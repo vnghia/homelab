@@ -1,10 +1,13 @@
 import homelab_docker as docker
 from pydantic import BaseModel, ValidationInfo, field_validator
 
+from homelab.config.docker.volume import Volume
+
 
 class Docker(BaseModel):
     platform: docker.image.Platform
     image: dict[str, docker.image.Remote]
+    volume: Volume
 
     @field_validator("image", mode="after")
     @classmethod
@@ -15,9 +18,7 @@ class Docker(BaseModel):
             name: (
                 model
                 if model.platform
-                else docker.image.Remote.model_copy(
-                    model, update={"platform": info.data["platform"]}
-                )
+                else model.model_copy(update={"platform": info.data["platform"]})
             )
             for name, model in image.items()
         }

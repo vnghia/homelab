@@ -19,4 +19,4 @@ config:
       volume:
         local:
           tailscale:
-            data:
+            data: {}
