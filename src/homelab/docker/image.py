@@ -14,6 +14,7 @@ class Image(ComponentResource):
             name: model.build_resource(opts=self.child_opts)
             for name, model in config.docker.image.items()
         }
+
         self.register_outputs(
             {name: image.repo_digest for name, image in self.image.items()}
         )
