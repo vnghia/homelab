@@ -1,8 +1,10 @@
 import pulumi_docker as docker
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Bridge(BaseModel):
+    model_config = ConfigDict(strict=True)
+
     name: str
     ipv6: bool = True
     labels: dict[str, str] = {}
