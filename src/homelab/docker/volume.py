@@ -21,7 +21,7 @@ class Volume(ComponentResource):
                 )
                 for name, model in volume.items()
             }
-            for namespace, volume in config.docker.volume.local.items()
+            for namespace, volume in config.docker.volume.locals.items()
         }
 
         self.register_outputs(

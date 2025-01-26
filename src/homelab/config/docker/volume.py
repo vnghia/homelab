@@ -8,11 +8,11 @@ from homelab.common import constant
 
 
 class Volume(BaseModel):
-    local: dict[str, dict[str, docker.volume.Local]]
+    locals: dict[str, dict[str, docker.volume.Local]]
 
     @model_validator(mode="after")
     def merge_pulumi_label(self) -> Self:
-        self.local = {
+        self.locals = {
             namespace: {
                 name: model.model_copy(
                     update={
@@ -23,6 +23,6 @@ class Volume(BaseModel):
                 )
                 for name, model in local.items()
             }
-            for namespace, local in self.local.items()
+            for namespace, local in self.locals.items()
         }
         return self

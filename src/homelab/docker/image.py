@@ -12,7 +12,7 @@ class Image(ComponentResource):
 
         self.image = {
             name: model.build_resource(opts=self.child_opts)
-            for name, model in config.docker.image.items()
+            for name, model in config.docker.images.items()
         }
 
         self.register_outputs(

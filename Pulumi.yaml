@@ -12,11 +12,11 @@ config:
   docker:
     value:
       platform: amd64
-      image:
+      images:
         tailscale:
           repo: tailscale/tailscale
           tag: "v1.78.3"
       volume:
-        local:
+        locals:
           tailscale:
             data: {}

@@ -16,18 +16,21 @@ class Container(BaseModel):
 
     def build_resource(
         self,
-        image: dict[str, docker.RemoteImage],
+        images: dict[str, docker.RemoteImage],
         opts: ResourceOptions | None = None,
         name: str | None = None,
     ) -> docker.Container:
-        image_data = image[self.image]
+        image = images[self.image]
         return docker.Container(
             self.name,
             opts=opts,
             name=name,
-            image=image_data.name,
+            image=image.name,
             restart=self.restart,
             rm=self.remove,
-            labels=[docker.ContainerLabelArgs(label=k, value=v) for k, v in self.labels]
-            + [docker.ContainerLabelArgs(label="image.id", value=image_data.image_id)],
+            labels=[
+                docker.ContainerLabelArgs(label=k, value=v)
+                for k, v in self.labels.items()
+            ]
+            + [docker.ContainerLabelArgs(label="image.id", value=image.image_id)],
         )

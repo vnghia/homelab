@@ -6,13 +6,13 @@ from homelab.config.docker.volume import Volume
 
 class Docker(BaseModel):
     platform: docker.image.Platform
-    image: dict[str, docker.image.Remote]
+    images: dict[str, docker.image.Remote]
     volume: Volume
 
-    @field_validator("image", mode="after")
+    @field_validator("images", mode="after")
     @classmethod
     def set_image_platform(
-        cls, image: dict[str, docker.image.Remote], info: ValidationInfo
+        cls, images: dict[str, docker.image.Remote], info: ValidationInfo
     ) -> dict[str, docker.image.Remote]:
         return {
             name: (
@@ -20,5 +20,5 @@ class Docker(BaseModel):
                 if model.platform
                 else model.model_copy(update={"platform": info.data["platform"]})
             )
-            for name, model in image.items()
+            for name, model in images.items()
         }
