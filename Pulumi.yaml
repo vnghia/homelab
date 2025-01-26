@@ -9,3 +9,12 @@ config:
   pulumi:tags:
     value:
       pulumi:template: python
+  server:
+    value:
+      platform: amd64
+  docker:
+    value:
+      image:
+        tailscale:
+          repo: tailscale/tailscale
+          tag: "v1.78.3"
