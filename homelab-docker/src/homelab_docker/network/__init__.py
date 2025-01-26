@@ -8,6 +8,7 @@ class Bridge(BaseModel):
 
     resource_name: str
     name: str | None = None
+
     ipv6: bool = True
     labels: dict[str, str] = {}
 
