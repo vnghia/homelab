@@ -1,7 +1,7 @@
 import deepmerge
 import pulumi
 
-from homelab.config.server import Server as Server
+from homelab.config.docker import Docker
 
 
 def __build(key: str) -> dict:
@@ -11,4 +11,4 @@ def __build(key: str) -> dict:
     )
 
 
-server = Server(**__build("server"))
+docker = Docker(**__build("docker"))

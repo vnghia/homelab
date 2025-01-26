@@ -11,7 +11,7 @@ class Remote(BaseModel):
     repo: str
     tag: str
 
-    platform: Platform
+    platform: Platform | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -25,5 +25,5 @@ class Remote(BaseModel):
             name=self.name,
             force_remove=False,
             keep_locally=False,
-            platform=self.platform.value,
+            platform=self.platform.value if self.platform else None,
         )
