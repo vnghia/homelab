@@ -3,6 +3,7 @@ from pulumi import ComponentResource, ResourceOptions
 
 from homelab.common import constant
 from homelab.docker.container import Container
+from homelab.docker.image import Image
 
 
 class Docker(ComponentResource):
@@ -15,6 +16,8 @@ class Docker(ComponentResource):
         self.bridge_network = docker.network.Bridge(
             resource_name="bridge", labels=constant.PROJECT_LABELS
         ).build_resource(opts=self.child_opts)
+
+        self.image = Image(opts=self.child_opts)
 
         self.container = Container(opts=self.child_opts)
 
