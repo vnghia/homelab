@@ -4,6 +4,7 @@ runtime:
   name: python
   options:
     virtualenv: .venv
+    typechecker: mypy
 config:
   pulumi:tags:
     value:

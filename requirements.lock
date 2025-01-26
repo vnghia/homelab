@@ -12,6 +12,8 @@
 -e file:.
 -e file:homelab-docker
     # via homelab
+annotated-types==0.7.0
+    # via pydantic
 arpeggio==2.0.2
     # via parver
 attrs==25.1.0
@@ -33,6 +35,10 @@ pulumi==3.147.0
     # via pulumi-docker
 pulumi-docker==4.6.1
     # via homelab-docker
+pydantic==2.10.6
+    # via homelab-docker
+pydantic-core==2.27.2
+    # via pydantic
 pyyaml==6.0.2
     # via pulumi
 semver==2.13.0
@@ -40,3 +46,6 @@ semver==2.13.0
     # via pulumi-docker
 six==1.17.0
     # via pulumi
+typing-extensions==4.12.2
+    # via pydantic
+    # via pydantic-core
