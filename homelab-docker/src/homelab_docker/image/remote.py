@@ -6,7 +6,7 @@ from homelab_docker.image.platform import Platform
 
 
 class Remote(BaseModel):
-    model_config = ConfigDict(use_enum_values=True, strict=True)
+    model_config = ConfigDict(strict=True)
 
     repo: str
     tag: str
@@ -24,6 +24,6 @@ class Remote(BaseModel):
             opts=opts,
             name=self.name,
             force_remove=False,
-            keep_locally=True,
+            keep_locally=False,
             platform=self.platform.value,
         )

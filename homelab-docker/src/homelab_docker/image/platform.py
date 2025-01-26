@@ -1,6 +1,6 @@
-import enum
+from enum import StrEnum, auto
 
 
-class Platform(enum.Enum):
-    Arm64 = "arm64"
-    Amd64 = "amd64"
+class Platform(StrEnum):
+    ARM64 = auto()
+    AMD64 = auto()
