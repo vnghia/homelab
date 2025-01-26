@@ -16,3 +16,7 @@ config:
         tailscale:
           repo: tailscale/tailscale
           tag: "v1.78.3"
+      volume:
+        local:
+          tailscale:
+            data:
