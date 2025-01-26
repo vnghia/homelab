@@ -1,13 +1,9 @@
 [project]
-name = "homelab"
+name = "homelab-docker"
 version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
-dependencies = [
-    "pulumi>=3.147.0",
-    "homelab-docker @ file:///home/xana/code/homelab-new/homelab-docker",
-]
-readme = "README.md"
+dependencies = ["pulumi-docker>=4.6.1"]
 requires-python = ">= 3.12"
 classifiers = ["Private :: Do Not Upload"]
 
@@ -23,7 +19,4 @@ dev-dependencies = []
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/homelab"]
-
-[tool.rye.workspace]
-members = ["homelab-*"]
+packages = ["src/homelab_docker"]
