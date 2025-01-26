@@ -8,9 +8,6 @@ from pydantic import BaseModel, ConfigDict, field_validator
 class Local(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    resource_name: str
-    name: str | None = None
-
     bind: PosixPath | None = None
     labels: dict[str, str] = {}
 
@@ -21,11 +18,16 @@ class Local(BaseModel):
             raise ValueError("`bind` path must be absolute")
         return bind
 
-    def build_resource(self, opts: ResourceOptions | None) -> docker.Volume:
+    def build_resource(
+        self,
+        resource_name: str,
+        opts: ResourceOptions | None = None,
+        name: str | None = None,
+    ) -> docker.Volume:
         return docker.Volume(
-            self.resource_name,
+            resource_name,
             opts=opts,
-            name=self.name,
+            name=name,
             driver="local",
             driver_opts={
                 "type": "none",

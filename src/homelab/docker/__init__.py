@@ -14,8 +14,8 @@ class Docker(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.bridge_network = docker.network.Bridge(
-            resource_name="bridge", labels=constant.PROJECT_LABELS
-        ).build_resource(opts=self.child_opts)
+            labels=constant.PROJECT_LABELS
+        ).build_resource(resource_name="bridge", opts=self.child_opts)
 
         self.image = Image(opts=self.child_opts)
 

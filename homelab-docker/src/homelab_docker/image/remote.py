@@ -18,7 +18,7 @@ class Remote(BaseModel):
     def name(self) -> str:
         return f"{self.repo}:{self.tag}"
 
-    def build_resource(self, opts: ResourceOptions | None) -> docker.RemoteImage:
+    def build_resource(self, opts: ResourceOptions | None = None) -> docker.RemoteImage:
         return docker.RemoteImage(
             resource_name=self.repo,
             opts=opts,
