@@ -27,7 +27,9 @@ config:
               tmpfs: {}
               volumes:
                 tailscale-data:
-                  path: /var/lib/tailscale/
+                  path: /var/lib/tailscale
               envs:
+                TS_STATE_DIR:
+                  volume: tailscale-data
                 TS_USERSPACE: "false"
                 TS_AUTH_ONCE: "true"

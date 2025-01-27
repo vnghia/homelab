@@ -3,6 +3,7 @@ import pulumi_docker as docker
 from pulumi import Input, Output, ResourceOptions
 from pydantic import BaseModel, ConfigDict
 
+from homelab_docker.container.env import Env
 from homelab_docker.container.tmpfs import Tmpfs
 from homelab_docker.container.volume import Volume
 
@@ -19,7 +20,7 @@ class Container(BaseModel):
 
     tmpfs: Tmpfs | None = None
     volumes: dict[str, Volume] = {}
-    envs: dict[str, str] = {}
+    envs: dict[str, str | Env] = {}
     labels: dict[str, str] = {}
 
     def build_resource(
@@ -61,7 +62,13 @@ class Container(BaseModel):
                 for k, v in self.volumes.items()
             ],
             envs=[
-                Output.concat(k, "=", Output.from_input(v).apply(str))
+                Output.concat(
+                    k,
+                    "=",
+                    Output.from_input(v).apply(
+                        lambda x: x.to_str(self.volumes) if isinstance(x, Env) else x
+                    ),
+                )
                 for k, v in deepmerge.always_merger.merge(self.envs, envs).items()  # type: ignore[attr-defined]
             ],
             labels=[
