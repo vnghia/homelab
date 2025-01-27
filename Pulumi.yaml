@@ -25,3 +25,9 @@ config:
             tailscale:
               image: tailscale
               tmpfs: {}
+              volumes:
+                tailscale-data:
+                  path: /var/lib/tailscale/
+              envs:
+                TS_USERSPACE: "false"
+                TS_AUTH_ONCE: "true"

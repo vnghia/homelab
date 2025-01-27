@@ -7,6 +7,7 @@ dependencies = [
     "pulumi>=3.147.0",
     "homelab-docker @ file:///home/xana/code/homelab-new/homelab-docker",
     "deepmerge>=2.0",
+    "pulumi-tailscale>=0.17.5",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

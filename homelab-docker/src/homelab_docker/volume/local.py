@@ -2,13 +2,13 @@ from pathlib import PosixPath
 
 import pulumi_docker as docker
 from pulumi import ResourceOptions
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Local(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    bind: PosixPath | None = None
+    bind: PosixPath | None = Field(None, strict=False)
     labels: dict[str, str] = {}
 
     @field_validator("bind", mode="after")
