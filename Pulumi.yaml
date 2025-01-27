@@ -24,3 +24,4 @@ config:
           containers:
             tailscale:
               image: tailscale
+              tmpfs: {}

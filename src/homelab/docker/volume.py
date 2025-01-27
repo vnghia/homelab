@@ -16,5 +16,5 @@ class Volume(ComponentResource):
         }
 
         self.register_outputs(
-            {name: volume.id for name, volume in self.volumes.items()}
+            {name: volume.name for name, volume in self.volumes.items()}
         )

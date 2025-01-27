@@ -16,6 +16,8 @@ class Docker(ComponentResource):
         self.network = Network(opts=self.child_opts)
         self.image = Image(opts=self.child_opts)
         self.volume = Volume(opts=self.child_opts)
-        self.service = Service(image=self.image, opts=self.child_opts)
+        self.service = Service(
+            image=self.image, volume=self.volume, opts=self.child_opts
+        )
 
         self.register_outputs({})

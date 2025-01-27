@@ -3,6 +3,9 @@ import pulumi_docker as docker
 from pulumi import Input, Output, ResourceOptions
 from pydantic import BaseModel, ConfigDict
 
+from homelab_docker.container.tmpfs import Tmpfs
+from homelab_docker.container.volume import Volume
+
 
 class Container(BaseModel):
     model_config = ConfigDict(strict=True)
@@ -14,6 +17,8 @@ class Container(BaseModel):
 
     image: str
 
+    tmpfs: Tmpfs | None = None
+    volumes: dict[str, Volume] = {}
     envs: dict[str, str] = {}
     labels: dict[str, str] = {}
 
@@ -21,6 +26,7 @@ class Container(BaseModel):
         self,
         resource_name: str,
         images: dict[str, docker.RemoteImage],
+        volumes: dict[str, docker.Volume],
         opts: ResourceOptions | None = None,
         name: str | None = None,
         envs: dict[str, Input[str]] = {},
@@ -31,14 +37,33 @@ class Container(BaseModel):
             opts=opts,
             name=name,
             image=image.name,
-            envs=[
-                Output.concat(k, "=", Output.from_input(v).apply(str))
-                for k, v in deepmerge.always_merger.merge(self.envs, envs).items()  # type: ignore[attr-defined]
-            ],
             read_only=self.read_only,
             restart=self.restart,
             rm=self.remove,
             wait=self.wait,
+            mounts=[
+                docker.ContainerMountArgs(
+                    target=self.tmpfs.path.as_posix(),
+                    type="tmpfs",
+                    tmpfs_options=docker.ContainerMountTmpfsOptionsArgs(
+                        size_bytes=self.tmpfs.size
+                    ),
+                )
+            ]
+            if self.tmpfs
+            else [],
+            volumes=[
+                docker.ContainerVolumeArgs(
+                    container_path=v.path.as_posix(),
+                    read_only=v.read_only,
+                    volume_name=volumes[k].name,
+                )
+                for k, v in self.volumes.items()
+            ],
+            envs=[
+                Output.concat(k, "=", Output.from_input(v).apply(str))
+                for k, v in deepmerge.always_merger.merge(self.envs, envs).items()  # type: ignore[attr-defined]
+            ],
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in self.labels.items()
