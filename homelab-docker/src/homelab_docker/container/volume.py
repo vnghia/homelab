@@ -1,17 +1,10 @@
-from pathlib import PosixPath
+from pydantic import BaseModel, ConfigDict
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from homelab_docker.pydantic.path import AbsolutePath
 
 
 class Volume(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    path: PosixPath = Field(strict=False)
+    path: AbsolutePath
     read_only: bool = False
-
-    @field_validator("path", mode="after")
-    @classmethod
-    def check_absolute_path(cls, path: PosixPath) -> PosixPath:
-        if not path.is_absolute():
-            raise ValueError("path must be absolute")
-        return path

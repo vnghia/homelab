@@ -1,17 +1,12 @@
 from pathlib import PosixPath
 
-from pydantic import BaseModel, ConfigDict, Field, PositiveInt, field_validator
+from pydantic import BaseModel, ConfigDict, PositiveInt
+
+from homelab_docker.pydantic.path import AbsolutePath
 
 
 class Tmpfs(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    path: PosixPath = Field(PosixPath("/tmp"), strict=False)
+    path: AbsolutePath = PosixPath("/tmp")
     size: PositiveInt | None = None
-
-    @field_validator("path", mode="after")
-    @classmethod
-    def check_absolute_path(cls, path: PosixPath) -> PosixPath:
-        if not path.is_absolute():
-            raise ValueError("path must be absolute")
-        return path

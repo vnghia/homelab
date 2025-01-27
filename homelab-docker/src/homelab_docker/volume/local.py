@@ -1,22 +1,15 @@
-from pathlib import PosixPath
-
 import pulumi_docker as docker
 from pulumi import ResourceOptions
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict
+
+from homelab_docker.pydantic.path import AbsolutePath
 
 
 class Local(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    bind: PosixPath | None = Field(None, strict=False)
+    bind: AbsolutePath | None = None
     labels: dict[str, str] = {}
-
-    @field_validator("bind", mode="after")
-    @classmethod
-    def check_bind_absolute_path(cls, bind: PosixPath | None) -> PosixPath | None:
-        if bind and not bind.is_absolute():
-            raise ValueError("`bind` path must be absolute")
-        return bind
 
     def build_resource(
         self,
