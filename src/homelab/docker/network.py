@@ -1,7 +1,6 @@
-import homelab_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab.common import constant
+from homelab import config
 
 
 class Network(ComponentResource):
@@ -11,8 +10,11 @@ class Network(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.bridge = docker.network.Bridge(
-            labels=constant.PROJECT_LABELS
-        ).build_resource(resource_name="bridge", opts=self.child_opts)
+        self.networks = {
+            name: model.build_resource(resource_name=name, opts=self.child_opts)
+            for name, model in config.docker.networks.bridge.items()
+        }
 
-        self.register_outputs({"bridge": self.bridge.name})
+        self.register_outputs(
+            {name: network.name for name, network in self.networks.items()}
+        )

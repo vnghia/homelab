@@ -12,6 +12,9 @@ config:
   docker:
     value:
       platform: amd64
+      networks:
+        bridge:
+          default-bridge: {}
       images:
         tailscale:
           repo: tailscale/tailscale
@@ -24,7 +27,26 @@ config:
           containers:
             tailscale:
               image: tailscale
-              tmpfs: {}
+              capabilities:
+                - NET_ADMIN
+              healthcheck:
+                tests:
+                  - "CMD"
+                  - "wget"
+                  - "--spider"
+                  - "-q"
+                  - "http://127.0.0.1:8080/healthz"
+                interval: 1s
+                timeout: 5s
+              sysctls:
+                "net.ipv6.conf.all.disable_ipv6": "0"
+                "net.ipv6.conf.all.forwarding": "1"
+                "net.ipv6.conf.all.proxy_ndp": "1"
+              tmpfs:
+                - "/tmp"
+                - "/run"
+              networks:
+                default-bridge: {}
               volumes:
                 tailscale-data: /var/lib/tailscale
               envs:
@@ -32,3 +54,4 @@ config:
                   volume: tailscale-data
                 TS_USERSPACE: "false"
                 TS_AUTH_ONCE: "true"
+                TS_HEALTHCHECK_ADDR_PORT: "127.0.0.1:8080"

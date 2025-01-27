@@ -27,7 +27,7 @@ class Volume(BaseModel):
         volume = self.volume
         return volume.path if isinstance(volume, Full) else volume
 
-    def to_container_volume_args(self, name: Input[str]) -> docker.ContainerVolumeArgs:
+    def to_container_volume(self, name: Input[str]) -> docker.ContainerVolumeArgs:
         volume = self.volume
         container_path = self.to_path().as_posix()
         read_only = volume.read_only if isinstance(volume, Full) else None
