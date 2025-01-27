@@ -8,7 +8,7 @@ from homelab.config.docker.volume import Volume
 class Docker(BaseModel):
     platform: docker.image.Platform
     images: dict[str, docker.image.Remote]
-    volume: Volume
+    volumes: Volume
     services: dict[str, Service]
 
     @field_validator("images", mode="after")
