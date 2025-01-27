@@ -1,3 +1,4 @@
+import pulumi
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab import config
@@ -14,6 +15,8 @@ class Image(ComponentResource):
             name: model.build_resource(opts=self.child_opts)
             for name, model in config.docker.images.items()
         }
+        for name, image in self.remotes.items():
+            pulumi.export(f"image-{name}", image.image_id)
 
         self.register_outputs(
             {name: image.repo_digest for name, image in self.remotes.items()}

@@ -1,3 +1,4 @@
+import pulumi
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab import config
@@ -14,6 +15,8 @@ class Network(ComponentResource):
             name: model.build_resource(resource_name=name, opts=self.child_opts)
             for name, model in config.docker.networks.bridge.items()
         }
+        for name, network in self.networks.items():
+            pulumi.export(f"network-{name}", network.name)
 
         self.register_outputs(
             {name: network.name for name, network in self.networks.items()}

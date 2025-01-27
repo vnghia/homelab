@@ -1,3 +1,4 @@
+import pulumi
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab import config
@@ -14,6 +15,8 @@ class Volume(ComponentResource):
             name: model.build_resource(name, opts=self.child_opts)
             for name, model in config.docker.volumes.local.items()
         }
+        for name, volume in self.volumes.items():
+            pulumi.export(f"volume-{name}", volume.name)
 
         self.register_outputs(
             {name: volume.name for name, volume in self.volumes.items()}
