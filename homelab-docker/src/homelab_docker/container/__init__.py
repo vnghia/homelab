@@ -20,7 +20,7 @@ class Container(BaseModel):
 
     tmpfs: Tmpfs | None = None
     volumes: dict[str, Volume] = {}
-    envs: dict[str, str | Env] = {}
+    envs: dict[str, Env] = {}
     labels: dict[str, str] = {}
 
     def build_resource(
@@ -54,11 +54,7 @@ class Container(BaseModel):
             if self.tmpfs
             else [],
             volumes=[
-                docker.ContainerVolumeArgs(
-                    container_path=v.path.as_posix(),
-                    read_only=v.read_only,
-                    volume_name=volumes[k].name,
-                )
+                v.to_container_volume_args(name=volumes[k].name)
                 for k, v in self.volumes.items()
             ],
             envs=[
