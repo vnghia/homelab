@@ -1,6 +1,7 @@
 import homelab_docker as docker
 from pydantic import BaseModel, ValidationInfo, field_validator
 
+from homelab.config.docker.service import Service
 from homelab.config.docker.volume import Volume
 
 
@@ -8,6 +9,7 @@ class Docker(BaseModel):
     platform: docker.image.Platform
     images: dict[str, docker.image.Remote]
     volume: Volume
+    services: dict[str, Service]
 
     @field_validator("images", mode="after")
     @classmethod
