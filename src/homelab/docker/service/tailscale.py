@@ -6,7 +6,7 @@ from pulumi import InvokeOptions, ResourceOptions
 
 from homelab.docker.image import Image
 from homelab.docker.network import Network
-from homelab.docker.service.base import Base
+from homelab.docker.service.base import Base, BuildOption
 from homelab.docker.volume import Volume
 
 
@@ -29,10 +29,13 @@ class Tailscale(Base):
         )
 
         self.build_containers(
-            envs={
-                self.resource_name: {
-                    "TS_AUTHKEY": self.build_authkey().key,
-                }
+            options={
+                self.resource_name: BuildOption(
+                    opts=ResourceOptions(delete_before_replace=True),
+                    envs={
+                        "TS_AUTHKEY": self.build_authkey().key,
+                    },
+                )
             }
         )
 

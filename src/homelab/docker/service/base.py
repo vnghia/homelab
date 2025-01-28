@@ -1,11 +1,20 @@
+import dataclasses
+
 import pulumi
 import pulumi_docker as docker
+from homelab_docker.container import Container
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 
 from homelab import config
 from homelab.docker.image import Image
 from homelab.docker.network import Network
 from homelab.docker.volume import Volume
+
+
+@dataclasses.dataclass
+class BuildOption:
+    opts: ResourceOptions | None = None
+    envs: dict[str, Input[str]] = dataclasses.field(default_factory=dict)
 
 
 class Base(ComponentResource):
@@ -24,18 +33,24 @@ class Base(ComponentResource):
         super().__init__(resource_name, resource_name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+    def build_container(
+        self, name: str, model: Container, option: BuildOption | None = None
+    ) -> docker.Container:
+        option = option or BuildOption()
+        return model.build_resource(
+            name,
+            networks=self.network.networks,
+            images=self.image.remotes,
+            volumes=self.volume.volumes,
+            opts=ResourceOptions.merge(self.child_opts, option.opts),
+            envs=option.envs,
+        )
+
     def build_containers(
-        self, envs: dict[str, dict[str, Input[str]]] = {}
+        self, options: dict[str, BuildOption] = {}
     ) -> dict[str, docker.Container]:
         self.containers = {
-            name: model.build_resource(
-                self.resource_name,
-                networks=self.network.networks,
-                images=self.image.remotes,
-                volumes=self.volume.volumes,
-                opts=self.child_opts,
-                envs=envs.get(name, {}),
-            )
+            name: self.build_container(name, model, options.get(name))
             for name, model in config.docker.services[
                 self.resource_name
             ].containers.items()
