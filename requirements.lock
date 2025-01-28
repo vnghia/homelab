@@ -10,6 +10,8 @@
 #   universal: false
 
 -e file:.
+-e file:homelab-dns
+    # via homelab
 -e file:homelab-docker
     # via homelab
 annotated-types==0.7.0
@@ -42,6 +44,7 @@ pulumi-docker==4.6.1
 pulumi-tailscale==0.17.5
     # via homelab
 pydantic==2.10.6
+    # via homelab-dns
     # via homelab-docker
 pydantic-core==2.27.2
     # via pydantic
