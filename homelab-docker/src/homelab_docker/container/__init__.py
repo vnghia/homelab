@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 from homelab_docker.container.env import Env
 from homelab_docker.container.healthcheck import Healthcheck
 from homelab_docker.container.network import Network
+from homelab_docker.container.port import Port
 from homelab_docker.container.tmpfs import Tmpfs
 from homelab_docker.container.volume import Volume
 
@@ -16,6 +17,7 @@ class Container(BaseModel):
     name: str | None = None
     capabilities: list[str] = []
     healthcheck: Healthcheck | None = None
+    ports: dict[str, Port] = {}
     restart: str = "unless-stopped"
     read_only: bool = True
     remove: bool = False
@@ -49,6 +51,10 @@ class Container(BaseModel):
             healthcheck=self.healthcheck.to_container_healthcheck()
             if self.healthcheck
             else None,
+            ports=[
+                port.to_container_port()
+                for port in sorted(self.ports.values(), key=lambda x: x.to_comparable())
+            ],
             read_only=self.read_only,
             restart=self.restart,
             rm=self.remove,

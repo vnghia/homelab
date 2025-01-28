@@ -37,6 +37,23 @@ config:
                 - "http://localhost:9002/healthz"
               interval: 1s
               timeout: 5s
+            ports:
+              httpv4:
+                internal: 81
+                external: 80
+                ip: "0.0.0.0"
+              httpv6:
+                internal: 81
+                external: 80
+                ip: "::"
+              httpsv4:
+                internal: 444
+                external: 443
+                ip: "0.0.0.0"
+              httpsv6:
+                internal: 444
+                external: 443
+                ip: "::"
             tmpfs:
               - "/tmp"
               - "/run"
