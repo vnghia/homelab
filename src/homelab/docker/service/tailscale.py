@@ -2,7 +2,7 @@ from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_tailscale as tailscale
-from pulumi import InvokeOptions, ResourceOptions
+from pulumi import ResourceOptions
 
 from homelab import common
 from homelab.docker.image import Image
@@ -41,8 +41,7 @@ class Tailscale(Base):
         )
 
         self.device = tailscale.get_device_output(
-            hostname=self.container.id.apply(lambda _: self.hostname),
-            opts=InvokeOptions(parent=self.container),
+            hostname=self.container.id.apply(lambda _: self.hostname)
         )
         self.ipv4 = self.device.apply(lambda x: IPv4Address(x.addresses[0]))
         self.ipv6 = self.device.apply(lambda x: IPv6Address(x.addresses[1]))
