@@ -4,6 +4,7 @@ import pulumi
 import pulumi_tailscale as tailscale
 from pulumi import InvokeOptions, ResourceOptions
 
+from homelab import common
 from homelab.docker.image import Image
 from homelab.docker.network import Network
 from homelab.docker.service.base import Base, BuildOption
@@ -11,8 +12,6 @@ from homelab.docker.volume import Volume
 
 
 class Tailscale(Base):
-    RESOURCE_NAME = "tailscale"
-
     def __init__(
         self,
         network: Network,
@@ -24,23 +23,26 @@ class Tailscale(Base):
             network=network,
             image=image,
             volume=volume,
-            resource_name=self.RESOURCE_NAME,
+            name="tailscale",
             opts=opts,
         )
 
+        self.hostname = common.get_name(name=None, project=True, stack=True)
         self.build_containers(
             options={
-                self.resource_name: BuildOption(
+                None: BuildOption(
                     opts=ResourceOptions(delete_before_replace=True),
                     envs={
                         "TS_AUTHKEY": self.build_authkey().key,
+                        "TS_HOSTNAME": self.hostname,
                     },
                 )
             }
         )
 
         self.device = tailscale.get_device_output(
-            hostname=self.container.hostname, opts=InvokeOptions(parent=self.container)
+            hostname=self.container.id.apply(lambda _: self.hostname),
+            opts=InvokeOptions(parent=self.container),
         )
         self.ipv4 = self.device.apply(lambda x: IPv4Address(x.addresses[0]))
         self.ipv6 = self.device.apply(lambda x: IPv6Address(x.addresses[1]))

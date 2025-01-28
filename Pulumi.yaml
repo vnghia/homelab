@@ -24,30 +24,29 @@ config:
           tailscale-data: {}
       services:
         tailscale:
-          containers:
-            tailscale:
-              image: tailscale
-              capabilities:
-                - NET_ADMIN
-              healthcheck:
-                tests:
-                  - "CMD"
-                  - "wget"
-                  - "--spider"
-                  - "-q"
-                  - "http://localhost:9002/healthz"
-                interval: 1s
-                timeout: 5s
-              tmpfs:
-                - "/tmp"
-                - "/run"
-              networks:
-                default-bridge: {}
-              volumes:
-                tailscale-data: /var/lib/tailscale
-              envs:
-                TS_STATE_DIR:
-                  volume: tailscale-data
-                TS_USERSPACE: "false"
-                TS_AUTH_ONCE: "true"
-                TS_ENABLE_HEALTH_CHECK: "true"
+          container:
+            image: tailscale
+            capabilities:
+              - NET_ADMIN
+            healthcheck:
+              tests:
+                - "CMD"
+                - "wget"
+                - "--spider"
+                - "-q"
+                - "http://localhost:9002/healthz"
+              interval: 1s
+              timeout: 5s
+            tmpfs:
+              - "/tmp"
+              - "/run"
+            networks:
+              default-bridge: {}
+            volumes:
+              tailscale-data: /var/lib/tailscale
+            envs:
+              TS_STATE_DIR:
+                volume: tailscale-data
+              TS_USERSPACE: "false"
+              TS_AUTH_ONCE: "true"
+              TS_ENABLE_HEALTH_CHECK: "true"

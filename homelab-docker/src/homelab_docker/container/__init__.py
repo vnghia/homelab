@@ -58,7 +58,7 @@ class Container(BaseModel):
             # TODO: remove this line after https://github.com/pulumi/pulumi-docker/issues/1272
             network_mode="bridge",
             networks_advanced=[
-                v.to_container_network_advance(networks[k])
+                v.to_container_network_advance(resource_name, networks[k])
                 for k, v in self.networks.items()
             ],
             volumes=[

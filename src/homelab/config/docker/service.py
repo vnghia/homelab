@@ -3,4 +3,5 @@ from pydantic import BaseModel
 
 
 class Service(BaseModel):
-    containers: dict[str, docker.container.Container]
+    container: docker.container.Container
+    containers: dict[str, docker.container.Container] = {}

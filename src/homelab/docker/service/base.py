@@ -23,22 +23,27 @@ class Base(ComponentResource):
         network: Network,
         image: Image,
         volume: Volume,
-        resource_name: str,
+        name: str,
         opts: ResourceOptions | None,
     ) -> None:
         self.network = network
         self.image = image
         self.volume = volume
-        self.resource_name = resource_name
-        super().__init__(resource_name, resource_name, None, opts)
+        self.name = name
+        self.config = config.docker.services[self.name]
+
+        super().__init__(name, name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+    def add_service_name(self, name: str | None) -> str:
+        return f"{self.name}-{name}" if name else self.name
+
     def build_container(
-        self, name: str, model: Container, option: BuildOption | None = None
+        self, name: str | None, model: Container, option: BuildOption | None = None
     ) -> docker.Container:
         option = option or BuildOption()
         return model.build_resource(
-            name,
+            self.add_service_name(name),
             networks=self.network.networks,
             images=self.image.remotes,
             volumes=self.volume.volumes,
@@ -46,20 +51,20 @@ class Base(ComponentResource):
             envs=option.envs,
         )
 
-    def build_containers(
-        self, options: dict[str, BuildOption] = {}
-    ) -> dict[str, docker.Container]:
+    def build_containers(self, options: dict[str | None, BuildOption] = {}):
+        self.container = self.build_container(
+            None, self.config.container, options.get(None)
+        )
         self.containers = {
             name: self.build_container(name, model, options.get(name))
-            for name, model in config.docker.services[
-                self.resource_name
-            ].containers.items()
-        }
-        self.container = self.containers[self.resource_name]
-        for name, container in self.containers.items():
-            pulumi.export(f"container-{name}", container.name)
+            for name, model in self.config.containers.items()
+        } | {None: self.container}
 
-        return self.containers
+        for name, container in self.containers.items():
+            pulumi.export(f"container-{self.add_service_name(name)}", container.name)
 
     def container_outputs(self) -> dict[str, Output[str]]:
-        return {name: container.name for name, container in self.containers.items()}
+        return {
+            name or self.name: container.name
+            for name, container in self.containers.items()
+        }
