@@ -23,7 +23,6 @@ class Tailscale(Base):
             network=network,
             image=image,
             volume=volume,
-            name="tailscale",
             opts=opts,
         )
 

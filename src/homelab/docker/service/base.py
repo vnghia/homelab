@@ -6,6 +6,7 @@ from homelab_docker.container import Container
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 
 from homelab import config
+from homelab.config.docker.service import Service
 from homelab.docker.image import Image
 from homelab.docker.network import Network
 from homelab.docker.volume import Volume
@@ -23,20 +24,25 @@ class Base(ComponentResource):
         network: Network,
         image: Image,
         volume: Volume,
-        name: str,
         opts: ResourceOptions | None,
     ) -> None:
         self.network = network
         self.image = image
         self.volume = volume
-        self.name = name
-        self.config = config.docker.services[self.name]
 
-        super().__init__(name, name, None, opts)
+        super().__init__(self.name(), self.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+    @classmethod
+    def name(cls) -> str:
+        return cls.__name__.lower()
+
+    @classmethod
+    def config(cls) -> Service:
+        return config.docker.services[cls.name()]
+
     def add_service_name(self, name: str | None) -> str:
-        return f"{self.name}-{name}" if name else self.name
+        return f"{self.name()}-{name}" if name else self.name()
 
     def build_container(
         self, name: str | None, model: Container, option: BuildOption | None = None
@@ -53,11 +59,11 @@ class Base(ComponentResource):
 
     def build_containers(self, options: dict[str | None, BuildOption] = {}):
         self.container = self.build_container(
-            None, self.config.container, options.get(None)
+            None, self.config().container, options.get(None)
         )
         self.containers = {
             name: self.build_container(name, model, options.get(name))
-            for name, model in self.config.containers.items()
+            for name, model in self.config().containers.items()
         } | {None: self.container}
 
         for name, container in self.containers.items():
@@ -65,6 +71,6 @@ class Base(ComponentResource):
 
     def container_outputs(self) -> dict[str, Output[str]]:
         return {
-            name or self.name: container.name
+            name or self.name(): container.name
             for name, container in self.containers.items()
         }
