@@ -1,5 +1,8 @@
+from ipaddress import IPv4Address, IPv6Address
+
+import pulumi
 import pulumi_tailscale as tailscale
-from pulumi import ResourceOptions
+from pulumi import InvokeOptions, ResourceOptions
 
 from homelab.docker.image import Image
 from homelab.docker.network import Network
@@ -33,7 +36,19 @@ class Tailscale(Base):
             }
         )
 
-        self.register_outputs(self.container_outputs())
+        self.device = tailscale.get_device_output(
+            hostname=self.container.hostname, opts=InvokeOptions(parent=self.container)
+        )
+        self.ipv4 = self.device.apply(lambda x: IPv4Address(x.addresses[0]))
+        self.ipv6 = self.device.apply(lambda x: IPv6Address(x.addresses[1]))
+
+        outputs = self.container_outputs() | {
+            "ipv4": self.ipv4.apply(str),
+            "ipv6": self.ipv6.apply(str),
+        }
+        pulumi.export("tailscale-ipv4", outputs["ipv4"])
+        pulumi.export("tailscale-ipv6", outputs["ipv6"])
+        self.register_outputs(outputs)
 
     def build_authkey(self) -> tailscale.TailnetKey:
         self.authkey = tailscale.TailnetKey(

@@ -40,7 +40,7 @@ class Base(ComponentResource):
                 self.resource_name
             ].containers.items()
         }
-
+        self.container = self.containers[self.resource_name]
         for name, container in self.containers.items():
             pulumi.export(f"container-{name}", container.name)
 

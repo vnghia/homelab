@@ -35,13 +35,9 @@ config:
                   - "wget"
                   - "--spider"
                   - "-q"
-                  - "http://127.0.0.1:8080/healthz"
+                  - "http://localhost:9002/healthz"
                 interval: 1s
                 timeout: 5s
-              sysctls:
-                "net.ipv6.conf.all.disable_ipv6": "0"
-                "net.ipv6.conf.all.forwarding": "1"
-                "net.ipv6.conf.all.proxy_ndp": "1"
               tmpfs:
                 - "/tmp"
                 - "/run"
@@ -54,4 +50,4 @@ config:
                   volume: tailscale-data
                 TS_USERSPACE: "false"
                 TS_AUTH_ONCE: "true"
-                TS_HEALTHCHECK_ADDR_PORT: "127.0.0.1:8080"
+                TS_ENABLE_HEALTH_CHECK: "true"
