@@ -1,6 +1,6 @@
 import pulumi_docker as docker
 from pulumi import ResourceOptions
-from pydantic import BaseModel, ConfigDict, computed_field
+from pydantic import BaseModel, ConfigDict
 
 from homelab_docker.image.platform import Platform
 
@@ -13,7 +13,6 @@ class Remote(BaseModel):
 
     platform: Platform | None = None
 
-    @computed_field  # type: ignore[prop-decorator]
     @property
     def name(self) -> str:
         return f"{self.repo}:{self.tag}"
