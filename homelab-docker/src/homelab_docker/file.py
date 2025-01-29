@@ -1,13 +1,20 @@
 import hashlib
+import io
 import tarfile
 import tempfile
+from contextlib import contextmanager
+from pathlib import Path, PosixPath
+from typing import Iterator
 
 import docker
 import pulumi_docker
+from docker.errors import NotFound
+from docker.models.containers import Container
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
     CreateResult,
     DiffResult,
+    ReadResult,
     Resource,
     ResourceProvider,
     UpdateResult,
@@ -36,7 +43,22 @@ class FileProviderProps(BaseModel):
 
 class VolumeProxy:
     IMAGE = "busybox"
-    WORKING_DIR = "/mnt/volume/"
+    WORKING_DIR = PosixPath("/mnt/volume/")
+
+    @classmethod
+    @contextmanager
+    def container(cls, volume: str) -> Iterator[Container]:
+        container = docker.from_env().containers.create(
+            image=cls.IMAGE,
+            network_mode="none",
+            volumes={volume: {"bind": cls.WORKING_DIR.as_posix(), "mode": "rw"}},
+            working_dir=cls.WORKING_DIR.as_posix(),
+            detach=True,
+        )
+        try:
+            yield container
+        finally:
+            container.remove(force=True)
 
     @classmethod
     def pull_image(cls):
@@ -45,28 +67,45 @@ class VolumeProxy:
     @classmethod
     def create_file(cls, props: FileProviderProps):
         def compress_tar():
-            tar_file = tempfile.NamedTemporaryFile()
+            tar_file = io.BytesIO()
             with tarfile.open(mode="w", fileobj=tar_file) as tar:
-                with tempfile.NamedTemporaryFile() as f:
-                    f.write(props.content.encode())
-                    f.flush()
+                with tempfile.NamedTemporaryFile() as file:
+                    file.write(props.content.encode())
+                    file.flush()
                     tar.add(
-                        f.name,
+                        file.name,
                         arcname=props.path,
                         filter=lambda x: x.replace(mode=props.mode, deep=False),
                     )
             tar_file.seek(0)
             return tar_file
 
-        container = docker.from_env().containers.create(
-            image=cls.IMAGE,
-            network_mode="none",
-            volumes={props.volume: {"bind": cls.WORKING_DIR, "mode": "rw"}},
-            working_dir=cls.WORKING_DIR,
-            detach=True,
-        )
-        container.put_archive(cls.WORKING_DIR, compress_tar())
-        container.remove(force=True)
+        with cls.container(props.volume) as container:
+            container.put_archive(cls.WORKING_DIR.as_posix(), compress_tar())
+
+    @classmethod
+    def read_file(cls, props: FileProviderProps) -> FileProviderProps | None:
+        with cls.container(props.volume) as container:
+            try:
+                tar_file = io.BytesIO()
+                (stream, stat) = container.get_archive(
+                    (cls.WORKING_DIR / props.path).as_posix()
+                )
+                for chunk in stream:
+                    tar_file.write(chunk)
+                tar_file.seek(0)
+                with tarfile.open(mode="r", fileobj=tar_file) as tar:
+                    with tempfile.TemporaryDirectory() as tmpdir:
+                        name = stat["name"]
+                        tar.extract(name, path=tmpdir, set_attrs=False)
+                        return props.model_copy(
+                            update={
+                                "content": open(Path(tmpdir) / name).read(),
+                                "mode": stat["mode"],
+                            }
+                        )
+            except NotFound:
+                return None
 
     @classmethod
     def delete_file(cls, props: FileProviderProps):
@@ -75,8 +114,8 @@ class VolumeProxy:
             command=["rm", "-rf", props.path.as_posix()],
             remove=True,
             network_mode="none",
-            volumes={props.volume: {"bind": cls.WORKING_DIR, "mode": "rw"}},
-            working_dir=cls.WORKING_DIR,
+            volumes={props.volume: {"bind": cls.WORKING_DIR.as_posix(), "mode": "rw"}},
+            working_dir=cls.WORKING_DIR.as_posix(),
             detach=True,
         )
 
@@ -108,6 +147,14 @@ class FileProvider(ResourceProvider):
     def delete(self, _id: str, props):
         props = FileProviderProps(**props)
         VolumeProxy.delete_file(props)
+
+    def read(self, id_: str, props) -> ReadResult:
+        props = FileProviderProps(**props)
+        props = VolumeProxy.read_file(props)
+        if props:
+            return ReadResult(id_=id_, outs=props.model_dump(mode="json"))
+        else:
+            return ReadResult(outs={})
 
 
 class File(Resource, module="docker", name="File"):
