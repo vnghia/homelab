@@ -50,6 +50,7 @@ class Base(ComponentResource):
         option = option or BuildOption()
         return model.build_resource(
             self.add_service_name(name),
+            timezone=config.docker.timezone,
             networks=self.network.networks,
             images=self.image.remotes,
             volumes=self.volume.volumes,

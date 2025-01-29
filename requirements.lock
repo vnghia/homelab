@@ -50,8 +50,11 @@ pulumi-tailscale==0.17.5
 pydantic==2.10.6
     # via homelab-dns
     # via homelab-docker
+    # via pydantic-extra-types
 pydantic-core==2.27.2
     # via pydantic
+pydantic-extra-types==2.10.2
+    # via homelab-docker
 pyyaml==6.0.2
     # via pulumi
 semver==2.13.0
@@ -64,3 +67,6 @@ six==1.17.0
 typing-extensions==4.12.2
     # via pydantic
     # via pydantic-core
+    # via pydantic-extra-types
+tzdata==2025.1
+    # via homelab-docker

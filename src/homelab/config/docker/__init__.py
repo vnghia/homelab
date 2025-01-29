@@ -1,5 +1,6 @@
 import homelab_docker as docker
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
+from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab.config.docker.network import Network
 from homelab.config.docker.service import Service
@@ -10,6 +11,7 @@ class Docker(BaseModel):
     model_config = ConfigDict(strict=True)
 
     platform: docker.image.Platform = Field(strict=False)
+    timezone: TimeZoneName = Field(strict=False)
     networks: Network
     images: dict[str, docker.image.Remote]
     volumes: Volume

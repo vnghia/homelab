@@ -2,6 +2,7 @@ import deepmerge
 import pulumi_docker as docker
 from pulumi import Input, Output, ResourceOptions
 from pydantic import BaseModel, ConfigDict
+from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab_docker.container.env import Env
 from homelab_docker.container.healthcheck import Healthcheck
@@ -36,6 +37,7 @@ class Container(BaseModel):
     def build_resource(
         self,
         resource_name: str,
+        timezone: TimeZoneName,
         networks: dict[str, docker.Network],
         images: dict[str, docker.RemoteImage],
         volumes: dict[str, docker.Volume],
@@ -74,6 +76,18 @@ class Container(BaseModel):
                 v.to_container_volume(name=volumes[k].name)
                 for k, v in self.volumes.items()
             ]
+            + [
+                docker.ContainerVolumeArgs(
+                    container_path="/etc/localtime",
+                    host_path="/etc/localtime",
+                    read_only=True,
+                ),
+                docker.ContainerVolumeArgs(
+                    container_path="/usr/share/zoneinfo",
+                    host_path="/usr/share/zoneinfo",
+                    read_only=True,
+                ),
+            ]
             + (
                 [
                     docker.ContainerVolumeArgs(
@@ -93,7 +107,12 @@ class Container(BaseModel):
                         lambda x: x.to_str(self.volumes) if isinstance(x, Env) else x
                     ),
                 )
-                for k, v in deepmerge.always_merger.merge(self.envs, envs).items()  # type: ignore[attr-defined]
+                for k, v in sorted(
+                    deepmerge.always_merger.merge(
+                        self.envs, envs | {"TZ": timezone}
+                    ).items(),  # type: ignore[attr-defined]
+                    key=lambda x: x[0],
+                )
             ],
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
