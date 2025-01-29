@@ -1,5 +1,5 @@
 import homelab_docker as docker
-from pydantic import BaseModel, ValidationInfo, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 from homelab.config.docker.network import Network
 from homelab.config.docker.service import Service
@@ -7,7 +7,9 @@ from homelab.config.docker.volume import Volume
 
 
 class Docker(BaseModel):
-    platform: docker.image.Platform
+    model_config = ConfigDict(strict=True)
+
+    platform: docker.image.Platform = Field(strict=False)
     networks: Network
     images: dict[str, docker.image.Remote]
     volumes: Volume

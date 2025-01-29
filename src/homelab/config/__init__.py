@@ -2,6 +2,7 @@ import deepmerge
 import pulumi
 
 from homelab.config.docker import Docker
+from homelab.config.network import Network
 
 
 def __build(key: str) -> dict:
@@ -12,3 +13,4 @@ def __build(key: str) -> dict:
 
 
 docker = Docker(**__build("docker"))
+network = Network(**__build("network"))
