@@ -1,11 +1,18 @@
+import hashlib
 import tarfile
 import tempfile
 
 import docker
 import pulumi_docker
 from pulumi import Input, Output, ResourceOptions
-from pulumi.dynamic import CreateResult, Resource, ResourceProvider
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+from pulumi.dynamic import (
+    CreateResult,
+    DiffResult,
+    Resource,
+    ResourceProvider,
+    UpdateResult,
+)
+from pydantic import BaseModel, ConfigDict, Field
 
 from homelab_docker.pydantic.path import RelativePath
 
@@ -21,6 +28,10 @@ class FileProviderProps(BaseModel):
     @property
     def id_(self) -> str:
         return f"{self.volume}:{self.path.as_posix()}"
+
+    @property
+    def hash(self) -> str:
+        return hashlib.sha256(self.content.encode()).hexdigest()
 
 
 class VolumeProxy:
@@ -58,16 +69,13 @@ class VolumeProxy:
         container.remove(force=True)
 
     @classmethod
-    def delete_file(cls, id_: str):
-        volume, raw_path = id_.split(":", maxsplit=1)
-        path = TypeAdapter(RelativePath).validate_python(raw_path)
-
+    def delete_file(cls, props: FileProviderProps):
         docker.from_env().containers.run(
             image=cls.IMAGE,
-            command=["rm", "-rf", path.as_posix()],
+            command=["rm", "-rf", props.path.as_posix()],
             remove=True,
             network_mode="none",
-            volumes={volume: {"bind": cls.WORKING_DIR, "mode": "rw"}},
+            volumes={props.volume: {"bind": cls.WORKING_DIR, "mode": "rw"}},
             working_dir=cls.WORKING_DIR,
             detach=True,
         )
@@ -82,17 +90,31 @@ class FileProvider(ResourceProvider):
     def create(self, props) -> CreateResult:
         props = FileProviderProps(**props)
         VolumeProxy.create_file(props)
-        return CreateResult(id_=props.id_, outs={})
+        return CreateResult(id_=props.id_, outs=props.model_dump(mode="json"))
 
-    def delete(self, id_: str, _props):
-        VolumeProxy.delete_file(id_)
+    def diff(self, _id: str, olds, news) -> DiffResult:
+        olds = FileProviderProps(**olds)
+        news = FileProviderProps(**news)
+        return DiffResult(
+            changes=olds != news,
+            stables=["volume", "path"],
+        )
+
+    def update(self, _id: str, _olds, news) -> UpdateResult:
+        news = FileProviderProps(**news)
+        VolumeProxy.create_file(news)
+        return UpdateResult(outs=news.model_dump(mode="json"))
+
+    def delete(self, _id: str, props):
+        props = FileProviderProps(**props)
+        VolumeProxy.delete_file(props)
 
 
 class File(Resource, module="docker", name="File"):
     def __init__(
         self,
         resource_name: str,
-        volume: Input[pulumi_docker.Volume],
+        volume: pulumi_docker.Volume,
         path: Input[RelativePath],
         content: Input[str],
         mode: Input[int] = 0o444,
@@ -102,10 +124,12 @@ class File(Resource, module="docker", name="File"):
             FileProvider(),
             resource_name,
             {
-                "volume": Output.from_input(volume).apply(lambda x: x.name),
+                "volume": volume.name,
                 "path": Output.from_input(path).apply(lambda x: x.as_posix()),
                 "content": content,
                 "mode": mode,
             },
-            opts,
+            ResourceOptions.merge(
+                opts, ResourceOptions(delete_before_replace=True, deleted_with=volume)
+            ),
         )
