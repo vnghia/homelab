@@ -29,6 +29,7 @@ dill==0.3.9
 grpcio==1.66.2
     # via pulumi
 parver==0.5
+    # via pulumi-cloudflare
     # via pulumi-docker
     # via pulumi-tailscale
 pip==24.3.1
@@ -37,8 +38,11 @@ protobuf==4.25.6
     # via pulumi
 pulumi==3.147.0
     # via homelab
+    # via pulumi-cloudflare
     # via pulumi-docker
     # via pulumi-tailscale
+pulumi-cloudflare==5.49.0
+    # via homelab-dns
 pulumi-docker==4.6.1
     # via homelab-docker
 pulumi-tailscale==0.17.5
@@ -52,6 +56,7 @@ pyyaml==6.0.2
     # via pulumi
 semver==2.13.0
     # via pulumi
+    # via pulumi-cloudflare
     # via pulumi-docker
     # via pulumi-tailscale
 six==1.17.0

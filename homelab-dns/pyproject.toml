@@ -3,7 +3,10 @@ name = "homelab-dns"
 version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
-dependencies = ["pydantic>=2.10.6"]
+dependencies = [
+    "pydantic>=2.10.6",
+    "pulumi-cloudflare>=5.49.0",
+]
 requires-python = ">= 3.12"
 classifiers = ["Private :: Do Not Upload"]
 
