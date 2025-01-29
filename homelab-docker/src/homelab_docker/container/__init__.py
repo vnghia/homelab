@@ -15,7 +15,7 @@ class Container(BaseModel):
     model_config = ConfigDict(strict=True)
 
     name: str | None = None
-    capabilities: list[str] = []
+    capabilities: list[str] | None = None
     healthcheck: Healthcheck | None = None
     ports: dict[str, Port] = {}
     restart: str = "unless-stopped"
@@ -27,6 +27,7 @@ class Container(BaseModel):
 
     image: str
 
+    docker_sock_ro: bool | None = None
     networks: dict[str, Network] = {}
     volumes: dict[str, Volume] = {}
     envs: dict[str, Env] = {}
@@ -47,7 +48,9 @@ class Container(BaseModel):
             opts=ResourceOptions.merge(opts, ResourceOptions(ignore_changes=["image"])),
             image=image.name,
             name=self.name,
-            capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities),
+            capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
+            if self.capabilities
+            else None,
             healthcheck=self.healthcheck.to_container_healthcheck()
             if self.healthcheck
             else None,
@@ -70,7 +73,18 @@ class Container(BaseModel):
             volumes=[
                 v.to_container_volume(name=volumes[k].name)
                 for k, v in self.volumes.items()
-            ],
+            ]
+            + (
+                [
+                    docker.ContainerVolumeArgs(
+                        container_path="/var/run/docker.sock",
+                        host_path="/var/run/docker.sock",
+                        read_only=self.docker_sock_ro,
+                    )
+                ]
+                if self.docker_sock_ro is not None
+                else []
+            ),
             envs=[
                 Output.concat(
                     k,

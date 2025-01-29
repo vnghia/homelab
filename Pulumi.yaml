@@ -19,6 +19,9 @@ config:
         tailscale:
           repo: tailscale/tailscale
           tag: "v1.78.3"
+        dozzle:
+          repo: amir20/dozzle
+          tag: "v8.10.4"
       volumes:
         local:
           tailscale-data: {}
@@ -30,11 +33,13 @@ config:
               - NET_ADMIN
             healthcheck:
               tests:
-                - "CMD"
-                - "wget"
-                - "--spider"
-                - "-q"
-                - "http://localhost:9002/healthz"
+                [
+                  "CMD",
+                  "wget",
+                  "--spider",
+                  "-q",
+                  "http://localhost:9002/healthz",
+                ]
               interval: 1s
               timeout: 5s
             ports:
@@ -67,3 +72,13 @@ config:
               TS_USERSPACE: "false"
               TS_AUTH_ONCE: "true"
               TS_ENABLE_HEALTH_CHECK: "true"
+        dozzle:
+          container:
+            image: dozzle
+            healthcheck:
+              tests: ["CMD", "/dozzle", "healthcheck"]
+              interval: 3s
+              timeout: 30s
+              retries: 5
+              start_period: 30s
+            docker_sock_ro: false
