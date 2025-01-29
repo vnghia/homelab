@@ -5,26 +5,17 @@ import pulumi_tailscale as tailscale
 from pulumi import InvokeOutputOptions, ResourceOptions
 
 from homelab import common
-from homelab.docker.image import Image
-from homelab.docker.network import Network
+from homelab.docker.resource import Resource
 from homelab.docker.service.base import Base, BuildOption
-from homelab.docker.volume import Volume
 
 
 class Tailscale(Base):
     def __init__(
         self,
-        network: Network,
-        image: Image,
-        volume: Volume,
+        resource: Resource,
         opts: ResourceOptions | None,
     ) -> None:
-        super().__init__(
-            network=network,
-            image=image,
-            volume=volume,
-            opts=opts,
-        )
+        super().__init__(resource=resource, opts=opts)
 
         self.hostname = common.get_name(name=None, project=True, stack=True)
         self.build_containers(

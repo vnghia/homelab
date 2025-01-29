@@ -1,9 +1,7 @@
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab.docker.image import Image
-from homelab.docker.network import Network
+from homelab.docker.resource import Resource
 from homelab.docker.service import Service
-from homelab.docker.volume import Volume
 
 
 class Docker(ComponentResource):
@@ -13,14 +11,7 @@ class Docker(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, None)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.network = Network(opts=self.child_opts)
-        self.image = Image(opts=self.child_opts)
-        self.volume = Volume(opts=self.child_opts)
-        self.service = Service(
-            network=self.network,
-            image=self.image,
-            volume=self.volume,
-            opts=self.child_opts,
-        )
+        self.resource = Resource(opts=self.child_opts)
+        self.service = Service(resource=self.resource, opts=self.child_opts)
 
         self.register_outputs({})

@@ -64,7 +64,7 @@ class Container(BaseModel):
             restart=self.restart,
             rm=self.remove,
             sysctls=self.sysctls,
-            wait=self.wait,
+            wait=self.wait if self.healthcheck else False,
             mounts=[tmpfs.to_container_mount() for tmpfs in self.tmpfs],
             # TODO: remove this line after https://github.com/pulumi/pulumi-docker/issues/1272
             network_mode="bridge",

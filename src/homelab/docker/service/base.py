@@ -7,9 +7,7 @@ from pulumi import ComponentResource, Input, Output, ResourceOptions
 
 from homelab import config
 from homelab.config.docker.service import Service
-from homelab.docker.image import Image
-from homelab.docker.network import Network
-from homelab.docker.volume import Volume
+from homelab.docker.resource import Resource
 
 
 @dataclasses.dataclass
@@ -21,14 +19,10 @@ class BuildOption:
 class Base(ComponentResource):
     def __init__(
         self,
-        network: Network,
-        image: Image,
-        volume: Volume,
+        resource: Resource,
         opts: ResourceOptions | None,
     ) -> None:
-        self.network = network
-        self.image = image
-        self.volume = volume
+        self.resource = resource
 
         super().__init__(self.name(), self.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -51,9 +45,9 @@ class Base(ComponentResource):
         return model.build_resource(
             self.add_service_name(name),
             timezone=config.docker.timezone,
-            networks=self.network.networks,
-            images=self.image.remotes,
-            volumes=self.volume.volumes,
+            networks=self.resource.network.networks,
+            images=self.resource.image.remotes,
+            volumes=self.resource.volume.volumes,
             opts=ResourceOptions.merge(self.child_opts, option.opts),
             envs=option.envs,
         )

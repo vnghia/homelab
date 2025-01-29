@@ -19,6 +19,9 @@ config:
         tailscale:
           repo: tailscale/tailscale
           tag: "v1.78.3"
+        traefik:
+          repo: traefik
+          tag: "v3.3.2"
         dozzle:
           repo: amir20/dozzle
           tag: "v8.10.4"
@@ -72,6 +75,14 @@ config:
               TS_USERSPACE: "false"
               TS_AUTH_ONCE: "true"
               TS_ENABLE_HEALTH_CHECK: "true"
+        traefik:
+          container:
+            image: traefik
+            # healthcheck:
+            #   tests: ["CMD", "traefik", "healthcheck", "--ping"]
+            #   interval: 1s
+            #   timeout: 5s
+            #   retries: 5
         dozzle:
           container:
             image: dozzle
@@ -80,5 +91,7 @@ config:
               interval: 3s
               timeout: 30s
               retries: 5
-              start_period: 30s
             docker_sock_ro: false
+            envs:
+              DOZZLE_BASE: /log
+              DOZZLE_ENABLE_ACTIONS: "true"
