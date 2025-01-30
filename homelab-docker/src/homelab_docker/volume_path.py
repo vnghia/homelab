@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict
 
 from homelab_docker.container.volume import Volume
 from homelab_docker.pydantic.path import RelativePath
+from homelab_docker.resource import Resource
 
 
 @dataclasses.dataclass
@@ -35,5 +36,5 @@ class VolumePath(BaseModel):
         path = volumes[self.volume].to_path()
         return (path / self.path if self.path else path).as_posix()
 
-    def to_input(self, volumes: dict[str, docker.Volume]) -> VolumePathInput:
-        return VolumePathInput(volume=volumes[self.volume], path=self.path)
+    def to_input(self, resource: Resource) -> VolumePathInput:
+        return VolumePathInput(volume=resource.volumes[self.volume], path=self.path)

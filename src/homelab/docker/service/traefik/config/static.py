@@ -1,6 +1,6 @@
-import tomlkit
 from homelab_docker.container.string import VolumePath
 from homelab_docker.file import File
+from homelab_docker.file.config import ConfigFile
 from pulumi import ResourceOptions
 
 from homelab.config.docker import Service as Config
@@ -67,10 +67,6 @@ class Static:
         }
 
     def to_file(self, resource: Resource, opts: ResourceOptions | None = None) -> File:
-        assert self.volume_path.path
-        return File(
-            "static",
-            volume_path=self.volume_path.to_input(resource.volumes),
-            content=tomlkit.dumps(self.data, sort_keys=True),
-            opts=opts,
+        return ConfigFile(volume_path=self.volume_path, data=self.data).build_resource(
+            "static", resource=resource.to_docker_resource(), opts=opts
         )

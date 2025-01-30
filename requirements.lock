@@ -88,7 +88,7 @@ semver==2.13.0
 six==1.17.0
     # via pulumi
 tomlkit==0.13.2
-    # via homelab
+    # via homelab-docker
 typing-extensions==4.12.2
     # via pydantic
     # via pydantic-core

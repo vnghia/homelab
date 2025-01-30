@@ -10,6 +10,7 @@ dependencies = [
     "tzdata>=2025.1",
     "docker>=7.1.0",
     "paramiko>=3.5.0",
+    "tomlkit>=0.13.2",
 ]
 requires-python = ">= 3.12"
 classifiers = ["Private :: Do Not Upload"]
@@ -20,9 +21,7 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = [
-    "types-docker>=7.1.0.20241229",
-]
+dev-dependencies = ["types-docker>=7.1.0.20241229"]
 
 [tool.hatch.metadata]
 allow-direct-references = true

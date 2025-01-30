@@ -91,7 +91,7 @@ semver==2.13.0
 six==1.17.0
     # via pulumi
 tomlkit==0.13.2
-    # via homelab
+    # via homelab-docker
 types-docker==7.1.0.20241229
 types-requests==2.32.0.20241016
     # via types-docker

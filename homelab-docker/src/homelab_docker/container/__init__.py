@@ -7,10 +7,10 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 from homelab_docker.container.healthcheck import Healthcheck
 from homelab_docker.container.network import Network
 from homelab_docker.container.port import Port
-from homelab_docker.container.resource import Resource
 from homelab_docker.container.string import String
 from homelab_docker.container.tmpfs import Tmpfs
 from homelab_docker.container.volume import Volume
+from homelab_docker.resource import Resource
 
 
 class Container(BaseModel):
