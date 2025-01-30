@@ -1,12 +1,13 @@
 import deepmerge
 import pulumi_docker as docker
 from pulumi import Input, Output, ResourceOptions
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab_docker.container.healthcheck import Healthcheck
 from homelab_docker.container.network import Network
 from homelab_docker.container.port import Port
+from homelab_docker.container.resource import Resource
 from homelab_docker.container.string import String
 from homelab_docker.container.tmpfs import Tmpfs
 from homelab_docker.container.volume import Volume
@@ -30,22 +31,31 @@ class Container(BaseModel):
 
     docker_sock_ro: bool | None = None
     command: list[String] | None = None
-    networks: dict[str, Network] = {}
+    network_mode: str | None = None
+    networks: dict[str, Network] | None = None
     volumes: dict[str, Volume] = {}
     envs: dict[str, String] = {}
     labels: dict[str, str] = {}
+
+    @field_validator("networks", mode="after")
+    def network_exclusive(
+        cls, networks: dict[str, Network] | None, info: ValidationInfo
+    ) -> dict[str, Network] | None:
+        if info.data["network_mode"] is not None and networks is not None:
+            raise ValueError(
+                "`network_mode` and `networks` fields are mutually exclusive"
+            )
+        return networks
 
     def build_resource(
         self,
         resource_name: str,
         timezone: TimeZoneName,
-        networks: dict[str, docker.Network],
-        images: dict[str, docker.RemoteImage],
-        volumes: dict[str, docker.Volume],
+        resource: Resource,
         opts: ResourceOptions | None = None,
         envs: dict[str, Input[str]] = {},
     ) -> docker.Container:
-        image = images[self.image]
+        image = resource.images[self.image]
         return docker.Container(
             resource_name,
             opts=ResourceOptions.merge(opts, ResourceOptions(ignore_changes=["image"])),
@@ -71,13 +81,19 @@ class Container(BaseModel):
             else None,
             mounts=[tmpfs.to_container_mount() for tmpfs in self.tmpfs],
             # TODO: remove this line after https://github.com/pulumi/pulumi-docker/issues/1272
-            network_mode="bridge",
+            network_mode=resource.containers[self.network_mode].id.apply(
+                lambda x: f"container:{x}"
+            )
+            if self.network_mode
+            else "bridge",
             networks_advanced=[
-                v.to_container_network_advance(resource_name, networks[k])
+                v.to_container_network_advance(resource_name, resource.networks[k])
                 for k, v in self.networks.items()
-            ],
+            ]
+            if self.networks
+            else None,
             volumes=[
-                v.to_container_volume(name=volumes[k].name)
+                v.to_container_volume(name=resource.volumes[k].name)
                 for k, v in self.volumes.items()
             ]
             + [

@@ -3,6 +3,7 @@ import dataclasses
 import pulumi
 import pulumi_docker as docker
 from homelab_docker.container import Container
+from homelab_docker.container.resource import Resource as DockerResource
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 
 from homelab import config
@@ -45,9 +46,12 @@ class Base(ComponentResource):
         return model.build_resource(
             self.add_service_name(name),
             timezone=config.docker.timezone,
-            networks=self.resource.network.networks,
-            images=self.resource.image.remotes,
-            volumes=self.resource.volume.volumes,
+            resource=DockerResource(
+                networks=self.resource.network.networks,
+                images=self.resource.image.remotes,
+                volumes=self.resource.volume.volumes,
+                containers=self.resource.containers,
+            ),
             opts=ResourceOptions.merge(self.child_opts, option.opts),
             envs=option.envs,
         )
@@ -62,7 +66,9 @@ class Base(ComponentResource):
         } | {None: self.container}
 
         for name, container in self.containers.items():
-            pulumi.export(f"container-{self.add_service_name(name)}", container.name)
+            name = self.add_service_name(name)
+            self.resource.containers[name] = container
+            pulumi.export(f"container-{name}", container.name)
 
     def container_outputs(self) -> dict[str, Output[str]]:
         return {

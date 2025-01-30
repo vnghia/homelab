@@ -18,7 +18,7 @@ class Service(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.tailscale = Tailscale(resource=resource, opts=self.child_opts)
-        self.dozzle = Dozzle(resource=resource, opts=self.child_opts)
         self.traefik = Traefik(resource=resource, opts=self.child_opts)
+        self.dozzle = Dozzle(resource=resource, opts=self.child_opts)
 
         self.register_outputs({})

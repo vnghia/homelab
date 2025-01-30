@@ -84,6 +84,7 @@ config:
               - "--configFile"
               - volume: traefik-config
                 path: static.toml
+            network_mode: tailscale
             volumes:
               traefik-config:
                 path: /etc/traefik/config
