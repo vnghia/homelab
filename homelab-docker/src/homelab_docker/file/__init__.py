@@ -9,7 +9,7 @@ from typing import Any, Iterator
 import docker
 from docker.errors import NotFound
 from docker.models.containers import Container
-from pulumi import Input, ResourceOptions
+from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
     ConfigureRequest,
     CreateResult,
@@ -19,7 +19,7 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
 from homelab_docker.volume_path import VolumePath, VolumePathInput
 
@@ -41,6 +41,7 @@ class FileProviderProps(BaseModel):
     def id_(self) -> str:
         return self.volume_path.id_
 
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def hash(self) -> str:
         return hashlib.sha256(self.content.encode()).hexdigest()
@@ -170,6 +171,8 @@ class FileProvider(ResourceProvider):
 
 
 class File(Resource, module="docker", name="File"):
+    hash: Output[str]
+
     def __init__(
         self,
         resource_name: str,
@@ -185,6 +188,7 @@ class File(Resource, module="docker", name="File"):
                 "volume_path": volume_path.to_props(),
                 "content": content,
                 "mode": mode,
+                "hash": None,
             },
             ResourceOptions.merge(
                 opts,

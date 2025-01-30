@@ -10,6 +10,7 @@ from homelab_docker.container.port import Port
 from homelab_docker.container.string import String
 from homelab_docker.container.tmpfs import Tmpfs
 from homelab_docker.container.volume import Volume
+from homelab_docker.file import File
 from homelab_docker.resource import Resource
 
 
@@ -54,11 +55,19 @@ class Container(BaseModel):
         resource: Resource,
         opts: ResourceOptions | None = None,
         envs: dict[str, Input[str]] = {},
+        files: list[File] = [],
     ) -> docker.Container:
         image = resource.images[self.image]
         return docker.Container(
             resource_name,
-            opts=ResourceOptions.merge(opts, ResourceOptions(ignore_changes=["image"])),
+            opts=ResourceOptions.merge(
+                opts,
+                ResourceOptions(
+                    ignore_changes=["image"],
+                    replace_on_changes=["*"],
+                    depends_on=files,
+                ),
+            ),
             image=image.name,
             name=self.name,
             capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
@@ -140,5 +149,9 @@ class Container(BaseModel):
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in self.labels.items()
             ]
-            + [docker.ContainerLabelArgs(label="image.id", value=image.image_id)],
+            + [docker.ContainerLabelArgs(label="image.id", value=image.image_id)]
+            + [
+                docker.ContainerLabelArgs(label=file.id, value=file.hash)
+                for file in files
+            ],
         )

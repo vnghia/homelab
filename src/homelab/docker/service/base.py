@@ -3,6 +3,7 @@ import dataclasses
 import pulumi
 import pulumi_docker as docker
 from homelab_docker.container import Container
+from homelab_docker.file import File
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 
 from homelab import config
@@ -14,6 +15,7 @@ from homelab.docker.resource import Resource
 class BuildOption:
     opts: ResourceOptions | None = None
     envs: dict[str, Input[str]] = dataclasses.field(default_factory=dict)
+    files: list[File] = dataclasses.field(default_factory=list)
 
 
 class Base(ComponentResource):
@@ -48,6 +50,7 @@ class Base(ComponentResource):
             resource=self.resource.to_docker_resource(),
             opts=ResourceOptions.merge(self.child_opts, option.opts),
             envs=option.envs,
+            files=option.files,
         )
 
     def build_containers(self, options: dict[str | None, BuildOption] = {}) -> None:

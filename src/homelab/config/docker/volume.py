@@ -1,6 +1,5 @@
 from typing import Self
 
-import deepmerge
 import homelab_docker as docker
 from pydantic import BaseModel, model_validator
 
@@ -14,11 +13,7 @@ class Volume(BaseModel):
     def merge_pulumi_label(self) -> Self:
         self.local = {
             name: model.model_copy(
-                update={
-                    "labels": deepmerge.always_merger.merge(
-                        model.labels, constant.PROJECT_LABELS
-                    )
-                }
+                update={"labels": model.labels | constant.PROJECT_LABELS}
             )
             for name, model in self.local.items()
         }
