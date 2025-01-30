@@ -19,7 +19,7 @@ class Record(ComponentResource):
         self.records = {
             k: [
                 dns.Record(zone_id=self.config.zone_id, name=v).build_resource(
-                    f"{self.name}-{k}-{kip}",
+                    "{}-{}-{}".format(self.name, k, kip),
                     ip=ip,
                     opts=self.child_opts,
                 )
@@ -30,5 +30,5 @@ class Record(ComponentResource):
         self.hostnames = {k: v[0].hostname for k, v in self.records.items()}
 
         for k, hostname in self.hostnames.items():
-            pulumi.export(f"record-{self.name}-{k}", hostname)
+            pulumi.export("record-{}-{}".format(self.name, k), hostname)
         self.register_outputs(self.hostnames)

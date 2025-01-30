@@ -37,7 +37,7 @@ class Base(ComponentResource):
         return config.docker.services[cls.name()]
 
     def add_service_name(self, name: str | None) -> str:
-        return f"{self.name()}-{name}" if name else self.name()
+        return "{}-{}".format(self.name(), name) if name else self.name()
 
     def build_container(
         self, name: str | None, model: Container, option: BuildOption | None = None
@@ -68,7 +68,7 @@ class Base(ComponentResource):
         for name, container in self.containers.items():
             name = self.add_service_name(name)
             self.resource.containers[name] = container
-            pulumi.export(f"container-{name}", container.name)
+            pulumi.export("container-{}".format(name), container.name)
 
     def container_outputs(self) -> dict[str, Output[str]]:
         return {

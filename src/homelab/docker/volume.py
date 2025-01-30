@@ -16,7 +16,7 @@ class Volume(ComponentResource):
             for name, model in config.docker.volumes.local.items()
         }
         for name, volume in self.volumes.items():
-            pulumi.export(f"volume-{name}", volume.name)
+            pulumi.export("volume-{}".format(name), volume.name)
 
         self.register_outputs(
             {name: volume.name for name, volume in self.volumes.items()}

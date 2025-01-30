@@ -16,7 +16,7 @@ class Image(ComponentResource):
             for name, model in config.docker.images.items()
         }
         for name, image in self.remotes.items():
-            pulumi.export(f"image-{name}", image.image_id)
+            pulumi.export("image-{}".format(name), image.image_id)
 
         self.register_outputs(
             {name: image.repo_digest for name, image in self.remotes.items()}

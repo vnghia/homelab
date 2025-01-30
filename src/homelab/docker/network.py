@@ -16,7 +16,7 @@ class Network(ComponentResource):
             for name, model in config.docker.networks.bridge.items()
         }
         for name, network in self.networks.items():
-            pulumi.export(f"network-{name}", network.name)
+            pulumi.export("network-{}".format(name), network.name)
 
         self.register_outputs(
             {name: network.name for name, network in self.networks.items()}

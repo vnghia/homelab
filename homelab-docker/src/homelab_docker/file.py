@@ -34,7 +34,7 @@ class FileProviderProps(BaseModel):
 
     @property
     def id_(self) -> str:
-        return f"{self.volume}:{self.path.as_posix()}"
+        return "{}:{}".format(self.volume, self.path.as_posix())
 
     @property
     def hash(self) -> str:

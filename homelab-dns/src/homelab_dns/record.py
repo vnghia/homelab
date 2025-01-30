@@ -22,7 +22,7 @@ class Record(BaseModel):
             zone_id=self.zone_id,
             name=self.name,
             content=Output.from_input(ip).apply(str),
-            comment=f"record for {resource_name}",
+            comment="record for {}".format(resource_name),
             proxied=False,
             type=type,
         )

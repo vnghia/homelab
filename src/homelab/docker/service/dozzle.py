@@ -17,7 +17,9 @@ class Dozzle(Base):
             options={
                 None: BuildOption(
                     envs={
-                        "DOZZLE_FILTER": f"label=pulumi.stack={common.constant.PROJECT_STACK}",
+                        "DOZZLE_FILTER": "label=pulumi.stack={}".format(
+                            common.constant.PROJECT_STACK
+                        ),
                     },
                 )
             }
