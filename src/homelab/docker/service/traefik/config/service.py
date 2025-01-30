@@ -20,7 +20,6 @@ class Entrypoint(BaseModel):
 class Service(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    volume: str
     provider: Provider
     api: str
     entrypoint: Entrypoint

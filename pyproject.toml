@@ -9,6 +9,7 @@ dependencies = [
     "homelab-dns",
     "deepmerge>=2.0",
     "pulumi-tailscale>=0.17.5",
+    "tomlkit>=0.13.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

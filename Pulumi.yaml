@@ -78,7 +78,6 @@ config:
               TS_ENABLE_HEALTH_CHECK: "true"
         traefik:
           config:
-            volume: traefik-config
             provider:
               file: dynamic
             api: "/proxy"
@@ -99,11 +98,11 @@ config:
               traefik-config:
                 path: /etc/traefik/config
                 ro: true
-            # healthcheck:
-            #   tests: ["CMD", "traefik", "healthcheck", "--ping"]
-            #   interval: 1s
-            #   timeout: 5s
-            #   retries: 5
+            healthcheck:
+              tests: ["CMD", "traefik", "healthcheck", "--ping"]
+              interval: 1s
+              timeout: 5s
+              retries: 5
         dozzle:
           container:
             image: dozzle
