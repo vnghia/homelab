@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Generic
 
 import pulumi
 import pulumi_docker as docker
@@ -7,7 +8,7 @@ from homelab_docker.container.resource import Resource as DockerResource
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 
 from homelab import config
-from homelab.config.docker.service import Service
+from homelab.config.docker.service import Config, Service
 from homelab.docker.resource import Resource
 
 
@@ -17,7 +18,7 @@ class BuildOption:
     envs: dict[str, Input[str]] = dataclasses.field(default_factory=dict)
 
 
-class Base(ComponentResource):
+class Base(ComponentResource, Generic[Config]):
     def __init__(
         self,
         resource: Resource,
@@ -33,7 +34,7 @@ class Base(ComponentResource):
         return cls.__name__.lower()
 
     @classmethod
-    def config(cls) -> Service:
+    def config(cls) -> Service[Config]:
         return config.docker.services[cls.name()]
 
     def add_service_name(self, name: str | None) -> str:
