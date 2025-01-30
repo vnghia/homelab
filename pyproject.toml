@@ -30,3 +30,6 @@ packages = ["src/homelab"]
 
 [tool.rye.workspace]
 members = ["homelab-*"]
+
+[tool.mypy]
+strict = true

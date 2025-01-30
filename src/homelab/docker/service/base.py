@@ -50,7 +50,7 @@ class Base(ComponentResource):
             envs=option.envs,
         )
 
-    def build_containers(self, options: dict[str | None, BuildOption] = {}):
+    def build_containers(self, options: dict[str | None, BuildOption] = {}) -> None:
         self.container = self.build_container(
             None, self.config().container, options.get(None)
         )

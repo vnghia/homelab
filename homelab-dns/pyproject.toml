@@ -23,3 +23,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/homelab_dns"]
+
+[tool.mypy]
+strict = true

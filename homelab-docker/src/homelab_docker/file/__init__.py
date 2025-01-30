@@ -4,13 +4,14 @@ import tarfile
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path, PosixPath
-from typing import Iterator
+from typing import Any, Iterator
 
 import docker
 from docker.errors import NotFound
 from docker.models.containers import Container
 from pulumi import Input, ResourceOptions
 from pulumi.dynamic import (
+    ConfigureRequest,
     CreateResult,
     DiffResult,
     ReadResult,
@@ -65,12 +66,12 @@ class VolumeProxy:
             container.remove(force=True)
 
     @classmethod
-    def pull_image(cls):
+    def pull_image(cls) -> None:
         docker.from_env().images.pull(repository=cls.IMAGE)
 
     @classmethod
-    def create_file(cls, props: FileProviderProps):
-        def compress_tar():
+    def create_file(cls, props: FileProviderProps) -> None:
+        def compress_tar() -> io.BytesIO:
             tar_file = io.BytesIO()
             with tarfile.open(mode="w", fileobj=tar_file) as tar:
                 with tempfile.NamedTemporaryFile() as file:
@@ -112,7 +113,7 @@ class VolumeProxy:
                 return None
 
     @classmethod
-    def delete_file(cls, props: FileProviderProps):
+    def delete_file(cls, props: FileProviderProps) -> None:
         docker.from_env().containers.run(
             image=cls.IMAGE,
             command=["rm", "-rf", props.volume_path.path.as_posix()],
@@ -132,36 +133,38 @@ class VolumeProxy:
 class FileProvider(ResourceProvider):
     serialize_as_secret_always = False
 
-    def configure(self, req) -> None:
+    def configure(self, req: ConfigureRequest) -> None:
         VolumeProxy.pull_image()
 
-    def create(self, props) -> CreateResult:
-        props = FileProviderProps(**props)
-        VolumeProxy.create_file(props)
-        return CreateResult(id_=props.id_, outs=props.model_dump(mode="json"))
+    def create(self, props: dict[str, Any]) -> CreateResult:
+        file_props = FileProviderProps(**props)
+        VolumeProxy.create_file(file_props)
+        return CreateResult(id_=file_props.id_, outs=file_props.model_dump(mode="json"))
 
-    def diff(self, _id: str, olds, news) -> DiffResult:
-        olds = FileProviderProps(**olds)
-        news = FileProviderProps(**news)
+    def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
+        file_olds = FileProviderProps(**olds)
+        file_news = FileProviderProps(**news)
         return DiffResult(
-            changes=olds != news,
+            changes=file_olds != file_news,
             stables=["volume", "path"],
         )
 
-    def update(self, _id: str, _olds, news) -> UpdateResult:
-        news = FileProviderProps(**news)
-        VolumeProxy.create_file(news)
-        return UpdateResult(outs=news.model_dump(mode="json"))
+    def update(
+        self, _id: str, _olds: dict[str, Any], news: dict[str, Any]
+    ) -> UpdateResult:
+        file_news = FileProviderProps(**news)
+        VolumeProxy.create_file(file_news)
+        return UpdateResult(outs=file_news.model_dump(mode="json"))
 
-    def delete(self, _id: str, props):
-        props = FileProviderProps(**props)
-        VolumeProxy.delete_file(props)
+    def delete(self, _id: str, props: dict[str, Any]) -> None:
+        file_props = FileProviderProps(**props)
+        VolumeProxy.delete_file(file_props)
 
-    def read(self, id_: str, props) -> ReadResult:
-        props = FileProviderProps(**props)
-        props = VolumeProxy.read_file(props)
-        if props:
-            return ReadResult(id_=id_, outs=props.model_dump(mode="json"))
+    def read(self, id_: str, props: dict[str, Any]) -> ReadResult:
+        file_props = FileProviderProps(**props)
+        read_props = VolumeProxy.read_file(file_props)
+        if read_props:
+            return ReadResult(id_=id_, outs=read_props.model_dump(mode="json"))
         else:
             return ReadResult(outs={})
 

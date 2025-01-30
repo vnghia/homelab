@@ -1,3 +1,5 @@
+from typing import Any
+
 import deepmerge
 import pulumi
 
@@ -5,7 +7,7 @@ from homelab.config.docker import Docker
 from homelab.config.network import Network
 
 
-def __build(key: str) -> dict:
+def __build(key: str) -> dict[Any, Any]:
     return deepmerge.always_merger.merge(
         pulumi.Config().get_object(key, {}),
         pulumi.Config().get_object("stack-{}".format(key), {}),
