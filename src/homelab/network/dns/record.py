@@ -36,5 +36,13 @@ class Record(ComponentResource):
         self.hostnames = {k: v[0].hostname for k, v in self.records.items()}
 
         for k, hostname in self.hostnames.items():
+            hostname.apply(lambda x: self.compare_hostname(config.hostnames[k], x))
             pulumi.export("record-{}-{}".format(self.name, k), hostname)
         self.register_outputs(self.hostnames)
+
+    @classmethod
+    def compare_hostname(cls, hostname: str, output: str) -> None:
+        if hostname != output:
+            raise ValueError(
+                "hostname does not match ({} vs {})".format(hostname, output)
+            )
