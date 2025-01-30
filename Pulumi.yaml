@@ -28,6 +28,7 @@ config:
       volumes:
         local:
           tailscale-data: {}
+          traefik-config: {}
       services:
         tailscale:
           container:
@@ -78,6 +79,15 @@ config:
         traefik:
           container:
             image: traefik
+            command:
+              - "traefik"
+              - "--configFile"
+              - volume: traefik-config
+                path: static.toml
+            volumes:
+              traefik-config:
+                path: /etc/traefik/config
+                ro: true
             # healthcheck:
             #   tests: ["CMD", "traefik", "healthcheck", "--ping"]
             #   interval: 1s
@@ -91,6 +101,7 @@ config:
               interval: 3s
               timeout: 30s
               retries: 5
+              start_period: 30s
             docker_sock_ro: false
             envs:
               DOZZLE_BASE: /log

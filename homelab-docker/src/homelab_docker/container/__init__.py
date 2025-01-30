@@ -4,10 +4,10 @@ from pulumi import Input, Output, ResourceOptions
 from pydantic import BaseModel, ConfigDict
 from pydantic_extra_types.timezone_name import TimeZoneName
 
-from homelab_docker.container.env import Env
 from homelab_docker.container.healthcheck import Healthcheck
 from homelab_docker.container.network import Network
 from homelab_docker.container.port import Port
+from homelab_docker.container.string import String
 from homelab_docker.container.tmpfs import Tmpfs
 from homelab_docker.container.volume import Volume
 
@@ -29,9 +29,10 @@ class Container(BaseModel):
     image: str
 
     docker_sock_ro: bool | None = None
+    command: list[String] | None = None
     networks: dict[str, Network] = {}
     volumes: dict[str, Volume] = {}
-    envs: dict[str, Env] = {}
+    envs: dict[str, String] = {}
     labels: dict[str, str] = {}
 
     def build_resource(
@@ -65,6 +66,9 @@ class Container(BaseModel):
             rm=self.remove,
             sysctls=self.sysctls,
             wait=self.wait if self.healthcheck else False,
+            command=[command.to_str(volumes=self.volumes) for command in self.command]
+            if self.command
+            else None,
             mounts=[tmpfs.to_container_mount() for tmpfs in self.tmpfs],
             # TODO: remove this line after https://github.com/pulumi/pulumi-docker/issues/1272
             network_mode="bridge",
@@ -104,7 +108,9 @@ class Container(BaseModel):
                     k,
                     "=",
                     Output.from_input(v).apply(
-                        lambda x: x.to_str(self.volumes) if isinstance(x, Env) else x
+                        lambda x: x.to_str(volumes=self.volumes)
+                        if isinstance(x, String)
+                        else x
                     ),
                 )
                 for k, v in sorted(

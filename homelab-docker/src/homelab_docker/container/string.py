@@ -6,7 +6,7 @@ from homelab_docker.container.volume import Volume
 from homelab_docker.pydantic.path import RelativePath
 
 
-class Full(BaseModel):
+class VolumePath(BaseModel):
     model_config = ConfigDict(strict=True)
 
     volume: str
@@ -17,14 +17,14 @@ class Full(BaseModel):
         return (path / self.path if self.path else path).as_posix()
 
 
-class Env(BaseModel):
-    env: str | Full
+class String(BaseModel):
+    data: str | VolumePath
 
     @model_validator(mode="wrap")
     @classmethod
     def wrap(cls, data: Any, handler: ModelWrapValidatorHandler[Self]) -> Self:
-        return handler({"env": data})
+        return handler({"data": data})
 
     def to_str(self, volumes: dict[str, Volume]) -> str:
-        env = self.env
-        return env.to_str(volumes) if isinstance(env, Full) else env
+        data = self.data
+        return data.to_str(volumes) if isinstance(data, VolumePath) else data
