@@ -3,7 +3,6 @@ import dataclasses
 import pulumi
 import pulumi_docker as docker
 from homelab_docker.container import Container
-from homelab_docker.container.resource import Resource as DockerResource
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 
 from homelab import config
@@ -46,12 +45,7 @@ class Base(ComponentResource):
         return model.build_resource(
             self.add_service_name(name),
             timezone=config.docker.timezone,
-            resource=DockerResource(
-                networks=self.resource.network.networks,
-                images=self.resource.image.remotes,
-                volumes=self.resource.volume.volumes,
-                containers=self.resource.containers,
-            ),
+            resource=self.resource.to_docker_resource(),
             opts=ResourceOptions.merge(self.child_opts, option.opts),
             envs=option.envs,
         )

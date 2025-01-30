@@ -70,8 +70,7 @@ class Static:
         assert self.volume_path.path
         return File(
             "static",
-            volume=resource.volume.volumes[self.volume_path.volume],
-            path=self.volume_path.path,
+            volume_path=self.volume_path.to_input(resource.volumes),
             content=tomlkit.dumps(self.data, sort_keys=True),
             opts=opts,
         )

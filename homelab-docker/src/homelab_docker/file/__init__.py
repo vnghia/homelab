@@ -7,10 +7,9 @@ from pathlib import Path, PosixPath
 from typing import Iterator
 
 import docker
-import pulumi_docker
 from docker.errors import NotFound
 from docker.models.containers import Container
-from pulumi import Input, Output, ResourceOptions
+from pulumi import Input, ResourceOptions
 from pulumi.dynamic import (
     CreateResult,
     DiffResult,
@@ -19,22 +18,27 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from homelab_docker.pydantic.path import RelativePath
+from homelab_docker.volume_path import VolumePath, VolumePathInput
 
 
 class FileProviderProps(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    volume: str
-    path: RelativePath
+    volume_path: VolumePath
     content: str
     mode: int = Field(strict=False)
 
+    @field_validator("volume_path", mode="after")
+    def check_path_not_empty(cls, volume_path: VolumePath) -> VolumePath:
+        if not volume_path.path.name:
+            raise ValueError("{} should not be empty".format(volume_path.path))
+        return volume_path
+
     @property
     def id_(self) -> str:
-        return "{}:{}".format(self.volume, self.path.as_posix())
+        return self.volume_path.id_
 
     @property
     def hash(self) -> str:
@@ -74,22 +78,22 @@ class VolumeProxy:
                     file.flush()
                     tar.add(
                         file.name,
-                        arcname=props.path,
+                        arcname=props.volume_path.path,
                         filter=lambda x: x.replace(mode=props.mode, deep=False),
                     )
             tar_file.seek(0)
             return tar_file
 
-        with cls.container(props.volume) as container:
+        with cls.container(props.volume_path.volume) as container:
             container.put_archive(cls.WORKING_DIR.as_posix(), compress_tar())
 
     @classmethod
     def read_file(cls, props: FileProviderProps) -> FileProviderProps | None:
-        with cls.container(props.volume) as container:
+        with cls.container(props.volume_path.volume) as container:
             try:
                 tar_file = io.BytesIO()
                 (stream, stat) = container.get_archive(
-                    (cls.WORKING_DIR / props.path).as_posix()
+                    (cls.WORKING_DIR / props.volume_path.path).as_posix()
                 )
                 for chunk in stream:
                     tar_file.write(chunk)
@@ -111,10 +115,15 @@ class VolumeProxy:
     def delete_file(cls, props: FileProviderProps):
         docker.from_env().containers.run(
             image=cls.IMAGE,
-            command=["rm", "-rf", props.path.as_posix()],
+            command=["rm", "-rf", props.volume_path.path.as_posix()],
             remove=True,
             network_mode="none",
-            volumes={props.volume: {"bind": cls.WORKING_DIR.as_posix(), "mode": "rw"}},
+            volumes={
+                props.volume_path.volume: {
+                    "bind": cls.WORKING_DIR.as_posix(),
+                    "mode": "rw",
+                }
+            },
             working_dir=cls.WORKING_DIR.as_posix(),
             detach=True,
         )
@@ -161,8 +170,7 @@ class File(Resource, module="docker", name="File"):
     def __init__(
         self,
         resource_name: str,
-        volume: pulumi_docker.Volume,
-        path: Input[RelativePath],
+        volume_path: VolumePathInput,
         content: Input[str],
         mode: Input[int] = 0o444,
         opts: ResourceOptions | None = None,
@@ -171,12 +179,14 @@ class File(Resource, module="docker", name="File"):
             FileProvider(),
             resource_name,
             {
-                "volume": volume.name,
-                "path": Output.from_input(path).apply(lambda x: x.as_posix()),
+                "volume_path": volume_path.to_props(),
                 "content": content,
                 "mode": mode,
             },
             ResourceOptions.merge(
-                opts, ResourceOptions(delete_before_replace=True, deleted_with=volume)
+                opts,
+                ResourceOptions(
+                    delete_before_replace=True, deleted_with=volume_path.volume
+                ),
             ),
         )
