@@ -77,6 +77,16 @@ config:
               TS_AUTH_ONCE: "true"
               TS_ENABLE_HEALTH_CHECK: "true"
         traefik:
+          config:
+            volume: traefik-config
+            provider:
+              file: dynamic
+            api: "/proxy"
+            entrypoint:
+              public-http: "public-http"
+              private-http: "private-http"
+              public-https: "public-https"
+              private-https: "private-https"
           container:
             image: traefik
             command:
