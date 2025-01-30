@@ -57,7 +57,6 @@ class Static:
                 },
             },
             "api": {
-                "basePath": self.service_config.api,
                 "dashboard": True,
                 "disableDashboardAd": True,
             },
@@ -69,6 +68,8 @@ class Static:
     def build_resource(
         self, resource: Resource, opts: ResourceOptions | None = None
     ) -> File:
-        return ConfigFile(volume_path=self.volume_path, data=self.data).build_resource(
-            "static", resource=resource.to_docker_resource(), opts=opts
-        )
+        return ConfigFile(
+            volume_path=self.volume_path,
+            data=self.data,
+            schema_url="https://json.schemastore.org/traefik-v3.json",
+        ).build_resource("static", resource=resource.to_docker_resource(), opts=opts)
