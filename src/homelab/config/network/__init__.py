@@ -1,9 +1,10 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, IPvAnyAddress
 
-from homelab.config.network.dns import Dns
+from homelab.config.network.dns import DnsMap
 
 
 class Network(BaseModel):
     model_config = ConfigDict(strict=True)
 
-    dns: dict[str, Dns]
+    public_ips: dict[str, IPvAnyAddress] = Field(alias="public-ips")
+    dns: DnsMap = Field(alias="dns")

@@ -2,7 +2,8 @@ from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_tailscale as tailscale
-from pulumi import InvokeOutputOptions, ResourceOptions
+from pulumi import InvokeOutputOptions, Output, ResourceOptions
+from pydantic import IPvAnyAddress
 
 from homelab import common
 from homelab.docker.resource import Resource
@@ -37,9 +38,12 @@ class Tailscale(Base):
         self.ipv4 = self.device.apply(lambda x: IPv4Address(x.addresses[0]))
         self.ipv6 = self.device.apply(lambda x: IPv6Address(x.addresses[1]))
 
+        self.private_ips: dict[str, Output[IPvAnyAddress]] = {
+            "v4": self.ipv4,
+            "v6": self.ipv6,
+        }
         outputs = self.container_outputs() | {
-            "ipv4": self.ipv4.apply(str),
-            "ipv6": self.ipv6.apply(str),
+            "ip{}".format(k): v.apply(str) for k, v in self.private_ips.items()
         }
         pulumi.export("tailscale-ipv4", outputs["ipv4"])
         pulumi.export("tailscale-ipv6", outputs["ipv6"])

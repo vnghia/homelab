@@ -1,3 +1,5 @@
+from typing import Mapping
+
 import homelab_dns as dns
 import pulumi
 from pulumi import ComponentResource, Input, ResourceOptions
@@ -8,12 +10,16 @@ from homelab.config.network.dns import Dns
 
 class Record(ComponentResource):
     def __init__(
-        self, name: str, config: Dns, ips: dict[str, Input[IPvAnyAddress]]
+        self,
+        name: str,
+        config: Dns,
+        ips: Mapping[str, Input[IPvAnyAddress]],
+        opts: ResourceOptions | None = None,
     ) -> None:
         self.name = name
         self.config = config
 
-        super().__init__(self.name, self.name, None, None)
+        super().__init__(self.name, self.name, None, opts=opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.records = {

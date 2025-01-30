@@ -6,3 +6,8 @@ class Dns(BaseModel):
 
     zone_id: str = Field(alias="zone-id")
     records: dict[str, str]
+
+
+class DnsMap(BaseModel):
+    public: Dns
+    private: Dns
