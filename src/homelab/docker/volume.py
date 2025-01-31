@@ -17,13 +17,8 @@ class Volume(ComponentResource):
         }
 
         for service_name, service in config.docker.services.items():
-            for database_name, database in service.databases.postgres.items():
-                name = "{}-{}{}{}".format(
-                    database.DATABASE_TYPE,
-                    service_name,
-                    "" if database_name == service_name else "-",
-                    "" if database_name == service_name else database_name,
-                )
+            for name, database in service.databases.postgres.items():
+                name = database.get_full_name(service_name, name)
                 self.volumes[name] = docker.volume.Local(
                     labels=config.constant.PROJECT_LABELS
                 ).build_resource(name, opts=self.child_opts)

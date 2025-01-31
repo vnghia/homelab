@@ -9,6 +9,7 @@ from homelab_docker.file import File
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 
 from homelab.docker.resource import Resource
+from homelab.docker.service.postgres import Postgres
 
 
 @dataclasses.dataclass
@@ -40,6 +41,18 @@ class Base(ComponentResource):
     def add_service_name(self, name: str | None) -> str:
         return "{}-{}".format(self.name(), name) if name else self.name()
 
+    def build_databases(self) -> None:
+        self.postgres = {
+            None if name == self.name() else name: Postgres(
+                service_name=self.name(),
+                name=name,
+                model=model,
+                resource=self.resource,
+                opts=self.child_opts,
+            )
+            for name, model in self.config().databases.postgres.items()
+        }
+
     def build_container(
         self, name: str | None, model: Container, option: BuildOption | None = None
     ) -> docker.Container:
@@ -54,6 +67,8 @@ class Base(ComponentResource):
         )
 
     def build_containers(self, options: dict[str | None, BuildOption] = {}) -> None:
+        self.build_databases()
+
         self.container = self.build_container(
             None, self.config().container, options.get(None)
         )
@@ -62,7 +77,13 @@ class Base(ComponentResource):
             for name, model in self.config().containers.items()
         } | {None: self.container}
 
-        for name, container in self.containers.items():
+        for name, container in (
+            self.containers
+            | {
+                database.short_name: database.container
+                for database in self.postgres.values()
+            }
+        ).items():
             name = self.add_service_name(name)
             self.resource.containers[name] = container
             pulumi.export("container-{}".format(name), container.name)

@@ -7,6 +7,7 @@ from pydantic import (
     ConfigDict,
     ModelWrapValidatorHandler,
     PositiveInt,
+    ValidationError,
     model_validator,
 )
 
@@ -21,20 +22,23 @@ class Full(BaseModel):
 
 
 class Tmpfs(BaseModel):
-    tmpfs: AbsolutePath | Full
+    data: AbsolutePath | Full
 
     @model_validator(mode="wrap")
     @classmethod
     def wrap(cls, data: Any, handler: ModelWrapValidatorHandler[Self]) -> Self:
-        return handler({"tmpfs": data})
+        try:
+            return handler(data)
+        except ValidationError:
+            return handler({"data": data})
 
     def to_path(self) -> PosixPath:
-        tmpfs = self.tmpfs
-        return tmpfs.path if isinstance(tmpfs, Full) else tmpfs
+        data = self.data
+        return data.path if isinstance(data, Full) else data
 
     def to_container_mount(self) -> docker.ContainerMountArgs:
-        tmpfs = self.tmpfs
-        size = tmpfs.size if isinstance(tmpfs, Full) else None
+        data = self.data
+        size = data.size if isinstance(data, Full) else None
         return docker.ContainerMountArgs(
             target=self.to_path().as_posix(),
             type="tmpfs",
