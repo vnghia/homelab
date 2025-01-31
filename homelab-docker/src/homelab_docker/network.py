@@ -7,6 +7,7 @@ class Bridge(BaseModel):
     model_config = ConfigDict(strict=True)
 
     ipv6: bool = True
+    internal: bool = False
     labels: dict[str, str] = {}
 
     def build_resource(
@@ -21,6 +22,7 @@ class Bridge(BaseModel):
             name=name,
             driver="bridge",
             ipv6=self.ipv6,
+            internal=self.internal,
             labels=[
                 docker.NetworkLabelArgs(label=k, value=v)
                 for k, v in self.labels.items()

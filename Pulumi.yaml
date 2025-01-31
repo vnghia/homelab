@@ -15,6 +15,8 @@ config:
       networks:
         bridge:
           default-bridge: {}
+          internal-bridge:
+            internal: true
       images:
         tailscale:
           repo: tailscale/tailscale
@@ -72,6 +74,7 @@ config:
               - "/run"
             networks:
               default-bridge: {}
+              internal-bridge: {}
             volumes:
               tailscale-data: /var/lib/tailscale
             envs:
@@ -128,8 +131,9 @@ config:
               start_period: 30s
             docker_sock_ro: false
             networks:
-              default-bridge: {}
+              internal-bridge: {}
             envs:
               DOZZLE_BASE: /log
               DOZZLE_ADDR: ":8080"
+              DOZZLE_NO_ANALYTICS: "true"
               DOZZLE_ENABLE_ACTIONS: "true"
