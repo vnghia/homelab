@@ -4,12 +4,14 @@ import homelab_docker as docker
 from pydantic import BaseModel, Field, model_validator
 
 from homelab_config.common import constant
+from homelab_config.docker.service.database import Database
 
 Config = TypeVar("Config", bound=BaseModel)
 
 
 class Service(BaseModel):
     raw_config: Any = Field(None, alias="config")
+    databases: Database = Database()
     container: docker.container.Container
     containers: dict[str, docker.container.Container] = {}
 

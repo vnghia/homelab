@@ -25,6 +25,9 @@ config:
         dozzle:
           repo: amir20/dozzle
           tag: "v8.10.4"
+        postgres:
+          repo: postgres
+          tag: "17.2-bookworm"
       volumes:
         local:
           tailscale-data: {}
@@ -112,6 +115,9 @@ config:
             envs:
               LEGO_DISABLE_CNAME_SUPPORT: "true"
         dozzle:
+          databases:
+            postgres:
+              dozzle: {}
           container:
             image: dozzle
             healthcheck:
