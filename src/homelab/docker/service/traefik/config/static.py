@@ -16,6 +16,7 @@ class Static:
             config.container.command[-1].data if config.container.command else None
         )
         self.volume_config = config.container.volumes[self.volume_path.volume]
+        self.provider_directory = self.service_config.provider.file
 
         self.data = {
             "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
@@ -51,7 +52,7 @@ class Static:
             "providers": {
                 "file": {
                     "directory": (
-                        self.volume_config.to_path() / self.service_config.provider.file
+                        self.volume_config.to_path() / self.provider_directory
                     ).as_posix(),
                     "watch": True,
                 },
@@ -64,6 +65,11 @@ class Static:
             "log": {"level": "INFO", "format": "json"},
             "accessLog": {"format": "json", "fields": {"names": {"StartUTC": "drop"}}},
         }
+
+    def get_dynamic_volume_path(self, file: str) -> VolumePath:
+        return self.volume_path.model_copy(
+            update={"path": (self.provider_directory / file).with_suffix(".toml")}
+        )
 
     def build_resource(
         self, resource: Resource, opts: ResourceOptions | None = None

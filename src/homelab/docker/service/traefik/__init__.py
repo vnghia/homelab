@@ -15,14 +15,14 @@ class Traefik(Base):
     ) -> None:
         super().__init__(resource=resource, opts=opts)
 
-        self.static = Static(self.config(), tailscale).build_resource(
-            self.resource, opts=self.child_opts
-        )
+        self.static = Static(self.config(), tailscale)
         self.build_containers(
             options={
                 None: BuildOption(
                     opts=ResourceOptions(delete_before_replace=True),
-                    files=[self.static],
+                    files=[
+                        self.static.build_resource(self.resource, opts=self.child_opts)
+                    ],
                 )
             }
         )

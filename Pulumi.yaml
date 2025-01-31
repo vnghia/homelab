@@ -115,4 +115,5 @@ config:
             docker_sock_ro: false
             envs:
               DOZZLE_BASE: /log
+              DOZZLE_ADDR: ":8080"
               DOZZLE_ENABLE_ACTIONS: "true"

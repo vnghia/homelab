@@ -14,6 +14,11 @@ class String(BaseModel):
     def wrap(cls, data: Any, handler: ModelWrapValidatorHandler[Self]) -> Self:
         return handler({"data": data})
 
-    def to_str(self, volumes: dict[str, Volume]) -> str:
+    def to_str(self, volumes: dict[str, Volume] | None = None) -> str:
         data = self.data
-        return data.to_str(volumes) if isinstance(data, VolumePath) else data
+        if isinstance(data, VolumePath):
+            if volumes is None:
+                raise ValueError("`volumes` is required for volume path string type")
+            return data.to_str(volumes)
+        else:
+            return data

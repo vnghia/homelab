@@ -21,6 +21,8 @@ class Service(ComponentResource):
         self.traefik = Traefik(
             resource=resource, tailscale=self.tailscale, opts=self.child_opts
         )
-        self.dozzle = Dozzle(resource=resource, opts=self.child_opts)
+        self.dozzle = Dozzle(
+            resource=resource, traefik=self.traefik, opts=self.child_opts
+        )
 
         self.register_outputs({})
