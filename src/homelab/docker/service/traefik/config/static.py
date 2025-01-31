@@ -10,7 +10,8 @@ from homelab.docker.service.traefik.config.service import Service
 
 
 class Static:
-    TLS_RESOLVER = "leresolver-dns"
+    PUBLIC_CERT_RESOLVER = "public-cert-resolver"
+    PRIVATE_CERT_RESOLVER = "private-cert-resolver"
 
     def __init__(self, config: Config, tailscale: Tailscale) -> None:
         self.service_config = config.config(Service)
@@ -69,7 +70,19 @@ class Static:
                 },
             },
             "certificatesResolvers": {
-                self.TLS_RESOLVER: {
+                self.PUBLIC_CERT_RESOLVER: {
+                    "acme": {
+                        "caServer": str(self.service_config.acme.server),
+                        "email": self.service_config.acme.email,
+                        "storage": self.service_config.acme.storage.to_str(
+                            self.container_volumes
+                        ),
+                        "httpChallenge": {
+                            "entryPoint": self.service_config.entrypoint.public_http
+                        },
+                    }
+                },
+                self.PRIVATE_CERT_RESOLVER: {
                     "acme": {
                         "caServer": str(self.service_config.acme.server),
                         "email": self.service_config.acme.email,
@@ -78,7 +91,7 @@ class Static:
                         ),
                         "dnsChallenge": {"provider": "cloudflare"},
                     }
-                }
+                },
             },
         }
 

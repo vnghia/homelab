@@ -58,7 +58,11 @@ class HttpDynamic(BaseModel):
                                 )
                                 + self.rules
                             ),
-                            "tls": {"certResolver": static.TLS_RESOLVER},
+                            "tls": {
+                                "certResolver": static.PUBLIC_CERT_RESOLVER
+                                if self.public
+                                else static.PRIVATE_CERT_RESOLVER
+                            },
                         }
                     },
                     "services": {
