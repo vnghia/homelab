@@ -1,14 +1,13 @@
 [project]
-name = "homelab"
+name = "homelab-config"
 version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 dependencies = [
-    "homelab-config",
-    "deepmerge>=2.0",
-    "pulumi-tailscale>=0.17.5",
+    "pulumi>=3.147.0",
+    "homelab-docker",
+    "homelab-dns",
 ]
-readme = "README.md"
 requires-python = ">= 3.12"
 classifiers = ["Private :: Do Not Upload"]
 
@@ -18,16 +17,13 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = ["mypy>=1.14.1"]
+dev-dependencies = []
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/homelab"]
-
-[tool.rye.workspace]
-members = ["homelab-*"]
+packages = ["src/homelab_config"]
 
 [tool.mypy]
 strict = true

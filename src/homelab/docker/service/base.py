@@ -1,13 +1,13 @@
 import dataclasses
 
+import homelab_config as config
 import pulumi
 import pulumi_docker as docker
+from homelab_config.docker.service import Service
 from homelab_docker.container import Container
 from homelab_docker.file import File
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 
-from homelab import config
-from homelab.config.docker.service import Service
 from homelab.docker.resource import Resource
 
 

@@ -1,6 +1,6 @@
+import homelab_config as config
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab import config
 from homelab.docker.service.tailscale import Tailscale
 from homelab.network.dns.record import Record
 

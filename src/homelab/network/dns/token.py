@@ -1,7 +1,6 @@
+import homelab_config as config
 import pulumi_cloudflare as cloudflare
 from pulumi import ComponentResource, ResourceOptions
-
-from homelab import common, config
 
 
 class Token(ComponentResource):
@@ -29,7 +28,7 @@ class Token(ComponentResource):
             opts=ResourceOptions.merge(
                 self.child_opts, ResourceOptions(delete_before_replace=True)
             ),
-            name=common.get_name("acme-read-token", project=True),
+            name=config.get_name("acme-read-token", project=True),
             policies=[
                 cloudflare.ApiTokenPolicyArgs(
                     permission_groups=[permission_groups.zone["Zone Read"]],
@@ -42,7 +41,7 @@ class Token(ComponentResource):
             opts=ResourceOptions.merge(
                 self.child_opts, ResourceOptions(delete_before_replace=True)
             ),
-            name=common.get_name("acme-write-token", project=True),
+            name=config.get_name("acme-write-token", project=True),
             policies=[
                 cloudflare.ApiTokenPolicyArgs(
                     permission_groups=[permission_groups.zone["DNS Write"]],

@@ -1,11 +1,11 @@
 from ipaddress import IPv4Address, IPv6Address
 
+import homelab_config as config
 import pulumi
 import pulumi_tailscale as tailscale
 from pulumi import InvokeOutputOptions, Output, ResourceOptions
 from pydantic import IPvAnyAddress
 
-from homelab import common
 from homelab.docker.resource import Resource
 from homelab.docker.service.base import Base, BuildOption
 
@@ -18,7 +18,7 @@ class Tailscale(Base):
     ) -> None:
         super().__init__(resource=resource, opts=opts)
 
-        self.hostname = common.get_name(name=None, project=True, stack=True)
+        self.hostname = config.get_name(name=None, project=True, stack=True)
         self.build_containers(
             options={
                 None: BuildOption(

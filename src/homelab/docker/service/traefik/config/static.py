@@ -1,9 +1,9 @@
+from homelab_config.docker.service import Service as Config
 from homelab_docker.file import File
 from homelab_docker.file.config import ConfigFile
 from homelab_docker.volume_path import VolumePath
 from pulumi import ResourceOptions
 
-from homelab.config.docker.service import Service as Config
 from homelab.docker.resource import Resource
 from homelab.docker.service.tailscale import Tailscale
 from homelab.docker.service.traefik.config.service import Service

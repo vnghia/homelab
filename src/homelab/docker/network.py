@@ -1,7 +1,6 @@
+import homelab_config as config
 import pulumi
 from pulumi import ComponentResource, ResourceOptions
-
-from homelab import config
 
 
 class Network(ComponentResource):

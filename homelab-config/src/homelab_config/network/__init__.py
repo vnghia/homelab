@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field, IPvAnyAddress
 
-from homelab.config.network.dns import DnsMap
+from homelab_config.network.dns import DnsMap
 
 
 class Network(BaseModel):

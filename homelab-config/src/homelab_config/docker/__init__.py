@@ -2,9 +2,9 @@ import homelab_docker as docker
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 from pydantic_extra_types.timezone_name import TimeZoneName
 
-from homelab.config.docker.network import Network
-from homelab.config.docker.service import Service
-from homelab.config.docker.volume import Volume
+from homelab_config.docker.network import Network
+from homelab_config.docker.service import Service
+from homelab_config.docker.volume import Volume
 
 
 class Docker(BaseModel):

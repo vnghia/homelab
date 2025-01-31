@@ -2,10 +2,9 @@ from typing import Mapping
 
 import homelab_dns as dns
 import pulumi
+from homelab_config.network.dns import Dns
 from pulumi import ComponentResource, Input, ResourceOptions
 from pydantic import IPvAnyAddress
-
-from homelab.config.network.dns import Dns
 
 
 class Record(ComponentResource):

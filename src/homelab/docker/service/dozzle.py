@@ -1,6 +1,6 @@
+import homelab_config as config
 from pulumi import ResourceOptions
 
-from homelab import common
 from homelab.docker.resource import Resource
 from homelab.docker.service.base import Base, BuildOption
 from homelab.docker.service.traefik import Traefik
@@ -21,7 +21,7 @@ class Dozzle(Base):
                 None: BuildOption(
                     envs={
                         "DOZZLE_FILTER": "label=pulumi.stack={}".format(
-                            common.constant.PROJECT_STACK
+                            config.constant.PROJECT_STACK
                         ),
                     },
                 )

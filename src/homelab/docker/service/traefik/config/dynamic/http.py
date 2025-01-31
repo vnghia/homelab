@@ -1,9 +1,9 @@
+import homelab_config as config
 from homelab_docker.file import File
 from homelab_docker.file.config import ConfigFile
 from pulumi import ResourceOptions
 from pydantic import BaseModel, ConfigDict, PositiveInt
 
-from homelab import config
 from homelab.docker.resource import Resource
 from homelab.docker.service.traefik import Traefik
 

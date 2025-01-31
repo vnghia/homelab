@@ -3,7 +3,7 @@ from typing import Any, Self, Type, TypeVar
 import homelab_docker as docker
 from pydantic import BaseModel, Field, model_validator
 
-from homelab.common import constant
+from homelab_config.common import constant
 
 Config = TypeVar("Config", bound=BaseModel)
 

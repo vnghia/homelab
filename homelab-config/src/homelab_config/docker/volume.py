@@ -3,7 +3,7 @@ from typing import Self
 import homelab_docker as docker
 from pydantic import BaseModel, model_validator
 
-from homelab.common import constant
+from homelab_config.common import constant
 
 
 class Volume(BaseModel):

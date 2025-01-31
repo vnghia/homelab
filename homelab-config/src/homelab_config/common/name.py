@@ -1,4 +1,4 @@
-from homelab.common import constant
+from homelab_config.common import constant
 
 
 def get_name(name: str | None, project: bool = False, stack: bool = True) -> str:
