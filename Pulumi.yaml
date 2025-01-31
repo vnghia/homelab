@@ -162,3 +162,6 @@ config:
               nghe-cache: /tmp/nghe
             envs:
               NGHE_SERVER__PORT: 3000
+  integration:
+    value:
+      s3:

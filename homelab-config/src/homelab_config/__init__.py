@@ -6,6 +6,7 @@ import pulumi
 from homelab_config.common import constant as constant
 from homelab_config.common import get_name as get_name
 from homelab_config.docker import Docker
+from homelab_config.integration import Integration
 from homelab_config.network import Network
 
 
@@ -18,3 +19,4 @@ def __build(key: str) -> dict[Any, Any]:
 
 docker = Docker(**__build("docker"))
 network = Network(**__build("network"))
+integration = Integration(**__build("integration"))
