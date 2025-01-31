@@ -12,6 +12,7 @@ class Postgres(BaseModel):
 
     PGRUN_PATH: ClassVar[AbsolutePath] = PosixPath("/var/run/postgresql")
     PGDATA_PATH: ClassVar[AbsolutePath] = PosixPath("/var/lib/postgresql/data")
+    PORT: ClassVar[PositiveInt] = 5432
 
     PASSWORD_LENGTH: ClassVar[PositiveInt] = 64
 

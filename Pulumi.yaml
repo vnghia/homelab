@@ -27,6 +27,9 @@ config:
         dozzle:
           repo: amir20/dozzle
           tag: "v8.10.4"
+        nghe:
+          repo: ghcr.io/vnghia/nghe-musl
+          tag: "develop"
         postgres:
           repo: postgres
           tag: "17.2-bookworm"
@@ -35,6 +38,7 @@ config:
           tailscale-data: {}
           traefik-config: {}
           traefik-cert: {}
+          nghe-cache: {}
       services:
         tailscale:
           container:
@@ -70,8 +74,8 @@ config:
                 external: 443
                 ip: "::"
             tmpfs:
-              - "/tmp"
-              - "/run"
+              - /tmp
+              - /run
             networks:
               default-bridge: {}
               internal-bridge: {}
@@ -118,9 +122,6 @@ config:
             envs:
               LEGO_DISABLE_CNAME_SUPPORT: "true"
         dozzle:
-          databases:
-            postgres:
-              dozzle: {}
           container:
             image: dozzle
             healthcheck:
@@ -137,3 +138,27 @@ config:
               DOZZLE_ADDR: ":8080"
               DOZZLE_NO_ANALYTICS: "true"
               DOZZLE_ENABLE_ACTIONS: "true"
+        nghe:
+          databases:
+            postgres:
+              nghe: {}
+          container:
+            image: nghe
+            # healthcheck:
+            #   tests:
+            #     [
+            #       "CMD",
+            #       "wget",
+            #       "--spider",
+            #       "-q",
+            #       "http://localhost:3000/rest/getOpenSubsonicExtensions",
+            #     ]
+            #   interval: 1s
+            #   timeout: 5s
+            networks:
+              default-bridge: {}
+              internal-bridge: {}
+            volumes:
+              nghe-cache: /tmp/nghe
+            envs:
+              NGHE_SERVER__PORT: 3000

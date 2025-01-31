@@ -30,6 +30,8 @@ class Base(ComponentResource):
         super().__init__(self.name(), self.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+        self.build_databases()
+
     @classmethod
     def name(cls) -> str:
         return cls.__name__.lower()
@@ -67,8 +69,6 @@ class Base(ComponentResource):
         )
 
     def build_containers(self, options: dict[str | None, BuildOption] = {}) -> None:
-        self.build_databases()
-
         self.container = self.build_container(
             None, self.config().container, options.get(None)
         )

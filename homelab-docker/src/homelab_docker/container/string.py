@@ -3,6 +3,7 @@ from typing import Any, Self
 from pydantic import (
     BaseModel,
     ModelWrapValidatorHandler,
+    PositiveInt,
     ValidationError,
     model_validator,
 )
@@ -12,7 +13,7 @@ from homelab_docker.volume_path import VolumePath
 
 
 class String(BaseModel):
-    data: str | VolumePath
+    data: PositiveInt | str | VolumePath
 
     @model_validator(mode="wrap")
     @classmethod
@@ -29,4 +30,4 @@ class String(BaseModel):
                 raise ValueError("`volumes` is required for volume path string type")
             return data.to_str(volumes)
         else:
-            return data
+            return str(data)
