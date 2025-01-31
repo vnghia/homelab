@@ -29,6 +29,7 @@ config:
         local:
           tailscale-data: {}
           traefik-config: {}
+          traefik-cert: {}
       services:
         tailscale:
           container:
@@ -78,9 +79,13 @@ config:
               TS_ENABLE_HEALTH_CHECK: "true"
         traefik:
           config:
+            acme:
+              server: https://acme-v02.api.letsencrypt.org/directory
+              storage:
+                volume: traefik-cert
+                path: acme.json
             provider:
               file: dynamic
-            api: "/proxy"
             entrypoint:
               public-http: "public-http"
               private-http: "private-http"
@@ -94,15 +99,18 @@ config:
               - volume: traefik-config
                 path: static.toml
             network_mode: tailscale
-            volumes:
-              traefik-config:
-                path: /etc/traefik/config
-                ro: true
             healthcheck:
               tests: ["CMD", "traefik", "healthcheck", "--ping"]
               interval: 1s
               timeout: 5s
               retries: 5
+            volumes:
+              traefik-config:
+                path: /etc/traefik/config
+                ro: true
+              traefik-cert: /etc/traefik/cert
+            envs:
+              LEGO_DISABLE_CNAME_SUPPORT: "true"
         dozzle:
           container:
             image: dozzle
@@ -113,6 +121,8 @@ config:
               retries: 5
               start_period: 30s
             docker_sock_ro: false
+            networks:
+              default-bridge: {}
             envs:
               DOZZLE_BASE: /log
               DOZZLE_ADDR: ":8080"

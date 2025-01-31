@@ -58,6 +58,7 @@ class HttpDynamic(BaseModel):
                                 )
                                 + self.rules
                             ),
+                            "tls": {"certResolver": static.TLS_RESOLVER},
                         }
                     },
                     "services": {

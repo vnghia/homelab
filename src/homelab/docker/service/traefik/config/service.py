@@ -1,5 +1,14 @@
 from homelab_docker.pydantic.path import RelativePath
-from pydantic import BaseModel, ConfigDict, Field
+from homelab_docker.volume_path import VolumePath
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+
+
+class Acme(BaseModel):
+    model_config = ConfigDict(strict=True)
+
+    server: HttpUrl
+    email: str
+    storage: VolumePath
 
 
 class Provider(BaseModel):
@@ -20,6 +29,6 @@ class Entrypoint(BaseModel):
 class Service(BaseModel):
     model_config = ConfigDict(strict=True)
 
+    acme: Acme
     provider: Provider
-    api: str
     entrypoint: Entrypoint

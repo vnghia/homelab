@@ -32,9 +32,12 @@ class VolumePath(BaseModel):
     def id_(self) -> str:
         return "{}:{}".format(self.volume, self.path.as_posix())
 
-    def to_str(self, volumes: dict[str, Volume]) -> str:
+    def to_path(self, volumes: dict[str, Volume]) -> PosixPath:
         path = volumes[self.volume].to_path()
-        return (path / self.path if self.path else path).as_posix()
+        return path / self.path if self.path else path
+
+    def to_str(self, volumes: dict[str, Volume]) -> str:
+        return self.to_path(volumes).as_posix()
 
     def to_input(self, resource: Resource) -> VolumePathInput:
         return VolumePathInput(volume=resource.volumes[self.volume], path=self.path)

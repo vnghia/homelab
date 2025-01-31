@@ -10,16 +10,27 @@ from homelab.docker.service.traefik.config.service import Service
 
 
 class Static:
+    TLS_RESOLVER = "leresolver-dns"
+
     def __init__(self, config: Config, tailscale: Tailscale) -> None:
         self.service_config = config.config(Service)
+        self.container_volumes = config.container.volumes
+
         self.volume_path = VolumePath.model_validate(
             config.container.command[-1].data if config.container.command else None
         )
-        self.volume_config = config.container.volumes[self.volume_path.volume]
+        self.volume_config = self.container_volumes[self.volume_path.volume]
         self.provider_directory = self.service_config.provider.file
 
         self.data = {
             "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
+            "accessLog": {"format": "json"},
+            "api": {
+                "dashboard": True,
+                "disableDashboardAd": True,
+            },
+            "log": {"level": "INFO", "format": "json"},
+            "ping": {},
             "entryPoints": {
                 self.service_config.entrypoint.private_http: {
                     "address": "[::]:80",
@@ -57,13 +68,18 @@ class Static:
                     "watch": True,
                 },
             },
-            "api": {
-                "dashboard": True,
-                "disableDashboardAd": True,
+            "certificatesResolvers": {
+                self.TLS_RESOLVER: {
+                    "acme": {
+                        "caServer": str(self.service_config.acme.server),
+                        "email": self.service_config.acme.email,
+                        "storage": self.service_config.acme.storage.to_str(
+                            self.container_volumes
+                        ),
+                        "dnsChallenge": {"provider": "cloudflare"},
+                    }
+                }
             },
-            "ping": {},
-            "log": {"level": "INFO", "format": "json"},
-            "accessLog": {"format": "json", "fields": {"names": {"StartUTC": "drop"}}},
         }
 
     def get_dynamic_volume_path(self, file: str) -> VolumePath:

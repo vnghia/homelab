@@ -29,3 +29,5 @@ class Dns(ComponentResource):
             ips=tailscale.private_ips,
             opts=self.child_opts,
         )
+
+        self.register_outputs({})
