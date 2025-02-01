@@ -29,7 +29,7 @@ config:
           tag: "v8.10.4"
         nghe:
           repo: ghcr.io/vnghia/nghe-musl
-          tag: "develop"
+          tag: "0.10.0"
         postgres:
           repo: postgres
           tag: "17.2-bookworm"
@@ -144,17 +144,17 @@ config:
               nghe: {}
           container:
             image: nghe
-            # healthcheck:
-            #   tests:
-            #     [
-            #       "CMD",
-            #       "wget",
-            #       "--spider",
-            #       "-q",
-            #       "http://localhost:3000/rest/getOpenSubsonicExtensions",
-            #     ]
-            #   interval: 1s
-            #   timeout: 5s
+            healthcheck:
+              tests:
+                [
+                  "CMD",
+                  "wget",
+                  "--spider",
+                  "-q",
+                  "http://localhost:3000/rest/health",
+                ]
+              interval: 1s
+              timeout: 5s
             networks:
               default-bridge: {}
               internal-bridge: {}
