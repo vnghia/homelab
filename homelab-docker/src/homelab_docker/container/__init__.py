@@ -90,8 +90,8 @@ class Container(BaseModel):
             else None,
             mounts=[tmpfs.to_container_mount() for tmpfs in self.tmpfs],
             # TODO: remove this line after https://github.com/pulumi/pulumi-docker/issues/1272
-            network_mode=resource.containers[self.network_mode].id.apply(
-                lambda x: "container:{}".format(x)
+            network_mode=Output.format(
+                "container:{0}", resource.containers[self.network_mode].id
             )
             if self.network_mode
             else "bridge",

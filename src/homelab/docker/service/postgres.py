@@ -64,14 +64,11 @@ class Postgres(ComponentResource):
         self.register_outputs({"name": self.container.name})
 
     def get_url(self) -> Output[PostgresDsn]:
-        return self.password.apply(
-            lambda x: PostgresDsn(
-                url="postgres://{}:{}@{}:{}/{}?sslmode=disable".format(
-                    self.username,
-                    x,
-                    self.full_name,
-                    self.model.PORT,
-                    self.database,
-                )
-            )
-        )
+        return Output.format(
+            "postgres://{0}:{1}@{2}:{3}/{4}?sslmode=disable",
+            self.username,
+            self.password,
+            self.full_name,
+            self.model.PORT,
+            self.database,
+        ).apply(PostgresDsn)
