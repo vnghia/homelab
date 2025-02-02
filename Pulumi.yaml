@@ -119,8 +119,6 @@ config:
                 path: /etc/traefik/config
                 ro: true
               traefik-cert: /etc/traefik/cert
-            envs:
-              LEGO_DISABLE_CNAME_SUPPORT: "true"
         dozzle:
           container:
             image: dozzle

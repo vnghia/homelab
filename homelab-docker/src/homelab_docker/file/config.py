@@ -16,12 +16,17 @@ class ConfigFile:
     volume_path: VolumePath
     data: Input[Any]
     schema_url: str | None = None
+    schema_override: Any | None = None
 
-    @classmethod
-    def toml_dumps(cls, raw_data: str, schema_url: str | None) -> str:
+    def __post_init__(self) -> None:
+        self.schema = (
+            Schema(self.schema_url, self.schema_override) if self.schema_url else None
+        )
+
+    def toml_dumps(self, raw_data: str) -> str:
         data = json.loads(raw_data)
-        if schema_url:
-            Schema(schema_url).validate(data)
+        if self.schema:
+            self.schema.validate(data)
         return tomlkit.dumps(data, sort_keys=True)
 
     def build_resource(
@@ -33,9 +38,7 @@ class ConfigFile:
         extension = self.volume_path.path.suffix
         match extension:
             case ".toml":
-                content = Output.json_dumps(self.data).apply(
-                    lambda x: self.toml_dumps(x, self.schema_url)
-                )
+                content = Output.json_dumps(self.data).apply(self.toml_dumps)
             case _:
                 raise ValueError("Only `toml` format is supported")
         return File(

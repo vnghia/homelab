@@ -89,7 +89,12 @@ class Static:
                         "storage": self.service_config.acme.storage.to_str(
                             self.container_volumes
                         ),
-                        "dnsChallenge": {"provider": "cloudflare"},
+                        "dnsChallenge": {
+                            "provider": "cloudflare",
+                            "propagation": {
+                                "delayBeforeChecks": 300,
+                            },
+                        },
                     }
                 },
             },
@@ -107,4 +112,22 @@ class Static:
             volume_path=self.volume_path,
             data=self.data,
             schema_url="https://json.schemastore.org/traefik-v3.json",
+            schema_override={
+                "$defs": {
+                    "acmeDNSChallengePropagation": {
+                        "additionalProperties": False,
+                        "properties": {
+                            "delayBeforeChecks": {"type": "number"},
+                        },
+                        "type": "object",
+                    },
+                    "acmeDNSChallenge": {
+                        "properties": {
+                            "propagation": {
+                                "$ref": "#/$defs/acmeDNSChallengePropagation"
+                            }
+                        }
+                    },
+                }
+            },
         ).build_resource("static", resource=resource.to_docker_resource(), opts=opts)
