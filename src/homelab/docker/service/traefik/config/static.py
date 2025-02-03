@@ -27,6 +27,7 @@ class Static:
             "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
             "accessLog": {"format": "json"},
             "api": {
+                "basePath": self.service_config.path,
                 "dashboard": True,
                 "disableDashboardAd": True,
             },
@@ -128,6 +129,7 @@ class Static:
                             }
                         }
                     },
+                    "staticAPI": {"properties": {"basePath": {"type": "string"}}},
                 }
             },
         ).build_resource("static", resource=resource.to_docker_resource(), opts=opts)

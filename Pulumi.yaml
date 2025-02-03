@@ -89,6 +89,7 @@ config:
               TS_ENABLE_HEALTH_CHECK: "true"
         traefik:
           config:
+            path: /proxy
             acme:
               server: https://acme-v02.api.letsencrypt.org/directory
               storage:

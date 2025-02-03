@@ -29,6 +29,7 @@ class Entrypoint(BaseModel):
 class Service(BaseModel):
     model_config = ConfigDict(strict=True)
 
+    path: str
     acme: Acme
     provider: Provider
     entrypoint: Entrypoint
