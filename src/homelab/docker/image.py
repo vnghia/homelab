@@ -11,7 +11,7 @@ class Image(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.remotes = {
-            name: model.build_resource(opts=self.child_opts)
+            name: model.build_resource(name, opts=self.child_opts)
             for name, model in config.docker.images.items()
         }
         for name, image in self.remotes.items():

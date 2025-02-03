@@ -17,9 +17,11 @@ class Remote(BaseModel):
     def name(self) -> str:
         return "{}:{}".format(self.repo, self.tag)
 
-    def build_resource(self, opts: ResourceOptions | None = None) -> docker.RemoteImage:
+    def build_resource(
+        self, resource_name: str, opts: ResourceOptions | None = None
+    ) -> docker.RemoteImage:
         return docker.RemoteImage(
-            resource_name=self.repo,
+            resource_name,
             opts=ResourceOptions.merge(
                 opts, ResourceOptions(delete_before_replace=True)
             ),
