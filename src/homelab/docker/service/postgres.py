@@ -1,4 +1,5 @@
 import homelab_config as config
+import pulumi_docker as docker
 import pulumi_random as random
 from homelab_config.docker.service.database.postgres import Postgres as Model
 from homelab_docker.container import Container
@@ -24,9 +25,9 @@ class Postgres(ComponentResource):
         opts: ResourceOptions | None,
     ) -> None:
         self.service_name = service_name
+        self.name = name
+
         self.model = model
-        self.short_name = self.model.get_short_name(service_name, name)
-        self.full_name = self.model.get_full_name(service_name, name)
         self.resource = resource
 
         super().__init__(self.model.DATABASE_TYPE, self.short_name, None, opts)
@@ -41,41 +42,58 @@ class Postgres(ComponentResource):
             special=False,
         ).result
 
-        self.container = Container(
-            image=self.model.image,
-            healthcheck=Healthcheck(
-                tests=["CMD", "pg_isready", "-U", self.database],
-                interval="5s",
-                timeout="5s",
-                retries=5,
-            ),
-            tmpfs=[Tmpfs(data=self.model.PGRUN_PATH)],
-            networks={self.model.network: Network()},
-            volumes={self.full_name: Volume(data=self.model.PGDATA_PATH)},
-            envs={
-                "POSTGRES_USER": String(data=self.username),
-                "POSTGRES_DB": String(data=self.database),
-                "PGDATA": String(data=VolumePath(volume=self.full_name)),
-            },
-            labels=config.constant.PROJECT_LABELS,
-        ).build_resource(
-            self.full_name,
-            timezone=config.docker.timezone,
-            resource=resource.to_docker_resource(),
-            opts=self.child_opts,
-            envs={
-                "POSTGRES_PASSWORD": self.password,
-            },
-        )
+        self.containers: dict[int, docker.Container] = {}
+        for version in self.model.versions:
+            full_name_version = self.get_full_name_version(version)
+            self.containers[version] = Container(
+                image=self.model.get_image(version),
+                healthcheck=Healthcheck(
+                    tests=["CMD", "pg_isready", "-U", self.database],
+                    interval="5s",
+                    timeout="5s",
+                    retries=5,
+                ),
+                tmpfs=[Tmpfs(data=self.model.PGRUN_PATH)],
+                networks={self.model.network: Network()},
+                volumes={full_name_version: Volume(data=self.model.PGDATA_PATH)},
+                envs={
+                    "POSTGRES_USER": String(data=self.username),
+                    "POSTGRES_DB": String(data=self.database),
+                    "PGDATA": String(data=VolumePath(volume=full_name_version)),
+                },
+                labels=config.constant.PROJECT_LABELS,
+            ).build_resource(
+                full_name_version,
+                timezone=config.docker.timezone,
+                resource=resource.to_docker_resource(),
+                opts=self.child_opts,
+                envs={
+                    "POSTGRES_PASSWORD": self.password,
+                },
+            )
 
-        self.register_outputs({"name": self.container.name})
+        self.register_outputs({})
+
+    @property
+    def short_name(self) -> str:
+        return self.model.get_short_name(self.name)
+
+    def get_short_name_version(self, version: int) -> str:
+        return self.model.get_short_name_version(self.name, version)
+
+    def get_full_name_version(self, version: int) -> str:
+        return self.model.get_full_name_version(self.service_name, self.name, version)
+
+    @property
+    def container(self) -> docker.Container:
+        return self.containers[self.model.versions[0]]
 
     def get_url(self) -> Output[PostgresDsn]:
         return Output.format(
             "postgres://{0}:{1}@{2}:{3}/{4}?sslmode=disable",
             self.username,
             self.password,
-            self.full_name,
+            self.get_full_name_version(self.model.versions[0]),
             self.model.PORT,
             self.database,
         ).apply(PostgresDsn)

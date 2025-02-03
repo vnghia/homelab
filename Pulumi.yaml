@@ -30,7 +30,7 @@ config:
         nghe:
           repo: ghcr.io/vnghia/nghe-musl
           tag: "0.10.0"
-        postgres:
+        postgres-17:
           repo: postgres
           tag: "17.2-bookworm"
       volumes:
@@ -140,7 +140,7 @@ config:
         nghe:
           databases:
             postgres:
-              nghe: {}
+              postgres: {}
           container:
             image: nghe
             healthcheck:

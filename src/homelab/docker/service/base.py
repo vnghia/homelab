@@ -45,7 +45,7 @@ class Base(ComponentResource):
 
     def build_databases(self) -> None:
         self.postgres = {
-            None if name == self.name() else name: Postgres(
+            None if name == model.DATABASE_TYPE else name: Postgres(
                 service_name=self.name(),
                 name=name,
                 model=model,
@@ -80,8 +80,9 @@ class Base(ComponentResource):
         for name, container in (
             self.containers
             | {
-                database.short_name: database.container
+                database.get_short_name_version(version): container
                 for database in self.postgres.values()
+                for version, container in database.containers.items()
             }
         ).items():
             name = self.add_service_name(name)
