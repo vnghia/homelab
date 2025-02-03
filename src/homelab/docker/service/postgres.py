@@ -2,6 +2,7 @@ import homelab_config as config
 import pulumi_random as random
 from homelab_config.docker.service.database.postgres import Postgres as Model
 from homelab_docker.container import Container
+from homelab_docker.container.healthcheck import Healthcheck
 from homelab_docker.container.network import Network
 from homelab_docker.container.string import String
 from homelab_docker.container.tmpfs import Tmpfs
@@ -42,6 +43,12 @@ class Postgres(ComponentResource):
 
         self.container = Container(
             image=self.model.image,
+            healthcheck=Healthcheck(
+                tests=["CMD", "pg_isready", "-U", self.database],
+                interval="5s",
+                timeout="5s",
+                retries=5,
+            ),
             tmpfs=[Tmpfs(data=self.model.PGRUN_PATH)],
             networks={self.model.network: Network()},
             volumes={self.full_name: Volume(data=self.model.PGDATA_PATH)},
