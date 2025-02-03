@@ -19,10 +19,10 @@ class Volume(ComponentResource):
         for service_name, service in config.docker.services.items():
             for name, model in service.databases.postgres.items():
                 for version in model.versions:
-                    name = model.get_full_name_version(service_name, name, version)
-                    self.volumes[name] = docker.volume.Local(
+                    full_name = model.get_full_name_version(service_name, name, version)
+                    self.volumes[full_name] = docker.volume.Local(
                         labels=config.constant.PROJECT_LABELS
-                    ).build_resource(name, opts=self.child_opts)
+                    ).build_resource(full_name, opts=self.child_opts)
 
         for name, volume in self.volumes.items():
             pulumi.export("volume-{}".format(name), volume.name)
