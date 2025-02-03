@@ -49,7 +49,7 @@ class Nghe(Base):
         self.traefik = HttpDynamic(
             name=self.name(),
             public=True,
-            port=int(self.config().container.envs["NGHE_SERVER__PORT"].to_str()),
+            service=int(self.config().container.envs["NGHE_SERVER__PORT"].to_str()),
         ).build_resource(
             "traefik", resource=resource, traefik=traefik, opts=self.child_opts
         )

@@ -30,14 +30,13 @@ class Dozzle(Base):
         )
 
         self.prefix = self.config().container.envs["DOZZLE_BASE"].to_str()
-        self.port = int(self.config().container.envs["DOZZLE_ADDR"].to_str()[1:])
 
         self.traefik = HttpDynamic(
             name=self.name(),
             public=False,
             hostname="system",
             prefix=self.prefix,
-            port=self.port,
+            service=int(self.config().container.envs["DOZZLE_ADDR"].to_str()[1:]),
         ).build_resource(
             "traefik", resource=resource, traefik=traefik, opts=self.child_opts
         )
@@ -45,8 +44,7 @@ class Dozzle(Base):
             name="{}-redirect".format(self.name()),
             public=False,
             hostname="system",
-            container=self.name(),
-            port=self.port,
+            service=self.name(),
             middlewares=[
                 Middleware(
                     name="{}-redirect".format(self.name()),

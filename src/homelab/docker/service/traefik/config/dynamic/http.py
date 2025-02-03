@@ -1,3 +1,5 @@
+from typing import Any
+
 import homelab_config as config
 from homelab_docker.file import File
 from homelab_docker.file.config import ConfigFile
@@ -7,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, PositiveInt
 from homelab.docker.resource import Resource
 from homelab.docker.service.traefik import Traefik
 from homelab.docker.service.traefik.config.dynamic.middleware import Middleware
+from homelab.docker.service.traefik.config.dynamic.service import Service, ServiceType
 
 
 class HttpDynamic(BaseModel):
@@ -19,10 +22,9 @@ class HttpDynamic(BaseModel):
 
     rules: list[str] = []
 
-    container: str | None = None
-    port: PositiveInt
+    service: Service | PositiveInt | str
 
-    middlewares: list[Middleware] = []
+    middlewares: list[Middleware | str] = []
 
     def build_resource(
         self,
@@ -37,14 +39,14 @@ class HttpDynamic(BaseModel):
         host = (dns.public.hostnames if self.public else dns.private.hostnames)[
             self.hostname or self.name
         ]
-        container = self.container or self.name
-        resource.containers[container]
 
-        data = {
+        data: dict[str, Any] = {
             "http": {
                 "routers": {
                     self.name: {
-                        "service": self.name,
+                        "service": self.name
+                        if isinstance(self.service, (Service, int))
+                        else self.service,
                         "entryPoints": [
                             entrypoint.public_https
                             if self.public
@@ -72,17 +74,41 @@ class HttpDynamic(BaseModel):
                         },
                     }
                 },
-                "services": {
-                    self.name: {
-                        "loadBalancer": {
-                            "servers": [
-                                {"url": "http://{}:{}".format(container, self.port)}
-                            ]
-                        }
-                    }
-                },
             }
         }
+
+        if isinstance(self.service, Service):
+            data["http"]["services"] = {
+                self.name: {
+                    "loadBalancer": {
+                        "servers": [
+                            {
+                                "url": str(
+                                    self.service.to_url(
+                                        ServiceType.HTTP, self.name, resource
+                                    )
+                                )
+                            }
+                        ]
+                    }
+                }
+            }
+        elif isinstance(self.service, int):
+            data["http"]["services"] = {
+                self.name: {
+                    "loadBalancer": {
+                        "servers": [
+                            {
+                                "url": str(
+                                    Service(port=self.service).to_url(
+                                        ServiceType.HTTP, self.name, resource
+                                    )
+                                )
+                            }
+                        ]
+                    }
+                }
+            }
 
         middlewares = {
             middleware.name: middleware.data
