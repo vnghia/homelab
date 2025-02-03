@@ -3,6 +3,7 @@ from pulumi import ResourceOptions
 from homelab.docker.resource import Resource
 from homelab.docker.service.base import Base, BuildOption
 from homelab.docker.service.tailscale import Tailscale
+from homelab.docker.service.traefik.config.dynamic.http import HttpDynamic
 from homelab.docker.service.traefik.config.static import Static
 from homelab.network.dns.token import Token
 
@@ -32,4 +33,14 @@ class Traefik(Base):
                     ],
                 )
             }
+        )
+
+        self.dashboard = HttpDynamic(
+            name="{}-dashboard".format(self.name()),
+            public=False,
+            hostname="system",
+            prefix=self.static.service_config.path,
+            service="api@internal",
+        ).build_resource(
+            "dashboard", resource=resource, traefik=self.static, opts=self.child_opts
         )

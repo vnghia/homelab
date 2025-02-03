@@ -3,16 +3,16 @@ from pulumi import ResourceOptions
 
 from homelab.docker.resource import Resource
 from homelab.docker.service.base import Base, BuildOption
-from homelab.docker.service.traefik import Traefik
 from homelab.docker.service.traefik.config.dynamic.http import HttpDynamic
 from homelab.docker.service.traefik.config.dynamic.middleware import Middleware
+from homelab.docker.service.traefik.config.static import Static
 
 
 class Dozzle(Base):
     def __init__(
         self,
         resource: Resource,
-        traefik: Traefik,
+        traefik: Static,
         opts: ResourceOptions | None,
     ) -> None:
         super().__init__(resource=resource, opts=opts)

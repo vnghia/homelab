@@ -7,9 +7,9 @@ from pulumi import ResourceOptions
 from pydantic import BaseModel, ConfigDict, PositiveInt
 
 from homelab.docker.resource import Resource
-from homelab.docker.service.traefik import Traefik
 from homelab.docker.service.traefik.config.dynamic.middleware import Middleware
 from homelab.docker.service.traefik.config.dynamic.service import Service, ServiceType
+from homelab.docker.service.traefik.config.static import Static
 
 
 class HttpDynamic(BaseModel):
@@ -30,11 +30,10 @@ class HttpDynamic(BaseModel):
         self,
         resource_name: str,
         resource: Resource,
-        traefik: Traefik,
+        traefik: Static,
         opts: ResourceOptions | None = None,
     ) -> File:
-        static = traefik.static
-        entrypoint = static.service_config.entrypoint
+        entrypoint = traefik.service_config.entrypoint
         dns = config.network.dns
         host = (dns.public.hostnames if self.public else dns.private.hostnames)[
             self.hostname or self.name
@@ -68,9 +67,9 @@ class HttpDynamic(BaseModel):
                             for middleware in self.middlewares
                         ],
                         "tls": {
-                            "certResolver": static.PUBLIC_CERT_RESOLVER
+                            "certResolver": traefik.PUBLIC_CERT_RESOLVER
                             if self.public
-                            else static.PRIVATE_CERT_RESOLVER
+                            else traefik.PRIVATE_CERT_RESOLVER
                         },
                     }
                 },
@@ -119,7 +118,7 @@ class HttpDynamic(BaseModel):
             data["http"]["middlewares"] = middlewares
 
         return ConfigFile(
-            volume_path=static.get_dynamic_volume_path(self.name),
+            volume_path=traefik.get_dynamic_volume_path(self.name),
             data=data,
             schema_url="https://json.schemastore.org/traefik-v3-file-provider.json",
         ).build_resource(

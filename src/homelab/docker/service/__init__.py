@@ -23,8 +23,10 @@ class Service(ComponentResource):
             resource=resource, tailscale=self.tailscale, opts=self.child_opts
         )
         self.dozzle = Dozzle(
-            resource=resource, traefik=self.traefik, opts=self.child_opts
+            resource=resource, traefik=self.traefik.static, opts=self.child_opts
         )
-        self.nghe = Nghe(resource=resource, traefik=self.traefik, opts=self.child_opts)
+        self.nghe = Nghe(
+            resource=resource, traefik=self.traefik.static, opts=self.child_opts
+        )
 
         self.register_outputs({})
