@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, PositiveInt
 
 from homelab.docker.resource import Resource
 from homelab.docker.service.traefik import Traefik
+from homelab.docker.service.traefik.config.dynamic.middleware import Middleware
 
 
 class HttpDynamic(BaseModel):
@@ -20,6 +21,8 @@ class HttpDynamic(BaseModel):
 
     container: str | None = None
     port: PositiveInt
+
+    middlewares: list[Middleware] = []
 
     def build_resource(
         self,
@@ -37,45 +40,61 @@ class HttpDynamic(BaseModel):
         container = self.container or self.name
         resource.containers[container]
 
+        data = {
+            "http": {
+                "routers": {
+                    self.name: {
+                        "service": self.name,
+                        "entryPoints": [
+                            entrypoint.public_https
+                            if self.public
+                            else entrypoint.private_https
+                        ],
+                        "rule": " && ".join(
+                            ["Host(`{}`)".format(host)]
+                            + (
+                                ["PathPrefix(`{}`)".format(self.prefix)]
+                                if self.prefix
+                                else []
+                            )
+                            + self.rules
+                        ),
+                        "middlewares": [
+                            middleware.name
+                            if isinstance(middleware, Middleware)
+                            else middleware
+                            for middleware in self.middlewares
+                        ],
+                        "tls": {
+                            "certResolver": static.PUBLIC_CERT_RESOLVER
+                            if self.public
+                            else static.PRIVATE_CERT_RESOLVER
+                        },
+                    }
+                },
+                "services": {
+                    self.name: {
+                        "loadBalancer": {
+                            "servers": [
+                                {"url": "http://{}:{}".format(container, self.port)}
+                            ]
+                        }
+                    }
+                },
+            }
+        }
+
+        middlewares = {
+            middleware.name: middleware.data
+            for middleware in self.middlewares
+            if isinstance(middleware, Middleware)
+        }
+        if middlewares:
+            data["http"]["middlewares"] = middlewares
+
         return ConfigFile(
             volume_path=static.get_dynamic_volume_path(self.name),
-            data={
-                "http": {
-                    "routers": {
-                        self.name: {
-                            "service": self.name,
-                            "entryPoints": [
-                                entrypoint.public_https
-                                if self.public
-                                else entrypoint.private_https
-                            ],
-                            "rule": " && ".join(
-                                ["Host(`{}`)".format(host)]
-                                + (
-                                    ["PathPrefix(`{}`)".format(self.prefix)]
-                                    if self.prefix
-                                    else []
-                                )
-                                + self.rules
-                            ),
-                            "tls": {
-                                "certResolver": static.PUBLIC_CERT_RESOLVER
-                                if self.public
-                                else static.PRIVATE_CERT_RESOLVER
-                            },
-                        }
-                    },
-                    "services": {
-                        self.name: {
-                            "loadBalancer": {
-                                "servers": [
-                                    {"url": "http://{}:{}".format(container, self.port)}
-                                ]
-                            }
-                        }
-                    },
-                }
-            },
+            data=data,
             schema_url="https://json.schemastore.org/traefik-v3-file-provider.json",
         ).build_resource(
             resource_name, resource=resource.to_docker_resource(), opts=opts

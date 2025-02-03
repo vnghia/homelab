@@ -5,6 +5,7 @@ from homelab.docker.resource import Resource
 from homelab.docker.service.base import Base, BuildOption
 from homelab.docker.service.traefik import Traefik
 from homelab.docker.service.traefik.config.dynamic.http import HttpDynamic
+from homelab.docker.service.traefik.config.dynamic.middleware import Middleware
 
 
 class Dozzle(Base):
@@ -28,11 +29,30 @@ class Dozzle(Base):
             }
         )
 
+        self.prefix = self.config().container.envs["DOZZLE_BASE"].to_str()
+        self.port = int(self.config().container.envs["DOZZLE_ADDR"].to_str()[1:])
+
         self.traefik = HttpDynamic(
             name=self.name(),
             public=False,
-            prefix=self.config().container.envs["DOZZLE_BASE"].to_str(),
-            port=int(self.config().container.envs["DOZZLE_ADDR"].to_str()[1:]),
+            hostname="system",
+            prefix=self.prefix,
+            port=self.port,
         ).build_resource(
             "traefik", resource=resource, traefik=traefik, opts=self.child_opts
+        )
+        self.traefik_redirect = HttpDynamic(
+            name="{}-redirect".format(self.name()),
+            public=False,
+            hostname="system",
+            container=self.name(),
+            port=self.port,
+            middlewares=[
+                Middleware(
+                    name="{}-redirect".format(self.name()),
+                    data={"addPrefix": {"prefix": self.prefix}},
+                )
+            ],
+        ).build_resource(
+            "traefik-redirect", resource=resource, traefik=traefik, opts=self.child_opts
         )
