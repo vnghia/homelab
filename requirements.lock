@@ -13,14 +13,17 @@
 -e file:homelab-config
     # via homelab
     # via homelab-docker-image
+    # via homelab-docker-network
 -e file:homelab-dns
     # via homelab-config
 -e file:homelab-docker
     # via homelab
     # via homelab-config
     # via homelab-docker-image
+    # via homelab-docker-network
 -e file:homelab-docker-image
     # via homelab
+-e file:homelab-docker-network
 annotated-types==0.7.0
     # via pydantic
 anyio==4.8.0
@@ -91,6 +94,7 @@ pulumi-cloudflare==5.49.0
 pulumi-docker==4.6.1
     # via homelab-docker
     # via homelab-docker-image
+    # via homelab-docker-network
 pulumi-random==4.17.0
     # via homelab
 pulumi-tailscale==0.17.5

@@ -1,9 +1,9 @@
 import pulumi_docker as docker
 from homelab_docker.resource import Resource as DockerResource
 from homelab_docker_image import Image
+from homelab_docker_network import Network
 from pulumi import ResourceOptions
 
-from homelab.docker.network import Network
 from homelab.docker.volume import Volume
 
 
