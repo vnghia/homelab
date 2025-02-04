@@ -29,7 +29,7 @@ config:
           tag: "v8.10.4"
         nghe:
           repo: ghcr.io/vnghia/nghe-musl
-          tag: "0.10.0"
+          tag: "0.10.1"
         postgres-17:
           repo: postgres
           tag: "17.2-bookworm"
