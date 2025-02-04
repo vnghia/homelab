@@ -1,8 +1,8 @@
 import dataclasses
 
-import homelab_config as config
 import pulumi
 import pulumi_docker as docker
+from homelab_config import config
 from homelab_config.docker.service import Service
 from homelab_docker.container import Container
 from homelab_docker.file import File

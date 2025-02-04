@@ -1,6 +1,6 @@
 from typing import Any
 
-import homelab_config as config
+from homelab_config import config
 from homelab_docker.file import File
 from homelab_docker.file.config import ConfigFile
 from pulumi import ResourceOptions

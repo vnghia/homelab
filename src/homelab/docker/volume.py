@@ -1,6 +1,6 @@
-import homelab_config as config
 import homelab_docker as docker
 import pulumi
+from homelab_config import config
 from pulumi import ComponentResource, ResourceOptions
 
 
@@ -21,7 +21,7 @@ class Volume(ComponentResource):
                 for version in model.versions:
                     full_name = model.get_full_name_version(service_name, name, version)
                     self.volumes[full_name] = docker.volume.Local(
-                        labels=config.constant.PROJECT_LABELS
+                        labels=config.PROJECT_LABELS
                     ).build_resource(full_name, opts=self.child_opts)
 
         for name, volume in self.volumes.items():

@@ -1,5 +1,5 @@
-import homelab_config as config
 import pulumi
+from homelab_config import config
 from pulumi import ComponentResource, ResourceOptions
 
 

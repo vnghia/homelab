@@ -1,4 +1,4 @@
-import homelab_config as config
+from homelab_config import config
 from pulumi import ResourceOptions
 
 from homelab.docker.resource import Resource
@@ -22,7 +22,7 @@ class Dozzle(Base):
                 None: BuildOption(
                     envs={
                         "DOZZLE_FILTER": "label=pulumi.stack={}".format(
-                            config.constant.PROJECT_STACK
+                            config.PROJECT_STACK
                         ),
                     },
                 )

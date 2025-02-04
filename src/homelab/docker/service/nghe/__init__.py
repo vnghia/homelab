@@ -39,7 +39,7 @@ class Nghe(Base):
                         "NGHE_INTEGRATION__SPOTIFY__SECRET": self.service_config.spotify.secret,
                         "NGHE_INTEGRATION__LASTFM__KEY": self.service_config.lastfm.key,
                         "NGHE_S3__ENABLE": "true",
-                        **homelab_config.integration.s3.to_env_input(),
+                        **homelab_config.config.integration.s3.to_env_input(),
                     },
                     opts=ResourceOptions(depends_on=[self.postgres[None].container]),
                 )

@@ -1,4 +1,4 @@
-import homelab_config as config
+from homelab_config import config
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab.docker.service.tailscale import Tailscale

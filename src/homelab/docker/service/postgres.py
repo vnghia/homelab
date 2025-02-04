@@ -1,6 +1,6 @@
-import homelab_config as config
 import pulumi_docker as docker
 import pulumi_random as random
+from homelab_config import config
 from homelab_config.docker.service.database.postgres import Postgres as Model
 from homelab_docker.container import Container
 from homelab_docker.container.healthcheck import Healthcheck
@@ -61,7 +61,7 @@ class Postgres(ComponentResource):
                     "POSTGRES_DB": String(data=self.database),
                     "PGDATA": String(data=VolumePath(volume=full_name_version)),
                 },
-                labels=config.constant.PROJECT_LABELS,
+                labels=config.PROJECT_LABELS,
             ).build_resource(
                 full_name_version,
                 timezone=config.docker.timezone,

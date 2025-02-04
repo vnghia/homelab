@@ -1,8 +1,8 @@
 from ipaddress import IPv4Address, IPv6Address
 
-import homelab_config as config
 import pulumi
 import pulumi_tailscale as tailscale
+from homelab_config import config
 from pulumi import InvokeOutputOptions, Output, ResourceOptions
 from pydantic import IPvAnyAddress
 
