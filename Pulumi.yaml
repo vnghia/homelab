@@ -9,6 +9,21 @@ config:
   pulumi:tags:
     value:
       pulumi:template: python
+  docker-test:
+    value:
+      network:
+        default-bridge: {}
+        internal-bridge: {}
+      images:
+        platform: amd64
+        remote:
+          dozzle-test:
+            repo: amir20/dozzle
+            tag: "v8.10.1"
+      volumes:
+        local:
+          tailscale-data: {}
+      services:
   docker:
     value:
       platform: amd64

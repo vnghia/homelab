@@ -10,7 +10,7 @@ from homelab_docker.model.container.healthcheck import Healthcheck
 from homelab_docker.model.container.network import Network
 from homelab_docker.model.container.port import Port
 from homelab_docker.model.container.volume import Volume
-from homelab_docker.resource import GlobalResource
+from homelab_docker.resource.global_ import Global as GlobalResource
 
 
 class Container(BaseModel):
@@ -31,19 +31,19 @@ class Container(BaseModel):
     envs: dict[str, ContainerString] = {}
     labels: dict[str, str] = {}
 
-    def build_resource(
+    def build_resource[T](
         self,
         resource_name: str,
         *,
         opts: ResourceOptions,
         timezone: TimeZoneName,
-        global_: GlobalResource,
+        global_: GlobalResource[T],
         containers: dict[str, docker.Container],
         envs: dict[str, Input[str]] = {},
         project_labels: dict[str, str],
     ) -> docker.Container:
         image = global_.image[self.image]
-        network_args = self.network.to_args(global_, containers)
+        network_args = self.network.to_args(global_.network, containers)
 
         return docker.Container(
             resource_name,
@@ -100,7 +100,16 @@ class Container(BaseModel):
                     ),
                 )
                 for k, v in sorted(
-                    ({"TZ": timezone} | self.envs | envs).items(),
+                    (
+                        {"TZ": Output.from_input(ContainerString(data=timezone))}
+                        | self.envs
+                        | {
+                            k: Output.from_input(v).apply(
+                                lambda x: ContainerString(data=x)
+                            )
+                            for k, v in envs.items()
+                        }
+                    ).items(),
                     key=lambda x: x[0],
                 )
             ],

@@ -5,7 +5,7 @@ import pulumi_docker as docker
 from pulumi import Input, Output
 from pydantic import BaseModel, ModelWrapValidatorHandler, model_validator
 
-from homelab_docker.resource.global_ import GlobalResource
+from homelab_docker.resource.network import Network as NetworkResource
 
 
 @dataclasses.dataclass
@@ -18,7 +18,7 @@ class ContainerNetwork(BaseModel):
     container: str
 
     def to_args(
-        self, _: GlobalResource, containers: dict[str, docker.Container]
+        self, _: NetworkResource, containers: dict[str, docker.Container]
     ) -> NetworkArgs:
         return NetworkArgs(
             mode=Output.format("container:{0}", containers[self.container].id),
@@ -31,14 +31,14 @@ class CommonNetwork(BaseModel):
     internal_bridge: bool
 
     def to_args(
-        self, global_: GlobalResource, _: dict[str, docker.Container]
+        self, network: NetworkResource, _: dict[str, docker.Container]
     ) -> NetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
         return NetworkArgs(
             mode="bridge",
-            advanced=[global_.network.default_bridge_args]
+            advanced=[network.default_bridge_args]
             if self.default_bridge
-            else [] + [global_.network.internal_bridge_args]
+            else [] + [network.internal_bridge_args]
             if self.internal_bridge
             else [],
         )
@@ -58,6 +58,6 @@ class Network(BaseModel):
             return handler({"data": data})
 
     def to_args(
-        self, global_: GlobalResource, containers: dict[str, docker.Container]
+        self, network: NetworkResource, containers: dict[str, docker.Container]
     ) -> NetworkArgs:
-        return self.data.to_args(global_, containers)
+        return self.data.to_args(network, containers)

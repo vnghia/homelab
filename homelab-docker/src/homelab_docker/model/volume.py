@@ -5,9 +5,9 @@ from pydantic import BaseModel
 from homelab_docker.pydantic import AbsolutePath
 
 
-class LocalVolume(BaseModel):
+class Local(BaseModel):
     bind: AbsolutePath | None = None
-    labels: dict[str, str]
+    labels: dict[str, str] = {}
 
     def build_resource(
         self,

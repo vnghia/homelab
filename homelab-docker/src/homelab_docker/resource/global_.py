@@ -1,15 +1,15 @@
 from pulumi import ResourceOptions
 
-from homelab_docker import config
-from homelab_docker.resource.image import Image as Image
-from homelab_docker.resource.network import Network as Network
-from homelab_docker.resource.volume import Volume as Volume
+from homelab_docker.config.docker import Docker as DockerConfig
+from homelab_docker.resource.image import Image
+from homelab_docker.resource.network import Network
+from homelab_docker.resource.volume import Volume
 
 
-class GlobalResource:
+class Global[T]:
     def __init__(
         self,
-        config: config.Docker,
+        config: DockerConfig[T],
         *,
         opts: ResourceOptions,
         project_labels: dict[str, str],

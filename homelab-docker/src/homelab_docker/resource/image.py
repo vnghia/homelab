@@ -2,7 +2,7 @@ import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker import config
+from homelab_docker.config.image import Image as ImageConfig
 
 
 class Image(ComponentResource):
@@ -10,7 +10,7 @@ class Image(ComponentResource):
 
     def __init__(
         self,
-        config: config.Image,
+        config: ImageConfig,
         *,
         opts: ResourceOptions,
     ) -> None:

@@ -2,7 +2,7 @@ import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker import config
+from homelab_docker.config.network import Network as NetworkConfig
 
 
 class Network(ComponentResource):
@@ -10,7 +10,7 @@ class Network(ComponentResource):
 
     def __init__(
         self,
-        config: config.Network,
+        config: NetworkConfig,
         *,
         opts: ResourceOptions,
         project_labels: dict[str, str],

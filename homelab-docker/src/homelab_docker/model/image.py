@@ -2,10 +2,10 @@ import pulumi_docker as docker
 from pulumi import ResourceOptions
 from pydantic import BaseModel
 
-from homelab_docker.model.platform import Platform
+from homelab_docker.model.platform import Model as Platform
 
 
-class RemoteImage(BaseModel):
+class Remote(BaseModel):
     repo: str
     tag: str
 

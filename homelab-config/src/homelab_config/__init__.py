@@ -22,8 +22,8 @@ class Config(BaseModel):
     integration: Integration
 
     @classmethod
-    def build_key(cls, type_: Type[KeyConfig]) -> KeyConfig:
-        key = type_.__name__.lower()
+    def build_key(cls, type_: Type[KeyConfig], key: str | None = None) -> KeyConfig:
+        key = key or type_.__name__.lower()
         return type_(
             **deepmerge.always_merger.merge(
                 pulumi.Config().get_object(key, {}),

@@ -1,4 +1,11 @@
-from homelab_docker.resource.global_ import GlobalResource as GlobalResource
-from homelab_docker.resource.image import Image as Image
-from homelab_docker.resource.network import Network as Network
-from homelab_docker.resource.volume import Volume as Volume
+import dataclasses
+
+import pulumi_docker as docker
+
+
+@dataclasses.dataclass
+class Resource:
+    networks: dict[str, docker.Network]
+    images: dict[str, docker.RemoteImage]
+    volumes: dict[str, docker.Volume]
+    containers: dict[str, docker.Container]

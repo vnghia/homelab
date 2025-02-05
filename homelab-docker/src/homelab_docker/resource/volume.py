@@ -2,7 +2,7 @@ import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker import config
+from homelab_docker.config.volume import Volume as VolumeConfig
 
 
 class Volume(ComponentResource):
@@ -10,7 +10,7 @@ class Volume(ComponentResource):
 
     def __init__(
         self,
-        config: config.Volume,
+        config: VolumeConfig,
         *,
         opts: ResourceOptions,
         project_labels: dict[str, str],
