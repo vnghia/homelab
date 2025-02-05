@@ -1,7 +1,7 @@
 import pulumi
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker import config, model
+from homelab_docker import config
 
 
 class Image(ComponentResource):
@@ -12,13 +12,14 @@ class Image(ComponentResource):
         config: config.Image,
         *,
         opts: ResourceOptions,
-        platform: model.Platform,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.remotes = {
-            name: model.build_resource(name, opts=self.child_opts, platform=platform)
+            name: model.build_resource(
+                name, opts=self.child_opts, platform=config.platform
+            )
             for name, model in config.remote.items()
         }
 

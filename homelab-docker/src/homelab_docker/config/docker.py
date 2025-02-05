@@ -8,4 +8,4 @@ from homelab_docker.config.volume import Volume
 class Docker(BaseModel):
     network: Network
     images: Image
-    volume: Volume
+    volumes: Volume
