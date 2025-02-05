@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from homelab_docker.model.container.healthcheck import Healthcheck
 from homelab_docker.model.container.network import Network
 from homelab_docker.model.container.port import Port
+from homelab_docker.model.container.volume import Volume
 from homelab_docker.resource import GlobalResource
 
 
@@ -21,6 +22,7 @@ class Container(BaseModel):
     remove: bool = False
     restart: Literal["unless-stopped"] = "unless-stopped"
     sysctls: dict[str, str] | None = None
+    volumes: dict[str, Volume] = {}
     wait: bool = True
 
     labels: dict[str, str] = {}
@@ -46,7 +48,7 @@ class Container(BaseModel):
                     replace_on_changes=["*"],
                 ),
             ),
-            image=image.repo_digest,
+            image=image.name,
             capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
             if self.capabilities
             else None,
@@ -58,10 +60,29 @@ class Container(BaseModel):
             rm=self.remove,
             restart=self.restart,
             sysctls=self.sysctls,
+            volumes=[
+                volume.to_args(volume_name=global_.volume[name].name)
+                for name, volume in self.volumes.items()
+            ]
+            + [
+                docker.ContainerVolumeArgs(
+                    container_path="/etc/localtime",
+                    host_path="/etc/localtime",
+                    read_only=True,
+                ),
+                docker.ContainerVolumeArgs(
+                    container_path="/usr/share/zoneinfo",
+                    host_path="/usr/share/zoneinfo",
+                    read_only=True,
+                ),
+            ],
             wait=self.wait if self.healthcheck else False,
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
-                for k, v in (project_labels | self.labels).items()
-            ]
-            + [docker.ContainerLabelArgs(label="image.id", value=image.image_id)],
+                for k, v in (
+                    project_labels
+                    | self.labels
+                    | {"image.repo_digest": image.repo_digest}
+                ).items()
+            ],
         )

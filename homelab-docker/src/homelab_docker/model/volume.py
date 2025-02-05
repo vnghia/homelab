@@ -2,7 +2,7 @@ import pulumi_docker as docker
 from pulumi import ResourceOptions
 from pydantic import BaseModel
 
-from homelab_docker.pydantic.path import AbsolutePath
+from homelab_docker.pydantic import AbsolutePath
 
 
 class LocalVolume(BaseModel):
