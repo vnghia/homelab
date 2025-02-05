@@ -17,12 +17,8 @@ class Image(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.platform = platform
-
         self.remotes = {
-            name: model.build_resource(
-                name, opts=self.child_opts, platform=self.platform
-            )
+            name: model.build_resource(name, opts=self.child_opts, platform=platform)
             for name, model in config.remote.items()
         }
 
