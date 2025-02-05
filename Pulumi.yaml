@@ -11,6 +11,7 @@ config:
       pulumi:template: python
   docker-test:
     value:
+      timezone: America/New_York
       network:
         default-bridge: {}
         internal-bridge: {}
@@ -27,6 +28,23 @@ config:
           traefik-cert: {}
           nghe-cache: {}
       services:
+        dozzle:
+          config:
+          container:
+            image: dozzle-test
+            healthcheck:
+              tests: ["CMD", "/dozzle", "healthcheck"]
+              interval: 3s
+              timeout: 30s
+              retries: 5
+              start_period: 30s
+            volumes:
+              docker_socket: false
+            envs:
+              DOZZLE_BASE: /log
+              DOZZLE_ADDR: ":8080"
+              DOZZLE_NO_ANALYTICS: true
+              DOZZLE_ENABLE_ACTIONS: true
   docker:
     value:
       platform: amd64

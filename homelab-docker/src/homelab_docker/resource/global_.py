@@ -1,4 +1,5 @@
 from pulumi import ResourceOptions
+from pydantic import BaseModel
 
 from homelab_docker.config.docker import Docker as DockerConfig
 from homelab_docker.resource.image import Image
@@ -7,7 +8,7 @@ from homelab_docker.resource.volume import Volume
 
 
 class Global:
-    def __init__[T](
+    def __init__[T: BaseModel](
         self,
         config: DockerConfig[T],
         *,

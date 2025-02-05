@@ -5,12 +5,14 @@ from pulumi import Input, Output, ResourceOptions
 from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
+from homelab_docker.file import File
 from homelab_docker.interpolation.container_string import ContainerString
-from homelab_docker.model.container.healthcheck import Healthcheck
-from homelab_docker.model.container.network import CommonNetwork, Network
-from homelab_docker.model.container.port import Port
-from homelab_docker.model.container.volume import Volume
 from homelab_docker.resource.global_ import Global as GlobalResource
+
+from .healthcheck import Healthcheck
+from .network import Network
+from .port import Port
+from .volume import Volumes
 
 
 class Model(BaseModel):
@@ -19,21 +21,19 @@ class Model(BaseModel):
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
     healthcheck: Healthcheck | None = None
-    network: Network = Network(
-        CommonNetwork(default_bridge=False, internal_bridge=True)
-    )
+    network: Network = Network()
     ports: dict[str, Port] = {}
     read_only: bool = True
     remove: bool = False
     restart: Literal["unless-stopped"] = "unless-stopped"
     sysctls: dict[str, str] | None = None
-    volumes: dict[str, Volume] = {}
+    volumes: Volumes = Volumes()
     wait: bool = True
 
     envs: dict[str, ContainerString] = {}
     labels: dict[str, str] = {}
 
-    def build_resource[T](
+    def build_resource(
         self,
         resource_name: str,
         *,
@@ -41,7 +41,8 @@ class Model(BaseModel):
         timezone: TimeZoneName,
         global_resource: GlobalResource,
         containers: dict[str, docker.Container],
-        envs: dict[str, Input[str]] = {},
+        envs: dict[str, Input[str]] | None,
+        files: list[File] | None,
         project_labels: dict[str, str],
     ) -> docker.Container:
         image = global_resource.image[self.image]
@@ -52,8 +53,7 @@ class Model(BaseModel):
             opts=ResourceOptions.merge(
                 opts,
                 ResourceOptions(
-                    ignore_changes=["image"],
-                    replace_on_changes=["*"],
+                    ignore_changes=["image"], replace_on_changes=["*"], depends_on=files
                 ),
             ),
             image=image.name,
@@ -74,22 +74,7 @@ class Model(BaseModel):
             rm=self.remove,
             restart=self.restart,
             sysctls=self.sysctls,
-            volumes=[
-                volume.to_args(volume_name=global_resource.volume[name].name)
-                for name, volume in self.volumes.items()
-            ]
-            + [
-                docker.ContainerVolumeArgs(
-                    container_path="/etc/localtime",
-                    host_path="/etc/localtime",
-                    read_only=True,
-                ),
-                docker.ContainerVolumeArgs(
-                    container_path="/usr/share/zoneinfo",
-                    host_path="/usr/share/zoneinfo",
-                    read_only=True,
-                ),
-            ],
+            volumes=self.volumes.to_args(volume_resource=global_resource.volume),
             wait=self.wait if self.healthcheck else False,
             envs=[
                 Output.concat(
@@ -107,7 +92,7 @@ class Model(BaseModel):
                         | self.envs
                         | {
                             k: Output.from_input(v).apply(ContainerString)
-                            for k, v in envs.items()
+                            for k, v in (envs or {}).items()
                         }
                     ).items(),
                     key=lambda x: x[0],

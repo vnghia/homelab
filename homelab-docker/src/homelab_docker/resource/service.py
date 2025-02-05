@@ -2,7 +2,8 @@ import dataclasses
 
 import pulumi
 import pulumi_docker as docker
-from pulumi import ComponentResource, Input, Output, ResourceOptions
+from pulumi import ComponentResource, Input, ResourceOptions
+from pydantic.alias_generators import to_snake
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab_docker.file import File
@@ -18,25 +19,32 @@ class BuildOption:
     files: list[File] = dataclasses.field(default_factory=list)
 
 
+@dataclasses.dataclass
+class Args:
+    timezone: TimeZoneName
+    global_resource: GlobalResource
+    opts: ResourceOptions | None
+    project_labels: dict[str, str]
+
+
 class Base[T](ComponentResource):
+    CONTAINERS: dict[str, docker.Container] = {}
+
     def __init__(
         self,
-        *,
         model: ServiceModel[T],
-        global_resource: GlobalResource,
-        opts: ResourceOptions | None,
-        project_labels: dict[str, str],
+        *,
+        args: Args,
     ) -> None:
-        super().__init__(self.name(), self.name(), None, opts)
+        super().__init__(self.name(), self.name(), None, args.opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.model = model
-        self.global_resource = global_resource
-        self.project_labels = project_labels
+        self.args = args
 
     @classmethod
     def name(cls) -> str:
-        return cls.__name__.lower()
+        return to_snake(cls.__name__).replace("_", "-")
 
     @property
     def config(self) -> T:
@@ -52,11 +60,11 @@ class Base[T](ComponentResource):
         return model.build_resource(
             self.add_service_name(name),
             opts=ResourceOptions.merge(self.child_opts, option.opts),
-            timezone=TimeZoneName("America/New_York"),
-            global_resource=self.global_resource,
-            containers={},
+            timezone=self.args.timezone,
+            global_resource=self.args.global_resource,
+            containers=self.CONTAINERS,
             envs=option.envs,
-            project_labels=self.project_labels,
+            project_labels=self.args.project_labels,
         )
 
     def build_containers(self, options: dict[str | None, BuildOption] = {}) -> None:
@@ -68,13 +76,7 @@ class Base[T](ComponentResource):
             for name, model in self.model.containers.items()
         } | {None: self.container}
 
-        for name, value in self.export_containers.items():
+        for name, container in self.containers.items():
             name = self.add_service_name(name)
-            pulumi.export("container.{}".format(name), value)
-
-    @property
-    def export_containers(self) -> dict[str, Output[str]]:
-        return {
-            name or self.name(): container.name
-            for name, container in self.containers.items()
-        }
+            self.CONTAINERS[name] = container
+            pulumi.export("container.{}".format(name), container.name)
