@@ -1,13 +1,9 @@
 from pathlib import PosixPath
-from typing import Any, ClassVar, Self
+from typing import ClassVar
 
 import pulumi_docker as docker
 from pulumi import Input
-from pydantic import (
-    BaseModel,
-    ModelWrapValidatorHandler,
-    model_validator,
-)
+from pydantic import BaseModel, RootModel
 
 from homelab_docker.pydantic import AbsolutePath
 
@@ -43,29 +39,19 @@ class VolumeConfig(BaseModel):
         )
 
 
-class Volume(BaseModel):
-    data: AbsolutePath | DockerConfig | VolumeConfig
-
-    @model_validator(mode="wrap")
-    @classmethod
-    def wrap(cls, data: Any, handler: ModelWrapValidatorHandler[Self]) -> Self:
-        if isinstance(data, (PosixPath, DockerConfig, VolumeConfig)):
-            return cls(data=data)
-        else:
-            return handler({"data": data})
-
+class Volume(RootModel[AbsolutePath | DockerConfig | VolumeConfig]):
     def to_container_path(self) -> PosixPath:
-        data = self.data
-        if isinstance(data, PosixPath):
-            return data
+        root = self.root
+        if isinstance(root, PosixPath):
+            return root
         else:
-            return data.to_container_path()
+            return root.to_container_path()
 
     def to_args(self, volume_name: Input[str]) -> docker.ContainerVolumeArgs:
-        data = self.data
-        if isinstance(data, PosixPath):
+        root = self.root
+        if isinstance(root, PosixPath):
             return docker.ContainerVolumeArgs(
-                container_path=data.as_posix(), volume_name=volume_name
+                container_path=root.as_posix(), volume_name=volume_name
             )
         else:
-            return data.to_args(volume_name)
+            return root.to_args(volume_name)

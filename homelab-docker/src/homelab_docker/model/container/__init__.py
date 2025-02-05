@@ -7,7 +7,7 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab_docker.interpolation.container_string import ContainerString
 from homelab_docker.model.container.healthcheck import Healthcheck
-from homelab_docker.model.container.network import Network
+from homelab_docker.model.container.network import CommonNetwork, Network
 from homelab_docker.model.container.port import Port
 from homelab_docker.model.container.volume import Volume
 from homelab_docker.resource.global_ import Global as GlobalResource
@@ -19,7 +19,9 @@ class Model(BaseModel):
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
     healthcheck: Healthcheck | None = None
-    network: Network = Network()
+    network: Network = Network(
+        CommonNetwork(default_bridge=False, internal_bridge=True)
+    )
     ports: dict[str, Port] = {}
     read_only: bool = True
     remove: bool = False
@@ -101,12 +103,10 @@ class Model(BaseModel):
                 )
                 for k, v in sorted(
                     (
-                        {"TZ": Output.from_input(ContainerString(data=timezone))}
+                        {"TZ": Output.from_input(ContainerString(timezone))}
                         | self.envs
                         | {
-                            k: Output.from_input(v).apply(
-                                lambda x: ContainerString(data=x)
-                            )
+                            k: Output.from_input(v).apply(ContainerString)
                             for k, v in envs.items()
                         }
                     ).items(),
