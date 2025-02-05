@@ -16,8 +16,9 @@ class RemoteImage(BaseModel):
     def build_resource(
         self,
         resource_name: str,
-        opts: ResourceOptions | None = None,
-        platform: Platform | None = None,
+        *,
+        opts: ResourceOptions,
+        platform: Platform,
     ) -> docker.RemoteImage:
         return docker.RemoteImage(
             resource_name,
@@ -27,5 +28,5 @@ class RemoteImage(BaseModel):
             name=self.name,
             force_remove=False,
             keep_locally=False,
-            platform=platform.value if platform else None,
+            platform=platform.value,
         )
