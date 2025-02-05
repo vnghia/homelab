@@ -29,7 +29,8 @@ class Network(ComponentResource):
             config.DEFAULT_BRIDGE: self.default_bridge.name,
             config.INTERNAL_BRIDGE: self.internal_bridge.name,
         }
-        pulumi.export(self.RESOURCE_NAME, export)
+        for name, value in export.items():
+            pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
         self.register_outputs(export)
 
     @property

@@ -25,7 +25,8 @@ class Image(ComponentResource):
         }
 
         export = {name: image.id for name, image in self.remotes.items()}
-        pulumi.export(self.RESOURCE_NAME, export)
+        for name, value in export.items():
+            pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
         self.register_outputs(export)
 
     def __getitem__(self, key: str) -> docker.RemoteImage:

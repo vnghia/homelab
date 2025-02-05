@@ -1,5 +1,6 @@
-from homelab_config import Config
+from homelab_config import Config, config
 from homelab_docker.config.docker import Docker as DockerConfig
+from homelab_docker.resource.global_ import Global as GlobalResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import BaseModel
 
@@ -31,6 +32,8 @@ class DockerTest(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, None)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.config = Config.build_key(DockerConfig, "docker-test")
-
+        self.config = Config.build_key(DockerConfig[None], "docker-test")
+        self.resource = GlobalResource(
+            self.config, opts=self.child_opts, project_labels=config.PROJECT_LABELS
+        )
         self.register_outputs({})

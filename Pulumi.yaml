@@ -23,6 +23,9 @@ config:
       volumes:
         local:
           tailscale-data: {}
+          traefik-config: {}
+          traefik-cert: {}
+          nghe-cache: {}
       services:
   docker:
     value:
