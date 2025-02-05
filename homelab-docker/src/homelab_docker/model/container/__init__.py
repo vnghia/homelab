@@ -1,9 +1,11 @@
 from typing import Literal
 
 import pulumi_docker as docker
-from pulumi import ResourceOptions
+from pulumi import Input, Output, ResourceOptions
 from pydantic import BaseModel
+from pydantic_extra_types.timezone_name import TimeZoneName
 
+from homelab_docker.interpolation.container_string import ContainerString
 from homelab_docker.model.container.healthcheck import Healthcheck
 from homelab_docker.model.container.network import Network
 from homelab_docker.model.container.port import Port
@@ -15,6 +17,7 @@ class Container(BaseModel):
     image: str
 
     capabilities: list[str] | None = None
+    command: list[ContainerString] | None = None
     healthcheck: Healthcheck | None = None
     network: Network = Network()
     ports: dict[str, Port] = {}
@@ -25,6 +28,7 @@ class Container(BaseModel):
     volumes: dict[str, Volume] = {}
     wait: bool = True
 
+    envs: dict[str, ContainerString] = {}
     labels: dict[str, str] = {}
 
     def build_resource(
@@ -32,8 +36,10 @@ class Container(BaseModel):
         resource_name: str,
         *,
         opts: ResourceOptions,
+        timezone: TimeZoneName,
         global_: GlobalResource,
         containers: dict[str, docker.Container],
+        envs: dict[str, Input[str]] = {},
         project_labels: dict[str, str],
     ) -> docker.Container:
         image = global_.image[self.image]
@@ -51,6 +57,12 @@ class Container(BaseModel):
             image=image.name,
             capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
             if self.capabilities
+            else None,
+            command=[
+                command.to_str(container_volumes=self.volumes)
+                for command in self.command
+            ]
+            if self.command
             else None,
             healthcheck=self.healthcheck.to_args() if self.healthcheck else None,
             network_mode=network_args.mode,
@@ -77,6 +89,21 @@ class Container(BaseModel):
                 ),
             ],
             wait=self.wait if self.healthcheck else False,
+            envs=[
+                Output.concat(
+                    k,
+                    "=",
+                    Output.from_input(v).apply(
+                        lambda x: x.to_str(container_volumes=self.volumes)
+                        if isinstance(x, ContainerString)
+                        else x
+                    ),
+                )
+                for k, v in sorted(
+                    ({"TZ": timezone} | self.envs | envs).items(),
+                    key=lambda x: x[0],
+                )
+            ],
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
