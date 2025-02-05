@@ -6,8 +6,8 @@ from homelab_docker.resource.network import Network
 from homelab_docker.resource.volume import Volume
 
 
-class Global[T]:
-    def __init__(
+class Global:
+    def __init__[T](
         self,
         config: DockerConfig[T],
         *,

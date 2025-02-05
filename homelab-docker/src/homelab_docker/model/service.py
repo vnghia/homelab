@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 
-from homelab_docker.model.container import Container
+from homelab_docker.model.container import Model as ContainerModel
 
 
-class Model(BaseModel):
-    container: Container
-    containers: dict[str, Container] = {}
+class Model[T](BaseModel):
+    config: T
+    container: ContainerModel
+    containers: dict[str, ContainerModel] = {}

@@ -33,7 +33,7 @@ class DockerTest(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.config = Config.build_key(DockerConfig[None], "docker-test")
-        self.resource = GlobalResource(
+        self.global_resource = GlobalResource(
             self.config, opts=self.child_opts, project_labels=config.PROJECT_LABELS
         )
         self.register_outputs({})

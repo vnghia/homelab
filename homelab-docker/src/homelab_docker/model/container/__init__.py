@@ -13,7 +13,7 @@ from homelab_docker.model.container.volume import Volume
 from homelab_docker.resource.global_ import Global as GlobalResource
 
 
-class Container(BaseModel):
+class Model(BaseModel):
     image: str
 
     capabilities: list[str] | None = None
@@ -37,13 +37,13 @@ class Container(BaseModel):
         *,
         opts: ResourceOptions,
         timezone: TimeZoneName,
-        global_: GlobalResource[T],
+        global_resource: GlobalResource,
         containers: dict[str, docker.Container],
         envs: dict[str, Input[str]] = {},
         project_labels: dict[str, str],
     ) -> docker.Container:
-        image = global_.image[self.image]
-        network_args = self.network.to_args(global_.network, containers)
+        image = global_resource.image[self.image]
+        network_args = self.network.to_args(global_resource.network, containers)
 
         return docker.Container(
             resource_name,
@@ -73,7 +73,7 @@ class Container(BaseModel):
             restart=self.restart,
             sysctls=self.sysctls,
             volumes=[
-                volume.to_args(volume_name=global_.volume[name].name)
+                volume.to_args(volume_name=global_resource.volume[name].name)
                 for name, volume in self.volumes.items()
             ]
             + [
