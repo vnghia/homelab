@@ -6,7 +6,7 @@ from homelab_docker.resource.network import Network as Network
 from homelab_docker.resource.volume import Volume as Volume
 
 
-class CommonResource:
+class GlobalResource:
     def __init__(
         self,
         config: config.Docker,

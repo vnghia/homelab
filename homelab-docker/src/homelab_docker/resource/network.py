@@ -1,4 +1,5 @@
 import pulumi
+import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab_docker import config
@@ -30,3 +31,11 @@ class Network(ComponentResource):
         }
         pulumi.export(self.RESOURCE_NAME, export)
         self.register_outputs(export)
+
+    @property
+    def default_bridge_args(self) -> docker.ContainerNetworksAdvancedArgs:
+        return docker.ContainerNetworksAdvancedArgs(name=self.default_bridge.name)
+
+    @property
+    def internal_bridge_args(self) -> docker.ContainerNetworksAdvancedArgs:
+        return docker.ContainerNetworksAdvancedArgs(name=self.internal_bridge.name)

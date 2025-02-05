@@ -1,4 +1,5 @@
 import pulumi
+import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab_docker import config
@@ -26,3 +27,6 @@ class Image(ComponentResource):
         export = {name: image.id for name, image in self.remotes.items()}
         pulumi.export(self.RESOURCE_NAME, export)
         self.register_outputs(export)
+
+    def __getitem__(self, key: str) -> docker.RemoteImage:
+        return self.remotes[key]
