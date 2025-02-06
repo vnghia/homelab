@@ -34,7 +34,9 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
             Config.get_name(None), network_config, opts=self.child_opts
         )
         self.static = TraefikStaticConfig(
-            traefik_service_model=self.model, tailscale_service=tailscale_service
+            network_config=network_config,
+            traefik_service_model=self.model,
+            tailscale_service=tailscale_service,
         )
         self.build_containers(
             options={
@@ -63,7 +65,6 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
         ).build_resource(
             "dashboard",
             opts=self.child_opts,
-            network_config=network_config,
             volume_resource=container_model_global_args.docker_resource.volume,
             containers=self.CONTAINERS,
             static_config=self.static,

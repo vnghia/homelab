@@ -4,7 +4,6 @@ import pulumi_random as random
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_network.config.network import NetworkConfig
 from pulumi import ResourceOptions
 
 from homelab.docker.service.nghe.config import NgheConfig
@@ -17,7 +16,6 @@ class NgheService(ServiceResourceBase[NgheConfig]):
         model: ServiceModel[NgheConfig],
         *,
         opts: ResourceOptions | None,
-        network_config: NetworkConfig,
         container_model_global_args: ContainerModelGlobalArgs,
         traefik_static_config: TraefikStaticConfig,
     ) -> None:

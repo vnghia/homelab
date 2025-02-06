@@ -5,7 +5,6 @@ from homelab_docker.model.container.model import (
 )
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_network.config.network import NetworkConfig
 from pulumi import ResourceOptions
 
 from homelab.docker.service.traefik.config.dynamic.http import TraefikHttpDynamicConfig
@@ -19,7 +18,6 @@ class DozzleService(ServiceResourceBase[None]):
         model: ServiceModel[None],
         *,
         opts: ResourceOptions | None,
-        network_config: NetworkConfig,
         container_model_global_args: ContainerModelGlobalArgs,
         traefik_static_config: TraefikStaticConfig,
     ) -> None:
@@ -50,7 +48,6 @@ class DozzleService(ServiceResourceBase[None]):
         ).build_resource(
             "traefik",
             opts=self.child_opts,
-            network_config=network_config,
             volume_resource=container_model_global_args.docker_resource.volume,
             containers=self.CONTAINERS,
             static_config=traefik_static_config,
@@ -69,7 +66,6 @@ class DozzleService(ServiceResourceBase[None]):
         ).build_resource(
             "traefik-redirect",
             opts=self.child_opts,
-            network_config=network_config,
             volume_resource=container_model_global_args.docker_resource.volume,
             containers=self.CONTAINERS,
             static_config=traefik_static_config,

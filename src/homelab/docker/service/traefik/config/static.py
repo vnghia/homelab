@@ -3,6 +3,7 @@ from homelab_docker.model.file.config import ConfigFile
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.volume import VolumeResource
+from homelab_network.config.network import NetworkConfig
 from pulumi import ResourceOptions
 
 from homelab.docker.service.tailscale import TailscaleService
@@ -15,9 +16,11 @@ class TraefikStaticConfig:
 
     def __init__(
         self,
+        network_config: NetworkConfig,
         traefik_service_model: ServiceModel[TraefikConfig],
         tailscale_service: TailscaleService,
     ) -> None:
+        self.network_config = network_config
         container_volumes_config = traefik_service_model.container.volumes
         self.service_config = traefik_service_model.config
 

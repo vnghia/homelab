@@ -4,7 +4,6 @@ import pulumi_docker as docker
 from homelab_docker.model.file.config import ConfigFile
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.volume import VolumeResource
-from homelab_network.config.network import NetworkConfig
 from pulumi import ResourceOptions
 from pydantic import BaseModel, PositiveInt
 
@@ -28,16 +27,15 @@ class TraefikHttpDynamicConfig(BaseModel):
         resource_name: str,
         *,
         opts: ResourceOptions | None,
-        network_config: NetworkConfig,
         volume_resource: VolumeResource,
         containers: dict[str, docker.Container],
         static_config: TraefikStaticConfig,
     ) -> FileResource:
         entrypoint = static_config.service_config.entrypoint
         host = (
-            network_config.public.hostnames
+            static_config.network_config.public.hostnames
             if self.public
-            else network_config.private.hostnames
+            else static_config.network_config.private.hostnames
         )[self.hostname or self.name]
 
         data: dict[str, Any] = {
