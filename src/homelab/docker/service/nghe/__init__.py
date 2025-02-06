@@ -1,55 +1,60 @@
-# import binascii
+import binascii
 
-# import homelab_config
-# import pulumi_random as random
-# from pulumi import ResourceOptions
+import pulumi_random as random
+from homelab_docker.model.container.model import ContainerModelGlobalArgs
+from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource.service import ServiceResourceBase
+from homelab_network.config.network import NetworkConfig
+from pulumi import ResourceOptions
 
-# from homelab.docker.resource import Resource
-# from homelab.docker.service.base import Base, BuildOption
-# from homelab.docker.service.nghe.config import Config
-# from homelab.docker.service.traefik.config.dynamic.http import HttpDynamic
-# from homelab.docker.service.traefik.config.static import Static
+from homelab.docker.service.nghe.config import NgheConfig
+from homelab.docker.service.traefik.config.static import TraefikStaticConfig
 
 
-# class Nghe(Base):
-#     KEY_LENGTH = 16
+class NgheService(ServiceResourceBase[NgheConfig]):
+    def __init__(
+        self,
+        model: ServiceModel[NgheConfig],
+        *,
+        opts: ResourceOptions | None,
+        network_config: NetworkConfig,
+        container_model_global_args: ContainerModelGlobalArgs,
+        traefik_static_config: TraefikStaticConfig,
+    ) -> None:
+        super().__init__(
+            model, opts=opts, container_model_global_args=container_model_global_args
+        )
 
-#     def __init__(
-#         self,
-#         resource: Resource,
-#         traefik: Static,
-#         opts: ResourceOptions | None,
-#     ) -> None:
-#         super().__init__(resource=resource, opts=opts)
+        self.build_containers(options={})
 
-#         self.service_config = self.config().config(Config)
+        # self.service_config = self.config().config(Config)
 
-#         self.key = random.RandomPassword(
-#             "key", opts=self.child_opts, length=self.KEY_LENGTH, special=False
-#         ).result
-#         self.build_containers(
-#             options={
-#                 None: BuildOption(
-#                     envs={
-#                         "NGHE_DATABASE__URL": self.postgres[None].get_url().apply(str),
-#                         "NGHE_DATABASE__KEY": self.key.apply(
-#                             lambda x: binascii.hexlify(x.encode()).decode("ascii")
-#                         ),
-#                         "NGHE_INTEGRATION__SPOTIFY__ID": self.service_config.spotify.id,
-#                         "NGHE_INTEGRATION__SPOTIFY__SECRET": self.service_config.spotify.secret,
-#                         "NGHE_INTEGRATION__LASTFM__KEY": self.service_config.lastfm.key,
-#                         "NGHE_S3__ENABLE": "true",
-#                         **homelab_config.config.integration.s3.to_env_input(),
-#                     },
-#                     opts=ResourceOptions(depends_on=[self.postgres[None].container]),
-#                 )
-#             }
-#         )
+        # self.key = random.RandomPassword(
+        #     "key", opts=self.child_opts, length=self.KEY_LENGTH, special=False
+        # ).result
+        # self.build_containers(
+        #     options={
+        #         None: BuildOption(
+        #             envs={
+        #                 "NGHE_DATABASE__URL": self.postgres[None].get_url().apply(str),
+        #                 "NGHE_DATABASE__KEY": self.key.apply(
+        #                     lambda x: binascii.hexlify(x.encode()).decode("ascii")
+        #                 ),
+        #                 "NGHE_INTEGRATION__SPOTIFY__ID": self.service_config.spotify.id,
+        #                 "NGHE_INTEGRATION__SPOTIFY__SECRET": self.service_config.spotify.secret,
+        #                 "NGHE_INTEGRATION__LASTFM__KEY": self.service_config.lastfm.key,
+        #                 "NGHE_S3__ENABLE": "true",
+        #                 **homelab_config.config.integration.s3.to_env_input(),
+        #             },
+        #             opts=ResourceOptions(depends_on=[self.postgres[None].container]),
+        #         )
+        #     }
+        # )
 
-#         self.traefik = HttpDynamic(
-#             name=self.name(),
-#             public=True,
-#             service=int(self.config().container.envs["NGHE_SERVER__PORT"].to_str()),
-#         ).build_resource(
-#             "traefik", resource=resource, traefik=traefik, opts=self.child_opts
-#         )
+        # self.traefik = HttpDynamic(
+        #     name=self.name(),
+        #     public=True,
+        #     service=int(self.config().container.envs["NGHE_SERVER__PORT"].to_str()),
+        # ).build_resource(
+        #     "traefik", resource=resource, traefik=traefik, opts=self.child_opts
+        # )

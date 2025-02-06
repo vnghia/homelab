@@ -90,7 +90,7 @@ pulumi-cloudflare==5.49.0
 pulumi-docker==4.6.1
     # via homelab-docker
 pulumi-random==4.17.0
-    # via homelab
+    # via homelab-docker
 pulumi-tailscale==0.17.5
     # via homelab
 pycparser==2.22

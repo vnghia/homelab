@@ -9,6 +9,7 @@ from homelab_docker.model.container.model import (
     ContainerModelGlobalArgs,
 )
 from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource.database.resource import DatabaseResource
 
 
 class ServiceResourceBase[T](ComponentResource):
@@ -26,6 +27,7 @@ class ServiceResourceBase[T](ComponentResource):
 
         self.model = model
         self.container_model_global_args = container_model_global_args
+        self.build_databases()
 
     @classmethod
     def name(cls) -> str:
@@ -37,6 +39,14 @@ class ServiceResourceBase[T](ComponentResource):
 
     def add_service_name(self, name: str | None) -> str:
         return "{}-{}".format(self.name(), name) if name else self.name()
+
+    def build_databases(self) -> None:
+        self.database = DatabaseResource(
+            self.model.databases,
+            opts=self.child_opts,
+            service_name=self.name(),
+            container_model_global_args=self.container_model_global_args,
+        )
 
     def build_container(
         self,

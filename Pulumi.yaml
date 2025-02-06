@@ -25,6 +25,9 @@ config:
           dozzle:
             repo: amir20/dozzle
             tag: "v8.10.4"
+          nghe:
+            repo: ghcr.io/vnghia/nghe-musl
+            tag: "0.10.1"
         postgres:
           postgres:
             "17":
@@ -145,17 +148,17 @@ config:
               postgres: {}
           container:
             image: nghe
-            healthcheck:
-              tests:
-                [
-                  "CMD",
-                  "wget",
-                  "--spider",
-                  "-q",
-                  "http://localhost:3000/rest/health",
-                ]
-              interval: 1s
-              timeout: 5s
+            # healthcheck:
+            #   tests:
+            #     [
+            #       "CMD",
+            #       "wget",
+            #       "--spider",
+            #       "-q",
+            #       "http://localhost:3000/rest/health",
+            #     ]
+            #   interval: 1s
+            #   timeout: 5s
             network:
               default-bridge: true
             volumes:

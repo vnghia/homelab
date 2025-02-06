@@ -1,15 +1,15 @@
 from pydantic import BaseModel
 
 
-class LastFm(BaseModel):
+class NgheLastFmConfig(BaseModel):
     key: str
 
 
-class Spotify(BaseModel):
+class NgheSpotifyConfig(BaseModel):
     id: str
     secret: str
 
 
-class Config(BaseModel):
-    lastfm: LastFm
-    spotify: Spotify
+class NgheConfig(BaseModel):
+    lastfm: NgheLastFmConfig
+    spotify: NgheSpotifyConfig

@@ -6,6 +6,6 @@ from .database import DatabaseModel
 
 class ServiceModel[T](BaseModel):
     config: T
-    databases: DatabaseModel | None = None
+    databases: DatabaseModel = DatabaseModel()
     container: ContainerModel
     containers: dict[str, ContainerModel] = {}

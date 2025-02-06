@@ -8,7 +8,6 @@ dependencies = [
     "homelab-docker",
     "deepmerge>=2.0",
     "pulumi-tailscale>=0.17.5",
-    "pulumi-random>=4.17.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

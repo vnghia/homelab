@@ -7,7 +7,10 @@ from homelab_docker.resource.docker import DockerResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 
+from homelab.docker.service.nghe import NgheService
+
 from .dozzle import DozzleService
+from .nghe.config import NgheConfig
 from .tailscale import TailscaleService
 from .traefik import TraefikService
 from .traefik.config import TraefikConfig
@@ -17,7 +20,7 @@ class ServiceConfig(ServiceConfigBase):
     tailscale: ServiceModel[None]
     traefik: ServiceModel[TraefikConfig]
     dozzle: ServiceModel[None]
-    nghe: ServiceModel[None]
+    nghe: ServiceModel[NgheConfig]
 
     @property
     def databases(self) -> dict[str, DatabaseModel]:
@@ -63,6 +66,13 @@ class Service(ComponentResource):
         )
         self.dozzle = DozzleService(
             self.services_config.dozzle,
+            opts=self.child_opts,
+            network_config=config.network,
+            container_model_global_args=self.container_model_global_args,
+            traefik_static_config=self.traefik.static,
+        )
+        self.nghe = NgheService(
+            self.services_config.nghe,
             opts=self.child_opts,
             network_config=config.network,
             container_model_global_args=self.container_model_global_args,
