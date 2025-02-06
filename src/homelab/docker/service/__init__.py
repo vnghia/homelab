@@ -8,31 +8,12 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 
 from .dozzle import Dozzle
 from .tailscale import Tailscale
-
-# class Service(ComponentResource):
-#     RESOURCE_NAME = "service"
-
-#     def __init__(
-#         self,
-#         resource: Resource,
-#         opts: ResourceOptions | None,
-#     ) -> None:
-#         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
-#         self.child_opts = ResourceOptions(parent=self)
-
-#         self.tailscale = Tailscale(resource=resource, opts=self.child_opts)
-#         self.traefik = Traefik(
-#             resource=resource, tailscale=self.tailscale, opts=self.child_opts
-#         )
-#         self.nghe = Nghe(
-#             resource=resource, traefik=self.traefik.static, opts=self.child_opts
-#         )
-
-#         self.register_outputs({})
+from .traefik import TraefikConfig
 
 
 class ServiceConfig(BaseModel):
     tailscale: ServiceModel[None]
+    traefik: ServiceModel[TraefikConfig]
     dozzle: ServiceModel[None]
 
 
