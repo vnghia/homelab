@@ -9,18 +9,16 @@ config:
   pulumi:tags:
     value:
       pulumi:template: python
-  docker-test:
+  docker:
     value:
-      timezone: America/New_York
       network:
         default-bridge: {}
         internal-bridge: {}
       images:
-        platform: amd64
         remote:
-          dozzle-test:
+          dozzle:
             repo: amir20/dozzle
-            tag: "v8.10.1"
+            tag: "v8.10.4"
       volumes:
         local:
           tailscale-data: {}
@@ -31,7 +29,7 @@ config:
         dozzle:
           config:
           container:
-            image: dozzle-test
+            image: dozzle
             healthcheck:
               tests: ["CMD", "/dozzle", "healthcheck"]
               interval: 3s
@@ -45,158 +43,158 @@ config:
               DOZZLE_ADDR: ":8080"
               DOZZLE_NO_ANALYTICS: true
               DOZZLE_ENABLE_ACTIONS: true
-  docker:
-    value:
-      platform: amd64
-      networks:
-        bridge:
-          default-bridge: {}
-          internal-bridge:
-            internal: true
-      images:
-        tailscale:
-          repo: tailscale/tailscale
-          tag: "v1.78.3"
-        traefik:
-          repo: traefik
-          tag: "v3.3.2"
-        dozzle:
-          repo: amir20/dozzle
-          tag: "v8.10.4"
-        nghe:
-          repo: ghcr.io/vnghia/nghe-musl
-          tag: "0.10.1"
-        postgres-17:
-          repo: postgres
-          tag: "17.2-bookworm"
-      volumes:
-        local:
-          tailscale-data: {}
-          traefik-config: {}
-          traefik-cert: {}
-          nghe-cache: {}
-      services:
-        tailscale:
-          container:
-            image: tailscale
-            capabilities:
-              - NET_ADMIN
-            healthcheck:
-              tests:
-                [
-                  "CMD",
-                  "wget",
-                  "--spider",
-                  "-q",
-                  "http://localhost:9002/healthz",
-                ]
-              interval: 1s
-              timeout: 5s
-            ports:
-              httpv4:
-                internal: 81
-                external: 80
-                ip: "0.0.0.0"
-              httpv6:
-                internal: 81
-                external: 80
-                ip: "::"
-              httpsv4:
-                internal: 444
-                external: 443
-                ip: "0.0.0.0"
-              httpsv6:
-                internal: 444
-                external: 443
-                ip: "::"
-            tmpfs:
-              - /tmp
-              - /run
-            networks:
-              default-bridge: {}
-              internal-bridge: {}
-            volumes:
-              tailscale-data: /var/lib/tailscale
-            envs:
-              TS_STATE_DIR:
-                volume: tailscale-data
-              TS_USERSPACE: "false"
-              TS_AUTH_ONCE: "true"
-              TS_ENABLE_HEALTH_CHECK: "true"
-        traefik:
-          config:
-            path: /proxy
-            acme:
-              server: https://acme-v02.api.letsencrypt.org/directory
-              storage:
-                volume: traefik-cert
-                path: acme.json
-            provider:
-              file: dynamic
-            entrypoint:
-              public-http: "public-http"
-              private-http: "private-http"
-              public-https: "public-https"
-              private-https: "private-https"
-          container:
-            image: traefik
-            command:
-              - "traefik"
-              - "--configFile"
-              - volume: traefik-config
-                path: static.toml
-            network_mode: tailscale
-            healthcheck:
-              tests: ["CMD", "traefik", "healthcheck", "--ping"]
-              interval: 1s
-              timeout: 5s
-              retries: 5
-            volumes:
-              traefik-config:
-                path: /etc/traefik/config
-                ro: true
-              traefik-cert: /etc/traefik/cert
-        dozzle:
-          container:
-            image: dozzle
-            healthcheck:
-              tests: ["CMD", "/dozzle", "healthcheck"]
-              interval: 3s
-              timeout: 30s
-              retries: 5
-              start_period: 30s
-            docker_sock_ro: false
-            networks:
-              internal-bridge: {}
-            envs:
-              DOZZLE_BASE: /log
-              DOZZLE_ADDR: ":8080"
-              DOZZLE_NO_ANALYTICS: "true"
-              DOZZLE_ENABLE_ACTIONS: "true"
-        nghe:
-          databases:
-            postgres:
-              postgres: {}
-          container:
-            image: nghe
-            healthcheck:
-              tests:
-                [
-                  "CMD",
-                  "wget",
-                  "--spider",
-                  "-q",
-                  "http://localhost:3000/rest/health",
-                ]
-              interval: 1s
-              timeout: 5s
-            networks:
-              default-bridge: {}
-              internal-bridge: {}
-            volumes:
-              nghe-cache: /tmp/nghe
-            envs:
-              NGHE_SERVER__PORT: 3000
+  # docker:
+  #   value:
+  #     platform: amd64
+  #     networks:
+  #       bridge:
+  #         default-bridge: {}
+  #         internal-bridge:
+  #           internal: true
+  #     images:
+  #       tailscale:
+  #         repo: tailscale/tailscale
+  #         tag: "v1.78.3"
+  #       traefik:
+  #         repo: traefik
+  #         tag: "v3.3.2"
+  #       dozzle:
+  #         repo: amir20/dozzle
+  #         tag: "v8.10.4"
+  #       nghe:
+  #         repo: ghcr.io/vnghia/nghe-musl
+  #         tag: "0.10.1"
+  #       postgres-17:
+  #         repo: postgres
+  #         tag: "17.2-bookworm"
+  #     volumes:
+  #       local:
+  #         tailscale-data: {}
+  #         traefik-config: {}
+  #         traefik-cert: {}
+  #         nghe-cache: {}
+  #     services:
+  #       tailscale:
+  #         container:
+  #           image: tailscale
+  #           capabilities:
+  #             - NET_ADMIN
+  #           healthcheck:
+  #             tests:
+  #               [
+  #                 "CMD",
+  #                 "wget",
+  #                 "--spider",
+  #                 "-q",
+  #                 "http://localhost:9002/healthz",
+  #               ]
+  #             interval: 1s
+  #             timeout: 5s
+  #           ports:
+  #             httpv4:
+  #               internal: 81
+  #               external: 80
+  #               ip: "0.0.0.0"
+  #             httpv6:
+  #               internal: 81
+  #               external: 80
+  #               ip: "::"
+  #             httpsv4:
+  #               internal: 444
+  #               external: 443
+  #               ip: "0.0.0.0"
+  #             httpsv6:
+  #               internal: 444
+  #               external: 443
+  #               ip: "::"
+  #           tmpfs:
+  #             - /tmp
+  #             - /run
+  #           networks:
+  #             default-bridge: {}
+  #             internal-bridge: {}
+  #           volumes:
+  #             tailscale-data: /var/lib/tailscale
+  #           envs:
+  #             TS_STATE_DIR:
+  #               volume: tailscale-data
+  #             TS_USERSPACE: "false"
+  #             TS_AUTH_ONCE: "true"
+  #             TS_ENABLE_HEALTH_CHECK: "true"
+  #       traefik:
+  #         config:
+  #           path: /proxy
+  #           acme:
+  #             server: https://acme-v02.api.letsencrypt.org/directory
+  #             storage:
+  #               volume: traefik-cert
+  #               path: acme.json
+  #           provider:
+  #             file: dynamic
+  #           entrypoint:
+  #             public-http: "public-http"
+  #             private-http: "private-http"
+  #             public-https: "public-https"
+  #             private-https: "private-https"
+  #         container:
+  #           image: traefik
+  #           command:
+  #             - "traefik"
+  #             - "--configFile"
+  #             - volume: traefik-config
+  #               path: static.toml
+  #           network_mode: tailscale
+  #           healthcheck:
+  #             tests: ["CMD", "traefik", "healthcheck", "--ping"]
+  #             interval: 1s
+  #             timeout: 5s
+  #             retries: 5
+  #           volumes:
+  #             traefik-config:
+  #               path: /etc/traefik/config
+  #               ro: true
+  #             traefik-cert: /etc/traefik/cert
+  #       dozzle:
+  #         container:
+  #           image: dozzle
+  #           healthcheck:
+  #             tests: ["CMD", "/dozzle", "healthcheck"]
+  #             interval: 3s
+  #             timeout: 30s
+  #             retries: 5
+  #             start_period: 30s
+  #           docker_sock_ro: false
+  #           networks:
+  #             internal-bridge: {}
+  #           envs:
+  #             DOZZLE_BASE: /log
+  #             DOZZLE_ADDR: ":8080"
+  #             DOZZLE_NO_ANALYTICS: "true"
+  #             DOZZLE_ENABLE_ACTIONS: "true"
+  #       nghe:
+  #         databases:
+  #           postgres:
+  #             postgres: {}
+  #         container:
+  #           image: nghe
+  #           healthcheck:
+  #             tests:
+  #               [
+  #                 "CMD",
+  #                 "wget",
+  #                 "--spider",
+  #                 "-q",
+  #                 "http://localhost:3000/rest/health",
+  #               ]
+  #             interval: 1s
+  #             timeout: 5s
+  #           networks:
+  #             default-bridge: {}
+  #             internal-bridge: {}
+  #           volumes:
+  #             nghe-cache: /tmp/nghe
+  #           envs:
+  #             NGHE_SERVER__PORT: 3000
   integration:
     value:
       s3:

@@ -1,34 +1,30 @@
-from typing import ClassVar, Type, TypeVar
+from typing import Any, ClassVar, Self, Type
 
 import deepmerge
 import pulumi
+from homelab_docker.config.docker import Docker as DockerConfig
 from pydantic import BaseModel
 
-from homelab_config.constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
-from homelab_config.docker import Docker
 from homelab_config.integration import Integration
 from homelab_config.network import Network
 
-KeyConfig = TypeVar("KeyConfig", bound=BaseModel)
+from .constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
 
 
-class Config(BaseModel):
+class Config[T: BaseModel](BaseModel):
     PROJECT_NAME: ClassVar[str] = PROJECT_NAME
     PROJECT_STACK: ClassVar[str] = PROJECT_STACK
     PROJECT_LABELS: ClassVar[dict[str, str]] = PROJECT_LABELS
 
-    docker: Docker
+    docker: DockerConfig[T]
     network: Network
     integration: Integration
 
     @classmethod
-    def build_key(cls, type_: Type[KeyConfig], key: str | None = None) -> KeyConfig:
-        key = key or type_.__name__.lower()
-        return type_(
-            **deepmerge.always_merger.merge(
-                pulumi.Config().get_object(key, {}),
-                pulumi.Config().get_object("stack-{}".format(key), {}),
-            )
+    def get_key(cls, key: str) -> Any:
+        return deepmerge.always_merger.merge(
+            pulumi.Config().get_object(key, {}),
+            pulumi.Config().get_object("stack-{}".format(key), {}),
         )
 
     @classmethod
@@ -41,9 +37,10 @@ class Config(BaseModel):
             + ([cls.PROJECT_STACK] if stack else [])
         )
 
-
-config = Config(
-    docker=Config.build_key(Docker),
-    network=Config.build_key(Network),
-    integration=Config.build_key(Integration),
-)
+    @classmethod
+    def build(cls, docker_type: Type[DockerConfig[T]]) -> Self:
+        return cls(
+            docker=docker_type(**cls.get_key("docker")),
+            network=Network(**cls.get_key("network")),
+            integration=Integration(**cls.get_key("integration")),
+        )

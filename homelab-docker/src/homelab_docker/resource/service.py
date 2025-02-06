@@ -64,6 +64,7 @@ class Base[T](ComponentResource):
             global_resource=self.args.global_resource,
             containers=self.CONTAINERS,
             envs=option.envs,
+            files=option.files,
             project_labels=self.args.project_labels,
         )
 

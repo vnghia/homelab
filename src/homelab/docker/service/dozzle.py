@@ -1,4 +1,4 @@
-from homelab_config import config
+from homelab_config import Config
 from homelab_docker.model.service import Model as ServiceModel
 from homelab_docker.resource.service import Args, Base, BuildOption
 
@@ -59,7 +59,7 @@ class Dozzle(Base[None]):
                 None: BuildOption(
                     envs={
                         "DOZZLE_FILTER": "label=pulumi.stack={}".format(
-                            config.PROJECT_STACK
+                            Config.PROJECT_STACK
                         ),
                     },
                 )

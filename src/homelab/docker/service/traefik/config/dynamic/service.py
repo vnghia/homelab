@@ -3,7 +3,7 @@ from enum import Enum
 from pydantic import BaseModel, ConfigDict, PositiveInt
 from pydantic_core import Url
 
-from homelab.docker.resource import Resource
+# from homelab.docker.resource import Resource
 
 
 class ServiceType(Enum):
@@ -16,12 +16,12 @@ class Service(BaseModel):
     container: str | None = None
     port: PositiveInt
 
-    def to_url(
-        self,
-        type: ServiceType,
-        router_name: str,
-        resource: Resource,
-    ) -> Url:
-        container = self.container or router_name
-        resource.containers[container]
-        return Url("{}://{}:{}".format(type.value, container, self.port))
+    # def to_url(
+    #     self,
+    #     type_: ServiceType,
+    #     router_name: str,
+    #     resource: Resource,
+    # ) -> Url:
+    #     container = self.container or router_name
+    #     resource.containers[container]
+    #     return Url("{}://{}:{}".format(type.value, container, self.port))

@@ -6,8 +6,6 @@ authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 dependencies = [
     "homelab-config",
     "homelab-docker",
-    "homelab-docker-image",
-    "homelab-docker-network",
     "deepmerge>=2.0",
     "pulumi-tailscale>=0.17.5",
     "pulumi-random>=4.17.0",
