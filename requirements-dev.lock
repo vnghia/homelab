@@ -12,12 +12,11 @@
 -e file:.
 -e file:homelab-config
     # via homelab
--e file:homelab-dns
-    # via homelab-config
 -e file:homelab-docker
     # via homelab
     # via homelab-config
 -e file:homelab-network
+    # via homelab-config
 annotated-types==0.7.0
     # via pydantic
 anyio==4.8.0
@@ -87,7 +86,6 @@ pulumi==3.147.0
     # via pulumi-random
     # via pulumi-tailscale
 pulumi-cloudflare==5.49.0
-    # via homelab-dns
     # via homelab-network
 pulumi-docker==4.6.1
     # via homelab-docker
@@ -98,7 +96,6 @@ pulumi-tailscale==0.17.5
 pycparser==2.22
     # via cffi
 pydantic==2.10.6
-    # via homelab-dns
     # via homelab-docker
     # via homelab-network
     # via pydantic-extra-types

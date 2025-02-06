@@ -6,7 +6,7 @@ authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 dependencies = [
     "pulumi>=3.147.0",
     "homelab-docker",
-    "homelab-dns",
+    "homelab-network",
 ]
 requires-python = ">= 3.12"
 classifiers = ["Private :: Do Not Upload"]

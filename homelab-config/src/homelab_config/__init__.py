@@ -3,10 +3,10 @@ from typing import Any, ClassVar, Self, Type
 import deepmerge
 import pulumi
 from homelab_docker.config.docker import DockerConfig
+from homelab_network.config.network import NetworkConfig
 from pydantic import BaseModel
 
 from homelab_config.integration import Integration
-from homelab_config.network import Network
 
 from .constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
 
@@ -17,7 +17,7 @@ class Config[T: BaseModel](BaseModel):
     PROJECT_LABELS: ClassVar[dict[str, str]] = PROJECT_LABELS
 
     docker: DockerConfig[T]
-    network: Network
+    network: NetworkConfig
     integration: Integration
 
     @classmethod
@@ -41,6 +41,6 @@ class Config[T: BaseModel](BaseModel):
     def build(cls, docker_type: Type[DockerConfig[T]]) -> Self:
         return cls(
             docker=docker_type(**cls.get_key("docker")),
-            network=Network(**cls.get_key("network")),
+            network=NetworkConfig(**cls.get_key("network")),
             integration=Integration(**cls.get_key("integration")),
         )

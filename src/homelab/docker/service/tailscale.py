@@ -45,7 +45,7 @@ class Tailscale(ServiceResourceBase[None]):
         self.ipv4 = self.device.apply(lambda x: IPv4Address(x.addresses[0]))
         self.ipv6 = self.device.apply(lambda x: IPv6Address(x.addresses[1]))
 
-        self.private_ips: dict[str, Output[IPvAnyAddress]] = {
+        self.ips: dict[str, Output[IPvAnyAddress]] = {
             "v4": self.ipv4,
             "v6": self.ipv6,
         }

@@ -1,4 +1,4 @@
-from homelab_config import constant
+from homelab_config import Config
 from homelab_docker.model.container import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.docker import DockerResource
@@ -22,7 +22,7 @@ class Service(ComponentResource):
 
     def __init__(
         self,
-        config: ServiceConfig,
+        config: Config[ServiceConfig],
         *,
         timezone: TimeZoneName,
         docker_resource: DockerResource,
@@ -31,19 +31,20 @@ class Service(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+        self.services_config = config.docker.services
         self.container_model_global_args = ContainerModelGlobalArgs(
             timezone=timezone,
             docker_resource=docker_resource,
-            project_labels=constant.PROJECT_LABELS,
+            project_labels=Config.PROJECT_LABELS,
         )
 
         self.tailscale = Tailscale(
-            config.tailscale,
+            self.services_config.tailscale,
             opts=self.child_opts,
             container_model_global_args=self.container_model_global_args,
         )
         self.dozzle = Dozzle(
-            config.dozzle,
+            self.services_config.dozzle,
             opts=self.child_opts,
             container_model_global_args=self.container_model_global_args,
         )
