@@ -124,9 +124,6 @@ config:
               traefik-cert: /etc/traefik/cert
         dozzle:
           config:
-          databases:
-            postgres:
-              postgres: {}
           container:
             image: dozzle
             healthcheck:
@@ -142,6 +139,29 @@ config:
               DOZZLE_ADDR: ":8080"
               DOZZLE_NO_ANALYTICS: true
               DOZZLE_ENABLE_ACTIONS: true
+        nghe:
+          databases:
+            postgres:
+              postgres: {}
+          container:
+            image: nghe
+            healthcheck:
+              tests:
+                [
+                  "CMD",
+                  "wget",
+                  "--spider",
+                  "-q",
+                  "http://localhost:3000/rest/health",
+                ]
+              interval: 1s
+              timeout: 5s
+            network:
+              default-bridge: true
+            volumes:
+              nghe-cache: /tmp/nghe
+            envs:
+              NGHE_SERVER__PORT: 3000
   # docker:
   #   value:
   #     platform: amd64

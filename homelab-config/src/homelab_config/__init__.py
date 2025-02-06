@@ -3,6 +3,7 @@ from typing import Any, ClassVar, Self, Type
 import deepmerge
 import pulumi
 from homelab_docker.config.docker import DockerConfig
+from homelab_docker.config.service import ServiceConfigBase
 from homelab_network.config.network import NetworkConfig
 from pydantic import BaseModel
 
@@ -11,7 +12,7 @@ from homelab_config.integration import Integration
 from .constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
 
 
-class Config[T: BaseModel](BaseModel):
+class Config[T: ServiceConfigBase](BaseModel):
     PROJECT_NAME: ClassVar[str] = PROJECT_NAME
     PROJECT_STACK: ClassVar[str] = PROJECT_STACK
     PROJECT_LABELS: ClassVar[dict[str, str]] = PROJECT_LABELS

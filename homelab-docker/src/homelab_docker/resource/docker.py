@@ -1,7 +1,7 @@
 from pulumi import ResourceOptions
-from pydantic import BaseModel
 
 from homelab_docker.config.docker import DockerConfig
+from homelab_docker.config.service import ServiceConfigBase
 
 from .image import ImageResource
 from .network import NetworkResource
@@ -9,7 +9,7 @@ from .volume import VolumeResource
 
 
 class DockerResource:
-    def __init__[T: BaseModel](
+    def __init__[T: ServiceConfigBase](
         self,
         config: DockerConfig[T],
         *,
@@ -21,5 +21,5 @@ class DockerResource:
         )
         self.image = ImageResource(config=config.images, opts=opts)
         self.volume = VolumeResource(
-            config=config.volumes, opts=opts, project_labels=project_labels
+            config=config, opts=opts, project_labels=project_labels
         )

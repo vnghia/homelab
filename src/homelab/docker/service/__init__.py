@@ -1,9 +1,10 @@
 from homelab_config import Config
+from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
+from homelab_docker.model.database import DatabaseModel
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.docker import DockerResource
 from pulumi import ComponentResource, ResourceOptions
-from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from .dozzle import DozzleService
@@ -12,10 +13,19 @@ from .traefik import TraefikService
 from .traefik.config import TraefikConfig
 
 
-class ServiceConfig(BaseModel):
+class ServiceConfig(ServiceConfigBase):
     tailscale: ServiceModel[None]
     traefik: ServiceModel[TraefikConfig]
     dozzle: ServiceModel[None]
+    nghe: ServiceModel[None]
+
+    @property
+    def databases(self) -> dict[str, DatabaseModel]:
+        return {
+            field: service.databases
+            for field, service in self
+            if isinstance(service, ServiceModel) and service.databases
+        }
 
 
 class Service(ComponentResource):
