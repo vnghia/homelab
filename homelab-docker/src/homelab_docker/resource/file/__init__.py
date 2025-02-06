@@ -19,27 +19,30 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
+from pydantic import BaseModel, Field, computed_field, field_validator
 
-from homelab_docker.volume_path import VolumePath, VolumePathInput
+from homelab_docker.interpolation.container_volume_path import (
+    ContainerVolumePath,
+    ContainerVolumeResourcePath,
+)
 
 
 class FileProviderProps(BaseModel):
-    model_config = ConfigDict(strict=True)
-
-    volume_path: VolumePath
+    container_volume_path: ContainerVolumePath
     content: str
     mode: int = Field(strict=False)
 
     @field_validator("volume_path", mode="after")
-    def check_path_not_empty(cls, volume_path: VolumePath) -> VolumePath:
-        if not volume_path.path.name:
-            raise ValueError("{} should not be empty".format(volume_path.path))
-        return volume_path
+    def check_path_not_empty(
+        cls, container_volume_path: ContainerVolumePath
+    ) -> ContainerVolumePath:
+        if not container_volume_path.path.name:
+            raise ValueError("Container volume path should not be empty")
+        return container_volume_path
 
     @property
     def id_(self) -> str:
-        return self.volume_path.id_
+        return self.container_volume_path.id_
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -47,7 +50,7 @@ class FileProviderProps(BaseModel):
         return hashlib.sha256(self.content.encode()).hexdigest()
 
 
-class VolumeProxy:
+class FileVolumeProxy:
     IMAGE = "busybox"
     WORKING_DIR = PosixPath("/mnt/volume/")
 
@@ -80,22 +83,22 @@ class VolumeProxy:
                     file.flush()
                     tar.add(
                         file.name,
-                        arcname=props.volume_path.path,
+                        arcname=props.container_volume_path.path,
                         filter=lambda x: x.replace(mode=props.mode, deep=False),
                     )
             tar_file.seek(0)
             return tar_file
 
-        with cls.container(props.volume_path.volume) as container:
+        with cls.container(props.container_volume_path.volume) as container:
             container.put_archive(cls.WORKING_DIR.as_posix(), compress_tar())
 
     @classmethod
     def read_file(cls, props: FileProviderProps) -> FileProviderProps | None:
-        with cls.container(props.volume_path.volume) as container:
+        with cls.container(props.container_volume_path.volume) as container:
             try:
                 tar_file = io.BytesIO()
                 (stream, stat) = container.get_archive(
-                    (cls.WORKING_DIR / props.volume_path.path).as_posix()
+                    (cls.WORKING_DIR / props.container_volume_path.path).as_posix()
                 )
                 for chunk in stream:
                     tar_file.write(chunk)
@@ -117,11 +120,11 @@ class VolumeProxy:
     def delete_file(cls, props: FileProviderProps) -> None:
         docker.from_env().containers.run(
             image=cls.IMAGE,
-            command=["rm", "-rf", props.volume_path.path.as_posix()],
+            command=["rm", "-rf", props.container_volume_path.path.as_posix()],
             remove=True,
             network_mode="none",
             volumes={
-                props.volume_path.volume: {
+                props.container_volume_path.volume: {
                     "bind": cls.WORKING_DIR.as_posix(),
                     "mode": "rw",
                 }
@@ -135,11 +138,11 @@ class FileProvider(ResourceProvider):
     serialize_as_secret_always = False
 
     def configure(self, req: ConfigureRequest) -> None:
-        VolumeProxy.pull_image()
+        FileVolumeProxy.pull_image()
 
     def create(self, props: dict[str, Any]) -> CreateResult:
         file_props = FileProviderProps(**props)
-        VolumeProxy.create_file(file_props)
+        FileVolumeProxy.create_file(file_props)
         return CreateResult(id_=file_props.id_, outs=file_props.model_dump(mode="json"))
 
     def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
@@ -154,38 +157,39 @@ class FileProvider(ResourceProvider):
         self, _id: str, _olds: dict[str, Any], news: dict[str, Any]
     ) -> UpdateResult:
         file_news = FileProviderProps(**news)
-        VolumeProxy.create_file(file_news)
+        FileVolumeProxy.create_file(file_news)
         return UpdateResult(outs=file_news.model_dump(mode="json"))
 
     def delete(self, _id: str, props: dict[str, Any]) -> None:
         file_props = FileProviderProps(**props)
-        VolumeProxy.delete_file(file_props)
+        FileVolumeProxy.delete_file(file_props)
 
     def read(self, id_: str, props: dict[str, Any]) -> ReadResult:
         file_props = FileProviderProps(**props)
-        read_props = VolumeProxy.read_file(file_props)
+        read_props = FileVolumeProxy.read_file(file_props)
         if read_props:
             return ReadResult(id_=id_, outs=read_props.model_dump(mode="json"))
         else:
             return ReadResult(outs={})
 
 
-class File(Resource, module="docker", name="File"):
+class FileResource(Resource, module="docker", name="File"):
     hash: Output[str]
 
     def __init__(
         self,
         resource_name: str,
-        volume_path: VolumePathInput,
+        *,
+        opts: ResourceOptions | None,
+        container_volume_resource_path: ContainerVolumeResourcePath,
         content: Input[str],
-        mode: Input[int] = 0o444,
-        opts: ResourceOptions | None = None,
+        mode: int = 0o444,
     ):
         super().__init__(
             FileProvider(),
             resource_name,
             {
-                "volume_path": volume_path.to_props(),
+                "container_volume_path": container_volume_resource_path.to_props(),
                 "content": content,
                 "mode": mode,
                 "hash": None,
@@ -193,7 +197,8 @@ class File(Resource, module="docker", name="File"):
             ResourceOptions.merge(
                 opts,
                 ResourceOptions(
-                    delete_before_replace=True, deleted_with=volume_path.volume
+                    delete_before_replace=True,
+                    deleted_with=container_volume_resource_path.volume,
                 ),
             ),
         )

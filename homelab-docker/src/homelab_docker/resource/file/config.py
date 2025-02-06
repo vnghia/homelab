@@ -5,15 +5,16 @@ from typing import Any
 import tomlkit
 from pulumi import Input, Output, ResourceOptions
 
-from homelab_docker.file import File
-from homelab_docker.file.schema import Schema
-from homelab_docker.resource import Resource
-from homelab_docker.volume_path import VolumePath
+from homelab_docker.interpolation.container_volume_path import ContainerVolumePath
+from homelab_docker.resource.volume import VolumeResource
+
+from . import FileResource
+from .schema import Schema
 
 
 @dataclasses.dataclass
 class ConfigFile:
-    volume_path: VolumePath
+    container_volume_path: ContainerVolumePath
     data: Input[Any]
     schema_url: str | None = None
     schema_override: Any | None = None
@@ -32,18 +33,21 @@ class ConfigFile:
     def build_resource(
         self,
         resource_name: str,
-        resource: Resource,
-        opts: ResourceOptions | None = None,
-    ) -> File:
-        extension = self.volume_path.path.suffix
+        *,
+        opts: ResourceOptions | None,
+        volume_resource: VolumeResource,
+    ) -> FileResource:
+        extension = self.container_volume_path.path.suffix
         match extension:
             case ".toml":
                 content = Output.json_dumps(self.data).apply(self.toml_dumps)
             case _:
                 raise ValueError("Only `toml` format is supported")
-        return File(
+        return FileResource(
             resource_name,
-            volume_path=self.volume_path.to_input(resource),
-            content=content,
             opts=opts,
+            container_volume_resource_path=self.container_volume_path.to_resource(
+                volume_resource
+            ),
+            content=content,
         )
