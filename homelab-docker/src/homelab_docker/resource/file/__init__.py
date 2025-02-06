@@ -32,7 +32,7 @@ class FileProviderProps(BaseModel):
     content: str
     mode: int = Field(strict=False)
 
-    @field_validator("volume_path", mode="after")
+    @field_validator("container_volume_path", mode="after")
     def check_path_not_empty(
         cls, container_volume_path: ContainerVolumePath
     ) -> ContainerVolumePath:

@@ -6,8 +6,8 @@ from pulumi import Input, Output, ResourceOptions
 from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
-from homelab_docker.file import File
 from homelab_docker.interpolation.container_string import ContainerString
+from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.global_ import GlobalResource
 
 from .healthcheck import ContainerHealthCheckConfig
@@ -27,7 +27,7 @@ class ContainerModelGlobalArgs:
 class ContainerModelBuildArgs:
     opts: ResourceOptions | None = None
     envs: dict[str, Input[str]] = dataclasses.field(default_factory=dict)
-    files: list[File] = dataclasses.field(default_factory=list)
+    files: list[FileResource] = dataclasses.field(default_factory=list)
 
 
 class ContainerModel(BaseModel):
@@ -123,6 +123,7 @@ class ContainerModel(BaseModel):
                     global_args.project_labels
                     | self.labels
                     | {"image.repo_digest": image.repo_digest}
+                    | {file.id: file.hash for file in build_args.files}
                 ).items()
             ],
         )

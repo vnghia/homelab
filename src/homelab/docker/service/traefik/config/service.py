@@ -1,5 +1,5 @@
+from homelab_docker.interpolation.container_volume_path import ContainerVolumePath
 from homelab_docker.pydantic.path import RelativePath
-from homelab_docker.volume_path import VolumePath
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
 
@@ -8,7 +8,7 @@ class Acme(BaseModel):
 
     server: HttpUrl
     email: str
-    storage: VolumePath
+    storage: ContainerVolumePath
 
 
 class Provider(BaseModel):
