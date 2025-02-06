@@ -25,6 +25,11 @@ config:
           dozzle:
             repo: amir20/dozzle
             tag: "v8.10.4"
+        postgres:
+          postgres:
+            "17":
+              repo: postgres
+              tag: "17.2-bookworm"
       volumes:
         local:
           tailscale-data: {}
@@ -119,6 +124,9 @@ config:
               traefik-cert: /etc/traefik/cert
         dozzle:
           config:
+          databases:
+            postgres:
+              postgres: {}
           container:
             image: dozzle
             healthcheck:

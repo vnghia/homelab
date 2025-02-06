@@ -1,13 +1,14 @@
 from pathlib import PosixPath
 from typing import ClassVar
 
-from homelab_docker.pydantic.path import AbsolutePath
-from pydantic import BaseModel, ConfigDict, PositiveInt
+from pydantic import BaseModel, PositiveInt
+
+from homelab_docker.pydantic import AbsolutePath
+
+from ..container.network import ContainerNetworkConfig
 
 
-class Postgres(BaseModel):
-    model_config = ConfigDict(strict=True)
-
+class PostgresDatabaseModel(BaseModel):
     DATABASE_TYPE: ClassVar[str] = "postgres"
     DATABASE_VERSION: ClassVar[PositiveInt] = 17
 
@@ -22,29 +23,26 @@ class Postgres(BaseModel):
 
     user: str | None = None
     database: str | None = None
-    network: str = "internal-bridge"
+
+    network: ContainerNetworkConfig = ContainerNetworkConfig()
 
     @classmethod
-    def get_short_name(cls, name: str) -> str:
-        return "{}{}{}".format(
-            cls.DATABASE_TYPE,
-            "" if name == cls.DATABASE_TYPE else "-",
-            "" if name == cls.DATABASE_TYPE else name,
-        )
+    def get_short_name(cls, name: str | None) -> str:
+        if name:
+            return "{}-{}".format(cls.DATABASE_TYPE, name)
+        else:
+            return cls.DATABASE_TYPE
 
     @classmethod
-    def get_short_name_version(cls, name: str, version: PositiveInt) -> str:
+    def get_short_name_version(cls, name: str | None, version: PositiveInt) -> str:
         return "{}-{}".format(cls.get_short_name(name), version)
 
     @classmethod
-    def get_full_name(cls, service_name: str, name: str) -> str:
+    def get_full_name(cls, service_name: str, name: str | None) -> str:
         return "{}-{}".format(service_name, cls.get_short_name(name))
 
     @classmethod
     def get_full_name_version(
-        cls, service_name: str, name: str, version: PositiveInt
+        cls, service_name: str, name: str | None, version: PositiveInt
     ) -> str:
         return "{}-{}".format(cls.get_full_name(service_name, name), version)
-
-    def get_image(self, version: PositiveInt) -> str:
-        return "{}-{}".format(self.image, version)

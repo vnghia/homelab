@@ -43,6 +43,10 @@ class ContainerCommonNetworkConfig(BaseModel):
 class ContainerNetworkConfig(
     RootModel[ContainerCommonNetworkConfig | ContainerNetworkModeConfig]
 ):
+    root: ContainerCommonNetworkConfig | ContainerNetworkModeConfig = (
+        ContainerCommonNetworkConfig()  # type: ignore [call-arg]
+    )
+
     def to_args(
         self, network: NetworkResource, containers: dict[str, docker.Container]
     ) -> ContainerNetworkArgs:

@@ -10,7 +10,7 @@ from homelab_docker.resource.docker import DockerResource
 from homelab_docker.resource.file import FileResource
 
 from .healthcheck import ContainerHealthCheckConfig
-from .network import ContainerCommonNetworkConfig, ContainerNetworkConfig
+from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
 from .string import ContainerString
 from .tmpfs import ContainerTmpfsConfig
@@ -37,9 +37,7 @@ class ContainerModel(BaseModel):
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
-    network: ContainerNetworkConfig = ContainerNetworkConfig(
-        ContainerCommonNetworkConfig()  # type: ignore [call-arg]
-    )
+    network: ContainerNetworkConfig = ContainerNetworkConfig()
     ports: dict[str, ContainerPortConfig] = {}
     read_only: bool = True
     remove: bool = False
