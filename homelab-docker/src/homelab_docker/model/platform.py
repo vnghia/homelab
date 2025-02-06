@@ -1,6 +1,6 @@
 from enum import StrEnum, auto
 
 
-class Model(StrEnum):
+class Platform(StrEnum):
     ARM64 = auto()
     AMD64 = auto()

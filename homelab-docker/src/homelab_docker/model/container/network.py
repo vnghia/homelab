@@ -4,36 +4,36 @@ import pulumi_docker as docker
 from pulumi import Input, Output
 from pydantic import BaseModel, RootModel
 
-from homelab_docker.resource.network import Network as NetworkResource
+from homelab_docker.resource.network import NetworkResource
 
 
 @dataclasses.dataclass
-class NetworkArgs:
+class ContainerNetworkArgs:
     mode: Input[str]
     advanced: list[docker.ContainerNetworksAdvancedArgs]
 
 
-class ContainerNetwork(BaseModel):
+class ContainerNetworkModeConfig(BaseModel):
     container: str
 
     def to_args(
         self, _: NetworkResource, containers: dict[str, docker.Container]
-    ) -> NetworkArgs:
-        return NetworkArgs(
+    ) -> ContainerNetworkArgs:
+        return ContainerNetworkArgs(
             mode=Output.format("container:{0}", containers[self.container].id),
             advanced=[],
         )
 
 
-class CommonNetwork(BaseModel):
+class ContainerCommonNetworkConfig(BaseModel):
     default_bridge: bool
     internal_bridge: bool
 
     def to_args(
         self, network: NetworkResource, _: dict[str, docker.Container]
-    ) -> NetworkArgs:
+    ) -> ContainerNetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
-        return NetworkArgs(
+        return ContainerNetworkArgs(
             mode="bridge",
             advanced=[network.default_bridge_args]
             if self.default_bridge
@@ -43,12 +43,14 @@ class CommonNetwork(BaseModel):
         )
 
 
-class Network(RootModel[CommonNetwork | ContainerNetwork]):
-    root: CommonNetwork | ContainerNetwork = CommonNetwork(
-        default_bridge=False, internal_bridge=True
+class ContainerNetworkConfig(
+    RootModel[ContainerCommonNetworkConfig | ContainerNetworkModeConfig]
+):
+    root: ContainerCommonNetworkConfig | ContainerNetworkModeConfig = (
+        ContainerCommonNetworkConfig(default_bridge=False, internal_bridge=True)
     )
 
     def to_args(
         self, network: NetworkResource, containers: dict[str, docker.Container]
-    ) -> NetworkArgs:
+    ) -> ContainerNetworkArgs:
         return self.root.to_args(network, containers)

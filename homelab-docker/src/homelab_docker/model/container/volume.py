@@ -5,10 +5,10 @@ from pulumi import Input
 from pydantic import BaseModel, ConfigDict, RootModel
 
 from homelab_docker.pydantic import AbsolutePath
-from homelab_docker.resource.volume import Volume as VolumeResource
+from homelab_docker.resource.volume import VolumeResource
 
 
-class VolumeConfig(BaseModel):
+class ContainerVolumeReadOnlyConfig(BaseModel):
     path: AbsolutePath
     read_only: bool = False
 
@@ -23,7 +23,7 @@ class VolumeConfig(BaseModel):
         )
 
 
-class Volume(RootModel[AbsolutePath | VolumeConfig]):
+class ContainerVolumeConfig(RootModel[AbsolutePath | ContainerVolumeReadOnlyConfig]):
     def to_container_path(self) -> PosixPath:
         root = self.root
         if isinstance(root, PosixPath):
@@ -41,15 +41,13 @@ class Volume(RootModel[AbsolutePath | VolumeConfig]):
             return root.to_args(volume_name)
 
 
-class Volumes(BaseModel):
+class ContainerVolumesConfig(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     docker_socket: bool | None = None
-    __pydantic_extra__: dict[str, Volume] = {}  # pyright: ignore [reportIncompatibleVariableOverride]
+    __pydantic_extra__: dict[str, ContainerVolumeReadOnlyConfig] = {}  # pyright: ignore [reportIncompatibleVariableOverride]
 
-    def __getitem__(self, key: str) -> Volume:
-        if not self.__pydantic_extra__:
-            raise ValueError("volumes config is empty")
+    def __getitem__(self, key: str) -> ContainerVolumeReadOnlyConfig:
         return self.__pydantic_extra__[key]
 
     def to_args(

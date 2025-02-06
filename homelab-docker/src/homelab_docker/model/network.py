@@ -3,7 +3,7 @@ from pulumi import ResourceOptions
 from pydantic import BaseModel
 
 
-class Bridge(BaseModel):
+class BridgeNetworkModel(BaseModel):
     ipv6: bool = True
     internal: bool = False
     labels: dict[str, str] = {}

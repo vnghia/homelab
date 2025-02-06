@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
-from homelab_docker.model.image import Remote as RemoteModel
-from homelab_docker.model.platform import Model as Platform
+from homelab_docker.model.image import RemoteImageModel
+from homelab_docker.model.platform import Platform
 
 
-class Image(BaseModel):
+class ImageConfig(BaseModel):
     platform: Platform
-    remote: dict[str, RemoteModel]
+    remote: dict[str, RemoteImageModel]

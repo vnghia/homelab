@@ -1,10 +1,9 @@
 from homelab_config import Config
-from homelab_docker.config.docker import Docker as DockerConfig
-from homelab_docker.resource.global_ import Global as GlobalResource
+from homelab_docker.config.docker import DockerConfig
+from homelab_docker.resource.global_ import GlobalResource
 from pulumi import ComponentResource, ResourceOptions
 
-from .service import Config as ServiceConfig
-from .service import Service
+from .service import Service, ServiceConfig
 
 # class Docker(ComponentResource):
 #     RESOURCE_NAME = "docker"

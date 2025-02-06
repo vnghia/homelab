@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from homelab_docker.pydantic import AbsolutePath
 
 
-class Local(BaseModel):
+class LocalVolumeModel(BaseModel):
     bind: AbsolutePath | None = None
     labels: dict[str, str] = {}
 

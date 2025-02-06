@@ -1,8 +1,8 @@
 from homelab_config import Config
-from homelab_docker.config.docker import Docker as DockerConfig
+from homelab_docker.config.docker import DockerConfig
 
 from .docker import Docker
-from .docker.service import Config as ServiceConfig
+from .docker.service import ServiceConfig
 
 
 class Homelab:

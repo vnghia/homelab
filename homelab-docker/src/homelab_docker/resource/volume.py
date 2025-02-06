@@ -2,10 +2,10 @@ import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker.config.volume import Volume as VolumeConfig
+from homelab_docker.config.volume import VolumeConfig
 
 
-class Volume(ComponentResource):
+class VolumeResource(ComponentResource):
     RESOURCE_NAME = "volume"
 
     def __init__(

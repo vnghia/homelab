@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
-from homelab_docker.model.container import Model as ContainerModel
+from .container import ContainerModel
 
 
-class Model[T](BaseModel):
+class ServiceModel[T](BaseModel):
     config: T
     container: ContainerModel
     containers: dict[str, ContainerModel] = {}

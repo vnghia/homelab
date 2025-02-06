@@ -1,13 +1,14 @@
 from pulumi import ResourceOptions
 from pydantic import BaseModel
 
-from homelab_docker.config.docker import Docker as DockerConfig
-from homelab_docker.resource.image import Image
-from homelab_docker.resource.network import Network
-from homelab_docker.resource.volume import Volume
+from homelab_docker.config.docker import DockerConfig
+
+from .image import ImageResource
+from .network import NetworkResource
+from .volume import VolumeResource
 
 
-class Global:
+class GlobalResource:
     def __init__[T: BaseModel](
         self,
         config: DockerConfig[T],
@@ -15,10 +16,10 @@ class Global:
         opts: ResourceOptions,
         project_labels: dict[str, str],
     ) -> None:
-        self.network = Network(
+        self.network = NetworkResource(
             config=config.network, opts=opts, project_labels=project_labels
         )
-        self.image = Image(config=config.images, opts=opts)
-        self.volume = Volume(
+        self.image = ImageResource(config=config.images, opts=opts)
+        self.volume = VolumeResource(
             config=config.volumes, opts=opts, project_labels=project_labels
         )

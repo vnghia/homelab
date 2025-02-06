@@ -2,7 +2,7 @@ from typing import Any, ClassVar, Self, Type
 
 import deepmerge
 import pulumi
-from homelab_docker.config.docker import Docker as DockerConfig
+from homelab_docker.config.docker import DockerConfig
 from pydantic import BaseModel
 
 from homelab_config.integration import Integration

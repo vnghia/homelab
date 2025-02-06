@@ -1,46 +1,31 @@
-import dataclasses
-
 import pulumi
 import pulumi_docker as docker
-from pulumi import ComponentResource, Input, ResourceOptions
+from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
-from pydantic_extra_types.timezone_name import TimeZoneName
 
-from homelab_docker.file import File
-from homelab_docker.model.container import Model as ContainerModel
-from homelab_docker.model.service import Model as ServiceModel
-from homelab_docker.resource.global_ import Global as GlobalResource
-
-
-@dataclasses.dataclass
-class BuildOption:
-    opts: ResourceOptions | None = None
-    envs: dict[str, Input[str]] = dataclasses.field(default_factory=dict)
-    files: list[File] = dataclasses.field(default_factory=list)
+from homelab_docker.model.container import (
+    ContainerModel,
+    ContainerModelBuildArgs,
+    ContainerModelGlobalArgs,
+)
+from homelab_docker.model.service import ServiceModel
 
 
-@dataclasses.dataclass
-class Args:
-    timezone: TimeZoneName
-    global_resource: GlobalResource
-    opts: ResourceOptions | None
-    project_labels: dict[str, str]
-
-
-class Base[T](ComponentResource):
+class ServiceResourceBase[T](ComponentResource):
     CONTAINERS: dict[str, docker.Container] = {}
 
     def __init__(
         self,
         model: ServiceModel[T],
         *,
-        args: Args,
+        opts: ResourceOptions | None,
+        container_model_global_args: ContainerModelGlobalArgs,
     ) -> None:
-        super().__init__(self.name(), self.name(), None, args.opts)
+        super().__init__(self.name(), self.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.model = model
-        self.args = args
+        self.container_model_global_args = container_model_global_args
 
     @classmethod
     def name(cls) -> str:
@@ -54,21 +39,25 @@ class Base[T](ComponentResource):
         return "{}-{}".format(self.name(), name) if name else self.name()
 
     def build_container(
-        self, name: str | None, model: ContainerModel, option: BuildOption | None = None
+        self,
+        name: str | None,
+        model: ContainerModel,
+        container_model_build_args: ContainerModelBuildArgs | None,
     ) -> docker.Container:
-        option = option or BuildOption()
+        container_model_build_args = (
+            container_model_build_args or ContainerModelBuildArgs()
+        )
         return model.build_resource(
             self.add_service_name(name),
-            opts=ResourceOptions.merge(self.child_opts, option.opts),
-            timezone=self.args.timezone,
-            global_resource=self.args.global_resource,
+            opts=self.child_opts,
+            global_args=self.container_model_global_args,
+            build_args=container_model_build_args,
             containers=self.CONTAINERS,
-            envs=option.envs,
-            files=option.files,
-            project_labels=self.args.project_labels,
         )
 
-    def build_containers(self, options: dict[str | None, BuildOption] = {}) -> None:
+    def build_containers(
+        self, options: dict[str | None, ContainerModelBuildArgs]
+    ) -> None:
         self.container = self.build_container(
             None, self.model.container, options.get(None)
         )

@@ -1,7 +1,7 @@
 from homelab_config import constant
-from homelab_docker.model.service import Model as ServiceModel
-from homelab_docker.resource.global_ import Global as GlobalResource
-from homelab_docker.resource.service import Args as ServiceArgs
+from homelab_docker.model.container import ContainerModelGlobalArgs
+from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource.global_ import GlobalResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
@@ -30,7 +30,7 @@ from .dozzle import Dozzle
 #         self.register_outputs({})
 
 
-class Config(BaseModel):
+class ServiceConfig(BaseModel):
     dozzle: ServiceModel[None]
 
 
@@ -39,7 +39,7 @@ class Service(ComponentResource):
 
     def __init__(
         self,
-        config: Config,
+        config: ServiceConfig,
         *,
         timezone: TimeZoneName,
         global_resource: GlobalResource,
@@ -48,11 +48,14 @@ class Service(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.args = ServiceArgs(
+        self.container_model_global_args = ContainerModelGlobalArgs(
             timezone=timezone,
             global_resource=global_resource,
-            opts=self.child_opts,
             project_labels=constant.PROJECT_LABELS,
         )
 
-        self.dozzle = Dozzle(config.dozzle, args=self.args)
+        self.dozzle = Dozzle(
+            config.dozzle,
+            opts=self.child_opts,
+            container_model_global_args=self.container_model_global_args,
+        )

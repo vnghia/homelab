@@ -2,10 +2,10 @@ import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker.config.network import Network as NetworkConfig
+from homelab_docker.config.network import NetworkConfig
 
 
-class Network(ComponentResource):
+class NetworkResource(ComponentResource):
     RESOURCE_NAME = "network"
 
     def __init__(

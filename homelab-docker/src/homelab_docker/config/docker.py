@@ -1,14 +1,14 @@
 from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
-from homelab_docker.config.image import Image
-from homelab_docker.config.network import Network
-from homelab_docker.config.volume import Volume
+from .image import ImageConfig
+from .network import NetworkConfig
+from .volume import VolumeConfig
 
 
-class Docker[T: BaseModel](BaseModel):
+class DockerConfig[T: BaseModel](BaseModel):
     timezone: TimeZoneName
-    network: Network
-    images: Image
-    volumes: Volume
+    network: NetworkConfig
+    images: ImageConfig
+    volumes: VolumeConfig
     services: T

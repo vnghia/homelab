@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Literal
 
 import pulumi_docker as docker
@@ -7,27 +8,41 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab_docker.file import File
 from homelab_docker.interpolation.container_string import ContainerString
-from homelab_docker.resource.global_ import Global as GlobalResource
+from homelab_docker.resource.global_ import GlobalResource
 
-from .healthcheck import Healthcheck
-from .network import Network
-from .port import Port
-from .volume import Volumes
+from .healthcheck import ContainerHealthCheckConfig
+from .network import ContainerNetworkConfig
+from .port import ContainerPortConfig
+from .volume import ContainerVolumesConfig
 
 
-class Model(BaseModel):
+@dataclasses.dataclass
+class ContainerModelGlobalArgs:
+    timezone: TimeZoneName
+    global_resource: GlobalResource
+    project_labels: dict[str, str]
+
+
+@dataclasses.dataclass
+class ContainerModelBuildArgs:
+    opts: ResourceOptions | None = None
+    envs: dict[str, Input[str]] = dataclasses.field(default_factory=dict)
+    files: list[File] = dataclasses.field(default_factory=list)
+
+
+class ContainerModel(BaseModel):
     image: str
 
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
-    healthcheck: Healthcheck | None = None
-    network: Network = Network()
-    ports: dict[str, Port] = {}
+    healthcheck: ContainerHealthCheckConfig | None = None
+    network: ContainerNetworkConfig = ContainerNetworkConfig()
+    ports: dict[str, ContainerPortConfig] = {}
     read_only: bool = True
     remove: bool = False
     restart: Literal["unless-stopped"] = "unless-stopped"
     sysctls: dict[str, str] | None = None
-    volumes: Volumes = Volumes()
+    volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
 
     envs: dict[str, ContainerString] = {}
@@ -37,23 +52,25 @@ class Model(BaseModel):
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions,
-        timezone: TimeZoneName,
-        global_resource: GlobalResource,
+        opts: ResourceOptions | None,
+        global_args: ContainerModelGlobalArgs,
+        build_args: ContainerModelBuildArgs | None,
         containers: dict[str, docker.Container],
-        envs: dict[str, Input[str]] | None,
-        files: list[File] | None,
-        project_labels: dict[str, str],
     ) -> docker.Container:
-        image = global_resource.image[self.image]
-        network_args = self.network.to_args(global_resource.network, containers)
+        build_args = build_args or ContainerModelBuildArgs()
+        image = global_args.global_resource.image[self.image]
+        network_args = self.network.to_args(
+            global_args.global_resource.network, containers
+        )
 
         return docker.Container(
             resource_name,
             opts=ResourceOptions.merge(
-                opts,
+                ResourceOptions.merge(opts, build_args.opts),
                 ResourceOptions(
-                    ignore_changes=["image"], replace_on_changes=["*"], depends_on=files
+                    ignore_changes=["image"],
+                    replace_on_changes=["*"],
+                    depends_on=build_args.files,
                 ),
             ),
             image=image.name,
@@ -61,7 +78,7 @@ class Model(BaseModel):
             if self.capabilities
             else None,
             command=[
-                command.to_str(container_volumes=self.volumes)
+                command.to_str(container_volumes_config=self.volumes)
                 for command in self.command
             ]
             if self.command
@@ -74,25 +91,27 @@ class Model(BaseModel):
             rm=self.remove,
             restart=self.restart,
             sysctls=self.sysctls,
-            volumes=self.volumes.to_args(volume_resource=global_resource.volume),
+            volumes=self.volumes.to_args(
+                volume_resource=global_args.global_resource.volume
+            ),
             wait=self.wait if self.healthcheck else False,
             envs=[
                 Output.concat(
                     k,
                     "=",
                     Output.from_input(v).apply(
-                        lambda x: x.to_str(container_volumes=self.volumes)
+                        lambda x: x.to_str(container_volumes_config=self.volumes)
                         if isinstance(x, ContainerString)
                         else x
                     ),
                 )
                 for k, v in sorted(
                     (
-                        {"TZ": Output.from_input(ContainerString(timezone))}
+                        {"TZ": Output.from_input(ContainerString(global_args.timezone))}
                         | self.envs
                         | {
                             k: Output.from_input(v).apply(ContainerString)
-                            for k, v in (envs or {}).items()
+                            for k, v in (build_args.envs).items()
                         }
                     ).items(),
                     key=lambda x: x[0],
@@ -101,7 +120,7 @@ class Model(BaseModel):
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
-                    project_labels
+                    global_args.project_labels
                     | self.labels
                     | {"image.repo_digest": image.repo_digest}
                 ).items()

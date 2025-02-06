@@ -5,7 +5,7 @@ import pulumi_docker as docker
 from pydantic import BaseModel, IPvAnyAddress, PositiveInt
 
 
-class Port(BaseModel):
+class ContainerPortConfig(BaseModel):
     internal: PositiveInt
     external: PositiveInt
     ip: IPvAnyAddress

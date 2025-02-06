@@ -2,10 +2,10 @@ import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker.config.image import Image as ImageConfig
+from homelab_docker.config.image import ImageConfig
 
 
-class Image(ComponentResource):
+class ImageResource(ComponentResource):
     RESOURCE_NAME = "image"
 
     def __init__(

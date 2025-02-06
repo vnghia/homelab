@@ -1,6 +1,11 @@
 from homelab_config import Config
-from homelab_docker.model.service import Model as ServiceModel
-from homelab_docker.resource.service import Args, Base, BuildOption
+from homelab_docker.model.container import (
+    ContainerModelBuildArgs,
+    ContainerModelGlobalArgs,
+)
+from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource.service import ServiceResourceBase
+from pulumi import ResourceOptions
 
 # class Dozzle(Base):
 #     def __init__(
@@ -50,13 +55,21 @@ from homelab_docker.resource.service import Args, Base, BuildOption
 #         )
 
 
-class Dozzle(Base[None]):
-    def __init__(self, model: ServiceModel[None], *, args: Args) -> None:
-        super().__init__(model, args=args)
+class Dozzle(ServiceResourceBase[None]):
+    def __init__(
+        self,
+        model: ServiceModel[None],
+        *,
+        opts: ResourceOptions | None,
+        container_model_global_args: ContainerModelGlobalArgs,
+    ) -> None:
+        super().__init__(
+            model, opts=opts, container_model_global_args=container_model_global_args
+        )
 
         self.build_containers(
             options={
-                None: BuildOption(
+                None: ContainerModelBuildArgs(
                     envs={
                         "DOZZLE_FILTER": "label=pulumi.stack={}".format(
                             Config.PROJECT_STACK
