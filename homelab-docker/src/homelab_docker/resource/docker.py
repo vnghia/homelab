@@ -8,7 +8,7 @@ from .network import NetworkResource
 from .volume import VolumeResource
 
 
-class GlobalResource:
+class DockerResource:
     def __init__[T: BaseModel](
         self,
         config: DockerConfig[T],

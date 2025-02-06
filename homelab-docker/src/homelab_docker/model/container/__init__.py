@@ -7,8 +7,8 @@ from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab_docker.interpolation.container_string import ContainerString
+from homelab_docker.resource.docker import DockerResource
 from homelab_docker.resource.file import FileResource
-from homelab_docker.resource.global_ import GlobalResource
 
 from .healthcheck import ContainerHealthCheckConfig
 from .network import ContainerCommonNetworkConfig, ContainerNetworkConfig
@@ -20,7 +20,7 @@ from .volume import ContainerVolumesConfig
 @dataclasses.dataclass
 class ContainerModelGlobalArgs:
     timezone: TimeZoneName
-    global_resource: GlobalResource
+    docker_resource: DockerResource
     project_labels: dict[str, str]
 
 
@@ -62,9 +62,9 @@ class ContainerModel(BaseModel):
         containers: dict[str, docker.Container],
     ) -> docker.Container:
         build_args = build_args or ContainerModelBuildArgs()
-        image = global_args.global_resource.image[self.image]
+        image = global_args.docker_resource.image[self.image]
         network_args = self.network.to_args(
-            global_args.global_resource.network, containers
+            global_args.docker_resource.network, containers
         )
 
         return docker.Container(
@@ -97,7 +97,7 @@ class ContainerModel(BaseModel):
             restart=self.restart,
             sysctls=self.sysctls,
             volumes=self.volumes.to_args(
-                volume_resource=global_args.global_resource.volume
+                volume_resource=global_args.docker_resource.volume
             ),
             wait=self.wait if self.healthcheck else False,
             envs=[

@@ -1,6 +1,6 @@
 from homelab_config import Config
 from homelab_docker.config.docker import DockerConfig
-from homelab_docker.resource.global_ import GlobalResource
+from homelab_docker.resource.docker import DockerResource
 from pulumi import ComponentResource, ResourceOptions
 
 from .service import Service, ServiceConfig
@@ -14,13 +14,13 @@ class Docker(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.config = config
-        self.global_resource = GlobalResource(
+        self.resource = DockerResource(
             self.config, opts=self.child_opts, project_labels=Config.PROJECT_LABELS
         )
         self.service = Service(
             self.config.services,
             timezone=self.config.timezone,
-            global_resource=self.global_resource,
+            docker_resource=self.resource,
             opts=self.child_opts,
         )
         self.register_outputs({})

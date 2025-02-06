@@ -1,7 +1,7 @@
 from homelab_config import constant
 from homelab_docker.model.container import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
-from homelab_docker.resource.global_ import GlobalResource
+from homelab_docker.resource.docker import DockerResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
@@ -25,7 +25,7 @@ class Service(ComponentResource):
         config: ServiceConfig,
         *,
         timezone: TimeZoneName,
-        global_resource: GlobalResource,
+        docker_resource: DockerResource,
         opts: ResourceOptions | None,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
@@ -33,7 +33,7 @@ class Service(ComponentResource):
 
         self.container_model_global_args = ContainerModelGlobalArgs(
             timezone=timezone,
-            global_resource=global_resource,
+            docker_resource=docker_resource,
             project_labels=constant.PROJECT_LABELS,
         )
 

@@ -3,7 +3,7 @@ from pulumi import Input, Output, ResourceOptions
 from pydantic import IPvAnyAddress, RootModel
 
 
-class RecordModel(RootModel):
+class RecordModel(RootModel[str]):
     def build_resource(
         self,
         resource_name: str,
