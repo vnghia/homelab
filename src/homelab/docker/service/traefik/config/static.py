@@ -1,7 +1,7 @@
 from homelab_docker.model.container.volume_path import ContainerVolumePath
+from homelab_docker.model.file.config import ConfigFile
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.file import FileResource
-from homelab_docker.resource.file.config import ConfigFile
 from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
 

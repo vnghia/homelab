@@ -2,14 +2,25 @@ import dataclasses
 import json
 from typing import Any
 
+import deepmerge
+import httpx
+import jsonschema
 import tomlkit
 from pulumi import Input, Output, ResourceOptions
 
 from homelab_docker.model.container.volume_path import ContainerVolumePath
+from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.volume import VolumeResource
 
-from . import FileResource
-from .schema import Schema
+
+class Schema:
+    def __init__(self, url: str, override: Any | None = None) -> None:
+        self.schema = deepmerge.always_merger.merge(
+            httpx.get(url=url).raise_for_status().json(), override or {}
+        )
+
+    def validate(self, data: Any) -> None:
+        jsonschema.validate(data, self.schema)
 
 
 @dataclasses.dataclass
