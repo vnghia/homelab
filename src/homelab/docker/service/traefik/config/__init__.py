@@ -1,6 +1,6 @@
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.pydantic import RelativePath
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class TraefikAcmeStorageConfig(BaseModel):
@@ -26,8 +26,6 @@ class TraefikEntrypointConfig(BaseModel):
 
 
 class TraefikConfig(BaseModel):
-    model_config = ConfigDict(strict=True)
-
     path: str
     acme: TraefikAcmeConfig
     provider: TraefikProviderConfig

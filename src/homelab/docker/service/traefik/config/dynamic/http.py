@@ -6,7 +6,7 @@ from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.volume import VolumeResource
 from homelab_network.config.network import NetworkConfig
 from pulumi import ResourceOptions
-from pydantic import BaseModel, ConfigDict, PositiveInt
+from pydantic import BaseModel, PositiveInt
 
 from ..static import TraefikStaticConfig
 from .middleware import TraefikMiddleware
@@ -14,8 +14,6 @@ from .service import TraefikService, TraefikServiceType
 
 
 class TraefikHttpDynamicConfig(BaseModel):
-    model_config = ConfigDict(strict=True)
-
     name: str
     public: bool
     hostname: str | None = None

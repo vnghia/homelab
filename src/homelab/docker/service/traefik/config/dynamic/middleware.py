@@ -1,10 +1,8 @@
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class TraefikMiddleware(BaseModel):
-    model_config = ConfigDict(strict=True)
-
     name: str
     data: Any

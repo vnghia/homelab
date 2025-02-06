@@ -2,7 +2,7 @@ from enum import StrEnum, auto
 
 import pulumi_docker as docker
 from pulumi import Output
-from pydantic import BaseModel, ConfigDict, PositiveInt
+from pydantic import BaseModel, PositiveInt
 from pydantic_core import Url
 
 
@@ -11,8 +11,6 @@ class TraefikServiceType(StrEnum):
 
 
 class TraefikService(BaseModel):
-    model_config = ConfigDict(strict=True)
-
     container: str | None = None
     port: PositiveInt
 
