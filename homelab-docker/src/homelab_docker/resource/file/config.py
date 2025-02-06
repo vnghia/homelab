@@ -5,7 +5,7 @@ from typing import Any
 import tomlkit
 from pulumi import Input, Output, ResourceOptions
 
-from homelab_docker.interpolation.container_volume_path import ContainerVolumePath
+from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.resource.volume import VolumeResource
 
 from . import FileResource

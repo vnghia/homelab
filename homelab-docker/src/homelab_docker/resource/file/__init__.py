@@ -21,7 +21,7 @@ from pulumi.dynamic import (
 )
 from pydantic import BaseModel, Field, computed_field, field_validator
 
-from homelab_docker.interpolation.container_volume_path import (
+from homelab_docker.model.container.volume_path import (
     ContainerVolumePath,
     ContainerVolumeResourcePath,
 )

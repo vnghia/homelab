@@ -3,7 +3,7 @@ import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
-from homelab_docker.model.container import (
+from homelab_docker.model.container.model import (
     ContainerModel,
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
@@ -29,7 +29,7 @@ class ServiceResourceBase[T](ComponentResource):
 
     @classmethod
     def name(cls) -> str:
-        return to_snake(cls.__name__).replace("_", "-")
+        return to_snake(cls.__name__.removesuffix("Service")).replace("_", "-")
 
     @property
     def config(self) -> T:

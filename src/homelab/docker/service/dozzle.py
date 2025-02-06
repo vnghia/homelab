@@ -1,5 +1,5 @@
 from homelab_config import Config
-from homelab_docker.model.container import (
+from homelab_docker.model.container.model import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )
@@ -55,7 +55,7 @@ from pulumi import ResourceOptions
 #         )
 
 
-class Dozzle(ServiceResourceBase[None]):
+class DozzleService(ServiceResourceBase[None]):
     def __init__(
         self,
         model: ServiceModel[None],

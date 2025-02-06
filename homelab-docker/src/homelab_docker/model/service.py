@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from .container import ContainerModel
+from .container.model import ContainerModel
 
 
 class ServiceModel[T](BaseModel):

@@ -86,8 +86,12 @@ config:
             acme:
               server: https://acme-v02.api.letsencrypt.org/directory
               storage:
-                volume: traefik-cert
-                path: acme.json
+                public:
+                  volume: traefik-cert
+                  path: acme-public.json
+                private:
+                  volume: traefik-cert
+                  path: acme-private.json
             provider:
               file: dynamic
             entrypoint:

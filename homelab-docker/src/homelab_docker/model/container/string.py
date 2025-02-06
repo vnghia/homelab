@@ -1,8 +1,7 @@
 from pydantic import PositiveInt, RootModel
 
-from homelab_docker.model.container.volume import ContainerVolumesConfig
-
-from .container_volume_path import ContainerVolumePath
+from .volume import ContainerVolumesConfig
+from .volume_path import ContainerVolumePath
 
 
 class ContainerString(RootModel[bool | PositiveInt | str | ContainerVolumePath]):
