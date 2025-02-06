@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from .dozzle import Dozzle
+from .tailscale import Tailscale
 
 # class Service(ComponentResource):
 #     RESOURCE_NAME = "service"
@@ -31,6 +32,7 @@ from .dozzle import Dozzle
 
 
 class ServiceConfig(BaseModel):
+    tailscale: ServiceModel[None]
     dozzle: ServiceModel[None]
 
 
@@ -54,6 +56,11 @@ class Service(ComponentResource):
             project_labels=constant.PROJECT_LABELS,
         )
 
+        self.tailscale = Tailscale(
+            config.tailscale,
+            opts=self.child_opts,
+            container_model_global_args=self.container_model_global_args,
+        )
         self.dozzle = Dozzle(
             config.dozzle,
             opts=self.child_opts,

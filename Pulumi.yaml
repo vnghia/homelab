@@ -16,6 +16,9 @@ config:
         internal-bridge: {}
       images:
         remote:
+          tailscale:
+            repo: tailscale/tailscale
+            tag: "v1.78.3"
           dozzle:
             repo: amir20/dozzle
             tag: "v8.10.4"
@@ -26,6 +29,54 @@ config:
           traefik-cert: {}
           nghe-cache: {}
       services:
+        tailscale:
+          config:
+          container:
+            image: tailscale
+            capabilities:
+              - NET_ADMIN
+            healthcheck:
+              tests:
+                [
+                  "CMD",
+                  "wget",
+                  "--spider",
+                  "-q",
+                  "http://localhost:9002/healthz",
+                ]
+              interval: 1s
+              timeout: 5s
+            network:
+              default-bridge: true
+              internal-bridge: true
+            ports:
+              httpv4:
+                internal: 81
+                external: 80
+                ip: "0.0.0.0"
+              httpv6:
+                internal: 81
+                external: 80
+                ip: "::"
+              httpsv4:
+                internal: 444
+                external: 443
+                ip: "0.0.0.0"
+              httpsv6:
+                internal: 444
+                external: 443
+                ip: "::"
+            tmpfs:
+              - /tmp
+              - /run
+            volumes:
+              tailscale-data: /var/lib/tailscale
+            envs:
+              TS_STATE_DIR:
+                volume: tailscale-data
+              TS_USERSPACE: false
+              TS_AUTH_ONCE: true
+              TS_ENABLE_HEALTH_CHECK: true
         dozzle:
           config:
           container:

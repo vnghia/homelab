@@ -8,7 +8,7 @@ from homelab_docker.pydantic import AbsolutePath
 from homelab_docker.resource.volume import VolumeResource
 
 
-class ContainerVolumeReadOnlyConfig(BaseModel):
+class ContainerVolumeFullConfig(BaseModel):
     path: AbsolutePath
     read_only: bool = False
 
@@ -23,7 +23,7 @@ class ContainerVolumeReadOnlyConfig(BaseModel):
         )
 
 
-class ContainerVolumeConfig(RootModel[AbsolutePath | ContainerVolumeReadOnlyConfig]):
+class ContainerVolumeConfig(RootModel[AbsolutePath | ContainerVolumeFullConfig]):
     def to_container_path(self) -> PosixPath:
         root = self.root
         if isinstance(root, PosixPath):
@@ -45,9 +45,9 @@ class ContainerVolumesConfig(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     docker_socket: bool | None = None
-    __pydantic_extra__: dict[str, ContainerVolumeReadOnlyConfig] = {}  # pyright: ignore [reportIncompatibleVariableOverride]
+    __pydantic_extra__: dict[str, ContainerVolumeConfig] = {}  # pyright: ignore [reportIncompatibleVariableOverride]
 
-    def __getitem__(self, key: str) -> ContainerVolumeReadOnlyConfig:
+    def __getitem__(self, key: str) -> ContainerVolumeConfig:
         return self.__pydantic_extra__[key]
 
     def to_args(

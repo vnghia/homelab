@@ -11,8 +11,9 @@ from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.global_ import GlobalResource
 
 from .healthcheck import ContainerHealthCheckConfig
-from .network import ContainerNetworkConfig
+from .network import ContainerCommonNetworkConfig, ContainerNetworkConfig
 from .port import ContainerPortConfig
+from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumesConfig
 
 
@@ -36,12 +37,15 @@ class ContainerModel(BaseModel):
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
-    network: ContainerNetworkConfig = ContainerNetworkConfig()
+    network: ContainerNetworkConfig = ContainerNetworkConfig(
+        ContainerCommonNetworkConfig()  # type: ignore [call-arg]
+    )
     ports: dict[str, ContainerPortConfig] = {}
     read_only: bool = True
     remove: bool = False
     restart: Literal["unless-stopped"] = "unless-stopped"
     sysctls: dict[str, str] | None = None
+    tmpfs: list[ContainerTmpfsConfig] | None = None
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
 
@@ -84,6 +88,7 @@ class ContainerModel(BaseModel):
             if self.command
             else None,
             healthcheck=self.healthcheck.to_args() if self.healthcheck else None,
+            mounts=[tmpfs.to_args() for tmpfs in self.tmpfs] if self.tmpfs else None,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
             ports=[port.to_args() for port in sorted(self.ports.values())],

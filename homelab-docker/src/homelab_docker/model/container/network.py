@@ -2,7 +2,7 @@ import dataclasses
 
 import pulumi_docker as docker
 from pulumi import Input, Output
-from pydantic import BaseModel, RootModel
+from pydantic import BaseModel, Field, RootModel
 
 from homelab_docker.resource.network import NetworkResource
 
@@ -26,8 +26,8 @@ class ContainerNetworkModeConfig(BaseModel):
 
 
 class ContainerCommonNetworkConfig(BaseModel):
-    default_bridge: bool
-    internal_bridge: bool
+    default_bridge: bool = Field(False, alias="default-bridge")
+    internal_bridge: bool = Field(True, alias="internal-bridge")
 
     def to_args(
         self, network: NetworkResource, _: dict[str, docker.Container]
@@ -46,10 +46,6 @@ class ContainerCommonNetworkConfig(BaseModel):
 class ContainerNetworkConfig(
     RootModel[ContainerCommonNetworkConfig | ContainerNetworkModeConfig]
 ):
-    root: ContainerCommonNetworkConfig | ContainerNetworkModeConfig = (
-        ContainerCommonNetworkConfig(default_bridge=False, internal_bridge=True)
-    )
-
     def to_args(
         self, network: NetworkResource, containers: dict[str, docker.Container]
     ) -> ContainerNetworkArgs:
