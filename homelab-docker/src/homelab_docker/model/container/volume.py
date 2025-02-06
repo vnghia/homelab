@@ -54,21 +54,25 @@ class ContainerVolumesConfig(BaseModel):
         self, volume_resource: VolumeResource
     ) -> list[docker.ContainerVolumeArgs]:
         return (
-            [
-                volume.to_args(volume_name=volume_resource[name].name)
-                for name, volume in self.__pydantic_extra__.items()
-            ]
-            if self.__pydantic_extra__
-            else []
-            + [
-                docker.ContainerVolumeArgs(
-                    container_path="/var/run/docker.sock",
-                    host_path="/var/run/docker.sock",
-                    read_only=self.docker_socket,
-                )
-            ]
-            if self.docker_socket is not None
-            else []
+            (
+                [
+                    volume.to_args(volume_name=volume_resource[name].name)
+                    for name, volume in self.__pydantic_extra__.items()
+                ]
+                if self.__pydantic_extra__
+                else []
+            )
+            + (
+                [
+                    docker.ContainerVolumeArgs(
+                        container_path="/var/run/docker.sock",
+                        host_path="/var/run/docker.sock",
+                        read_only=self.docker_socket,
+                    )
+                ]
+                if self.docker_socket is not None
+                else []
+            )
             + [
                 docker.ContainerVolumeArgs(
                     container_path="/etc/localtime",

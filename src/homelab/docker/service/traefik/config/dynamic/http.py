@@ -1,126 +1,125 @@
-# from typing import Any
+from typing import Any
 
-# from homelab_config import config
-# from homelab_docker.file import File
-# from homelab_docker.file.config import ConfigFile
-# from pulumi import ResourceOptions
-# from pydantic import BaseModel, ConfigDict, PositiveInt
+import pulumi_docker as docker
+from homelab_docker.model.file.config import ConfigFile
+from homelab_docker.resource.file import FileResource
+from homelab_docker.resource.volume import VolumeResource
+from homelab_network.config.network import NetworkConfig
+from pulumi import ResourceOptions
+from pydantic import BaseModel, ConfigDict, PositiveInt
 
-# from homelab.docker.resource import Resource
-# from homelab.docker.service.traefik.config.dynamic.middleware import Middleware
-# from homelab.docker.service.traefik.config.dynamic.service import Service, ServiceType
-# from homelab.docker.service.traefik.config.static import Static
+from ..static import TraefikStaticConfig
+from .middleware import TraefikMiddleware
+from .service import TraefikService, TraefikServiceType
 
 
-# class HttpDynamic(BaseModel):
-#     model_config = ConfigDict(strict=True)
+class TraefikHttpDynamicConfig(BaseModel):
+    model_config = ConfigDict(strict=True)
 
-#     name: str
-#     public: bool
-#     hostname: str | None = None
-#     prefix: str | None = None
+    name: str
+    public: bool
+    hostname: str | None = None
+    prefix: str | None = None
 
-#     rules: list[str] = []
+    rules: list[str] = []
+    service: TraefikService | PositiveInt | str
+    middlewares: list[TraefikMiddleware | str] = []
 
-#     service: Service | PositiveInt | str
+    def build_resource(
+        self,
+        resource_name: str,
+        *,
+        opts: ResourceOptions | None,
+        network_config: NetworkConfig,
+        volume_resource: VolumeResource,
+        containers: dict[str, docker.Container],
+        static_config: TraefikStaticConfig,
+    ) -> FileResource:
+        entrypoint = static_config.service_config.entrypoint
+        host = (
+            network_config.public.hostnames
+            if self.public
+            else network_config.private.hostnames
+        )[self.hostname or self.name]
 
-#     middlewares: list[Middleware | str] = []
+        data: dict[str, Any] = {
+            "http": {
+                "routers": {
+                    self.name: {
+                        "service": self.name
+                        if isinstance(self.service, (TraefikService, int))
+                        else self.service,
+                        "entryPoints": [
+                            entrypoint.public_https
+                            if self.public
+                            else entrypoint.private_https
+                        ],
+                        "rule": " && ".join(
+                            ["Host(`{}`)".format(host)]
+                            + (
+                                ["PathPrefix(`{}`)".format(self.prefix)]
+                                if self.prefix
+                                else []
+                            )
+                            + self.rules
+                        ),
+                        "middlewares": [
+                            middleware.name
+                            if isinstance(middleware, TraefikMiddleware)
+                            else middleware
+                            for middleware in self.middlewares
+                        ],
+                        "tls": {
+                            "certResolver": static_config.PUBLIC_CERT_RESOLVER
+                            if self.public
+                            else static_config.PRIVATE_CERT_RESOLVER
+                        },
+                    }
+                },
+            }
+        }
 
-#     def build_resource(
-#         self,
-#         resource_name: str,
-#         resource: Resource,
-#         traefik: Static,
-#         opts: ResourceOptions | None = None,
-#     ) -> File:
-#         entrypoint = traefik.service_config.entrypoint
-#         dns = config.network.dns
-#         host = (dns.public.hostnames if self.public else dns.private.hostnames)[
-#             self.hostname or self.name
-#         ]
+        if isinstance(self.service, TraefikService):
+            data["http"]["services"] = {
+                self.name: {
+                    "loadBalancer": {
+                        "servers": [
+                            {
+                                "url": self.service.to_url(
+                                    TraefikServiceType.HTTP, self.name, containers
+                                ).apply(str)
+                            }
+                        ]
+                    }
+                }
+            }
+        elif isinstance(self.service, int):
+            data["http"]["services"] = {
+                self.name: {
+                    "loadBalancer": {
+                        "servers": [
+                            {
+                                "url": TraefikService(port=self.service)
+                                .to_url(TraefikServiceType.HTTP, self.name, containers)
+                                .apply(str)
+                            }
+                        ]
+                    }
+                }
+            }
 
-#         data: dict[str, Any] = {
-#             "http": {
-#                 "routers": {
-#                     self.name: {
-#                         "service": self.name
-#                         if isinstance(self.service, (Service, int))
-#                         else self.service,
-#                         "entryPoints": [
-#                             entrypoint.public_https
-#                             if self.public
-#                             else entrypoint.private_https
-#                         ],
-#                         "rule": " && ".join(
-#                             ["Host(`{}`)".format(host)]
-#                             + (
-#                                 ["PathPrefix(`{}`)".format(self.prefix)]
-#                                 if self.prefix
-#                                 else []
-#                             )
-#                             + self.rules
-#                         ),
-#                         "middlewares": [
-#                             middleware.name
-#                             if isinstance(middleware, Middleware)
-#                             else middleware
-#                             for middleware in self.middlewares
-#                         ],
-#                         "tls": {
-#                             "certResolver": traefik.PUBLIC_CERT_RESOLVER
-#                             if self.public
-#                             else traefik.PRIVATE_CERT_RESOLVER
-#                         },
-#                     }
-#                 },
-#             }
-#         }
+        middlewares = {
+            middleware.name: middleware.data
+            for middleware in self.middlewares
+            if isinstance(middleware, TraefikMiddleware)
+        }
+        if middlewares:
+            data["http"]["middlewares"] = middlewares
 
-#         if isinstance(self.service, Service):
-#             data["http"]["services"] = {
-#                 self.name: {
-#                     "loadBalancer": {
-#                         "servers": [
-#                             {
-#                                 "url": str(
-#                                     self.service.to_url(
-#                                         ServiceType.HTTP, self.name, resource
-#                                     )
-#                                 )
-#                             }
-#                         ]
-#                     }
-#                 }
-#             }
-#         elif isinstance(self.service, int):
-#             data["http"]["services"] = {
-#                 self.name: {
-#                     "loadBalancer": {
-#                         "servers": [
-#                             {
-#                                 "url": str(
-#                                     Service(port=self.service).to_url(
-#                                         ServiceType.HTTP, self.name, resource
-#                                     )
-#                                 )
-#                             }
-#                         ]
-#                     }
-#                 }
-#             }
-
-#         middlewares = {
-#             middleware.name: middleware.data
-#             for middleware in self.middlewares
-#             if isinstance(middleware, Middleware)
-#         }
-#         if middlewares:
-#             data["http"]["middlewares"] = middlewares
-
-#         return ConfigFile(
-#             volume_path=traefik.get_dynamic_volume_path(self.name),
-#             data=data,
-#             schema_url="https://json.schemastore.org/traefik-v3-file-provider.json",
-#         ).build_resource(
-#             resource_name, resource=resource.to_docker_resource(), opts=opts
-#         )
+        return ConfigFile(
+            container_volume_path=static_config.get_dynamic_container_volume_path(
+                self.name
+            ),
+            data=data,
+            schema_url="https://json.schemastore.org/traefik-v3-file-provider.json",
+        ).build_resource(resource_name, opts=opts, volume_resource=volume_resource)

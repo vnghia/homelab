@@ -1,27 +1,28 @@
-from enum import Enum
+from enum import StrEnum, auto
 
+import pulumi_docker as docker
+from pulumi import Output
 from pydantic import BaseModel, ConfigDict, PositiveInt
 from pydantic_core import Url
 
-# from homelab.docker.resource import Resource
+
+class TraefikServiceType(StrEnum):
+    HTTP = auto()
 
 
-class ServiceType(Enum):
-    HTTP = "http"
-
-
-class Service(BaseModel):
+class TraefikService(BaseModel):
     model_config = ConfigDict(strict=True)
 
     container: str | None = None
     port: PositiveInt
 
-    # def to_url(
-    #     self,
-    #     type_: ServiceType,
-    #     router_name: str,
-    #     resource: Resource,
-    # ) -> Url:
-    #     container = self.container or router_name
-    #     resource.containers[container]
-    #     return Url("{}://{}:{}".format(type.value, container, self.port))
+    def to_url(
+        self,
+        type_: TraefikServiceType,
+        router_name: str,
+        containers: dict[str, docker.Container],
+    ) -> Output[Url]:
+        container = self.container or router_name
+        return Output.format(
+            "{0}://{1}:{2}", type_.value, containers[container].name, self.port
+        ).apply(Url)

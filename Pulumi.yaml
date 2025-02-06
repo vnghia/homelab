@@ -51,7 +51,6 @@ config:
               timeout: 5s
             network:
               default-bridge: true
-              internal-bridge: true
             ports:
               httpv4:
                 internal: 81
@@ -111,7 +110,7 @@ config:
               interval: 1s
               timeout: 5s
               retries: 5
-            network_mode:
+            network:
               container: tailscale
             volumes:
               traefik-config:

@@ -18,7 +18,7 @@ class TraefikStaticConfig:
         traefik_service_model: ServiceModel[TraefikConfig],
         tailscale_service: TailscaleService,
     ) -> None:
-        self.container_volumes = traefik_service_model.container.volumes
+        container_volumes_config = traefik_service_model.container.volumes
         self.service_config = traefik_service_model.config
 
         self.container_volume_path = ContainerVolumePath.model_validate(
@@ -26,7 +26,7 @@ class TraefikStaticConfig:
             if traefik_service_model.container.command
             else None
         )
-        self.container_volume_config = self.container_volumes[
+        self.container_volume_config = container_volumes_config[
             self.container_volume_path.volume
         ]
         self.provider_directory = self.service_config.provider.file
@@ -85,7 +85,7 @@ class TraefikStaticConfig:
                         "caServer": str(self.service_config.acme.server),
                         "email": self.service_config.acme.email,
                         "storage": self.service_config.acme.storage.public.to_container_path(
-                            self.container_volumes
+                            container_volumes_config
                         ).as_posix(),
                         "httpChallenge": {
                             "entryPoint": self.service_config.entrypoint.public_http
@@ -97,7 +97,7 @@ class TraefikStaticConfig:
                         "caServer": str(self.service_config.acme.server),
                         "email": self.service_config.acme.email,
                         "storage": self.service_config.acme.storage.private.to_container_path(
-                            self.container_volumes
+                            container_volumes_config
                         ).as_posix(),
                         "dnsChallenge": {
                             "provider": "cloudflare",

@@ -35,11 +35,8 @@ class ContainerCommonNetworkConfig(BaseModel):
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
         return ContainerNetworkArgs(
             mode="bridge",
-            advanced=[network.default_bridge_args]
-            if self.default_bridge
-            else [] + [network.internal_bridge_args]
-            if self.internal_bridge
-            else [],
+            advanced=([network.default_bridge_args] if self.default_bridge else [])
+            + ([network.internal_bridge_args] if self.internal_bridge else []),
         )
 
 

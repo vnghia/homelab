@@ -54,5 +54,7 @@ class Service(ComponentResource):
         self.dozzle = DozzleService(
             self.services_config.dozzle,
             opts=self.child_opts,
+            network_config=config.network,
             container_model_global_args=self.container_model_global_args,
+            traefik_static_config=self.traefik.static,
         )

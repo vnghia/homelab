@@ -5,54 +5,12 @@ from homelab_docker.model.container.model import (
 )
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_network.config.network import NetworkConfig
 from pulumi import ResourceOptions
 
-# class Dozzle(Base):
-#     def __init__(
-#         self,
-#         resource: Resource,
-#         traefik: Static,
-#         opts: ResourceOptions | None,
-#     ) -> None:
-#         super().__init__(resource=resource, opts=opts)
-
-#         self.build_containers(
-#             options={
-#                 None: BuildOption(
-#                     envs={
-#                         "DOZZLE_FILTER": "label=pulumi.stack={}".format(
-#                             config.PROJECT_STACK
-#                         ),
-#                     },
-#                 )
-#             }
-#         )
-
-#         self.prefix = self.config().container.envs["DOZZLE_BASE"].to_str()
-
-#         self.traefik = HttpDynamic(
-#             name=self.name(),
-#             public=False,
-#             hostname="system",
-#             prefix=self.prefix,
-#             service=int(self.config().container.envs["DOZZLE_ADDR"].to_str()[1:]),
-#         ).build_resource(
-#             "traefik", resource=resource, traefik=traefik, opts=self.child_opts
-#         )
-#         self.traefik_redirect = HttpDynamic(
-#             name="{}-redirect".format(self.name()),
-#             public=False,
-#             hostname="system",
-#             service=self.name(),
-#             middlewares=[
-#                 Middleware(
-#                     name="{}-redirect".format(self.name()),
-#                     data={"addPrefix": {"prefix": self.prefix}},
-#                 )
-#             ],
-#         ).build_resource(
-#             "traefik-redirect", resource=resource, traefik=traefik, opts=self.child_opts
-#         )
+from homelab.docker.service.traefik.config.dynamic.http import TraefikHttpDynamicConfig
+from homelab.docker.service.traefik.config.dynamic.middleware import TraefikMiddleware
+from homelab.docker.service.traefik.config.static import TraefikStaticConfig
 
 
 class DozzleService(ServiceResourceBase[None]):
@@ -61,7 +19,9 @@ class DozzleService(ServiceResourceBase[None]):
         model: ServiceModel[None],
         *,
         opts: ResourceOptions | None,
+        network_config: NetworkConfig,
         container_model_global_args: ContainerModelGlobalArgs,
+        traefik_static_config: TraefikStaticConfig,
     ) -> None:
         super().__init__(
             model, opts=opts, container_model_global_args=container_model_global_args
@@ -77,6 +37,42 @@ class DozzleService(ServiceResourceBase[None]):
                     },
                 )
             }
+        )
+
+        self.prefix = self.model.container.envs["DOZZLE_BASE"].to_str()
+
+        self.traefik = TraefikHttpDynamicConfig(
+            name=self.name(),
+            public=False,
+            hostname="system",
+            prefix=self.prefix,
+            service=int(self.model.container.envs["DOZZLE_ADDR"].to_str()[1:]),
+        ).build_resource(
+            "traefik",
+            opts=self.child_opts,
+            network_config=network_config,
+            volume_resource=container_model_global_args.docker_resource.volume,
+            containers=self.CONTAINERS,
+            static_config=traefik_static_config,
+        )
+        self.traefik_redirect = TraefikHttpDynamicConfig(
+            name="{}-redirect".format(self.name()),
+            public=False,
+            hostname="system",
+            service=self.name(),
+            middlewares=[
+                TraefikMiddleware(
+                    name="{}-redirect".format(self.name()),
+                    data={"addPrefix": {"prefix": self.prefix}},
+                )
+            ],
+        ).build_resource(
+            "traefik-redirect",
+            opts=self.child_opts,
+            network_config=network_config,
+            volume_resource=container_model_global_args.docker_resource.volume,
+            containers=self.CONTAINERS,
+            static_config=traefik_static_config,
         )
 
         self.register_outputs({})
