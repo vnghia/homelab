@@ -1,4 +1,3 @@
-import pulumi
 import pulumi_docker as docker
 import pulumi_random as random
 from pulumi import ComponentResource, ResourceOptions
@@ -74,6 +73,7 @@ class PostgresDatabaseResource(ComponentResource):
                 full_name,
                 opts=self.child_opts,
                 global_args=container_model_global_args,
+                service_args=None,
                 build_args=ContainerModelBuildArgs(
                     envs={
                         "POSTGRES_PASSWORD": self.password,
@@ -82,7 +82,6 @@ class PostgresDatabaseResource(ComponentResource):
                 containers={},
             )
             self.containers[version] = container
-            pulumi.export("container.{}".format(full_name), container.name)
 
         self.register_outputs({})
 
@@ -90,5 +89,8 @@ class PostgresDatabaseResource(ComponentResource):
     def short_name(self) -> str:
         return self.model.get_short_name(self.name)
 
-    def get_full_name_version(self, version: int) -> str:
+    def get_short_name_version(self, version: PositiveInt) -> str:
+        return self.model.get_short_name_version(self.name, version)
+
+    def get_full_name_version(self, version: PositiveInt) -> str:
         return self.model.get_full_name_version(self.service_name, self.name, version)

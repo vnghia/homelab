@@ -19,7 +19,7 @@ class PostgresDatabaseModel(BaseModel):
     PASSWORD_LENGTH: ClassVar[PositiveInt] = 64
 
     image: str = DATABASE_TYPE
-    versions: list[PositiveInt] = [17]
+    versions: list[PositiveInt] = [DATABASE_VERSION]
 
     user: str | None = None
     database: str | None = None

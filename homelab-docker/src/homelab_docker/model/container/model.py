@@ -2,10 +2,12 @@ import dataclasses
 from typing import Literal, Mapping
 
 import pulumi_docker as docker
-from pulumi import Input, Output, ResourceOptions
+from pulumi import Input, Output, Resource, ResourceOptions
 from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
+from homelab_docker.config.database import DatabaseConfig
+from homelab_docker.model.container.database import ContainerDatabaseConfig
 from homelab_docker.resource.docker import DockerResource
 from homelab_docker.resource.file import FileResource
 
@@ -25,6 +27,12 @@ class ContainerModelGlobalArgs:
 
 
 @dataclasses.dataclass
+class ContainerModelServiceArgs:
+    name: str
+    database_config: DatabaseConfig
+
+
+@dataclasses.dataclass
 class ContainerModelBuildArgs:
     opts: ResourceOptions | None = None
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
@@ -36,6 +44,7 @@ class ContainerModel(BaseModel):
 
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
+    database: ContainerDatabaseConfig | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
     ports: dict[str, ContainerPortConfig] = {}
@@ -56,6 +65,7 @@ class ContainerModel(BaseModel):
         *,
         opts: ResourceOptions | None,
         global_args: ContainerModelGlobalArgs,
+        service_args: ContainerModelServiceArgs | None,
         build_args: ContainerModelBuildArgs | None,
         containers: dict[str, docker.Container],
     ) -> docker.Container:
@@ -65,6 +75,21 @@ class ContainerModel(BaseModel):
             global_args.docker_resource.network, containers
         )
 
+        depends_on: list[Resource] = []
+        depends_on.extend(build_args.files)
+        if self.database:
+            if not service_args:
+                raise ValueError(
+                    "service args is required if database config is not None"
+                )
+            depends_on.append(
+                containers[
+                    self.database.to_container_name(
+                        service_args.name, service_args.database_config
+                    )
+                ]
+            )
+
         return docker.Container(
             resource_name,
             opts=ResourceOptions.merge(
@@ -72,7 +97,7 @@ class ContainerModel(BaseModel):
                 ResourceOptions(
                     ignore_changes=["image"],
                     replace_on_changes=["*"],
-                    depends_on=build_args.files,
+                    depends_on=depends_on,
                 ),
             ),
             image=image.name,

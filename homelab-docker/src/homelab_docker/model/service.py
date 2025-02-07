@@ -1,11 +1,12 @@
 from pydantic import BaseModel
 
+from homelab_docker.config.database import DatabaseConfig
+
 from .container.model import ContainerModel
-from .database import DatabaseModel
 
 
 class ServiceModel[T](BaseModel):
     config: T
-    databases: DatabaseModel = DatabaseModel()
+    databases: DatabaseConfig = DatabaseConfig()
     container: ContainerModel
     containers: dict[str, ContainerModel] = {}

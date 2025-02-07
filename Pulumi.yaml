@@ -148,6 +148,8 @@ config:
               postgres: {}
           container:
             image: nghe
+            database:
+              postgres:
             # healthcheck:
             #   tests:
             #     [

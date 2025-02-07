@@ -1,7 +1,7 @@
 from homelab_config import Config
+from homelab_docker.config.database import DatabaseConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
-from homelab_docker.model.database import DatabaseModel
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.docker import DockerResource
 from pulumi import ComponentResource, ResourceOptions
@@ -23,7 +23,7 @@ class ServiceConfig(ServiceConfigBase):
     nghe: ServiceModel[NgheConfig]
 
     @property
-    def databases(self) -> dict[str, DatabaseModel]:
+    def databases(self) -> dict[str, DatabaseConfig]:
         return {
             field: service.databases
             for field, service in self

@@ -1,7 +1,8 @@
+import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
+from homelab_docker.config.database import DatabaseConfig
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
-from homelab_docker.model.database import DatabaseModel
 from homelab_docker.resource.database.postgres import PostgresDatabaseResource
 
 
@@ -10,7 +11,7 @@ class DatabaseResource(ComponentResource):
 
     def __init__(
         self,
-        model: DatabaseModel,
+        model: DatabaseConfig,
         *,
         opts: ResourceOptions,
         service_name: str,
@@ -28,4 +29,12 @@ class DatabaseResource(ComponentResource):
                 container_model_global_args=container_model_global_args,
             )
             for name, model in model.postgres.items()
+        }
+
+    @property
+    def containers(self) -> dict[str, docker.Container]:
+        return {
+            resource.get_short_name_version(version): container
+            for resource in self.postgres.values()
+            for version, container in resource.containers.items()
         }
