@@ -43,7 +43,7 @@ class DatabaseResource(ComponentResource):
     @property
     def source_config(self) -> DatabaseSourceConfig:
         return DatabaseSourceConfig(
-            {
+            postgres={
                 name: {
                     version: resource.to_source_model(version)
                     for version in resource.model.versions

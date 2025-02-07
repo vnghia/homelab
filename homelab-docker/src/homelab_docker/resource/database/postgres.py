@@ -46,7 +46,7 @@ class PostgresDatabaseResource(ComponentResource):
             opts=self.child_opts,
             length=self.model.PASSWORD_LENGTH,
             special=False,
-        ).result
+        )
         self.database = self.model.database or self.service_name
 
         self.containers: dict[PositiveInt, docker.Container] = {}
@@ -77,7 +77,7 @@ class PostgresDatabaseResource(ComponentResource):
                 service_args=None,
                 build_args=ContainerModelBuildArgs(
                     envs={
-                        "POSTGRES_PASSWORD": self.password,
+                        "POSTGRES_PASSWORD": self.password.result,
                     }
                 ),
                 containers={},
@@ -98,9 +98,9 @@ class PostgresDatabaseResource(ComponentResource):
 
     def to_source_model(self, version: PositiveInt) -> DatabaseSourceModel:
         return DatabaseSourceModel(
-            self.username,
-            self.password,
-            self.database,
-            self.containers[version].name,
-            self.model.PORT,
+            username=self.username,
+            password=self.password.result,
+            database=self.database,
+            host=self.containers[version].name,
+            port=self.model.PORT,
         )

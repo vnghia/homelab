@@ -150,23 +150,24 @@ config:
             image: nghe
             database:
               postgres:
-            # healthcheck:
-            #   tests:
-            #     [
-            #       "CMD",
-            #       "wget",
-            #       "--spider",
-            #       "-q",
-            #       "http://localhost:3000/rest/health",
-            #     ]
-            #   interval: 1s
-            #   timeout: 5s
+            healthcheck:
+              tests:
+                [
+                  "CMD",
+                  "wget",
+                  "--spider",
+                  "-q",
+                  "http://localhost:3000/rest/health",
+                ]
+              interval: 1s
+              timeout: 5s
             network:
               default-bridge: true
             volumes:
               nghe-cache: /tmp/nghe
             envs:
               NGHE_SERVER__PORT: 3000
+              NGHE_S3__ENABLE: true
   integration:
     value:
       s3:

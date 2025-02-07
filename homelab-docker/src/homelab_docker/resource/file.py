@@ -7,6 +7,7 @@ from pathlib import Path, PosixPath
 from typing import Any, Iterator
 
 import docker
+import pulumi
 from docker.errors import NotFound
 from docker.models.containers import Container
 from pulumi import Input, Output, ResourceOptions
@@ -19,7 +20,13 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import BaseModel, Field, computed_field, field_validator
+from pydantic import (
+    BaseModel,
+    ValidationInfo,
+    ValidatorFunctionWrapHandler,
+    computed_field,
+    field_validator,
+)
 
 from homelab_docker.model.container.volume_path import (
     ContainerVolumePath,
@@ -30,7 +37,7 @@ from homelab_docker.model.container.volume_path import (
 class FileProviderProps(BaseModel):
     container_volume_path: ContainerVolumePath
     content: str
-    mode: int = Field(strict=False)
+    mode: int
 
     @field_validator("container_volume_path", mode="after")
     def check_path_not_empty(
@@ -39,6 +46,21 @@ class FileProviderProps(BaseModel):
         if not container_volume_path.path.name:
             raise ValueError("Container volume path should not be empty")
         return container_volume_path
+
+    @field_validator("content", mode="wrap")
+    @classmethod
+    def ignore_non_string_input(
+        cls, data: Any, _: ValidatorFunctionWrapHandler, info: ValidationInfo
+    ) -> str:
+        if isinstance(data, str):
+            return data
+        else:
+            pulumi.log.warn(
+                "Non string data encountered: {}. Validated data: {}".format(
+                    data, info.data
+                )
+            )
+            return "Unknown"
 
     @property
     def id_(self) -> str:

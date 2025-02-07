@@ -50,7 +50,9 @@ class ServiceResourceBase[T](ComponentResource):
         )
 
         self.container_model_service_args = ContainerModelServiceArgs(
-            self.name(), self.model.databases, self.database.source_config
+            name=self.name(),
+            database_config=self.model.databases,
+            database_source_config=self.database.source_config,
         )
 
         self.database_containers = {

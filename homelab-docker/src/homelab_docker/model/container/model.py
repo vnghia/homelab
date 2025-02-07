@@ -40,7 +40,7 @@ class ContainerModelBuildArgs:
     opts: ResourceOptions | None = None
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
     database_envs_factory: (
-        Callable[[DatabaseSourceModel], dict[str, Input[str]]] | None
+        Callable[[DatabaseSourceModel], dict[str, Output[str]]] | None
     ) = None
     files: list[FileResource] = dataclasses.field(default_factory=list)
 
@@ -83,11 +83,15 @@ class ContainerModel(BaseModel):
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
+
+        database_envs: dict[str, Output[str]] = {}
+
         if self.database:
             if not service_args:
                 raise ValueError(
                     "service args is required if database config is not None"
                 )
+
             depends_on.append(
                 containers[
                     self.database.to_container_name(
@@ -95,6 +99,13 @@ class ContainerModel(BaseModel):
                     )
                 ]
             )
+
+            if build_args.database_envs_factory:
+                source_model = self.database.to_database_source_model(
+                    service_args.database_config,
+                    service_args.database_source_config,
+                )
+                database_envs = build_args.database_envs_factory(source_model)
 
         return docker.Container(
             resource_name,
@@ -145,21 +156,7 @@ class ContainerModel(BaseModel):
                         | self.envs
                         | {
                             k: Output.from_input(v).apply(ContainerString)
-                            for k, v in (
-                                dict(build_args.envs)
-                                | (
-                                    build_args.database_envs_factory(
-                                        self.database.to_database_source_model(
-                                            service_args.database_config,
-                                            service_args.database_source_config,
-                                        )
-                                    )
-                                    if self.database
-                                    and service_args
-                                    and build_args.database_envs_factory
-                                    else {}
-                                )
-                            ).items()
+                            for k, v in (dict(build_args.envs) | database_envs).items()
                         }
                     ).items(),
                     key=lambda x: x[0],

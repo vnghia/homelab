@@ -5,6 +5,7 @@ from homelab_docker.model.container.model import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )
+from homelab_docker.model.database.source import PostgresDatabaseSourceUrlEnvsFactory
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
@@ -42,8 +43,10 @@ class NgheService(ServiceResourceBase[NgheConfig]):
                         "NGHE_INTEGRATION__SPOTIFY__ID": self.model.config.spotify.id,
                         "NGHE_INTEGRATION__SPOTIFY__SECRET": self.model.config.spotify.secret,
                         "NGHE_INTEGRATION__LASTFM__KEY": self.model.config.lastfm.key,
-                        "NGHE_S3__ENABLE": "true",
-                    }
+                    },
+                    database_envs_factory=PostgresDatabaseSourceUrlEnvsFactory(
+                        env="NGHE_DATABASE__URL"
+                    ),
                 )
             }
         )

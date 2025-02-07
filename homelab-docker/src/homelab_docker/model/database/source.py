@@ -27,3 +27,15 @@ class DatabaseSourceModel:
             ._replace(query=urllib.parse.urlencode(query=query))
             .geturl()
         )
+
+
+@dataclasses.dataclass
+class PostgresDatabaseSourceUrlEnvsFactory:
+    env: str
+    scheme: str = "postgres"
+    query: dict[str, str] = dataclasses.field(
+        default_factory=lambda: {"sslmode": "disable"}
+    )
+
+    def __call__(self, model: DatabaseSourceModel) -> dict[str, Output[str]]:
+        return {self.env: model.to_url(self.scheme, self.query)}
