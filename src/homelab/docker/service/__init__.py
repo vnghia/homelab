@@ -4,6 +4,7 @@ from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.docker import DockerResource
+from homelab_dozzle_service import DozzleService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config import TraefikConfig
@@ -12,7 +13,6 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab.docker.service.nghe import NgheService
 
-from .dozzle import DozzleService
 from .nghe.config import NgheConfig
 
 

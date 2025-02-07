@@ -1,19 +1,13 @@
 [project]
-name = "homelab"
+name = "homelab-dozzle-service"
 version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 dependencies = [
-    "homelab-config",
     "homelab-docker",
-    "homelab-network",
-    "homelab-integration",
-    "homelab-tailscale-service",
     "homelab-traefik-service",
-    "homelab-dozzle-service",
     "pulumi>=3.148.0",
 ]
-readme = "README.md"
 requires-python = ">= 3.12"
 classifiers = ["Private :: Do Not Upload"]
 
@@ -23,16 +17,13 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = ["mypy>=1.14.1"]
+dev-dependencies = []
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/homelab"]
-
-[tool.rye.workspace]
-members = ["homelab-*"]
+packages = ["src/homelab_dozzle_service"]
 
 [tool.mypy]
 strict = true

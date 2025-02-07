@@ -15,8 +15,11 @@
 -e file:homelab-docker
     # via homelab
     # via homelab-config
+    # via homelab-dozzle-service
     # via homelab-tailscale-service
     # via homelab-traefik-service
+-e file:homelab-dozzle-service
+    # via homelab
 -e file:homelab-integration
     # via homelab
     # via homelab-config
@@ -29,6 +32,7 @@
     # via homelab-traefik-service
 -e file:homelab-traefik-service
     # via homelab
+    # via homelab-dozzle-service
 annotated-types==0.7.0
     # via pydantic
 anyio==4.8.0
@@ -93,6 +97,7 @@ protobuf==4.25.6
 pulumi==3.148.0
     # via homelab
     # via homelab-config
+    # via homelab-dozzle-service
     # via homelab-integration
     # via homelab-tailscale-service
     # via homelab-traefik-service
