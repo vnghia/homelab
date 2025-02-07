@@ -73,6 +73,7 @@ class PostgresDatabaseResource(ComponentResource):
             ).build_resource(
                 full_name,
                 opts=self.child_opts,
+                service_name=service_name,
                 global_args=container_model_global_args,
                 service_args=None,
                 build_args=ContainerModelBuildArgs(
@@ -101,6 +102,6 @@ class PostgresDatabaseResource(ComponentResource):
             username=self.username,
             password=self.password.result,
             database=self.database,
-            host=self.containers[version].name,
+            host=self.get_full_name_version(version),
             port=self.model.PORT,
         )

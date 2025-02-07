@@ -50,7 +50,6 @@ class ServiceResourceBase[T](ComponentResource):
         )
 
         self.container_model_service_args = ContainerModelServiceArgs(
-            name=self.name(),
             database_config=self.model.databases,
             database_source_config=self.database.source_config,
         )
@@ -75,6 +74,7 @@ class ServiceResourceBase[T](ComponentResource):
         return model.build_resource(
             self.add_service_name(name),
             opts=self.child_opts,
+            service_name=self.name(),
             global_args=self.container_model_global_args,
             service_args=self.container_model_service_args,
             build_args=container_model_build_args,

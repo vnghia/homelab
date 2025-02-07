@@ -1,9 +1,7 @@
 from enum import StrEnum, auto
 
 import pulumi_docker as docker
-from pulumi import Output
-from pydantic import BaseModel, PositiveInt
-from pydantic_core import Url
+from pydantic import AnyUrl, BaseModel, PositiveInt
 
 
 class TraefikServiceType(StrEnum):
@@ -19,8 +17,7 @@ class TraefikService(BaseModel):
         type_: TraefikServiceType,
         router_name: str,
         containers: dict[str, docker.Container],
-    ) -> Output[Url]:
+    ) -> AnyUrl:
         container = self.container or router_name
-        return Output.format(
-            "{0}://{1}:{2}", type_.value, containers[container].name, self.port
-        ).apply(Url)
+        containers[container]
+        return AnyUrl("{}://{}:{}".format(type_.value, container, self.port))

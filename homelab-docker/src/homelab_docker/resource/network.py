@@ -33,10 +33,16 @@ class NetworkResource(ComponentResource):
             pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
         self.register_outputs(export)
 
-    @property
-    def default_bridge_args(self) -> docker.ContainerNetworksAdvancedArgs:
-        return docker.ContainerNetworksAdvancedArgs(name=self.default_bridge.name)
+    def default_bridge_args(
+        self, aliases: list[str]
+    ) -> docker.ContainerNetworksAdvancedArgs:
+        return docker.ContainerNetworksAdvancedArgs(
+            name=self.default_bridge.name, aliases=aliases
+        )
 
-    @property
-    def internal_bridge_args(self) -> docker.ContainerNetworksAdvancedArgs:
-        return docker.ContainerNetworksAdvancedArgs(name=self.internal_bridge.name)
+    def internal_bridge_args(
+        self, aliases: list[str]
+    ) -> docker.ContainerNetworksAdvancedArgs:
+        return docker.ContainerNetworksAdvancedArgs(
+            name=self.internal_bridge.name, aliases=aliases
+        )

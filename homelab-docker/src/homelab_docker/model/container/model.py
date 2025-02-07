@@ -30,7 +30,6 @@ class ContainerModelGlobalArgs:
 
 @dataclasses.dataclass
 class ContainerModelServiceArgs:
-    name: str
     database_config: DatabaseConfig
     database_source_config: DatabaseSourceConfig
 
@@ -70,6 +69,7 @@ class ContainerModel(BaseModel):
         resource_name: str,
         *,
         opts: ResourceOptions | None,
+        service_name: str,
         global_args: ContainerModelGlobalArgs,
         service_args: ContainerModelServiceArgs | None,
         build_args: ContainerModelBuildArgs | None,
@@ -78,7 +78,7 @@ class ContainerModel(BaseModel):
         build_args = build_args or ContainerModelBuildArgs()
         image = global_args.docker_resource.image[self.image]
         network_args = self.network.to_args(
-            global_args.docker_resource.network, containers
+            resource_name, global_args.docker_resource.network, containers
         )
 
         depends_on: list[Resource] = []
@@ -95,7 +95,7 @@ class ContainerModel(BaseModel):
             depends_on.append(
                 containers[
                     self.database.to_container_name(
-                        service_args.name, service_args.database_config
+                        service_name, service_args.database_config
                     )
                 ]
             )
@@ -167,7 +167,11 @@ class ContainerModel(BaseModel):
                 for k, v in (
                     global_args.project_labels
                     | self.labels
-                    | {"image.repo_digest": image.repo_digest}
+                    | {
+                        "image.repo_digest": image.repo_digest,
+                        "dev.dozzle.group": Output.from_input(service_name),
+                        "dev.dozzle.name": Output.from_input(resource_name),
+                    }
                     | {file.id: file.hash for file in build_args.files}
                 ).items()
             ],

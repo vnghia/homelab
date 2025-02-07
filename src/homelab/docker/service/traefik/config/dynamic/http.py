@@ -75,29 +75,22 @@ class TraefikHttpDynamicConfig(BaseModel):
             }
         }
 
+        service: TraefikService | None = None
         if isinstance(self.service, TraefikService):
-            data["http"]["services"] = {
-                self.name: {
-                    "loadBalancer": {
-                        "servers": [
-                            {
-                                "url": self.service.to_url(
-                                    TraefikServiceType.HTTP, self.name, containers
-                                ).apply(str)
-                            }
-                        ]
-                    }
-                }
-            }
+            service = self.service
         elif isinstance(self.service, int):
+            service = TraefikService(port=self.service)
+        if service:
             data["http"]["services"] = {
                 self.name: {
                     "loadBalancer": {
                         "servers": [
                             {
-                                "url": TraefikService(port=self.service)
-                                .to_url(TraefikServiceType.HTTP, self.name, containers)
-                                .apply(str)
+                                "url": str(
+                                    service.to_url(
+                                        TraefikServiceType.HTTP, self.name, containers
+                                    )
+                                )
                             }
                         ]
                     }
