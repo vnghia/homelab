@@ -16,13 +16,18 @@
     # via homelab
     # via homelab-config
     # via homelab-tailscale-service
+    # via homelab-traefik-service
 -e file:homelab-integration
     # via homelab
     # via homelab-config
 -e file:homelab-network
     # via homelab
     # via homelab-config
+    # via homelab-traefik-service
 -e file:homelab-tailscale-service
+    # via homelab
+    # via homelab-traefik-service
+-e file:homelab-traefik-service
     # via homelab
 annotated-types==0.7.0
     # via pydantic
@@ -90,6 +95,7 @@ pulumi==3.148.0
     # via homelab-config
     # via homelab-integration
     # via homelab-tailscale-service
+    # via homelab-traefik-service
     # via pulumi-cloudflare
     # via pulumi-docker
     # via pulumi-random
@@ -109,6 +115,7 @@ pydantic==2.10.6
     # via homelab-integration
     # via homelab-network
     # via homelab-tailscale-service
+    # via homelab-traefik-service
     # via pydantic-extra-types
 pydantic-core==2.27.2
     # via pydantic

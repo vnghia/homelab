@@ -9,10 +9,9 @@ from homelab_docker.model.database.source import PostgresDatabaseSourceUrlEnvsFa
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_integration.config.s3 import S3IntegrationConfig
+from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
+from homelab_traefik_service.config.static import TraefikStaticConfig
 from pulumi import ResourceOptions
-
-from homelab.docker.service.traefik.config.dynamic.http import TraefikHttpDynamicConfig
-from homelab.docker.service.traefik.config.static import TraefikStaticConfig
 
 from .config import NgheConfig
 

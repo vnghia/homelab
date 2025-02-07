@@ -7,7 +7,7 @@ from homelab_network.config.network import NetworkConfig
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
-from homelab.docker.service.traefik.config import TraefikConfig
+from . import TraefikConfig
 
 
 class TraefikStaticConfig:

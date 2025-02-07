@@ -1,4 +1,3 @@
-from homelab_config import Config
 from homelab_docker.model.container.model import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
@@ -10,10 +9,9 @@ from homelab_network.resource.token import TokenResource
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
-from homelab.docker.service.traefik.config.dynamic.http import TraefikHttpDynamicConfig
-from homelab.docker.service.traefik.config.static import TraefikStaticConfig
-
 from .config import TraefikConfig
+from .config.dynamic.http import TraefikHttpDynamicConfig
+from .config.static import TraefikStaticConfig
 
 
 class TraefikService(ServiceResourceBase[TraefikConfig]):
@@ -22,6 +20,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
         model: ServiceModel[TraefikConfig],
         *,
         opts: ResourceOptions | None,
+        token_name: str,
         network_config: NetworkConfig,
         container_model_global_args: ContainerModelGlobalArgs,
         tailscale_service: TailscaleService,
@@ -30,9 +29,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
             model, opts=opts, container_model_global_args=container_model_global_args
         )
 
-        self.token = TokenResource(
-            Config.get_name(None), network_config, opts=self.child_opts
-        )
+        self.token = TokenResource(token_name, network_config, opts=self.child_opts)
         self.static = TraefikStaticConfig(
             network_config=network_config,
             traefik_service_model=self.model,

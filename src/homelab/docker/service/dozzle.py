@@ -5,11 +5,10 @@ from homelab_docker.model.container.model import (
 )
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
+from homelab_traefik_service.config.dynamic.middleware import TraefikMiddleware
+from homelab_traefik_service.config.static import TraefikStaticConfig
 from pulumi import ResourceOptions
-
-from homelab.docker.service.traefik.config.dynamic.http import TraefikHttpDynamicConfig
-from homelab.docker.service.traefik.config.dynamic.middleware import TraefikMiddleware
-from homelab.docker.service.traefik.config.static import TraefikStaticConfig
 
 
 class DozzleService(ServiceResourceBase[None]):
