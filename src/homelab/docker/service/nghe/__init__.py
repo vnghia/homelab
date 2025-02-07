@@ -65,3 +65,5 @@ class NgheService(ServiceResourceBase[NgheConfig]):
             containers=self.CONTAINERS,
             static_config=traefik_static_config,
         )
+
+        self.register_outputs({})
