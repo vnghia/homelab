@@ -2,6 +2,7 @@ import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab_docker.config.database import DatabaseConfig
+from homelab_docker.config.database.source import DatabaseSourceConfig
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
 from homelab_docker.resource.database.postgres import PostgresDatabaseResource
 
@@ -38,3 +39,15 @@ class DatabaseResource(ComponentResource):
             for resource in self.postgres.values()
             for version, container in resource.containers.items()
         }
+
+    @property
+    def source_config(self) -> DatabaseSourceConfig:
+        return DatabaseSourceConfig(
+            {
+                name: {
+                    version: resource.to_source_model(version)
+                    for version in resource.model.versions
+                }
+                for name, resource in self.postgres.items()
+            }
+        )

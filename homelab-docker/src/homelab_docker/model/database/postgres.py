@@ -21,7 +21,7 @@ class PostgresDatabaseModel(BaseModel):
     image: str = DATABASE_TYPE
     versions: list[PositiveInt] = [DATABASE_VERSION]
 
-    user: str | None = None
+    username: str | None = None
     database: str | None = None
 
     network: ContainerNetworkConfig = ContainerNetworkConfig()

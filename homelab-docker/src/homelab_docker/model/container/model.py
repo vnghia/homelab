@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal, Mapping
+from typing import Callable, Literal, Mapping
 
 import pulumi_docker as docker
 from pulumi import Input, Output, Resource, ResourceOptions
@@ -7,7 +7,9 @@ from pydantic import BaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from homelab_docker.config.database import DatabaseConfig
+from homelab_docker.config.database.source import DatabaseSourceConfig
 from homelab_docker.model.container.database import ContainerDatabaseConfig
+from homelab_docker.model.database.source import DatabaseSourceModel
 from homelab_docker.resource.docker import DockerResource
 from homelab_docker.resource.file import FileResource
 
@@ -30,12 +32,16 @@ class ContainerModelGlobalArgs:
 class ContainerModelServiceArgs:
     name: str
     database_config: DatabaseConfig
+    database_source_config: DatabaseSourceConfig
 
 
 @dataclasses.dataclass
 class ContainerModelBuildArgs:
     opts: ResourceOptions | None = None
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
+    database_envs_factory: (
+        Callable[[DatabaseSourceModel], dict[str, Input[str]]] | None
+    ) = None
     files: list[FileResource] = dataclasses.field(default_factory=list)
 
 
@@ -139,7 +145,21 @@ class ContainerModel(BaseModel):
                         | self.envs
                         | {
                             k: Output.from_input(v).apply(ContainerString)
-                            for k, v in (build_args.envs).items()
+                            for k, v in (
+                                dict(build_args.envs)
+                                | (
+                                    build_args.database_envs_factory(
+                                        self.database.to_database_source_model(
+                                            service_args.database_config,
+                                            service_args.database_source_config,
+                                        )
+                                    )
+                                    if self.database
+                                    and service_args
+                                    and build_args.database_envs_factory
+                                    else {}
+                                )
+                            ).items()
                         }
                     ).items(),
                     key=lambda x: x[0],

@@ -17,6 +17,7 @@ from homelab_docker.model.container.volume import (
 )
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
+from homelab_docker.model.database.source import DatabaseSourceModel
 
 
 class PostgresDatabaseResource(ComponentResource):
@@ -39,14 +40,14 @@ class PostgresDatabaseResource(ComponentResource):
 
         self.service_name = service_name
 
-        self.username = self.model.user or self.service_name
-        self.database = self.model.database or self.service_name
+        self.username = self.model.username or self.service_name
         self.password = random.RandomPassword(
             self.short_name,
             opts=self.child_opts,
             length=self.model.PASSWORD_LENGTH,
             special=False,
         ).result
+        self.database = self.model.database or self.service_name
 
         self.containers: dict[PositiveInt, docker.Container] = {}
         for version in self.model.versions:
@@ -94,3 +95,12 @@ class PostgresDatabaseResource(ComponentResource):
 
     def get_full_name_version(self, version: PositiveInt) -> str:
         return self.model.get_full_name_version(self.service_name, self.name, version)
+
+    def to_source_model(self, version: PositiveInt) -> DatabaseSourceModel:
+        return DatabaseSourceModel(
+            self.username,
+            self.password,
+            self.database,
+            self.containers[version].name,
+            self.model.PORT,
+        )

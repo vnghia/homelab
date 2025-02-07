@@ -28,9 +28,6 @@ class ServiceResourceBase[T](ComponentResource):
 
         self.model = model
         self.container_model_global_args = container_model_global_args
-        self.container_model_service_args = ContainerModelServiceArgs(
-            self.name(), self.model.databases
-        )
         self.build_databases()
 
     @classmethod
@@ -51,10 +48,14 @@ class ServiceResourceBase[T](ComponentResource):
             service_name=self.name(),
             container_model_global_args=self.container_model_global_args,
         )
+
+        self.container_model_service_args = ContainerModelServiceArgs(
+            self.name(), self.model.databases, self.database.source_config
+        )
+
         self.database_containers = {
             name: container for name, container in self.database.containers.items()
         }
-
         for name, container in self.database_containers.items():
             name = self.add_service_name(name)
             self.CONTAINERS[name] = container
