@@ -15,7 +15,11 @@
 -e file:homelab-docker
     # via homelab
     # via homelab-config
+-e file:homelab-integration
+    # via homelab
+    # via homelab-config
 -e file:homelab-network
+    # via homelab
     # via homelab-config
 annotated-types==0.7.0
     # via pydantic
@@ -79,8 +83,10 @@ pip==24.3.1
     # via pulumi
 protobuf==4.25.6
     # via pulumi
-pulumi==3.147.0
+pulumi==3.148.0
+    # via homelab
     # via homelab-config
+    # via homelab-integration
     # via pulumi-cloudflare
     # via pulumi-docker
     # via pulumi-random
@@ -97,6 +103,7 @@ pycparser==2.22
     # via cffi
 pydantic==2.10.6
     # via homelab-docker
+    # via homelab-integration
     # via homelab-network
     # via pydantic-extra-types
 pydantic-core==2.27.2

@@ -8,11 +8,13 @@ from homelab_docker.model.container.model import (
 from homelab_docker.model.database.source import PostgresDatabaseSourceUrlEnvsFactory
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_integration.config.s3 import S3IntegrationConfig
 from pulumi import ResourceOptions
 
-from homelab.docker.service.nghe.config import NgheConfig
 from homelab.docker.service.traefik.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab.docker.service.traefik.config.static import TraefikStaticConfig
+
+from .config import NgheConfig
 
 
 class NgheService(ServiceResourceBase[NgheConfig]):
@@ -23,6 +25,7 @@ class NgheService(ServiceResourceBase[NgheConfig]):
         model: ServiceModel[NgheConfig],
         *,
         opts: ResourceOptions | None,
+        s3_integration_config: S3IntegrationConfig,
         container_model_global_args: ContainerModelGlobalArgs,
         traefik_static_config: TraefikStaticConfig,
     ) -> None:
@@ -43,6 +46,7 @@ class NgheService(ServiceResourceBase[NgheConfig]):
                         "NGHE_INTEGRATION__SPOTIFY__ID": self.model.config.spotify.id,
                         "NGHE_INTEGRATION__SPOTIFY__SECRET": self.model.config.spotify.secret,
                         "NGHE_INTEGRATION__LASTFM__KEY": self.model.config.lastfm.key,
+                        **s3_integration_config.to_env(),
                     },
                     database_envs_factory=PostgresDatabaseSourceUrlEnvsFactory(
                         env="NGHE_DATABASE__URL"
@@ -62,22 +66,3 @@ class NgheService(ServiceResourceBase[NgheConfig]):
             containers=self.CONTAINERS,
             static_config=traefik_static_config,
         )
-
-        # self.build_containers(
-        #     options={
-        #         None: BuildOption(
-        #             envs={
-        #                 "NGHE_DATABASE__URL": self.postgres[None].get_url().apply(str),
-        #                 "NGHE_DATABASE__KEY": self.key.apply(
-        #                     lambda x: binascii.hexlify(x.encode()).decode("ascii")
-        #                 ),
-        #                 "NGHE_INTEGRATION__SPOTIFY__ID": self.service_config.spotify.id,
-        #                 "NGHE_INTEGRATION__SPOTIFY__SECRET": self.service_config.spotify.secret,
-        #                 "NGHE_INTEGRATION__LASTFM__KEY": self.service_config.lastfm.key,
-        #                 "NGHE_S3__ENABLE": "true",
-        #                 **homelab_config.config.integration.s3.to_env_input(),
-        #             },
-        #             opts=ResourceOptions(depends_on=[self.postgres[None].container]),
-        #         )
-        #     }
-        # )

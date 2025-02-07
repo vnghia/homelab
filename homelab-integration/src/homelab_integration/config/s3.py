@@ -1,10 +1,7 @@
-from pulumi import Input
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl
 
 
-class S3(BaseModel):
-    model_config = ConfigDict(strict=True)
-
+class S3IntegrationConfig(BaseModel):
     bucket: str
     key_id: str = Field(alias="key-id")
     access_key: str = Field(alias="access-key")
@@ -18,6 +15,3 @@ class S3(BaseModel):
             "AWS_REGION": self.region,
             "AWS_ENDPOINT_URL": str(self.endpoint),
         }
-
-    def to_env_input(self) -> dict[str, Input[str]]:
-        return {k: v for k, v in self.to_env().items()}

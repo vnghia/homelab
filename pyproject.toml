@@ -6,8 +6,11 @@ authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 dependencies = [
     "homelab-config",
     "homelab-docker",
+    "homelab-network",
+    "homelab-integration",
     "deepmerge>=2.0",
     "pulumi-tailscale>=0.17.5",
+    "pulumi>=3.148.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"

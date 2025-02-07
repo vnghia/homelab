@@ -73,6 +73,7 @@ class Service(ComponentResource):
         self.nghe = NgheService(
             self.services_config.nghe,
             opts=self.child_opts,
+            s3_integration_config=config.integration.s3,
             container_model_global_args=self.container_model_global_args,
             traefik_static_config=self.traefik.static,
         )
