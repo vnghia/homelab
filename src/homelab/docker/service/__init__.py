@@ -4,6 +4,7 @@ from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.docker import DockerResource
+from homelab_tailscale_service import TailscaleService
 from pulumi import ComponentResource, ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 
@@ -11,7 +12,6 @@ from homelab.docker.service.nghe import NgheService
 
 from .dozzle import DozzleService
 from .nghe.config import NgheConfig
-from .tailscale import TailscaleService
 from .traefik import TraefikService
 from .traefik.config import TraefikConfig
 
@@ -55,6 +55,7 @@ class Service(ComponentResource):
         self.tailscale = TailscaleService(
             self.services_config.tailscale,
             opts=self.child_opts,
+            hostname=Config.get_name(None, project=True, stack=True),
             container_model_global_args=self.container_model_global_args,
         )
         self.traefik = TraefikService(

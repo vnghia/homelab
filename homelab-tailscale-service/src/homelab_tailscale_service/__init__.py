@@ -2,7 +2,6 @@ from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_tailscale as tailscale
-from homelab_config import Config
 from homelab_docker.model.container.model import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
@@ -19,13 +18,14 @@ class TailscaleService(ServiceResourceBase[None]):
         model: ServiceModel[None],
         *,
         opts: ResourceOptions | None,
+        hostname: str,
         container_model_global_args: ContainerModelGlobalArgs,
     ) -> None:
         super().__init__(
             model, opts=opts, container_model_global_args=container_model_global_args
         )
 
-        self.hostname = Config.get_name(name=None, project=True, stack=True)
+        self.hostname = hostname
         self.build_containers(
             options={
                 None: ContainerModelBuildArgs(

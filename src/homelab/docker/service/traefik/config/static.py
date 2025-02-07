@@ -4,9 +4,9 @@ from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.volume import VolumeResource
 from homelab_network.config.network import NetworkConfig
+from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
-from homelab.docker.service.tailscale import TailscaleService
 from homelab.docker.service.traefik.config import TraefikConfig
 
 
