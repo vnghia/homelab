@@ -63,10 +63,7 @@ class TraefikStaticConfig:
                         }
                     },
                 },
-                self.service_config.entrypoint.private_https: {
-                    "address": "[::]:443",
-                    "forwardedHeaders": {"insecure": True},
-                },
+                self.service_config.entrypoint.private_https: {"address": "[::]:443"},
                 self.service_config.entrypoint.public_https: {
                     "address": "[::]:{}".format(
                         tailscale_service.model.container.ports["httpsv4"].internal
