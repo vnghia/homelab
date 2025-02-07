@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Callable, Literal, Mapping
+from typing import Literal, Mapping
 
 import pulumi_docker as docker
 from pulumi import Input, Output, Resource, ResourceOptions
@@ -9,7 +9,6 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 from homelab_docker.config.database import DatabaseConfig
 from homelab_docker.config.database.source import DatabaseSourceConfig
 from homelab_docker.model.container.database import ContainerDatabaseConfig
-from homelab_docker.model.database.source import DatabaseSourceModel
 from homelab_docker.resource.docker import DockerResource
 from homelab_docker.resource.file import FileResource
 
@@ -38,9 +37,6 @@ class ContainerModelServiceArgs:
 class ContainerModelBuildArgs:
     opts: ResourceOptions | None = None
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
-    database_envs_factory: (
-        Callable[[DatabaseSourceModel], dict[str, Output[str]]] | None
-    ) = None
     files: list[FileResource] = dataclasses.field(default_factory=list)
 
 
@@ -100,12 +96,10 @@ class ContainerModel(BaseModel):
                 ]
             )
 
-            if build_args.database_envs_factory:
-                source_model = self.database.to_database_source_model(
-                    service_args.database_config,
-                    service_args.database_source_config,
-                )
-                database_envs = build_args.database_envs_factory(source_model)
+            database_envs = self.database.build_envs(
+                service_args.database_config,
+                service_args.database_source_config,
+            )
 
         return docker.Container(
             resource_name,

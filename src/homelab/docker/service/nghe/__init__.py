@@ -5,7 +5,6 @@ from homelab_docker.model.container.model import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )
-from homelab_docker.model.database.source import PostgresDatabaseSourceUrlEnvsFactory
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_integration.config.s3 import S3IntegrationConfig
@@ -47,9 +46,6 @@ class NgheService(ServiceResourceBase[NgheConfig]):
                         "NGHE_INTEGRATION__LASTFM__KEY": self.model.config.lastfm.key,
                         **s3_integration_config.to_env(),
                     },
-                    database_envs_factory=PostgresDatabaseSourceUrlEnvsFactory(
-                        env="NGHE_DATABASE__URL"
-                    ),
                 )
             }
         )

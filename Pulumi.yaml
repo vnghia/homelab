@@ -150,6 +150,8 @@ config:
             image: nghe
             database:
               postgres:
+              envs:
+                env: NGHE_DATABASE__URL
             healthcheck:
               tests:
                 [
