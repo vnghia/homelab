@@ -23,7 +23,7 @@ class ServiceResourceBase[T](ComponentResource):
         opts: ResourceOptions | None,
         container_model_global_args: ContainerModelGlobalArgs,
     ) -> None:
-        super().__init__(self.name(), self.name(), None, opts)
+        super().__init__("{}-service".format(self.name()), self.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.model = model
