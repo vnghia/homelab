@@ -11,8 +11,8 @@ from homelab_traefik_service.config import TraefikConfig
 from pulumi import ComponentResource, ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 
-from homelab.docker.service.nghe import NgheService
-
+from .memos import MemosService
+from .nghe import NgheService
 from .nghe.config import NgheConfig
 
 
@@ -21,6 +21,7 @@ class ServiceConfig(ServiceConfigBase):
     traefik: ServiceModel[TraefikConfig]
     dozzle: ServiceModel[None]
     nghe: ServiceModel[NgheConfig]
+    memos: ServiceModel[None]
 
     @property
     def databases(self) -> dict[str, DatabaseConfig]:
@@ -76,6 +77,12 @@ class Service(ComponentResource):
             self.services_config.nghe,
             opts=self.child_opts,
             s3_integration_config=config.integration.s3,
+            container_model_global_args=self.container_model_global_args,
+            traefik_static_config=self.traefik.static,
+        )
+        self.memos = MemosService(
+            self.services_config.memos,
+            opts=self.child_opts,
             container_model_global_args=self.container_model_global_args,
             traefik_static_config=self.traefik.static,
         )

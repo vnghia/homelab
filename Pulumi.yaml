@@ -28,6 +28,9 @@ config:
           nghe:
             repo: ghcr.io/vnghia/nghe-musl
             tag: "0.10.1"
+          memos:
+            repo: ghcr.io/usememos/memos
+            tag: "0.24.0"
         postgres:
           postgres:
             "17":
@@ -39,6 +42,7 @@ config:
           traefik-config: {}
           traefik-cert: {}
           nghe-cache: {}
+          memos-data: {}
       services:
         tailscale:
           config:
@@ -170,6 +174,35 @@ config:
             envs:
               NGHE_SERVER__PORT: 3000
               NGHE_S3__ENABLE: true
+        memos:
+          config:
+          databases:
+            postgres:
+              postgres: {}
+          container:
+            image: memos
+            database:
+              postgres:
+              envs:
+                env: MEMOS_DSN
+            healthcheck:
+              tests:
+                [
+                  "CMD",
+                  "wget",
+                  "--spider",
+                  "-q",
+                  "http://localhost:5230/healthz",
+                ]
+              interval: 1s
+              timeout: 5s
+            volumes:
+              memos-data: /var/opt/memos
+            envs:
+              MEMOS_PORT: 5230
+              MEMOS_DATA:
+                volume: memos-data
+              MEMOS_DRIVER: postgres
   integration:
     value:
       s3:

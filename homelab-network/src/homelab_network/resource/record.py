@@ -1,7 +1,8 @@
+import json
 from typing import Mapping
 
 import pulumi
-from pulumi import ComponentResource, Input, ResourceOptions
+from pulumi import ComponentResource, Input, Output, ResourceOptions
 from pydantic import IPvAnyAddress
 
 from homelab_network.config.record import RecordConfig
@@ -34,15 +35,19 @@ class RecordResource(ComponentResource):
             for key, record in config.records.items()
         }
         self.hostnames = {k: v[0].hostname for k, v in self.records.items()}
+        Output.json_dumps(self.hostnames).apply(
+            lambda x: self.compare_hostnames(config.hostnames, json.loads(x))
+        )
 
         for key, hostname in self.hostnames.items():
-            hostname.apply(lambda x: self.compare_hostname(config.hostnames[key], x))
             pulumi.export("record.{}.{}".format(name, key), hostname)
         self.register_outputs({})
 
     @classmethod
-    def compare_hostname(cls, hostname: str, output: str) -> None:
-        if hostname != output:
+    def compare_hostnames(
+        cls, hostnames: dict[str, str], outputs: dict[str, str]
+    ) -> None:
+        if hostnames != outputs:
             raise ValueError(
-                "Hostname does not match ({} vs {})".format(hostname, output)
+                "Hostname do not match ({} vs {})".format(hostnames, outputs)
             )
