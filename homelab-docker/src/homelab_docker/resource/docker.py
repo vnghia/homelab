@@ -14,12 +14,18 @@ class DockerResource:
         config: DockerConfig[T],
         *,
         opts: ResourceOptions,
+        project_prefix: str,
         project_labels: dict[str, str],
     ) -> None:
         self.network = NetworkResource(
             config=config.network, opts=opts, project_labels=project_labels
         )
-        self.image = ImageResource(config=config.images, opts=opts)
+        self.image = ImageResource(
+            config=config.images,
+            opts=opts,
+            project_prefix=project_prefix,
+            project_labels=project_labels,
+        )
         self.volume = VolumeResource(
             config=config, opts=opts, project_labels=project_labels
         )

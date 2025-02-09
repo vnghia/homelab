@@ -2,13 +2,11 @@ from pydantic import BaseModel, Field
 
 from homelab_docker.config.database import DatabaseConfig
 
-from .build.model import BuildModel
 from .container.model import ContainerModel
 
 
 class ServiceModel[T](BaseModel):
     raw_config: T | None = Field(None, alias="config")
-    builds: dict[str, BuildModel] = {}
     databases: DatabaseConfig = DatabaseConfig()
     raw_container: ContainerModel | None = Field(None, alias="container")
     containers: dict[str, ContainerModel] = {}

@@ -9,10 +9,10 @@ class TokenResource(ComponentResource):
 
     def __init__(
         self,
-        name: str,
         config: NetworkConfig,
         *,
         opts: ResourceOptions | None,
+        project_prefix: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -28,7 +28,7 @@ class TokenResource(ComponentResource):
             opts=ResourceOptions.merge(
                 self.child_opts, ResourceOptions(delete_before_replace=True)
             ),
-            name="{}-acme-read-token".format(name),
+            name="{}-acme-read-token".format(project_prefix),
             policies=[
                 cloudflare.ApiTokenPolicyArgs(
                     permission_groups=[permission_groups.zone["Zone Read"]],
@@ -41,7 +41,7 @@ class TokenResource(ComponentResource):
             opts=ResourceOptions.merge(
                 self.child_opts, ResourceOptions(delete_before_replace=True)
             ),
-            name="{}-acme-write-token".format(name),
+            name="{}-acme-write-token".format(project_prefix),
             policies=[
                 cloudflare.ApiTokenPolicyArgs(
                     permission_groups=[permission_groups.zone["DNS Write"]],

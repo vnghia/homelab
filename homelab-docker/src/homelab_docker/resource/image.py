@@ -14,6 +14,8 @@ class ImageResource(ComponentResource):
         config: ImageConfig,
         *,
         opts: ResourceOptions,
+        project_prefix: str,
+        project_labels: dict[str, str],
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -23,6 +25,17 @@ class ImageResource(ComponentResource):
                 name, opts=self.child_opts, platform=config.platform
             )
             for name, model in config.remote.items()
+        }
+
+        self.builds = {
+            name: model.build_resource(
+                name,
+                opts=self.child_opts,
+                remote_images=self.remotes,
+                project_prefix=project_prefix,
+                project_labels=project_labels,
+            )
+            for name, model in config.build.items()
         }
 
         for name, versions in config.postgres.items():

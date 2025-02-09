@@ -9,7 +9,7 @@ config:
   pulumi:tags:
     value:
       pulumi:template: python
-  docker:
+  homelab:docker:
     value:
       network:
         default-bridge: {}
@@ -31,6 +31,14 @@ config:
           memos:
             repo: ghcr.io/usememos/memos
             tag: "0.24.0"
+          debian:
+            repo: debian
+            tag: "12.9-slim"
+        build:
+          barman:
+            context:
+              location: homelab-backup-service/image/barman
+              base: debian
         postgres:
           postgres:
             "17":
@@ -200,6 +208,6 @@ config:
               MEMOS_DATA:
                 volume: memos-data
               MEMOS_DRIVER: postgres
-  integration:
+  homelab:integration:
     value:
       s3:

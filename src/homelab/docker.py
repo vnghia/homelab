@@ -9,7 +9,7 @@ from homelab.service.config import ServiceConfig
 class Docker(ComponentResource):
     RESOURCE_NAME = "docker"
 
-    def __init__(self, config: Config[ServiceConfig]) -> None:
+    def __init__(self, config: Config[ServiceConfig], project_prefix: str) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, None)
         self.child_opts = ResourceOptions(parent=self)
 
@@ -17,6 +17,7 @@ class Docker(ComponentResource):
         self.resource = DockerResource(
             config.docker,
             opts=self.child_opts,
+            project_prefix=project_prefix,
             project_labels=Config.PROJECT_LABELS,
         )
 

@@ -17,8 +17,8 @@ class NetworkResource(ComponentResource):
         config: NetworkConfig,
         *,
         opts: ResourceOptions | None,
-        token_name: str,
         private_ips: Mapping[str, Input[IPvAnyAddress]],
+        project_prefix: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -29,6 +29,8 @@ class NetworkResource(ComponentResource):
         self.private = RecordResource(
             "private", config.private, opts=self.child_opts, ips=private_ips
         )
-        self.token = TokenResource(token_name, config, opts=self.child_opts)
+        self.token = TokenResource(
+            config, opts=self.child_opts, project_prefix=project_prefix
+        )
 
         self.register_outputs({})

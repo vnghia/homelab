@@ -14,20 +14,21 @@ from .service.nghe import NgheService
 class Homelab:
     def __init__(self) -> None:
         self.config = Config[ServiceConfig].build(DockerConfig[ServiceConfig])
-        self.docker = Docker(self.config)
+        self.project_prefix = Config.get_name(None, project=True, stack=True)
+        self.docker = Docker(self.config, self.project_prefix)
 
         self.tailscale = TailscaleService(
             self.docker.services_config.tailscale,
             opts=None,
-            hostname=Config.get_name(None, project=True, stack=True),
+            hostname=self.project_prefix,
             container_model_global_args=self.docker.container_model_global_args,
         )
 
         self.network = NetworkResource(
             self.config.network,
             opts=None,
-            token_name=Config.get_name(None, project=True, stack=True),
             private_ips=self.tailscale.ips,
+            project_prefix=self.project_prefix,
         )
 
         self.traefik = TraefikService(

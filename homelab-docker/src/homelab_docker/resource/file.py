@@ -79,7 +79,8 @@ class FileVolumeProxy:
     @classmethod
     @contextmanager
     def container(cls, volume: str) -> Iterator[Container]:
-        container = docker.from_env().containers.create(
+        # TODO: use paramiko again if it works with Tailscale
+        container = docker.from_env(use_ssh_client=True).containers.create(
             image=cls.IMAGE,
             network_mode="none",
             volumes={volume: {"bind": cls.WORKING_DIR.as_posix(), "mode": "rw"}},
@@ -93,7 +94,8 @@ class FileVolumeProxy:
 
     @classmethod
     def pull_image(cls) -> None:
-        docker.from_env().images.pull(repository=cls.IMAGE)
+        # TODO: use paramiko again if it works with Tailscale
+        docker.from_env(use_ssh_client=True).images.pull(repository=cls.IMAGE)
 
     @classmethod
     def create_file(cls, props: FileProviderProps) -> None:
