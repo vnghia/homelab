@@ -15,6 +15,6 @@ class ImageConfig(BaseModel):
         cls, postgres: dict[str | None, dict[PositiveInt, RemoteImageModel]]
     ) -> dict[str | None, dict[PositiveInt, RemoteImageModel]]:
         return {
-            None if name == PostgresDatabaseModel.DATABASE_TYPE else name: model
+            PostgresDatabaseModel.get_key(name): model
             for name, model in postgres.items()
         }

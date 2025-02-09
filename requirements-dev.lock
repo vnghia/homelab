@@ -88,6 +88,7 @@ paramiko==3.5.0
 parver==0.5
     # via pulumi-cloudflare
     # via pulumi-docker
+    # via pulumi-docker-build
     # via pulumi-random
     # via pulumi-tailscale
 pip==24.3.1
@@ -103,11 +104,14 @@ pulumi==3.148.0
     # via homelab-traefik-service
     # via pulumi-cloudflare
     # via pulumi-docker
+    # via pulumi-docker-build
     # via pulumi-random
     # via pulumi-tailscale
 pulumi-cloudflare==5.49.0
     # via homelab-network
 pulumi-docker==4.6.1
+    # via homelab-docker
+pulumi-docker-build==0.0.10
     # via homelab-docker
 pulumi-random==4.17.0
     # via homelab-docker
@@ -143,6 +147,7 @@ semver==2.13.0
     # via pulumi
     # via pulumi-cloudflare
     # via pulumi-docker
+    # via pulumi-docker-build
     # via pulumi-random
     # via pulumi-tailscale
 six==1.17.0

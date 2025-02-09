@@ -11,6 +11,6 @@ class DatabaseConfig(BaseModel):
         cls, postgres: dict[str | None, PostgresDatabaseModel]
     ) -> dict[str | None, PostgresDatabaseModel]:
         return {
-            None if name == PostgresDatabaseModel.DATABASE_TYPE else name: model
+            PostgresDatabaseModel.get_key(name): model
             for name, model in postgres.items()
         }

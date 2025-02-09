@@ -27,6 +27,10 @@ class PostgresDatabaseModel(BaseModel):
     network: ContainerNetworkConfig = ContainerNetworkConfig()
 
     @classmethod
+    def get_key(cls, name: str | None) -> str | None:
+        return None if name == cls.DATABASE_TYPE else name
+
+    @classmethod
     def get_short_name(cls, name: str | None) -> str:
         if name:
             return "{}-{}".format(cls.DATABASE_TYPE, name)
