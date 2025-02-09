@@ -84,13 +84,18 @@ class ServiceResourceBase[T](ComponentResource):
     def build_containers(
         self, options: dict[str | None, ContainerModelBuildArgs]
     ) -> None:
-        self.container = self.build_container(
-            None, self.model.container, options.get(None)
-        )
         self.containers = {
             name: self.build_container(name, model, options.get(name))
             for name, model in self.model.containers.items()
-        } | {None: self.container}
+        } | (
+            {
+                None: self.build_container(
+                    None, self.model.raw_container, options.get(None)
+                )
+            }
+            if self.model.raw_container
+            else {}
+        )
 
         for name, container in self.containers.items():
             name = self.add_service_name(name)
