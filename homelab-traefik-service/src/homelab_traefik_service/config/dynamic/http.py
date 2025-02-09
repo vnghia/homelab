@@ -32,10 +32,10 @@ class TraefikHttpDynamicConfig(BaseModel):
         static_config: TraefikStaticConfig,
     ) -> FileResource:
         entrypoint = static_config.service_config.entrypoint
-        host = (
-            static_config.network_config.public.hostnames
+        hostname = (
+            static_config.network_resource.public.hostnames
             if self.public
-            else static_config.network_config.private.hostnames
+            else static_config.network_resource.private.hostnames
         )[self.hostname or self.name]
 
         data: dict[str, Any] = {
@@ -50,14 +50,16 @@ class TraefikHttpDynamicConfig(BaseModel):
                             if self.public
                             else entrypoint.private_https
                         ],
-                        "rule": " && ".join(
-                            ["Host(`{}`)".format(host)]
-                            + (
-                                ["PathPrefix(`{}`)".format(self.prefix)]
-                                if self.prefix
-                                else []
+                        "rule": hostname.apply(
+                            lambda x: " && ".join(
+                                ["Host(`{}`)".format(x)]
+                                + (
+                                    ["PathPrefix(`{}`)".format(self.prefix)]
+                                    if self.prefix
+                                    else []
+                                )
+                                + self.rules
                             )
-                            + self.rules
                         ),
                         "middlewares": [
                             middleware.name

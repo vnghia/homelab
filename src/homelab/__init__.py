@@ -26,14 +26,14 @@ class Homelab:
         self.network = NetworkResource(
             self.config.network,
             opts=None,
+            token_name=Config.get_name(None, project=True, stack=True),
             private_ips=self.tailscale.ips,
         )
 
         self.traefik = TraefikService(
             self.docker.services_config.traefik,
             opts=None,
-            token_name=Config.get_name(None, project=True, stack=True),
-            network_config=self.config.network,
+            network_resource=self.network,
             container_model_global_args=self.docker.container_model_global_args,
             tailscale_service=self.tailscale,
         )

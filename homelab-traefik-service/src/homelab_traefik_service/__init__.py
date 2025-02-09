@@ -4,8 +4,7 @@ from homelab_docker.model.container.model import (
 )
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_network.config.network import NetworkConfig
-from homelab_network.resource.token import TokenResource
+from homelab_network.resource.network import NetworkResource
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
@@ -20,8 +19,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
         model: ServiceModel[TraefikConfig],
         *,
         opts: ResourceOptions | None,
-        token_name: str,
-        network_config: NetworkConfig,
+        network_resource: NetworkResource,
         container_model_global_args: ContainerModelGlobalArgs,
         tailscale_service: TailscaleService,
     ) -> None:
@@ -29,9 +27,8 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
             model, opts=opts, container_model_global_args=container_model_global_args
         )
 
-        self.token = TokenResource(token_name, network_config, opts=self.child_opts)
         self.static = TraefikStaticConfig(
-            network_config=network_config,
+            network_resource=network_resource,
             traefik_service_model=self.model,
             tailscale_service=tailscale_service,
         )
@@ -40,8 +37,8 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
                 None: ContainerModelBuildArgs(
                     opts=ResourceOptions(delete_before_replace=True),
                     envs={
-                        "CF_ZONE_API_TOKEN": self.token.read.value,
-                        "CF_DNS_API_TOKEN": self.token.write.value,
+                        "CF_ZONE_API_TOKEN": network_resource.token.read.value,
+                        "CF_DNS_API_TOKEN": network_resource.token.write.value,
                     },
                     files=[
                         self.static.build_resource(
