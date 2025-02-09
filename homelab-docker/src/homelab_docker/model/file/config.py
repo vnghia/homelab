@@ -1,4 +1,6 @@
+import configparser
 import dataclasses
+import io
 import json
 from typing import Any
 
@@ -41,6 +43,23 @@ class ConfigFile:
             self.schema.validate(data)
         return tomlkit.dumps(data, sort_keys=True)
 
+    def conf_dumps(self, raw_data: str) -> str:
+        data = json.loads(raw_data)
+        if self.schema:
+            self.schema.validate(data)
+
+        parser = configparser.ConfigParser()
+        for remote_name, remote in data.items():
+            parser.add_section(remote_name)
+            for k, v in remote.items():
+                parser.set(remote_name, k, v)
+        config_content = io.StringIO()
+        parser.write(config_content)
+        config_content.seek(0)
+
+        content = config_content.read()
+        return content
+
     def build_resource(
         self,
         resource_name: str,
@@ -52,8 +71,10 @@ class ConfigFile:
         match extension:
             case ".toml":
                 content = Output.json_dumps(self.data).apply(self.toml_dumps)
+            case ".conf":
+                content = Output.json_dumps(self.data).apply(self.conf_dumps)
             case _:
-                raise ValueError("Only `toml` format is supported")
+                raise ValueError("Only `toml`, `conf` formats are supported")
         return FileResource(
             resource_name,
             opts=opts,

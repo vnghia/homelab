@@ -1,4 +1,5 @@
 import dataclasses
+import json
 import urllib.parse
 
 from pulumi import Input, Output
@@ -26,4 +27,19 @@ class DatabaseSourceModel:
             lambda x: urllib.parse.urlparse(x)
             ._replace(query=urllib.parse.urlencode(query=query))
             .geturl()
+        )
+
+    def to_kv(self, query: dict[str, str] = {}) -> Output[str]:
+        return Output.json_dumps(
+            {
+                "user": self.username,
+                "password": self.password,
+                "host": self.host,
+                "port": self.port,
+                "dbname": self.database,
+            }
+        ).apply(
+            lambda x: " ".join(
+                "{}={}".format(k, v) for k, v in (json.loads(x) | query).items()
+            )
         )

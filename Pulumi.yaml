@@ -55,6 +55,10 @@ config:
           nghe-cache: {}
           memos-data: {}
           dagu-config: {}
+          barman-home: {}
+          barman-log: {}
+          barman-config: {}
+          postgres-docker-entrypoint-initdb: {}
       services:
         tailscale:
           container:
@@ -222,6 +226,23 @@ config:
               dagu-config: /config
             envs:
               DAGU_PORT: 8080
+        backup:
+          config:
+            barman:
+              config-dir:
+                volume: barman-config
+              staging-dir:
+                volume: barman-home
+                path: staging
+          containers:
+            barman:
+              image: barman
+              volumes:
+                barman-home: /var/lib/barman
+                barman-log: /var/log/barman
+                barman-config:
+                  path: /etc/barman.d
+                  ro: true
   homelab:integration:
     value:
       s3:

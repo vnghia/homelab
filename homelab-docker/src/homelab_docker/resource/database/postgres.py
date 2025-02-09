@@ -13,6 +13,7 @@ from homelab_docker.model.container.string import ContainerString
 from homelab_docker.model.container.tmpfs import ContainerTmpfsConfig
 from homelab_docker.model.container.volume import (
     ContainerVolumeConfig,
+    ContainerVolumeFullConfig,
     ContainerVolumesConfig,
 )
 from homelab_docker.model.container.volume_path import ContainerVolumePath
@@ -63,7 +64,15 @@ class PostgresDatabaseResource(ComponentResource):
                 network=model.network,
                 tmpfs=[ContainerTmpfsConfig(self.model.PGRUN_PATH)],
                 volumes=ContainerVolumesConfig.model_validate(
-                    {full_name: ContainerVolumeConfig(self.model.PGDATA_PATH)}
+                    {
+                        full_name: ContainerVolumeConfig(self.model.PGDATA_PATH),
+                        self.model.DATABASE_ENTRYPOINT_INITDB_VOLUME: ContainerVolumeConfig(
+                            ContainerVolumeFullConfig(
+                                path=self.model.DATABASE_ENTRYPOINT_INITDB_PATH,
+                                read_only=True,
+                            )
+                        ),
+                    }
                 ),
                 envs={
                     "POSTGRES_USER": ContainerString(self.username),

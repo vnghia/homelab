@@ -1,6 +1,8 @@
+from homelab_backup_service.service import BackupService
 from homelab_config import Config
 from homelab_dagu_service import DaguService
 from homelab_docker.config.docker import DockerConfig
+from homelab_docker.resource.database.global_ import DatabaseGlobalResource
 from homelab_dozzle_service import DozzleService
 from homelab_network.resource.network import NetworkResource
 from homelab_tailscale_service import TailscaleService
@@ -17,6 +19,10 @@ class Homelab:
         self.config = Config[ServiceConfig].build(DockerConfig[ServiceConfig])
         self.project_prefix = Config.get_name(None, project=True, stack=True)
         self.docker = Docker(self.config, self.project_prefix)
+
+        self.datbase_global = DatabaseGlobalResource(
+            opts=None, volume_resource=self.docker.resource.volume
+        )
 
         self.tailscale = TailscaleService(
             self.docker.services_config.tailscale,
@@ -63,4 +69,11 @@ class Homelab:
             opts=None,
             container_model_global_args=self.docker.container_model_global_args,
             traefik_static_config=self.traefik.static,
+        )
+
+        # It should always be the last service
+        self.backup = BackupService(
+            self.docker.services_config.backup,
+            opts=None,
+            container_model_global_args=self.docker.container_model_global_args,
         )

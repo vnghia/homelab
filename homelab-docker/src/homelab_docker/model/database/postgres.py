@@ -12,6 +12,13 @@ class PostgresDatabaseModel(BaseModel):
     DATABASE_TYPE: ClassVar[str] = "postgres"
     DATABASE_VERSION: ClassVar[PositiveInt] = 17
 
+    DATABASE_ENTRYPOINT_INITDB_VOLUME: ClassVar[str] = (
+        "postgres-docker-entrypoint-initdb"
+    )
+    DATABASE_ENTRYPOINT_INITDB_PATH: ClassVar[AbsolutePath] = PosixPath(
+        "/docker-entrypoint-initdb.d"
+    )
+
     PGRUN_PATH: ClassVar[AbsolutePath] = PosixPath("/var/run/postgresql")
     PGDATA_PATH: ClassVar[AbsolutePath] = PosixPath("/var/lib/postgresql/data")
     PORT: ClassVar[PositiveInt] = 5432

@@ -3,6 +3,7 @@ import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
+from homelab_docker.config.database.source import DatabaseSourceConfig
 from homelab_docker.model.container.model import (
     ContainerModel,
     ContainerModelBuildArgs,
@@ -10,11 +11,13 @@ from homelab_docker.model.container.model import (
     ContainerModelServiceArgs,
 )
 from homelab_docker.model.service import ServiceModel
-from homelab_docker.resource.database.resource import DatabaseResource
+
+from .database.resource import DatabaseResource
 
 
 class ServiceResourceBase[T](ComponentResource):
     CONTAINERS: dict[str, docker.Container] = {}
+    DATABASE_SOURCE_CONFIGS: dict[str, DatabaseSourceConfig] = {}
 
     def __init__(
         self,
@@ -52,6 +55,9 @@ class ServiceResourceBase[T](ComponentResource):
         self.container_model_service_args = ContainerModelServiceArgs(
             database_config=self.model.databases,
             database_source_config=self.database.source_config,
+        )
+        self.DATABASE_SOURCE_CONFIGS[self.name()] = (
+            self.container_model_service_args.database_source_config
         )
 
         self.database_containers = {

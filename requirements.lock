@@ -11,12 +11,14 @@
 
 -e file:.
 -e file:homelab-backup-service
+    # via homelab
 -e file:homelab-config
     # via homelab
 -e file:homelab-dagu-service
     # via homelab
 -e file:homelab-docker
     # via homelab
+    # via homelab-backup-service
     # via homelab-config
     # via homelab-dagu-service
     # via homelab-dozzle-service
@@ -99,6 +101,7 @@ protobuf==4.25.6
     # via pulumi
 pulumi==3.148.0
     # via homelab
+    # via homelab-backup-service
     # via homelab-config
     # via homelab-dagu-service
     # via homelab-dozzle-service
@@ -123,6 +126,7 @@ pulumi-tailscale==0.17.5
 pycparser==2.22
     # via cffi
 pydantic==2.10.6
+    # via homelab-backup-service
     # via homelab-docker
     # via homelab-integration
     # via homelab-network

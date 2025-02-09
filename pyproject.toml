@@ -12,6 +12,7 @@ dependencies = [
     "homelab-traefik-service",
     "homelab-dozzle-service",
     "homelab-dagu-service",
+    "homelab-backup-service",
     "pulumi>=3.148.0",
 ]
 readme = "README.md"

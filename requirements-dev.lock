@@ -11,12 +11,14 @@
 
 -e file:.
 -e file:homelab-backup-service
+    # via homelab
 -e file:homelab-config
     # via homelab
 -e file:homelab-dagu-service
     # via homelab
 -e file:homelab-docker
     # via homelab
+    # via homelab-backup-service
     # via homelab-config
     # via homelab-dagu-service
     # via homelab-dozzle-service
@@ -61,6 +63,7 @@ charset-normalizer==3.4.1
     # via requests
 cryptography==44.0.0
     # via paramiko
+    # via types-paramiko
 debugpy==1.8.12
     # via pulumi
 deepmerge==2.0
@@ -102,6 +105,7 @@ protobuf==4.25.6
     # via pulumi
 pulumi==3.148.0
     # via homelab
+    # via homelab-backup-service
     # via homelab-config
     # via homelab-dagu-service
     # via homelab-dozzle-service
@@ -126,6 +130,7 @@ pulumi-tailscale==0.17.5
 pycparser==2.22
     # via cffi
 pydantic==2.10.6
+    # via homelab-backup-service
     # via homelab-docker
     # via homelab-integration
     # via homelab-network
@@ -164,6 +169,7 @@ tomlkit==0.13.2
     # via homelab-docker
 types-docker==7.1.0.20241229
 types-jsonschema==4.23.0.20241208
+types-paramiko==3.5.0.20240928
 types-requests==2.32.0.20241016
     # via types-docker
 typing-extensions==4.12.2
