@@ -47,7 +47,9 @@ class ImageResource(ComponentResource):
                     platform=config.platform,
                 )
 
-        export = {name: image.repo_digest for name, image in self.remotes.items()}
+        export = {name: image.repo_digest for name, image in self.remotes.items()} | {
+            name: image.ref for name, image in self.builds.items()
+        }
         for name, value in export.items():
             pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
         self.register_outputs(export)
