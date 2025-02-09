@@ -9,6 +9,7 @@ from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_integration.config.s3 import S3IntegrationConfig
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
+from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from homelab_traefik_service.config.static import TraefikStaticConfig
 from pulumi import ResourceOptions
 
@@ -53,7 +54,9 @@ class NgheService(ServiceResourceBase[NgheConfig]):
         self.traefik = TraefikHttpDynamicConfig(
             name=self.name(),
             public=True,
-            service=int(self.model.container.envs["NGHE_SERVER__PORT"].to_str()),
+            service=TraefikDynamicServiceConfig(
+                int(self.model.container.envs["NGHE_SERVER__PORT"].to_str())
+            ),
         ).build_resource(
             "traefik",
             opts=self.child_opts,

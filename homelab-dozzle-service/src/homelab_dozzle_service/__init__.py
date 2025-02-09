@@ -6,7 +6,11 @@ from homelab_docker.model.container.model import (
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
-from homelab_traefik_service.config.dynamic.middleware import TraefikMiddleware
+from homelab_traefik_service.config.dynamic.middleware import (
+    TraefikDynamicMiddlewareConfig,
+    TraefikDynamicMiddlewareFullConfig,
+)
+from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from homelab_traefik_service.config.static import TraefikStaticConfig
 from pulumi import ResourceOptions
 
@@ -43,7 +47,9 @@ class DozzleService(ServiceResourceBase[None]):
             public=False,
             hostname="system",
             prefix=self.prefix,
-            service=int(self.model.container.envs["DOZZLE_ADDR"].to_str()[1:]),
+            service=TraefikDynamicServiceConfig(
+                int(self.model.container.envs["DOZZLE_ADDR"].to_str()[1:])
+            ),
         ).build_resource(
             "traefik",
             opts=self.child_opts,
@@ -55,11 +61,13 @@ class DozzleService(ServiceResourceBase[None]):
             name="{}-redirect".format(self.name()),
             public=False,
             hostname="system",
-            service=self.name(),
+            service=TraefikDynamicServiceConfig(self.name()),
             middlewares=[
-                TraefikMiddleware(
-                    name="{}-redirect".format(self.name()),
-                    data={"addPrefix": {"prefix": self.prefix}},
+                TraefikDynamicMiddlewareConfig(
+                    TraefikDynamicMiddlewareFullConfig(
+                        name="{}-redirect".format(self.name()),
+                        data={"addPrefix": {"prefix": self.prefix}},
+                    )
                 )
             ],
         ).build_resource(

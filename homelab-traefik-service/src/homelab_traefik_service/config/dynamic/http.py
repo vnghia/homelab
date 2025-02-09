@@ -5,11 +5,11 @@ from homelab_docker.model.file.config import ConfigFile
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
-from pydantic import BaseModel, PositiveInt
+from pydantic import BaseModel
 
 from ..static import TraefikStaticConfig
-from .middleware import TraefikMiddleware
-from .service import TraefikService, TraefikServiceType
+from .middleware import TraefikDynamicMiddlewareConfig
+from .service import TraefikDynamicServiceConfig, TraefikDynamicServiceType
 
 
 class TraefikHttpDynamicConfig(BaseModel):
@@ -19,8 +19,8 @@ class TraefikHttpDynamicConfig(BaseModel):
     prefix: str | None = None
 
     rules: list[str] = []
-    service: TraefikService | PositiveInt | str
-    middlewares: list[TraefikMiddleware | str] = []
+    service: TraefikDynamicServiceConfig
+    middlewares: list[TraefikDynamicMiddlewareConfig] = []
 
     def build_resource(
         self,
@@ -42,9 +42,7 @@ class TraefikHttpDynamicConfig(BaseModel):
             "http": {
                 "routers": {
                     self.name: {
-                        "service": self.name
-                        if isinstance(self.service, (TraefikService, int))
-                        else self.service,
+                        "service": self.service.to_service_name(self.name),
                         "entryPoints": [
                             entrypoint.public_https
                             if self.public
@@ -62,10 +60,7 @@ class TraefikHttpDynamicConfig(BaseModel):
                             )
                         ),
                         "middlewares": [
-                            middleware.name
-                            if isinstance(middleware, TraefikMiddleware)
-                            else middleware
-                            for middleware in self.middlewares
+                            middleware.name for middleware in self.middlewares
                         ],
                         "tls": {
                             "certResolver": static_config.PUBLIC_CERT_RESOLVER
@@ -77,32 +72,16 @@ class TraefikHttpDynamicConfig(BaseModel):
             }
         }
 
-        service: TraefikService | None = None
-        if isinstance(self.service, TraefikService):
-            service = self.service
-        elif isinstance(self.service, int):
-            service = TraefikService(port=self.service)
-        if service:
-            data["http"]["services"] = {
-                self.name: {
-                    "loadBalancer": {
-                        "servers": [
-                            {
-                                "url": str(
-                                    service.to_url(
-                                        TraefikServiceType.HTTP, self.name, containers
-                                    )
-                                )
-                            }
-                        ]
-                    }
-                }
-            }
+        service_full = self.service.full
+        if service_full:
+            data["http"]["services"] = service_full.to_http_service(
+                TraefikDynamicServiceType.HTTP, self.name, containers
+            )
 
         middlewares = {
             middleware.name: middleware.data
             for middleware in self.middlewares
-            if isinstance(middleware, TraefikMiddleware)
+            if middleware.data is not None
         }
         if middlewares:
             data["http"]["middlewares"] = middlewares

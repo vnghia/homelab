@@ -10,6 +10,7 @@ from pulumi import ResourceOptions
 
 from .config import TraefikConfig
 from .config.dynamic.http import TraefikHttpDynamicConfig
+from .config.dynamic.service import TraefikDynamicServiceConfig
 from .config.static import TraefikStaticConfig
 
 
@@ -55,7 +56,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
             public=False,
             hostname="system",
             prefix=self.static.service_config.path,
-            service="api@internal",
+            service=TraefikDynamicServiceConfig("api@internal"),
         ).build_resource(
             "dashboard",
             opts=self.child_opts,
