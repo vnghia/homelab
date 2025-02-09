@@ -26,3 +26,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/homelab_traefik_service"]
+
+[tool.mypy]
+strict = true

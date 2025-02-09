@@ -1,4 +1,5 @@
 from homelab_config import Config
+from homelab_dagu_service import DaguService
 from homelab_docker.config.docker import DockerConfig
 from homelab_dozzle_service import DozzleService
 from homelab_network.resource.network import NetworkResource
@@ -53,6 +54,12 @@ class Homelab:
         )
         self.memos = MemosService(
             self.docker.services_config.memos,
+            opts=None,
+            container_model_global_args=self.docker.container_model_global_args,
+            traefik_static_config=self.traefik.static,
+        )
+        self.dagu = DaguService(
+            self.docker.services_config.dagu,
             opts=None,
             container_model_global_args=self.docker.container_model_global_args,
             traefik_static_config=self.traefik.static,

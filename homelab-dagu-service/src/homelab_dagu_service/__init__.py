@@ -1,4 +1,7 @@
-from homelab_docker.model.container.model import ContainerModelGlobalArgs
+from homelab_docker.model.container.model import (
+    ContainerModelBuildArgs,
+    ContainerModelGlobalArgs,
+)
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
@@ -7,7 +10,7 @@ from homelab_traefik_service.config.static import TraefikStaticConfig
 from pulumi import ResourceOptions
 
 
-class MemosService(ServiceResourceBase[None]):
+class DaguService(ServiceResourceBase[None]):
     def __init__(
         self,
         model: ServiceModel[None],
@@ -20,13 +23,19 @@ class MemosService(ServiceResourceBase[None]):
             model, opts=opts, container_model_global_args=container_model_global_args
         )
 
-        self.build_containers(options={})
+        self.build_containers(
+            options={
+                None: ContainerModelBuildArgs(
+                    envs={"DAGU_TZ": str(self.container_model_global_args.timezone)}
+                )
+            }
+        )
 
         self.traefik = TraefikHttpDynamicConfig(
             name=self.name(),
-            public=True,
+            public=False,
             service=TraefikDynamicServiceConfig(
-                int(self.model.container.envs["MEMOS_PORT"].to_str())
+                int(self.model.container.envs["DAGU_PORT"].to_str())
             ),
         ).build_resource(
             "traefik",

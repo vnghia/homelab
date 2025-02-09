@@ -31,6 +31,9 @@ config:
           memos:
             repo: ghcr.io/usememos/memos
             tag: "0.24.0"
+          dagu:
+            repo: ghcr.io/dagu-org/dagu
+            tag: "1.16.0"
           debian:
             repo: debian
             tag: "12.9-slim"
@@ -51,6 +54,7 @@ config:
           traefik-cert: {}
           nghe-cache: {}
           memos-data: {}
+          dagu-config: {}
       services:
         tailscale:
           container:
@@ -146,7 +150,7 @@ config:
               retries: 5
               start_period: 30s
             volumes:
-              docker_socket: false
+              docker-socket: false
             envs:
               DOZZLE_BASE: /log
               DOZZLE_ADDR: ":8080"
@@ -208,6 +212,16 @@ config:
               MEMOS_DATA:
                 volume: memos-data
               MEMOS_DRIVER: postgres
+        dagu:
+          container:
+            image: dagu
+            tmpfs:
+              - /tmp
+            volumes:
+              docker-socket: true
+              dagu-config: /config
+            envs:
+              DAGU_PORT: 8080
   homelab:integration:
     value:
       s3:

@@ -44,7 +44,7 @@ class ContainerVolumeConfig(RootModel[AbsolutePath | ContainerVolumeFullConfig])
 class ContainerVolumesConfig(BaseModel):
     model_config = ConfigDict(extra="allow")
 
-    docker_socket: bool | None = None
+    docker_socket: bool | None = Field(None, alias="docker-socket")
     __pydantic_extra__: dict[str, ContainerVolumeConfig] = Field({}, init=False)  # pyright: ignore [reportIncompatibleVariableOverride]
 
     def __getitem__(self, key: str) -> ContainerVolumeConfig:
@@ -67,7 +67,7 @@ class ContainerVolumesConfig(BaseModel):
                     docker.ContainerVolumeArgs(
                         container_path="/var/run/docker.sock",
                         host_path="/var/run/docker.sock",
-                        read_only=self.docker_socket,
+                        read_only=not self.docker_socket,
                     )
                 ]
                 if self.docker_socket is not None

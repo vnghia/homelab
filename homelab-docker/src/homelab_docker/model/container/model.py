@@ -54,7 +54,7 @@ class ContainerModel(BaseModel):
     restart: Literal["unless-stopped"] = "unless-stopped"
     sysctls: dict[str, str] | None = None
     tmpfs: list[ContainerTmpfsConfig] | None = None
-    volumes: ContainerVolumesConfig = ContainerVolumesConfig()
+    volumes: ContainerVolumesConfig = ContainerVolumesConfig.model_construct()
     wait: bool = True
 
     envs: dict[str, ContainerString] = {}

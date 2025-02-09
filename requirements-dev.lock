@@ -10,11 +10,15 @@
 #   universal: false
 
 -e file:.
+-e file:homelab-backup-service
 -e file:homelab-config
+    # via homelab
+-e file:homelab-dagu-service
     # via homelab
 -e file:homelab-docker
     # via homelab
     # via homelab-config
+    # via homelab-dagu-service
     # via homelab-dozzle-service
     # via homelab-tailscale-service
     # via homelab-traefik-service
@@ -32,6 +36,7 @@
     # via homelab-traefik-service
 -e file:homelab-traefik-service
     # via homelab
+    # via homelab-dagu-service
     # via homelab-dozzle-service
 annotated-types==0.7.0
     # via pydantic
@@ -98,6 +103,7 @@ protobuf==4.25.6
 pulumi==3.148.0
     # via homelab
     # via homelab-config
+    # via homelab-dagu-service
     # via homelab-dozzle-service
     # via homelab-integration
     # via homelab-tailscale-service

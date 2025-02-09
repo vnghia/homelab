@@ -12,6 +12,7 @@ class ServiceConfig(ServiceConfigBase):
     dozzle: ServiceModel[None]
     nghe: ServiceModel[NgheConfig]
     memos: ServiceModel[None]
+    dagu: ServiceModel[None]
 
     @property
     def databases(self) -> dict[str, DatabaseConfig]:
