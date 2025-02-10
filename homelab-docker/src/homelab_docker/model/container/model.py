@@ -13,6 +13,7 @@ from homelab_docker.resource.docker import DockerResource
 from homelab_docker.resource.file import FileResource
 
 from .healthcheck import ContainerHealthCheckConfig
+from .image import ContainerImageModelConfig
 from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
 from .string import ContainerString
@@ -41,12 +42,13 @@ class ContainerModelBuildArgs:
 
 
 class ContainerModel(BaseModel):
-    image: str
+    image: ContainerImageModelConfig
 
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
     database: ContainerDatabaseConfig | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
+    init: bool | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
     ports: dict[str, ContainerPortConfig] = {}
     read_only: bool = True
@@ -72,7 +74,6 @@ class ContainerModel(BaseModel):
         containers: dict[str, docker.Container],
     ) -> docker.Container:
         build_args = build_args or ContainerModelBuildArgs()
-        image = global_args.docker_resource.image[self.image]
         network_args = self.network.to_args(
             resource_name, global_args.docker_resource.network, containers
         )
@@ -111,7 +112,7 @@ class ContainerModel(BaseModel):
                     depends_on=depends_on,
                 ),
             ),
-            image=image.name,
+            image=self.image.to_image_name(global_args.docker_resource.image),
             capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
             if self.capabilities
             else None,
@@ -122,6 +123,7 @@ class ContainerModel(BaseModel):
             if self.command
             else None,
             healthcheck=self.healthcheck.to_args() if self.healthcheck else None,
+            init=self.init,
             mounts=[tmpfs.to_args() for tmpfs in self.tmpfs] if self.tmpfs else None,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
@@ -162,7 +164,9 @@ class ContainerModel(BaseModel):
                     global_args.project_labels
                     | self.labels
                     | {
-                        "image.repo_digest": image.repo_digest,
+                        "pulumi.image.id": self.image.to_image_id(
+                            global_args.docker_resource.image
+                        ),
                         "dev.dozzle.group": Output.from_input(service_name),
                         "dev.dozzle.name": Output.from_input(resource_name),
                     }

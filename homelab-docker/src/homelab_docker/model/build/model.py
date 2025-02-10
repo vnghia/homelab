@@ -10,6 +10,10 @@ class BuildModel(BaseModel):
     context: BuildContextModel
     labels: dict[str, str] = {}
 
+    @classmethod
+    def get_name(cls, resource_name: str, project_prefix: str) -> str:
+        return "{}-{}".format(project_prefix, resource_name)
+
     def build_resource(
         self,
         resource_name: str,
@@ -28,5 +32,5 @@ class BuildModel(BaseModel):
             load=True,
             labels=self.labels | project_labels,
             push=False,
-            tags=["{}-{}".format(project_prefix, resource_name)],
+            tags=[self.get_name(resource_name, project_prefix)],
         )

@@ -34,14 +34,14 @@ config:
           dagu:
             repo: ghcr.io/dagu-org/dagu
             tag: "1.16.0"
-          debian:
-            repo: debian
-            tag: "12.9-slim"
+          minideb:
+            repo: bitnami/minideb
+            tag: "bookworm"
         build:
           barman:
             context:
               location: homelab-backup-service/image/barman
-              base: debian
+              base: minideb
         postgres:
           postgres:
             "17":
@@ -56,7 +56,6 @@ config:
           memos-data: {}
           dagu-config: {}
           barman-home: {}
-          barman-log: {}
           barman-config: {}
           postgres-docker-entrypoint-initdb: {}
       services:
@@ -236,10 +235,14 @@ config:
                 path: staging
           containers:
             barman:
-              image: barman
+              image:
+                build: barman
+              command:
+                - sleep
+                - infinity
+              init: true
               volumes:
                 barman-home: /var/lib/barman
-                barman-log: /var/log/barman
                 barman-config:
                   path: /etc/barman.d
                   ro: true

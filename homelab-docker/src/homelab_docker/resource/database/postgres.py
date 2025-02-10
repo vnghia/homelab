@@ -4,6 +4,7 @@ from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
 from homelab_docker.model.container.healthcheck import ContainerHealthCheckConfig
+from homelab_docker.model.container.image import ContainerImageModelConfig
 from homelab_docker.model.container.model import (
     ContainerModel,
     ContainerModelBuildArgs,
@@ -54,7 +55,9 @@ class PostgresDatabaseResource(ComponentResource):
         for version in self.model.versions:
             full_name = self.get_full_name_version(version)
             container = ContainerModel(
-                image=self.model.get_short_name_version(None, version),
+                image=ContainerImageModelConfig(
+                    self.model.get_short_name_version(None, version)
+                ),
                 healthcheck=ContainerHealthCheckConfig(
                     tests=["CMD", "pg_isready", "-U", self.database],
                     interval="5s",
