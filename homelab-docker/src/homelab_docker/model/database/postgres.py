@@ -10,7 +10,7 @@ from ..container.network import ContainerNetworkConfig
 
 class PostgresDatabaseModel(BaseModel):
     DATABASE_TYPE: ClassVar[str] = "postgres"
-    DATABASE_VERSION: ClassVar[PositiveInt] = 17
+    DATABASE_VERSION: ClassVar[PositiveInt] = 16
 
     DATABASE_ENTRYPOINT_INITDB_VOLUME: ClassVar[str] = (
         "postgres-docker-entrypoint-initdb"

@@ -44,9 +44,13 @@ config:
               base: minideb
         postgres:
           postgres:
+            # TODO: use postgres 17 after https://github.com/EnterpriseDB/barman/issues/1041
             "17":
               repo: postgres
               tag: "17.2-bookworm"
+            "16":
+              repo: postgres
+              tag: "16.6-bookworm"
       volumes:
         local:
           tailscale-data: {}
