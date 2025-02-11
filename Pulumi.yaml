@@ -33,7 +33,7 @@ config:
             tag: "0.24.0"
           dagu:
             repo: ghcr.io/dagu-org/dagu
-            tag: "1.16.0"
+            tag: "1.16.1"
           minideb:
             repo: bitnami/minideb
             tag: "bookworm"
@@ -58,7 +58,8 @@ config:
           traefik-cert: {}
           nghe-cache: {}
           memos-data: {}
-          dagu-config: {}
+          dagu-home: {}
+          dagu-dags: {}
           barman-home: {}
           barman-config: {}
           postgres-docker-entrypoint-initdb: {}
@@ -222,16 +223,47 @@ config:
         dagu:
           container:
             image: dagu
+            command: ["start-all"]
+            entrypoint: ["dagu"]
+            healthcheck:
+              tests:
+                [
+                  "CMD",
+                  "wget",
+                  "-q",
+                  "http://localhost:8080/api/v1/health",
+                  "-O",
+                  "/dev/null",
+                ]
+              interval: 1s
+              timeout: 5s
             tmpfs:
               - /tmp
             volumes:
               docker-socket: true
-              dagu-config: /config
+              dagu-home: /config
+              dagu-dags:
+                path: /config/dags
+                ro: true
             envs:
               DAGU_PORT: 8080
+              DAGU_LOG_DIR:
+                volume: dagu-home
+                path: logs
+              DAGU_DATA_DIR:
+                volume: dagu-home
+                path: data
+              DAGU_SUSPEND_FLAGS_DIR:
+                volume: dagu-home
+                path: suspend
+              DAGU_ADMIN_LOG_DIR:
+                volume: dagu-home
+                path: admin
               DAGU_DAGS_DIR:
-                volume: dagu-config
-                path: dags
+                volume: dagu-dags
+              DAGU_BASE_CONFIG:
+                volume: dagu-dags
+                path: base.yaml
         backup:
           config:
             barman:
