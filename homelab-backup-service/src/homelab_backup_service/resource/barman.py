@@ -1,3 +1,5 @@
+from pathlib import PosixPath
+
 import pulumi_docker as docker
 from homelab_backup_service.config.barman import BarmanConfig
 from homelab_dagu_service import DaguService
@@ -44,7 +46,7 @@ class BarmanResource(ComponentResource):
                                 "backup_method": "postgres",
                                 "archiver": "off",
                                 "streaming_archiver": "on",
-                                "slot_name": "barman",
+                                "slot_name": self.RESOURCE_NAME,
                                 "create_slot": "auto",
                                 "minimum_redundancy": str(config.minimum_redundancy),
                                 "retention_policy": config.retention_policy,
@@ -63,6 +65,7 @@ class BarmanResource(ComponentResource):
     def build_dag_files(
         self,
         *,
+        service_name: str,
         barman_container: docker.Container,
         dagu_service: DaguService,
         volume_resource: VolumeResource,
@@ -73,8 +76,12 @@ class BarmanResource(ComponentResource):
         }
 
         # Run barman cron every minutes
+        self.cron_name = "{}-cron".format(self.RESOURCE_NAME)
         self.cron = DaguDag(
-            name="barman-cron",
+            path=PosixPath("{}-{}".format(service_name, self.cron_name)),
+            name=self.cron_name,
+            group=service_name,
+            tags=[self.RESOURCE_NAME],
             schedule="* * * * *",
             max_active_runs=1,
             steps=[

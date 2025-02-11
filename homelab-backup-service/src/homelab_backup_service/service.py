@@ -41,6 +41,7 @@ class BackupService(ServiceResourceBase[BackupConfig]):
         )
 
         self.barman.build_dag_files(
+            service_name=self.name(),
             barman_container=self.containers[BarmanResource.RESOURCE_NAME],
             dagu_service=dagu_service,
             volume_resource=self.container_model_global_args.docker_resource.volume,

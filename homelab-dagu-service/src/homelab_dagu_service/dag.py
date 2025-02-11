@@ -3,6 +3,7 @@ from pathlib import PosixPath
 from typing import Any, ClassVar
 
 from homelab_docker.model.file.config import ConfigFile
+from homelab_docker.pydantic.path import RelativePath
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
@@ -26,7 +27,11 @@ class DaguDag:
     DAGS_DIR_ENV: ClassVar[str] = "DAGU_DAGS_DIR"
     steps: list[DaguDagStep]
 
+    path: RelativePath | None = None
+
     name: str | None = None
+    group: str | None = None
+    tags: list[str] | None = None
     schedule: str | None = None
     max_active_runs: PositiveInt | None = None
 
@@ -41,10 +46,13 @@ class DaguDag:
         return ConfigFile(
             container_volume_path=dagu_service.model.container.envs[self.DAGS_DIR_ENV]
             .as_container_volume_path()
-            .join(PosixPath(self.name or resource_name), ".yaml"),
+            .join(self.path or PosixPath(resource_name), ".yaml"),
             data={
                 "steps": [step.dict() for step in self.steps],
             }
+            | ({"name": self.name} if self.name else {})
+            | ({"group": self.group} if self.group else {})
+            | ({"tags": ",".join(self.tags)} if self.tags else {})
             | ({"schedule": self.schedule} if self.schedule else {})
             | ({"maxActiveRuns": self.max_active_runs} if self.max_active_runs else {}),
             schema_url="https://raw.githubusercontent.com/dagu-org/dagu/refs/heads/main/schemas/dag.schema.json",
