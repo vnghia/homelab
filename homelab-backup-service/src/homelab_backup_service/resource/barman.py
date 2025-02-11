@@ -98,7 +98,7 @@ class BarmanResource(ComponentResource):
             volume_resource=volume_resource,
         )
 
-        # Run barman cron every minutes
+        # Run barman cron every minute
         self.cron_name = "{}-cron".format(self.RESOURCE_NAME)
         self.cron = DaguDag(
             path=PosixPath("{}-{}".format(service_name, self.cron_name)),
@@ -116,6 +116,29 @@ class BarmanResource(ComponentResource):
             ],
         ).build_resource(
             "dagu-cron",
+            opts=self.child_opts,
+            dagu_service=dagu_service,
+            volume_resource=volume_resource,
+        )
+
+        # Run barman backup every day
+        # TODO: Use param after https://github.com/dagu-org/dagu/issues/827
+        self.backup_name = "{}-backup".format(self.RESOURCE_NAME)
+        self.backup = DaguDag(
+            path=PosixPath("{}-{}".format(service_name, self.backup_name)),
+            name=self.backup_name,
+            group=service_name,
+            tags=[self.RESOURCE_NAME],
+            schedule="0 0 * * *",
+            max_active_runs=1,
+            params={self.SERVER_NAME_KEY: self.SERVER_NAME_DEFAULT_VALUE},
+            steps=[
+                DaguDagStep(
+                    name="backup", command="barman backup all --wait", executor=executor
+                ),
+            ],
+        ).build_resource(
+            "dagu-backup",
             opts=self.child_opts,
             dagu_service=dagu_service,
             volume_resource=volume_resource,
