@@ -19,7 +19,9 @@ class DaguDagStep:
     executor: dict[str, Any] | None = None
 
     def dict(self) -> dict[str, Any]:
-        return {"name": self.name, "command": self.command, "executor": self.executor}
+        return {"name": self.name, "command": self.command} | (
+            {"executor": self.executor} if self.executor else {}
+        )
 
 
 @dataclasses.dataclass
@@ -34,6 +36,8 @@ class DaguDag:
     tags: list[str] | None = None
     schedule: str | None = None
     max_active_runs: PositiveInt | None = None
+
+    params: dict[str, Any] | None = None
 
     def build_resource(
         self,
@@ -54,6 +58,11 @@ class DaguDag:
             | ({"group": self.group} if self.group else {})
             | ({"tags": ",".join(self.tags)} if self.tags else {})
             | ({"schedule": self.schedule} if self.schedule else {})
-            | ({"maxActiveRuns": self.max_active_runs} if self.max_active_runs else {}),
+            | ({"maxActiveRuns": self.max_active_runs} if self.max_active_runs else {})
+            | (
+                {"params": [{key: param} for key, param in self.params.items()]}
+                if self.params
+                else {}
+            ),
             schema_url="https://raw.githubusercontent.com/dagu-org/dagu/refs/heads/main/schemas/dag.schema.json",
         ).build_resource(resource_name, opts=opts, volume_resource=volume_resource)

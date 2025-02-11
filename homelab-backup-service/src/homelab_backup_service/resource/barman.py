@@ -15,6 +15,8 @@ from pulumi import ComponentResource, ResourceOptions
 
 class BarmanResource(ComponentResource):
     RESOURCE_NAME = "barman"
+    SERVER_NAME_KEY = "SERVER_NAME"
+    SERVER_NAME_DEFAULT_VALUE = "all"
 
     def __init__(
         self,
@@ -72,8 +74,29 @@ class BarmanResource(ComponentResource):
     ) -> None:
         executor = {
             "type": "docker",
-            "config": {"containerName": barman_container.name, "exec": {}},
+            "config": {"containerName": barman_container.name},
         }
+
+        # Run barman check manually
+        # TODO: Use param after https://github.com/dagu-org/dagu/issues/827
+        self.check_name = "{}-check".format(self.RESOURCE_NAME)
+        self.check = DaguDag(
+            path=PosixPath("{}-{}".format(service_name, self.check_name)),
+            name=self.check_name,
+            group=service_name,
+            tags=[self.RESOURCE_NAME],
+            params={self.SERVER_NAME_KEY: self.SERVER_NAME_DEFAULT_VALUE},
+            steps=[
+                DaguDagStep(
+                    name="check", command="barman check all", executor=executor
+                ),
+            ],
+        ).build_resource(
+            "dagu-check",
+            opts=self.child_opts,
+            dagu_service=dagu_service,
+            volume_resource=volume_resource,
+        )
 
         # Run barman cron every minutes
         self.cron_name = "{}-cron".format(self.RESOURCE_NAME)
