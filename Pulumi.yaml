@@ -229,6 +229,9 @@ config:
               dagu-config: /config
             envs:
               DAGU_PORT: 8080
+              DAGU_DAGS_DIR:
+                volume: dagu-config
+                path: dags
         backup:
           config:
             barman:

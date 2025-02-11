@@ -1,5 +1,6 @@
 import dataclasses
 from pathlib import PosixPath
+from typing import Self
 
 import pulumi_docker as docker
 from pulumi import Input, Output
@@ -42,3 +43,6 @@ class ContainerVolumePath(BaseModel):
         return ContainerVolumeResourcePath(
             volume=volume_resource[self.volume], path=self.path
         )
+
+    def join(self, path: RelativePath, suffix: str) -> Self:
+        return self.model_copy(update={"path": (self.path / path).with_suffix(suffix)})

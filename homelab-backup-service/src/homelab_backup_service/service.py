@@ -1,3 +1,4 @@
+from homelab_dagu_service import DaguService
 from homelab_docker.model.container.model import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
@@ -16,6 +17,7 @@ class BackupService(ServiceResourceBase[BackupConfig]):
         model: ServiceModel[BackupConfig],
         *,
         opts: ResourceOptions | None,
+        dagu_service: DaguService,
         container_model_global_args: ContainerModelGlobalArgs,
     ) -> None:
         super().__init__(
@@ -36,4 +38,10 @@ class BackupService(ServiceResourceBase[BackupConfig]):
                     files=self.barman.files
                 )
             }
+        )
+
+        self.barman.build_dag_files(
+            barman_container=self.containers[BarmanResource.RESOURCE_NAME],
+            dagu_service=dagu_service,
+            volume_resource=self.container_model_global_args.docker_resource.volume,
         )

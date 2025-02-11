@@ -8,6 +8,7 @@ import deepmerge
 import httpx
 import jsonschema
 import tomlkit
+import yaml
 from pulumi import Input, Output, ResourceOptions
 
 from homelab_docker.model.container.volume_path import ContainerVolumePath
@@ -60,6 +61,12 @@ class ConfigFile:
         content = config_content.read()
         return content
 
+    def yaml_dumps(self, raw_data: str) -> str:
+        data = json.loads(raw_data)
+        if self.schema:
+            self.schema.validate(data)
+        return yaml.dump(data, default_flow_style=False, sort_keys=True)
+
     def build_resource(
         self,
         resource_name: str,
@@ -73,8 +80,10 @@ class ConfigFile:
                 content = Output.json_dumps(self.data).apply(self.toml_dumps)
             case ".conf":
                 content = Output.json_dumps(self.data).apply(self.conf_dumps)
+            case ".yaml":
+                content = Output.json_dumps(self.data).apply(self.yaml_dumps)
             case _:
-                raise ValueError("Only `toml`, `conf` formats are supported")
+                raise ValueError("Only `toml`, `conf`, `yaml` formats are supported")
         return FileResource(
             resource_name,
             opts=opts,

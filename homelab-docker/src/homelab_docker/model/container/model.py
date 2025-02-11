@@ -47,6 +47,7 @@ class ContainerModel(BaseModel):
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
     database: ContainerDatabaseConfig | None = None
+    entrypoint: list[ContainerString] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
     init: bool | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
@@ -56,6 +57,7 @@ class ContainerModel(BaseModel):
     restart: Literal["unless-stopped"] = "unless-stopped"
     sysctls: dict[str, str] | None = None
     tmpfs: list[ContainerTmpfsConfig] | None = None
+    user: str | None = None
     volumes: ContainerVolumesConfig = ContainerVolumesConfig.model_construct()
     wait: bool = True
 
@@ -120,7 +122,13 @@ class ContainerModel(BaseModel):
                 command.to_str(container_volumes_config=self.volumes)
                 for command in self.command
             ]
-            if self.command
+            if self.command is not None
+            else None,
+            entrypoints=[
+                entrypoint.to_str(container_volumes_config=self.volumes)
+                for entrypoint in self.entrypoint
+            ]
+            if self.entrypoint is not None
             else None,
             healthcheck=self.healthcheck.to_args() if self.healthcheck else None,
             init=self.init,
@@ -132,6 +140,7 @@ class ContainerModel(BaseModel):
             rm=self.remove,
             restart=self.restart,
             sysctls=self.sysctls,
+            user=self.user,
             volumes=self.volumes.to_args(
                 volume_resource=global_args.docker_resource.volume
             ),

@@ -16,6 +16,7 @@ dependencies = [
     "deepmerge>=2.0",
     "pulumi-random>=4.17.0",
     "pulumi-docker-build>=0.0.10",
+    "pyyaml>=6.0.2",
 ]
 requires-python = ">= 3.12"
 classifiers = ["Private :: Do Not Upload"]
@@ -30,6 +31,7 @@ dev-dependencies = [
     "types-docker>=7.1.0.20241229",
     "types-jsonschema>=4.23.0.20241208",
     "types-paramiko>=3.5.0.20240928",
+    "types-pyyaml>=6.0.12.20241230",
 ]
 
 [tool.hatch.metadata]
