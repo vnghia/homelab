@@ -37,6 +37,9 @@ config:
           minideb:
             repo: bitnami/minideb
             tag: "bookworm"
+          restic:
+            repo: restic/restic
+            tag: "0.17.3"
         build:
           barman:
             context:
@@ -285,6 +288,10 @@ config:
                 barman-config:
                   path: /etc/barman.d
                   ro: true
+            restic:
+              image: restic
+              entrypoint: ["/bin/sleep", "infinity"]
+              init: true
   homelab:integration:
     value:
       s3:
