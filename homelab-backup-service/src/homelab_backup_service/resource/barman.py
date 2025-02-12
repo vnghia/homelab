@@ -40,7 +40,6 @@ class BarmanResource(ComponentResource):
 
         self.config = model.config.barman
         self.container_model = model.containers[self.RESOURCE_NAME]
-        container_model_global_args = container_model_global_args
         volume_resource = container_model_global_args.docker_resource.volume
 
         self.files: list[FileResource] = []
@@ -156,3 +155,5 @@ class BarmanResource(ComponentResource):
             dagu_service=dagu_service,
             volume_resource=volume_resource,
         )
+
+        self.register_outputs({})

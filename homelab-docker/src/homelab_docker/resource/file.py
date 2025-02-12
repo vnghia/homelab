@@ -81,10 +81,10 @@ class FileVolumeProxy:
     def container(cls, volume: str) -> Iterator[Container]:
         container = DockerClient().containers.create(
             image=cls.IMAGE,
+            detach=True,
             network_mode="none",
             volumes={volume: {"bind": cls.WORKING_DIR.as_posix(), "mode": "rw"}},
             working_dir=cls.WORKING_DIR.as_posix(),
-            detach=True,
         )
         try:
             yield container
@@ -143,8 +143,9 @@ class FileVolumeProxy:
         DockerClient().containers.run(
             image=cls.IMAGE,
             command=["rm", "-rf", props.container_volume_path.path.as_posix()],
-            remove=True,
+            detach=False,
             network_mode="none",
+            remove=True,
             volumes={
                 props.container_volume_path.volume: {
                     "bind": cls.WORKING_DIR.as_posix(),
@@ -152,7 +153,6 @@ class FileVolumeProxy:
                 }
             },
             working_dir=cls.WORKING_DIR.as_posix(),
-            detach=True,
         )
 
 

@@ -5,6 +5,8 @@ from homelab_docker.resource.service import ServiceResourceBase
 from homelab_integration.config.s3 import S3IntegrationConfig
 from pulumi import ResourceOptions
 
+from homelab_backup_service.resource.restic import ResticResource
+
 from .config.backup import BackupConfig
 from .resource.barman import BarmanResource
 
@@ -32,3 +34,15 @@ class BackupService(ServiceResourceBase[BackupConfig]):
             container_model_global_args=self.container_model_global_args,
             containers=self.CONTAINERS,
         )
+
+        self.restic = ResticResource(
+            self.model,
+            opts=self.child_opts,
+            service_name=self.name(),
+            s3_integration_config=s3_integration_config,
+            dagu_service=dagu_service,
+            container_model_global_args=self.container_model_global_args,
+            containers=self.CONTAINERS,
+        )
+
+        self.register_outputs({})
