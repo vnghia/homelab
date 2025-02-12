@@ -30,6 +30,7 @@
     # via homelab
     # via homelab-backup-service
     # via homelab-config
+    # via homelab-dagu-service
 -e file:homelab-network
     # via homelab
     # via homelab-config

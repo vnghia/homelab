@@ -1,6 +1,6 @@
 import dataclasses
 from pathlib import PosixPath
-from typing import Any, ClassVar
+from typing import Any
 
 from homelab_docker.model.file.config import ConfigFile
 from homelab_docker.pydantic.path import RelativePath
@@ -16,7 +16,6 @@ from .step import DaguDagStepConfig
 
 @dataclasses.dataclass
 class DaguDagConfig:
-    DAGS_DIR_ENV: ClassVar[str] = "DAGU_DAGS_DIR"
     steps: list[DaguDagStepConfig]
 
     path: RelativePath | None = None
@@ -36,14 +35,27 @@ class DaguDagConfig:
         opts: ResourceOptions | None,
         dagu_service: DaguService,
         volume_resource: VolumeResource,
+        env_files: list[FileResource] = [],
     ) -> FileResource:
         return ConfigFile(
-            container_volume_path=dagu_service.model.container.envs[self.DAGS_DIR_ENV]
-            .as_container_volume_path()
-            .join(self.path or PosixPath(resource_name), ".yaml"),
+            container_volume_path=dagu_service.get_config_container_volume_path().join(
+                self.path or PosixPath(resource_name), ".yaml"
+            ),
             data={
                 "steps": [step.dict() for step in self.steps],
             }
+            | (
+                {
+                    "dotenv": [
+                        env_file.container_volume_path.to_container_path(
+                            dagu_service.model.container.volumes
+                        ).as_posix()
+                        for env_file in env_files
+                    ]
+                }
+                if env_files
+                else {}
+            )
             | ({"name": self.name} if self.name else {})
             | ({"group": self.group} if self.group else {})
             | ({"tags": ",".join(self.tags)} if self.tags else {})
@@ -55,4 +67,8 @@ class DaguDagConfig:
                 else {}
             ),
             schema_url="https://raw.githubusercontent.com/dagu-org/dagu/refs/heads/main/schemas/dag.schema.json",
-        ).build_resource(resource_name, opts=opts, volume_resource=volume_resource)
+        ).build_resource(
+            resource_name,
+            opts=ResourceOptions.merge(opts, ResourceOptions(depends_on=env_files)),
+            volume_resource=volume_resource,
+        )

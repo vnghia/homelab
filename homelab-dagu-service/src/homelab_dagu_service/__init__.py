@@ -1,27 +1,38 @@
+from pathlib import PosixPath
+from typing import Mapping
+
 from homelab_docker.model.container.model import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )
+from homelab_docker.model.container.volume_path import ContainerVolumePath
+from homelab_docker.model.file.config import ConfigFile
 from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_integration.config.s3 import S3IntegrationConfig
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from homelab_traefik_service.config.static import TraefikStaticConfig
-from pulumi import ResourceOptions
+from pulumi import Input, ResourceOptions
 
 
 class DaguService(ServiceResourceBase[None]):
+    DAGS_DIR_ENV = "DAGU_DAGS_DIR"
+
     def __init__(
         self,
         model: ServiceModel[None],
         *,
         opts: ResourceOptions | None,
+        s3_integration_config: S3IntegrationConfig,
         container_model_global_args: ContainerModelGlobalArgs,
         traefik_static_config: TraefikStaticConfig,
     ) -> None:
         super().__init__(
             model, opts=opts, container_model_global_args=container_model_global_args
         )
+        self.s3_integration_config = s3_integration_config
 
         self.build_containers(
             options={
@@ -29,6 +40,13 @@ class DaguService(ServiceResourceBase[None]):
                     envs={"DAGU_TZ": str(self.container_model_global_args.timezone)}
                 )
             }
+        )
+
+        self.aws_env = self.build_env_file(
+            "aws-env",
+            opts=self.child_opts,
+            name="aws",
+            envs=self.s3_integration_config.to_envs(use_default_region=True),
         )
 
         self.traefik = TraefikHttpDynamicConfig(
@@ -40,9 +58,31 @@ class DaguService(ServiceResourceBase[None]):
         ).build_resource(
             "traefik",
             opts=self.child_opts,
-            volume_resource=container_model_global_args.docker_resource.volume,
+            volume_resource=self.container_model_global_args.docker_resource.volume,
             containers=self.CONTAINERS,
             static_config=traefik_static_config,
         )
 
         self.register_outputs({})
+
+    def get_config_container_volume_path(self) -> ContainerVolumePath:
+        return self.model.container.envs[self.DAGS_DIR_ENV].as_container_volume_path()
+
+    def get_env_container_volume_path(self, name: str) -> ContainerVolumePath:
+        return self.get_config_container_volume_path().join(PosixPath(name), ".env")
+
+    def build_env_file(
+        self,
+        resource_name: str,
+        *,
+        opts: ResourceOptions,
+        name: str,
+        envs: Mapping[str, Input[str]],
+    ) -> FileResource:
+        return ConfigFile(
+            container_volume_path=self.get_env_container_volume_path(name), data=envs
+        ).build_resource(
+            resource_name,
+            opts=opts,
+            volume_resource=self.container_model_global_args.docker_resource.volume,
+        )

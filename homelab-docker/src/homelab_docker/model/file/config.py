@@ -67,6 +67,20 @@ class ConfigFile:
             self.schema.validate(data)
         return yaml.dump(data, default_flow_style=False, sort_keys=True)
 
+    def env_dumps(self, raw_data: str) -> str:
+        data = json.loads(raw_data)
+        if self.schema:
+            self.schema.validate(data)
+        return (
+            "\n".join(
+                [
+                    "{}={}".format(k, v)
+                    for k, v in sorted(data.items(), key=lambda x: x[0])
+                ]
+            )
+            + "\n"
+        )
+
     def build_resource(
         self,
         resource_name: str,
@@ -82,8 +96,12 @@ class ConfigFile:
                 content = Output.json_dumps(self.data).apply(self.conf_dumps)
             case ".yaml":
                 content = Output.json_dumps(self.data).apply(self.yaml_dumps)
+            case ".env":
+                content = Output.json_dumps(self.data).apply(self.env_dumps)
             case _:
-                raise ValueError("Only `toml`, `conf`, `yaml` formats are supported")
+                raise ValueError(
+                    "Only `toml`, `conf`, `yaml`, `env` formats are supported"
+                )
         return FileResource(
             resource_name,
             opts=opts,

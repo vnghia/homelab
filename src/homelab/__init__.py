@@ -67,6 +67,7 @@ class Homelab:
         self.dagu = DaguService(
             self.docker.services_config.dagu,
             opts=None,
+            s3_integration_config=self.config.integration.s3,
             container_model_global_args=self.docker.container_model_global_args,
             traefik_static_config=self.traefik.static,
         )
@@ -76,7 +77,6 @@ class Homelab:
             self.docker.services_config.backup,
             opts=None,
             volume_config=self.docker.config.volumes,
-            s3_integration_config=self.config.integration.s3,
             dagu_service=self.dagu,
             container_model_global_args=self.docker.container_model_global_args,
         )

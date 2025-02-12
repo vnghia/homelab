@@ -13,6 +13,7 @@ from homelab_docker.resource.volume import VolumeResource
 
 @dataclasses.dataclass
 class ContainerVolumeResourcePath:
+    name: str
     volume: docker.Volume
     path: RelativePath
 
@@ -41,7 +42,7 @@ class ContainerVolumePath(BaseModel):
         self, volume_resource: VolumeResource
     ) -> ContainerVolumeResourcePath:
         return ContainerVolumeResourcePath(
-            volume=volume_resource[self.volume], path=self.path
+            name=self.volume, volume=volume_resource[self.volume], path=self.path
         )
 
     def join(self, path: RelativePath, suffix: str) -> Self:

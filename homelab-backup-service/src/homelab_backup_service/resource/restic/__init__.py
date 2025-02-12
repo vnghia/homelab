@@ -17,7 +17,6 @@ from homelab_docker.model.container.volume import (
 )
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_integration.config.s3 import S3IntegrationConfig
 from pulumi import ComponentResource, ResourceOptions
 
 
@@ -32,7 +31,6 @@ class ResticResource(ComponentResource):
         opts: ResourceOptions,
         service_name: str,
         volume_config: VolumeConfig,
-        s3_integration_config: S3IntegrationConfig,
         dagu_service: DaguService,
         container_model_global_args: ContainerModelGlobalArgs,
         containers: dict[str, docker.Container],
@@ -54,8 +52,18 @@ class ResticResource(ComponentResource):
             self.config,
             opts=self.child_opts,
             password=self.password.result,
-            s3_integration_config=s3_integration_config,
+            s3_integration_config=dagu_service.s3_integration_config,
             image_resource=container_model_global_args.docker_resource.image,
+        )
+
+        self.restic_env = dagu_service.build_env_file(
+            "env",
+            opts=self.child_opts,
+            name="restic",
+            envs={
+                "RESTIC_REPOSITORY": self.repo.id,
+                "RESTIC_PASSWORD": self.password.result,
+            },
         )
 
         self.executor = DaguDagDockerExecutorConfig.from_container_model(
@@ -95,6 +103,7 @@ class ResticResource(ComponentResource):
             opts=self.child_opts,
             dagu_service=dagu_service,
             volume_resource=volume_resource,
+            env_files=[dagu_service.aws_env, self.restic_env],
         )
 
         pulumi.export("restic.repo", self.repo.id)

@@ -224,3 +224,8 @@ class FileResource(Resource, module="docker", name="File"):
                 ),
             ),
         )
+
+        self.container_volume_path = ContainerVolumePath(
+            volume=container_volume_resource_path.name,
+            path=container_volume_resource_path.path,
+        )
