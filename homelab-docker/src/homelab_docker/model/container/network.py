@@ -35,19 +35,20 @@ class ContainerCommonNetworkConfig(BaseModel):
     def to_args(
         self,
         resource_name: str,
-        network: NetworkResource,
+        network_resource: NetworkResource,
         _: dict[str, docker.Container],
     ) -> ContainerNetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
+        aliases = [resource_name] if resource_name else []
         return ContainerNetworkArgs(
             mode="bridge",
             advanced=(
-                [network.default_bridge_args([resource_name])]
+                [network_resource.default_bridge_args(aliases)]
                 if self.default_bridge
                 else []
             )
             + (
-                [network.internal_bridge_args([resource_name])]
+                [network_resource.internal_bridge_args(aliases)]
                 if self.internal_bridge
                 else []
             ),
@@ -64,7 +65,7 @@ class ContainerNetworkConfig(
     def to_args(
         self,
         resource_name: str,
-        network: NetworkResource,
+        network_resource: NetworkResource,
         containers: dict[str, docker.Container],
     ) -> ContainerNetworkArgs:
-        return self.root.to_args(resource_name, network, containers)
+        return self.root.to_args(resource_name, network_resource, containers)

@@ -1,7 +1,7 @@
 from pathlib import PosixPath
 
 import pulumi_docker as docker
-from pulumi import Input
+from pulumi import Input, Output
 from pydantic import BaseModel, ConfigDict, Field, RootModel
 
 from homelab_docker.pydantic import AbsolutePath
@@ -10,7 +10,7 @@ from homelab_docker.resource.volume import VolumeResource
 
 class ContainerVolumeFullConfig(BaseModel):
     path: AbsolutePath
-    read_only: bool = False
+    read_only: bool = Field(False, alias="read-only")
 
     def to_container_path(self) -> PosixPath:
         return self.path
@@ -86,3 +86,20 @@ class ContainerVolumesConfig(BaseModel):
                 ),
             ]
         )
+
+    def to_binds(self, volume_resource: VolumeResource) -> list[Output[str]]:
+        def to_bind(arg: docker.ContainerVolumeArgs) -> Output[str]:
+            return Output.format(
+                "{volume_or_path}:{container_path}:{read_write}",
+                volume_or_path=arg.volume_name if arg.volume_name else arg.host_path,
+                container_path=arg.container_path,
+                read_write=(
+                    Output.from_input(arg.read_only).apply(
+                        lambda x: "ro" if x else "rw"
+                    )
+                )
+                if arg.read_only is not None
+                else "rw",
+            )
+
+        return [to_bind(arg) for arg in self.to_args(volume_resource)]

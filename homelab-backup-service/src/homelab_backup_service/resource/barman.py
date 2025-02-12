@@ -1,15 +1,21 @@
 from pathlib import PosixPath
 
 import pulumi_docker as docker
-from homelab_backup_service.config.barman import BarmanConfig
+from homelab_backup_service.config.backup import BackupConfig
 from homelab_dagu_service import DaguService
-from homelab_dagu_service.dag import DaguDag, DaguDagStep
+from homelab_dagu_service.config import DaguDagConfig
+from homelab_dagu_service.config.executor.docker import DaguDagDockerExecutorConfig
+from homelab_dagu_service.config.step import DaguDagStepConfig
 from homelab_docker.config.database.source import DatabaseSourceConfig
-from homelab_docker.model.container.model import ContainerModel
+from homelab_docker.model.container.model import (
+    ContainerModelBuildArgs,
+    ContainerModelGlobalArgs,
+)
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
 from homelab_docker.model.file.config import ConfigFile
+from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.file import FileResource
-from homelab_docker.resource.volume import VolumeResource
+from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ComponentResource, ResourceOptions
 
 
@@ -20,15 +26,22 @@ class BarmanResource(ComponentResource):
 
     def __init__(
         self,
-        config: BarmanConfig,
+        model: ServiceModel[BackupConfig],
         *,
         opts: ResourceOptions,
-        container_model: ContainerModel,
+        service_name: str,
+        dagu_service: DaguService,
         database_source_configs: dict[str, DatabaseSourceConfig],
-        volume_resource: VolumeResource,
+        container_model_global_args: ContainerModelGlobalArgs,
+        containers: dict[str, docker.Container],
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
+
+        self.config = model.config.barman
+        self.container_model = model.containers[self.RESOURCE_NAME]
+        container_model_global_args = container_model_global_args
+        volume_resource = container_model_global_args.docker_resource.volume
 
         self.files: list[FileResource] = []
         for service_name, source_config in database_source_configs.items():
@@ -38,7 +51,7 @@ class BarmanResource(ComponentResource):
                         service_name, name, version
                     )
                     file = ConfigFile(
-                        container_volume_path=config.get_config_container_volume_path(
+                        container_volume_path=self.config.get_config_container_volume_path(
                             full_name
                         ),
                         data={
@@ -50,10 +63,12 @@ class BarmanResource(ComponentResource):
                                 "streaming_archiver": "on",
                                 "slot_name": self.RESOURCE_NAME,
                                 "create_slot": "auto",
-                                "minimum_redundancy": str(config.minimum_redundancy),
-                                "retention_policy": config.retention_policy,
-                                "local_staging_path": config.staging_dir.to_container_path(
-                                    container_model.volumes
+                                "minimum_redundancy": str(
+                                    self.config.minimum_redundancy
+                                ),
+                                "retention_policy": self.config.retention_policy,
+                                "local_staging_path": self.config.staging_dir.to_container_path(
+                                    self.container_model.volumes
                                 ).as_posix(),
                             }
                         },
@@ -64,31 +79,29 @@ class BarmanResource(ComponentResource):
                     )
                     self.files.append(file)
 
-    def build_dag_files(
-        self,
-        *,
-        service_name: str,
-        barman_container: docker.Container,
-        dagu_service: DaguService,
-        volume_resource: VolumeResource,
-    ) -> None:
-        executor = {
-            "type": "docker",
-            "config": {"containerName": barman_container.name},
-        }
+        self.executor = DaguDagDockerExecutorConfig.from_container_model(
+            ServiceResourceBase.add_service_name_cls(service_name, self.RESOURCE_NAME),
+            self.container_model,
+            service_name=service_name,
+            global_args=container_model_global_args,
+            service_args=None,
+            build_args=ContainerModelBuildArgs(files=self.files),
+            containers=containers,
+            additional={"autoRemove": True, "pull": False},
+        )
 
         # Run barman check manually
         # TODO: Use param after https://github.com/dagu-org/dagu/issues/827
         self.check_name = "{}-check".format(self.RESOURCE_NAME)
-        self.check = DaguDag(
+        self.check = DaguDagConfig(
             path=PosixPath("{}-{}".format(service_name, self.check_name)),
             name=self.check_name,
             group=service_name,
             tags=[self.RESOURCE_NAME],
             params={self.SERVER_NAME_KEY: self.SERVER_NAME_DEFAULT_VALUE},
             steps=[
-                DaguDagStep(
-                    name="check", command="barman check all", executor=executor
+                DaguDagStepConfig(
+                    name="check", command="check all", executor=self.executor
                 ),
             ],
         ).build_resource(
@@ -100,7 +113,7 @@ class BarmanResource(ComponentResource):
 
         # Run barman cron every minute
         self.cron_name = "{}-cron".format(self.RESOURCE_NAME)
-        self.cron = DaguDag(
+        self.cron = DaguDagConfig(
             path=PosixPath("{}-{}".format(service_name, self.cron_name)),
             name=self.cron_name,
             group=service_name,
@@ -108,10 +121,10 @@ class BarmanResource(ComponentResource):
             schedule="* * * * *",
             max_active_runs=1,
             steps=[
-                DaguDagStep(
+                DaguDagStepConfig(
                     name="cron",
-                    command="barman cron --keep-descriptors",
-                    executor=executor,
+                    command="cron --keep-descriptors",
+                    executor=self.executor,
                 )
             ],
         ).build_resource(
@@ -124,7 +137,7 @@ class BarmanResource(ComponentResource):
         # Run barman backup every day
         # TODO: Use param after https://github.com/dagu-org/dagu/issues/827
         self.backup_name = "{}-backup".format(self.RESOURCE_NAME)
-        self.backup = DaguDag(
+        self.backup = DaguDagConfig(
             path=PosixPath("{}-{}".format(service_name, self.backup_name)),
             name=self.backup_name,
             group=service_name,
@@ -133,8 +146,8 @@ class BarmanResource(ComponentResource):
             max_active_runs=1,
             params={self.SERVER_NAME_KEY: self.SERVER_NAME_DEFAULT_VALUE},
             steps=[
-                DaguDagStep(
-                    name="backup", command="barman backup all --wait", executor=executor
+                DaguDagStepConfig(
+                    name="backup", command="backup all --wait", executor=self.executor
                 ),
             ],
         ).build_resource(

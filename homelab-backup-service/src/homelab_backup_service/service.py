@@ -1,8 +1,5 @@
 from homelab_dagu_service import DaguService
-from homelab_docker.model.container.model import (
-    ContainerModelBuildArgs,
-    ContainerModelGlobalArgs,
-)
+from homelab_docker.model.container.model import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
@@ -25,24 +22,11 @@ class BackupService(ServiceResourceBase[BackupConfig]):
         )
 
         self.barman = BarmanResource(
-            self.model.config.barman,
+            self.model,
             opts=self.child_opts,
-            container_model=self.model.containers[BarmanResource.RESOURCE_NAME],
-            database_source_configs=self.DATABASE_SOURCE_CONFIGS,
-            volume_resource=self.container_model_global_args.docker_resource.volume,
-        )
-
-        self.build_containers(
-            options={
-                BarmanResource.RESOURCE_NAME: ContainerModelBuildArgs(
-                    files=self.barman.files
-                )
-            }
-        )
-
-        self.barman.build_dag_files(
             service_name=self.name(),
-            barman_container=self.containers[BarmanResource.RESOURCE_NAME],
             dagu_service=dagu_service,
-            volume_resource=self.container_model_global_args.docker_resource.volume,
+            database_source_configs=self.DATABASE_SOURCE_CONFIGS,
+            container_model_global_args=self.container_model_global_args,
+            containers=self.CONTAINERS,
         )

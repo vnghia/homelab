@@ -41,8 +41,12 @@ class ServiceResourceBase[T](ComponentResource):
     def config(self) -> T:
         return self.model.config
 
+    @classmethod
+    def add_service_name_cls(cls, service_name: str, name: str | None) -> str:
+        return "{}-{}".format(service_name, name) if name else service_name
+
     def add_service_name(self, name: str | None) -> str:
-        return "{}-{}".format(self.name(), name) if name else self.name()
+        return self.add_service_name_cls(self.name(), name)
 
     def build_databases(self) -> None:
         self.database = DatabaseResource(
@@ -74,9 +78,6 @@ class ServiceResourceBase[T](ComponentResource):
         model: ContainerModel,
         container_model_build_args: ContainerModelBuildArgs | None,
     ) -> docker.Container:
-        container_model_build_args = (
-            container_model_build_args or ContainerModelBuildArgs()
-        )
         return model.build_resource(
             self.add_service_name(name),
             opts=self.child_opts,

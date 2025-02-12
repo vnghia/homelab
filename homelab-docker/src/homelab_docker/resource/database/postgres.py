@@ -70,9 +70,11 @@ class PostgresDatabaseResource(ComponentResource):
                     {
                         full_name: ContainerVolumeConfig(self.model.PGDATA_PATH),
                         self.model.DATABASE_ENTRYPOINT_INITDB_VOLUME: ContainerVolumeConfig(
-                            ContainerVolumeFullConfig(
-                                path=self.model.DATABASE_ENTRYPOINT_INITDB_PATH,
-                                read_only=True,
+                            ContainerVolumeFullConfig.model_validate(
+                                {
+                                    "path": self.model.DATABASE_ENTRYPOINT_INITDB_PATH,
+                                    "read-only": True,
+                                }
                             )
                         ),
                     }

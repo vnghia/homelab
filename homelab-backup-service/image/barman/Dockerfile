@@ -8,3 +8,5 @@ RUN install_packages ca-certificates postgresql-common \
     postgresql-client-16 \
     postgresql-client-17
 COPY ./barman.conf /etc/barman.conf
+
+ENTRYPOINT [ "/usr/bin/barman" ]

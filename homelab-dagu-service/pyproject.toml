@@ -6,6 +6,7 @@ authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 dependencies = [
     "homelab-docker",
     "homelab-traefik-service",
+    "pydantic>=2.10.6",
     "pulumi>=3.148.0",
 ]
 requires-python = ">= 3.12"

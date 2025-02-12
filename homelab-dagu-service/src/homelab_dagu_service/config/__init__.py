@@ -11,23 +11,13 @@ from pydantic import PositiveInt
 
 from homelab_dagu_service import DaguService
 
-
-@dataclasses.dataclass
-class DaguDagStep:
-    name: str
-    command: str
-    executor: dict[str, Any] | None = None
-
-    def dict(self) -> dict[str, Any]:
-        return {"name": self.name, "command": self.command} | (
-            {"executor": self.executor} if self.executor else {}
-        )
+from .step import DaguDagStepConfig
 
 
 @dataclasses.dataclass
-class DaguDag:
+class DaguDagConfig:
     DAGS_DIR_ENV: ClassVar[str] = "DAGU_DAGS_DIR"
-    steps: list[DaguDagStep]
+    steps: list[DaguDagStepConfig]
 
     path: RelativePath | None = None
 

@@ -64,6 +64,90 @@ class ContainerModel(BaseModel):
     envs: dict[str, ContainerString] = {}
     labels: dict[str, str] = {}
 
+    def build_command(self) -> list[str] | None:
+        return (
+            [
+                command.to_str(container_volumes_config=self.volumes)
+                for command in self.command
+            ]
+            if self.command is not None
+            else None
+        )
+
+    def build_entrypoint(self) -> list[str] | None:
+        return (
+            [
+                entrypoint.to_str(container_volumes_config=self.volumes)
+                for entrypoint in self.entrypoint
+            ]
+            if self.entrypoint is not None
+            else None
+        )
+
+    def build_tmpfs(self) -> list[docker.ContainerMountArgs] | None:
+        return [tmpfs.to_args() for tmpfs in self.tmpfs] if self.tmpfs else None
+
+    def build_envs(
+        self,
+        global_args: ContainerModelGlobalArgs,
+        service_args: ContainerModelServiceArgs | None,
+        build_args: ContainerModelBuildArgs,
+    ) -> list[Output[str]]:
+        database_envs: dict[str, Output[str]] = {}
+
+        if self.database:
+            if not service_args:
+                raise ValueError(
+                    "service args is required if database config is not None"
+                )
+
+            database_envs = self.database.build_envs(
+                service_args.database_config,
+                service_args.database_source_config,
+            )
+
+        return [
+            Output.concat(
+                k,
+                "=",
+                Output.from_input(v).apply(
+                    lambda x: x.to_str(container_volumes_config=self.volumes)
+                    if isinstance(x, ContainerString)
+                    else x
+                ),
+            )
+            for k, v in sorted(
+                (
+                    {"TZ": Output.from_input(ContainerString(global_args.timezone))}
+                    | self.envs
+                    | {
+                        k: Output.from_input(v).apply(ContainerString)
+                        for k, v in (dict(build_args.envs) | database_envs).items()
+                    }
+                ).items(),
+                key=lambda x: x[0],
+            )
+        ]
+
+    def build_labels(
+        self,
+        resource_name: str,
+        service_name: str,
+        global_args: ContainerModelGlobalArgs,
+        build_args: ContainerModelBuildArgs,
+    ) -> dict[Output[str], Output[str]]:
+        return {
+            Output.from_input(k): Output.from_input(v)
+            for k, v in (
+                global_args.project_labels
+                | self.labels
+                | {
+                    "dev.dozzle.group": service_name,
+                    "dev.dozzle.name": resource_name,
+                }
+            ).items()
+        } | {file.id: file.hash for file in build_args.files}
+
     def build_resource(
         self,
         resource_name: str,
@@ -83,8 +167,6 @@ class ContainerModel(BaseModel):
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
 
-        database_envs: dict[str, Output[str]] = {}
-
         if self.database:
             if not service_args:
                 raise ValueError(
@@ -97,11 +179,6 @@ class ContainerModel(BaseModel):
                         service_name, service_args.database_config
                     )
                 ]
-            )
-
-            database_envs = self.database.build_envs(
-                service_args.database_config,
-                service_args.database_source_config,
             )
 
         return docker.Container(
@@ -118,21 +195,11 @@ class ContainerModel(BaseModel):
             capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
             if self.capabilities
             else None,
-            command=[
-                command.to_str(container_volumes_config=self.volumes)
-                for command in self.command
-            ]
-            if self.command is not None
-            else None,
-            entrypoints=[
-                entrypoint.to_str(container_volumes_config=self.volumes)
-                for entrypoint in self.entrypoint
-            ]
-            if self.entrypoint is not None
-            else None,
+            command=self.build_command(),
+            entrypoints=self.build_entrypoint(),
             healthcheck=self.healthcheck.to_args() if self.healthcheck else None,
             init=self.init,
-            mounts=[tmpfs.to_args() for tmpfs in self.tmpfs] if self.tmpfs else None,
+            mounts=self.build_tmpfs(),
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
             ports=[port.to_args() for port in sorted(self.ports.values())],
@@ -145,41 +212,18 @@ class ContainerModel(BaseModel):
                 volume_resource=global_args.docker_resource.volume
             ),
             wait=self.wait if self.healthcheck else False,
-            envs=[
-                Output.concat(
-                    k,
-                    "=",
-                    Output.from_input(v).apply(
-                        lambda x: x.to_str(container_volumes_config=self.volumes)
-                        if isinstance(x, ContainerString)
-                        else x
-                    ),
-                )
-                for k, v in sorted(
-                    (
-                        {"TZ": Output.from_input(ContainerString(global_args.timezone))}
-                        | self.envs
-                        | {
-                            k: Output.from_input(v).apply(ContainerString)
-                            for k, v in (dict(build_args.envs) | database_envs).items()
-                        }
-                    ).items(),
-                    key=lambda x: x[0],
-                )
-            ],
+            envs=self.build_envs(global_args, service_args, build_args),
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
-                    global_args.project_labels
-                    | self.labels
+                    self.build_labels(
+                        resource_name, service_name, global_args, build_args
+                    )
                     | {
                         "pulumi.image.id": self.image.to_image_id(
                             global_args.docker_resource.image
-                        ),
-                        "dev.dozzle.group": Output.from_input(service_name),
-                        "dev.dozzle.name": Output.from_input(resource_name),
+                        )
                     }
-                    | {file.id: file.hash for file in build_args.files}
                 ).items()
             ],
         )

@@ -149,7 +149,7 @@ config:
             volumes:
               traefik-config:
                 path: /etc/traefik/config
-                ro: true
+                read-only: true
               traefik-cert: /etc/traefik/cert
         dozzle:
           container:
@@ -247,7 +247,7 @@ config:
               dagu-home: /config
               dagu-dags:
                 path: /config/dags
-                ro: true
+                read-only: true
             envs:
               DAGU_PORT: 8080
               DAGU_LOG_DIR:
@@ -279,15 +279,11 @@ config:
             barman:
               image:
                 build: barman
-              command:
-                - sleep
-                - infinity
-              init: true
               volumes:
                 barman-home: /var/lib/barman
                 barman-config:
                   path: /etc/barman.d
-                  ro: true
+                  read-only: true
             restic:
               image: restic
               entrypoint: ["/bin/sleep", "infinity"]

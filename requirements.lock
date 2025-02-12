@@ -127,6 +127,7 @@ pycparser==2.22
     # via cffi
 pydantic==2.10.6
     # via homelab-backup-service
+    # via homelab-dagu-service
     # via homelab-docker
     # via homelab-integration
     # via homelab-network
