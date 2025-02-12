@@ -30,9 +30,6 @@ class DaguDagDockerExecutorConfig(RootModel[dict[str, Any]]):
 
         if container_model.user:
             config["user"] = container_model.user
-        config["env"] = container_model.build_envs(
-            global_args, service_args, build_args
-        )
         command = container_model.build_command()
         if command:
             config["cmd"] = command
@@ -48,6 +45,9 @@ class DaguDagDockerExecutorConfig(RootModel[dict[str, Any]]):
 
         host_config: dict[str, Any] = {}
 
+        host_config["env"] = container_model.build_envs(
+            global_args, service_args, build_args
+        )
         host_config["binds"] = container_model.volumes.to_binds(
             global_args.docker_resource.volume
         )

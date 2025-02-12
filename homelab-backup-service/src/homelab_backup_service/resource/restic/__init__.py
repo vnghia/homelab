@@ -71,7 +71,8 @@ class ResticResource(ComponentResource):
             self.container_model.model_copy(
                 update={
                     "volumes": ContainerVolumesConfig.model_validate(
-                        {
+                        self.container_model.volumes.model_dump(by_alias=True)
+                        | {
                             name: ContainerVolumeConfig(self.RESTIC_MOUNT_PATH / name)
                             for name, model in volume_config.local.items()
                             if model.backup

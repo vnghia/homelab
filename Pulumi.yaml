@@ -68,6 +68,8 @@ config:
           barman-home: {}
           barman-config:
             backup: false
+          restic-cache:
+            backup: false
           postgres-docker-entrypoint-initdb:
             backup: false
       services:
@@ -295,6 +297,11 @@ config:
               network:
                 default-bridge: true
                 internal-bridge: false
+              volumes:
+                restic-cache: /tmp/restic
+              envs:
+                RESTIC_CACHE_DIR:
+                  volume: restic-cache
   homelab:integration:
     value:
       s3:
