@@ -45,7 +45,7 @@ class NgheService(ServiceResourceBase[NgheConfig]):
                         "NGHE_INTEGRATION__SPOTIFY__ID": self.model.config.spotify.id,
                         "NGHE_INTEGRATION__SPOTIFY__SECRET": self.model.config.spotify.secret,
                         "NGHE_INTEGRATION__LASTFM__KEY": self.model.config.lastfm.key,
-                        **s3_integration_config.to_env(),
+                        **s3_integration_config.to_envs(use_default_region=False),
                     },
                 )
             }

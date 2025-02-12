@@ -5,6 +5,7 @@ description = "Add your description here"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 dependencies = [
     "homelab-docker",
+    "homelab-integration",
     "pulumi>=3.148.0",
     "pydantic>=2.10.6",
 ]

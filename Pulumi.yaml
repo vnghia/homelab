@@ -275,6 +275,8 @@ config:
               staging-dir:
                 volume: barman-home
                 path: staging
+            restic:
+              prefix: backup/restic
           containers:
             barman:
               image:
@@ -286,8 +288,9 @@ config:
                   read-only: true
             restic:
               image: restic
-              entrypoint: ["/bin/sleep", "infinity"]
-              init: true
+              network:
+                default-bridge: true
+                internal-bridge: false
   homelab:integration:
     value:
       s3:

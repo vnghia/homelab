@@ -75,6 +75,7 @@ class Homelab:
         self.backup = BackupService(
             self.docker.services_config.backup,
             opts=None,
+            s3_integration_config=self.config.integration.s3,
             dagu_service=self.dagu,
             container_model_global_args=self.docker.container_model_global_args,
         )

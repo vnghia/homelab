@@ -28,6 +28,7 @@
     # via homelab
 -e file:homelab-integration
     # via homelab
+    # via homelab-backup-service
     # via homelab-config
 -e file:homelab-network
     # via homelab
