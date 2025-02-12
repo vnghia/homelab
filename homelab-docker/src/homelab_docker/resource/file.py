@@ -6,11 +6,9 @@ from contextlib import contextmanager
 from pathlib import Path, PosixPath
 from typing import Any, Iterator
 
-import docker
 import pulumi
 from docker.errors import NotFound
 from docker.models.containers import Container
-from paramiko import BadAuthenticationType
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
     ConfigureRequest,
@@ -29,6 +27,7 @@ from pydantic import (
     field_validator,
 )
 
+from homelab_docker.client import DockerClient
 from homelab_docker.model.container.volume_path import (
     ContainerVolumePath,
     ContainerVolumeResourcePath,
@@ -78,17 +77,9 @@ class FileVolumeProxy:
     WORKING_DIR = PosixPath("/mnt/volume/")
 
     @classmethod
-    def client(cls) -> docker.DockerClient:
-        try:
-            return docker.from_env()
-        except BadAuthenticationType:
-            # TODO: use paramiko again if it works with Tailscale
-            return docker.from_env(use_ssh_client=True)
-
-    @classmethod
     @contextmanager
     def container(cls, volume: str) -> Iterator[Container]:
-        container = cls.client().containers.create(
+        container = DockerClient().containers.create(
             image=cls.IMAGE,
             network_mode="none",
             volumes={volume: {"bind": cls.WORKING_DIR.as_posix(), "mode": "rw"}},
@@ -102,7 +93,7 @@ class FileVolumeProxy:
 
     @classmethod
     def pull_image(cls) -> None:
-        cls.client().images.pull(repository=cls.IMAGE)
+        DockerClient().images.pull(repository=cls.IMAGE)
 
     @classmethod
     def create_file(cls, props: FileProviderProps) -> None:
@@ -149,7 +140,7 @@ class FileVolumeProxy:
 
     @classmethod
     def delete_file(cls, props: FileProviderProps) -> None:
-        cls.client().containers.run(
+        DockerClient().containers.run(
             image=cls.IMAGE,
             command=["rm", "-rf", props.container_volume_path.path.as_posix()],
             remove=True,
