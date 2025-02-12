@@ -56,25 +56,25 @@ class DaguDagDockerExecutorConfig(RootModel[dict[str, Any]]):
         )
         if network_args.advanced:
             networking_config: dict[str, Any] = {
-                "endpoints_config": {
+                "endpointsConfig": {
                     network.name: {"aliases": network.aliases}
                     for network in network_args.advanced
                 }
             }
             config["networking"] = networking_config
         elif network_args.mode:
-            host_config["network_mode"] = network_args.mode
+            host_config["networkMode"] = network_args.mode
         if container_model.capabilities:
-            host_config["cap_add"] = container_model.capabilities
-        host_config["readonly_root_fs"] = container_model.read_only
+            host_config["capAdd"] = container_model.capabilities
+        host_config["readonlyRootfs"] = container_model.read_only
         mounts = container_model.build_tmpfs()
         if mounts:
             host_config["mounts"] = [
                 {"type": mount.type, "target": mount.target}
                 | (
                     {
-                        "tmpfs_options": {
-                            "size_bytes": Output.from_input(mount.tmpfs_options).apply(
+                        "tmpfsOptions": {
+                            "sizeBytes": Output.from_input(mount.tmpfs_options).apply(
                                 lambda x: x.size_bytes
                             )
                         }
