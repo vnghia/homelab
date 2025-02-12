@@ -1,4 +1,5 @@
 from homelab_dagu_service import DaguService
+from homelab_docker.config.volume import VolumeConfig
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
@@ -17,6 +18,7 @@ class BackupService(ServiceResourceBase[BackupConfig]):
         model: ServiceModel[BackupConfig],
         *,
         opts: ResourceOptions | None,
+        volume_config: VolumeConfig,
         s3_integration_config: S3IntegrationConfig,
         dagu_service: DaguService,
         container_model_global_args: ContainerModelGlobalArgs,
@@ -39,6 +41,7 @@ class BackupService(ServiceResourceBase[BackupConfig]):
             self.model,
             opts=self.child_opts,
             service_name=self.name(),
+            volume_config=volume_config,
             s3_integration_config=s3_integration_config,
             dagu_service=dagu_service,
             container_model_global_args=self.container_model_global_args,

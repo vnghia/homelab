@@ -1,17 +1,29 @@
+from pathlib import PosixPath
+
 import pulumi
 import pulumi_docker as docker
 import pulumi_random as random
 from homelab_backup_service.config.backup import BackupConfig
 from homelab_backup_service.resource.restic.repo import ResticRepoResource
 from homelab_dagu_service import DaguService
+from homelab_dagu_service.config import DaguDagConfig
+from homelab_dagu_service.config.executor.docker import DaguDagDockerExecutorConfig
+from homelab_dagu_service.config.step import DaguDagStepConfig
+from homelab_docker.config.volume import VolumeConfig
 from homelab_docker.model.container.model import ContainerModelGlobalArgs
+from homelab_docker.model.container.volume import (
+    ContainerVolumeConfig,
+    ContainerVolumesConfig,
+)
 from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource.service import ServiceResourceBase
 from homelab_integration.config.s3 import S3IntegrationConfig
 from pulumi import ComponentResource, ResourceOptions
 
 
 class ResticResource(ComponentResource):
     RESOURCE_NAME = "restic"
+    RESTIC_MOUNT_PATH = PosixPath("/") / RESOURCE_NAME
 
     def __init__(
         self,
@@ -19,6 +31,7 @@ class ResticResource(ComponentResource):
         *,
         opts: ResourceOptions,
         service_name: str,
+        volume_config: VolumeConfig,
         s3_integration_config: S3IntegrationConfig,
         dagu_service: DaguService,
         container_model_global_args: ContainerModelGlobalArgs,
@@ -29,6 +42,7 @@ class ResticResource(ComponentResource):
 
         self.config = model.config.restic
         self.container_model = model.containers[self.RESOURCE_NAME]
+        volume_resource = container_model_global_args.docker_resource.volume
 
         self.password = random.RandomPassword(
             "password",
@@ -42,6 +56,45 @@ class ResticResource(ComponentResource):
             password=self.password.result,
             s3_integration_config=s3_integration_config,
             image_resource=container_model_global_args.docker_resource.image,
+        )
+
+        self.executor = DaguDagDockerExecutorConfig.from_container_model(
+            ServiceResourceBase.add_service_name_cls(service_name, self.RESOURCE_NAME),
+            self.container_model.model_copy(
+                update={
+                    "volumes": ContainerVolumesConfig.model_validate(
+                        {
+                            name: ContainerVolumeConfig(self.RESTIC_MOUNT_PATH / name)
+                            for name, model in volume_config.local.items()
+                            if model.backup
+                        }
+                    )
+                }
+            ),
+            service_name=service_name,
+            global_args=container_model_global_args,
+            service_args=None,
+            build_args=None,
+            containers=containers,
+            additional={"autoRemove": True, "pull": False},
+        )
+
+        self.check_name = "{}-check".format(self.RESOURCE_NAME)
+        self.check = DaguDagConfig(
+            path=PosixPath("{}-{}".format(service_name, self.check_name)),
+            name=self.check_name,
+            group=service_name,
+            tags=[self.RESOURCE_NAME],
+            steps=[
+                DaguDagStepConfig(
+                    name="check", command="check --read-data", executor=self.executor
+                ),
+            ],
+        ).build_resource(
+            "dagu-check",
+            opts=self.child_opts,
+            dagu_service=dagu_service,
+            volume_resource=volume_resource,
         )
 
         pulumi.export("restic.repo", self.repo.id)

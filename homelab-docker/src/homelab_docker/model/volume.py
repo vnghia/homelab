@@ -6,6 +6,8 @@ from homelab_docker.pydantic import AbsolutePath
 
 
 class LocalVolumeModel(BaseModel):
+    backup: bool = True
+
     bind: AbsolutePath | None = None
     labels: dict[str, str] = {}
 

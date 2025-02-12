@@ -57,15 +57,19 @@ config:
       volumes:
         local:
           tailscale-data: {}
-          traefik-config: {}
+          traefik-config:
+            backup: false
           traefik-cert: {}
           nghe-cache: {}
           memos-data: {}
           dagu-home: {}
-          dagu-dags: {}
+          dagu-dags:
+            backup: false
           barman-home: {}
-          barman-config: {}
-          postgres-docker-entrypoint-initdb: {}
+          barman-config:
+            backup: false
+          postgres-docker-entrypoint-initdb:
+            backup: false
       services:
         tailscale:
           container:
