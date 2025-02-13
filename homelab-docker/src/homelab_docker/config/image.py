@@ -3,11 +3,9 @@ from pydantic import BaseModel, PositiveInt, field_validator
 from homelab_docker.model.build.model import BuildModel
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
 from homelab_docker.model.image import RemoteImageModel
-from homelab_docker.model.platform import Platform
 
 
 class ImageConfig(BaseModel):
-    platform: Platform
     remote: dict[str, RemoteImageModel]
     build: dict[str, BuildModel]
     postgres: dict[str | None, dict[PositiveInt, RemoteImageModel]]

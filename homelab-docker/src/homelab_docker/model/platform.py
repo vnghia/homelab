@@ -10,7 +10,7 @@ class Platform(StrEnum):
 
 class PlatformFullString(BaseModel):
     template: str
-    platform: dict[Platform, str]
+    platform: dict[Platform, str] = {platform: platform.value for platform in Platform}
 
     def to_str(self, platform: Platform) -> str:
         return self.template.format(platform=self.platform[platform])

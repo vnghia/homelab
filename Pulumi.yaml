@@ -55,6 +55,11 @@ config:
             "16":
               repo: postgres
               tag: "16.6-bookworm"
+      plugins:
+        rclone:
+          repo: rclone/docker-volume-rclone
+          tag:
+            template: "{platform}-1.69.0"
       volumes:
         local:
           tailscale-data: {}

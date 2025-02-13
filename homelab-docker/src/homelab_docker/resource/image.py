@@ -3,6 +3,7 @@ from pulumi import ComponentResource, ResourceOptions
 
 from homelab_docker.config.image import ImageConfig
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
+from homelab_docker.model.platform import Platform
 
 
 class ImageResource(ComponentResource):
@@ -13,6 +14,7 @@ class ImageResource(ComponentResource):
         config: ImageConfig,
         *,
         opts: ResourceOptions,
+        platform: Platform,
         project_prefix: str,
         project_labels: dict[str, str],
     ) -> None:
@@ -20,9 +22,7 @@ class ImageResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.remotes = {
-            name: model.build_resource(
-                name, opts=self.child_opts, platform=config.platform
-            )
+            name: model.build_resource(name, opts=self.child_opts, platform=platform)
             for name, model in config.remote.items()
         }
 
@@ -43,7 +43,7 @@ class ImageResource(ComponentResource):
                 self.remotes[image_name] = model.build_resource(
                     image_name,
                     opts=self.child_opts,
-                    platform=config.platform,
+                    platform=platform,
                 )
 
         export = {name: image.image_id for name, image in self.remotes.items()} | {
