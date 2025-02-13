@@ -170,15 +170,15 @@ class FileProvider(ResourceProvider):
     def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
         file_olds = FileProviderProps(**olds)
         file_news = FileProviderProps(**news)
-        return DiffResult(
-            changes=file_olds != file_news,
-            stables=["volume", "path"],
-        )
+        return DiffResult(changes=file_olds != file_news)
 
     def update(
-        self, _id: str, _olds: dict[str, Any], news: dict[str, Any]
+        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
     ) -> UpdateResult:
+        file_olds = FileProviderProps(**olds)
         file_news = FileProviderProps(**news)
+        if file_olds.container_volume_path != file_news.container_volume_path:
+            FileVolumeProxy.delete_file(file_olds)
         FileVolumeProxy.create_file(file_news)
         return UpdateResult(outs=file_news.model_dump(mode="json"))
 
@@ -218,10 +218,7 @@ class FileResource(Resource, module="docker", name="File"):
             },
             ResourceOptions.merge(
                 opts,
-                ResourceOptions(
-                    delete_before_replace=True,
-                    deleted_with=container_volume_resource_path.volume,
-                ),
+                ResourceOptions(deleted_with=container_volume_resource_path.volume),
             ),
         )
 
