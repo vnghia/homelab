@@ -24,6 +24,9 @@ class BarmanResource(ComponentResource):
     SERVER_NAME_KEY = "SERVER_NAME"
     SERVER_NAME_DEFAULT_VALUE = "all"
 
+    DURATION_KEY = "DURATION"
+    DURATION_DEFAULT_VALUE = "30m"
+
     def __init__(
         self,
         model: ServiceModel[BackupConfig],
@@ -86,11 +89,31 @@ class BarmanResource(ComponentResource):
             service_args=None,
             build_args=ContainerModelBuildArgs(files=self.files),
             containers=containers,
-            additional={"autoRemove": True, "pull": False},
+        )
+
+        # Spawn a docker container for debugging purpose
+        self.debug_name = "{}-debug".format(self.RESOURCE_NAME)
+        self.debug = DaguDagConfig(
+            path=PosixPath("{}-{}".format(service_name, self.debug_name)),
+            name=self.debug_name,
+            group=service_name,
+            tags=[self.RESOURCE_NAME],
+            params={self.DURATION_KEY: self.DURATION_DEFAULT_VALUE},
+            steps=[
+                DaguDagStepConfig(
+                    name="hang",
+                    command="1h",
+                    executor=self.executor.to_hang_executor(),
+                ),
+            ],
+        ).build_resource(
+            "dagu-debug",
+            opts=self.child_opts,
+            dagu_service=dagu_service,
+            volume_resource=volume_resource,
         )
 
         # Run barman check manually
-        # TODO: Use param after https://github.com/dagu-org/dagu/issues/827
         self.check_name = "{}-check".format(self.RESOURCE_NAME)
         self.check = DaguDagConfig(
             path=PosixPath("{}-{}".format(service_name, self.check_name)),
@@ -100,11 +123,37 @@ class BarmanResource(ComponentResource):
             params={self.SERVER_NAME_KEY: self.SERVER_NAME_DEFAULT_VALUE},
             steps=[
                 DaguDagStepConfig(
-                    name="check", command="check all", executor=self.executor
+                    name="check",
+                    command="check ${{{}}}".format(self.SERVER_NAME_KEY),
+                    executor=self.executor,
                 ),
             ],
         ).build_resource(
             "dagu-check",
+            opts=self.child_opts,
+            dagu_service=dagu_service,
+            volume_resource=volume_resource,
+        )
+
+        # Run barman switch-wal manually
+        self.switch_wal_name = "{}-switch-wal".format(self.RESOURCE_NAME)
+        self.switch_wal = DaguDagConfig(
+            path=PosixPath("{}-{}".format(service_name, self.switch_wal_name)),
+            name=self.switch_wal_name,
+            group=service_name,
+            tags=[self.RESOURCE_NAME],
+            params={self.SERVER_NAME_KEY: self.SERVER_NAME_DEFAULT_VALUE},
+            steps=[
+                DaguDagStepConfig(
+                    name="switch-wal",
+                    command="switch-wal --force --archive ${{{}}}".format(
+                        self.SERVER_NAME_KEY
+                    ),
+                    executor=self.executor,
+                ),
+            ],
+        ).build_resource(
+            "dagu-switch-wal",
             opts=self.child_opts,
             dagu_service=dagu_service,
             volume_resource=volume_resource,
@@ -134,7 +183,6 @@ class BarmanResource(ComponentResource):
         )
 
         # Run barman backup every day
-        # TODO: Use param after https://github.com/dagu-org/dagu/issues/827
         self.backup_name = "{}-backup".format(self.RESOURCE_NAME)
         self.backup = DaguDagConfig(
             path=PosixPath("{}-{}".format(service_name, self.backup_name)),
@@ -146,7 +194,9 @@ class BarmanResource(ComponentResource):
             params={self.SERVER_NAME_KEY: self.SERVER_NAME_DEFAULT_VALUE},
             steps=[
                 DaguDagStepConfig(
-                    name="backup", command="backup all --wait", executor=self.executor
+                    name="backup",
+                    command="backup ${{{}}} --wait".format(self.SERVER_NAME_KEY),
+                    executor=self.executor,
                 ),
             ],
         ).build_resource(

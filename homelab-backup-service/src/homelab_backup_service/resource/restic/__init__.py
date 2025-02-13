@@ -85,7 +85,6 @@ class ResticResource(ComponentResource):
             service_args=None,
             build_args=None,
             containers=containers,
-            additional={"autoRemove": True, "pull": False},
         )
 
         self.check_name = "{}-check".format(self.RESOURCE_NAME)
