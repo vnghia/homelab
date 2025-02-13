@@ -24,7 +24,7 @@ config:
             tag: "v3.3.2"
           dozzle:
             repo: amir20/dozzle
-            tag: "v8.10.4"
+            tag: "v8.10.7"
           nghe:
             repo: ghcr.io/vnghia/nghe-musl
             tag: "0.10.1"
@@ -37,6 +37,7 @@ config:
           minideb:
             repo: bitnami/minideb
             tag: "bookworm"
+            delete-before-replace: true
           restic:
             repo: restic/restic
             tag: "0.17.3"
