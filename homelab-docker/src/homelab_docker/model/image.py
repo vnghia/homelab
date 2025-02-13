@@ -2,16 +2,15 @@ import pulumi_docker as docker
 from pulumi import ResourceOptions
 from pydantic import BaseModel
 
-from .platform import Platform
+from .platform import Platform, PlatformString
 
 
 class RemoteImageModel(BaseModel):
-    repo: str
-    tag: str
+    repo: PlatformString
+    tag: PlatformString
 
-    @property
-    def name(self) -> str:
-        return "{}:{}".format(self.repo, self.tag)
+    def build_name(self, platform: Platform) -> str:
+        return "{}:{}".format(self.repo.to_str(platform), self.tag.to_str(platform))
 
     def build_resource(
         self,
@@ -25,7 +24,7 @@ class RemoteImageModel(BaseModel):
             opts=ResourceOptions.merge(
                 opts, ResourceOptions(delete_before_replace=True)
             ),
-            name=self.name,
+            name=self.build_name(platform),
             force_remove=False,
             keep_locally=False,
             platform=platform.value,
