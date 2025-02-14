@@ -1,8 +1,6 @@
-from homelab_docker.model.container import (
-    ContainerModelBuildArgs,
-    ContainerModelGlobalArgs,
-)
+from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_network.resource.network import NetworkResource
 from homelab_tailscale_service import TailscaleService
@@ -21,12 +19,10 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
         *,
         opts: ResourceOptions | None,
         network_resource: NetworkResource,
-        container_model_global_args: ContainerModelGlobalArgs,
+        docker_resource_args: DockerResourceArgs,
         tailscale_service: TailscaleService,
     ) -> None:
-        super().__init__(
-            model, opts=opts, container_model_global_args=container_model_global_args
-        )
+        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
         self.static = TraefikStaticConfig(
             network_resource=network_resource,
@@ -44,7 +40,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
                     files=[
                         self.static.build_resource(
                             opts=self.child_opts,
-                            volume_resource=container_model_global_args.docker_resource.volume,
+                            volume_resource=self.docker_resource_args.volume,
                         )
                     ],
                 )
@@ -60,7 +56,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
         ).build_resource(
             "dashboard",
             opts=self.child_opts,
-            volume_resource=container_model_global_args.docker_resource.volume,
+            volume_resource=self.docker_resource_args.volume,
             containers=self.CONTAINERS,
             static_config=self.static,
         )

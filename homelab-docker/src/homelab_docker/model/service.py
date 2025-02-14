@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 
-from homelab_docker.config.database import DatabaseConfig
-
+from ..config.database import DatabaseConfig
 from .container import ContainerModel
 
 

@@ -1,18 +1,23 @@
+import dataclasses
+
 import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
-from homelab_docker.config.database.source import DatabaseSourceConfig
-from homelab_docker.model.container import (
-    ContainerModel,
-    ContainerModelBuildArgs,
-    ContainerModelGlobalArgs,
-    ContainerModelServiceArgs,
-)
+from homelab_docker.model.container import ContainerModel, ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
 
-from .database.resource import DatabaseResource
+from ..config.database import DatabaseConfig
+from ..config.database.source import DatabaseSourceConfig
+from . import DockerResourceArgs
+from .database import DatabaseResource
+
+
+@dataclasses.dataclass
+class ServiceResourceArgs:
+    database_config: DatabaseConfig
+    database_source_config: DatabaseSourceConfig
 
 
 class ServiceResourceBase[T](ComponentResource):
@@ -24,13 +29,13 @@ class ServiceResourceBase[T](ComponentResource):
         model: ServiceModel[T],
         *,
         opts: ResourceOptions | None,
-        container_model_global_args: ContainerModelGlobalArgs,
+        docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__("{}-service".format(self.name()), self.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.model = model
-        self.container_model_global_args = container_model_global_args
+        self.docker_resource_args = docker_resource_args
         self.build_databases()
 
     @classmethod
@@ -53,16 +58,14 @@ class ServiceResourceBase[T](ComponentResource):
             self.model.databases,
             opts=self.child_opts,
             service_name=self.name(),
-            container_model_global_args=self.container_model_global_args,
+            docker_resource_args=self.docker_resource_args,
         )
 
-        self.container_model_service_args = ContainerModelServiceArgs(
+        self.args = ServiceResourceArgs(
             database_config=self.model.databases,
             database_source_config=self.database.source_config,
         )
-        self.DATABASE_SOURCE_CONFIGS[self.name()] = (
-            self.container_model_service_args.database_source_config
-        )
+        self.DATABASE_SOURCE_CONFIGS[self.name()] = self.args.database_source_config
 
         self.database_containers = {
             name: container for name, container in self.database.containers.items()
@@ -82,9 +85,9 @@ class ServiceResourceBase[T](ComponentResource):
             self.add_service_name(name),
             opts=self.child_opts,
             service_name=self.name(),
-            global_args=self.container_model_global_args,
-            service_args=self.container_model_service_args,
             build_args=container_model_build_args,
+            docker_resource_args=self.docker_resource_args,
+            service_resource_args=self.args,
             containers=self.CONTAINERS,
         )
 

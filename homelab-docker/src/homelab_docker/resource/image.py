@@ -1,9 +1,9 @@
 import pulumi
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker.config.image import ImageConfig
-from homelab_docker.model.database.postgres import PostgresDatabaseModel
-from homelab_docker.model.platform import Platform
+from ..config.image import ImageConfig
+from ..model.database.postgres import PostgresDatabaseModel
+from ..model.platform import Platform
 
 
 class ImageResource(ComponentResource):

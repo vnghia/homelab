@@ -1,6 +1,5 @@
 from homelab_config import Config
-from homelab_docker.model.container import ContainerModelGlobalArgs
-from homelab_docker.resource.docker import DockerResource
+from homelab_docker.resource import DockerResource, DockerResourceArgs
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab.service.config import ServiceConfig
@@ -22,9 +21,9 @@ class Docker(ComponentResource):
         )
 
         self.services_config = self.config.services
-        self.container_model_global_args = ContainerModelGlobalArgs(
+        self.resource_args = DockerResourceArgs(
             timezone=self.config.timezone,
-            docker_resource=self.resource,
+            resource=self.resource,
             project_labels=Config.PROJECT_LABELS,
         )
 

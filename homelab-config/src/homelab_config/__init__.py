@@ -2,7 +2,7 @@ from typing import Any, ClassVar, Self, Type
 
 import deepmerge
 import pulumi
-from homelab_docker.config.docker import DockerConfig
+from homelab_docker.config import DockerConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_integration.config.integration import IntegrationConfig
 from homelab_network.config.network import NetworkConfig

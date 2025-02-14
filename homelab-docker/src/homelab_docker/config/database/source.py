@@ -2,7 +2,7 @@ import dataclasses
 
 from pydantic import PositiveInt
 
-from homelab_docker.model.database.source import DatabaseSourceModel
+from ...model.database.source import DatabaseSourceModel
 
 
 @dataclasses.dataclass

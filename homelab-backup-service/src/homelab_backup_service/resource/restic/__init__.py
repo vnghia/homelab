@@ -9,12 +9,12 @@ from homelab_dagu_service.config import DaguDagConfig
 from homelab_dagu_service.config.executor.docker import DaguDagDockerExecutorConfig
 from homelab_dagu_service.config.step import DaguDagStepConfig
 from homelab_docker.config.volume import VolumeConfig
-from homelab_docker.model.container import ContainerModelGlobalArgs
 from homelab_docker.model.container.volume import (
     ContainerVolumeConfig,
     ContainerVolumesConfig,
 )
 from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ComponentResource, ResourceOptions
 
@@ -33,7 +33,7 @@ class ResticResource(ComponentResource):
         service_name: str,
         volume_config: VolumeConfig,
         dagu_service: DaguService,
-        container_model_global_args: ContainerModelGlobalArgs,
+        docker_resource_args: DockerResourceArgs,
         containers: dict[str, docker.Container],
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
@@ -41,7 +41,7 @@ class ResticResource(ComponentResource):
 
         self.config = model.config.restic
         self.container_model = model.containers[self.RESOURCE_NAME]
-        volume_resource = container_model_global_args.docker_resource.volume
+        volume_resource = docker_resource_args.volume
 
         self.password = random.RandomPassword(
             "password",
@@ -54,7 +54,7 @@ class ResticResource(ComponentResource):
             opts=self.child_opts,
             password=self.password.result,
             s3_integration_config=dagu_service.s3_integration_config,
-            image_resource=container_model_global_args.docker_resource.image,
+            image_resource=docker_resource_args.image,
         )
 
         self.restic_env = dagu_service.build_env_file(
@@ -82,9 +82,9 @@ class ResticResource(ComponentResource):
                 }
             ),
             service_name=service_name,
-            global_args=container_model_global_args,
-            service_args=None,
             build_args=None,
+            docker_resource_args=docker_resource_args,
+            service_resource_args=None,
             containers=containers,
         )
 

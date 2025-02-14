@@ -5,13 +5,8 @@ from typing import Literal, Mapping, Sequence
 import pulumi_docker as docker
 from pulumi import Input, Output, Resource, ResourceOptions
 from pydantic import BaseModel
-from pydantic_extra_types.timezone_name import TimeZoneName
 
-from homelab_docker.config.database import DatabaseConfig
-from homelab_docker.config.database.source import DatabaseSourceConfig
-from homelab_docker.model.container.database import ContainerDatabaseConfig
-from homelab_docker.resource.docker import DockerResource
-
+from .database import ContainerDatabaseConfig
 from .healthcheck import ContainerHealthCheckConfig
 from .image import ContainerImageModelConfig
 from .network import ContainerNetworkConfig
@@ -21,20 +16,9 @@ from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumesConfig
 
 if typing.TYPE_CHECKING:
-    from homelab_docker.resource.file import FileResource
-
-
-@dataclasses.dataclass
-class ContainerModelGlobalArgs:
-    timezone: TimeZoneName
-    docker_resource: DockerResource
-    project_labels: dict[str, str]
-
-
-@dataclasses.dataclass
-class ContainerModelServiceArgs:
-    database_config: DatabaseConfig
-    database_source_config: DatabaseSourceConfig
+    from ...resource import DockerResourceArgs
+    from ...resource.file import FileResource
+    from ...resource.service import ServiceResourceArgs
 
 
 @dataclasses.dataclass
@@ -92,21 +76,21 @@ class ContainerModel(BaseModel):
 
     def build_envs(
         self,
-        global_args: ContainerModelGlobalArgs,
-        service_args: ContainerModelServiceArgs | None,
         build_args: ContainerModelBuildArgs,
+        docker_resource_args: "DockerResourceArgs",
+        service_resource_args: "ServiceResourceArgs | None",
     ) -> list[Output[str]]:
         database_envs: dict[str, Output[str]] = {}
 
         if self.database:
-            if not service_args:
+            if not service_resource_args:
                 raise ValueError(
                     "service args is required if database config is not None"
                 )
 
             database_envs = self.database.build_envs(
-                service_args.database_config,
-                service_args.database_source_config,
+                service_resource_args.database_config,
+                service_resource_args.database_source_config,
             )
 
         return [
@@ -121,7 +105,11 @@ class ContainerModel(BaseModel):
             )
             for k, v in sorted(
                 (
-                    {"TZ": Output.from_input(ContainerString(global_args.timezone))}
+                    {
+                        "TZ": Output.from_input(
+                            ContainerString(docker_resource_args.timezone)
+                        )
+                    }
                     | self.envs
                     | {
                         k: Output.from_input(v).apply(ContainerString)
@@ -136,13 +124,13 @@ class ContainerModel(BaseModel):
         self,
         resource_name: str,
         service_name: str,
-        global_args: ContainerModelGlobalArgs,
         build_args: ContainerModelBuildArgs,
+        docker_resource_args: "DockerResourceArgs",
     ) -> dict[Output[str], Output[str]]:
         return {
             Output.from_input(k): Output.from_input(v)
             for k, v in (
-                global_args.project_labels
+                docker_resource_args.project_labels
                 | self.labels
                 | {
                     "dev.dozzle.group": service_name,
@@ -157,21 +145,21 @@ class ContainerModel(BaseModel):
         *,
         opts: ResourceOptions | None,
         service_name: str,
-        global_args: ContainerModelGlobalArgs,
-        service_args: ContainerModelServiceArgs | None,
         build_args: ContainerModelBuildArgs | None,
+        docker_resource_args: "DockerResourceArgs",
+        service_resource_args: "ServiceResourceArgs | None",
         containers: dict[str, docker.Container],
     ) -> docker.Container:
         build_args = build_args or ContainerModelBuildArgs()
         network_args = self.network.to_args(
-            resource_name, global_args.docker_resource.network, containers
+            resource_name, docker_resource_args.network, containers
         )
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
 
         if self.database:
-            if not service_args:
+            if not service_resource_args:
                 raise ValueError(
                     "service args is required if database config is not None"
                 )
@@ -179,7 +167,7 @@ class ContainerModel(BaseModel):
             depends_on.append(
                 containers[
                     self.database.to_container_name(
-                        service_name, service_args.database_config
+                        service_name, service_resource_args.database_config
                     )
                 ]
             )
@@ -194,7 +182,7 @@ class ContainerModel(BaseModel):
                     depends_on=depends_on,
                 ),
             ),
-            image=self.image.to_image_name(global_args.docker_resource.image),
+            image=self.image.to_image_name(docker_resource_args.image),
             capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
             if self.capabilities
             else None,
@@ -211,20 +199,20 @@ class ContainerModel(BaseModel):
             restart=self.restart,
             sysctls=self.sysctls,
             user=self.user,
-            volumes=self.volumes.to_args(
-                volume_resource=global_args.docker_resource.volume
-            ),
+            volumes=self.volumes.to_args(volume_resource=docker_resource_args.volume),
             wait=self.wait if self.healthcheck else False,
-            envs=self.build_envs(global_args, service_args, build_args),
+            envs=self.build_envs(
+                build_args, docker_resource_args, service_resource_args
+            ),
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
                     self.build_labels(
-                        resource_name, service_name, global_args, build_args
+                        resource_name, service_name, build_args, docker_resource_args
                     )
                     | {
                         "pulumi.image.id": self.image.to_image_id(
-                            global_args.docker_resource.image
+                            docker_resource_args.image
                         )
                     }
                 ).items()

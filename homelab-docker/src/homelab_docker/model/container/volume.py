@@ -1,3 +1,4 @@
+import typing
 from pathlib import PosixPath
 
 import pulumi_docker as docker
@@ -5,7 +6,9 @@ from pulumi import Input, Output
 from pydantic import BaseModel, ConfigDict, Field, RootModel
 
 from homelab_docker.pydantic import AbsolutePath
-from homelab_docker.resource.volume import VolumeResource
+
+if typing.TYPE_CHECKING:
+    from ...resource.volume import VolumeResource
 
 
 class ContainerVolumeFullConfig(BaseModel):
@@ -51,7 +54,7 @@ class ContainerVolumesConfig(BaseModel):
         return self.__pydantic_extra__[key]
 
     def to_args(
-        self, volume_resource: VolumeResource
+        self, volume_resource: "VolumeResource"
     ) -> list[docker.ContainerVolumeArgs]:
         return (
             (
@@ -87,7 +90,7 @@ class ContainerVolumesConfig(BaseModel):
             ]
         )
 
-    def to_binds(self, volume_resource: VolumeResource) -> list[Output[str]]:
+    def to_binds(self, volume_resource: "VolumeResource") -> list[Output[str]]:
         def to_bind(arg: docker.ContainerVolumeArgs) -> Output[str]:
             return Output.format(
                 "{volume_or_path}:{container_path}:{read_write}",

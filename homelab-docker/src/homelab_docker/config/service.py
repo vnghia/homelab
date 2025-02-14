@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from pydantic import BaseModel
 
-from homelab_docker.config.database import DatabaseConfig
+from ..config.database import DatabaseConfig
 
 
 class ServiceConfigBase(BaseModel):

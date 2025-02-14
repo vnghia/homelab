@@ -2,9 +2,10 @@ import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker.config.docker import DockerConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.volume import LocalVolumeModel
+
+from ..config import DockerConfig
 
 
 class VolumeResource(ComponentResource):

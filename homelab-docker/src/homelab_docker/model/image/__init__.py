@@ -2,7 +2,7 @@ import pulumi_docker as docker
 from pulumi import ResourceOptions
 from pydantic import BaseModel, Field
 
-from .platform import Platform, PlatformString
+from ..platform import Platform, PlatformString
 
 
 class RemoteImageModel(BaseModel):

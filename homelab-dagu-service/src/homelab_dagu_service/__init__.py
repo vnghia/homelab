@@ -1,13 +1,11 @@
 from pathlib import PosixPath
 from typing import Mapping
 
-from homelab_docker.model.container import (
-    ContainerModelBuildArgs,
-    ContainerModelGlobalArgs,
-)
+from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_integration.config.s3 import S3IntegrationConfig
@@ -26,18 +24,16 @@ class DaguService(ServiceResourceBase[None]):
         *,
         opts: ResourceOptions | None,
         s3_integration_config: S3IntegrationConfig,
-        container_model_global_args: ContainerModelGlobalArgs,
+        docker_resource_args: DockerResourceArgs,
         traefik_static_config: TraefikStaticConfig,
     ) -> None:
-        super().__init__(
-            model, opts=opts, container_model_global_args=container_model_global_args
-        )
+        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
         self.s3_integration_config = s3_integration_config
 
         self.build_containers(
             options={
                 None: ContainerModelBuildArgs(
-                    envs={"DAGU_TZ": str(self.container_model_global_args.timezone)}
+                    envs={"DAGU_TZ": str(self.docker_resource_args.timezone)}
                 )
             }
         )
@@ -58,7 +54,7 @@ class DaguService(ServiceResourceBase[None]):
         ).build_resource(
             "traefik",
             opts=self.child_opts,
-            volume_resource=self.container_model_global_args.docker_resource.volume,
+            volume_resource=self.docker_resource_args.volume,
             containers=self.CONTAINERS,
             static_config=traefik_static_config,
         )
@@ -84,5 +80,5 @@ class DaguService(ServiceResourceBase[None]):
         ).build_resource(
             resource_name,
             opts=opts,
-            volume_resource=self.container_model_global_args.docker_resource.volume,
+            volume_resource=self.docker_resource_args.volume,
         )

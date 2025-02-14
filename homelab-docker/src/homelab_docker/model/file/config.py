@@ -5,11 +5,11 @@ from typing import Any, Mapping
 from pulumi import Input, ResourceOptions
 from pydantic import HttpUrl
 
-from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.resource.volume import VolumeResource
+from ..container.volume_path import ContainerVolumePath
 
 if typing.TYPE_CHECKING:
-    from homelab_docker.resource.file.config import ConfigFileResource
+    from ...resource.file.config import ConfigFileResource
+    from ...resource.volume import VolumeResource
 
 
 @dataclasses.dataclass
@@ -24,9 +24,9 @@ class ConfigFileModel:
         resource_name: str,
         *,
         opts: ResourceOptions | None,
-        volume_resource: VolumeResource,
+        volume_resource: "VolumeResource",
     ) -> "ConfigFileResource":
-        from homelab_docker.resource.file.config import ConfigFileResource
+        from ...resource.file.config import ConfigFileResource
 
         return ConfigFileResource(
             self, resource_name, opts=opts, volume_resource=volume_resource

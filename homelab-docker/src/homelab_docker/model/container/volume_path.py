@@ -1,4 +1,5 @@
 import dataclasses
+import typing
 from pathlib import PosixPath
 from typing import Self
 
@@ -6,9 +7,12 @@ import pulumi_docker as docker
 from pulumi import Input, Output
 from pydantic import BaseModel
 
-from homelab_docker.model.container.volume import ContainerVolumesConfig
-from homelab_docker.pydantic.path import RelativePath
-from homelab_docker.resource.volume import VolumeResource
+from homelab_docker.pydantic import RelativePath
+
+from .volume import ContainerVolumesConfig
+
+if typing.TYPE_CHECKING:
+    from ...resource.volume import VolumeResource
 
 
 @dataclasses.dataclass
@@ -39,7 +43,7 @@ class ContainerVolumePath(BaseModel):
         return "{}:{}".format(self.volume, self.path.as_posix())
 
     def to_resource(
-        self, volume_resource: VolumeResource
+        self, volume_resource: "VolumeResource"
     ) -> ContainerVolumeResourcePath:
         return ContainerVolumeResourcePath(
             name=self.volume, volume=volume_resource[self.volume], path=self.path

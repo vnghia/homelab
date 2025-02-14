@@ -1,10 +1,12 @@
 import dataclasses
+import typing
 
 import pulumi_docker as docker
 from pulumi import Input, Output
 from pydantic import BaseModel, Field, RootModel
 
-from homelab_docker.resource.network import NetworkResource
+if typing.TYPE_CHECKING:
+    from ...resource.network import NetworkResource
 
 
 @dataclasses.dataclass
@@ -19,7 +21,7 @@ class ContainerNetworkModeConfig(BaseModel):
     def to_args(
         self,
         _resource_name: str,
-        _network_resource: NetworkResource,
+        _network_resource: "NetworkResource",
         containers: dict[str, docker.Container],
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
@@ -35,7 +37,7 @@ class ContainerCommonNetworkConfig(BaseModel):
     def to_args(
         self,
         resource_name: str,
-        network_resource: NetworkResource,
+        network_resource: "NetworkResource",
         _: dict[str, docker.Container],
     ) -> ContainerNetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
@@ -65,7 +67,7 @@ class ContainerNetworkConfig(
     def to_args(
         self,
         resource_name: str,
-        network_resource: NetworkResource,
+        network_resource: "NetworkResource",
         containers: dict[str, docker.Container],
     ) -> ContainerNetworkArgs:
         return self.root.to_args(resource_name, network_resource, containers)

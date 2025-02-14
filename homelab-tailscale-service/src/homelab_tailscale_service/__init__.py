@@ -2,11 +2,9 @@ from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_tailscale as tailscale
-from homelab_docker.model.container import (
-    ContainerModelBuildArgs,
-    ContainerModelGlobalArgs,
-)
+from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
+from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import InvokeOutputOptions, Output, ResourceOptions
 from pydantic import IPvAnyAddress
@@ -19,11 +17,9 @@ class TailscaleService(ServiceResourceBase[None]):
         *,
         opts: ResourceOptions | None,
         hostname: str,
-        container_model_global_args: ContainerModelGlobalArgs,
+        docker_resource_args: DockerResourceArgs,
     ) -> None:
-        super().__init__(
-            model, opts=opts, container_model_global_args=container_model_global_args
-        )
+        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
         self.hostname = hostname
         self.build_containers(

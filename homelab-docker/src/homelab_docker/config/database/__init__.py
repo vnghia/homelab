@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 
-from homelab_docker.model.database.postgres import PostgresDatabaseModel
+from ...model.database.postgres import PostgresDatabaseModel
 
 
 class DatabaseConfig(BaseModel):

@@ -2,11 +2,10 @@ from pathlib import PosixPath
 
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.database.postgres import PostgresDatabaseModel
-from homelab_docker.resource.volume import VolumeResource
-
+from ...model.container.volume_path import ContainerVolumePath
+from ...model.database.postgres import PostgresDatabaseModel
 from ..file import FileResource
+from ..volume import VolumeResource
 
 
 class DatabaseGlobalResource(ComponentResource):

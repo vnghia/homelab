@@ -3,23 +3,20 @@ import pulumi_random as random
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
-from homelab_docker.model.container import (
-    ContainerModel,
-    ContainerModelBuildArgs,
-    ContainerModelGlobalArgs,
-)
-from homelab_docker.model.container.healthcheck import ContainerHealthCheckConfig
-from homelab_docker.model.container.image import ContainerImageModelConfig
-from homelab_docker.model.container.string import ContainerString
-from homelab_docker.model.container.tmpfs import ContainerTmpfsConfig
-from homelab_docker.model.container.volume import (
+from ...model.container import ContainerModel, ContainerModelBuildArgs
+from ...model.container.healthcheck import ContainerHealthCheckConfig
+from ...model.container.image import ContainerImageModelConfig
+from ...model.container.string import ContainerString
+from ...model.container.tmpfs import ContainerTmpfsConfig
+from ...model.container.volume import (
     ContainerVolumeConfig,
     ContainerVolumeFullConfig,
     ContainerVolumesConfig,
 )
-from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.database.postgres import PostgresDatabaseModel
-from homelab_docker.model.database.source import DatabaseSourceModel
+from ...model.container.volume_path import ContainerVolumePath
+from ...model.database.postgres import PostgresDatabaseModel
+from ...model.database.source import DatabaseSourceModel
+from .. import DockerResourceArgs
 
 
 class PostgresDatabaseResource(ComponentResource):
@@ -30,7 +27,7 @@ class PostgresDatabaseResource(ComponentResource):
         opts: ResourceOptions,
         service_name: str,
         name: str | None,
-        container_model_global_args: ContainerModelGlobalArgs,
+        docker_resource_args: DockerResourceArgs,
     ) -> None:
         self.model = model
         self.name = name
@@ -88,13 +85,13 @@ class PostgresDatabaseResource(ComponentResource):
                 full_name,
                 opts=self.child_opts,
                 service_name=service_name,
-                global_args=container_model_global_args,
-                service_args=None,
                 build_args=ContainerModelBuildArgs(
                     envs={
                         "POSTGRES_PASSWORD": self.password.result,
                     }
                 ),
+                docker_resource_args=docker_resource_args,
+                service_resource_args=None,
                 containers={},
             )
             self.containers[version] = container

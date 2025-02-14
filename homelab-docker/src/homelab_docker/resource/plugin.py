@@ -1,8 +1,8 @@
 import pulumi
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker.config.plugin import PluginConfig
-from homelab_docker.model.platform import Platform
+from ..config.plugin import PluginConfig
+from ..model.platform import Platform
 
 
 class PluginResource(ComponentResource):

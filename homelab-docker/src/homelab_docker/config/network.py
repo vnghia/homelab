@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from pydantic import BaseModel, Field, field_validator
 
-from homelab_docker.model.network import BridgeNetworkModel
+from ..model.network import BridgeNetworkModel
 
 
 class NetworkConfig(BaseModel):
