@@ -2,7 +2,7 @@ from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_tailscale as tailscale
-from homelab_docker.model.container.model import (
+from homelab_docker.model.container import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )

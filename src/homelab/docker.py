@@ -1,5 +1,5 @@
 from homelab_config import Config
-from homelab_docker.model.container.model import ContainerModelGlobalArgs
+from homelab_docker.model.container import ContainerModelGlobalArgs
 from homelab_docker.resource.docker import DockerResource
 from pulumi import ComponentResource, ResourceOptions
 

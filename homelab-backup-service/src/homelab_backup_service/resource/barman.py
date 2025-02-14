@@ -7,7 +7,7 @@ from homelab_dagu_service.config import DaguDagConfig
 from homelab_dagu_service.config.executor.docker import DaguDagDockerExecutorConfig
 from homelab_dagu_service.config.step import DaguDagStepConfig
 from homelab_docker.config.database.source import DatabaseSourceConfig
-from homelab_docker.model.container.model import (
+from homelab_docker.model.container import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )

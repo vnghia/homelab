@@ -3,13 +3,13 @@ import pulumi_random as random
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
-from homelab_docker.model.container.healthcheck import ContainerHealthCheckConfig
-from homelab_docker.model.container.image import ContainerImageModelConfig
-from homelab_docker.model.container.model import (
+from homelab_docker.model.container import (
     ContainerModel,
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )
+from homelab_docker.model.container.healthcheck import ContainerHealthCheckConfig
+from homelab_docker.model.container.image import ContainerImageModelConfig
 from homelab_docker.model.container.string import ContainerString
 from homelab_docker.model.container.tmpfs import ContainerTmpfsConfig
 from homelab_docker.model.container.volume import (

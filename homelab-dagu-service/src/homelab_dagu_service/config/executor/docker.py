@@ -3,7 +3,7 @@ from typing import Any, Self
 
 import deepmerge
 import pulumi_docker as docker
-from homelab_docker.model.container.model import (
+from homelab_docker.model.container import (
     ContainerModel,
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,

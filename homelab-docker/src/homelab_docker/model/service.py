@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 from homelab_docker.config.database import DatabaseConfig
 
-from .container.model import ContainerModel
+from .container import ContainerModel
 
 
 class ServiceModel[T](BaseModel):

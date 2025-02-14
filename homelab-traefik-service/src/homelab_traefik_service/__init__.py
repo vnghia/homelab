@@ -1,4 +1,4 @@
-from homelab_docker.model.container.model import (
+from homelab_docker.model.container import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )

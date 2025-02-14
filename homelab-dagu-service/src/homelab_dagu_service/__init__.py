@@ -1,7 +1,7 @@
 from pathlib import PosixPath
 from typing import Mapping
 
-from homelab_docker.model.container.model import (
+from homelab_docker.model.container import (
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,
 )

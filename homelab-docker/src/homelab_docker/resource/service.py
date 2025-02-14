@@ -4,7 +4,7 @@ from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from homelab_docker.config.database.source import DatabaseSourceConfig
-from homelab_docker.model.container.model import (
+from homelab_docker.model.container import (
     ContainerModel,
     ContainerModelBuildArgs,
     ContainerModelGlobalArgs,

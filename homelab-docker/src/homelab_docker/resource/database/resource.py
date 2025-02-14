@@ -3,7 +3,7 @@ from pulumi import ComponentResource, ResourceOptions
 
 from homelab_docker.config.database import DatabaseConfig
 from homelab_docker.config.database.source import DatabaseSourceConfig
-from homelab_docker.model.container.model import ContainerModelGlobalArgs
+from homelab_docker.model.container import ContainerModelGlobalArgs
 from homelab_docker.resource.database.postgres import PostgresDatabaseResource
 
 

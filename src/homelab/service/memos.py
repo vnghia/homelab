@@ -1,4 +1,4 @@
-from homelab_docker.model.container.model import ContainerModelGlobalArgs
+from homelab_docker.model.container import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig

@@ -1,6 +1,6 @@
 from homelab_dagu_service import DaguService
 from homelab_docker.config.volume import VolumeConfig
-from homelab_docker.model.container.model import ContainerModelGlobalArgs
+from homelab_docker.model.container import ContainerModelGlobalArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
