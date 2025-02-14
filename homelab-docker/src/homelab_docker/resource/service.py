@@ -15,9 +15,16 @@ from .database import DatabaseResource
 
 
 @dataclasses.dataclass
+class ServiceDatabaseArgs:
+    config: DatabaseConfig
+    source_config: DatabaseSourceConfig
+
+
+@dataclasses.dataclass
 class ServiceResourceArgs:
-    database_config: DatabaseConfig
-    database_source_config: DatabaseSourceConfig
+    containers: dict[str, docker.Container]
+    database_source_configs: dict[str, DatabaseSourceConfig]
+    database: ServiceDatabaseArgs | None = None
 
 
 class ServiceResourceBase[T](ComponentResource):
@@ -61,11 +68,17 @@ class ServiceResourceBase[T](ComponentResource):
             docker_resource_args=self.docker_resource_args,
         )
 
-        self.args = ServiceResourceArgs(
-            database_config=self.model.databases,
-            database_source_config=self.database.source_config,
+        self.database_args = ServiceDatabaseArgs(
+            config=self.model.databases,
+            source_config=self.database.source_config,
         )
-        self.DATABASE_SOURCE_CONFIGS[self.name()] = self.args.database_source_config
+
+        self.DATABASE_SOURCE_CONFIGS[self.name()] = self.database_args.source_config
+        self.args = ServiceResourceArgs(
+            containers=self.CONTAINERS,
+            database_source_configs=self.DATABASE_SOURCE_CONFIGS,
+            database=self.database_args,
+        )
 
         self.database_containers = {
             name: container for name, container in self.database.containers.items()
@@ -88,7 +101,6 @@ class ServiceResourceBase[T](ComponentResource):
             build_args=container_model_build_args,
             docker_resource_args=self.docker_resource_args,
             service_resource_args=self.args,
-            containers=self.CONTAINERS,
         )
 
     def build_containers(

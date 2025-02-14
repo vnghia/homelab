@@ -78,19 +78,19 @@ class ContainerModel(BaseModel):
         self,
         build_args: ContainerModelBuildArgs,
         docker_resource_args: "DockerResourceArgs",
-        service_resource_args: "ServiceResourceArgs | None",
+        service_resource_args: "ServiceResourceArgs",
     ) -> list[Output[str]]:
         database_envs: dict[str, Output[str]] = {}
 
         if self.database:
-            if not service_resource_args:
+            if not service_resource_args.database:
                 raise ValueError(
                     "service args is required if database config is not None"
                 )
 
             database_envs = self.database.build_envs(
-                service_resource_args.database_config,
-                service_resource_args.database_source_config,
+                service_resource_args.database.config,
+                service_resource_args.database.source_config,
             )
 
         return [
@@ -147,27 +147,28 @@ class ContainerModel(BaseModel):
         service_name: str,
         build_args: ContainerModelBuildArgs | None,
         docker_resource_args: "DockerResourceArgs",
-        service_resource_args: "ServiceResourceArgs | None",
-        containers: dict[str, docker.Container],
+        service_resource_args: "ServiceResourceArgs",
     ) -> docker.Container:
         build_args = build_args or ContainerModelBuildArgs()
         network_args = self.network.to_args(
-            resource_name, docker_resource_args.network, containers
+            resource_name,
+            docker_resource_args.network,
+            service_resource_args.containers,
         )
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
 
         if self.database:
-            if not service_resource_args:
+            if not service_resource_args.database:
                 raise ValueError(
                     "service args is required if database config is not None"
                 )
 
             depends_on.append(
-                containers[
+                service_resource_args.containers[
                     self.database.to_container_name(
-                        service_name, service_resource_args.database_config
+                        service_name, service_resource_args.database.config
                     )
                 ]
             )

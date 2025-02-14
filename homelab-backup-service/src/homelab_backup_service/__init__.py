@@ -40,7 +40,7 @@ class BackupService(ServiceResourceBase[BackupConfig]):
             volume_config=volume_config,
             dagu_service=dagu_service,
             docker_resource_args=self.docker_resource_args,
-            containers=self.CONTAINERS,
+            service_resource_args=self.args,
         )
 
         self.register_outputs({})

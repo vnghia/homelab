@@ -15,7 +15,7 @@ from homelab_docker.model.container.volume import (
 )
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import ServiceResourceArgs, ServiceResourceBase
 from pulumi import ComponentResource, ResourceOptions
 
 from ...config import BackupConfig
@@ -36,7 +36,7 @@ class ResticResource(ComponentResource):
         volume_config: VolumeConfig,
         dagu_service: DaguService,
         docker_resource_args: DockerResourceArgs,
-        containers: dict[str, docker.Container],
+        service_resource_args: ServiceResourceArgs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -82,8 +82,7 @@ class ResticResource(ComponentResource):
             service_name=service_name,
             build_args=None,
             docker_resource_args=docker_resource_args,
-            service_resource_args=None,
-            containers=containers,
+            service_resource_args=service_resource_args,
         )
 
         # self.check_name = "{}-check".format(self.RESOURCE_NAME)

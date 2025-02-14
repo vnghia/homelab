@@ -1,7 +1,6 @@
 import dataclasses
 from typing import Any, Self
 
-import pulumi_docker as docker
 from homelab_docker.model.container import ContainerModel, ContainerModelBuildArgs
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceArgs
@@ -27,8 +26,7 @@ class DaguDagDockerExecutorConfig:
         service_name: str,
         build_args: ContainerModelBuildArgs | None,
         docker_resource_args: DockerResourceArgs,
-        service_resource_args: ServiceResourceArgs | None,
-        containers: dict[str, docker.Container],
+        service_resource_args: ServiceResourceArgs,
     ) -> Self:
         build_args = build_args or ContainerModelBuildArgs()
         config: dict[str, Any] = {}
@@ -56,7 +54,9 @@ class DaguDagDockerExecutorConfig:
         )
 
         network_args = container_model.network.to_args(
-            resource_name, docker_resource_args.network, containers
+            resource_name,
+            docker_resource_args.network,
+            service_resource_args.containers,
         )
         if network_args.advanced:
             network_config["endpointsConfig"] = {

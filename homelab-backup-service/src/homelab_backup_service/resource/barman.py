@@ -1,18 +1,16 @@
 from pathlib import PosixPath
 
-import pulumi_docker as docker
 from homelab_dagu_service import DaguService
 from homelab_dagu_service.config import DaguDagConfig
 from homelab_dagu_service.config.executor.docker import DaguDagDockerExecutorConfig
 from homelab_dagu_service.config.step import DaguDagStepConfig
-from homelab_docker.config.database.source import DatabaseSourceConfig
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
 from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import ConfigFileResource
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import ServiceResourceArgs, ServiceResourceBase
 from pulumi import ComponentResource, ResourceOptions
 
 from ..config import BackupConfig
@@ -33,9 +31,8 @@ class BarmanResource(ComponentResource):
         opts: ResourceOptions,
         service_name: str,
         dagu_service: DaguService,
-        database_source_configs: dict[str, DatabaseSourceConfig],
         docker_resource_args: DockerResourceArgs,
-        containers: dict[str, docker.Container],
+        service_resource_args: ServiceResourceArgs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -45,7 +42,10 @@ class BarmanResource(ComponentResource):
         volume_resource = docker_resource_args.volume
 
         self.files: list[ConfigFileResource] = []
-        for service_name, source_config in database_source_configs.items():
+        for (
+            service_name,
+            source_config,
+        ) in service_resource_args.database_source_configs.items():
             for name, sources in source_config.postgres.items():
                 for version, source in sources.items():
                     full_name = PostgresDatabaseModel.get_full_name_version(
@@ -86,8 +86,7 @@ class BarmanResource(ComponentResource):
             service_name=service_name,
             build_args=ContainerModelBuildArgs(files=self.files),
             docker_resource_args=docker_resource_args,
-            service_resource_args=None,
-            containers=containers,
+            service_resource_args=service_resource_args,
         )
 
         # Spawn a docker container for debugging purpose

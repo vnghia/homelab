@@ -29,6 +29,8 @@ class PostgresDatabaseResource(ComponentResource):
         name: str | None,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
+        from ..service import ServiceResourceArgs
+
         self.model = model
         self.name = name
 
@@ -91,8 +93,9 @@ class PostgresDatabaseResource(ComponentResource):
                     }
                 ),
                 docker_resource_args=docker_resource_args,
-                service_resource_args=None,
-                containers={},
+                service_resource_args=ServiceResourceArgs(
+                    containers={}, database_source_configs={}
+                ),
             )
             self.containers[version] = container
 
