@@ -1,13 +1,13 @@
 import dataclasses
 from pathlib import PosixPath
-from typing import Any
+from typing import Any, Sequence
 
-from homelab_docker.model.file.config import ConfigFile
+from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.pydantic.path import RelativePath
-from homelab_docker.resource.file import FileResource
+from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
-from pydantic import PositiveInt
+from pydantic import HttpUrl, PositiveInt
 
 from homelab_dagu_service import DaguService
 
@@ -35,9 +35,9 @@ class DaguDagConfig:
         opts: ResourceOptions | None,
         dagu_service: DaguService,
         volume_resource: VolumeResource,
-        env_files: list[FileResource] = [],
-    ) -> FileResource:
-        return ConfigFile(
+        env_files: Sequence[ConfigFileResource] | None = None,
+    ) -> ConfigFileResource:
+        return ConfigFileModel(
             container_volume_path=dagu_service.get_config_container_volume_path().join(
                 self.path or PosixPath(resource_name), ".yaml"
             ),
@@ -47,7 +47,7 @@ class DaguDagConfig:
             | (
                 {
                     "dotenv": [
-                        env_file.container_volume_path.to_container_path(
+                        env_file.to_container_path(
                             dagu_service.model.container.volumes
                         ).as_posix()
                         for env_file in env_files
@@ -66,7 +66,9 @@ class DaguDagConfig:
                 if self.params
                 else {}
             ),
-            schema_url="https://raw.githubusercontent.com/dagu-org/dagu/refs/heads/main/schemas/dag.schema.json",
+            schema_url=HttpUrl(
+                "https://raw.githubusercontent.com/dagu-org/dagu/refs/heads/main/schemas/dag.schema.json"
+            ),
         ).build_resource(
             resource_name,
             opts=ResourceOptions.merge(opts, ResourceOptions(depends_on=env_files)),

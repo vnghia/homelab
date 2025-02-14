@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Literal, Mapping
+from typing import Literal, Mapping, Sequence
 
 import pulumi_docker as docker
 from pulumi import Input, Output, Resource, ResourceOptions
@@ -38,7 +38,7 @@ class ContainerModelServiceArgs:
 class ContainerModelBuildArgs:
     opts: ResourceOptions | None = None
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
-    files: list[FileResource] = dataclasses.field(default_factory=list)
+    files: Sequence[FileResource] = dataclasses.field(default_factory=list)
 
 
 class ContainerModel(BaseModel):

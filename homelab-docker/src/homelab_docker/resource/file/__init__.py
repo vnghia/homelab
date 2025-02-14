@@ -28,6 +28,7 @@ from pydantic import (
 )
 
 from homelab_docker.client import DockerClient
+from homelab_docker.model.container.volume import ContainerVolumesConfig
 from homelab_docker.model.container.volume_path import (
     ContainerVolumePath,
     ContainerVolumeResourcePath,
@@ -226,3 +227,8 @@ class FileResource(Resource, module="docker", name="File"):
             volume=container_volume_resource_path.name,
             path=container_volume_resource_path.path,
         )
+
+    def to_container_path(
+        self, container_volumes_config: ContainerVolumesConfig
+    ) -> PosixPath:
+        return self.container_volume_path.to_container_path(container_volumes_config)

@@ -6,9 +6,9 @@ from homelab_docker.model.container.model import (
     ContainerModelGlobalArgs,
 )
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.file.config import ConfigFile
+from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
-from homelab_docker.resource.file import FileResource
+from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_integration.config.s3 import S3IntegrationConfig
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
@@ -78,8 +78,8 @@ class DaguService(ServiceResourceBase[None]):
         opts: ResourceOptions,
         name: str,
         envs: Mapping[str, Input[str]],
-    ) -> FileResource:
-        return ConfigFile(
+    ) -> ConfigFileResource:
+        return ConfigFileModel(
             container_volume_path=self.get_env_container_volume_path(name), data=envs
         ).build_resource(
             resource_name,

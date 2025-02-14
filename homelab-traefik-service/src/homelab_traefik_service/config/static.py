@@ -1,11 +1,12 @@
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.file.config import ConfigFile
+from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
-from homelab_docker.resource.file import FileResource
+from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.volume import VolumeResource
 from homelab_network.resource.network import NetworkResource
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
+from pydantic import HttpUrl
 
 from . import TraefikConfig
 
@@ -117,11 +118,11 @@ class TraefikStaticConfig:
 
     def build_resource(
         self, *, opts: ResourceOptions | None, volume_resource: VolumeResource
-    ) -> FileResource:
-        return ConfigFile(
+    ) -> ConfigFileResource:
+        return ConfigFileModel(
             container_volume_path=self.container_volume_path,
             data=self.data,
-            schema_url="https://json.schemastore.org/traefik-v3.json",
+            schema_url=HttpUrl("https://json.schemastore.org/traefik-v3.json"),
             schema_override={
                 "$defs": {
                     "acmeDNSChallengePropagation": {

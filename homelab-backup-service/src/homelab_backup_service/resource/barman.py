@@ -12,9 +12,9 @@ from homelab_docker.model.container.model import (
     ContainerModelGlobalArgs,
 )
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
-from homelab_docker.model.file.config import ConfigFile
+from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
-from homelab_docker.resource.file import FileResource
+from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ComponentResource, ResourceOptions
 
@@ -45,14 +45,14 @@ class BarmanResource(ComponentResource):
         self.container_model = model.containers[self.RESOURCE_NAME]
         volume_resource = container_model_global_args.docker_resource.volume
 
-        self.files: list[FileResource] = []
+        self.files: list[ConfigFileResource] = []
         for service_name, source_config in database_source_configs.items():
             for name, sources in source_config.postgres.items():
                 for version, source in sources.items():
                     full_name = PostgresDatabaseModel.get_full_name_version(
                         service_name, name, version
                     )
-                    file = ConfigFile(
+                    file = ConfigFileModel(
                         container_volume_path=self.config.get_config_container_volume_path(
                             full_name
                         ),
