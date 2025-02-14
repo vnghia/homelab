@@ -86,24 +86,24 @@ class ResticResource(ComponentResource):
             containers=containers,
         )
 
-        self.check_name = "{}-check".format(self.RESOURCE_NAME)
-        self.check = DaguDagConfig(
-            path=PosixPath("{}-{}".format(service_name, self.check_name)),
-            name=self.check_name,
-            group=service_name,
-            tags=[self.RESOURCE_NAME],
-            steps=[
-                DaguDagStepConfig(
-                    name="check", command="check --read-data", executor=self.executor
-                ),
-            ],
-        ).build_resource(
-            "dagu-check",
-            opts=self.child_opts,
-            dagu_service=dagu_service,
-            volume_resource=volume_resource,
-            env_files=[self.restic_env],
-        )
+        # self.check_name = "{}-check".format(self.RESOURCE_NAME)
+        # self.check = DaguDagConfig(
+        #     path=PosixPath("{}-{}".format(service_name, self.check_name)),
+        #     name=self.check_name,
+        #     group=service_name,
+        #     tags=[self.RESOURCE_NAME],
+        #     steps=[
+        #         DaguDagStepConfig(
+        #             name="check", command="check --read-data", executor=self.executor
+        #         ),
+        #     ],
+        # ).build_resource(
+        #     "dagu-check",
+        #     opts=self.child_opts,
+        #     dagu_service=dagu_service,
+        #     volume_resource=volume_resource,
+        #     env_files=[self.restic_env],
+        # )
 
         pulumi.export("restic.repo", self.repo.id)
         pulumi.export("restic.password", self.password.result)

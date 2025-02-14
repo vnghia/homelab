@@ -23,15 +23,15 @@ class BackupService(ServiceResourceBase[BackupConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.barman = BarmanResource(
-            self.model,
-            opts=self.child_opts,
-            service_name=self.name(),
-            dagu_service=dagu_service,
-            database_source_configs=self.DATABASE_SOURCE_CONFIGS,
-            docker_resource_args=self.docker_resource_args,
-            containers=self.CONTAINERS,
-        )
+        # self.barman = BarmanResource(
+        #     self.model,
+        #     opts=self.child_opts,
+        #     service_name=self.name(),
+        #     dagu_service=dagu_service,
+        #     database_source_configs=self.DATABASE_SOURCE_CONFIGS,
+        #     docker_resource_args=self.docker_resource_args,
+        #     containers=self.CONTAINERS,
+        # )
 
         self.restic = ResticResource(
             self.model,
