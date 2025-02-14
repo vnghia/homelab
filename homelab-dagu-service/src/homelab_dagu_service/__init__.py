@@ -8,7 +8,6 @@ from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_integration.config.s3 import S3IntegrationConfig
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
@@ -23,12 +22,10 @@ class DaguService(ServiceResourceBase[None]):
         model: ServiceModel[None],
         *,
         opts: ResourceOptions | None,
-        s3_integration_config: S3IntegrationConfig,
         traefik_service: TraefikService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
-        self.s3_integration_config = s3_integration_config
 
         self.build_containers(
             options={
@@ -36,13 +33,6 @@ class DaguService(ServiceResourceBase[None]):
                     envs={"DAGU_TZ": str(self.docker_resource_args.timezone)}
                 )
             }
-        )
-
-        self.aws_env = self.build_env_file(
-            "aws-env",
-            opts=self.child_opts,
-            name="aws",
-            envs=self.s3_integration_config.to_envs(use_default_region=True),
         )
 
         self.traefik = TraefikHttpDynamicConfig(

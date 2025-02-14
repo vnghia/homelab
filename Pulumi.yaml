@@ -308,6 +308,3 @@ config:
               envs:
                 RESTIC_CACHE_DIR:
                   volume: restic-cache
-  homelab:integration:
-    value:
-      s3:

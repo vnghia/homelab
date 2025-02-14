@@ -9,11 +9,22 @@ from pydantic import BaseModel
 class ResticConfig(BaseModel):
     bucket: str
     prefix: RelativePath
+    s3: S3IntegrationConfig
 
-    def build_repo_url(self, s3_integration_config: S3IntegrationConfig) -> str:
+    @property
+    def repo(self) -> str:
         return "s3:{}".format(
             urllib.parse.urljoin(
-                str(s3_integration_config.endpoint) or "s3.us-east-1.amazonaws.com",
+                str(self.s3.endpoint) or "s3.us-east-1.amazonaws.com",
                 (PosixPath(self.bucket) / self.prefix).as_posix(),
             )
         )
+
+    def to_envs[T](self, password: T) -> dict[str, str | T]:
+        s3_envs: dict[str, str | T] = {
+            k: v for k, v in self.s3.to_envs(use_default_region=True).items()
+        }
+        return s3_envs | {
+            "RESTIC_REPOSITORY": self.repo,
+            "RESTIC_PASSWORD": password,
+        }

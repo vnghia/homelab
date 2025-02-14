@@ -53,7 +53,6 @@ class ResticResource(ComponentResource):
             self.config,
             opts=self.child_opts,
             password=self.password.result,
-            s3_integration_config=dagu_service.s3_integration_config,
             image_resource=docker_resource_args.image,
         )
 
@@ -104,7 +103,7 @@ class ResticResource(ComponentResource):
             opts=self.child_opts,
             dagu_service=dagu_service,
             volume_resource=volume_resource,
-            env_files=[dagu_service.aws_env, self.restic_env],
+            env_files=[self.restic_env],
         )
 
         pulumi.export("restic.repo", self.repo.id)

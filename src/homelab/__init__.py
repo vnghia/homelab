@@ -1,4 +1,4 @@
-from homelab_backup_service.service import BackupService
+from homelab_backup_service import BackupService
 from homelab_config import Config
 from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
@@ -54,7 +54,6 @@ class Homelab:
         self.nghe = NgheService(
             self.docker.services_config.nghe,
             opts=None,
-            s3_integration_config=self.config.integration.s3,
             traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )
@@ -67,7 +66,6 @@ class Homelab:
         self.dagu = DaguService(
             self.docker.services_config.dagu,
             opts=None,
-            s3_integration_config=self.config.integration.s3,
             traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )

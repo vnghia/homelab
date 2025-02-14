@@ -4,7 +4,6 @@ import deepmerge
 import pulumi
 from homelab_docker.config import DockerConfig
 from homelab_docker.config.service import ServiceConfigBase
-from homelab_integration.config.integration import IntegrationConfig
 from homelab_network.config.network import NetworkConfig
 from pydantic import BaseModel
 
@@ -18,7 +17,6 @@ class Config[T: ServiceConfigBase](BaseModel):
 
     docker: DockerConfig[T]
     network: NetworkConfig
-    integration: IntegrationConfig
 
     @classmethod
     def get_key(cls, key: str) -> Any:
@@ -42,5 +40,4 @@ class Config[T: ServiceConfigBase](BaseModel):
         return cls(
             docker=docker_type(**cls.get_key("docker")),
             network=NetworkConfig(**cls.get_key("network")),
-            integration=IntegrationConfig(**cls.get_key("integration")),
         )

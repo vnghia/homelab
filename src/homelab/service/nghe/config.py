@@ -1,3 +1,4 @@
+from homelab_integration.config.s3 import S3IntegrationConfig
 from pydantic import BaseModel
 
 
@@ -13,3 +14,4 @@ class NgheSpotifyConfig(BaseModel):
 class NgheConfig(BaseModel):
     lastfm: NgheLastFmConfig
     spotify: NgheSpotifyConfig
+    s3: S3IntegrationConfig | None = None

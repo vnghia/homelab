@@ -4,7 +4,6 @@ from docker.errors import ContainerError
 from homelab_backup_service.config.restic import ResticConfig
 from homelab_docker.client import DockerClient
 from homelab_docker.resource.image import ImageResource
-from homelab_integration.config.s3 import S3IntegrationConfig
 from pulumi import Input, ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider
 from pydantic import BaseModel
@@ -15,19 +14,15 @@ class ResticRepoProviderProps(BaseModel):
 
     image: str
     restic: ResticConfig
-    s3: S3IntegrationConfig
 
     password: str
 
     @property
     def id_(self) -> str:
-        return self.restic.build_repo_url(self.s3)
+        return self.restic.repo
 
     def to_envs(self) -> dict[str, str]:
-        return self.s3.to_envs(use_default_region=True) | {
-            "RESTIC_REPOSITORY": self.id_,
-            "RESTIC_PASSWORD": self.password,
-        }
+        return self.restic.to_envs(self.password)
 
 
 class ResticRepo:
@@ -80,7 +75,6 @@ class ResticRepoResource(Resource, module="restic", name="Repo"):
         *,
         opts: ResourceOptions | None,
         password: Input[str],
-        s3_integration_config: S3IntegrationConfig,
         image_resource: ImageResource,
     ):
         super().__init__(
@@ -90,8 +84,7 @@ class ResticRepoResource(Resource, module="restic", name="Repo"):
                 "image": image_resource.remotes[
                     ResticRepoProviderProps.RESTIC_IMAGE_KEY
                 ].image_id,
-                "restic": config.model_dump(mode="json"),
-                "s3": s3_integration_config.model_dump(mode="json", by_alias=True),
+                "restic": config.model_dump(mode="json", by_alias=True),
                 "password": password,
             },
             opts,
