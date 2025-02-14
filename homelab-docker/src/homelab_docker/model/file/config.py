@@ -74,7 +74,7 @@ class ConfigFile:
         return (
             "\n".join(
                 [
-                    "{}={}".format(k, v)
+                    '{}="{}"'.format(k, v.replace('"', '\\"'))
                     for k, v in sorted(data.items(), key=lambda x: x[0])
                 ]
             )
