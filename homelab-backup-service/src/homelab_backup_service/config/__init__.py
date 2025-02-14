@@ -1,9 +1,9 @@
-# from pydantic import BaseModel
+from pydantic import BaseModel
 
-# from .barman import BarmanConfig
-# from .restic import ResticConfig
+from .barman import BarmanConfig
+from .restic import ResticConfig
 
 
-# class BackupConfig(BaseModel):
-#     barman: BarmanConfig
-#     restic: ResticConfig
+class BackupConfig(BaseModel):
+    barman: BarmanConfig
+    restic: ResticConfig

@@ -1,7 +1,6 @@
 from pathlib import PosixPath
 
 import pulumi_docker as docker
-from homelab_backup_service.config.backup import BackupConfig
 from homelab_dagu_service import DaguService
 from homelab_dagu_service.config import DaguDagConfig
 from homelab_dagu_service.config.executor.docker import DaguDagDockerExecutorConfig
@@ -17,6 +16,8 @@ from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ComponentResource, ResourceOptions
+
+from ..config import BackupConfig
 
 
 class BarmanResource(ComponentResource):

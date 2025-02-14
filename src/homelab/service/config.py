@@ -1,4 +1,4 @@
-from homelab_backup_service.config.backup import BackupConfig
+from homelab_backup_service.config import BackupConfig
 from homelab_docker.config.database import DatabaseConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceModel

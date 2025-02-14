@@ -3,7 +3,6 @@ from pathlib import PosixPath
 import pulumi
 import pulumi_docker as docker
 import pulumi_random as random
-from homelab_backup_service.config.backup import BackupConfig
 from homelab_backup_service.resource.restic.repo import ResticRepoResource
 from homelab_dagu_service import DaguService
 from homelab_dagu_service.config import DaguDagConfig
@@ -18,6 +17,8 @@ from homelab_docker.model.container.volume import (
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ComponentResource, ResourceOptions
+
+from ...config import BackupConfig
 
 
 class ResticResource(ComponentResource):

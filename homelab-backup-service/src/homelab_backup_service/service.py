@@ -7,7 +7,7 @@ from pulumi import ResourceOptions
 
 from homelab_backup_service.resource.restic import ResticResource
 
-from .config.backup import BackupConfig
+from .config import BackupConfig
 from .resource.barman import BarmanResource
 
 
