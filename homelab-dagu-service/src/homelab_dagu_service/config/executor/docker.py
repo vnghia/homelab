@@ -1,7 +1,6 @@
 import dataclasses
 from typing import Any, Self
 
-import deepmerge
 import pulumi_docker as docker
 from homelab_docker.model.container import ContainerModel, ContainerModelBuildArgs
 from homelab_docker.resource import DockerResourceArgs
@@ -15,7 +14,9 @@ class DaguDagDockerExecutorConfig:
     container_config: dict[str, Any]
     host_config: dict[str, Any]
     network_config: dict[str, Any]
-    additional_config: dict[str, Any]
+
+    auto_remove: bool = True
+    pull: bool = False
 
     @classmethod
     def from_container_model(
@@ -28,22 +29,17 @@ class DaguDagDockerExecutorConfig:
         docker_resource_args: DockerResourceArgs,
         service_resource_args: ServiceResourceArgs | None,
         containers: dict[str, docker.Container],
-        additional_config: dict[str, Any] | None = None,
     ) -> Self:
         build_args = build_args or ContainerModelBuildArgs()
         config: dict[str, Any] = {}
         container_config: dict[str, Any] = {}
         host_config: dict[str, Any] = {}
         network_config: dict[str, Any] = {}
-        additional_config = additional_config or {"autoRemove": True, "pull": False}
 
         config["image"] = container_model.image.to_image_id(docker_resource_args.image)
 
         if container_model.user:
             container_config["user"] = container_model.user
-        command = container_model.build_command()
-        if command:
-            container_config["cmd"] = command
 
         entrypoint = container_model.build_entrypoint()
         if entrypoint:
@@ -98,7 +94,6 @@ class DaguDagDockerExecutorConfig:
             container_config=container_config,
             host_config=host_config,
             network_config=network_config,
-            additional_config=additional_config,
         )
 
     def to_hang_executor(self) -> Self:
@@ -107,19 +102,17 @@ class DaguDagDockerExecutorConfig:
             container_config=self.container_config | {"entrypoint": ["/bin/sleep"]},
             host_config=self.host_config,
             network_config=self.network_config,
-            additional_config=self.additional_config,
         )
 
     def to_executor(self) -> dict[str, Any]:
         return {
             "type": "docker",
-            "config": deepmerge.always_merger.merge(
-                self.config
-                | {
-                    "container": self.container_config,
-                    "host": self.host_config,
-                    "network": self.network_config,
-                },
-                self.additional_config,
-            ),
+            "config": self.config
+            | {
+                "autoRemove": self.auto_remove,
+                "pull": self.pull,
+                "container": self.container_config,
+                "host": self.host_config,
+                "network": self.network_config,
+            },
         }

@@ -25,6 +25,8 @@ class ResticResource(ComponentResource):
     RESOURCE_NAME = "restic"
     RESTIC_MOUNT_PATH = PosixPath("/") / RESOURCE_NAME
 
+    PASSWORD_LENGTH = 64
+
     def __init__(
         self,
         model: ServiceModel[BackupConfig],
@@ -46,7 +48,7 @@ class ResticResource(ComponentResource):
         self.password = random.RandomPassword(
             "password",
             opts=ResourceOptions.merge(self.child_opts, ResourceOptions(protect=True)),
-            length=64,
+            length=self.PASSWORD_LENGTH,
         )
         self.repo = ResticRepoResource(
             "repo",
@@ -60,10 +62,7 @@ class ResticResource(ComponentResource):
             "env",
             opts=self.child_opts,
             name="restic",
-            envs={
-                "RESTIC_REPOSITORY": self.repo.id,
-                "RESTIC_PASSWORD": self.password.result,
-            },
+            envs=self.config.to_envs(self.password.result),
         )
 
         self.executor = DaguDagDockerExecutorConfig.from_container_model(
