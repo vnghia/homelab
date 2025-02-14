@@ -1,7 +1,6 @@
 import typing
 from typing import Any
 
-from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
 from pydantic import BaseModel
 
@@ -68,7 +67,7 @@ class TraefikHttpDynamicConfig(BaseModel):
         service_full = self.service.full
         if service_full:
             data["http"]["services"] = service_full.to_http_service(
-                TraefikDynamicServiceType.HTTP, self.name, traefik_service.CONTAINERS
+                TraefikDynamicServiceType.HTTP, self.name, traefik_service.args
             )
 
         middlewares = {
@@ -87,14 +86,9 @@ class TraefikHttpDynamicConfig(BaseModel):
         *,
         opts: ResourceOptions | None,
         traefik_service: "TraefikService",
-        volume_resource: VolumeResource,
     ) -> "TraefikDynamicConfigResource":
         from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
 
         return TraefikDynamicConfigResource(
-            self,
-            resource_name,
-            opts=opts,
-            traefik_service=traefik_service,
-            volume_resource=volume_resource,
+            self, resource_name, opts=opts, traefik_service=traefik_service
         )

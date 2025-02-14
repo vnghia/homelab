@@ -54,12 +54,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
             hostname="system",
             prefix=self.config.path,
             service=TraefikDynamicServiceConfig("api@internal"),
-        ).build_resource(
-            None,
-            opts=self.child_opts,
-            traefik_service=self,
-            volume_resource=self.docker_resource_args.volume,
-        )
+        ).build_resource(None, opts=self.child_opts, traefik_service=self)
 
         self.register_outputs({})
 

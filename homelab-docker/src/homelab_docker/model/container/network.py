@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, RootModel
 
 if typing.TYPE_CHECKING:
     from ...resource.network import NetworkResource
+    from ...resource.service import ServiceResourceArgs
 
 
 @dataclasses.dataclass
@@ -22,10 +23,12 @@ class ContainerNetworkModeConfig(BaseModel):
         self,
         _resource_name: str,
         _network_resource: "NetworkResource",
-        containers: dict[str, docker.Container],
+        service_resource_args: "ServiceResourceArgs",
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
-            mode=Output.format("container:{0}", containers[self.container].id),
+            mode=Output.format(
+                "container:{0}", service_resource_args.containers[self.container].id
+            ),
             advanced=[],
         )
 
@@ -38,7 +41,7 @@ class ContainerCommonNetworkConfig(BaseModel):
         self,
         resource_name: str,
         network_resource: "NetworkResource",
-        _: dict[str, docker.Container],
+        _: "ServiceResourceArgs",
     ) -> ContainerNetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
         aliases = [resource_name] if resource_name else []
@@ -68,6 +71,6 @@ class ContainerNetworkConfig(
         self,
         resource_name: str,
         network_resource: "NetworkResource",
-        containers: dict[str, docker.Container],
+        service_resource_args: "ServiceResourceArgs",
     ) -> ContainerNetworkArgs:
-        return self.root.to_args(resource_name, network_resource, containers)
+        return self.root.to_args(resource_name, network_resource, service_resource_args)

@@ -2,7 +2,6 @@ import typing
 
 from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.resource.file.config import ConfigFileResource
-from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
 from pydantic import HttpUrl
 
@@ -26,7 +25,6 @@ class TraefikDynamicConfigResource(
         *,
         opts: ResourceOptions | None,
         traefik_service: "TraefikService",
-        volume_resource: VolumeResource,
     ):
         self.name = config.name
         super().__init__(
@@ -39,5 +37,5 @@ class TraefikDynamicConfigResource(
             ),
             resource_name or self.name,
             opts=opts,
-            volume_resource=volume_resource,
+            volume_resource=traefik_service.docker_resource_args.volume,
         )

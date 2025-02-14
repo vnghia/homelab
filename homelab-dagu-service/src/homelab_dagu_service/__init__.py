@@ -41,12 +41,7 @@ class DaguService(ServiceResourceBase[None]):
             service=TraefikDynamicServiceConfig(
                 int(self.model.container.envs["DAGU_PORT"].to_str())
             ),
-        ).build_resource(
-            None,
-            opts=self.child_opts,
-            traefik_service=traefik_service,
-            volume_resource=self.docker_resource_args.volume,
-        )
+        ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
 
         self.register_outputs({})
 

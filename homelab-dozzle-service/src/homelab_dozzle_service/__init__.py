@@ -46,12 +46,7 @@ class DozzleService(ServiceResourceBase[None]):
             service=TraefikDynamicServiceConfig(
                 int(self.model.container.envs["DOZZLE_ADDR"].to_str()[1:])
             ),
-        ).build_resource(
-            None,
-            opts=self.child_opts,
-            traefik_service=traefik_service,
-            volume_resource=self.docker_resource_args.volume,
-        )
+        ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
         self.traefik_redirect = TraefikHttpDynamicConfig(
             name="{}-redirect".format(self.name()),
             public=False,
@@ -65,11 +60,6 @@ class DozzleService(ServiceResourceBase[None]):
                     )
                 )
             ],
-        ).build_resource(
-            None,
-            opts=self.child_opts,
-            traefik_service=traefik_service,
-            volume_resource=self.docker_resource_args.volume,
-        )
+        ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
 
         self.register_outputs({})

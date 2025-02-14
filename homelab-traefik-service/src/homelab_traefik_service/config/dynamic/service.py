@@ -1,7 +1,7 @@
 from enum import StrEnum, auto
 from typing import Any
 
-import pulumi_docker as docker
+from homelab_docker.resource.service import ServiceResourceArgs
 from pydantic import AnyUrl, BaseModel, PositiveInt, RootModel
 
 
@@ -17,23 +17,27 @@ class TraefikDynamicServiceFullConfig(BaseModel):
         self,
         type_: TraefikDynamicServiceType,
         router_name: str,
-        containers: dict[str, docker.Container],
+        service_resource_args: ServiceResourceArgs,
     ) -> AnyUrl:
         container = self.container or router_name
-        containers[container]
+        service_resource_args.containers[container]
         return AnyUrl("{}://{}:{}".format(type_.value, container, self.port))
 
     def to_http_service(
         self,
         type_: TraefikDynamicServiceType,
         router_name: str,
-        containers: dict[str, docker.Container],
+        service_resource_args: ServiceResourceArgs,
     ) -> dict[str, Any]:
         return {
             router_name: {
                 "loadBalancer": {
                     "servers": [
-                        {"url": str(self.to_url(type_, router_name, containers))}
+                        {
+                            "url": str(
+                                self.to_url(type_, router_name, service_resource_args)
+                            )
+                        }
                     ]
                 }
             }

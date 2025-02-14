@@ -1,7 +1,6 @@
 import typing
 from typing import Any
 
-from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
 from pydantic import BaseModel, RootModel
 
@@ -23,16 +22,11 @@ class TraefikDynamicMiddlewareFullConfig(BaseModel):
         *,
         opts: ResourceOptions | None,
         traefik_service: "TraefikService",
-        volume_resource: VolumeResource,
     ) -> "TraefikDynamicConfigResource":
         from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
 
         return TraefikDynamicConfigResource(
-            self,
-            resource_name,
-            opts=opts,
-            traefik_service=traefik_service,
-            volume_resource=volume_resource,
+            self, resource_name, opts=opts, traefik_service=traefik_service
         )
 
 

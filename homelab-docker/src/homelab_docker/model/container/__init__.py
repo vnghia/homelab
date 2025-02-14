@@ -152,9 +152,7 @@ class ContainerModel(BaseModel):
     ) -> docker.Container:
         build_args = build_args or ContainerModelBuildArgs()
         network_args = self.network.to_args(
-            resource_name,
-            docker_resource_args.network,
-            service_resource_args.containers,
+            resource_name, docker_resource_args.network, service_resource_args
         )
 
         depends_on: list[Resource] = []

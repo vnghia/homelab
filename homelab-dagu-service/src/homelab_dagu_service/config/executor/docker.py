@@ -54,9 +54,7 @@ class DaguDagDockerExecutorConfig:
         )
 
         network_args = container_model.network.to_args(
-            resource_name,
-            docker_resource_args.network,
-            service_resource_args.containers,
+            resource_name, docker_resource_args.network, service_resource_args
         )
         if network_args.advanced:
             network_config["endpointsConfig"] = {
