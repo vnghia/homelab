@@ -1,37 +1,39 @@
+import typing
 from typing import Any
 
-from homelab_docker.model.file.config import ConfigFileModel
-from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
-from pydantic import BaseModel, HttpUrl, RootModel
+from pydantic import BaseModel, RootModel
 
-from ..static import TraefikStaticConfig
+if typing.TYPE_CHECKING:
+    from ... import TraefikService
+    from ..dynamic import TraefikDynamicConfigResource
 
 
 class TraefikDynamicMiddlewareFullConfig(BaseModel):
     name: str
     data: Any
 
+    def to_data(self, _traefik_service: "TraefikService") -> dict[str, Any]:
+        return {"http": {"middlewares": {self.name: self.data}}}
+
     def build_resource(
         self,
-        resource_name: str,
+        resource_name: str | None,
         *,
         opts: ResourceOptions | None,
+        traefik_service: "TraefikService",
         volume_resource: VolumeResource,
-        static_config: TraefikStaticConfig,
-    ) -> ConfigFileResource:
-        data = {"http": {"middlewares": {self.name: self.data}}}
+    ) -> "TraefikDynamicConfigResource":
+        from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
 
-        return ConfigFileModel(
-            container_volume_path=static_config.get_dynamic_container_volume_path(
-                self.name
-            ),
-            data=data,
-            schema_url=HttpUrl(
-                "https://json.schemastore.org/traefik-v3-file-provider.json"
-            ),
-        ).build_resource(resource_name, opts=opts, volume_resource=volume_resource)
+        return TraefikDynamicConfigResource(
+            self,
+            resource_name,
+            opts=opts,
+            traefik_service=traefik_service,
+            volume_resource=volume_resource,
+        )
 
 
 class TraefikDynamicMiddlewareConfig(

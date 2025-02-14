@@ -1,15 +1,16 @@
+import typing
 from typing import Any
 
-import pulumi_docker as docker
-from homelab_docker.model.file.config import ConfigFileModel
-from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 
-from ..static import TraefikStaticConfig
 from .middleware import TraefikDynamicMiddlewareConfig
 from .service import TraefikDynamicServiceConfig, TraefikDynamicServiceType
+
+if typing.TYPE_CHECKING:
+    from ... import TraefikService
+    from ..dynamic import TraefikDynamicConfigResource
 
 
 class TraefikHttpDynamicConfig(BaseModel):
@@ -22,20 +23,12 @@ class TraefikHttpDynamicConfig(BaseModel):
     service: TraefikDynamicServiceConfig
     middlewares: list[TraefikDynamicMiddlewareConfig] = []
 
-    def build_resource(
-        self,
-        resource_name: str,
-        *,
-        opts: ResourceOptions | None,
-        volume_resource: VolumeResource,
-        containers: dict[str, docker.Container],
-        static_config: TraefikStaticConfig,
-    ) -> ConfigFileResource:
-        entrypoint = static_config.service_config.entrypoint
+    def to_data(self, traefik_service: "TraefikService") -> dict[str, Any]:
+        entrypoint = traefik_service.config.entrypoint
         hostname = (
-            static_config.network_resource.public.hostnames
+            traefik_service.network_resource.public.hostnames
             if self.public
-            else static_config.network_resource.private.hostnames
+            else traefik_service.network_resource.private.hostnames
         )[self.hostname or self.name]
 
         data: dict[str, Any] = {
@@ -63,9 +56,9 @@ class TraefikHttpDynamicConfig(BaseModel):
                             middleware.name for middleware in self.middlewares
                         ],
                         "tls": {
-                            "certResolver": static_config.PUBLIC_CERT_RESOLVER
+                            "certResolver": traefik_service.static.PUBLIC_CERT_RESOLVER
                             if self.public
-                            else static_config.PRIVATE_CERT_RESOLVER
+                            else traefik_service.static.PRIVATE_CERT_RESOLVER
                         },
                     }
                 },
@@ -75,7 +68,7 @@ class TraefikHttpDynamicConfig(BaseModel):
         service_full = self.service.full
         if service_full:
             data["http"]["services"] = service_full.to_http_service(
-                TraefikDynamicServiceType.HTTP, self.name, containers
+                TraefikDynamicServiceType.HTTP, self.name, traefik_service.CONTAINERS
             )
 
         middlewares = {
@@ -86,12 +79,22 @@ class TraefikHttpDynamicConfig(BaseModel):
         if middlewares:
             data["http"]["middlewares"] = middlewares
 
-        return ConfigFileModel(
-            container_volume_path=static_config.get_dynamic_container_volume_path(
-                self.name
-            ),
-            data=data,
-            schema_url=HttpUrl(
-                "https://json.schemastore.org/traefik-v3-file-provider.json"
-            ),
-        ).build_resource(resource_name, opts=opts, volume_resource=volume_resource)
+        return data
+
+    def build_resource(
+        self,
+        resource_name: str | None,
+        *,
+        opts: ResourceOptions | None,
+        traefik_service: "TraefikService",
+        volume_resource: VolumeResource,
+    ) -> "TraefikDynamicConfigResource":
+        from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
+
+        return TraefikDynamicConfigResource(
+            self,
+            resource_name,
+            opts=opts,
+            traefik_service=traefik_service,
+            volume_resource=volume_resource,
+        )

@@ -3,7 +3,6 @@ from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.volume import VolumeResource
-from homelab_network.resource.network import NetworkResource
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 from pydantic import HttpUrl
@@ -17,13 +16,11 @@ class TraefikStaticConfig:
 
     def __init__(
         self,
-        network_resource: NetworkResource,
         traefik_service_model: ServiceModel[TraefikConfig],
         tailscale_service: TailscaleService,
     ) -> None:
-        self.network_resource = network_resource
         container_volumes_config = traefik_service_model.container.volumes
-        self.service_config = traefik_service_model.config
+        service_config = traefik_service_model.config
 
         self.container_volume_path = ContainerVolumePath.model_validate(
             traefik_service_model.container.command[-1].root
@@ -33,20 +30,20 @@ class TraefikStaticConfig:
         self.container_volume_config = container_volumes_config[
             self.container_volume_path.volume
         ]
-        self.provider_directory = self.service_config.provider.file
+        self.provider_directory = service_config.provider.file
 
         self.data = {
             "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
             "accessLog": {"format": "json"},
             "api": {
-                "basePath": self.service_config.path,
+                "basePath": service_config.path,
                 "dashboard": True,
                 "disableDashboardAd": True,
             },
             "log": {"level": "INFO", "format": "json"},
             "ping": {},
             "entryPoints": {
-                self.service_config.entrypoint.private_http: {
+                service_config.entrypoint.private_http: {
                     "address": "[::]:80",
                     "http": {
                         "redirections": {
@@ -54,7 +51,7 @@ class TraefikStaticConfig:
                         }
                     },
                 },
-                self.service_config.entrypoint.public_http: {
+                service_config.entrypoint.public_http: {
                     "address": "[::]:{}".format(
                         tailscale_service.model.container.ports["httpv4"].internal
                     ),
@@ -64,8 +61,8 @@ class TraefikStaticConfig:
                         }
                     },
                 },
-                self.service_config.entrypoint.private_https: {"address": "[::]:443"},
-                self.service_config.entrypoint.public_https: {
+                service_config.entrypoint.private_https: {"address": "[::]:443"},
+                service_config.entrypoint.public_https: {
                     "address": "[::]:{}".format(
                         tailscale_service.model.container.ports["httpsv4"].internal
                     ),
@@ -83,21 +80,21 @@ class TraefikStaticConfig:
             "certificatesResolvers": {
                 self.PUBLIC_CERT_RESOLVER: {
                     "acme": {
-                        "caServer": str(self.service_config.acme.server),
-                        "email": self.service_config.acme.email,
-                        "storage": self.service_config.acme.storage.public.to_container_path(
+                        "caServer": str(service_config.acme.server),
+                        "email": service_config.acme.email,
+                        "storage": service_config.acme.storage.public.to_container_path(
                             container_volumes_config
                         ).as_posix(),
                         "httpChallenge": {
-                            "entryPoint": self.service_config.entrypoint.public_http
+                            "entryPoint": service_config.entrypoint.public_http
                         },
                     }
                 },
                 self.PRIVATE_CERT_RESOLVER: {
                     "acme": {
-                        "caServer": str(self.service_config.acme.server),
-                        "email": self.service_config.acme.email,
-                        "storage": self.service_config.acme.storage.private.to_container_path(
+                        "caServer": str(service_config.acme.server),
+                        "email": service_config.acme.email,
+                        "storage": service_config.acme.storage.private.to_container_path(
                             container_volumes_config
                         ).as_posix(),
                         "dnsChallenge": {
@@ -110,11 +107,6 @@ class TraefikStaticConfig:
                 },
             },
         }
-
-    def get_dynamic_container_volume_path(self, file: str) -> ContainerVolumePath:
-        return self.container_volume_path.model_copy(
-            update={"path": (self.provider_directory / file).with_suffix(".toml")}
-        )
 
     def build_resource(
         self, *, opts: ResourceOptions | None, volume_resource: VolumeResource

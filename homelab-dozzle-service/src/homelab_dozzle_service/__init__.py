@@ -3,13 +3,13 @@ from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.middleware import (
     TraefikDynamicMiddlewareConfig,
     TraefikDynamicMiddlewareFullConfig,
 )
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
-from homelab_traefik_service.config.static import TraefikStaticConfig
 from pulumi import ResourceOptions
 
 
@@ -19,8 +19,8 @@ class DozzleService(ServiceResourceBase[None]):
         model: ServiceModel[None],
         *,
         opts: ResourceOptions | None,
+        traefik_service: TraefikService,
         docker_resource_args: DockerResourceArgs,
-        traefik_static_config: TraefikStaticConfig,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
@@ -47,11 +47,10 @@ class DozzleService(ServiceResourceBase[None]):
                 int(self.model.container.envs["DOZZLE_ADDR"].to_str()[1:])
             ),
         ).build_resource(
-            "traefik",
+            None,
             opts=self.child_opts,
+            traefik_service=traefik_service,
             volume_resource=self.docker_resource_args.volume,
-            containers=self.CONTAINERS,
-            static_config=traefik_static_config,
         )
         self.traefik_redirect = TraefikHttpDynamicConfig(
             name="{}-redirect".format(self.name()),
@@ -67,11 +66,10 @@ class DozzleService(ServiceResourceBase[None]):
                 )
             ],
         ).build_resource(
-            "traefik-redirect",
+            None,
             opts=self.child_opts,
+            traefik_service=traefik_service,
             volume_resource=self.docker_resource_args.volume,
-            containers=self.CONTAINERS,
-            static_config=traefik_static_config,
         )
 
         self.register_outputs({})

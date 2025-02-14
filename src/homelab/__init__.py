@@ -42,34 +42,34 @@ class Homelab:
             self.docker.services_config.traefik,
             opts=None,
             network_resource=self.network,
-            docker_resource_args=self.docker.resource_args,
             tailscale_service=self.tailscale,
+            docker_resource_args=self.docker.resource_args,
         )
         self.dozzle = DozzleService(
             self.docker.services_config.dozzle,
             opts=None,
+            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
-            traefik_static_config=self.traefik.static,
         )
         self.nghe = NgheService(
             self.docker.services_config.nghe,
             opts=None,
             s3_integration_config=self.config.integration.s3,
+            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
-            traefik_static_config=self.traefik.static,
         )
         self.memos = MemosService(
             self.docker.services_config.memos,
             opts=None,
+            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
-            traefik_static_config=self.traefik.static,
         )
         self.dagu = DaguService(
             self.docker.services_config.dagu,
             opts=None,
             s3_integration_config=self.config.integration.s3,
+            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
-            traefik_static_config=self.traefik.static,
         )
 
         # It should always be the last service

@@ -1,4 +1,5 @@
 from homelab_docker.model.container import ContainerModelBuildArgs
+from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
@@ -18,14 +19,14 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
         model: ServiceModel[TraefikConfig],
         *,
         opts: ResourceOptions | None,
+        tailscale_service: TailscaleService,
         network_resource: NetworkResource,
         docker_resource_args: DockerResourceArgs,
-        tailscale_service: TailscaleService,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        self.network_resource = network_resource
 
         self.static = TraefikStaticConfig(
-            network_resource=network_resource,
             traefik_service_model=self.model,
             tailscale_service=tailscale_service,
         )
@@ -47,18 +48,24 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
             }
         )
 
-        self.dashboard = TraefikHttpDynamicConfig(
-            name="{}-dashboard".format(self.name()),
+        TraefikHttpDynamicConfig(
+            name="dashboard",
             public=False,
             hostname="system",
-            prefix=self.static.service_config.path,
+            prefix=self.config.path,
             service=TraefikDynamicServiceConfig("api@internal"),
         ).build_resource(
-            "dashboard",
+            None,
             opts=self.child_opts,
+            traefik_service=self,
             volume_resource=self.docker_resource_args.volume,
-            containers=self.CONTAINERS,
-            static_config=self.static,
         )
 
         self.register_outputs({})
+
+    def get_dynamic_container_volume_path(self, file: str) -> ContainerVolumePath:
+        return self.static.container_volume_path.model_copy(
+            update={
+                "path": (self.static.provider_directory / file).with_suffix(".toml")
+            }
+        )
