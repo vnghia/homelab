@@ -293,12 +293,15 @@ config:
             barman:
               image:
                 build: barman
+              entrypoint: ["/bin/sleep"]
+              command: ["infinity"]
               volumes:
                 barman-home: /var/lib/barman
                 barman-config:
                   path: /etc/barman.d
                   read-only: true
             restic:
+              active: false
               image: restic
               network:
                 default-bridge: true

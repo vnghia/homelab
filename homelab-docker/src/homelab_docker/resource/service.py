@@ -109,6 +109,7 @@ class ServiceResourceBase[T](ComponentResource):
         self.containers = {
             name: self.build_container(name, model, options.get(name))
             for name, model in self.model.containers.items()
+            if model.active
         } | (
             {
                 None: self.build_container(

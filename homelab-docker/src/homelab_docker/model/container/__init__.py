@@ -29,6 +29,7 @@ class ContainerModelBuildArgs:
 
 
 class ContainerModel(BaseModel):
+    active: bool = True
     image: ContainerImageModelConfig
 
     capabilities: list[str] | None = None

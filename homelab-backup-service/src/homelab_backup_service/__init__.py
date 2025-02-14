@@ -43,4 +43,6 @@ class BackupService(ServiceResourceBase[BackupConfig]):
             service_resource_args=self.args,
         )
 
+        self.build_containers(options={})
+
         self.register_outputs({})
