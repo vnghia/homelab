@@ -44,6 +44,11 @@ class ServiceResourceBase[T](ComponentResource):
         self.model = model
         self.docker_resource_args = docker_resource_args
         self.build_databases()
+        self.args = ServiceResourceArgs(
+            containers=self.CONTAINERS,
+            database_source_configs=self.DATABASE_SOURCE_CONFIGS,
+            database=self.database_args,
+        )
 
     @classmethod
     def name(cls) -> str:
@@ -61,32 +66,27 @@ class ServiceResourceBase[T](ComponentResource):
         return self.add_service_name_cls(self.name(), name)
 
     def build_databases(self) -> None:
-        self.database = DatabaseResource(
-            self.model.databases,
-            opts=self.child_opts,
-            service_name=self.name(),
-            docker_resource_args=self.docker_resource_args,
-        )
+        self.database_args: ServiceDatabaseArgs | None = None
+        if self.model.databases:
+            self.database = DatabaseResource(
+                self.model.databases,
+                opts=self.child_opts,
+                service_name=self.name(),
+                docker_resource_args=self.docker_resource_args,
+            )
+            self.database_args = ServiceDatabaseArgs(
+                config=self.model.databases,
+                source_config=self.database.source_config,
+            )
+            self.DATABASE_SOURCE_CONFIGS[self.name()] = self.database_args.source_config
 
-        self.database_args = ServiceDatabaseArgs(
-            config=self.model.databases,
-            source_config=self.database.source_config,
-        )
-
-        self.DATABASE_SOURCE_CONFIGS[self.name()] = self.database_args.source_config
-        self.args = ServiceResourceArgs(
-            containers=self.CONTAINERS,
-            database_source_configs=self.DATABASE_SOURCE_CONFIGS,
-            database=self.database_args,
-        )
-
-        self.database_containers = {
-            name: container for name, container in self.database.containers.items()
-        }
-        for name, container in self.database_containers.items():
-            name = self.add_service_name(name)
-            self.CONTAINERS[name] = container
-            pulumi.export("container.{}".format(name), container.name)
+            self.database_containers = {
+                name: container for name, container in self.database.containers.items()
+            }
+            for name, container in self.database_containers.items():
+                name = self.add_service_name(name)
+                self.CONTAINERS[name] = container
+                pulumi.export("container.{}".format(name), container.name)
 
     def build_container(
         self,

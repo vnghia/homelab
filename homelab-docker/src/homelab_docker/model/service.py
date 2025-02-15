@@ -6,7 +6,7 @@ from .container import ContainerModel
 
 class ServiceModel[T](BaseModel):
     raw_config: T | None = Field(None, alias="config")
-    databases: DatabaseConfig = DatabaseConfig()
+    databases: DatabaseConfig | None = None
     raw_container: ContainerModel | None = Field(None, alias="container")
     containers: dict[str, ContainerModel] = {}
 
