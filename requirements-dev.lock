@@ -12,6 +12,8 @@
 -e file:.
 -e file:homelab-backup-service
     # via homelab
+-e file:homelab-barman-service
+    # via homelab
 -e file:homelab-config
     # via homelab
 -e file:homelab-dagu-service
@@ -19,9 +21,11 @@
 -e file:homelab-docker
     # via homelab
     # via homelab-backup-service
+    # via homelab-barman-service
     # via homelab-config
     # via homelab-dagu-service
     # via homelab-dozzle-service
+    # via homelab-rclone
     # via homelab-tailscale-service
     # via homelab-traefik-service
 -e file:homelab-dozzle-service
@@ -29,12 +33,12 @@
 -e file:homelab-integration
     # via homelab
     # via homelab-backup-service
-    # via homelab-config
     # via homelab-dagu-service
 -e file:homelab-network
     # via homelab
     # via homelab-config
     # via homelab-traefik-service
+-e file:homelab-rclone
 -e file:homelab-tailscale-service
     # via homelab
     # via homelab-traefik-service
@@ -69,6 +73,7 @@ cryptography==44.0.0
 debugpy==1.8.12
     # via pulumi
 deepmerge==2.0
+    # via homelab-dagu-service
     # via homelab-docker
 dill==0.3.9
     # via pulumi
@@ -109,10 +114,12 @@ protobuf==4.25.6
 pulumi==3.148.0
     # via homelab
     # via homelab-backup-service
+    # via homelab-barman-service
     # via homelab-config
     # via homelab-dagu-service
     # via homelab-dozzle-service
     # via homelab-integration
+    # via homelab-rclone
     # via homelab-tailscale-service
     # via homelab-traefik-service
     # via pulumi-cloudflare
@@ -135,10 +142,12 @@ pycparser==2.22
     # via cffi
 pydantic==2.10.6
     # via homelab-backup-service
+    # via homelab-barman-service
     # via homelab-dagu-service
     # via homelab-docker
     # via homelab-integration
     # via homelab-network
+    # via homelab-rclone
     # via homelab-tailscale-service
     # via homelab-traefik-service
     # via pydantic-extra-types

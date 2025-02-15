@@ -1,4 +1,5 @@
 from homelab_backup_service import BackupService
+from homelab_barman_service import BarmanService
 from homelab_config import Config
 from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
@@ -71,6 +72,11 @@ class Homelab:
         )
 
         # It should always be the last service
+        self.barman = BarmanService(
+            self.docker.services_config.barman,
+            opts=None,
+            docker_resource_args=self.docker.resource_args,
+        )
         self.backup = BackupService(
             self.docker.services_config.backup,
             opts=None,

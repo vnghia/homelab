@@ -1,4 +1,5 @@
 from homelab_backup_service.config import BackupConfig
+from homelab_barman_service.config import BarmanConfig
 from homelab_docker.config.database import DatabaseConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceModel
@@ -14,6 +15,7 @@ class ServiceConfig(ServiceConfigBase):
     nghe: ServiceModel[NgheConfig]
     memos: ServiceModel[None]
     dagu: ServiceModel[None]
+    barman: ServiceModel[BarmanConfig]
     backup: ServiceModel[BackupConfig]
 
     @property

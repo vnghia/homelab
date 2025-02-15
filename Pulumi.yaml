@@ -44,7 +44,7 @@ config:
         build:
           barman:
             context:
-              location: homelab-backup-service/image/barman
+              location: homelab-barman-service/image
               base: minideb
         postgres:
           postgres:
@@ -279,6 +279,24 @@ config:
               DAGU_BASE_CONFIG:
                 volume: dagu-dags
                 path: base.yaml
+        barman:
+          config:
+            config-dir:
+              volume: barman-config
+            staging-dir:
+              volume: barman-home
+              path: staging
+          container:
+            image:
+              build: barman
+            init: true
+            tmpfs:
+              - /var/run
+            volumes:
+              barman-home: /var/lib/barman
+              barman-config:
+                path: /etc/barman.d
+                read-only: true
         backup:
           config:
             barman:
@@ -290,16 +308,6 @@ config:
             restic:
               prefix: backup/restic
           containers:
-            barman:
-              image:
-                build: barman
-              entrypoint: ["/bin/sleep"]
-              command: ["infinity"]
-              volumes:
-                barman-home: /var/lib/barman
-                barman-config:
-                  path: /etc/barman.d
-                  read-only: true
             restic:
               active: false
               image: restic

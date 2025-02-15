@@ -8,7 +8,6 @@ from pulumi import ResourceOptions
 from homelab_backup_service.resource.restic import ResticResource
 
 from .config import BackupConfig
-from .resource.barman import BarmanResource
 
 
 class BackupService(ServiceResourceBase[BackupConfig]):
