@@ -1,7 +1,7 @@
 import typing
 
 from homelab_docker.model.file.config import ConfigFileModel
-from homelab_docker.resource.file.config import ConfigFileResource
+from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from pulumi import ResourceOptions
 
 from homelab_traefik_service.config.dynamic.middleware import (
@@ -19,6 +19,7 @@ class TraefikDynamicConfigResource(
     ConfigFileResource[schema.Model], module="traefik", name="DynamicConfig"
 ):
     validator = schema.Model
+    dumper = TomlDumper[schema.Model]
 
     def __init__(
         self,

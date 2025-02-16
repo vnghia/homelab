@@ -1,7 +1,7 @@
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
-from homelab_docker.resource.file.config import ConfigFileResource
+from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
@@ -15,6 +15,7 @@ class TraefikStaticConfigResource(
     name="StaticConfig",
 ):
     validator = schema.TraefikV3StaticConfiguration
+    dumper = TomlDumper[schema.TraefikV3StaticConfiguration]
 
     PUBLIC_CERT_RESOLVER = "public-cert-resolver"
     PRIVATE_CERT_RESOLVER = "private-cert-resolver"

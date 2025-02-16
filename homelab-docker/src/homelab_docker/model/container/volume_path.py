@@ -49,5 +49,8 @@ class ContainerVolumePath(BaseModel):
             name=self.volume, volume=volume_resource[self.volume], path=self.path
         )
 
-    def join(self, path: RelativePath, suffix: str) -> Self:
-        return self.model_copy(update={"path": (self.path / path).with_suffix(suffix)})
+    def join(self, path: RelativePath) -> Self:
+        return self.model_copy(update={"path": self.path / path})
+
+    def with_suffix(self, suffix: str) -> Self:
+        return self.model_copy(update={"path": self.path.with_suffix(suffix)})

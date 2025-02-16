@@ -49,7 +49,7 @@ class DaguService(ServiceResourceBase[None]):
         return self.model.container.envs[self.DAGS_DIR_ENV].as_container_volume_path()
 
     def get_env_container_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.get_config_container_volume_path().join(PosixPath(name), ".env")
+        return self.get_config_container_volume_path().join(PosixPath(name))
 
     # def build_env_file(
     #     self,

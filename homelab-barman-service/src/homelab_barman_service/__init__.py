@@ -4,7 +4,11 @@ from homelab_docker.model.database.source import DatabaseSourceModel
 from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.file.config import ConfigFileResource, JsonDefaultModel
+from homelab_docker.resource.file.config import (
+    ConfigFileResource,
+    IniDumper,
+    JsonDefaultModel,
+)
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_docker.resource.volume import VolumeResource
 from pulumi import ResourceOptions
@@ -16,6 +20,7 @@ class BarmanConfigFileResource(
     ConfigFileResource[JsonDefaultModel], module="barman", name="Config"
 ):
     validator = JsonDefaultModel
+    dumper = IniDumper[JsonDefaultModel]
 
     def __init__(
         self,

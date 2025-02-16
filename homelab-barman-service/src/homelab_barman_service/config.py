@@ -13,4 +13,4 @@ class BarmanConfig(BaseModel):
     )
 
     def get_config_container_volume_path(self, file: str) -> ContainerVolumePath:
-        return self.config_dir.join(PosixPath(file), ".conf")
+        return self.config_dir.join(PosixPath(file))

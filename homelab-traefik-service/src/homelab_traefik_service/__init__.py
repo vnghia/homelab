@@ -60,6 +60,4 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
     def get_dynamic_config_container_volume_path(
         self, name: str
     ) -> ContainerVolumePath:
-        return self.static.dynamic_directory_container_volume_path.join(
-            PosixPath(name), ".toml"
-        )
+        return self.static.dynamic_directory_container_volume_path.join(PosixPath(name))
