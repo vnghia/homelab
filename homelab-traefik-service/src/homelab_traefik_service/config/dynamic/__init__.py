@@ -3,12 +3,12 @@ import typing
 from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.resource.file.config import ConfigFileResource
 from pulumi import ResourceOptions
-from pydantic import HttpUrl
 
 from homelab_traefik_service.config.dynamic.middleware import (
     TraefikDynamicMiddlewareFullConfig,
 )
 
+from . import schema
 from .http import TraefikHttpDynamicConfig
 
 if typing.TYPE_CHECKING:
@@ -16,8 +16,10 @@ if typing.TYPE_CHECKING:
 
 
 class TraefikDynamicConfigResource(
-    ConfigFileResource, module="traefik", name="DynamicConfig"
+    ConfigFileResource[schema.Model], module="traefik", name="DynamicConfig"
 ):
+    validator = schema.Model
+
     def __init__(
         self,
         config: TraefikHttpDynamicConfig | TraefikDynamicMiddlewareFullConfig,
@@ -29,11 +31,8 @@ class TraefikDynamicConfigResource(
         self.name = config.name
         super().__init__(
             ConfigFileModel(
-                traefik_service.get_dynamic_container_volume_path(self.name),
+                traefik_service.get_dynamic_config_container_volume_path(self.name),
                 config.to_data(traefik_service),
-                schema_url=HttpUrl(
-                    "https://json.schemastore.org/traefik-v3-file-provider.json"
-                ),
             ),
             resource_name or self.name,
             opts=opts,

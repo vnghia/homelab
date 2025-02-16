@@ -58,12 +58,12 @@ class ResticResource(ComponentResource):
             image_resource=docker_resource_args.image,
         )
 
-        self.restic_env = dagu_service.build_env_file(
-            "env",
-            opts=self.child_opts,
-            name="restic",
-            envs=self.config.to_envs(self.password.result),
-        )
+        # self.restic_env = dagu_service.build_env_file(
+        #     "env",
+        #     opts=self.child_opts,
+        #     name="restic",
+        #     envs=self.config.to_envs(self.password.result),
+        # )
 
         self.executor = DaguDagDockerExecutorConfig.from_container_model(
             ServiceResourceBase.add_service_name_cls(service_name, self.RESOURCE_NAME),

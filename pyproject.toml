@@ -26,7 +26,10 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = ["mypy>=1.14.1"]
+dev-dependencies = [
+    "mypy>=1.14.1",
+    "datamodel-code-generator[http]>=0.28.1",
+]
 
 [tool.hatch.metadata]
 allow-direct-references = true

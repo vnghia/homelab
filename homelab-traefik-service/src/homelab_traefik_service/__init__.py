@@ -1,3 +1,5 @@
+from pathlib import PosixPath
+
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceModel
@@ -10,7 +12,7 @@ from pulumi import ResourceOptions
 from .config import TraefikConfig
 from .config.dynamic.http import TraefikHttpDynamicConfig
 from .config.dynamic.service import TraefikDynamicServiceConfig
-from .config.static import TraefikStaticConfig
+from .config.static import TraefikStaticConfigResource
 
 
 class TraefikService(ServiceResourceBase[TraefikConfig]):
@@ -26,10 +28,12 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
         self.network_resource = network_resource
 
-        self.static = TraefikStaticConfig(
+        self.static = TraefikStaticConfigResource(
+            opts=self.child_opts,
             traefik_service_model=self.model,
             tailscale_service=tailscale_service,
         )
+
         self.build_containers(
             options={
                 None: ContainerModelBuildArgs(
@@ -38,12 +42,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
                         "CF_ZONE_API_TOKEN": network_resource.token.read.value,
                         "CF_DNS_API_TOKEN": network_resource.token.write.value,
                     },
-                    files=[
-                        self.static.build_resource(
-                            opts=self.child_opts,
-                            volume_resource=self.docker_resource_args.volume,
-                        )
-                    ],
+                    files=[self.static],
                 )
             }
         )
@@ -58,9 +57,9 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
 
         self.register_outputs({})
 
-    def get_dynamic_container_volume_path(self, file: str) -> ContainerVolumePath:
-        return self.static.container_volume_path.model_copy(
-            update={
-                "path": (self.static.provider_directory / file).with_suffix(".toml")
-            }
+    def get_dynamic_config_container_volume_path(
+        self, name: str
+    ) -> ContainerVolumePath:
+        return self.static.dynamic_directory_container_volume_path.join(
+            PosixPath(name), ".toml"
         )

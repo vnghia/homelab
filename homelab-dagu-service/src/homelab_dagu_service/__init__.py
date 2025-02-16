@@ -51,18 +51,18 @@ class DaguService(ServiceResourceBase[None]):
     def get_env_container_volume_path(self, name: str) -> ContainerVolumePath:
         return self.get_config_container_volume_path().join(PosixPath(name), ".env")
 
-    def build_env_file(
-        self,
-        resource_name: str,
-        *,
-        opts: ResourceOptions,
-        name: str,
-        envs: Mapping[str, Input[str]],
-    ) -> ConfigFileResource:
-        return ConfigFileModel(
-            container_volume_path=self.get_env_container_volume_path(name), data=envs
-        ).build_resource(
-            resource_name,
-            opts=opts,
-            volume_resource=self.docker_resource_args.volume,
-        )
+    # def build_env_file(
+    #     self,
+    #     resource_name: str,
+    #     *,
+    #     opts: ResourceOptions,
+    #     name: str,
+    #     envs: Mapping[str, Input[str]],
+    # ) -> ConfigFileResource:
+    #     return ConfigFileModel(
+    #         container_volume_path=self.get_env_container_volume_path(name), data=envs
+    #     ).build_resource(
+    #         resource_name,
+    #         opts=opts,
+    #         volume_resource=self.docker_resource_args.volume,
+    #     )
