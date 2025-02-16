@@ -5,7 +5,7 @@ from pulumi import Input
 from pydantic import BaseModel
 
 
-class DaguDagDockerExecutorExecModel(BaseModel):
+class DaguDagStepDockerExecutorExecModel(BaseModel):
     container: str
 
     def to_executor_config(

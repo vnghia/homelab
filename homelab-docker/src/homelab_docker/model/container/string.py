@@ -4,7 +4,7 @@ from .volume import ContainerVolumesConfig
 from .volume_path import ContainerVolumePath
 
 
-class ContainerString(RootModel[bool | PositiveInt | str | ContainerVolumePath]):
+class ContainerString(RootModel[ContainerVolumePath | bool | PositiveInt | str]):
     def to_str(
         self, container_volumes_config: ContainerVolumesConfig | None = None
     ) -> str:

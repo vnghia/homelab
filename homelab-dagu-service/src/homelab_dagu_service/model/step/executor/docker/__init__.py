@@ -4,11 +4,11 @@ from homelab_docker.resource.service import ServiceResourceArgs
 from pulumi import Input
 from pydantic import RootModel
 
-from .exec import DaguDagDockerExecutorExecModel
+from .exec import DaguDagStepDockerExecutorExecModel
 
 
-class DaguDagDockerExecutorModel(RootModel[DaguDagDockerExecutorExecModel]):
-    root: DaguDagDockerExecutorExecModel
+class DaguDagStepDockerExecutorModel(RootModel[DaguDagStepDockerExecutorExecModel]):
+    root: DaguDagStepDockerExecutorExecModel
 
     def to_executor(
         self, service_resource_args: ServiceResourceArgs
