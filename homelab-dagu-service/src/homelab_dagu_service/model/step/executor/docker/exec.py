@@ -1,14 +1,15 @@
+import typing
 from typing import Any
 
-from homelab_docker.resource.service import ServiceResourceArgs
 from pulumi import Input
 from pydantic import BaseModel
+
+if typing.TYPE_CHECKING:
+    from ..... import DaguService
 
 
 class DaguDagStepDockerExecutorExecModel(BaseModel):
     container: str
 
-    def to_executor_config(
-        self, service_resource_args: ServiceResourceArgs
-    ) -> dict[str, Input[Any]]:
-        return {"containerName": service_resource_args.containers[self.container].name}
+    def to_executor_config(self, dagu_service: "DaguService") -> dict[str, Input[Any]]:
+        return {"containerName": dagu_service.args.containers[self.container].name}

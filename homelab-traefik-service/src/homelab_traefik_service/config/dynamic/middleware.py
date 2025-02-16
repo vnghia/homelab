@@ -26,7 +26,7 @@ class TraefikDynamicMiddlewareFullConfig(BaseModel):
         from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
 
         return TraefikDynamicConfigResource(
-            self, resource_name, opts=opts, traefik_service=traefik_service
+            resource_name, self, opts=opts, traefik_service=traefik_service
         )
 
 

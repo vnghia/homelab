@@ -1,3 +1,14 @@
+from homelab_dagu_service import DaguService
+from homelab_dagu_service.model import DaguDagModel
+from homelab_dagu_service.model.step import DaguDagStepModel
+from homelab_dagu_service.model.step.command import DaguDagStepCommandModel
+from homelab_dagu_service.model.step.executor import DaguDagStepExecutorModel
+from homelab_dagu_service.model.step.executor.docker import (
+    DaguDagStepDockerExecutorModel,
+)
+from homelab_dagu_service.model.step.executor.docker.exec import (
+    DaguDagStepDockerExecutorExecModel,
+)
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
 from homelab_docker.model.database.source import DatabaseSourceModel
@@ -64,6 +75,7 @@ class BarmanService(ServiceResourceBase[BarmanConfig]):
         model: ServiceModel[BarmanConfig],
         *,
         opts: ResourceOptions | None,
+        dagu_service: DaguService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
@@ -92,5 +104,31 @@ class BarmanService(ServiceResourceBase[BarmanConfig]):
         self.build_containers(
             options={None: ContainerModelBuildArgs(files=self.configs)}
         )
+
+        self.executor = DaguDagStepExecutorModel(
+            DaguDagStepDockerExecutorModel(
+                DaguDagStepDockerExecutorExecModel(
+                    container=self.add_service_name(None)
+                )
+            )
+        )
+
+        self.check = DaguDagModel(
+            name="check",
+            path="{}-check".format(self.name()),
+            group=self.name(),
+            tags=["backup"],
+            steps=[
+                DaguDagStepModel(
+                    name="check",
+                    command=[
+                        DaguDagStepCommandModel("barman"),
+                        DaguDagStepCommandModel("check"),
+                        DaguDagStepCommandModel("all"),
+                    ],
+                    executor=self.executor,
+                )
+            ],
+        ).build_resource("check", opts=self.child_opts, dagu_service=dagu_service)
 
         self.register_outputs({})

@@ -101,7 +101,9 @@ class ConfigFileResource(Generic[T], FileResource):
         super().__init__(
             resource_name,
             opts=opts,
-            container_volume_path=container_volume_path,
+            container_volume_path=container_volume_path.with_suffix(
+                self.suffix or self.dumper.suffix()
+            ),
             content=Output.json_dumps(data).apply(self.dumps),
             mode=0o444,
             volume_resource=volume_resource,

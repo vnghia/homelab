@@ -22,8 +22,8 @@ class TraefikDynamicConfigResource(
 
     def __init__(
         self,
-        config: TraefikHttpDynamicConfig | TraefikDynamicMiddlewareFullConfig,
         resource_name: str | None,
+        config: TraefikHttpDynamicConfig | TraefikDynamicMiddlewareFullConfig,
         *,
         opts: ResourceOptions | None,
         traefik_service: "TraefikService",

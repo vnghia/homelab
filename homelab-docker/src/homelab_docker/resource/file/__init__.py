@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from pathlib import Path, PosixPath
 from typing import Any, Iterator
 
+import pulumi
 from docker.errors import NotFound
 from docker.models.containers import Container
 from pulumi import Input, Output, ResourceOptions
@@ -17,7 +18,13 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import BaseModel, computed_field
+from pydantic import (
+    BaseModel,
+    ValidationInfo,
+    ValidatorFunctionWrapHandler,
+    computed_field,
+    field_validator,
+)
 
 from homelab_docker.client import DockerClient
 
@@ -39,6 +46,21 @@ class FileProviderProps(BaseModel):
     @property
     def hash(self) -> str:
         return self.data.hash
+
+    @field_validator("data", mode="wrap")
+    @classmethod
+    def ignore_pulumi_unknown(
+        cls, data: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo
+    ) -> FileDataModel:
+        if isinstance(data, pulumi.output.Unknown):
+            pulumi.log.warn(
+                "Pulumi unknown output encountered: {}. Validated data: {}".format(
+                    data, info.data
+                )
+            )
+            return FileDataModel(content="", mode=0o444)
+        else:
+            return handler(data)  # type: ignore[no-any-return]
 
 
 class FileVolumeProxy:
@@ -68,7 +90,7 @@ class FileVolumeProxy:
     def create_file(cls, props: FileProviderProps) -> None:
         def compress_tar() -> io.BytesIO:
             tar_file = io.BytesIO()
-            with tarfile.open(mode="w", fileobj=tar_file) as tar:
+            with tarfile.open(mode="w|", fileobj=tar_file) as tar:
                 with tempfile.NamedTemporaryFile() as file:
                     file.write(props.data.content.encode())
                     file.flush()

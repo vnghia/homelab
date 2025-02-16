@@ -75,6 +75,7 @@ class Homelab:
         self.barman = BarmanService(
             self.docker.services_config.barman,
             opts=None,
+            dagu_service=self.dagu,
             docker_resource_args=self.docker.resource_args,
         )
         self.backup = BackupService(

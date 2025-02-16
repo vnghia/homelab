@@ -1,16 +1,14 @@
 from pathlib import PosixPath
-from typing import Mapping
 
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
-from pulumi import Input, ResourceOptions
+from pulumi import ResourceOptions
 
 
 class DaguService(ServiceResourceBase[None]):
@@ -26,6 +24,9 @@ class DaguService(ServiceResourceBase[None]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
+        self.dagu_directory_container_volume_path = self.model.container.envs[
+            self.DAGS_DIR_ENV
+        ].as_container_volume_path()
         self.build_containers(
             options={
                 None: ContainerModelBuildArgs(
@@ -44,11 +45,8 @@ class DaguService(ServiceResourceBase[None]):
 
         self.register_outputs({})
 
-    def get_config_container_volume_path(self) -> ContainerVolumePath:
-        return self.model.container.envs[self.DAGS_DIR_ENV].as_container_volume_path()
-
-    def get_env_container_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.get_config_container_volume_path().join(PosixPath(name))
+    def get_dag_container_volume_path(self, name: str) -> ContainerVolumePath:
+        return self.dagu_directory_container_volume_path.join(PosixPath(name))
 
     # def build_env_file(
     #     self,

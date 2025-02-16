@@ -1,13 +1,6 @@
 import hashlib
-from typing import Any
 
-import pulumi
-from pydantic import (
-    BaseModel,
-    ValidationInfo,
-    ValidatorFunctionWrapHandler,
-    field_validator,
-)
+from pydantic import BaseModel
 
 from homelab_docker.pydantic.path import RelativePath
 
@@ -28,18 +21,3 @@ class FileDataModel(BaseModel):
     @property
     def hash(self) -> str:
         return hashlib.sha256(self.content.encode()).hexdigest()
-
-    @field_validator("content", mode="wrap")
-    @classmethod
-    def ignore_non_string_input(
-        cls, data: Any, _: ValidatorFunctionWrapHandler, info: ValidationInfo
-    ) -> str:
-        if isinstance(data, str):
-            return data
-        else:
-            pulumi.log.warn(
-                "Non string data encountered: {}. Validated data: {}".format(
-                    data, info.data
-                )
-            )
-            return "Unknown"
