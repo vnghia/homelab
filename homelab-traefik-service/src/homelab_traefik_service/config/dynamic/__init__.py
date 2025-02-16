@@ -1,6 +1,5 @@
 import typing
 
-from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from pulumi import ResourceOptions
 
@@ -31,11 +30,11 @@ class TraefikDynamicConfigResource(
     ):
         self.name = config.name
         super().__init__(
-            ConfigFileModel(
-                traefik_service.get_dynamic_config_container_volume_path(self.name),
-                config.to_data(traefik_service),
-            ),
             resource_name or self.name,
             opts=opts,
+            container_volume_path=traefik_service.get_dynamic_config_container_volume_path(
+                self.name
+            ),
+            data=config.to_data(traefik_service),
             volume_resource=traefik_service.docker_resource_args.volume,
         )

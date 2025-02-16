@@ -1,7 +1,6 @@
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
 from homelab_docker.model.database.source import DatabaseSourceModel
-from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import (
@@ -34,29 +33,27 @@ class BarmanConfigFileResource(
     ):
         config = barman_service_model.config
         super().__init__(
-            ConfigFileModel(
-                container_volume_path=config.get_config_container_volume_path(
-                    resource_name
-                ),
-                data={
-                    resource_name: {
-                        "description": resource_name,
-                        "conninfo": source.to_kv({"sslmode": "disable"}),
-                        "backup_method": "postgres",
-                        "archiver": "off",
-                        "streaming_archiver": "on",
-                        "slot_name": service_name,
-                        "create_slot": "auto",
-                        "minimum_redundancy": str(config.minimum_redundancy),
-                        "retention_policy": config.retention_policy,
-                        "local_staging_path": config.staging_dir.to_container_path(
-                            barman_service_model.container.volumes
-                        ).as_posix(),
-                    }
-                },
-            ),
             resource_name,
             opts=opts,
+            container_volume_path=config.get_config_container_volume_path(
+                resource_name
+            ),
+            data={
+                resource_name: {
+                    "description": resource_name,
+                    "conninfo": source.to_kv({"sslmode": "disable"}),
+                    "backup_method": "postgres",
+                    "archiver": "off",
+                    "streaming_archiver": "on",
+                    "slot_name": service_name,
+                    "create_slot": "auto",
+                    "minimum_redundancy": str(config.minimum_redundancy),
+                    "retention_policy": config.retention_policy,
+                    "local_staging_path": config.staging_dir.to_container_path(
+                        barman_service_model.container.volumes
+                    ).as_posix(),
+                }
+            },
             volume_resource=volume_resource,
         )
 

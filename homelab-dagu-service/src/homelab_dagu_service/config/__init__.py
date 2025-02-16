@@ -2,7 +2,6 @@ import dataclasses
 from pathlib import PosixPath
 from typing import Any, Sequence
 
-from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.pydantic.path import RelativePath
 from homelab_docker.resource.file.config import ConfigFileResource
 from homelab_docker.resource.volume import VolumeResource

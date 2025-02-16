@@ -23,10 +23,11 @@ class DatabaseGlobalResource(ComponentResource):
         FileResource(
             "replication",
             opts=self.child_opts,
-            container_volume_resource_path=ContainerVolumePath(
+            container_volume_path=ContainerVolumePath(
                 volume=PostgresDatabaseModel.DATABASE_ENTRYPOINT_INITDB_VOLUME,
                 path=PosixPath("add-replication-hba-entry.sh"),
-            ).to_resource(volume_resource),
+            ),
             content="#!/bin/bash\nset -eux\necho 'host replication all all scram-sha-256' >> ${PGDATA}/pg_hba.conf\n",
             mode=0o555,
+            volume_resource=volume_resource,
         )

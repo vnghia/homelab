@@ -3,7 +3,6 @@ from typing import Mapping
 
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.file.config import ConfigFileModel
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import ConfigFileResource

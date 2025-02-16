@@ -1,16 +1,15 @@
 import abc
 import configparser
 import io
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Mapping, TypeVar
 
 import tomlkit
 import yaml
 from pulumi import Output, ResourceOptions
 from pydantic import BaseModel, RootModel, TypeAdapter
 
-from homelab_docker.model.file.config import ConfigFileModel
-from homelab_docker.resource.volume import VolumeResource
-
+from ...model.container.volume_path import ContainerVolumePath
+from ..volume import VolumeResource
 from . import FileResource
 
 T = TypeVar("T", bound=BaseModel)
@@ -92,21 +91,20 @@ class ConfigFileResource(Generic[T], FileResource):
 
     def __init__(
         self,
-        model: ConfigFileModel,
         resource_name: str,
         *,
         opts: ResourceOptions | None,
+        container_volume_path: ContainerVolumePath,
+        data: Mapping[str, Any],
         volume_resource: VolumeResource,
     ):
-        self.model = model
-        self.data = self.model.data
         super().__init__(
             resource_name,
             opts=opts,
-            container_volume_resource_path=self.model.container_volume_path.with_suffix(
-                self.suffix or self.dumper.suffix()
-            ).to_resource(volume_resource),
-            content=Output.json_dumps(self.data).apply(self.dumps),
+            container_volume_path=container_volume_path,
+            content=Output.json_dumps(data).apply(self.dumps),
+            mode=0o444,
+            volume_resource=volume_resource,
         )
 
     def validate(self, raw_data: str) -> T:
