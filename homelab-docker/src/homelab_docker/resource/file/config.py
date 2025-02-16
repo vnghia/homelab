@@ -19,7 +19,7 @@ class JsonDefaultModel(RootModel[dict[str, Any]]):
     root: dict[str, Any]
 
 
-class Dumper(Generic[T]):
+class ConfigDumper(Generic[T]):
     @staticmethod
     @abc.abstractmethod
     def dumps(data: T) -> str:
@@ -31,7 +31,7 @@ class Dumper(Generic[T]):
         pass
 
 
-class TomlDumper(Dumper[T]):
+class TomlDumper(ConfigDumper[T]):
     @staticmethod
     def dumps(data: T) -> str:
         return tomlkit.dumps(
@@ -46,7 +46,7 @@ class TomlDumper(Dumper[T]):
         return ".toml"
 
 
-class IniDumper(Dumper[T]):
+class IniDumper(ConfigDumper[T]):
     @staticmethod
     def dumps(data: T) -> str:
         parser = configparser.ConfigParser()
@@ -68,7 +68,7 @@ class IniDumper(Dumper[T]):
         return ".conf"
 
 
-class YamlDumper(Dumper[T]):
+class YamlDumper(ConfigDumper[T]):
     @staticmethod
     def dumps(data: T) -> str:
         return yaml.dump(
@@ -86,7 +86,7 @@ class YamlDumper(Dumper[T]):
 
 class ConfigFileResource(Generic[T], FileResource):
     validator: type[T]
-    dumper: type[Dumper[T]]
+    dumper: type[ConfigDumper[T]]
     suffix: str | None = None
 
     def __init__(
