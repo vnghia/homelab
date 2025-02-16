@@ -286,6 +286,17 @@ config:
             staging-dir:
               volume: barman-home
               path: staging
+            dagu:
+              tasks:
+                check:
+                  command: ["check"]
+                  # Run `barman check` at 2am every day
+                  schedule: "* 2 * * *"
+                backup:
+                  command: ["backup", "--wait"]
+                switch-wal:
+                  command: ["switch-wal", "--force", "--archive"]
+              tags: ["backup"]
           container:
             image:
               build: barman
