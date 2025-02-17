@@ -79,6 +79,8 @@ config:
             backup: false
           restic-cache:
             backup: false
+          restic-profile:
+            backup: false
           postgres-docker-entrypoint-initdb:
             backup: false
       services:
@@ -322,6 +324,7 @@ config:
               internal-bridge: false
             volumes:
               restic-cache: /tmp/restic
+              restic-profile: /etc/resticprofile
             envs:
               RESTIC_CACHE_DIR:
                 volume: restic-cache
@@ -335,15 +338,3 @@ config:
                 path: staging
             restic:
               prefix: backup/restic
-          containers:
-            restic:
-              active: false
-              image: restic
-              network:
-                default-bridge: true
-                internal-bridge: false
-              volumes:
-                restic-cache: /tmp/restic
-              envs:
-                RESTIC_CACHE_DIR:
-                  volume: restic-cache

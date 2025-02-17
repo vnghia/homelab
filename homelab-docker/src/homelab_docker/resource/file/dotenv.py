@@ -17,8 +17,7 @@ class DotenvDumper(ConfigDumper[DotenvModel]):
     def dumps(data: DotenvModel) -> str:
         return (
             "\n".join(
-                '{}="{}"'.replace(k, v.replace('"', '\\"'))
-                for k, v in data.root.items()
+                '{}="{}"'.format(k, v.replace('"', '\\"')) for k, v in data.root.items()
             )
             + "\n"
         )
@@ -32,7 +31,7 @@ class DotenvFileResource(
     ConfigFileResource[DotenvModel], module="docker", name="Dotenv"
 ):
     validator = DotenvModel
-    dumper: type[ConfigDumper[DotenvModel]]
+    dumper = DotenvDumper
 
     def __init__(
         self,

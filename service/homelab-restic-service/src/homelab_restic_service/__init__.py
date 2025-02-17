@@ -3,6 +3,7 @@ import pulumi_random as random
 from homelab_dagu_service import DaguService
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
+from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
@@ -27,16 +28,26 @@ class ResticService(ServiceResourceBase[ResticConfig]):
             "password",
             opts=ResourceOptions.merge(self.child_opts, ResourceOptions(protect=True)),
             length=self.PASSWORD_LENGTH,
-        )
+        ).result
         self.repo = ResticRepoResource(
             "repo",
             self.config,
             opts=self.child_opts,
-            password=self.password.result,
-            image_resource=docker_resource_args.image,
+            password=self.password,
+            image_resource=self.docker_resource_args.image,
+        )
+
+        self.dotenv = DotenvFileResource(
+            self.name(),
+            opts=self.child_opts,
+            container_volume_path=dagu_service.get_dotenv_container_volume_path(
+                self.name()
+            ),
+            data=self.config.to_envs(self.password),
+            volume_resource=self.docker_resource_args.volume,
         )
 
         pulumi.export("restic.repo", self.repo.id)
-        pulumi.export("restic.password", self.password.result)
+        pulumi.export("restic.password", self.password)
 
         self.register_outputs({})
