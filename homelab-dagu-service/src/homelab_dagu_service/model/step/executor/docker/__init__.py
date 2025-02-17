@@ -1,17 +1,30 @@
-import typing
 from typing import Any
 
+from homelab_docker.model.container import ContainerModelBuildArgs
+from homelab_docker.resource.file.dotenv import DotenvFileResource
+from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import Input
 from pydantic import RootModel
 
-from .exec import DaguDagStepDockerExecutorExecModel
-
-if typing.TYPE_CHECKING:
-    from ..... import DaguService
+from .exec import DaguDagStepDockerExecExecutorModel
+from .run import DaguDagStepDockerRunExecutorModel
 
 
-class DaguDagStepDockerExecutorModel(RootModel[DaguDagStepDockerExecutorExecModel]):
-    root: DaguDagStepDockerExecutorExecModel
+class DaguDagStepDockerExecutorModel(
+    RootModel[DaguDagStepDockerRunExecutorModel | DaguDagStepDockerExecExecutorModel]
+):
+    root: DaguDagStepDockerRunExecutorModel | DaguDagStepDockerExecExecutorModel
 
-    def to_executor(self, dagu_service: "DaguService") -> dict[str, Input[Any]]:
-        return {"type": "docker", "config": self.root.to_executor_config(dagu_service)}
+    def to_executor[T](
+        self,
+        main_service: ServiceResourceBase[T],
+        build_args: ContainerModelBuildArgs | None,
+        dotenv: DotenvFileResource | None,
+    ) -> dict[str, Input[Any]]:
+        root = self.root
+        return {
+            "type": "docker",
+            "config": root.to_executor_config(main_service, build_args, dotenv)
+            if isinstance(root, DaguDagStepDockerRunExecutorModel)
+            else root.to_executor_config(main_service),
+        }

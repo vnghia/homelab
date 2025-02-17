@@ -1,21 +1,13 @@
 from pathlib import PosixPath
 
 import pulumi
-import pulumi_docker as docker
 import pulumi_random as random
 from homelab_backup_service.resource.restic.repo import ResticRepoResource
 from homelab_dagu_service import DaguService
-from homelab_dagu_service.config import DaguDagConfig
-from homelab_dagu_service.config.executor.docker import DaguDagDockerExecutorConfig
-from homelab_dagu_service.config.step import DaguDagStepConfig
 from homelab_docker.config.volume import VolumeConfig
-from homelab_docker.model.container.volume import (
-    ContainerVolumeConfig,
-    ContainerVolumesConfig,
-)
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.service import ServiceResourceArgs, ServiceResourceBase
+from homelab_docker.resource.service import ServiceResourceArgs
 from pulumi import ComponentResource, ResourceOptions
 
 from ...config import BackupConfig
@@ -43,7 +35,6 @@ class ResticResource(ComponentResource):
 
         self.config = model.config.restic
         self.container_model = model.containers[self.RESOURCE_NAME]
-        volume_resource = docker_resource_args.volume
 
         self.password = random.RandomPassword(
             "password",
@@ -65,25 +56,25 @@ class ResticResource(ComponentResource):
         #     envs=self.config.to_envs(self.password.result),
         # )
 
-        self.executor = DaguDagDockerExecutorConfig.from_container_model(
-            ServiceResourceBase.add_service_name_cls(service_name, self.RESOURCE_NAME),
-            self.container_model.model_copy(
-                update={
-                    "volumes": ContainerVolumesConfig.model_validate(
-                        self.container_model.volumes.model_dump(by_alias=True)
-                        | {
-                            name: ContainerVolumeConfig(self.RESTIC_MOUNT_PATH / name)
-                            for name, model in volume_config.local.items()
-                            if model.backup
-                        }
-                    ),
-                }
-            ),
-            service_name=service_name,
-            build_args=None,
-            docker_resource_args=docker_resource_args,
-            service_resource_args=service_resource_args,
-        )
+        # self.executor = DaguDagDockerExecutorConfig.from_container_model(
+        #     ServiceResourceBase.add_service_name_cls(service_name, self.RESOURCE_NAME),
+        #     self.container_model.model_copy(
+        #         update={
+        #             "volumes": ContainerVolumesConfig.model_validate(
+        #                 self.container_model.volumes.model_dump(by_alias=True)
+        #                 | {
+        #                     name: ContainerVolumeConfig(self.RESTIC_MOUNT_PATH / name)
+        #                     for name, model in volume_config.local.items()
+        #                     if model.backup
+        #                 }
+        #             ),
+        #         }
+        #     ),
+        #     service_name=service_name,
+        #     build_args=None,
+        #     docker_resource_args=docker_resource_args,
+        #     service_resource_args=service_resource_args,
+        # )
 
         # self.check_name = "{}-check".format(self.RESOURCE_NAME)
         # self.check = DaguDagConfig(

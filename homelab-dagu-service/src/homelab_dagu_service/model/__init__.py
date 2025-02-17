@@ -1,6 +1,9 @@
 import typing
 from typing import Any
 
+from homelab_docker.model.container import ContainerModelBuildArgs
+from homelab_docker.resource.file.dotenv import DotenvFileResource
+from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 from pydantic import BaseModel, PositiveInt
 
@@ -24,7 +27,12 @@ class DaguDagModel(BaseModel):
 
     steps: list[DaguDagStepModel]
 
-    def to_data(self, dagu_service: "DaguService") -> dict[str, Any]:
+    def to_data[T](
+        self,
+        main_service: ServiceResourceBase[T],
+        build_args: ContainerModelBuildArgs | None,
+        dotenv: DotenvFileResource | None,
+    ) -> dict[str, Any]:
         return {
             "name": self.name,
             "group": self.group,
@@ -34,18 +42,30 @@ class DaguDagModel(BaseModel):
             "params": [{key: param} for key, param in self.params.root.items()]
             if self.params
             else None,
-            "steps": [step.to_step(self.params, dagu_service) for step in self.steps],
+            "steps": [
+                step.to_step(self.params, main_service, build_args, dotenv)
+                for step in self.steps
+            ],
         }
 
-    def build_resource(
+    def build_resource[T](
         self,
         resource_name: str,
         *,
         opts: ResourceOptions | None,
+        main_service: ServiceResourceBase[T],
         dagu_service: "DaguService",
+        build_args: ContainerModelBuildArgs | None,
+        dotenv: DotenvFileResource | None,
     ) -> "DaguDagResource":
         from ..resource import DaguDagResource
 
         return DaguDagResource(
-            resource_name, self, opts=opts, dagu_service=dagu_service
+            resource_name,
+            self,
+            opts=opts,
+            main_service=main_service,
+            dagu_service=dagu_service,
+            build_args=build_args,
+            dotenv=dotenv,
         )

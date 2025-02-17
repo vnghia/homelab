@@ -1,6 +1,9 @@
 import typing
 from typing import Any
 
+from homelab_docker.model.container import ContainerModelBuildArgs
+from homelab_docker.resource.file.dotenv import DotenvFileResource
+from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import Input
 from pydantic import BaseModel
 
@@ -8,7 +11,6 @@ from .command import DaguDagStepCommandModel
 from .executor import DaguDagStepExecutorModel
 
 if typing.TYPE_CHECKING:
-    from ... import DaguService
     from ..params import DaguDagParamsModel
 
 
@@ -17,13 +19,17 @@ class DaguDagStepModel(BaseModel):
     command: list[DaguDagStepCommandModel]
     executor: DaguDagStepExecutorModel | None = None
 
-    def to_step(
-        self, params: "DaguDagParamsModel | None", dagu_service: "DaguService"
+    def to_step[T](
+        self,
+        params: "DaguDagParamsModel | None",
+        main_service: ServiceResourceBase[T],
+        build_args: ContainerModelBuildArgs | None,
+        dotenv: DotenvFileResource | None,
     ) -> dict[str, Input[Any]]:
         return {
             "name": self.name,
             "command": " ".join(command.to_str(params) for command in self.command),
-            "executor": self.executor.to_executor(dagu_service)
+            "executor": self.executor.to_executor(main_service, build_args, dotenv)
             if self.executor
             else None,
         }

@@ -123,7 +123,7 @@ class ContainerModel(BaseModel):
 
     def build_labels(
         self,
-        resource_name: str,
+        resource_name: str | None,
         service_name: str,
         build_args: ContainerModelBuildArgs,
         docker_resource_args: "DockerResourceArgs",
@@ -133,10 +133,8 @@ class ContainerModel(BaseModel):
             for k, v in (
                 docker_resource_args.project_labels
                 | self.labels
-                | {
-                    "dev.dozzle.group": service_name,
-                    "dev.dozzle.name": resource_name,
-                }
+                | {"dev.dozzle.group": service_name}
+                | ({"dev.dozzle.name": resource_name} if resource_name else {})
             ).items()
         } | {file.id: file.hash for file in build_args.files}
 

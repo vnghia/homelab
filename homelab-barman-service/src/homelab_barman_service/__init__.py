@@ -11,7 +11,7 @@ from homelab_dagu_service.model.step.executor.docker import (
     DaguDagStepDockerExecutorModel,
 )
 from homelab_dagu_service.model.step.executor.docker.exec import (
-    DaguDagStepDockerExecutorExecModel,
+    DaguDagStepDockerExecExecutorModel,
 )
 from homelab_dagu_service.resource import DaguDagResource
 from homelab_docker.model.container import ContainerModelBuildArgs
@@ -115,9 +115,7 @@ class BarmanService(ServiceResourceBase[BarmanConfig]):
 
         self.executor = DaguDagStepExecutorModel(
             DaguDagStepDockerExecutorModel(
-                DaguDagStepDockerExecutorExecModel(
-                    container=self.add_service_name(None)
-                )
+                DaguDagStepDockerExecExecutorModel(container=None)
             )
         )
 
@@ -144,6 +142,13 @@ class BarmanService(ServiceResourceBase[BarmanConfig]):
                         executor=self.executor,
                     )
                 ],
-            ).build_resource(name, opts=self.child_opts, dagu_service=dagu_service)
+            ).build_resource(
+                name,
+                opts=self.child_opts,
+                main_service=self,
+                dagu_service=dagu_service,
+                build_args=None,
+                dotenv=None,
+            )
 
         self.register_outputs({})

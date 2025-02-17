@@ -21,7 +21,7 @@ class ContainerNetworkModeConfig(BaseModel):
 
     def to_args(
         self,
-        _resource_name: str,
+        _resource_name: str | None,
         _network_resource: "NetworkResource",
         service_resource_args: "ServiceResourceArgs",
     ) -> ContainerNetworkArgs:
@@ -39,7 +39,7 @@ class ContainerCommonNetworkConfig(BaseModel):
 
     def to_args(
         self,
-        resource_name: str,
+        resource_name: str | None,
         network_resource: "NetworkResource",
         _: "ServiceResourceArgs",
     ) -> ContainerNetworkArgs:
@@ -69,7 +69,7 @@ class ContainerNetworkConfig(
 
     def to_args(
         self,
-        resource_name: str,
+        resource_name: str | None,
         network_resource: "NetworkResource",
         service_resource_args: "ServiceResourceArgs",
     ) -> ContainerNetworkArgs:
