@@ -1,11 +1,11 @@
 import pulumi_docker as docker
+from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
-from pydantic import BaseModel
 
 from .platform import Platform, PlatformString
 
 
-class PluginModel(BaseModel):
+class PluginModel(HomelabBaseModel):
     repo: PlatformString
     tag: PlatformString
 

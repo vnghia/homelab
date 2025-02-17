@@ -1,9 +1,10 @@
-from pydantic import BaseModel, field_validator
+from homelab_pydantic import HomelabBaseModel
+from pydantic import field_validator
 
 from ...model.database.postgres import PostgresDatabaseModel
 
 
-class DatabaseConfig(BaseModel):
+class DatabaseConfig(HomelabBaseModel):
     postgres: dict[str | None, PostgresDatabaseModel] = {}
 
     @field_validator("postgres", mode="after")

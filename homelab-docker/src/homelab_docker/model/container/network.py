@@ -2,8 +2,9 @@ import dataclasses
 import typing
 
 import pulumi_docker as docker
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, Output
-from pydantic import BaseModel, Field, RootModel
+from pydantic import Field, RootModel
 
 if typing.TYPE_CHECKING:
     from ...resource.network import NetworkResource
@@ -16,7 +17,7 @@ class ContainerNetworkArgs:
     advanced: list[docker.ContainerNetworksAdvancedArgs]
 
 
-class ContainerNetworkModeConfig(BaseModel):
+class ContainerNetworkModeConfig(HomelabBaseModel):
     container: str
 
     def to_args(
@@ -33,7 +34,7 @@ class ContainerNetworkModeConfig(BaseModel):
         )
 
 
-class ContainerCommonNetworkConfig(BaseModel):
+class ContainerCommonNetworkConfig(HomelabBaseModel):
     default_bridge: bool = Field(False, alias="default-bridge")
     internal_bridge: bool = Field(True, alias="internal-bridge")
 

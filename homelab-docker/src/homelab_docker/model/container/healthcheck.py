@@ -1,8 +1,9 @@
 import pulumi_docker as docker
-from pydantic import BaseModel, PositiveInt
+from homelab_pydantic import HomelabBaseModel
+from pydantic import PositiveInt
 
 
-class ContainerHealthCheckConfig(BaseModel):
+class ContainerHealthCheckConfig(HomelabBaseModel):
     tests: list[str]
     interval: str | None = None
     retries: PositiveInt | None = None

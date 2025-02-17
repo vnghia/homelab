@@ -1,7 +1,8 @@
 import typing
 
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Output
-from pydantic import BaseModel, Field, PositiveInt, RootModel
+from pydantic import Field, PositiveInt, RootModel
 
 from ..database.source import DatabaseSourceModel
 from ..database.source.postgres.url import PostgresDatabaseSourceUrlEnvs
@@ -11,7 +12,7 @@ if typing.TYPE_CHECKING:
     from ...config.database.source import DatabaseSourceConfig
 
 
-class ContainerPostgresDatabaseConfig(BaseModel):
+class ContainerPostgresDatabaseConfig(HomelabBaseModel):
     name: str | None = Field(alias="postgres")
     version: PositiveInt | None = None
     envs: PostgresDatabaseSourceUrlEnvs | None = None

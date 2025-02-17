@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
 dependencies = [
+    "homelab-pydantic",
     "pulumi-docker>=4.6.1",
     "pydantic>=2.10.6",
     "pydantic-extra-types>=2.10.2",
@@ -22,3 +23,6 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = ["types-docker>=7.1.0.20241229", "types-pyyaml>=6.0.12.20241230"]
+
+[tool.ruff]
+extend = "../pyproject.toml"

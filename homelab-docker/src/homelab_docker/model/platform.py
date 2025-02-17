@@ -1,6 +1,7 @@
 from enum import StrEnum, auto
 
-from pydantic import BaseModel, RootModel
+from homelab_pydantic import HomelabBaseModel
+from pydantic import RootModel
 
 
 class Platform(StrEnum):
@@ -8,7 +9,7 @@ class Platform(StrEnum):
     AMD64 = auto()
 
 
-class PlatformFullString(BaseModel):
+class PlatformFullString(HomelabBaseModel):
     template: str
     platform: dict[Platform, str] = {platform: platform.value for platform in Platform}
 

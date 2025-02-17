@@ -1,11 +1,11 @@
 from typing import Any
 
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Input
-from pydantic import BaseModel
 
 
-class DaguDagStepDockerExecExecutorModel(BaseModel):
+class DaguDagStepDockerExecExecutorModel(HomelabBaseModel):
     container: str | None
 
     def to_executor_config[T](

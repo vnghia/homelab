@@ -1,13 +1,14 @@
 import typing
 
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Output
-from pydantic import BaseModel, RootModel
+from pydantic import RootModel
 
 if typing.TYPE_CHECKING:
     from ...resource.image import ImageResource
 
 
-class ContainerImageBuildModelConfig(BaseModel):
+class ContainerImageBuildModelConfig(HomelabBaseModel):
     build: str
 
 

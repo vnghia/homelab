@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
 dependencies = [
+    "homelab-pydantic",
     "homelab-dagu-service",
     "homelab-docker",
     "homelab-integration",
@@ -20,3 +21,6 @@ build-backend = "hatchling.build"
 homelab-integration = { workspace = true }
 homelab-docker = { workspace = true }
 homelab-dagu-service = { workspace = true }
+
+[tool.ruff]
+extend = "../../pyproject.toml"

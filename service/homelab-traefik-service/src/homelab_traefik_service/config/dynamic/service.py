@@ -2,14 +2,15 @@ from enum import StrEnum, auto
 from typing import Any
 
 from homelab_docker.resource.service import ServiceResourceArgs
-from pydantic import AnyUrl, BaseModel, PositiveInt, RootModel
+from homelab_pydantic import HomelabBaseModel
+from pydantic import AnyUrl, PositiveInt, RootModel
 
 
 class TraefikDynamicServiceType(StrEnum):
     HTTP = auto()
 
 
-class TraefikDynamicServiceFullConfig(BaseModel):
+class TraefikDynamicServiceFullConfig(HomelabBaseModel):
     container: str | None = None
     port: PositiveInt
 

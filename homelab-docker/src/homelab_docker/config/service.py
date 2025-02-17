@@ -1,11 +1,11 @@
 from abc import abstractmethod
 
-from pydantic import BaseModel
+from homelab_pydantic import HomelabBaseModel
 
 from ..config.database import DatabaseConfig
 
 
-class ServiceConfigBase(BaseModel):
+class ServiceConfigBase(HomelabBaseModel):
     @property
     @abstractmethod
     def databases(self) -> dict[str, DatabaseConfig]:

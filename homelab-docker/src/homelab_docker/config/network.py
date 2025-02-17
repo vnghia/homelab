@@ -1,16 +1,17 @@
 from typing import ClassVar
 
-from pydantic import BaseModel, Field, field_validator
+from homelab_pydantic import HomelabBaseModel
+from pydantic import field_validator
 
 from ..model.network import BridgeNetworkModel
 
 
-class NetworkConfig(BaseModel):
+class NetworkConfig(HomelabBaseModel):
     DEFAULT_BRIDGE: ClassVar[str] = "default-bridge"
     INTERNAL_BRIDGE: ClassVar[str] = "internal-bridge"
 
-    default_bridge: BridgeNetworkModel = Field(alias="default-bridge")
-    internal_bridge: BridgeNetworkModel = Field(alias="internal-bridge")
+    default_bridge: BridgeNetworkModel
+    internal_bridge: BridgeNetworkModel
 
     @field_validator("internal_bridge", mode="after")
     def set_internal_flag(

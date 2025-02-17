@@ -1,14 +1,9 @@
 [project]
-name = "homelab-network"
+name = "homelab-pydantic"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = [
-    "homelab-pydantic",
-    "pydantic>=2.10.6",
-    "pulumi>=3.148.0",
-    "pulumi-cloudflare>=5.49.0",
-]
+dependencies = ["pydantic>=2.10.6"]
 
 [build-system]
 requires = ["hatchling"]
@@ -16,3 +11,5 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 extend = "../pyproject.toml"
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]

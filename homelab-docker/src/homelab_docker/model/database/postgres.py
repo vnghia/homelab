@@ -1,14 +1,13 @@
 from pathlib import PosixPath
 from typing import ClassVar
 
-from pydantic import BaseModel, PositiveInt
-
-from homelab_docker.pydantic import AbsolutePath
+from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from pydantic import PositiveInt
 
 from ..container.network import ContainerNetworkConfig
 
 
-class PostgresDatabaseModel(BaseModel):
+class PostgresDatabaseModel(HomelabBaseModel):
     DATABASE_TYPE: ClassVar[str] = "postgres"
     DATABASE_VERSION: ClassVar[PositiveInt] = 16
 

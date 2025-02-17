@@ -6,10 +6,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, RootModel
+from homelab_pydantic import HomelabBaseModel
+from pydantic import ConfigDict, Field, RootModel
 
 
-class Certificate(BaseModel):
+class Certificate(HomelabBaseModel):
     cert_file: str | None = Field(None, alias="certFile")
     key_file: str | None = Field(None, alias="keyFile")
     stores: list[str] | None = Field(
@@ -18,7 +19,7 @@ class Certificate(BaseModel):
     )
 
 
-class ClientAuth(BaseModel):
+class ClientAuth(HomelabBaseModel):
     ca_files: list[str] | None = Field(
         None,
         alias="caFiles",
@@ -27,7 +28,7 @@ class ClientAuth(BaseModel):
     client_auth_type: str | None = Field(None, alias="clientAuthType")
 
 
-class Options(BaseModel):
+class Options(HomelabBaseModel):
     min_version: str | None = Field(
         None, alias="minVersion", description="Minimum TLS Version"
     )
@@ -63,7 +64,7 @@ class Options(BaseModel):
     )
 
 
-class DefaultCertificate(BaseModel):
+class DefaultCertificate(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -71,14 +72,14 @@ class DefaultCertificate(BaseModel):
     key_file: str | None = Field(None, alias="keyFile")
 
 
-class Domain(BaseModel):
+class Domain(HomelabBaseModel):
     main: str | None = Field(None, description="Main defines the main domain name.")
     sans: list[str] | None = Field(
         None, description="SANs defines the subject alternative domain names."
     )
 
 
-class DefaultGeneratedCert(BaseModel):
+class DefaultGeneratedCert(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -91,7 +92,7 @@ class DefaultGeneratedCert(BaseModel):
     )
 
 
-class Stores(BaseModel):
+class Stores(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -107,7 +108,7 @@ class Stores(BaseModel):
     )
 
 
-class Tls(BaseModel):
+class Tls(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -122,7 +123,7 @@ class Tls(BaseModel):
     )
 
 
-class Tls1(BaseModel):
+class Tls1(HomelabBaseModel):
     options: str | None = Field(
         None,
         description="The options field enables fine-grained control of the TLS parameters. It refers to a TLS Options and will be applied only if a Host rule is defined.",
@@ -138,7 +139,7 @@ class Tls1(BaseModel):
     )
 
 
-class HttpRouter(BaseModel):
+class HttpRouter(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -175,14 +176,14 @@ class HttpRouter(BaseModel):
     )
 
 
-class Server(BaseModel):
+class Server(HomelabBaseModel):
     url: str = Field(
         ...,
         description="The url option point to a specific instance. Paths in the servers' url have no effect. If you want the requests to be sent to a specific path on your servers, configure your routers to use a corresponding middleware (e.g. the AddPrefix or ReplacePath) middlewares.",
     )
 
 
-class Cookie(BaseModel):
+class Cookie(HomelabBaseModel):
     name: str | None = Field(
         None,
         description="The default cookie name is an abbreviation of a sha1 (ex: _1d52e).",
@@ -194,11 +195,11 @@ class Cookie(BaseModel):
     )
 
 
-class Sticky(BaseModel):
+class Sticky(HomelabBaseModel):
     cookie: Cookie | None = None
 
 
-class HealthCheck(BaseModel):
+class HealthCheck(HomelabBaseModel):
     method: str | None = Field(
         None,
         description="If defined, will apply this Method for the health check request.",
@@ -238,7 +239,7 @@ class HealthCheck(BaseModel):
     )
 
 
-class ResponseForwarding(BaseModel):
+class ResponseForwarding(HomelabBaseModel):
     flush_interval: str | None = Field(
         None,
         alias="flushInterval",
@@ -246,7 +247,7 @@ class ResponseForwarding(BaseModel):
     )
 
 
-class HttpLoadBalancerService(BaseModel):
+class HttpLoadBalancerService(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -277,16 +278,16 @@ class HttpLoadBalancerService(BaseModel):
     servers_transport: str | None = Field(None, alias="serversTransport")
 
 
-class Service(BaseModel):
+class Service(HomelabBaseModel):
     name: str | None = None
     weight: float | None = None
 
 
-class Sticky1(BaseModel):
+class Sticky1(HomelabBaseModel):
     cookie: Cookie | None = None
 
 
-class HttpWeightedService(BaseModel):
+class HttpWeightedService(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -298,12 +299,12 @@ class HttpWeightedService(BaseModel):
     health_check: dict[str, Any] | None = Field(None, alias="healthCheck")
 
 
-class Mirror(BaseModel):
+class Mirror(HomelabBaseModel):
     name: str | None = None
     percent: float | None = Field(None, ge=0.0, le=100.0)
 
 
-class HttpMirroringService(BaseModel):
+class HttpMirroringService(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -317,7 +318,7 @@ class HttpMirroringService(BaseModel):
     health_check: dict[str, Any] | None = Field(None, alias="healthCheck")
 
 
-class HttpFailoverService(BaseModel):
+class HttpFailoverService(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -326,28 +327,28 @@ class HttpFailoverService(BaseModel):
     health_check: dict[str, Any] | None = Field(None, alias="healthCheck")
 
 
-class HttpService1(BaseModel):
+class HttpService1(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     load_balancer: HttpLoadBalancerService | None = Field(None, alias="loadBalancer")
 
 
-class HttpService2(BaseModel):
+class HttpService2(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     weighted: HttpWeightedService | None = None
 
 
-class HttpService3(BaseModel):
+class HttpService3(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     mirroring: HttpMirroringService | None = None
 
 
-class HttpService4(BaseModel):
+class HttpService4(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -361,7 +362,7 @@ class HttpService(RootModel[HttpService1 | HttpService2 | HttpService3 | HttpSer
     )
 
 
-class AddPrefixMiddleware(BaseModel):
+class AddPrefixMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -371,7 +372,7 @@ class AddPrefixMiddleware(BaseModel):
     )
 
 
-class BasicAuthMiddleware(BaseModel):
+class BasicAuthMiddleware(HomelabBaseModel):
     users: list[str] | None = Field(
         None,
         description="The users option is an array of authorized users. Each user will be declared using the `name:hashed-password` format.",
@@ -397,7 +398,7 @@ class BasicAuthMiddleware(BaseModel):
     )
 
 
-class BufferingMiddleware(BaseModel):
+class BufferingMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -428,14 +429,14 @@ class BufferingMiddleware(BaseModel):
     )
 
 
-class ChainMiddleware(BaseModel):
+class ChainMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     middlewares: list[str] | None = Field(None, min_length=1)
 
 
-class CircuitBreakerMiddleware(BaseModel):
+class CircuitBreakerMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -465,7 +466,7 @@ class CircuitBreakerMiddleware(BaseModel):
     )
 
 
-class CompressMiddleware(BaseModel):
+class CompressMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -495,7 +496,7 @@ class CompressMiddleware(BaseModel):
     )
 
 
-class ContentTypeMiddleware(BaseModel):
+class ContentTypeMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -506,7 +507,7 @@ class ContentTypeMiddleware(BaseModel):
     )
 
 
-class DigestAuthMiddleware(BaseModel):
+class DigestAuthMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -535,7 +536,7 @@ class DigestAuthMiddleware(BaseModel):
     )
 
 
-class ErrorsMiddleware(BaseModel):
+class ErrorsMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -552,7 +553,7 @@ class ErrorsMiddleware(BaseModel):
     )
 
 
-class Tls2(BaseModel):
+class Tls2(HomelabBaseModel):
     ca: str | None = Field(
         None,
         description="Certificate Authority used for the secured connection to the authentication server.",
@@ -572,7 +573,7 @@ class Tls2(BaseModel):
     )
 
 
-class ForwardAuthMiddleware(BaseModel):
+class ForwardAuthMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -611,7 +612,7 @@ class ForwardAuthMiddleware(BaseModel):
     )
 
 
-class GrpcWebMiddleware(BaseModel):
+class GrpcWebMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -622,7 +623,7 @@ class GrpcWebMiddleware(BaseModel):
     )
 
 
-class HeadersMiddleware(BaseModel):
+class HeadersMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -793,7 +794,7 @@ class HeadersMiddleware(BaseModel):
     )
 
 
-class IpStrategy(BaseModel):
+class IpStrategy(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -808,7 +809,7 @@ class IpStrategy(BaseModel):
     )
 
 
-class IpWhiteListMiddleware(BaseModel):
+class IpWhiteListMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -820,7 +821,7 @@ class IpWhiteListMiddleware(BaseModel):
     ip_strategy: IpStrategy | None = Field(None, alias="ipStrategy")
 
 
-class IpAllowListMiddleware(BaseModel):
+class IpAllowListMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -837,7 +838,7 @@ class IpAllowListMiddleware(BaseModel):
     ip_strategy: IpStrategy | None = Field(None, alias="ipStrategy")
 
 
-class SourceCriterion(BaseModel):
+class SourceCriterion(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -854,7 +855,7 @@ class SourceCriterion(BaseModel):
     )
 
 
-class InFlightReqMiddleware(BaseModel):
+class InFlightReqMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -865,7 +866,7 @@ class InFlightReqMiddleware(BaseModel):
     source_criterion: SourceCriterion | None = Field(None, alias="sourceCriterion")
 
 
-class Subject(BaseModel):
+class Subject(HomelabBaseModel):
     country: bool | None = Field(
         None,
         description="Set the country option to true to add the country information into the subject.",
@@ -899,7 +900,7 @@ class Subject(BaseModel):
     )
 
 
-class Issuer(BaseModel):
+class Issuer(HomelabBaseModel):
     country: bool | None = Field(
         None,
         description="Set the country option to true to add the country information into the issuer.",
@@ -933,7 +934,7 @@ class Issuer(BaseModel):
     )
 
 
-class Info(BaseModel):
+class Info(HomelabBaseModel):
     not_after: bool | None = Field(
         None,
         alias="notAfter",
@@ -958,7 +959,7 @@ class Info(BaseModel):
     )
 
 
-class PassTLSClientCertMiddleware(BaseModel):
+class PassTLSClientCertMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -976,7 +977,7 @@ class PluginMiddleware(RootModel[dict[str, dict[str, Any]] | None]):
     root: dict[str, dict[str, Any]] | None = None
 
 
-class RateLimitMiddleware(BaseModel):
+class RateLimitMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -995,7 +996,7 @@ class RateLimitMiddleware(BaseModel):
     source_criterion: SourceCriterion | None = Field(None, alias="sourceCriterion")
 
 
-class RedirectRegexMiddleware(BaseModel):
+class RedirectRegexMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1013,7 +1014,7 @@ class RedirectRegexMiddleware(BaseModel):
     )
 
 
-class RedirectSchemeMiddleware(BaseModel):
+class RedirectSchemeMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1030,7 +1031,7 @@ class RedirectSchemeMiddleware(BaseModel):
     )
 
 
-class ReplacePathMiddleware(BaseModel):
+class ReplacePathMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1040,7 +1041,7 @@ class ReplacePathMiddleware(BaseModel):
     )
 
 
-class ReplacePathRegexMiddleware(BaseModel):
+class ReplacePathRegexMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1054,7 +1055,7 @@ class ReplacePathRegexMiddleware(BaseModel):
     )
 
 
-class RetryMiddleware(BaseModel):
+class RetryMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1069,7 +1070,7 @@ class RetryMiddleware(BaseModel):
     )
 
 
-class StripPrefixMiddleware(BaseModel):
+class StripPrefixMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1084,7 +1085,7 @@ class StripPrefixMiddleware(BaseModel):
     )
 
 
-class StripPrefixRegexMiddleware(BaseModel):
+class StripPrefixRegexMiddleware(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1094,35 +1095,35 @@ class StripPrefixRegexMiddleware(BaseModel):
     )
 
 
-class HttpMiddleware1(BaseModel):
+class HttpMiddleware1(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     add_prefix: AddPrefixMiddleware | None = Field(None, alias="addPrefix")
 
 
-class HttpMiddleware2(BaseModel):
+class HttpMiddleware2(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     basic_auth: BasicAuthMiddleware | None = Field(None, alias="basicAuth")
 
 
-class HttpMiddleware3(BaseModel):
+class HttpMiddleware3(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     buffering: BufferingMiddleware | None = None
 
 
-class HttpMiddleware4(BaseModel):
+class HttpMiddleware4(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     chain: ChainMiddleware | None = None
 
 
-class HttpMiddleware5(BaseModel):
+class HttpMiddleware5(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1131,77 +1132,77 @@ class HttpMiddleware5(BaseModel):
     )
 
 
-class HttpMiddleware6(BaseModel):
+class HttpMiddleware6(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     compress: CompressMiddleware | None = None
 
 
-class HttpMiddleware7(BaseModel):
+class HttpMiddleware7(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     content_type: ContentTypeMiddleware | None = Field(None, alias="contentType")
 
 
-class HttpMiddleware8(BaseModel):
+class HttpMiddleware8(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     digest_auth: DigestAuthMiddleware | None = Field(None, alias="digestAuth")
 
 
-class HttpMiddleware9(BaseModel):
+class HttpMiddleware9(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     errors: ErrorsMiddleware | None = None
 
 
-class HttpMiddleware10(BaseModel):
+class HttpMiddleware10(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     forward_auth: ForwardAuthMiddleware | None = Field(None, alias="forwardAuth")
 
 
-class HttpMiddleware11(BaseModel):
+class HttpMiddleware11(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     grpc_web: GrpcWebMiddleware | None = Field(None, alias="grpcWeb")
 
 
-class HttpMiddleware12(BaseModel):
+class HttpMiddleware12(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     headers: HeadersMiddleware | None = None
 
 
-class HttpMiddleware13(BaseModel):
+class HttpMiddleware13(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     ip_white_list: IpWhiteListMiddleware | None = Field(None, alias="ipWhiteList")
 
 
-class HttpMiddleware14(BaseModel):
+class HttpMiddleware14(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     ip_allow_list: IpAllowListMiddleware | None = Field(None, alias="ipAllowList")
 
 
-class HttpMiddleware15(BaseModel):
+class HttpMiddleware15(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     in_flight_req: InFlightReqMiddleware | None = Field(None, alias="inFlightReq")
 
 
-class HttpMiddleware16(BaseModel):
+class HttpMiddleware16(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1210,28 +1211,28 @@ class HttpMiddleware16(BaseModel):
     )
 
 
-class HttpMiddleware17(BaseModel):
+class HttpMiddleware17(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     plugin: PluginMiddleware | None = None
 
 
-class HttpMiddleware18(BaseModel):
+class HttpMiddleware18(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     rate_limit: RateLimitMiddleware | None = Field(None, alias="rateLimit")
 
 
-class HttpMiddleware19(BaseModel):
+class HttpMiddleware19(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     redirect_regex: RedirectRegexMiddleware | None = Field(None, alias="redirectRegex")
 
 
-class HttpMiddleware20(BaseModel):
+class HttpMiddleware20(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1240,14 +1241,14 @@ class HttpMiddleware20(BaseModel):
     )
 
 
-class HttpMiddleware21(BaseModel):
+class HttpMiddleware21(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     replace_path: ReplacePathMiddleware | None = Field(None, alias="replacePath")
 
 
-class HttpMiddleware22(BaseModel):
+class HttpMiddleware22(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1256,21 +1257,21 @@ class HttpMiddleware22(BaseModel):
     )
 
 
-class HttpMiddleware23(BaseModel):
+class HttpMiddleware23(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     retry: RetryMiddleware | None = None
 
 
-class HttpMiddleware24(BaseModel):
+class HttpMiddleware24(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     strip_prefix: StripPrefixMiddleware | None = Field(None, alias="stripPrefix")
 
 
-class HttpMiddleware25(BaseModel):
+class HttpMiddleware25(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1337,7 +1338,7 @@ class HttpMiddleware(
     )
 
 
-class Tls3(BaseModel):
+class Tls3(HomelabBaseModel):
     passthrough: bool | None = Field(
         False,
         description='A TLS router will terminate the TLS connection by default. However, the passthrough option can be specified to set whether the requests should be forwarded "as is", keeping all data encrypted.',
@@ -1357,7 +1358,7 @@ class Tls3(BaseModel):
     )
 
 
-class TcpRouter(BaseModel):
+class TcpRouter(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1391,17 +1392,17 @@ class TcpRouter(BaseModel):
     )
 
 
-class Server1(BaseModel):
+class Server1(HomelabBaseModel):
     address: str = Field(
         ..., description="The address option (IP:Port) point to a specific instance."
     )
 
 
-class ProxyProtocol(BaseModel):
+class ProxyProtocol(HomelabBaseModel):
     version: int | None = None
 
 
-class TcpLoadBalancerService(BaseModel):
+class TcpLoadBalancerService(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1419,7 +1420,7 @@ class TcpLoadBalancerService(BaseModel):
     servers_transport: str | None = Field(None, alias="serversTransport")
 
 
-class Service1(BaseModel):
+class Service1(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1427,21 +1428,21 @@ class Service1(BaseModel):
     weight: float
 
 
-class TcpWeightedService(BaseModel):
+class TcpWeightedService(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     services: list[Service1] = Field(..., min_length=1)
 
 
-class TcpService1(BaseModel):
+class TcpService1(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     load_balancer: TcpLoadBalancerService | None = Field(None, alias="loadBalancer")
 
 
-class TcpService2(BaseModel):
+class TcpService2(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1452,7 +1453,7 @@ class TcpService(RootModel[TcpService1 | TcpService2]):
     root: TcpService1 | TcpService2
 
 
-class UdpRouter(BaseModel):
+class UdpRouter(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1467,11 +1468,11 @@ class UdpRouter(BaseModel):
     )
 
 
-class Server2(BaseModel):
+class Server2(HomelabBaseModel):
     address: str
 
 
-class UdpLoadBalancerService(BaseModel):
+class UdpLoadBalancerService(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1482,21 +1483,21 @@ class UdpLoadBalancerService(BaseModel):
     )
 
 
-class UdpWeightedService(BaseModel):
+class UdpWeightedService(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     services: list[Service1] = Field(..., min_length=1)
 
 
-class UdpService1(BaseModel):
+class UdpService1(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     load_balancer: UdpLoadBalancerService | None = Field(None, alias="loadBalancer")
 
 
-class UdpService2(BaseModel):
+class UdpService2(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1507,7 +1508,7 @@ class UdpService(RootModel[UdpService1 | UdpService2]):
     root: UdpService1 | UdpService2
 
 
-class Http(BaseModel):
+class Http(HomelabBaseModel):
     routers: dict[str, HttpRouter] | None = None
     services: dict[str, HttpService] | None = None
     middlewares: dict[str, HttpMiddleware] | None = Field(
@@ -1516,7 +1517,7 @@ class Http(BaseModel):
     )
 
 
-class Tcp(BaseModel):
+class Tcp(HomelabBaseModel):
     routers: dict[str, TcpRouter] | None = None
     services: dict[str, TcpService] | None = Field(
         None,
@@ -1524,7 +1525,7 @@ class Tcp(BaseModel):
     )
 
 
-class Udp(BaseModel):
+class Udp(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -1538,7 +1539,7 @@ class Udp(BaseModel):
     )
 
 
-class Model(BaseModel):
+class Model(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )

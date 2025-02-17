@@ -4,8 +4,9 @@ from typing import Any
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
-from pydantic import BaseModel, PositiveInt
+from pydantic import PositiveInt
 
 from .params import DaguDagParamsModel
 from .step import DaguDagStepModel
@@ -15,7 +16,7 @@ if typing.TYPE_CHECKING:
     from ..resource import DaguDagResource
 
 
-class DaguDagModel(BaseModel):
+class DaguDagModel(HomelabBaseModel):
     name: str | None = None
     path: str | None = None
 

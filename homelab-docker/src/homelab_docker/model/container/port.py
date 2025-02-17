@@ -2,10 +2,11 @@ from ipaddress import IPv4Address
 from typing import Self
 
 import pulumi_docker as docker
-from pydantic import BaseModel, IPvAnyAddress, PositiveInt
+from homelab_pydantic import HomelabBaseModel
+from pydantic import IPvAnyAddress, PositiveInt
 
 
-class ContainerPortConfig(BaseModel):
+class ContainerPortConfig(HomelabBaseModel):
     internal: PositiveInt
     external: PositiveInt
     ip: IPvAnyAddress

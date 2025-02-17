@@ -1,11 +1,9 @@
 import pulumi_docker as docker
+from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import ResourceOptions
-from pydantic import BaseModel
-
-from homelab_docker.pydantic import AbsolutePath
 
 
-class LocalVolumeModel(BaseModel):
+class LocalVolumeModel(HomelabBaseModel):
     backup: bool = True
 
     bind: AbsolutePath | None = None

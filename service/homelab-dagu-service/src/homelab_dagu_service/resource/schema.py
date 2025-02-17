@@ -7,17 +7,18 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from homelab_pydantic import HomelabBaseModel
+from pydantic import ConfigDict, Field
 
 
-class Smtp(BaseModel):
+class Smtp(HomelabBaseModel):
     host: str | None = Field(None, description="SMTP server hostname")
     port: str | None = Field(None, description="SMTP server port")
     username: str | None = Field(None, description="SMTP authentication username")
     password: str | None = Field(None, description="SMTP authentication password")
 
 
-class MailOn(BaseModel):
+class MailOn(HomelabBaseModel):
     failure: bool | None = Field(
         None, description="Send email notification when DAG fails"
     )
@@ -34,14 +35,14 @@ class Type(str, Enum):
     jq = "jq"
 
 
-class Executor(BaseModel):
+class Executor(HomelabBaseModel):
     type: Type = Field(..., description="Type of executor to use for this step")
     config: dict[str, Any] | None = Field(
         None, description="Executor-specific configuration options"
     )
 
 
-class ContinueOn(BaseModel):
+class ContinueOn(HomelabBaseModel):
     failure: bool | None = Field(
         None, description="Continue DAG execution even if this step fails"
     )
@@ -58,7 +59,7 @@ class ContinueOn(BaseModel):
     )
 
 
-class RetryPolicy(BaseModel):
+class RetryPolicy(HomelabBaseModel):
     limit: int | str | None = Field(
         None, description="Maximum number of retry attempts"
     )
@@ -67,14 +68,14 @@ class RetryPolicy(BaseModel):
     )
 
 
-class RepeatPolicy(BaseModel):
+class RepeatPolicy(HomelabBaseModel):
     repeat: bool | None = Field(None, description="Whether to repeat this step")
     interval_sec: int | None = Field(
         None, alias="intervalSec", description="Interval in seconds between repetitions"
     )
 
 
-class Condition(BaseModel):
+class Condition(HomelabBaseModel):
     condition: str | None = Field(
         None,
         description="Command or expression to evaluate. Can include shell commands, environment variables, or command substitutions with backticks.",
@@ -85,7 +86,7 @@ class Condition(BaseModel):
     )
 
 
-class MailConfig(BaseModel):
+class MailConfig(HomelabBaseModel):
     from_: str | None = Field(
         None,
         alias="from",
@@ -106,7 +107,7 @@ class MailConfig(BaseModel):
     )
 
 
-class Step(BaseModel):
+class Step(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -192,14 +193,14 @@ class Step(BaseModel):
     )
 
 
-class HandlerOn(BaseModel):
+class HandlerOn(HomelabBaseModel):
     failure: Step | None = None
     success: Step | None = None
     cancel: Step | None = None
     exit: Step | None = None
 
 
-class Model(BaseModel):
+class Model(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )

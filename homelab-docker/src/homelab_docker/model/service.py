@@ -1,10 +1,11 @@
-from pydantic import BaseModel, Field
+from homelab_pydantic import HomelabBaseModel
+from pydantic import Field
 
 from ..config.database import DatabaseConfig
 from .container import ContainerModel
 
 
-class ServiceModel[T](BaseModel):
+class ServiceModel[T](HomelabBaseModel):
     raw_config: T | None = Field(None, alias="config")
     databases: DatabaseConfig | None = None
     raw_container: ContainerModel | None = Field(None, alias="container")

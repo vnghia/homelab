@@ -3,10 +3,11 @@ import typing
 from typing import Literal, Mapping, Sequence
 
 import pulumi_docker as docker
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, Output, Resource, ResourceOptions
-from pydantic import BaseModel
 
 from .database import ContainerDatabaseConfig
+from .docker_socket import ContainerDockerSocketConfig
 from .healthcheck import ContainerHealthCheckConfig
 from .image import ContainerImageModelConfig
 from .network import ContainerNetworkConfig
@@ -31,13 +32,14 @@ class ContainerModelBuildArgs:
     files: Sequence["FileResource"] = dataclasses.field(default_factory=list)
 
 
-class ContainerModel(BaseModel):
+class ContainerModel(HomelabBaseModel):
     active: bool = True
     image: ContainerImageModelConfig
 
     capabilities: list[str] | None = None
     command: list[ContainerString] | None = None
     database: ContainerDatabaseConfig | None = None
+    docker_socket: ContainerDockerSocketConfig | None = None
     entrypoint: list[ContainerString] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
     init: bool | None = None
@@ -49,7 +51,7 @@ class ContainerModel(BaseModel):
     sysctls: dict[str, str] | None = None
     tmpfs: list[ContainerTmpfsConfig] | None = None
     user: str | None = None
-    volumes: ContainerVolumesConfig = ContainerVolumesConfig.model_construct()
+    volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
 
     envs: dict[str, ContainerString] = {}
@@ -200,7 +202,9 @@ class ContainerModel(BaseModel):
             restart=self.restart,
             sysctls=self.sysctls,
             user=self.user,
-            volumes=self.volumes.to_args(build_args, docker_resource_args),
+            volumes=self.volumes.to_args(
+                self.docker_socket, build_args, docker_resource_args
+            ),
             wait=self.wait if self.healthcheck else False,
             envs=self.build_envs(
                 build_args, docker_resource_args, service_resource_args

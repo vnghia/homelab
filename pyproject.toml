@@ -27,12 +27,17 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 managed = true
-dev-dependencies = ["mypy>=1.14.1", "datamodel-code-generator[http]>=0.28.1"]
+dev-dependencies = [
+    "mypy>=1.14.1",
+    "datamodel-code-generator[http]>=0.28.1",
+    "ruff>=0.9.6",
+]
 
 [tool.uv.sources]
 homelab-config = { workspace = true }
 homelab-docker = { workspace = true }
 homelab-integration = { workspace = true }
+homelab-pydantic = { workspace = true }
 homelab-network = { workspace = true }
 
 homelab-backup-service = { workspace = true }
@@ -54,3 +59,9 @@ members = ["homelab-*", "service/homelab-*"]
 
 [tool.mypy]
 strict = true
+
+[tool.ruff.lint]
+extend-select = ["TID251"]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"pydantic.BaseModel".msg = "Use homelab_pydantic.HomelabBaseModel instead"

@@ -1,8 +1,8 @@
 import typing
 from typing import Any
 
+from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
-from pydantic import BaseModel
 
 from .middleware import TraefikDynamicMiddlewareConfig
 from .service import TraefikDynamicServiceConfig, TraefikDynamicServiceType
@@ -12,7 +12,7 @@ if typing.TYPE_CHECKING:
     from ..dynamic import TraefikDynamicConfigResource
 
 
-class TraefikHttpDynamicConfig(BaseModel):
+class TraefikHttpDynamicConfig(HomelabBaseModel):
     name: str
     public: bool
     hostname: str | None = None

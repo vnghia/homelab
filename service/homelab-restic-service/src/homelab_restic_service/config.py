@@ -2,12 +2,11 @@ import urllib.parse
 from pathlib import PosixPath
 
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.pydantic import RelativePath
 from homelab_integration.config.s3 import S3IntegrationConfig
-from pydantic import BaseModel, Field
+from homelab_pydantic import HomelabBaseModel, RelativePath
 
 
-class ResticRepoConfig(BaseModel):
+class ResticRepoConfig(HomelabBaseModel):
     bucket: str
     prefix: RelativePath
     s3: S3IntegrationConfig
@@ -31,8 +30,8 @@ class ResticRepoConfig(BaseModel):
         }
 
 
-class ResticConfig(BaseModel):
-    profile_dir: ContainerVolumePath = Field(alias="profile-dir")
+class ResticConfig(HomelabBaseModel):
+    profile_dir: ContainerVolumePath
     repo: ResticRepoConfig
 
     def get_profile_container_volume_path(self, file: str) -> ContainerVolumePath:

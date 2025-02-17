@@ -168,14 +168,14 @@ config:
         dozzle:
           container:
             image: dozzle
+            docker-socket:
+              write: false
             healthcheck:
               tests: ["CMD", "/dozzle", "healthcheck"]
               interval: 3s
               timeout: 30s
               retries: 5
-              start_period: 30s
-            volumes:
-              docker-socket: false
+              start-period: 30s
             envs:
               DOZZLE_BASE: /log
               DOZZLE_ADDR: ":8080"
@@ -241,6 +241,8 @@ config:
           container:
             image: dagu
             command: ["start-all"]
+            docker-socket:
+              write: true
             entrypoint: ["dagu"]
             healthcheck:
               tests:
@@ -257,7 +259,6 @@ config:
             tmpfs:
               - /tmp
             volumes:
-              docker-socket: true
               dagu-home: /config
               dagu-dags:
                 path: /config/dags

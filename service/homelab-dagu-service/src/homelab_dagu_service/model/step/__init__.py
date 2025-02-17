@@ -4,8 +4,8 @@ from typing import Any
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Input
-from pydantic import BaseModel
 
 from .command import DaguDagStepCommandModel
 from .executor import DaguDagStepExecutorModel
@@ -14,7 +14,7 @@ if typing.TYPE_CHECKING:
     from ..params import DaguDagParamsModel
 
 
-class DaguDagStepModel(BaseModel):
+class DaguDagStepModel(HomelabBaseModel):
     name: str
     command: list[DaguDagStepCommandModel]
     executor: DaguDagStepExecutorModel | None = None

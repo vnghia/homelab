@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from homelab_pydantic import HomelabBaseModel
 
 
-class BackupConfig(BaseModel):
+class BackupConfig(HomelabBaseModel):
     pass

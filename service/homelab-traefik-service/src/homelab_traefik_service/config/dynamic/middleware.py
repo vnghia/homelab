@@ -1,15 +1,16 @@
 import typing
 from typing import Any
 
+from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
-from pydantic import BaseModel, RootModel
+from pydantic import RootModel
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
     from ..dynamic import TraefikDynamicConfigResource
 
 
-class TraefikDynamicMiddlewareFullConfig(BaseModel):
+class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
     name: str
     data: Any
 

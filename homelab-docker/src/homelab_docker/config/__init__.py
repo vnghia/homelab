@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from homelab_pydantic import HomelabBaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from ..model.platform import Platform
@@ -9,7 +9,7 @@ from .service import ServiceConfigBase
 from .volume import VolumeConfig
 
 
-class DockerConfig[T: ServiceConfigBase](BaseModel):
+class DockerConfig[T: ServiceConfigBase](HomelabBaseModel):
     platform: Platform
     timezone: TimeZoneName
     network: NetworkConfig

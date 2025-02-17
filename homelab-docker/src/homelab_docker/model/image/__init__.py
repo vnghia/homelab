@@ -1,14 +1,14 @@
 import pulumi_docker as docker
+from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
-from pydantic import BaseModel, Field
 
 from ..platform import Platform, PlatformString
 
 
-class RemoteImageModel(BaseModel):
+class RemoteImageModel(HomelabBaseModel):
     repo: PlatformString
     tag: PlatformString
-    delete_before_replace: bool = Field(False, alias="delete-before-replace")
+    delete_before_replace: bool = False
 
     def build_name(self, platform: Platform) -> str:
         return "{}:{}".format(self.repo.to_str(platform), self.tag.to_str(platform))

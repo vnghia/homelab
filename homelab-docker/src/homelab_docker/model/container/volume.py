@@ -2,19 +2,20 @@ import typing
 from pathlib import PosixPath
 
 import pulumi_docker as docker
+from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import Input, Output
-from pydantic import BaseModel, ConfigDict, Field, RootModel
+from pydantic import RootModel
 
-from homelab_docker.pydantic import AbsolutePath
+from homelab_docker.model.container.docker_socket import ContainerDockerSocketConfig
 
 if typing.TYPE_CHECKING:
     from ...resource import DockerResourceArgs
     from . import ContainerModelBuildArgs
 
 
-class ContainerVolumeFullConfig(BaseModel):
+class ContainerVolumeFullConfig(HomelabBaseModel):
     path: AbsolutePath
-    read_only: bool = Field(False, alias="read-only")
+    read_only: bool = False
 
     def to_container_path(self) -> PosixPath:
         return self.path
@@ -45,17 +46,15 @@ class ContainerVolumeConfig(RootModel[AbsolutePath | ContainerVolumeFullConfig])
             return root.to_args(volume_name)
 
 
-class ContainerVolumesConfig(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    docker_socket: bool | None = Field(None, alias="docker-socket")
-    __pydantic_extra__: dict[str, ContainerVolumeConfig] = Field({}, init=False)  # pyright: ignore [reportIncompatibleVariableOverride]
+class ContainerVolumesConfig(RootModel[dict[str, ContainerVolumeConfig]]):
+    root: dict[str, ContainerVolumeConfig] = {}
 
     def __getitem__(self, key: str) -> ContainerVolumeConfig:
-        return self.__pydantic_extra__[key]
+        return self.root[key]
 
     def to_args(
         self,
+        docker_socket_config: ContainerDockerSocketConfig | None,
         build_args: "ContainerModelBuildArgs",
         docker_resource_args: "DockerResourceArgs",
     ) -> list[docker.ContainerVolumeArgs]:
@@ -74,10 +73,10 @@ class ContainerVolumesConfig(BaseModel):
                     docker.ContainerVolumeArgs(
                         container_path="/var/run/docker.sock",
                         host_path="/var/run/docker.sock",
-                        read_only=not self.docker_socket,
+                        read_only=not docker_socket_config.write,
                     )
                 ]
-                if self.docker_socket is not None
+                if docker_socket_config
                 else []
             )
             + (
@@ -102,6 +101,7 @@ class ContainerVolumesConfig(BaseModel):
 
     def to_binds(
         self,
+        docker_socket_config: ContainerDockerSocketConfig | None,
         build_args: "ContainerModelBuildArgs",
         docker_resource_args: "DockerResourceArgs",
     ) -> list[Output[str]]:
@@ -119,4 +119,9 @@ class ContainerVolumesConfig(BaseModel):
                 else "rw",
             )
 
-        return [to_bind(arg) for arg in self.to_args(build_args, docker_resource_args)]
+        return [
+            to_bind(arg)
+            for arg in self.to_args(
+                docker_socket_config, build_args, docker_resource_args
+            )
+        ]

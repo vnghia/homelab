@@ -1,13 +1,13 @@
 import typing
 
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Output
-from pydantic import BaseModel
 
 if typing.TYPE_CHECKING:
     from .. import DatabaseSourceModel
 
 
-class PostgresDatabaseSourceUrlEnvs(BaseModel):
+class PostgresDatabaseSourceUrlEnvs(HomelabBaseModel):
     env: str
     scheme: str = "postgres"
     query: dict[str, str] = {"sslmode": "disable"}

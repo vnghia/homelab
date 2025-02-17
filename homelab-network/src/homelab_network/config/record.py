@@ -1,8 +1,8 @@
-from pydantic import BaseModel, Field
+from homelab_pydantic import HomelabBaseModel
 
 from homelab_network.model.record import RecordModel
 
 
-class RecordConfig(BaseModel):
-    zone_id: str = Field(alias="zone-id")
+class RecordConfig(HomelabBaseModel):
+    zone_id: str
     records: dict[str, RecordModel]

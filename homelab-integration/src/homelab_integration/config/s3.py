@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field, HttpUrl
+from homelab_pydantic import HomelabBaseModel
+from pydantic import Field, HttpUrl
 
 
-class S3IntegrationConfig(BaseModel):
+class S3IntegrationConfig(HomelabBaseModel):
     key_id: str = Field(alias="key-id")
     access_key: str = Field(alias="access-key")
     region: str

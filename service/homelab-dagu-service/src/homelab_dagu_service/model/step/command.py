@@ -1,12 +1,13 @@
 import typing
 
-from pydantic import BaseModel, RootModel
+from homelab_pydantic import HomelabBaseModel
+from pydantic import RootModel
 
 if typing.TYPE_CHECKING:
     from ..params import DaguDagParamsModel
 
 
-class DaguDagStepCommandParamModel(BaseModel):
+class DaguDagStepCommandParamModel(HomelabBaseModel):
     param: str
 
 

@@ -3,11 +3,11 @@ from typing import Any
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, Output
-from pydantic import BaseModel
 
 
-class DaguDagStepDockerRunExecutorModel(BaseModel):
+class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
     model: str | None
     auto_remove: bool = True
     pull: bool = False
@@ -55,7 +55,7 @@ class DaguDagStepDockerRunExecutorModel(BaseModel):
         )
 
         host_config["binds"] = model.volumes.to_binds(
-            build_args, main_service.docker_resource_args
+            model.docker_socket, build_args, main_service.docker_resource_args
         )
 
         network_args = model.network.to_args(

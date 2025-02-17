@@ -5,12 +5,12 @@ import pulumi
 from homelab_docker.config import DockerConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_network.config.network import NetworkConfig
-from pydantic import BaseModel
+from homelab_pydantic import HomelabBaseModel
 
 from .constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
 
 
-class Config[T: ServiceConfigBase](BaseModel):
+class Config[T: ServiceConfigBase](HomelabBaseModel):
     PROJECT_NAME: ClassVar[str] = PROJECT_NAME
     PROJECT_STACK: ClassVar[str] = PROJECT_STACK
     PROJECT_LABELS: ClassVar[dict[str, str]] = PROJECT_LABELS

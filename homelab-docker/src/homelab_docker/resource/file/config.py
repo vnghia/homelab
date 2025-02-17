@@ -5,8 +5,9 @@ from typing import Any, Generic, Mapping, TypeVar
 
 import tomlkit
 import yaml
+from homelab_pydantic import BaseModel
 from pulumi import Output, ResourceOptions
-from pydantic import BaseModel, RootModel, TypeAdapter
+from pydantic import RootModel, TypeAdapter
 
 from ...model.container.volume_path import ContainerVolumePath
 from ..volume import VolumeResource

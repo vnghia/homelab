@@ -6,17 +6,18 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from homelab_pydantic import HomelabBaseModel
+from pydantic import ConfigDict, Field
 
 
-class CertificateResolverTailscaleStruct(BaseModel):
+class CertificateResolverTailscaleStruct(HomelabBaseModel):
     pass
     model_config = ConfigDict(
         extra="forbid",
     )
 
 
-class AcmeEAB(BaseModel):
+class AcmeEAB(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -24,14 +25,14 @@ class AcmeEAB(BaseModel):
     kid: str | None = None
 
 
-class AcmeHTTPChallenge(BaseModel):
+class AcmeHTTPChallenge(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     entry_point: str | None = Field(None, alias="entryPoint")
 
 
-class AcmePropagation(BaseModel):
+class AcmePropagation(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -41,14 +42,14 @@ class AcmePropagation(BaseModel):
     require_all_rns: bool | None = Field(None, alias="requireAllRNS")
 
 
-class AcmeTLSChallenge(BaseModel):
+class AcmeTLSChallenge(HomelabBaseModel):
     pass
     model_config = ConfigDict(
         extra="forbid",
     )
 
 
-class ConsulcatalogEndpointHTTPAuthConfig(BaseModel):
+class ConsulcatalogEndpointHTTPAuthConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -56,7 +57,7 @@ class ConsulcatalogEndpointHTTPAuthConfig(BaseModel):
     username: str | None = None
 
 
-class CrdProvider(BaseModel):
+class CrdProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -78,7 +79,7 @@ class CrdProvider(BaseModel):
     token: str | None = None
 
 
-class EcsProvider(BaseModel):
+class EcsProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -95,7 +96,7 @@ class EcsProvider(BaseModel):
     secret_access_key: str | None = Field(None, alias="secretAccessKey")
 
 
-class FileProvider(BaseModel):
+class FileProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -107,7 +108,7 @@ class FileProvider(BaseModel):
     watch: bool | None = None
 
 
-class GatewayServiceRef(BaseModel):
+class GatewayServiceRef(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -115,7 +116,7 @@ class GatewayServiceRef(BaseModel):
     namespace: str | None = None
 
 
-class GatewayStatusAddress(BaseModel):
+class GatewayStatusAddress(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -124,7 +125,7 @@ class GatewayStatusAddress(BaseModel):
     service: GatewayServiceRef | None = None
 
 
-class IngressEndpointIngress(BaseModel):
+class IngressEndpointIngress(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -133,7 +134,7 @@ class IngressEndpointIngress(BaseModel):
     published_service: str | None = Field(None, alias="publishedService")
 
 
-class IngressProvider(BaseModel):
+class IngressProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -160,7 +161,7 @@ class IngressProvider(BaseModel):
     token: str | None = None
 
 
-class PingHandler(BaseModel):
+class PingHandler(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -169,7 +170,7 @@ class PingHandler(BaseModel):
     terminating_status_code: int | None = Field(None, alias="terminatingStatusCode")
 
 
-class PluginsSettings(BaseModel):
+class PluginsSettings(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -177,7 +178,7 @@ class PluginsSettings(BaseModel):
     mounts: list[str] | None = None
 
 
-class RedisSentinel(BaseModel):
+class RedisSentinel(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -192,14 +193,14 @@ class RedisSentinel(BaseModel):
     username: str | None = None
 
 
-class RestProvider(BaseModel):
+class RestProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     insecure: bool | None = None
 
 
-class StaticAPI(BaseModel):
+class StaticAPI(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -210,21 +211,21 @@ class StaticAPI(BaseModel):
     insecure: bool | None = None
 
 
-class StaticCore(BaseModel):
+class StaticCore(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     default_rule_syntax: str | None = Field(None, alias="defaultRuleSyntax")
 
 
-class StaticFastProxyConfig(BaseModel):
+class StaticFastProxyConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     debug: bool | None = None
 
 
-class StaticForwardedHeaders(BaseModel):
+class StaticForwardedHeaders(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -233,7 +234,7 @@ class StaticForwardedHeaders(BaseModel):
     trusted_i_ps: list[str] | None = Field(None, alias="trustedIPs")
 
 
-class StaticForwardingTimeouts(BaseModel):
+class StaticForwardingTimeouts(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -242,7 +243,7 @@ class StaticForwardingTimeouts(BaseModel):
     response_header_timeout: str | None = Field(None, alias="responseHeaderTimeout")
 
 
-class StaticGlobal(BaseModel):
+class StaticGlobal(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -250,21 +251,21 @@ class StaticGlobal(BaseModel):
     send_anonymous_usage: bool | None = Field(None, alias="sendAnonymousUsage")
 
 
-class StaticHTTP2Config(BaseModel):
+class StaticHTTP2Config(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     max_concurrent_streams: int | None = Field(None, alias="maxConcurrentStreams")
 
 
-class StaticHTTP3Config(BaseModel):
+class StaticHTTP3Config(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     advertised_port: int | None = Field(None, alias="advertisedPort")
 
 
-class StaticLifeCycle(BaseModel):
+class StaticLifeCycle(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -274,7 +275,7 @@ class StaticLifeCycle(BaseModel):
     )
 
 
-class StaticObservabilityConfig(BaseModel):
+class StaticObservabilityConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -283,7 +284,7 @@ class StaticObservabilityConfig(BaseModel):
     tracing: bool | None = None
 
 
-class StaticProxyProtocol(BaseModel):
+class StaticProxyProtocol(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -291,7 +292,7 @@ class StaticProxyProtocol(BaseModel):
     trusted_i_ps: list[str] | None = Field(None, alias="trustedIPs")
 
 
-class StaticRedirectEntryPoint(BaseModel):
+class StaticRedirectEntryPoint(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -301,14 +302,14 @@ class StaticRedirectEntryPoint(BaseModel):
     to: str | None = None
 
 
-class StaticRedirections(BaseModel):
+class StaticRedirections(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     entry_point: StaticRedirectEntryPoint | None = Field(None, alias="entryPoint")
 
 
-class StaticRespondingTimeouts(BaseModel):
+class StaticRespondingTimeouts(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -317,7 +318,7 @@ class StaticRespondingTimeouts(BaseModel):
     write_timeout: str | None = Field(None, alias="writeTimeout")
 
 
-class StaticSpiffe(BaseModel):
+class StaticSpiffe(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -325,14 +326,14 @@ class StaticSpiffe(BaseModel):
     trust_domain: str | None = Field(None, alias="trustDomain")
 
 
-class StaticSpiffeClientConfig(BaseModel):
+class StaticSpiffeClientConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     workload_api_addr: str | None = Field(None, alias="workloadAPIAddr")
 
 
-class StaticTLSClientConfig(BaseModel):
+class StaticTLSClientConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -341,14 +342,14 @@ class StaticTLSClientConfig(BaseModel):
     spiffe: StaticSpiffe | None = None
 
 
-class StaticUDPConfig(BaseModel):
+class StaticUDPConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     timeout: str | None = None
 
 
-class TypesAccessLogFilters(BaseModel):
+class TypesAccessLogFilters(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -357,7 +358,7 @@ class TypesAccessLogFilters(BaseModel):
     status_codes: list[str] | None = Field(None, alias="statusCodes")
 
 
-class TypesClientTLS(BaseModel):
+class TypesClientTLS(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -367,7 +368,7 @@ class TypesClientTLS(BaseModel):
     key: str | None = None
 
 
-class TypesDatadog(BaseModel):
+class TypesDatadog(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -379,7 +380,7 @@ class TypesDatadog(BaseModel):
     push_interval: str | None = Field(None, alias="pushInterval")
 
 
-class TypesDomain(BaseModel):
+class TypesDomain(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -387,7 +388,7 @@ class TypesDomain(BaseModel):
     sans: list[str] | None = None
 
 
-class TypesFieldHeaders(BaseModel):
+class TypesFieldHeaders(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -395,7 +396,7 @@ class TypesFieldHeaders(BaseModel):
     names: dict[str, str] | None = None
 
 
-class TypesHostResolverConfig(BaseModel):
+class TypesHostResolverConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -404,7 +405,7 @@ class TypesHostResolverConfig(BaseModel):
     resolv_depth: int | None = Field(None, alias="resolvDepth")
 
 
-class TypesInfluxDB2(BaseModel):
+class TypesInfluxDB2(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -419,7 +420,7 @@ class TypesInfluxDB2(BaseModel):
     token: str | None = None
 
 
-class TypesOTelGRPC(BaseModel):
+class TypesOTelGRPC(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -429,7 +430,7 @@ class TypesOTelGRPC(BaseModel):
     tls: TypesClientTLS | None = None
 
 
-class TypesOTelHTTP(BaseModel):
+class TypesOTelHTTP(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -438,7 +439,7 @@ class TypesOTelHTTP(BaseModel):
     tls: TypesClientTLS | None = None
 
 
-class TypesOTelLog(BaseModel):
+class TypesOTelLog(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -448,7 +449,7 @@ class TypesOTelLog(BaseModel):
     service_name: str | None = Field(None, alias="serviceName")
 
 
-class TypesOTelTracing(BaseModel):
+class TypesOTelTracing(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -456,7 +457,7 @@ class TypesOTelTracing(BaseModel):
     http: TypesOTelHTTP | None = None
 
 
-class TypesPrometheus(BaseModel):
+class TypesPrometheus(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -469,7 +470,7 @@ class TypesPrometheus(BaseModel):
     manual_routing: bool | None = Field(None, alias="manualRouting")
 
 
-class TypesStatsd(BaseModel):
+class TypesStatsd(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -481,7 +482,7 @@ class TypesStatsd(BaseModel):
     push_interval: str | None = Field(None, alias="pushInterval")
 
 
-class TypesTraefikLog(BaseModel):
+class TypesTraefikLog(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -496,7 +497,7 @@ class TypesTraefikLog(BaseModel):
     otlp: TypesOTelLog | None = None
 
 
-class ZkProvider(BaseModel):
+class ZkProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -506,7 +507,7 @@ class ZkProvider(BaseModel):
     username: str | None = None
 
 
-class AcmeDNSChallenge(BaseModel):
+class AcmeDNSChallenge(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -519,7 +520,7 @@ class AcmeDNSChallenge(BaseModel):
     resolvers: list[str] | None = None
 
 
-class ConsulProviderBuilder(BaseModel):
+class ConsulProviderBuilder(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -530,7 +531,7 @@ class ConsulProviderBuilder(BaseModel):
     token: str | None = None
 
 
-class ConsulcatalogEndpointConfig(BaseModel):
+class ConsulcatalogEndpointConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -545,7 +546,7 @@ class ConsulcatalogEndpointConfig(BaseModel):
     token: str | None = None
 
 
-class ConsulcatalogProviderBuilder(BaseModel):
+class ConsulcatalogProviderBuilder(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -566,7 +567,7 @@ class ConsulcatalogProviderBuilder(BaseModel):
     watch: bool | None = None
 
 
-class DockerProvider(BaseModel):
+class DockerProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -584,7 +585,7 @@ class DockerProvider(BaseModel):
     watch: bool | None = None
 
 
-class DockerSwarmProvider(BaseModel):
+class DockerSwarmProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -603,7 +604,7 @@ class DockerSwarmProvider(BaseModel):
     watch: bool | None = None
 
 
-class EtcdProvider(BaseModel):
+class EtcdProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -614,7 +615,7 @@ class EtcdProvider(BaseModel):
     username: str | None = None
 
 
-class GatewayProvider(BaseModel):
+class GatewayProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -629,7 +630,7 @@ class GatewayProvider(BaseModel):
     token: str | None = None
 
 
-class HttpProvider(BaseModel):
+class HttpProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -640,7 +641,7 @@ class HttpProvider(BaseModel):
     tls: TypesClientTLS | None = None
 
 
-class NomadEndpointConfig(BaseModel):
+class NomadEndpointConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -651,7 +652,7 @@ class NomadEndpointConfig(BaseModel):
     token: str | None = None
 
 
-class NomadProviderBuilder(BaseModel):
+class NomadProviderBuilder(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -668,7 +669,7 @@ class NomadProviderBuilder(BaseModel):
     watch: bool | None = None
 
 
-class PluginsDescriptor(BaseModel):
+class PluginsDescriptor(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -677,7 +678,7 @@ class PluginsDescriptor(BaseModel):
     version: str | None = None
 
 
-class PluginsLocalDescriptor(BaseModel):
+class PluginsLocalDescriptor(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -685,7 +686,7 @@ class PluginsLocalDescriptor(BaseModel):
     settings: PluginsSettings | None = None
 
 
-class RedisProvider(BaseModel):
+class RedisProvider(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -698,7 +699,7 @@ class RedisProvider(BaseModel):
     username: str | None = None
 
 
-class StaticEntryPointsTransport(BaseModel):
+class StaticEntryPointsTransport(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -710,7 +711,7 @@ class StaticEntryPointsTransport(BaseModel):
     )
 
 
-class StaticExperimental(BaseModel):
+class StaticExperimental(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -724,7 +725,7 @@ class StaticExperimental(BaseModel):
     plugins: dict[str, PluginsDescriptor] | None = None
 
 
-class StaticProviders(BaseModel):
+class StaticProviders(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -751,7 +752,7 @@ class StaticProviders(BaseModel):
     zoo_keeper: ZkProvider | None = Field(None, alias="zooKeeper")
 
 
-class StaticServersTransport(BaseModel):
+class StaticServersTransport(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -764,7 +765,7 @@ class StaticServersTransport(BaseModel):
     spiffe: StaticSpiffe | None = None
 
 
-class StaticTCPServersTransport(BaseModel):
+class StaticTCPServersTransport(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -774,7 +775,7 @@ class StaticTCPServersTransport(BaseModel):
     tls: StaticTLSClientConfig | None = None
 
 
-class StaticTLSConfig(BaseModel):
+class StaticTLSConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -783,7 +784,7 @@ class StaticTLSConfig(BaseModel):
     options: str | None = None
 
 
-class StaticTracing(BaseModel):
+class StaticTracing(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -802,7 +803,7 @@ class StaticTracing(BaseModel):
     service_name: str | None = Field(None, alias="serviceName")
 
 
-class TypesAccessLogFields(BaseModel):
+class TypesAccessLogFields(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -811,7 +812,7 @@ class TypesAccessLogFields(BaseModel):
     names: dict[str, str] | None = None
 
 
-class TypesOTLP(BaseModel):
+class TypesOTLP(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -825,7 +826,7 @@ class TypesOTLP(BaseModel):
     service_name: str | None = Field(None, alias="serviceName")
 
 
-class AcmeConfiguration(BaseModel):
+class AcmeConfiguration(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -844,7 +845,7 @@ class AcmeConfiguration(BaseModel):
     tls_challenge: AcmeTLSChallenge | None = Field(None, alias="tlsChallenge")
 
 
-class StaticCertificateResolver(BaseModel):
+class StaticCertificateResolver(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -852,7 +853,7 @@ class StaticCertificateResolver(BaseModel):
     tailscale: CertificateResolverTailscaleStruct | None = None
 
 
-class StaticHTTPConfig(BaseModel):
+class StaticHTTPConfig(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -863,7 +864,7 @@ class StaticHTTPConfig(BaseModel):
     tls: StaticTLSConfig | None = None
 
 
-class TypesAccessLog(BaseModel):
+class TypesAccessLog(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -876,7 +877,7 @@ class TypesAccessLog(BaseModel):
     otlp: TypesOTelLog | None = None
 
 
-class TypesMetrics(BaseModel):
+class TypesMetrics(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -888,7 +889,7 @@ class TypesMetrics(BaseModel):
     stats_d: TypesStatsd | None = Field(None, alias="statsD")
 
 
-class StaticEntryPoint(BaseModel):
+class StaticEntryPoint(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -908,7 +909,7 @@ class StaticEntryPoint(BaseModel):
     udp: StaticUDPConfig | None = None
 
 
-class TraefikV3StaticConfiguration(BaseModel):
+class TraefikV3StaticConfiguration(HomelabBaseModel):
     access_log: TypesAccessLog | None = Field(None, alias="accessLog")
     api: StaticAPI | None = None
     certificates_resolvers: dict[str, StaticCertificateResolver] | None = Field(

@@ -1,10 +1,9 @@
 import pulumi_docker as docker
-from pydantic import BaseModel, PositiveInt, RootModel
+from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from pydantic import PositiveInt, RootModel
 
-from homelab_docker.pydantic import AbsolutePath
 
-
-class ContainerTmpfsFullConfig(BaseModel):
+class ContainerTmpfsFullConfig(HomelabBaseModel):
     path: AbsolutePath
     size: PositiveInt | None = None
 

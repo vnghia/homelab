@@ -1,10 +1,11 @@
-from pydantic import BaseModel, PositiveInt, field_validator
+from homelab_pydantic import HomelabBaseModel
+from pydantic import PositiveInt, field_validator
 
 from ..model.image import RemoteImageModel
 from ..model.image.build import BuildImageModel
 
 
-class ImageConfig(BaseModel):
+class ImageConfig(HomelabBaseModel):
     remote: dict[str, RemoteImageModel]
     build: dict[str, BuildImageModel]
     postgres: dict[str | None, dict[PositiveInt, RemoteImageModel]]

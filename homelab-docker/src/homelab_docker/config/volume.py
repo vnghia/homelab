@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from homelab_pydantic import HomelabBaseModel
 
 from ..model.volume import LocalVolumeModel
 
 
-class VolumeConfig(BaseModel):
+class VolumeConfig(HomelabBaseModel):
     local: dict[str, LocalVolumeModel]

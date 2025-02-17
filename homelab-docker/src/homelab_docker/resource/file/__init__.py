@@ -8,6 +8,7 @@ from typing import Any, Iterator
 import pulumi
 from docker.errors import NotFound
 from docker.models.containers import Container
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
     ConfigureRequest,
@@ -19,11 +20,11 @@ from pulumi.dynamic import (
     UpdateResult,
 )
 from pydantic import (
-    BaseModel,
     ValidationInfo,
     ValidatorFunctionWrapHandler,
     computed_field,
     field_validator,
+    model_validator,
 )
 
 from homelab_docker.client import DockerClient
@@ -34,7 +35,7 @@ from ...model.file import FileDataModel, FileLocationModel
 from ..volume import VolumeResource
 
 
-class FileProviderProps(BaseModel):
+class FileProviderProps(HomelabBaseModel):
     location: FileLocationModel
     data: FileDataModel
 
@@ -61,6 +62,13 @@ class FileProviderProps(BaseModel):
             return FileDataModel(content="", mode=0o444)
         else:
             return handler(data)  # type: ignore[no-any-return]
+
+    @model_validator(mode="before")
+    @classmethod
+    def ignore_hash(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data.pop("hash", None)
+        return data
 
 
 class FileVolumeProxy:

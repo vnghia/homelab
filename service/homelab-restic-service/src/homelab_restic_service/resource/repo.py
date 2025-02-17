@@ -3,14 +3,14 @@ from typing import Any, ClassVar
 from docker.errors import ContainerError
 from homelab_docker.client import DockerClient
 from homelab_docker.resource.image import ImageResource
+from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider
-from pydantic import BaseModel
 
 from ..config import ResticRepoConfig
 
 
-class ResticRepoProviderProps(BaseModel):
+class ResticRepoProviderProps(HomelabBaseModel):
     RESTIC_IMAGE_KEY: ClassVar[str] = "resticprofile"
 
     image: str

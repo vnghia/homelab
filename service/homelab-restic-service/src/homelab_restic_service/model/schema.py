@@ -7,7 +7,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Annotated, Any
 
-from pydantic import AnyUrl, BaseModel, ConfigDict, Field, RootModel, StringConstraints
+from homelab_pydantic import HomelabBaseModel
+from pydantic import AnyUrl, ConfigDict, Field, RootModel, StringConstraints
 
 
 class CommandOutput(str, Enum):
@@ -44,7 +45,7 @@ class Priority1(str, Enum):
     standard = "standard"
 
 
-class Mixins(BaseModel):
+class Mixins(HomelabBaseModel):
     model_config = ConfigDict(
         extra="allow",
     )
@@ -2027,7 +2028,7 @@ class IdB62c2f035a52f9e65b5a80c3895ee6bb(
     ]
 
 
-class IdB88443d3eba9c9dfad608c2a71614d0d(BaseModel):
+class IdB88443d3eba9c9dfad608c2a71614d0d(HomelabBaseModel):
     model_config = ConfigDict(
         extra="allow",
     )
@@ -3091,7 +3092,7 @@ class Id94210984cb45797ad8ac9de467d98489(
     ]
 
 
-class FieldHeaders(BaseModel):
+class FieldHeaders(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -3223,7 +3224,7 @@ class HeadersPrepend1(RootModel[list[HeadersPrepend1Item]]):
     ]
 
 
-class IdAc68e24112f7466d1d5141d04c491c8c(BaseModel):
+class IdAc68e24112f7466d1d5141d04c491c8c(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -3312,7 +3313,7 @@ class IdBc7a8ba8f54f45b25490b5dae9d7d3e2(
     ]
 
 
-class IdDda514fa7d7b07fd5cd5e88b788715d11(BaseModel):
+class IdDda514fa7d7b07fd5cd5e88b788715d11(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -3536,7 +3537,7 @@ class IdDda514fa7d7b07fd5cd5e88b788715d1(
     ]
 
 
-class IdE61f589a6ce6dba6d1329fb1b9c029dd(BaseModel):
+class IdE61f589a6ce6dba6d1329fb1b9c029dd(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -3619,7 +3620,7 @@ class Id169a8a109f5202e4e730ddb575c1282c(
     ]
 
 
-class Id3c76d5de2387afe5a7919aad456046441(BaseModel):
+class Id3c76d5de2387afe5a7919aad456046441(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -3897,7 +3898,7 @@ class IdB03ccdd7899cd5486625a0e514a03d2c(
     ]
 
 
-class ScheduleDefaults(BaseModel):
+class ScheduleDefaults(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -4012,7 +4013,7 @@ class ScheduleDefaults(BaseModel):
     use: Id169a8a109f5202e4e730ddb575c1282c | None = None
 
 
-class Global(BaseModel):
+class Global(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -4279,7 +4280,7 @@ class Global(BaseModel):
     use: Id169a8a109f5202e4e730ddb575c1282c | None = None
 
 
-class Groups(BaseModel):
+class Groups(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -4290,7 +4291,7 @@ class Profiles(Groups):
     pass
 
 
-class Model(BaseModel):
+class Model(HomelabBaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )

@@ -1,14 +1,12 @@
 from pathlib import PosixPath
 from typing import Self
 
-from pydantic import BaseModel
-
-from homelab_docker.pydantic import RelativePath
+from homelab_pydantic import HomelabBaseModel, RelativePath
 
 from .volume import ContainerVolumesConfig
 
 
-class ContainerVolumePath(BaseModel):
+class ContainerVolumePath(HomelabBaseModel):
     volume: str
     path: RelativePath = PosixPath("")
 
