@@ -30,7 +30,7 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
 
         self.static = TraefikStaticConfigResource(
             opts=self.child_opts,
-            traefik_service_model=self.model,
+            traefik_service=self,
             tailscale_service=tailscale_service,
         )
 

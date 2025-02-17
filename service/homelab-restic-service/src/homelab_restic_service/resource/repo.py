@@ -7,14 +7,14 @@ from pulumi import Input, ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider
 from pydantic import BaseModel
 
-from ..config import ResticConfig
+from ..config import ResticRepoConfig
 
 
 class ResticRepoProviderProps(BaseModel):
     RESTIC_IMAGE_KEY: ClassVar[str] = "resticprofile"
 
     image: str
-    restic: ResticConfig
+    restic: ResticRepoConfig
 
     password: str
 
@@ -78,7 +78,7 @@ class ResticRepoResource(Resource, module="restic", name="Repo"):
     def __init__(
         self,
         resource_name: str,
-        config: ResticConfig,
+        config: ResticRepoConfig,
         *,
         opts: ResourceOptions | None,
         password: Input[str],

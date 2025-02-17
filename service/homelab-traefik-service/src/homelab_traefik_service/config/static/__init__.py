@@ -1,11 +1,14 @@
+import typing
+
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
-from .. import TraefikConfig
 from . import schema
+
+if typing.TYPE_CHECKING:
+    from ... import TraefikService
 
 
 class TraefikStaticConfigResource(
@@ -23,9 +26,10 @@ class TraefikStaticConfigResource(
         self,
         *,
         opts: ResourceOptions | None,
-        traefik_service_model: ServiceModel[TraefikConfig],
+        traefik_service: "TraefikService",
         tailscale_service: TailscaleService,
     ) -> None:
+        traefik_service_model = traefik_service.model
         container_volumes_config = traefik_service_model.container.volumes
         traefik_config = traefik_service_model.config
 
@@ -111,5 +115,5 @@ class TraefikStaticConfigResource(
                     },
                 },
             },
-            volume_resource=tailscale_service.docker_resource_args.volume,
+            volume_resource=traefik_service.docker_resource_args.volume,
         )

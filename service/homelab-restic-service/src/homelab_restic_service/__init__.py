@@ -23,6 +23,8 @@ from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
+from homelab_restic_service.resource.profile.global_ import ResticGlobalProfileResource
+
 from .config import ResticConfig
 from .resource.repo import ResticRepoResource
 
@@ -30,8 +32,9 @@ from .resource.repo import ResticRepoResource
 class ResticService(ServiceResourceBase[ResticConfig]):
     PASSWORD_LENGTH = 64
 
+    RESTIC_MOUNT_PREFIX = PosixPath("/")
+
     PROFILE_NAME_KEY = "PROFILE"
-    RESTIC_MOUNT_PATH = PosixPath("/")
 
     def __init__(
         self,
@@ -51,7 +54,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
         ).result
         self.repo = ResticRepoResource(
             "repo",
-            self.config,
+            self.config.repo,
             opts=self.child_opts,
             password=self.password,
             image_resource=self.docker_resource_args.image,
@@ -63,12 +66,12 @@ class ResticService(ServiceResourceBase[ResticConfig]):
             container_volume_path=dagu_service.get_dotenv_container_volume_path(
                 self.name()
             ),
-            envs=self.config.to_envs(self.password),
+            envs=self.config.repo.to_envs(self.password),
             volume_resource=self.docker_resource_args.volume,
         )
 
         self.backup_volumes = {
-            name: ContainerVolumeConfig(self.RESTIC_MOUNT_PATH / self.name() / name)
+            name: ContainerVolumeConfig(self.RESTIC_MOUNT_PREFIX / self.name() / name)
             for name, model in volume_config.local.items()
             if model.backup
         }
@@ -84,6 +87,10 @@ class ResticService(ServiceResourceBase[ResticConfig]):
                     model=None, entrypoint=["/usr/bin/restic"]
                 )
             )
+        )
+
+        self.global_ = ResticGlobalProfileResource(
+            "global", opts=self.child_opts, restic_service=self
         )
 
         name = "check"

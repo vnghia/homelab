@@ -38,9 +38,6 @@ config:
             repo: bitnami/minideb
             tag: "bookworm"
             delete-before-replace: true
-          restic:
-            repo: restic/restic
-            tag: "0.17.3"
           resticprofile:
             repo: creativeprojects/resticprofile
             tag: "0.29.1"
@@ -315,10 +312,13 @@ config:
                 read-only: true
         restic:
           config:
-            prefix: backup/restic
+            profile-dir:
+              volume: restic-profile
+            repo:
+              prefix: backup/restic
           container:
             active: false
-            image: restic
+            image: resticprofile
             network:
               default-bridge: true
               internal-bridge: false
@@ -332,11 +332,3 @@ config:
                 volume: restic-cache
         backup:
           config:
-            barman:
-              config-dir:
-                volume: barman-config
-              staging-dir:
-                volume: barman-home
-                path: staging
-            restic:
-              prefix: backup/restic
