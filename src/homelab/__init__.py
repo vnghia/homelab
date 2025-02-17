@@ -6,6 +6,7 @@ from homelab_docker.config import DockerConfig
 from homelab_docker.resource.database.global_ import DatabaseGlobalResource
 from homelab_dozzle_service import DozzleService
 from homelab_network.resource.network import NetworkResource
+from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 
@@ -74,6 +75,12 @@ class Homelab:
         # It should always be the last service
         self.barman = BarmanService(
             self.docker.services_config.barman,
+            opts=None,
+            dagu_service=self.dagu,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.restic = ResticService(
+            self.docker.services_config.restic,
             opts=None,
             dagu_service=self.dagu,
             docker_resource_args=self.docker.resource_args,

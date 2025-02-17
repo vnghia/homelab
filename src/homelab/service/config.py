@@ -3,6 +3,7 @@ from homelab_barman_service.config import BarmanConfig
 from homelab_docker.config.database import DatabaseConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceModel
+from homelab_restic_service.config import ResticConfig
 from homelab_traefik_service.config import TraefikConfig
 
 from .nghe.config import NgheConfig
@@ -16,6 +17,7 @@ class ServiceConfig(ServiceConfigBase):
     memos: ServiceModel[None]
     dagu: ServiceModel[None]
     barman: ServiceModel[BarmanConfig]
+    restic: ServiceModel[ResticConfig]
     backup: ServiceModel[BackupConfig]
 
     @property

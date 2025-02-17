@@ -14,6 +14,7 @@ dependencies = [
     "homelab-dagu-service",
     "homelab-backup-service",
     "homelab-barman-service",
+    "homelab-restic-service",
     "pulumi>=3.148.0",
 ]
 readme = "README.md"
@@ -38,6 +39,7 @@ homelab-backup-service = { workspace = true }
 homelab-barman-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-dozzle-service = { workspace = true }
+homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }
 homelab-traefik-service = { workspace = true }
 

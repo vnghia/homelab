@@ -344,6 +344,7 @@ dependencies = [
     { name = "homelab-dozzle-service" },
     { name = "homelab-integration" },
     { name = "homelab-network" },
+    { name = "homelab-restic-service" },
     { name = "homelab-tailscale-service" },
     { name = "homelab-traefik-service" },
     { name = "pulumi" },
@@ -365,6 +366,7 @@ requires-dist = [
     { name = "homelab-dozzle-service", editable = "service/homelab-dozzle-service" },
     { name = "homelab-integration", editable = "homelab-integration" },
     { name = "homelab-network", editable = "homelab-network" },
+    { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
     { name = "pulumi", specifier = ">=3.148.0" },
@@ -550,6 +552,24 @@ requires-dist = [
 name = "homelab-restic-service"
 version = "0.1.0"
 source = { editable = "service/homelab-restic-service" }
+dependencies = [
+    { name = "homelab-dagu-service" },
+    { name = "homelab-docker" },
+    { name = "homelab-integration" },
+    { name = "pulumi" },
+    { name = "pulumi-random" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-integration", editable = "homelab-integration" },
+    { name = "pulumi", specifier = ">=3.150.0" },
+    { name = "pulumi-random", specifier = ">=4.17.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
 
 [[package]]
 name = "homelab-tailscale-service"

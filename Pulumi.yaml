@@ -41,6 +41,9 @@ config:
           restic:
             repo: restic/restic
             tag: "0.17.3"
+          resticprofile:
+            repo: creativeprojects/resticprofile
+            tag: "0.29.1"
         build:
           barman:
             context:
@@ -308,6 +311,20 @@ config:
               barman-config:
                 path: /etc/barman.d
                 read-only: true
+        restic:
+          config:
+            prefix: backup/restic
+          container:
+            active: false
+            image: restic
+            network:
+              default-bridge: true
+              internal-bridge: false
+            volumes:
+              restic-cache: /tmp/restic
+            envs:
+              RESTIC_CACHE_DIR:
+                volume: restic-cache
         backup:
           config:
             barman:
