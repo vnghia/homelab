@@ -13,7 +13,7 @@ from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
 from .string import ContainerString
 from .tmpfs import ContainerTmpfsConfig
-from .volume import ContainerVolumesConfig
+from .volume import ContainerVolumeConfig, ContainerVolumesConfig
 
 if typing.TYPE_CHECKING:
     from ...resource import DockerResourceArgs
@@ -25,6 +25,9 @@ if typing.TYPE_CHECKING:
 class ContainerModelBuildArgs:
     opts: ResourceOptions | None = None
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
+    volumes: Mapping[str, ContainerVolumeConfig] = dataclasses.field(
+        default_factory=dict
+    )
     files: Sequence["FileResource"] = dataclasses.field(default_factory=list)
 
 
@@ -197,7 +200,7 @@ class ContainerModel(BaseModel):
             restart=self.restart,
             sysctls=self.sysctls,
             user=self.user,
-            volumes=self.volumes.to_args(volume_resource=docker_resource_args.volume),
+            volumes=self.volumes.to_args(build_args, docker_resource_args),
             wait=self.wait if self.healthcheck else False,
             envs=self.build_envs(
                 build_args, docker_resource_args, service_resource_args

@@ -8,7 +8,8 @@ from pydantic import BaseModel, ConfigDict, Field, RootModel
 from homelab_docker.pydantic import AbsolutePath
 
 if typing.TYPE_CHECKING:
-    from ...resource.volume import VolumeResource
+    from ...resource import DockerResourceArgs
+    from . import ContainerModelBuildArgs
 
 
 class ContainerVolumeFullConfig(BaseModel):
@@ -54,8 +55,11 @@ class ContainerVolumesConfig(BaseModel):
         return self.__pydantic_extra__[key]
 
     def to_args(
-        self, volume_resource: "VolumeResource"
+        self,
+        build_args: "ContainerModelBuildArgs",
+        docker_resource_args: "DockerResourceArgs",
     ) -> list[docker.ContainerVolumeArgs]:
+        volume_resource = docker_resource_args.volume
         return (
             (
                 [
@@ -76,6 +80,12 @@ class ContainerVolumesConfig(BaseModel):
                 if self.docker_socket is not None
                 else []
             )
+            + (
+                [
+                    volume.to_args(volume_name=volume_resource[name].name)
+                    for name, volume in build_args.volumes.items()
+                ]
+            )
             + [
                 docker.ContainerVolumeArgs(
                     container_path="/etc/localtime",
@@ -90,7 +100,11 @@ class ContainerVolumesConfig(BaseModel):
             ]
         )
 
-    def to_binds(self, volume_resource: "VolumeResource") -> list[Output[str]]:
+    def to_binds(
+        self,
+        build_args: "ContainerModelBuildArgs",
+        docker_resource_args: "DockerResourceArgs",
+    ) -> list[Output[str]]:
         def to_bind(arg: docker.ContainerVolumeArgs) -> Output[str]:
             return Output.format(
                 "{volume_or_path}:{container_path}:{read_write}",
@@ -105,4 +119,4 @@ class ContainerVolumesConfig(BaseModel):
                 else "rw",
             )
 
-        return [to_bind(arg) for arg in self.to_args(volume_resource)]
+        return [to_bind(arg) for arg in self.to_args(build_args, docker_resource_args)]

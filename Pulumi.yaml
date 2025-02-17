@@ -324,7 +324,9 @@ config:
               internal-bridge: false
             volumes:
               restic-cache: /tmp/restic
-              restic-profile: /etc/resticprofile
+              restic-profile:
+                path: /etc/resticprofile
+                read-only: true
             envs:
               RESTIC_CACHE_DIR:
                 volume: restic-cache

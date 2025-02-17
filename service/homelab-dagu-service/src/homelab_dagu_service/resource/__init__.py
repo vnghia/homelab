@@ -36,6 +36,6 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
             container_volume_path=dagu_service.get_dag_container_volume_path(
                 model.path or resource_name
             ),
-            data=model.to_data(main_service, build_args, dotenv),
+            data=model.to_data(main_service, dagu_service, build_args, dotenv),
             volume_resource=dagu_service.docker_resource_args.volume,
         )

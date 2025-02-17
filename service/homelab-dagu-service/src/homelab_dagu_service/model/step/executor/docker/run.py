@@ -11,6 +11,7 @@ class DaguDagStepDockerRunExecutorModel(BaseModel):
     model: str | None
     auto_remove: bool = True
     pull: bool = False
+    entrypoint: list[str] | None = None
 
     def to_executor_config[T](
         self,
@@ -32,8 +33,13 @@ class DaguDagStepDockerRunExecutorModel(BaseModel):
         )
         config["pull"] = self.pull
 
-        container_config["user"] = model.user
-        container_config["entrypoint"] = model.build_entrypoint()
+        if model.user:
+            container_config["user"] = model.user
+        entrypoint = (
+            self.entrypoint if self.entrypoint is not None else model.build_entrypoint()
+        )
+        if entrypoint:
+            container_config["entrypoint"] = entrypoint
         container_config["labels"] = model.build_labels(
             None,
             main_service.name(),
@@ -43,13 +49,13 @@ class DaguDagStepDockerRunExecutorModel(BaseModel):
         container_config["env"] = model.build_envs(
             build_args, main_service.docker_resource_args, main_service.args
         ) + (
-            ["{key}=${{{key}}}".format(key=key) for key in dotenv.data.keys()]
+            ["{key}=${{{key}}}".format(key=key) for key in dotenv.envs.keys()]
             if dotenv
             else []
         )
 
         host_config["binds"] = model.volumes.to_binds(
-            main_service.docker_resource_args.volume
+            build_args, main_service.docker_resource_args
         )
 
         network_args = model.network.to_args(
@@ -62,7 +68,8 @@ class DaguDagStepDockerRunExecutorModel(BaseModel):
             }
         elif network_args.mode:
             host_config["networkMode"] = network_args.mode
-        host_config["capAdd"] = model.capabilities
+        if model.capabilities:
+            host_config["capAdd"] = model.capabilities
         host_config["readonlyRootfs"] = model.read_only
 
         mounts = model.build_tmpfs()
@@ -82,7 +89,8 @@ class DaguDagStepDockerRunExecutorModel(BaseModel):
                 )
                 for mount in mounts
             ]
-        host_config["init"] = model.init
+        if model.init:
+            host_config["init"] = model.init
 
         return config | {
             "container": container_config,

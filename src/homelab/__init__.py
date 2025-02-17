@@ -82,6 +82,7 @@ class Homelab:
         self.restic = ResticService(
             self.docker.services_config.restic,
             opts=None,
+            volume_config=self.config.docker.volumes,
             dagu_service=self.dagu,
             docker_resource_args=self.docker.resource_args,
         )

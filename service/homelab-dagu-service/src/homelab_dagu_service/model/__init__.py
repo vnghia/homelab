@@ -30,10 +30,16 @@ class DaguDagModel(BaseModel):
     def to_data[T](
         self,
         main_service: ServiceResourceBase[T],
+        dagu_service: "DaguService",
         build_args: ContainerModelBuildArgs | None,
         dotenv: DotenvFileResource | None,
     ) -> dict[str, Any]:
         return {
+            "dotenv": dotenv.to_container_path(
+                dagu_service.model.container.volumes
+            ).as_posix()
+            if dotenv
+            else None,
             "name": self.name,
             "group": self.group,
             "tags": self.tags,
