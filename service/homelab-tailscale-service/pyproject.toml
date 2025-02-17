@@ -1,12 +1,13 @@
 [project]
-name = "homelab-network"
+name = "homelab-tailscale-service"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.12.3"
 dependencies = [
-    "pydantic>=2.10.6",
+    "homelab-docker",
     "pulumi>=3.148.0",
-    "pulumi-cloudflare>=5.49.0",
+    "pulumi-tailscale>=0.17.5",
+    "pydantic>=2.10.6",
 ]
 
 [build-system]

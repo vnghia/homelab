@@ -44,7 +44,7 @@ config:
         build:
           barman:
             context:
-              location: homelab-barman-service/image
+              location: service/homelab-barman-service/image
               base: minideb
         postgres:
           postgres:

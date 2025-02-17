@@ -17,19 +17,29 @@ dependencies = [
     "pulumi>=3.148.0",
 ]
 readme = "README.md"
-requires-python = ">= 3.12"
+requires-python = ">= 3.12.3"
 classifiers = ["Private :: Do Not Upload"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.rye]
+[tool.uv]
 managed = true
-dev-dependencies = [
-    "mypy>=1.14.1",
-    "datamodel-code-generator[http]>=0.28.1",
-]
+dev-dependencies = ["mypy>=1.14.1", "datamodel-code-generator[http]>=0.28.1"]
+
+[tool.uv.sources]
+homelab-config = { workspace = true }
+homelab-docker = { workspace = true }
+homelab-integration = { workspace = true }
+homelab-network = { workspace = true }
+
+homelab-backup-service = { workspace = true }
+homelab-barman-service = { workspace = true }
+homelab-dagu-service = { workspace = true }
+homelab-dozzle-service = { workspace = true }
+homelab-tailscale-service = { workspace = true }
+homelab-traefik-service = { workspace = true }
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -37,8 +47,8 @@ allow-direct-references = true
 [tool.hatch.build.targets.wheel]
 packages = ["src/homelab"]
 
-[tool.rye.workspace]
-members = ["homelab-*"]
+[tool.uv.workspace]
+members = ["homelab-*", "service/homelab-*"]
 
 [tool.mypy]
 strict = true

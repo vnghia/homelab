@@ -1,8 +1,8 @@
 [project]
 name = "homelab-docker"
 version = "0.1.0"
-description = "Add your description here"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
+requires-python = ">=3.12.3"
 dependencies = [
     "pulumi-docker>=4.6.1",
     "pydantic>=2.10.6",
@@ -11,32 +11,14 @@ dependencies = [
     "docker>=7.1.0",
     "paramiko>=3.5.0",
     "tomlkit>=0.13.2",
-    "deepmerge>=2.0",
     "pulumi-random>=4.17.0",
     "pulumi-docker-build>=0.0.10",
     "pyyaml>=6.0.2",
 ]
-requires-python = ">= 3.12"
-classifiers = ["Private :: Do Not Upload"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.rye]
-managed = true
-dev-dependencies = [
-    "types-docker>=7.1.0.20241229",
-    "types-jsonschema>=4.23.0.20241208",
-    "types-paramiko>=3.5.0.20240928",
-    "types-pyyaml>=6.0.12.20241230",
-]
-
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/homelab_docker"]
-
-[tool.mypy]
-strict = true
+[dependency-groups]
+dev = ["types-docker>=7.1.0.20241229", "types-pyyaml>=6.0.12.20241230"]

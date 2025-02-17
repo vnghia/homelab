@@ -1,13 +1,9 @@
 [project]
-name = "homelab-network"
+name = "homelab-restic-service"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.12.3"
-dependencies = [
-    "pydantic>=2.10.6",
-    "pulumi>=3.148.0",
-    "pulumi-cloudflare>=5.49.0",
-]
+dependencies = []
 
 [build-system]
 requires = ["hatchling"]

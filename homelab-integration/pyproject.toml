@@ -1,28 +1,10 @@
 [project]
 name = "homelab-integration"
 version = "0.1.0"
-description = "Add your description here"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
-dependencies = [
-    "pulumi>=3.148.0",
-    "pydantic>=2.10.6",
-]
-requires-python = ">= 3.12"
-classifiers = ["Private :: Do Not Upload"]
+requires-python = ">=3.12.3"
+dependencies = ["pydantic>=2.10.6"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.rye]
-managed = true
-dev-dependencies = []
-
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/homelab_integration"]
-
-[tool.mypy]
-strict = true
