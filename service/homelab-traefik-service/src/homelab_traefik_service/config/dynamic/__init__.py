@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
@@ -26,7 +28,7 @@ class TraefikDynamicConfigResource(
         config: TraefikHttpDynamicConfig | TraefikDynamicMiddlewareFullConfig,
         *,
         opts: ResourceOptions | None,
-        traefik_service: "TraefikService",
+        traefik_service: TraefikService,
     ):
         self.name = config.name
         super().__init__(

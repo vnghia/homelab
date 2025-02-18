@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dataclasses
 import typing
 
@@ -23,8 +25,8 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     def to_args(
         self,
         _resource_name: str | None,
-        _network_resource: "NetworkResource",
-        service_resource_args: "ServiceResourceArgs",
+        _network_resource: NetworkResource,
+        service_resource_args: ServiceResourceArgs,
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
             mode=Output.format(
@@ -41,8 +43,8 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
     def to_args(
         self,
         resource_name: str | None,
-        network_resource: "NetworkResource",
-        _: "ServiceResourceArgs",
+        network_resource: NetworkResource,
+        _: ServiceResourceArgs,
     ) -> ContainerNetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
         aliases = [resource_name] if resource_name else []
@@ -71,7 +73,7 @@ class ContainerNetworkConfig(
     def to_args(
         self,
         resource_name: str | None,
-        network_resource: "NetworkResource",
-        service_resource_args: "ServiceResourceArgs",
+        network_resource: NetworkResource,
+        service_resource_args: ServiceResourceArgs,
     ) -> ContainerNetworkArgs:
         return self.root.to_args(resource_name, network_resource, service_resource_args)

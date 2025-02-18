@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dataclasses
 import typing
 from typing import Literal, Mapping, Sequence
@@ -83,8 +85,8 @@ class ContainerModel(HomelabBaseModel):
     def build_envs(
         self,
         build_args: ContainerModelBuildArgs,
-        docker_resource_args: "DockerResourceArgs",
-        service_resource_args: "ServiceResourceArgs",
+        docker_resource_args: DockerResourceArgs,
+        service_resource_args: ServiceResourceArgs,
     ) -> list[Output[str]]:
         database_envs: dict[str, Output[str]] = {}
 
@@ -131,7 +133,7 @@ class ContainerModel(HomelabBaseModel):
         resource_name: str | None,
         service_name: str,
         build_args: ContainerModelBuildArgs,
-        docker_resource_args: "DockerResourceArgs",
+        docker_resource_args: DockerResourceArgs,
     ) -> dict[Output[str], Output[str]]:
         return {
             Output.from_input(k): Output.from_input(v)
@@ -150,8 +152,8 @@ class ContainerModel(HomelabBaseModel):
         opts: ResourceOptions | None,
         service_name: str,
         build_args: ContainerModelBuildArgs | None,
-        docker_resource_args: "DockerResourceArgs",
-        service_resource_args: "ServiceResourceArgs",
+        docker_resource_args: DockerResourceArgs,
+        service_resource_args: ServiceResourceArgs,
     ) -> docker.Container:
         build_args = build_args or ContainerModelBuildArgs()
         network_args = self.network.to_args(

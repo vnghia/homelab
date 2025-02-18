@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 from homelab_docker.model.container import ContainerModelBuildArgs
@@ -26,7 +28,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase[T],
-        dagu_service: "DaguService",
+        dagu_service: DaguService,
         build_args: ContainerModelBuildArgs | None,
         dotenv: DotenvFileResource | None,
     ):

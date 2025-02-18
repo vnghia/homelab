@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 from typing import Any
 
@@ -22,7 +24,7 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
     service: TraefikDynamicServiceConfig
     middlewares: list[TraefikDynamicMiddlewareConfig] = []
 
-    def to_data(self, traefik_service: "TraefikService") -> dict[str, Any]:
+    def to_data(self, traefik_service: TraefikService) -> dict[str, Any]:
         entrypoint = traefik_service.config.entrypoint
         hostname = (
             traefik_service.network_resource.public.hostnames
@@ -85,8 +87,8 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
         resource_name: str | None,
         *,
         opts: ResourceOptions | None,
-        traefik_service: "TraefikService",
-    ) -> "TraefikDynamicConfigResource":
+        traefik_service: TraefikService,
+    ) -> TraefikDynamicConfigResource:
         from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
 
         return TraefikDynamicConfigResource(

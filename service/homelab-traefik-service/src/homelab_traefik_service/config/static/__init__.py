@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 from homelab_docker.model.container.volume_path import ContainerVolumePath
@@ -26,7 +28,7 @@ class TraefikStaticConfigResource(
         self,
         *,
         opts: ResourceOptions | None,
-        traefik_service: "TraefikService",
+        traefik_service: TraefikService,
         tailscale_service: TailscaleService,
     ) -> None:
         traefik_service_model = traefik_service.model

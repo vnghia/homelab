@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
@@ -20,7 +22,7 @@ class ResticGlobalProfileResource(
         resource_name: str,
         *,
         opts: ResourceOptions | None,
-        restic_service: "ResticService",
+        restic_service: ResticService,
     ):
         super().__init__(
             resource_name,

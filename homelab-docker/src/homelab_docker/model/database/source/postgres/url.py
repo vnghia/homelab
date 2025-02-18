@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 from homelab_pydantic import HomelabBaseModel
@@ -12,5 +14,5 @@ class PostgresDatabaseSourceUrlEnvs(HomelabBaseModel):
     scheme: str = "postgres"
     query: dict[str, str] = {"sslmode": "disable"}
 
-    def to_envs(self, model: "DatabaseSourceModel") -> dict[str, Output[str]]:
+    def to_envs(self, model: DatabaseSourceModel) -> dict[str, Output[str]]:
         return {self.env: model.to_url(self.scheme, self.query)}

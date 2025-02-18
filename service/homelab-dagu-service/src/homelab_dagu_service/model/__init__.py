@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 from typing import Any
 
@@ -31,7 +33,7 @@ class DaguDagModel(HomelabBaseModel):
     def to_data[T](
         self,
         main_service: ServiceResourceBase[T],
-        dagu_service: "DaguService",
+        dagu_service: DaguService,
         build_args: ContainerModelBuildArgs | None,
         dotenv: DotenvFileResource | None,
     ) -> dict[str, Any]:
@@ -59,7 +61,7 @@ class DaguDagModel(HomelabBaseModel):
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase[T],
-        dagu_service: "DaguService",
+        dagu_service: DaguService,
         build_args: ContainerModelBuildArgs | None,
         dotenv: DotenvFileResource | None,
     ) -> "DaguDagResource":

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 import pulumi_docker as docker
@@ -53,8 +55,8 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
     def to_args(
         self,
         docker_socket_config: ContainerDockerSocketConfig | None,
-        build_args: "ContainerModelBuildArgs",
-        docker_resource_args: "DockerResourceArgs",
+        build_args: ContainerModelBuildArgs,
+        docker_resource_args: DockerResourceArgs,
     ) -> list[docker.ContainerVolumeArgs]:
         volume_resource = docker_resource_args.volume
         return (
@@ -98,8 +100,8 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
     def to_binds(
         self,
         docker_socket_config: ContainerDockerSocketConfig | None,
-        build_args: "ContainerModelBuildArgs",
-        docker_resource_args: "DockerResourceArgs",
+        build_args: ContainerModelBuildArgs,
+        docker_resource_args: DockerResourceArgs,
     ) -> list[Output[str]]:
         def to_bind(arg: docker.ContainerVolumeArgs) -> Output[str]:
             return Output.format(
