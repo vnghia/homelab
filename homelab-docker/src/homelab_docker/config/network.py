@@ -17,4 +17,4 @@ class NetworkConfig(HomelabBaseModel):
     def set_internal_flag(
         cls, internal_bridge: BridgeNetworkModel
     ) -> BridgeNetworkModel:
-        return internal_bridge.model_copy(update={"internal": True})
+        return internal_bridge.__replace__(internal=True)

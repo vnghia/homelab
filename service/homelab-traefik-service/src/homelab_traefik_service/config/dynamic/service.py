@@ -2,8 +2,8 @@ from enum import StrEnum, auto
 from typing import Any
 
 from homelab_docker.resource.service import ServiceResourceArgs
-from homelab_pydantic import HomelabBaseModel
-from pydantic import AnyUrl, PositiveInt, RootModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from pydantic import AnyUrl, PositiveInt
 
 
 class TraefikDynamicServiceType(StrEnum):
@@ -46,7 +46,7 @@ class TraefikDynamicServiceFullConfig(HomelabBaseModel):
 
 
 class TraefikDynamicServiceConfig(
-    RootModel[str | PositiveInt | TraefikDynamicServiceFullConfig]
+    HomelabRootModel[str | PositiveInt | TraefikDynamicServiceFullConfig]
 ):
     @property
     def full(self) -> TraefikDynamicServiceFullConfig | None:

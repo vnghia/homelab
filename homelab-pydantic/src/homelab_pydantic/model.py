@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, RootModel, model_validator
 
 
 class HomelabBaseModel(BaseModel):
@@ -22,3 +22,16 @@ class HomelabBaseModel(BaseModel):
         if isinstance(data, dict):
             data.pop("__provider", None)
         return data
+
+
+class HomelabRootModel[T](RootModel[T]):
+    model_config = ConfigDict(
+        frozen=True,
+        revalidate_instances="always",
+        validate_assignment=True,
+        validate_default=True,
+        validate_return=True,
+        validation_error_cause=True,
+    )
+
+    root: T

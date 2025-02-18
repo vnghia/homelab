@@ -65,15 +65,13 @@ class PostgresDatabaseResource(ComponentResource):
                 ),
                 network=model.network,
                 tmpfs=[ContainerTmpfsConfig(self.model.PGRUN_PATH)],
-                volumes=ContainerVolumesConfig.model_validate(
+                volumes=ContainerVolumesConfig(
                     {
                         full_name: ContainerVolumeConfig(self.model.PGDATA_PATH),
                         self.model.DATABASE_ENTRYPOINT_INITDB_VOLUME: ContainerVolumeConfig(
-                            ContainerVolumeFullConfig.model_validate(
-                                {
-                                    "path": self.model.DATABASE_ENTRYPOINT_INITDB_PATH,
-                                    "read-only": True,
-                                }
+                            ContainerVolumeFullConfig(
+                                path=self.model.DATABASE_ENTRYPOINT_INITDB_PATH,
+                                read_only=True,
                             )
                         ),
                     }

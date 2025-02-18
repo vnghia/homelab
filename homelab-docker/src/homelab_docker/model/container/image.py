@@ -1,8 +1,7 @@
 import typing
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Output
-from pydantic import RootModel
 
 if typing.TYPE_CHECKING:
     from ...resource.image import ImageResource
@@ -12,7 +11,7 @@ class ContainerImageBuildModelConfig(HomelabBaseModel):
     build: str
 
 
-class ContainerImageModelConfig(RootModel[str | ContainerImageBuildModelConfig]):
+class ContainerImageModelConfig(HomelabRootModel[str | ContainerImageBuildModelConfig]):
     def to_image_name(self, image_resource: "ImageResource") -> Output[str]:
         root = self.root
         if isinstance(root, str):

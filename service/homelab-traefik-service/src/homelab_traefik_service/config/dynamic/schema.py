@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from homelab_pydantic import HomelabBaseModel
-from pydantic import ConfigDict, Field, RootModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from pydantic import ConfigDict, Field
 
 
 class Certificate(HomelabBaseModel):
@@ -355,7 +355,9 @@ class HttpService4(HomelabBaseModel):
     failover: HttpFailoverService | None = None
 
 
-class HttpService(RootModel[HttpService1 | HttpService2 | HttpService3 | HttpService4]):
+class HttpService(
+    HomelabRootModel[HttpService1 | HttpService2 | HttpService3 | HttpService4]
+):
     root: HttpService1 | HttpService2 | HttpService3 | HttpService4 = Field(
         ...,
         description="The Services are responsible for configuring how to reach the actual services that will eventually handle the incoming requests.",
@@ -973,7 +975,7 @@ class PassTLSClientCertMiddleware(HomelabBaseModel):
     )
 
 
-class PluginMiddleware(RootModel[dict[str, dict[str, Any]] | None]):
+class PluginMiddleware(HomelabRootModel[dict[str, dict[str, Any]] | None]):
     root: dict[str, dict[str, Any]] | None = None
 
 
@@ -1281,7 +1283,7 @@ class HttpMiddleware25(HomelabBaseModel):
 
 
 class HttpMiddleware(
-    RootModel[
+    HomelabRootModel[
         HttpMiddleware1
         | HttpMiddleware2
         | HttpMiddleware3
@@ -1449,7 +1451,7 @@ class TcpService2(HomelabBaseModel):
     weighted: TcpWeightedService | None = None
 
 
-class TcpService(RootModel[TcpService1 | TcpService2]):
+class TcpService(HomelabRootModel[TcpService1 | TcpService2]):
     root: TcpService1 | TcpService2
 
 
@@ -1504,7 +1506,7 @@ class UdpService2(HomelabBaseModel):
     weighted: UdpWeightedService | None = None
 
 
-class UdpService(RootModel[UdpService1 | UdpService2]):
+class UdpService(HomelabRootModel[UdpService1 | UdpService2]):
     root: UdpService1 | UdpService2
 
 

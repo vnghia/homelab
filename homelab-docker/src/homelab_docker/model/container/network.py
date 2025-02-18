@@ -2,9 +2,9 @@ import dataclasses
 import typing
 
 import pulumi_docker as docker
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
-from pydantic import Field, RootModel
+from pydantic import Field
 
 if typing.TYPE_CHECKING:
     from ...resource.network import NetworkResource
@@ -62,7 +62,7 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
 
 
 class ContainerNetworkConfig(
-    RootModel[ContainerCommonNetworkConfig | ContainerNetworkModeConfig]
+    HomelabRootModel[ContainerCommonNetworkConfig | ContainerNetworkModeConfig]
 ):
     root: ContainerCommonNetworkConfig | ContainerNetworkModeConfig = (
         ContainerCommonNetworkConfig()  # type: ignore [call-arg]

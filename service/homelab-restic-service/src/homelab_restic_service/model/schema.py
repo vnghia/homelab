@@ -7,8 +7,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Annotated, Any
 
-from homelab_pydantic import HomelabBaseModel
-from pydantic import AnyUrl, ConfigDict, Field, RootModel, StringConstraints
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from pydantic import AnyUrl, ConfigDict, Field, StringConstraints
 
 
 class CommandOutput(str, Enum):
@@ -52,19 +52,19 @@ class Mixins(HomelabBaseModel):
     default_vars: Annotated[dict[str, Any] | None, Field(alias="default-vars")] = None
 
 
-class Id03550d33226c03f7e7c8a6a6fc9713331(RootModel[str]):
+class Id03550d33226c03f7e7c8a6a6fc9713331(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(description="snapshot id to search in", min_length=0, title="snapshot"),
     ]
 
 
-class Id03550d33226c03f7e7c8a6a6fc9713332Item(RootModel[str]):
+class Id03550d33226c03f7e7c8a6a6fc9713332Item(HomelabRootModel[str]):
     root: Annotated[str, Field(min_length=0)]
 
 
 class Id03550d33226c03f7e7c8a6a6fc9713332(
-    RootModel[list[Id03550d33226c03f7e7c8a6a6fc9713332Item]]
+    HomelabRootModel[list[Id03550d33226c03f7e7c8a6a6fc9713332Item]]
 ):
     root: Annotated[
         list[Id03550d33226c03f7e7c8a6a6fc9713332Item],
@@ -75,7 +75,9 @@ class Id03550d33226c03f7e7c8a6a6fc9713332(
 
 
 class Id03550d33226c03f7e7c8a6a6fc971333(
-    RootModel[Id03550d33226c03f7e7c8a6a6fc9713331 | Id03550d33226c03f7e7c8a6a6fc9713332]
+    HomelabRootModel[
+        Id03550d33226c03f7e7c8a6a6fc9713331 | Id03550d33226c03f7e7c8a6a6fc9713332
+    ]
 ):
     root: Annotated[
         Id03550d33226c03f7e7c8a6a6fc9713331 | Id03550d33226c03f7e7c8a6a6fc9713332,
@@ -83,7 +85,7 @@ class Id03550d33226c03f7e7c8a6a6fc971333(
     ]
 
 
-class Id0859ea60b2fdecb8f8f9e6ce02ccc7e21(RootModel[str]):
+class Id0859ea60b2fdecb8f8f9e6ce02ccc7e21(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -95,7 +97,7 @@ class Id0859ea60b2fdecb8f8f9e6ce02ccc7e21(RootModel[str]):
     ]
 
 
-class Id0e78e6a97cca55e12ab1ddc3461bda241(RootModel[str]):
+class Id0e78e6a97cca55e12ab1ddc3461bda241(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -107,7 +109,7 @@ class Id0e78e6a97cca55e12ab1ddc3461bda241(RootModel[str]):
     ]
 
 
-class Id0ec8ec07c5d04919d4d678a5ae0105b41(RootModel[str]):
+class Id0ec8ec07c5d04919d4d678a5ae0105b41(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -123,7 +125,7 @@ class Id0ec8ec07c5d04919d4d678a5ae0105b42Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id0ec8ec07c5d04919d4d678a5ae0105b42(
-    RootModel[list[Id0ec8ec07c5d04919d4d678a5ae0105b42Item]]
+    HomelabRootModel[list[Id0ec8ec07c5d04919d4d678a5ae0105b42Item]]
 ):
     root: Annotated[
         list[Id0ec8ec07c5d04919d4d678a5ae0105b42Item],
@@ -136,7 +138,9 @@ class Id0ec8ec07c5d04919d4d678a5ae0105b42(
 
 
 class Id0ec8ec07c5d04919d4d678a5ae0105b4(
-    RootModel[Id0ec8ec07c5d04919d4d678a5ae0105b41 | Id0ec8ec07c5d04919d4d678a5ae0105b42]
+    HomelabRootModel[
+        Id0ec8ec07c5d04919d4d678a5ae0105b41 | Id0ec8ec07c5d04919d4d678a5ae0105b42
+    ]
 ):
     root: Annotated[
         Id0ec8ec07c5d04919d4d678a5ae0105b41 | Id0ec8ec07c5d04919d4d678a5ae0105b42,
@@ -147,7 +151,7 @@ class Id0ec8ec07c5d04919d4d678a5ae0105b4(
     ]
 
 
-class Id0f38cc784ed07dfeb28828fa20892403Item(RootModel[str]):
+class Id0f38cc784ed07dfeb28828fa20892403Item(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -158,7 +162,7 @@ class Id0f38cc784ed07dfeb28828fa20892403Item(RootModel[str]):
 
 
 class Id0f38cc784ed07dfeb28828fa20892403(
-    RootModel[list[Id0f38cc784ed07dfeb28828fa20892403Item]]
+    HomelabRootModel[list[Id0f38cc784ed07dfeb28828fa20892403Item]]
 ):
     root: Annotated[
         list[Id0f38cc784ed07dfeb28828fa20892403Item],
@@ -170,7 +174,7 @@ class Id0f38cc784ed07dfeb28828fa20892403(
     ]
 
 
-class Id101e02d74df828a834df2fb1ebb6fec01(RootModel[str]):
+class Id101e02d74df828a834df2fb1ebb6fec01(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -184,7 +188,7 @@ class Id101e02d74df828a834df2fb1ebb6fec01(RootModel[str]):
 
 
 class Id101e02d74df828a834df2fb1ebb6fec0(
-    RootModel[int | Id101e02d74df828a834df2fb1ebb6fec01]
+    HomelabRootModel[int | Id101e02d74df828a834df2fb1ebb6fec01]
 ):
     root: Annotated[
         int | Id101e02d74df828a834df2fb1ebb6fec01,
@@ -196,7 +200,7 @@ class Id101e02d74df828a834df2fb1ebb6fec0(
 
 
 class Id11fa1e23ade12c8149af2d113ea9dbb41(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -214,7 +218,7 @@ class Id11fa1e23ade12c8149af2d113ea9dbb41(
     pass
 
 
-class Id1372d6a4f6961e5e86fd694445a397211(RootModel[str]):
+class Id1372d6a4f6961e5e86fd694445a397211(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -230,7 +234,7 @@ class Id1372d6a4f6961e5e86fd694445a397212Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id1372d6a4f6961e5e86fd694445a397212(
-    RootModel[list[Id1372d6a4f6961e5e86fd694445a397212Item]]
+    HomelabRootModel[list[Id1372d6a4f6961e5e86fd694445a397212Item]]
 ):
     root: Annotated[
         list[Id1372d6a4f6961e5e86fd694445a397212Item],
@@ -243,7 +247,9 @@ class Id1372d6a4f6961e5e86fd694445a397212(
 
 
 class Id1372d6a4f6961e5e86fd694445a39721(
-    RootModel[Id1372d6a4f6961e5e86fd694445a397211 | Id1372d6a4f6961e5e86fd694445a397212]
+    HomelabRootModel[
+        Id1372d6a4f6961e5e86fd694445a397211 | Id1372d6a4f6961e5e86fd694445a397212
+    ]
 ):
     root: Annotated[
         Id1372d6a4f6961e5e86fd694445a397211 | Id1372d6a4f6961e5e86fd694445a397212,
@@ -254,7 +260,7 @@ class Id1372d6a4f6961e5e86fd694445a39721(
     ]
 
 
-class Id169a8a109f5202e4e730ddb575c1282c1(RootModel[str]):
+class Id169a8a109f5202e4e730ddb575c1282c1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -264,7 +270,7 @@ class Id169a8a109f5202e4e730ddb575c1282c1(RootModel[str]):
     ]
 
 
-class Id17df0ca3125f1db72ebb01d0ff9021111(RootModel[str]):
+class Id17df0ca3125f1db72ebb01d0ff9021111(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -280,7 +286,7 @@ class Id17df0ca3125f1db72ebb01d0ff9021112Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id17df0ca3125f1db72ebb01d0ff9021112(
-    RootModel[list[Id17df0ca3125f1db72ebb01d0ff9021112Item]]
+    HomelabRootModel[list[Id17df0ca3125f1db72ebb01d0ff9021112Item]]
 ):
     root: Annotated[
         list[Id17df0ca3125f1db72ebb01d0ff9021112Item],
@@ -293,7 +299,9 @@ class Id17df0ca3125f1db72ebb01d0ff9021112(
 
 
 class Id17df0ca3125f1db72ebb01d0ff902111(
-    RootModel[Id17df0ca3125f1db72ebb01d0ff9021111 | Id17df0ca3125f1db72ebb01d0ff9021112]
+    HomelabRootModel[
+        Id17df0ca3125f1db72ebb01d0ff9021111 | Id17df0ca3125f1db72ebb01d0ff9021112
+    ]
 ):
     root: Annotated[
         Id17df0ca3125f1db72ebb01d0ff9021111 | Id17df0ca3125f1db72ebb01d0ff9021112,
@@ -304,7 +312,7 @@ class Id17df0ca3125f1db72ebb01d0ff902111(
     ]
 
 
-class Id1afd9319fa44f3c2489e2ed69f1a472f1(RootModel[str]):
+class Id1afd9319fa44f3c2489e2ed69f1a472f1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -317,7 +325,7 @@ class Id1afd9319fa44f3c2489e2ed69f1a472f1(RootModel[str]):
 
 
 class Id1afd9319fa44f3c2489e2ed69f1a472f(
-    RootModel[list[bool | Id1afd9319fa44f3c2489e2ed69f1a472f1]]
+    HomelabRootModel[list[bool | Id1afd9319fa44f3c2489e2ed69f1a472f1]]
 ):
     root: Annotated[
         list[bool | Id1afd9319fa44f3c2489e2ed69f1a472f1],
@@ -325,7 +333,7 @@ class Id1afd9319fa44f3c2489e2ed69f1a472f(
     ]
 
 
-class Id1b525c9f6a0698293ca268ea3866afa41(RootModel[str]):
+class Id1b525c9f6a0698293ca268ea3866afa41(HomelabRootModel[str]):
     root: Annotated[
         str, Field(description="include a pattern", min_length=0, title="include")
     ]
@@ -336,7 +344,7 @@ class Id1b525c9f6a0698293ca268ea3866afa42Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id1b525c9f6a0698293ca268ea3866afa42(
-    RootModel[list[Id1b525c9f6a0698293ca268ea3866afa42Item]]
+    HomelabRootModel[list[Id1b525c9f6a0698293ca268ea3866afa42Item]]
 ):
     root: Annotated[
         list[Id1b525c9f6a0698293ca268ea3866afa42Item],
@@ -345,7 +353,9 @@ class Id1b525c9f6a0698293ca268ea3866afa42(
 
 
 class Id1b525c9f6a0698293ca268ea3866afa4(
-    RootModel[Id1b525c9f6a0698293ca268ea3866afa41 | Id1b525c9f6a0698293ca268ea3866afa42]
+    HomelabRootModel[
+        Id1b525c9f6a0698293ca268ea3866afa41 | Id1b525c9f6a0698293ca268ea3866afa42
+    ]
 ):
     root: Annotated[
         Id1b525c9f6a0698293ca268ea3866afa41 | Id1b525c9f6a0698293ca268ea3866afa42,
@@ -353,7 +363,7 @@ class Id1b525c9f6a0698293ca268ea3866afa4(
     ]
 
 
-class Id20cb912e946a794f54e5e7cd6faeb1331(RootModel[str]):
+class Id20cb912e946a794f54e5e7cd6faeb1331(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -369,7 +379,7 @@ class Id20cb912e946a794f54e5e7cd6faeb1332Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id20cb912e946a794f54e5e7cd6faeb1332(
-    RootModel[list[Id20cb912e946a794f54e5e7cd6faeb1332Item]]
+    HomelabRootModel[list[Id20cb912e946a794f54e5e7cd6faeb1332Item]]
 ):
     root: Annotated[
         list[Id20cb912e946a794f54e5e7cd6faeb1332Item],
@@ -382,7 +392,9 @@ class Id20cb912e946a794f54e5e7cd6faeb1332(
 
 
 class Id20cb912e946a794f54e5e7cd6faeb133(
-    RootModel[Id20cb912e946a794f54e5e7cd6faeb1331 | Id20cb912e946a794f54e5e7cd6faeb1332]
+    HomelabRootModel[
+        Id20cb912e946a794f54e5e7cd6faeb1331 | Id20cb912e946a794f54e5e7cd6faeb1332
+    ]
 ):
     root: Annotated[
         Id20cb912e946a794f54e5e7cd6faeb1331 | Id20cb912e946a794f54e5e7cd6faeb1332,
@@ -393,7 +405,7 @@ class Id20cb912e946a794f54e5e7cd6faeb133(
     ]
 
 
-class Id211783b4c728b6fc5c2c329f3010e6941(RootModel[str]):
+class Id211783b4c728b6fc5c2c329f3010e6941(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -405,7 +417,7 @@ class Id211783b4c728b6fc5c2c329f3010e6941(RootModel[str]):
     ]
 
 
-class Id259684dfd75be3116fd75f377c8f98661(RootModel[str]):
+class Id259684dfd75be3116fd75f377c8f98661(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -421,7 +433,7 @@ class Id259684dfd75be3116fd75f377c8f98662Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id259684dfd75be3116fd75f377c8f98662(
-    RootModel[list[Id259684dfd75be3116fd75f377c8f98662Item]]
+    HomelabRootModel[list[Id259684dfd75be3116fd75f377c8f98662Item]]
 ):
     root: Annotated[
         list[Id259684dfd75be3116fd75f377c8f98662Item],
@@ -434,7 +446,9 @@ class Id259684dfd75be3116fd75f377c8f98662(
 
 
 class Id259684dfd75be3116fd75f377c8f9866(
-    RootModel[Id259684dfd75be3116fd75f377c8f98661 | Id259684dfd75be3116fd75f377c8f98662]
+    HomelabRootModel[
+        Id259684dfd75be3116fd75f377c8f98661 | Id259684dfd75be3116fd75f377c8f98662
+    ]
 ):
     root: Annotated[
         Id259684dfd75be3116fd75f377c8f98661 | Id259684dfd75be3116fd75f377c8f98662,
@@ -445,7 +459,7 @@ class Id259684dfd75be3116fd75f377c8f9866(
     ]
 
 
-class Id2682695859679e0c4c2f3f7557a3c6701(RootModel[str]):
+class Id2682695859679e0c4c2f3f7557a3c6701(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -461,7 +475,7 @@ class Id2682695859679e0c4c2f3f7557a3c6702Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id2682695859679e0c4c2f3f7557a3c6702(
-    RootModel[list[Id2682695859679e0c4c2f3f7557a3c6702Item]]
+    HomelabRootModel[list[Id2682695859679e0c4c2f3f7557a3c6702Item]]
 ):
     root: Annotated[
         list[Id2682695859679e0c4c2f3f7557a3c6702Item],
@@ -474,7 +488,9 @@ class Id2682695859679e0c4c2f3f7557a3c6702(
 
 
 class Id2682695859679e0c4c2f3f7557a3c670(
-    RootModel[Id2682695859679e0c4c2f3f7557a3c6701 | Id2682695859679e0c4c2f3f7557a3c6702]
+    HomelabRootModel[
+        Id2682695859679e0c4c2f3f7557a3c6701 | Id2682695859679e0c4c2f3f7557a3c6702
+    ]
 ):
     root: Annotated[
         Id2682695859679e0c4c2f3f7557a3c6701 | Id2682695859679e0c4c2f3f7557a3c6702,
@@ -486,7 +502,7 @@ class Id2682695859679e0c4c2f3f7557a3c670(
 
 
 class Id2a2f6f7cd1fb61a45eb0eb65cdb60ee41(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -504,7 +520,7 @@ class Id2a2f6f7cd1fb61a45eb0eb65cdb60ee41(
     pass
 
 
-class Id2ca6a44f0bb5aa131cb5f092c9e98d10(RootModel[str]):
+class Id2ca6a44f0bb5aa131cb5f092c9e98d10(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -523,7 +539,7 @@ class Id2ca6a44f0bb5aa131cb5f092c9e98d10(RootModel[str]):
     ]
 
 
-class Id2cf445a83219358bee3423eaa7242c4d1(RootModel[str]):
+class Id2cf445a83219358bee3423eaa7242c4d1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -539,7 +555,7 @@ class Id2cf445a83219358bee3423eaa7242c4d2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id2cf445a83219358bee3423eaa7242c4d2(
-    RootModel[list[Id2cf445a83219358bee3423eaa7242c4d2Item]]
+    HomelabRootModel[list[Id2cf445a83219358bee3423eaa7242c4d2Item]]
 ):
     root: Annotated[
         list[Id2cf445a83219358bee3423eaa7242c4d2Item],
@@ -552,7 +568,9 @@ class Id2cf445a83219358bee3423eaa7242c4d2(
 
 
 class Id2cf445a83219358bee3423eaa7242c4d(
-    RootModel[Id2cf445a83219358bee3423eaa7242c4d1 | Id2cf445a83219358bee3423eaa7242c4d2]
+    HomelabRootModel[
+        Id2cf445a83219358bee3423eaa7242c4d1 | Id2cf445a83219358bee3423eaa7242c4d2
+    ]
 ):
     root: Annotated[
         Id2cf445a83219358bee3423eaa7242c4d1 | Id2cf445a83219358bee3423eaa7242c4d2,
@@ -568,7 +586,7 @@ class Id306fea3abd643f113b3a51bb5886dad41(Id1afd9319fa44f3c2489e2ed69f1a472f1):
 
 
 class Id306fea3abd643f113b3a51bb5886dad4(
-    RootModel[
+    HomelabRootModel[
         bool | Id306fea3abd643f113b3a51bb5886dad41 | Id1afd9319fa44f3c2489e2ed69f1a472f
     ]
 ):
@@ -581,7 +599,7 @@ class Id306fea3abd643f113b3a51bb5886dad4(
     ]
 
 
-class Id31b76762391db3e4e7e8275c1490db641(RootModel[str]):
+class Id31b76762391db3e4e7e8275c1490db641(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -597,7 +615,7 @@ class Id31b76762391db3e4e7e8275c1490db642Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id31b76762391db3e4e7e8275c1490db642(
-    RootModel[list[Id31b76762391db3e4e7e8275c1490db642Item]]
+    HomelabRootModel[list[Id31b76762391db3e4e7e8275c1490db642Item]]
 ):
     root: Annotated[
         list[Id31b76762391db3e4e7e8275c1490db642Item],
@@ -610,7 +628,9 @@ class Id31b76762391db3e4e7e8275c1490db642(
 
 
 class Id31b76762391db3e4e7e8275c1490db64(
-    RootModel[Id31b76762391db3e4e7e8275c1490db641 | Id31b76762391db3e4e7e8275c1490db642]
+    HomelabRootModel[
+        Id31b76762391db3e4e7e8275c1490db641 | Id31b76762391db3e4e7e8275c1490db642
+    ]
 ):
     root: Annotated[
         Id31b76762391db3e4e7e8275c1490db641 | Id31b76762391db3e4e7e8275c1490db642,
@@ -621,7 +641,7 @@ class Id31b76762391db3e4e7e8275c1490db64(
     ]
 
 
-class Id35e9a66d22a93b5cfbcebc1b8d53c2311(RootModel[str]):
+class Id35e9a66d22a93b5cfbcebc1b8d53c2311(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -637,7 +657,7 @@ class Id35e9a66d22a93b5cfbcebc1b8d53c2312Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id35e9a66d22a93b5cfbcebc1b8d53c2312(
-    RootModel[list[Id35e9a66d22a93b5cfbcebc1b8d53c2312Item]]
+    HomelabRootModel[list[Id35e9a66d22a93b5cfbcebc1b8d53c2312Item]]
 ):
     root: Annotated[
         list[Id35e9a66d22a93b5cfbcebc1b8d53c2312Item],
@@ -650,7 +670,9 @@ class Id35e9a66d22a93b5cfbcebc1b8d53c2312(
 
 
 class Id35e9a66d22a93b5cfbcebc1b8d53c231(
-    RootModel[Id35e9a66d22a93b5cfbcebc1b8d53c2311 | Id35e9a66d22a93b5cfbcebc1b8d53c2312]
+    HomelabRootModel[
+        Id35e9a66d22a93b5cfbcebc1b8d53c2311 | Id35e9a66d22a93b5cfbcebc1b8d53c2312
+    ]
 ):
     root: Annotated[
         Id35e9a66d22a93b5cfbcebc1b8d53c2311 | Id35e9a66d22a93b5cfbcebc1b8d53c2312,
@@ -666,7 +688,7 @@ class Id3680b978edcaeed00fffff21f6470093Item(Id03550d33226c03f7e7c8a6a6fc9713332
 
 
 class Id3680b978edcaeed00fffff21f6470093(
-    RootModel[list[Id3680b978edcaeed00fffff21f6470093Item]]
+    HomelabRootModel[list[Id3680b978edcaeed00fffff21f6470093Item]]
 ):
     root: Annotated[
         list[Id3680b978edcaeed00fffff21f6470093Item],
@@ -674,7 +696,7 @@ class Id3680b978edcaeed00fffff21f6470093(
     ]
 
 
-class FieldCaptureEnvironment(RootModel[str]):
+class FieldCaptureEnvironment(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -685,7 +707,7 @@ class FieldCaptureEnvironment(RootModel[str]):
     ]
 
 
-class FieldSystemdDropInFiles(RootModel[str]):
+class FieldSystemdDropInFiles(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -700,7 +722,7 @@ class FieldSystemdDropInFiles1Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class FieldSystemdDropInFiles1(RootModel[list[FieldSystemdDropInFiles1Item]]):
+class FieldSystemdDropInFiles1(HomelabRootModel[list[FieldSystemdDropInFiles1Item]]):
     root: Annotated[
         list[FieldSystemdDropInFiles1Item],
         Field(
@@ -723,7 +745,7 @@ class CaptureEnvironmentPrepend(FieldCaptureEnvironment):
     pass
 
 
-class LockWait(RootModel[str]):
+class LockWait(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -744,7 +766,7 @@ class SystemdDropInFiles1Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class SystemdDropInFiles1(RootModel[list[SystemdDropInFiles1Item]]):
+class SystemdDropInFiles1(HomelabRootModel[list[SystemdDropInFiles1Item]]):
     root: Annotated[
         list[SystemdDropInFiles1Item],
         Field(
@@ -763,7 +785,7 @@ class SystemdDropInFiles3Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class SystemdDropInFiles3(RootModel[list[SystemdDropInFiles3Item]]):
+class SystemdDropInFiles3(HomelabRootModel[list[SystemdDropInFiles3Item]]):
     root: Annotated[
         list[SystemdDropInFiles3Item],
         Field(
@@ -782,7 +804,7 @@ class SystemdDropInFilesAppend1Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class SystemdDropInFilesAppend1(RootModel[list[SystemdDropInFilesAppend1Item]]):
+class SystemdDropInFilesAppend1(HomelabRootModel[list[SystemdDropInFilesAppend1Item]]):
     root: Annotated[
         list[SystemdDropInFilesAppend1Item],
         Field(
@@ -801,7 +823,9 @@ class SystemdDropInFilesPrepend1Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class SystemdDropInFilesPrepend1(RootModel[list[SystemdDropInFilesPrepend1Item]]):
+class SystemdDropInFilesPrepend1(
+    HomelabRootModel[list[SystemdDropInFilesPrepend1Item]]
+):
     root: Annotated[
         list[SystemdDropInFilesPrepend1Item],
         Field(
@@ -817,7 +841,7 @@ class Use(Id169a8a109f5202e4e730ddb575c1282c1):
 
 
 class Id3db5e6a13da7efdfe4078d04413a15861(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -836,7 +860,7 @@ class Id3db5e6a13da7efdfe4078d04413a15861(
 
 
 class Id3db5e6a13da7efdfe4078d04413a1586(
-    RootModel[list[bool | Id3db5e6a13da7efdfe4078d04413a15861]]
+    HomelabRootModel[list[bool | Id3db5e6a13da7efdfe4078d04413a15861]]
 ):
     root: Annotated[
         list[bool | Id3db5e6a13da7efdfe4078d04413a15861],
@@ -844,7 +868,7 @@ class Id3db5e6a13da7efdfe4078d04413a1586(
     ]
 
 
-class Id43751bb98b8f27a3043a5cf8114dcc421(RootModel[str]):
+class Id43751bb98b8f27a3043a5cf8114dcc421(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -860,7 +884,7 @@ class Id43751bb98b8f27a3043a5cf8114dcc422Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id43751bb98b8f27a3043a5cf8114dcc422(
-    RootModel[list[Id43751bb98b8f27a3043a5cf8114dcc422Item]]
+    HomelabRootModel[list[Id43751bb98b8f27a3043a5cf8114dcc422Item]]
 ):
     root: Annotated[
         list[Id43751bb98b8f27a3043a5cf8114dcc422Item],
@@ -873,7 +897,9 @@ class Id43751bb98b8f27a3043a5cf8114dcc422(
 
 
 class Id43751bb98b8f27a3043a5cf8114dcc42(
-    RootModel[Id43751bb98b8f27a3043a5cf8114dcc421 | Id43751bb98b8f27a3043a5cf8114dcc422]
+    HomelabRootModel[
+        Id43751bb98b8f27a3043a5cf8114dcc421 | Id43751bb98b8f27a3043a5cf8114dcc422
+    ]
 ):
     root: Annotated[
         Id43751bb98b8f27a3043a5cf8114dcc421 | Id43751bb98b8f27a3043a5cf8114dcc422,
@@ -884,14 +910,14 @@ class Id43751bb98b8f27a3043a5cf8114dcc42(
     ]
 
 
-class Id49b466f6b160c6abeb21118ce749cdfdItem(RootModel[str]):
+class Id49b466f6b160c6abeb21118ce749cdfdItem(HomelabRootModel[str]):
     root: Annotated[
         str, Field(examples=["sh", "bash", "pwsh", "powershell", "cmd"], min_length=0)
     ]
 
 
 class Id49b466f6b160c6abeb21118ce749cdfd(
-    RootModel[list[Id49b466f6b160c6abeb21118ce749cdfdItem]]
+    HomelabRootModel[list[Id49b466f6b160c6abeb21118ce749cdfdItem]]
 ):
     root: Annotated[
         list[Id49b466f6b160c6abeb21118ce749cdfdItem],
@@ -903,7 +929,7 @@ class Id49b466f6b160c6abeb21118ce749cdfd(
     ]
 
 
-class Id50287fc5f0b0ec16f5013bbe833c11001(RootModel[str]):
+class Id50287fc5f0b0ec16f5013bbe833c11001(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -915,7 +941,7 @@ class Id50287fc5f0b0ec16f5013bbe833c11001(RootModel[str]):
     ]
 
 
-class Id523a82de7dda2cf9932a4ec54a0f6b571(RootModel[str]):
+class Id523a82de7dda2cf9932a4ec54a0f6b571(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -928,7 +954,7 @@ class Id523a82de7dda2cf9932a4ec54a0f6b571(RootModel[str]):
 
 
 class Id523a82de7dda2cf9932a4ec54a0f6b57(
-    RootModel[int | Id523a82de7dda2cf9932a4ec54a0f6b571]
+    HomelabRootModel[int | Id523a82de7dda2cf9932a4ec54a0f6b571]
 ):
     root: Annotated[
         int | Id523a82de7dda2cf9932a4ec54a0f6b571,
@@ -944,7 +970,7 @@ class Id53767a30fc77f3330d1a369be63db148Item(Id03550d33226c03f7e7c8a6a6fc9713332
 
 
 class Id53767a30fc77f3330d1a369be63db148(
-    RootModel[list[Id53767a30fc77f3330d1a369be63db148Item]]
+    HomelabRootModel[list[Id53767a30fc77f3330d1a369be63db148Item]]
 ):
     root: Annotated[
         list[Id53767a30fc77f3330d1a369be63db148Item],
@@ -952,7 +978,7 @@ class Id53767a30fc77f3330d1a369be63db148(
     ]
 
 
-class Id58170d9ae682165edaf4c818e7b505501(RootModel[str]):
+class Id58170d9ae682165edaf4c818e7b505501(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -964,7 +990,7 @@ class Id58170d9ae682165edaf4c818e7b505501(RootModel[str]):
     ]
 
 
-class Id5a30ba75410604c90422365278a6a8c21(RootModel[str]):
+class Id5a30ba75410604c90422365278a6a8c21(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -980,7 +1006,7 @@ class Id5a30ba75410604c90422365278a6a8c22Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id5a30ba75410604c90422365278a6a8c22(
-    RootModel[list[Id5a30ba75410604c90422365278a6a8c22Item]]
+    HomelabRootModel[list[Id5a30ba75410604c90422365278a6a8c22Item]]
 ):
     root: Annotated[
         list[Id5a30ba75410604c90422365278a6a8c22Item],
@@ -993,7 +1019,9 @@ class Id5a30ba75410604c90422365278a6a8c22(
 
 
 class Id5a30ba75410604c90422365278a6a8c2(
-    RootModel[Id5a30ba75410604c90422365278a6a8c21 | Id5a30ba75410604c90422365278a6a8c22]
+    HomelabRootModel[
+        Id5a30ba75410604c90422365278a6a8c21 | Id5a30ba75410604c90422365278a6a8c22
+    ]
 ):
     root: Annotated[
         Id5a30ba75410604c90422365278a6a8c21 | Id5a30ba75410604c90422365278a6a8c22,
@@ -1004,7 +1032,7 @@ class Id5a30ba75410604c90422365278a6a8c2(
     ]
 
 
-class Id5bfb7690d77d0226d2ffe0fe927a49811(RootModel[str]):
+class Id5bfb7690d77d0226d2ffe0fe927a49811(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1017,7 +1045,7 @@ class Id5bfb7690d77d0226d2ffe0fe927a49811(RootModel[str]):
 
 
 class Id5bfb7690d77d0226d2ffe0fe927a4981(
-    RootModel[list[bool | Id5bfb7690d77d0226d2ffe0fe927a49811]]
+    HomelabRootModel[list[bool | Id5bfb7690d77d0226d2ffe0fe927a49811]]
 ):
     root: Annotated[
         list[bool | Id5bfb7690d77d0226d2ffe0fe927a49811],
@@ -1025,7 +1053,7 @@ class Id5bfb7690d77d0226d2ffe0fe927a4981(
     ]
 
 
-class Id5ea59c8a3698c9f849086ff3968f5bde1(RootModel[str]):
+class Id5ea59c8a3698c9f849086ff3968f5bde1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1042,7 +1070,7 @@ class Id5f7b04a65135156c4a97e9e99ab9ac951(Id11fa1e23ade12c8149af2d113ea9dbb41):
 
 
 class Id5f7b04a65135156c4a97e9e99ab9ac95(
-    RootModel[list[bool | Id5f7b04a65135156c4a97e9e99ab9ac951]]
+    HomelabRootModel[list[bool | Id5f7b04a65135156c4a97e9e99ab9ac951]]
 ):
     root: Annotated[
         list[bool | Id5f7b04a65135156c4a97e9e99ab9ac951],
@@ -1050,7 +1078,7 @@ class Id5f7b04a65135156c4a97e9e99ab9ac95(
     ]
 
 
-class Id6b5642166c912fb9b40f15f5459cb7111(RootModel[str]):
+class Id6b5642166c912fb9b40f15f5459cb7111(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1063,7 +1091,7 @@ class Id6b5642166c912fb9b40f15f5459cb7111(RootModel[str]):
 
 
 class Id6b5642166c912fb9b40f15f5459cb711(
-    RootModel[list[bool | Id6b5642166c912fb9b40f15f5459cb7111]]
+    HomelabRootModel[list[bool | Id6b5642166c912fb9b40f15f5459cb7111]]
 ):
     root: Annotated[
         list[bool | Id6b5642166c912fb9b40f15f5459cb7111],
@@ -1071,7 +1099,7 @@ class Id6b5642166c912fb9b40f15f5459cb711(
     ]
 
 
-class Id6b767374afe44ab7caa0ae97e251c4ed(RootModel[bool | int]):
+class Id6b767374afe44ab7caa0ae97e251c4ed(HomelabRootModel[bool | int]):
     root: Annotated[
         bool | int,
         Field(
@@ -1081,7 +1109,7 @@ class Id6b767374afe44ab7caa0ae97e251c4ed(RootModel[bool | int]):
     ]
 
 
-class Id703d64899271340b197b461a1da954f01(RootModel[str]):
+class Id703d64899271340b197b461a1da954f01(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1097,7 +1125,7 @@ class Id703d64899271340b197b461a1da954f02Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id703d64899271340b197b461a1da954f02(
-    RootModel[list[Id703d64899271340b197b461a1da954f02Item]]
+    HomelabRootModel[list[Id703d64899271340b197b461a1da954f02Item]]
 ):
     root: Annotated[
         list[Id703d64899271340b197b461a1da954f02Item],
@@ -1110,7 +1138,9 @@ class Id703d64899271340b197b461a1da954f02(
 
 
 class Id703d64899271340b197b461a1da954f0(
-    RootModel[Id703d64899271340b197b461a1da954f01 | Id703d64899271340b197b461a1da954f02]
+    HomelabRootModel[
+        Id703d64899271340b197b461a1da954f01 | Id703d64899271340b197b461a1da954f02
+    ]
 ):
     root: Annotated[
         Id703d64899271340b197b461a1da954f01 | Id703d64899271340b197b461a1da954f02,
@@ -1121,7 +1151,7 @@ class Id703d64899271340b197b461a1da954f0(
     ]
 
 
-class Id71d4c72a873617fc9b373bf506f9606d1(RootModel[str]):
+class Id71d4c72a873617fc9b373bf506f9606d1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1137,7 +1167,7 @@ class Id71d4c72a873617fc9b373bf506f9606d2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id71d4c72a873617fc9b373bf506f9606d2(
-    RootModel[list[Id71d4c72a873617fc9b373bf506f9606d2Item]]
+    HomelabRootModel[list[Id71d4c72a873617fc9b373bf506f9606d2Item]]
 ):
     root: Annotated[
         list[Id71d4c72a873617fc9b373bf506f9606d2Item],
@@ -1150,7 +1180,9 @@ class Id71d4c72a873617fc9b373bf506f9606d2(
 
 
 class Id71d4c72a873617fc9b373bf506f9606d(
-    RootModel[Id71d4c72a873617fc9b373bf506f9606d1 | Id71d4c72a873617fc9b373bf506f9606d2]
+    HomelabRootModel[
+        Id71d4c72a873617fc9b373bf506f9606d1 | Id71d4c72a873617fc9b373bf506f9606d2
+    ]
 ):
     root: Annotated[
         Id71d4c72a873617fc9b373bf506f9606d1 | Id71d4c72a873617fc9b373bf506f9606d2,
@@ -1161,7 +1193,7 @@ class Id71d4c72a873617fc9b373bf506f9606d(
     ]
 
 
-class Id73ddecc00270b21ad3fb847e79607e501(RootModel[str]):
+class Id73ddecc00270b21ad3fb847e79607e501(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1174,7 +1206,7 @@ class Id73ddecc00270b21ad3fb847e79607e501(RootModel[str]):
 
 
 class Id7436182a7d8cda9c00cd5d31c743af8b1(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -1193,7 +1225,7 @@ class Id7436182a7d8cda9c00cd5d31c743af8b1(
 
 
 class Id7436182a7d8cda9c00cd5d31c743af8b(
-    RootModel[list[bool | Id7436182a7d8cda9c00cd5d31c743af8b1]]
+    HomelabRootModel[list[bool | Id7436182a7d8cda9c00cd5d31c743af8b1]]
 ):
     root: Annotated[
         list[bool | Id7436182a7d8cda9c00cd5d31c743af8b1],
@@ -1202,7 +1234,7 @@ class Id7436182a7d8cda9c00cd5d31c743af8b(
 
 
 class Id772a2599841b628f32030d9af183045a1(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -1221,7 +1253,7 @@ class Id772a2599841b628f32030d9af183045a1(
 
 
 class Id772a2599841b628f32030d9af183045a(
-    RootModel[list[bool | Id772a2599841b628f32030d9af183045a1]]
+    HomelabRootModel[list[bool | Id772a2599841b628f32030d9af183045a1]]
 ):
     root: Annotated[
         list[bool | Id772a2599841b628f32030d9af183045a1],
@@ -1229,7 +1261,7 @@ class Id772a2599841b628f32030d9af183045a(
     ]
 
 
-class Id783b5260d9a5f4eba741f6448d3a73a01(RootModel[str]):
+class Id783b5260d9a5f4eba741f6448d3a73a01(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1245,7 +1277,7 @@ class Id783b5260d9a5f4eba741f6448d3a73a02Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id783b5260d9a5f4eba741f6448d3a73a02(
-    RootModel[list[Id783b5260d9a5f4eba741f6448d3a73a02Item]]
+    HomelabRootModel[list[Id783b5260d9a5f4eba741f6448d3a73a02Item]]
 ):
     root: Annotated[
         list[Id783b5260d9a5f4eba741f6448d3a73a02Item],
@@ -1258,7 +1290,9 @@ class Id783b5260d9a5f4eba741f6448d3a73a02(
 
 
 class Id783b5260d9a5f4eba741f6448d3a73a0(
-    RootModel[Id783b5260d9a5f4eba741f6448d3a73a01 | Id783b5260d9a5f4eba741f6448d3a73a02]
+    HomelabRootModel[
+        Id783b5260d9a5f4eba741f6448d3a73a01 | Id783b5260d9a5f4eba741f6448d3a73a02
+    ]
 ):
     root: Annotated[
         Id783b5260d9a5f4eba741f6448d3a73a01 | Id783b5260d9a5f4eba741f6448d3a73a02,
@@ -1267,7 +1301,7 @@ class Id783b5260d9a5f4eba741f6448d3a73a0(
 
 
 class Id7c2846c9b466517f2dc34573f1b2e9321(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -1285,7 +1319,7 @@ class Id7c2846c9b466517f2dc34573f1b2e9321(
     pass
 
 
-class Id7d3654de0d890ce874dc332214970cad1(RootModel[str]):
+class Id7d3654de0d890ce874dc332214970cad1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1301,7 +1335,7 @@ class Id7d3654de0d890ce874dc332214970cad2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id7d3654de0d890ce874dc332214970cad2(
-    RootModel[list[Id7d3654de0d890ce874dc332214970cad2Item]]
+    HomelabRootModel[list[Id7d3654de0d890ce874dc332214970cad2Item]]
 ):
     root: Annotated[
         list[Id7d3654de0d890ce874dc332214970cad2Item],
@@ -1314,7 +1348,9 @@ class Id7d3654de0d890ce874dc332214970cad2(
 
 
 class Id7d3654de0d890ce874dc332214970cad(
-    RootModel[Id7d3654de0d890ce874dc332214970cad1 | Id7d3654de0d890ce874dc332214970cad2]
+    HomelabRootModel[
+        Id7d3654de0d890ce874dc332214970cad1 | Id7d3654de0d890ce874dc332214970cad2
+    ]
 ):
     root: Annotated[
         Id7d3654de0d890ce874dc332214970cad1 | Id7d3654de0d890ce874dc332214970cad2,
@@ -1327,7 +1363,7 @@ class Id7fe776d1a2c2dd57ebe6cff96c557b7a1(Id58170d9ae682165edaf4c818e7b505501):
 
 
 class Id7fe776d1a2c2dd57ebe6cff96c557b7a(
-    RootModel[list[bool | Id7fe776d1a2c2dd57ebe6cff96c557b7a1]]
+    HomelabRootModel[list[bool | Id7fe776d1a2c2dd57ebe6cff96c557b7a1]]
 ):
     root: Annotated[
         list[bool | Id7fe776d1a2c2dd57ebe6cff96c557b7a1],
@@ -1335,7 +1371,7 @@ class Id7fe776d1a2c2dd57ebe6cff96c557b7a(
     ]
 
 
-class Id808e4aea01f0d8d12832b2f8700064211(RootModel[str]):
+class Id808e4aea01f0d8d12832b2f8700064211(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1349,7 +1385,7 @@ class Id808e4aea01f0d8d12832b2f8700064211(RootModel[str]):
 
 
 class Id808e4aea01f0d8d12832b2f870006421(
-    RootModel[int | Id808e4aea01f0d8d12832b2f8700064211]
+    HomelabRootModel[int | Id808e4aea01f0d8d12832b2f8700064211]
 ):
     root: Annotated[
         int | Id808e4aea01f0d8d12832b2f8700064211,
@@ -1365,7 +1401,7 @@ class Id8c6fe1c84bae67ed9a76d97fe04722fe1(Id6b5642166c912fb9b40f15f5459cb7111):
 
 
 class Id8c6fe1c84bae67ed9a76d97fe04722fe(
-    RootModel[
+    HomelabRootModel[
         bool | Id8c6fe1c84bae67ed9a76d97fe04722fe1 | Id6b5642166c912fb9b40f15f5459cb711
     ]
 ):
@@ -1382,7 +1418,7 @@ class Id8e1fcc63a67be14220d248d0225ed5b71(FieldCaptureEnvironment):
     pass
 
 
-class Id8fee4af1900e0d2f64f1ee66a27254ef1(RootModel[str]):
+class Id8fee4af1900e0d2f64f1ee66a27254ef1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1394,7 +1430,7 @@ class Id8fee4af1900e0d2f64f1ee66a27254ef1(RootModel[str]):
     ]
 
 
-class Id92a8b0a93ca24cd3de9ae56a4dcb9ec61(RootModel[str]):
+class Id92a8b0a93ca24cd3de9ae56a4dcb9ec61(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1410,7 +1446,7 @@ class Id92a8b0a93ca24cd3de9ae56a4dcb9ec62Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id92a8b0a93ca24cd3de9ae56a4dcb9ec62(
-    RootModel[list[Id92a8b0a93ca24cd3de9ae56a4dcb9ec62Item]]
+    HomelabRootModel[list[Id92a8b0a93ca24cd3de9ae56a4dcb9ec62Item]]
 ):
     root: Annotated[
         list[Id92a8b0a93ca24cd3de9ae56a4dcb9ec62Item],
@@ -1423,7 +1459,9 @@ class Id92a8b0a93ca24cd3de9ae56a4dcb9ec62(
 
 
 class Id92a8b0a93ca24cd3de9ae56a4dcb9ec6(
-    RootModel[Id92a8b0a93ca24cd3de9ae56a4dcb9ec61 | Id92a8b0a93ca24cd3de9ae56a4dcb9ec62]
+    HomelabRootModel[
+        Id92a8b0a93ca24cd3de9ae56a4dcb9ec61 | Id92a8b0a93ca24cd3de9ae56a4dcb9ec62
+    ]
 ):
     root: Annotated[
         Id92a8b0a93ca24cd3de9ae56a4dcb9ec61 | Id92a8b0a93ca24cd3de9ae56a4dcb9ec62,
@@ -1434,7 +1472,7 @@ class Id92a8b0a93ca24cd3de9ae56a4dcb9ec6(
     ]
 
 
-class Id930a40c1f62ccd05adebb753afc312171(RootModel[str]):
+class Id930a40c1f62ccd05adebb753afc312171(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1445,7 +1483,7 @@ class Id930a40c1f62ccd05adebb753afc312171(RootModel[str]):
     ]
 
 
-class Id931c146f741a9fec3d98e7a08865a5301(RootModel[str]):
+class Id931c146f741a9fec3d98e7a08865a5301(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1461,7 +1499,7 @@ class Id931c146f741a9fec3d98e7a08865a5302Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id931c146f741a9fec3d98e7a08865a5302(
-    RootModel[list[Id931c146f741a9fec3d98e7a08865a5302Item]]
+    HomelabRootModel[list[Id931c146f741a9fec3d98e7a08865a5302Item]]
 ):
     root: Annotated[
         list[Id931c146f741a9fec3d98e7a08865a5302Item],
@@ -1474,7 +1512,9 @@ class Id931c146f741a9fec3d98e7a08865a5302(
 
 
 class Id931c146f741a9fec3d98e7a08865a530(
-    RootModel[Id931c146f741a9fec3d98e7a08865a5301 | Id931c146f741a9fec3d98e7a08865a5302]
+    HomelabRootModel[
+        Id931c146f741a9fec3d98e7a08865a5301 | Id931c146f741a9fec3d98e7a08865a5302
+    ]
 ):
     root: Annotated[
         Id931c146f741a9fec3d98e7a08865a5301 | Id931c146f741a9fec3d98e7a08865a5302,
@@ -1485,7 +1525,7 @@ class Id931c146f741a9fec3d98e7a08865a530(
     ]
 
 
-class Id9358229151687377a80daf4c8fbe8ca21(RootModel[str]):
+class Id9358229151687377a80daf4c8fbe8ca21(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1501,7 +1541,7 @@ class Id9358229151687377a80daf4c8fbe8ca22Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id9358229151687377a80daf4c8fbe8ca22(
-    RootModel[list[Id9358229151687377a80daf4c8fbe8ca22Item]]
+    HomelabRootModel[list[Id9358229151687377a80daf4c8fbe8ca22Item]]
 ):
     root: Annotated[
         list[Id9358229151687377a80daf4c8fbe8ca22Item],
@@ -1514,7 +1554,9 @@ class Id9358229151687377a80daf4c8fbe8ca22(
 
 
 class Id9358229151687377a80daf4c8fbe8ca2(
-    RootModel[Id9358229151687377a80daf4c8fbe8ca21 | Id9358229151687377a80daf4c8fbe8ca22]
+    HomelabRootModel[
+        Id9358229151687377a80daf4c8fbe8ca21 | Id9358229151687377a80daf4c8fbe8ca22
+    ]
 ):
     root: Annotated[
         Id9358229151687377a80daf4c8fbe8ca21 | Id9358229151687377a80daf4c8fbe8ca22,
@@ -1525,7 +1567,7 @@ class Id9358229151687377a80daf4c8fbe8ca2(
     ]
 
 
-class Id98ec131b3f78cbaced5a3a83f06258da1(RootModel[str]):
+class Id98ec131b3f78cbaced5a3a83f06258da1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1538,7 +1580,7 @@ class Id98ec131b3f78cbaced5a3a83f06258da1(RootModel[str]):
 
 
 class Id98ec131b3f78cbaced5a3a83f06258da(
-    RootModel[list[bool | Id98ec131b3f78cbaced5a3a83f06258da1]]
+    HomelabRootModel[list[bool | Id98ec131b3f78cbaced5a3a83f06258da1]]
 ):
     root: Annotated[
         list[bool | Id98ec131b3f78cbaced5a3a83f06258da1],
@@ -1546,7 +1588,7 @@ class Id98ec131b3f78cbaced5a3a83f06258da(
     ]
 
 
-class Id997692924136270ec7fee7ea4d04a8d61(RootModel[str]):
+class Id997692924136270ec7fee7ea4d04a8d61(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1562,7 +1604,7 @@ class Id997692924136270ec7fee7ea4d04a8d62Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id997692924136270ec7fee7ea4d04a8d62(
-    RootModel[list[Id997692924136270ec7fee7ea4d04a8d62Item]]
+    HomelabRootModel[list[Id997692924136270ec7fee7ea4d04a8d62Item]]
 ):
     root: Annotated[
         list[Id997692924136270ec7fee7ea4d04a8d62Item],
@@ -1575,7 +1617,9 @@ class Id997692924136270ec7fee7ea4d04a8d62(
 
 
 class Id997692924136270ec7fee7ea4d04a8d6(
-    RootModel[Id997692924136270ec7fee7ea4d04a8d61 | Id997692924136270ec7fee7ea4d04a8d62]
+    HomelabRootModel[
+        Id997692924136270ec7fee7ea4d04a8d61 | Id997692924136270ec7fee7ea4d04a8d62
+    ]
 ):
     root: Annotated[
         Id997692924136270ec7fee7ea4d04a8d61 | Id997692924136270ec7fee7ea4d04a8d62,
@@ -1591,7 +1635,7 @@ class Id9adce3f5946d7ba07e254360f9162b891(Id772a2599841b628f32030d9af183045a1):
 
 
 class Id9adce3f5946d7ba07e254360f9162b89(
-    RootModel[
+    HomelabRootModel[
         bool | Id9adce3f5946d7ba07e254360f9162b891 | Id772a2599841b628f32030d9af183045a
     ]
 ):
@@ -1605,7 +1649,7 @@ class Id9adce3f5946d7ba07e254360f9162b89(
 
 
 class Id9cfa481f3803a7b12fe7275be73cfc241(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -1624,7 +1668,7 @@ class Id9cfa481f3803a7b12fe7275be73cfc241(
 
 
 class Id9cfa481f3803a7b12fe7275be73cfc24(
-    RootModel[bool | Id9cfa481f3803a7b12fe7275be73cfc241]
+    HomelabRootModel[bool | Id9cfa481f3803a7b12fe7275be73cfc241]
 ):
     root: Annotated[
         bool | Id9cfa481f3803a7b12fe7275be73cfc241,
@@ -1635,7 +1679,7 @@ class Id9cfa481f3803a7b12fe7275be73cfc24(
     ]
 
 
-class Id9e1013a6d9d54bc7974f9c0ff9c0ea3e1(RootModel[str]):
+class Id9e1013a6d9d54bc7974f9c0ff9c0ea3e1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1651,7 +1695,7 @@ class Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2Item(Id9e1013a6d9d54bc7974f9c0ff9c0ea3e
 
 
 class Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2(
-    RootModel[list[Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2Item]]
+    HomelabRootModel[list[Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2Item]]
 ):
     root: Annotated[
         list[Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2Item],
@@ -1664,7 +1708,9 @@ class Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2(
 
 
 class Id9e1013a6d9d54bc7974f9c0ff9c0ea3e(
-    RootModel[Id9e1013a6d9d54bc7974f9c0ff9c0ea3e1 | Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2]
+    HomelabRootModel[
+        Id9e1013a6d9d54bc7974f9c0ff9c0ea3e1 | Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2
+    ]
 ):
     root: Annotated[
         Id9e1013a6d9d54bc7974f9c0ff9c0ea3e1 | Id9e1013a6d9d54bc7974f9c0ff9c0ea3e2,
@@ -1675,7 +1721,7 @@ class Id9e1013a6d9d54bc7974f9c0ff9c0ea3e(
     ]
 
 
-class Id9f9f3ec835e790da2b62f66ce5e9b1be1(RootModel[str]):
+class Id9f9f3ec835e790da2b62f66ce5e9b1be1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1688,7 +1734,7 @@ class Id9f9f3ec835e790da2b62f66ce5e9b1be1(RootModel[str]):
 
 
 class Id9f9f3ec835e790da2b62f66ce5e9b1be(
-    RootModel[list[bool | Id9f9f3ec835e790da2b62f66ce5e9b1be1]]
+    HomelabRootModel[list[bool | Id9f9f3ec835e790da2b62f66ce5e9b1be1]]
 ):
     root: Annotated[
         list[bool | Id9f9f3ec835e790da2b62f66ce5e9b1be1],
@@ -1696,7 +1742,7 @@ class Id9f9f3ec835e790da2b62f66ce5e9b1be(
     ]
 
 
-class Id9fc99e529e5753db5850c6ad0fe6e7691(RootModel[str]):
+class Id9fc99e529e5753db5850c6ad0fe6e7691(HomelabRootModel[str]):
     root: Annotated[
         str, Field(description="exclude a pattern", min_length=0, title="exclude")
     ]
@@ -1707,7 +1753,7 @@ class Id9fc99e529e5753db5850c6ad0fe6e7692Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class Id9fc99e529e5753db5850c6ad0fe6e7692(
-    RootModel[list[Id9fc99e529e5753db5850c6ad0fe6e7692Item]]
+    HomelabRootModel[list[Id9fc99e529e5753db5850c6ad0fe6e7692Item]]
 ):
     root: Annotated[
         list[Id9fc99e529e5753db5850c6ad0fe6e7692Item],
@@ -1716,7 +1762,9 @@ class Id9fc99e529e5753db5850c6ad0fe6e7692(
 
 
 class Id9fc99e529e5753db5850c6ad0fe6e769(
-    RootModel[Id9fc99e529e5753db5850c6ad0fe6e7691 | Id9fc99e529e5753db5850c6ad0fe6e7692]
+    HomelabRootModel[
+        Id9fc99e529e5753db5850c6ad0fe6e7691 | Id9fc99e529e5753db5850c6ad0fe6e7692
+    ]
 ):
     root: Annotated[
         Id9fc99e529e5753db5850c6ad0fe6e7691 | Id9fc99e529e5753db5850c6ad0fe6e7692,
@@ -1724,7 +1772,7 @@ class Id9fc99e529e5753db5850c6ad0fe6e769(
     ]
 
 
-class IdA009c428eabb1a0bbd5a6afe6ac4816a1(RootModel[str]):
+class IdA009c428eabb1a0bbd5a6afe6ac4816a1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1740,7 +1788,7 @@ class IdA009c428eabb1a0bbd5a6afe6ac4816a2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdA009c428eabb1a0bbd5a6afe6ac4816a2(
-    RootModel[list[IdA009c428eabb1a0bbd5a6afe6ac4816a2Item]]
+    HomelabRootModel[list[IdA009c428eabb1a0bbd5a6afe6ac4816a2Item]]
 ):
     root: Annotated[
         list[IdA009c428eabb1a0bbd5a6afe6ac4816a2Item],
@@ -1753,7 +1801,9 @@ class IdA009c428eabb1a0bbd5a6afe6ac4816a2(
 
 
 class IdA009c428eabb1a0bbd5a6afe6ac4816a(
-    RootModel[IdA009c428eabb1a0bbd5a6afe6ac4816a1 | IdA009c428eabb1a0bbd5a6afe6ac4816a2]
+    HomelabRootModel[
+        IdA009c428eabb1a0bbd5a6afe6ac4816a1 | IdA009c428eabb1a0bbd5a6afe6ac4816a2
+    ]
 ):
     root: Annotated[
         IdA009c428eabb1a0bbd5a6afe6ac4816a1 | IdA009c428eabb1a0bbd5a6afe6ac4816a2,
@@ -1769,7 +1819,7 @@ class IdA09c499e58e4610808213948c41e1c541(LockWait):
 
 
 class IdA09c499e58e4610808213948c41e1c54(
-    RootModel[int | IdA09c499e58e4610808213948c41e1c541]
+    HomelabRootModel[int | IdA09c499e58e4610808213948c41e1c541]
 ):
     root: Annotated[
         int | IdA09c499e58e4610808213948c41e1c541,
@@ -1780,7 +1830,7 @@ class IdA09c499e58e4610808213948c41e1c54(
     ]
 
 
-class IdA0a0f94f7b67bcfce0325495ae74a8f51(RootModel[str]):
+class IdA0a0f94f7b67bcfce0325495ae74a8f51(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1796,7 +1846,7 @@ class IdA0a0f94f7b67bcfce0325495ae74a8f52Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdA0a0f94f7b67bcfce0325495ae74a8f52(
-    RootModel[list[IdA0a0f94f7b67bcfce0325495ae74a8f52Item]]
+    HomelabRootModel[list[IdA0a0f94f7b67bcfce0325495ae74a8f52Item]]
 ):
     root: Annotated[
         list[IdA0a0f94f7b67bcfce0325495ae74a8f52Item],
@@ -1809,7 +1859,9 @@ class IdA0a0f94f7b67bcfce0325495ae74a8f52(
 
 
 class IdA0a0f94f7b67bcfce0325495ae74a8f5(
-    RootModel[IdA0a0f94f7b67bcfce0325495ae74a8f51 | IdA0a0f94f7b67bcfce0325495ae74a8f52]
+    HomelabRootModel[
+        IdA0a0f94f7b67bcfce0325495ae74a8f51 | IdA0a0f94f7b67bcfce0325495ae74a8f52
+    ]
 ):
     root: Annotated[
         IdA0a0f94f7b67bcfce0325495ae74a8f51 | IdA0a0f94f7b67bcfce0325495ae74a8f52,
@@ -1825,7 +1877,7 @@ class IdA19527553901cb803d03ed8c043834701(Id7c2846c9b466517f2dc34573f1b2e9321):
 
 
 class IdA19527553901cb803d03ed8c04383470(
-    RootModel[list[bool | IdA19527553901cb803d03ed8c043834701]]
+    HomelabRootModel[list[bool | IdA19527553901cb803d03ed8c043834701]]
 ):
     root: Annotated[
         list[bool | IdA19527553901cb803d03ed8c043834701],
@@ -1838,7 +1890,7 @@ class IdA3339bf04aa7ce8b2de0e4f0182e7ee11(Id2a2f6f7cd1fb61a45eb0eb65cdb60ee41):
 
 
 class IdA3339bf04aa7ce8b2de0e4f0182e7ee1(
-    RootModel[list[bool | IdA3339bf04aa7ce8b2de0e4f0182e7ee11]]
+    HomelabRootModel[list[bool | IdA3339bf04aa7ce8b2de0e4f0182e7ee11]]
 ):
     root: Annotated[
         list[bool | IdA3339bf04aa7ce8b2de0e4f0182e7ee11],
@@ -1846,7 +1898,7 @@ class IdA3339bf04aa7ce8b2de0e4f0182e7ee1(
     ]
 
 
-class IdA4563b5e7b4aa37bac3a57c09ef530f31(RootModel[str]):
+class IdA4563b5e7b4aa37bac3a57c09ef530f31(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1862,7 +1914,7 @@ class IdA4563b5e7b4aa37bac3a57c09ef530f32Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdA4563b5e7b4aa37bac3a57c09ef530f32(
-    RootModel[list[IdA4563b5e7b4aa37bac3a57c09ef530f32Item]]
+    HomelabRootModel[list[IdA4563b5e7b4aa37bac3a57c09ef530f32Item]]
 ):
     root: Annotated[
         list[IdA4563b5e7b4aa37bac3a57c09ef530f32Item],
@@ -1875,7 +1927,9 @@ class IdA4563b5e7b4aa37bac3a57c09ef530f32(
 
 
 class IdA4563b5e7b4aa37bac3a57c09ef530f3(
-    RootModel[IdA4563b5e7b4aa37bac3a57c09ef530f31 | IdA4563b5e7b4aa37bac3a57c09ef530f32]
+    HomelabRootModel[
+        IdA4563b5e7b4aa37bac3a57c09ef530f31 | IdA4563b5e7b4aa37bac3a57c09ef530f32
+    ]
 ):
     root: Annotated[
         IdA4563b5e7b4aa37bac3a57c09ef530f31 | IdA4563b5e7b4aa37bac3a57c09ef530f32,
@@ -1891,7 +1945,7 @@ class IdA50f2b8caf358a90c40554620f54e1991(Id8fee4af1900e0d2f64f1ee66a27254ef1):
 
 
 class IdA50f2b8caf358a90c40554620f54e199(
-    RootModel[list[bool | IdA50f2b8caf358a90c40554620f54e1991]]
+    HomelabRootModel[list[bool | IdA50f2b8caf358a90c40554620f54e1991]]
 ):
     root: Annotated[
         list[bool | IdA50f2b8caf358a90c40554620f54e1991],
@@ -1899,7 +1953,7 @@ class IdA50f2b8caf358a90c40554620f54e199(
     ]
 
 
-class IdAc1347149103e4aba75340d690c7d0111(RootModel[str]):
+class IdAc1347149103e4aba75340d690c7d0111(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1911,7 +1965,9 @@ class IdAc1347149103e4aba75340d690c7d0111(RootModel[str]):
 
 
 class IdAc1347149103e4aba75340d690c7d011(
-    RootModel[IdAc1347149103e4aba75340d690c7d0111 | Id3680b978edcaeed00fffff21f6470093]
+    HomelabRootModel[
+        IdAc1347149103e4aba75340d690c7d0111 | Id3680b978edcaeed00fffff21f6470093
+    ]
 ):
     root: Annotated[
         IdAc1347149103e4aba75340d690c7d0111 | Id3680b978edcaeed00fffff21f6470093,
@@ -1933,7 +1989,7 @@ class Method(str, Enum):
     trace = "TRACE"
 
 
-class IdAf6c00e035cdb6af35a7de31dc26023d1(RootModel[str]):
+class IdAf6c00e035cdb6af35a7de31dc26023d1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -1949,7 +2005,7 @@ class IdAf6c00e035cdb6af35a7de31dc26023d2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdAf6c00e035cdb6af35a7de31dc26023d2(
-    RootModel[list[IdAf6c00e035cdb6af35a7de31dc26023d2Item]]
+    HomelabRootModel[list[IdAf6c00e035cdb6af35a7de31dc26023d2Item]]
 ):
     root: Annotated[
         list[IdAf6c00e035cdb6af35a7de31dc26023d2Item],
@@ -1962,7 +2018,9 @@ class IdAf6c00e035cdb6af35a7de31dc26023d2(
 
 
 class IdAf6c00e035cdb6af35a7de31dc26023d(
-    RootModel[IdAf6c00e035cdb6af35a7de31dc26023d1 | IdAf6c00e035cdb6af35a7de31dc26023d2]
+    HomelabRootModel[
+        IdAf6c00e035cdb6af35a7de31dc26023d1 | IdAf6c00e035cdb6af35a7de31dc26023d2
+    ]
 ):
     root: Annotated[
         IdAf6c00e035cdb6af35a7de31dc26023d1 | IdAf6c00e035cdb6af35a7de31dc26023d2,
@@ -1978,7 +2036,7 @@ class IdB362a3e0ccae4b478c4681a4cb2963411(Id98ec131b3f78cbaced5a3a83f06258da1):
 
 
 class IdB362a3e0ccae4b478c4681a4cb296341(
-    RootModel[
+    HomelabRootModel[
         bool | IdB362a3e0ccae4b478c4681a4cb2963411 | Id98ec131b3f78cbaced5a3a83f06258da
     ]
 ):
@@ -1996,7 +2054,7 @@ class IdB5477d375908701459f12018dbadbbda1(Id50287fc5f0b0ec16f5013bbe833c11001):
 
 
 class IdB5477d375908701459f12018dbadbbda(
-    RootModel[list[bool | IdB5477d375908701459f12018dbadbbda1]]
+    HomelabRootModel[list[bool | IdB5477d375908701459f12018dbadbbda1]]
 ):
     root: Annotated[
         list[bool | IdB5477d375908701459f12018dbadbbda1],
@@ -2004,7 +2062,7 @@ class IdB5477d375908701459f12018dbadbbda(
     ]
 
 
-class IdB62c2f035a52f9e65b5a80c3895ee6bb1(RootModel[str]):
+class IdB62c2f035a52f9e65b5a80c3895ee6bb1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2017,7 +2075,7 @@ class IdB62c2f035a52f9e65b5a80c3895ee6bb1(RootModel[str]):
 
 
 class IdB62c2f035a52f9e65b5a80c3895ee6bb(
-    RootModel[int | IdB62c2f035a52f9e65b5a80c3895ee6bb1]
+    HomelabRootModel[int | IdB62c2f035a52f9e65b5a80c3895ee6bb1]
 ):
     root: Annotated[
         int | IdB62c2f035a52f9e65b5a80c3895ee6bb1,
@@ -2051,7 +2109,7 @@ class IdBac728d70d7f809711e6c27ea7825da91(Id5bfb7690d77d0226d2ffe0fe927a49811):
 
 
 class IdBac728d70d7f809711e6c27ea7825da9(
-    RootModel[
+    HomelabRootModel[
         bool | IdBac728d70d7f809711e6c27ea7825da91 | Id5bfb7690d77d0226d2ffe0fe927a4981
     ]
 ):
@@ -2064,7 +2122,7 @@ class IdBac728d70d7f809711e6c27ea7825da9(
     ]
 
 
-class IdBdebeefb786b97126bbaf65dcffdb1121(RootModel[str]):
+class IdBdebeefb786b97126bbaf65dcffdb1121(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2080,7 +2138,7 @@ class IdBdebeefb786b97126bbaf65dcffdb1122Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdBdebeefb786b97126bbaf65dcffdb1122(
-    RootModel[list[IdBdebeefb786b97126bbaf65dcffdb1122Item]]
+    HomelabRootModel[list[IdBdebeefb786b97126bbaf65dcffdb1122Item]]
 ):
     root: Annotated[
         list[IdBdebeefb786b97126bbaf65dcffdb1122Item],
@@ -2093,7 +2151,9 @@ class IdBdebeefb786b97126bbaf65dcffdb1122(
 
 
 class IdBdebeefb786b97126bbaf65dcffdb112(
-    RootModel[IdBdebeefb786b97126bbaf65dcffdb1121 | IdBdebeefb786b97126bbaf65dcffdb1122]
+    HomelabRootModel[
+        IdBdebeefb786b97126bbaf65dcffdb1121 | IdBdebeefb786b97126bbaf65dcffdb1122
+    ]
 ):
     root: Annotated[
         IdBdebeefb786b97126bbaf65dcffdb1121 | IdBdebeefb786b97126bbaf65dcffdb1122,
@@ -2113,7 +2173,7 @@ class IdCe60bcbc77a567ad9155eed1632d2b281(Id0859ea60b2fdecb8f8f9e6ce02ccc7e21):
 
 
 class IdCe60bcbc77a567ad9155eed1632d2b28(
-    RootModel[list[bool | IdCe60bcbc77a567ad9155eed1632d2b281]]
+    HomelabRootModel[list[bool | IdCe60bcbc77a567ad9155eed1632d2b281]]
 ):
     root: Annotated[
         list[bool | IdCe60bcbc77a567ad9155eed1632d2b281],
@@ -2121,7 +2181,7 @@ class IdCe60bcbc77a567ad9155eed1632d2b28(
     ]
 
 
-class IdD00dfc211f97db13bd5f14ea3a21e8e61(RootModel[str]):
+class IdD00dfc211f97db13bd5f14ea3a21e8e61(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2137,7 +2197,7 @@ class IdD00dfc211f97db13bd5f14ea3a21e8e62Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdD00dfc211f97db13bd5f14ea3a21e8e62(
-    RootModel[list[IdD00dfc211f97db13bd5f14ea3a21e8e62Item]]
+    HomelabRootModel[list[IdD00dfc211f97db13bd5f14ea3a21e8e62Item]]
 ):
     root: Annotated[
         list[IdD00dfc211f97db13bd5f14ea3a21e8e62Item],
@@ -2150,7 +2210,9 @@ class IdD00dfc211f97db13bd5f14ea3a21e8e62(
 
 
 class IdD00dfc211f97db13bd5f14ea3a21e8e6(
-    RootModel[IdD00dfc211f97db13bd5f14ea3a21e8e61 | IdD00dfc211f97db13bd5f14ea3a21e8e62]
+    HomelabRootModel[
+        IdD00dfc211f97db13bd5f14ea3a21e8e61 | IdD00dfc211f97db13bd5f14ea3a21e8e62
+    ]
 ):
     root: Annotated[
         IdD00dfc211f97db13bd5f14ea3a21e8e61 | IdD00dfc211f97db13bd5f14ea3a21e8e62,
@@ -2161,7 +2223,7 @@ class IdD00dfc211f97db13bd5f14ea3a21e8e6(
     ]
 
 
-class IdD0cb8938e8c33723a0a629c3376aecc51(RootModel[str]):
+class IdD0cb8938e8c33723a0a629c3376aecc51(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2177,7 +2239,7 @@ class IdD0cb8938e8c33723a0a629c3376aecc52Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdD0cb8938e8c33723a0a629c3376aecc52(
-    RootModel[list[IdD0cb8938e8c33723a0a629c3376aecc52Item]]
+    HomelabRootModel[list[IdD0cb8938e8c33723a0a629c3376aecc52Item]]
 ):
     root: Annotated[
         list[IdD0cb8938e8c33723a0a629c3376aecc52Item],
@@ -2190,7 +2252,9 @@ class IdD0cb8938e8c33723a0a629c3376aecc52(
 
 
 class IdD0cb8938e8c33723a0a629c3376aecc5(
-    RootModel[IdD0cb8938e8c33723a0a629c3376aecc51 | IdD0cb8938e8c33723a0a629c3376aecc52]
+    HomelabRootModel[
+        IdD0cb8938e8c33723a0a629c3376aecc51 | IdD0cb8938e8c33723a0a629c3376aecc52
+    ]
 ):
     root: Annotated[
         IdD0cb8938e8c33723a0a629c3376aecc51 | IdD0cb8938e8c33723a0a629c3376aecc52,
@@ -2201,7 +2265,7 @@ class IdD0cb8938e8c33723a0a629c3376aecc5(
     ]
 
 
-class IdD1f2b5737dfffd577f5878457493a8911(RootModel[str]):
+class IdD1f2b5737dfffd577f5878457493a8911(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2214,7 +2278,9 @@ class IdD1f2b5737dfffd577f5878457493a8911(RootModel[str]):
 
 
 class IdD1f2b5737dfffd577f5878457493a891(
-    RootModel[IdD1f2b5737dfffd577f5878457493a8911 | Id0f38cc784ed07dfeb28828fa20892403]
+    HomelabRootModel[
+        IdD1f2b5737dfffd577f5878457493a8911 | Id0f38cc784ed07dfeb28828fa20892403
+    ]
 ):
     root: Annotated[
         IdD1f2b5737dfffd577f5878457493a8911 | Id0f38cc784ed07dfeb28828fa20892403,
@@ -2223,7 +2289,7 @@ class IdD1f2b5737dfffd577f5878457493a891(
 
 
 class IdD7af7929542f414971eae9ea31c9fbe31(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -2242,7 +2308,7 @@ class IdD7af7929542f414971eae9ea31c9fbe31(
 
 
 class IdD7af7929542f414971eae9ea31c9fbe3(
-    RootModel[bool | IdD7af7929542f414971eae9ea31c9fbe31]
+    HomelabRootModel[bool | IdD7af7929542f414971eae9ea31c9fbe31]
 ):
     root: Annotated[
         bool | IdD7af7929542f414971eae9ea31c9fbe31,
@@ -2253,7 +2319,7 @@ class IdD7af7929542f414971eae9ea31c9fbe3(
     ]
 
 
-class IdD7f8fecbb230b837e9062334f594f0b51(RootModel[str]):
+class IdD7f8fecbb230b837e9062334f594f0b51(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2269,7 +2335,7 @@ class IdD7f8fecbb230b837e9062334f594f0b52Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdD7f8fecbb230b837e9062334f594f0b52(
-    RootModel[list[IdD7f8fecbb230b837e9062334f594f0b52Item]]
+    HomelabRootModel[list[IdD7f8fecbb230b837e9062334f594f0b52Item]]
 ):
     root: Annotated[
         list[IdD7f8fecbb230b837e9062334f594f0b52Item],
@@ -2282,7 +2348,9 @@ class IdD7f8fecbb230b837e9062334f594f0b52(
 
 
 class IdD7f8fecbb230b837e9062334f594f0b5(
-    RootModel[IdD7f8fecbb230b837e9062334f594f0b51 | IdD7f8fecbb230b837e9062334f594f0b52]
+    HomelabRootModel[
+        IdD7f8fecbb230b837e9062334f594f0b51 | IdD7f8fecbb230b837e9062334f594f0b52
+    ]
 ):
     root: Annotated[
         IdD7f8fecbb230b837e9062334f594f0b51 | IdD7f8fecbb230b837e9062334f594f0b52,
@@ -2295,7 +2363,7 @@ class IdD8318aede08ef634d4b20867f57917221(Id3db5e6a13da7efdfe4078d04413a15861):
 
 
 class IdD8318aede08ef634d4b20867f5791722(
-    RootModel[
+    HomelabRootModel[
         bool | IdD8318aede08ef634d4b20867f57917221 | Id3db5e6a13da7efdfe4078d04413a1586
     ]
 ):
@@ -2308,7 +2376,7 @@ class IdD8318aede08ef634d4b20867f5791722(
     ]
 
 
-class IdDb71520355d2a9baae090ca906a4bd4f1(RootModel[str]):
+class IdDb71520355d2a9baae090ca906a4bd4f1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2324,7 +2392,7 @@ class IdDb71520355d2a9baae090ca906a4bd4f2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdDb71520355d2a9baae090ca906a4bd4f2(
-    RootModel[list[IdDb71520355d2a9baae090ca906a4bd4f2Item]]
+    HomelabRootModel[list[IdDb71520355d2a9baae090ca906a4bd4f2Item]]
 ):
     root: Annotated[
         list[IdDb71520355d2a9baae090ca906a4bd4f2Item],
@@ -2337,7 +2405,9 @@ class IdDb71520355d2a9baae090ca906a4bd4f2(
 
 
 class IdDb71520355d2a9baae090ca906a4bd4f(
-    RootModel[IdDb71520355d2a9baae090ca906a4bd4f1 | IdDb71520355d2a9baae090ca906a4bd4f2]
+    HomelabRootModel[
+        IdDb71520355d2a9baae090ca906a4bd4f1 | IdDb71520355d2a9baae090ca906a4bd4f2
+    ]
 ):
     root: Annotated[
         IdDb71520355d2a9baae090ca906a4bd4f1 | IdDb71520355d2a9baae090ca906a4bd4f2,
@@ -2353,7 +2423,7 @@ class IdDb95ff431e47ecdb4f6936dec7f0ff621(Id5ea59c8a3698c9f849086ff3968f5bde1):
 
 
 class IdDb95ff431e47ecdb4f6936dec7f0ff62(
-    RootModel[list[bool | IdDb95ff431e47ecdb4f6936dec7f0ff621]]
+    HomelabRootModel[list[bool | IdDb95ff431e47ecdb4f6936dec7f0ff621]]
 ):
     root: Annotated[
         list[bool | IdDb95ff431e47ecdb4f6936dec7f0ff621],
@@ -2361,7 +2431,7 @@ class IdDb95ff431e47ecdb4f6936dec7f0ff62(
     ]
 
 
-class IdDd293c47346951998deea16fba697fb81(RootModel[str]):
+class IdDd293c47346951998deea16fba697fb81(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2373,7 +2443,9 @@ class IdDd293c47346951998deea16fba697fb81(RootModel[str]):
 
 
 class IdDd293c47346951998deea16fba697fb8(
-    RootModel[IdDd293c47346951998deea16fba697fb81 | Id53767a30fc77f3330d1a369be63db148]
+    HomelabRootModel[
+        IdDd293c47346951998deea16fba697fb81 | Id53767a30fc77f3330d1a369be63db148
+    ]
 ):
     root: Annotated[
         IdDd293c47346951998deea16fba697fb81 | Id53767a30fc77f3330d1a369be63db148,
@@ -2392,7 +2464,7 @@ class FieldSystemdDropInFiles3Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class FieldSystemdDropInFiles3(RootModel[list[FieldSystemdDropInFiles3Item]]):
+class FieldSystemdDropInFiles3(HomelabRootModel[list[FieldSystemdDropInFiles3Item]]):
     root: Annotated[
         list[FieldSystemdDropInFiles3Item],
         Field(
@@ -2411,7 +2483,7 @@ class SystemdDropInFiles5Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class SystemdDropInFiles5(RootModel[list[SystemdDropInFiles5Item]]):
+class SystemdDropInFiles5(HomelabRootModel[list[SystemdDropInFiles5Item]]):
     root: Annotated[
         list[SystemdDropInFiles5Item],
         Field(
@@ -2430,7 +2502,7 @@ class SystemdDropInFiles7Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class SystemdDropInFiles7(RootModel[list[SystemdDropInFiles7Item]]):
+class SystemdDropInFiles7(HomelabRootModel[list[SystemdDropInFiles7Item]]):
     root: Annotated[
         list[SystemdDropInFiles7Item],
         Field(
@@ -2449,7 +2521,7 @@ class SystemdDropInFilesAppend3Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class SystemdDropInFilesAppend3(RootModel[list[SystemdDropInFilesAppend3Item]]):
+class SystemdDropInFilesAppend3(HomelabRootModel[list[SystemdDropInFilesAppend3Item]]):
     root: Annotated[
         list[SystemdDropInFilesAppend3Item],
         Field(
@@ -2468,7 +2540,9 @@ class SystemdDropInFilesPrepend3Item(Id03550d33226c03f7e7c8a6a6fc9713332Item):
     pass
 
 
-class SystemdDropInFilesPrepend3(RootModel[list[SystemdDropInFilesPrepend3Item]]):
+class SystemdDropInFilesPrepend3(
+    HomelabRootModel[list[SystemdDropInFilesPrepend3Item]]
+):
     root: Annotated[
         list[SystemdDropInFilesPrepend3Item],
         Field(
@@ -2480,7 +2554,7 @@ class SystemdDropInFilesPrepend3(RootModel[list[SystemdDropInFilesPrepend3Item]]
 
 
 class IdDda514fa7d7b07fd5cd5e88b788715d12(
-    RootModel[list[Id2ca6a44f0bb5aa131cb5f092c9e98d10]]
+    HomelabRootModel[list[Id2ca6a44f0bb5aa131cb5f092c9e98d10]]
 ):
     root: Annotated[
         list[Id2ca6a44f0bb5aa131cb5f092c9e98d10],
@@ -2502,7 +2576,7 @@ class IdDda514fa7d7b07fd5cd5e88b788715d12(
     ]
 
 
-class IdE53da3b88d470edbc47a4cdd4160ff3f1(RootModel[str]):
+class IdE53da3b88d470edbc47a4cdd4160ff3f1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2516,7 +2590,7 @@ class IdE53da3b88d470edbc47a4cdd4160ff3f2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdE53da3b88d470edbc47a4cdd4160ff3f2(
-    RootModel[list[IdE53da3b88d470edbc47a4cdd4160ff3f2Item]]
+    HomelabRootModel[list[IdE53da3b88d470edbc47a4cdd4160ff3f2Item]]
 ):
     root: Annotated[
         list[IdE53da3b88d470edbc47a4cdd4160ff3f2Item],
@@ -2529,7 +2603,9 @@ class IdE53da3b88d470edbc47a4cdd4160ff3f2(
 
 
 class IdE53da3b88d470edbc47a4cdd4160ff3f(
-    RootModel[IdE53da3b88d470edbc47a4cdd4160ff3f1 | IdE53da3b88d470edbc47a4cdd4160ff3f2]
+    HomelabRootModel[
+        IdE53da3b88d470edbc47a4cdd4160ff3f1 | IdE53da3b88d470edbc47a4cdd4160ff3f2
+    ]
 ):
     root: Annotated[
         IdE53da3b88d470edbc47a4cdd4160ff3f1 | IdE53da3b88d470edbc47a4cdd4160ff3f2,
@@ -2542,7 +2618,7 @@ class IdE5d79a5de968009a7b4a832ca91042ea1(Id73ddecc00270b21ad3fb847e79607e501):
 
 
 class IdE5d79a5de968009a7b4a832ca91042ea(
-    RootModel[list[bool | IdE5d79a5de968009a7b4a832ca91042ea1]]
+    HomelabRootModel[list[bool | IdE5d79a5de968009a7b4a832ca91042ea1]]
 ):
     root: Annotated[
         list[bool | IdE5d79a5de968009a7b4a832ca91042ea1],
@@ -2550,7 +2626,7 @@ class IdE5d79a5de968009a7b4a832ca91042ea(
     ]
 
 
-class IdE85b383c5fe5f267b43cb2035308e9331(RootModel[str]):
+class IdE85b383c5fe5f267b43cb2035308e9331(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2566,7 +2642,7 @@ class IdE85b383c5fe5f267b43cb2035308e9332Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdE85b383c5fe5f267b43cb2035308e9332(
-    RootModel[list[IdE85b383c5fe5f267b43cb2035308e9332Item]]
+    HomelabRootModel[list[IdE85b383c5fe5f267b43cb2035308e9332Item]]
 ):
     root: Annotated[
         list[IdE85b383c5fe5f267b43cb2035308e9332Item],
@@ -2579,7 +2655,9 @@ class IdE85b383c5fe5f267b43cb2035308e9332(
 
 
 class IdE85b383c5fe5f267b43cb2035308e933(
-    RootModel[IdE85b383c5fe5f267b43cb2035308e9331 | IdE85b383c5fe5f267b43cb2035308e9332]
+    HomelabRootModel[
+        IdE85b383c5fe5f267b43cb2035308e9331 | IdE85b383c5fe5f267b43cb2035308e9332
+    ]
 ):
     root: Annotated[
         IdE85b383c5fe5f267b43cb2035308e9331 | IdE85b383c5fe5f267b43cb2035308e9332,
@@ -2595,7 +2673,7 @@ class IdEa1b70977b0e3cf792d5c3ad1231c8d31(Id7436182a7d8cda9c00cd5d31c743af8b1):
 
 
 class IdEa1b70977b0e3cf792d5c3ad1231c8d3(
-    RootModel[
+    HomelabRootModel[
         bool | IdEa1b70977b0e3cf792d5c3ad1231c8d31 | Id7436182a7d8cda9c00cd5d31c743af8b
     ]
 ):
@@ -2608,7 +2686,7 @@ class IdEa1b70977b0e3cf792d5c3ad1231c8d3(
     ]
 
 
-class IdEc2677e78c4ab68f0084eda8fac2205c1(RootModel[str]):
+class IdEc2677e78c4ab68f0084eda8fac2205c1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2624,7 +2702,7 @@ class IdEc2677e78c4ab68f0084eda8fac2205c2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdEc2677e78c4ab68f0084eda8fac2205c2(
-    RootModel[list[IdEc2677e78c4ab68f0084eda8fac2205c2Item]]
+    HomelabRootModel[list[IdEc2677e78c4ab68f0084eda8fac2205c2Item]]
 ):
     root: Annotated[
         list[IdEc2677e78c4ab68f0084eda8fac2205c2Item],
@@ -2637,7 +2715,9 @@ class IdEc2677e78c4ab68f0084eda8fac2205c2(
 
 
 class IdEc2677e78c4ab68f0084eda8fac2205c(
-    RootModel[IdEc2677e78c4ab68f0084eda8fac2205c1 | IdEc2677e78c4ab68f0084eda8fac2205c2]
+    HomelabRootModel[
+        IdEc2677e78c4ab68f0084eda8fac2205c1 | IdEc2677e78c4ab68f0084eda8fac2205c2
+    ]
 ):
     root: Annotated[
         IdEc2677e78c4ab68f0084eda8fac2205c1 | IdEc2677e78c4ab68f0084eda8fac2205c2,
@@ -2648,7 +2728,7 @@ class IdEc2677e78c4ab68f0084eda8fac2205c(
     ]
 
 
-class IdEcad63ddeaf9b6ee3257506b339a3dd41(RootModel[str]):
+class IdEcad63ddeaf9b6ee3257506b339a3dd41(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2661,7 +2741,7 @@ class IdEcad63ddeaf9b6ee3257506b339a3dd41(RootModel[str]):
 
 
 class IdEcad63ddeaf9b6ee3257506b339a3dd4(
-    RootModel[list[bool | IdEcad63ddeaf9b6ee3257506b339a3dd41]]
+    HomelabRootModel[list[bool | IdEcad63ddeaf9b6ee3257506b339a3dd41]]
 ):
     root: Annotated[
         list[bool | IdEcad63ddeaf9b6ee3257506b339a3dd41],
@@ -2674,7 +2754,7 @@ class IdEeb8a98cfbdda89f5344c19ef0ca1ef71(Id9f9f3ec835e790da2b62f66ce5e9b1be1):
 
 
 class IdEeb8a98cfbdda89f5344c19ef0ca1ef7(
-    RootModel[
+    HomelabRootModel[
         bool | IdEeb8a98cfbdda89f5344c19ef0ca1ef71 | Id9f9f3ec835e790da2b62f66ce5e9b1be
     ]
 ):
@@ -2692,7 +2772,7 @@ class IdEebaac4ced9464e5ce52c69dc77846f21(Id211783b4c728b6fc5c2c329f3010e6941):
 
 
 class IdEebaac4ced9464e5ce52c69dc77846f2(
-    RootModel[list[bool | IdEebaac4ced9464e5ce52c69dc77846f21]]
+    HomelabRootModel[list[bool | IdEebaac4ced9464e5ce52c69dc77846f21]]
 ):
     root: Annotated[
         list[bool | IdEebaac4ced9464e5ce52c69dc77846f21],
@@ -2700,7 +2780,7 @@ class IdEebaac4ced9464e5ce52c69dc77846f2(
     ]
 
 
-class IdEf4cd05741e7f69941250f6f7121853f1(RootModel[str]):
+class IdEf4cd05741e7f69941250f6f7121853f1(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2716,7 +2796,7 @@ class IdEf4cd05741e7f69941250f6f7121853f2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdEf4cd05741e7f69941250f6f7121853f2(
-    RootModel[list[IdEf4cd05741e7f69941250f6f7121853f2Item]]
+    HomelabRootModel[list[IdEf4cd05741e7f69941250f6f7121853f2Item]]
 ):
     root: Annotated[
         list[IdEf4cd05741e7f69941250f6f7121853f2Item],
@@ -2729,7 +2809,9 @@ class IdEf4cd05741e7f69941250f6f7121853f2(
 
 
 class IdEf4cd05741e7f69941250f6f7121853f(
-    RootModel[IdEf4cd05741e7f69941250f6f7121853f1 | IdEf4cd05741e7f69941250f6f7121853f2]
+    HomelabRootModel[
+        IdEf4cd05741e7f69941250f6f7121853f1 | IdEf4cd05741e7f69941250f6f7121853f2
+    ]
 ):
     root: Annotated[
         IdEf4cd05741e7f69941250f6f7121853f1 | IdEf4cd05741e7f69941250f6f7121853f2,
@@ -2749,7 +2831,7 @@ class IdEfc256c6055c563ef627167bef02d66c2Item(Id03550d33226c03f7e7c8a6a6fc971333
 
 
 class IdEfc256c6055c563ef627167bef02d66c2(
-    RootModel[list[IdEfc256c6055c563ef627167bef02d66c2Item]]
+    HomelabRootModel[list[IdEfc256c6055c563ef627167bef02d66c2Item]]
 ):
     root: Annotated[
         list[IdEfc256c6055c563ef627167bef02d66c2Item],
@@ -2762,7 +2844,9 @@ class IdEfc256c6055c563ef627167bef02d66c2(
 
 
 class IdEfc256c6055c563ef627167bef02d66c(
-    RootModel[IdEfc256c6055c563ef627167bef02d66c1 | IdEfc256c6055c563ef627167bef02d66c2]
+    HomelabRootModel[
+        IdEfc256c6055c563ef627167bef02d66c1 | IdEfc256c6055c563ef627167bef02d66c2
+    ]
 ):
     root: Annotated[
         IdEfc256c6055c563ef627167bef02d66c1 | IdEfc256c6055c563ef627167bef02d66c2,
@@ -2778,7 +2862,7 @@ class IdF322bd36da6394f27bf8e2a3f5b4c9bf1(IdEcad63ddeaf9b6ee3257506b339a3dd41):
 
 
 class IdF322bd36da6394f27bf8e2a3f5b4c9bf(
-    RootModel[
+    HomelabRootModel[
         bool | IdF322bd36da6394f27bf8e2a3f5b4c9bf1 | IdEcad63ddeaf9b6ee3257506b339a3dd4
     ]
 ):
@@ -2791,7 +2875,7 @@ class IdF322bd36da6394f27bf8e2a3f5b4c9bf(
     ]
 
 
-class IdF7bc4372460aefc0a1ecf448de19d0c81(RootModel[str]):
+class IdF7bc4372460aefc0a1ecf448de19d0c81(HomelabRootModel[str]):
     root: Annotated[
         str,
         Field(
@@ -2805,7 +2889,7 @@ class IdF7bc4372460aefc0a1ecf448de19d0c81(RootModel[str]):
 
 
 class IdF7bc4372460aefc0a1ecf448de19d0c8(
-    RootModel[int | IdF7bc4372460aefc0a1ecf448de19d0c81]
+    HomelabRootModel[int | IdF7bc4372460aefc0a1ecf448de19d0c81]
 ):
     root: Annotated[
         int | IdF7bc4372460aefc0a1ecf448de19d0c81,
@@ -2821,7 +2905,7 @@ class IdFdf62d09f0edc601bbd1dd5a126d8dbcItem(Id03550d33226c03f7e7c8a6a6fc9713332
 
 
 class IdFdf62d09f0edc601bbd1dd5a126d8dbc(
-    RootModel[list[IdFdf62d09f0edc601bbd1dd5a126d8dbcItem]]
+    HomelabRootModel[list[IdFdf62d09f0edc601bbd1dd5a126d8dbcItem]]
 ):
     root: Annotated[
         list[IdFdf62d09f0edc601bbd1dd5a126d8dbcItem],
@@ -2830,7 +2914,7 @@ class IdFdf62d09f0edc601bbd1dd5a126d8dbc(
 
 
 class IdFf0dfd3fabc9eefcc415fbef010711971(
-    RootModel[
+    HomelabRootModel[
         Annotated[
             str,
             StringConstraints(
@@ -2849,7 +2933,7 @@ class IdFf0dfd3fabc9eefcc415fbef010711971(
 
 
 class IdFf0dfd3fabc9eefcc415fbef01071197(
-    RootModel[bool | IdFf0dfd3fabc9eefcc415fbef010711971]
+    HomelabRootModel[bool | IdFf0dfd3fabc9eefcc415fbef010711971]
 ):
     root: Annotated[
         bool | IdFf0dfd3fabc9eefcc415fbef010711971,
@@ -2861,7 +2945,7 @@ class IdFf0dfd3fabc9eefcc415fbef01071197(
 
 
 class Id0859ea60b2fdecb8f8f9e6ce02ccc7e2(
-    RootModel[
+    HomelabRootModel[
         bool | Id0859ea60b2fdecb8f8f9e6ce02ccc7e21 | IdCe60bcbc77a567ad9155eed1632d2b28
     ]
 ):
@@ -2875,7 +2959,9 @@ class Id0859ea60b2fdecb8f8f9e6ce02ccc7e2(
 
 
 class Id0e78e6a97cca55e12ab1ddc3461bda24(
-    RootModel[Id0e78e6a97cca55e12ab1ddc3461bda241 | Id49b466f6b160c6abeb21118ce749cdfd]
+    HomelabRootModel[
+        Id0e78e6a97cca55e12ab1ddc3461bda241 | Id49b466f6b160c6abeb21118ce749cdfd
+    ]
 ):
     root: Annotated[
         Id0e78e6a97cca55e12ab1ddc3461bda241 | Id49b466f6b160c6abeb21118ce749cdfd,
@@ -2887,7 +2973,7 @@ class Id0e78e6a97cca55e12ab1ddc3461bda24(
 
 
 class Id11fa1e23ade12c8149af2d113ea9dbb4(
-    RootModel[
+    HomelabRootModel[
         bool | Id11fa1e23ade12c8149af2d113ea9dbb41 | Id5f7b04a65135156c4a97e9e99ab9ac95
     ]
 ):
@@ -2901,7 +2987,7 @@ class Id11fa1e23ade12c8149af2d113ea9dbb4(
 
 
 class Id211783b4c728b6fc5c2c329f3010e694(
-    RootModel[
+    HomelabRootModel[
         bool | Id211783b4c728b6fc5c2c329f3010e6941 | IdEebaac4ced9464e5ce52c69dc77846f2
     ]
 ):
@@ -2915,7 +3001,7 @@ class Id211783b4c728b6fc5c2c329f3010e694(
 
 
 class Id2a2f6f7cd1fb61a45eb0eb65cdb60ee4(
-    RootModel[
+    HomelabRootModel[
         bool | Id2a2f6f7cd1fb61a45eb0eb65cdb60ee41 | IdA3339bf04aa7ce8b2de0e4f0182e7ee1
     ]
 ):
@@ -2929,7 +3015,7 @@ class Id2a2f6f7cd1fb61a45eb0eb65cdb60ee4(
 
 
 class Id3c76d5de2387afe5a7919aad456046442(
-    RootModel[list[IdC20492a9908e894b76ed0102f27c38dc]]
+    HomelabRootModel[list[IdC20492a9908e894b76ed0102f27c38dc]]
 ):
     root: Annotated[
         list[IdC20492a9908e894b76ed0102f27c38dc],
@@ -2952,7 +3038,7 @@ class Id3c76d5de2387afe5a7919aad456046442(
 
 
 class Id50287fc5f0b0ec16f5013bbe833c1100(
-    RootModel[
+    HomelabRootModel[
         bool | Id50287fc5f0b0ec16f5013bbe833c11001 | IdB5477d375908701459f12018dbadbbda
     ]
 ):
@@ -2966,7 +3052,7 @@ class Id50287fc5f0b0ec16f5013bbe833c1100(
 
 
 class Id58170d9ae682165edaf4c818e7b50550(
-    RootModel[
+    HomelabRootModel[
         bool | Id58170d9ae682165edaf4c818e7b505501 | Id7fe776d1a2c2dd57ebe6cff96c557b7a
     ]
 ):
@@ -2980,7 +3066,7 @@ class Id58170d9ae682165edaf4c818e7b50550(
 
 
 class Id5ea59c8a3698c9f849086ff3968f5bde(
-    RootModel[
+    HomelabRootModel[
         bool | Id5ea59c8a3698c9f849086ff3968f5bde1 | IdDb95ff431e47ecdb4f6936dec7f0ff62
     ]
 ):
@@ -2994,7 +3080,7 @@ class Id5ea59c8a3698c9f849086ff3968f5bde(
 
 
 class Id6e3f69f4cd1eec58c0f94211a5f66b23(
-    RootModel[list[IdC20492a9908e894b76ed0102f27c38dc]]
+    HomelabRootModel[list[IdC20492a9908e894b76ed0102f27c38dc]]
 ):
     root: Annotated[
         list[IdC20492a9908e894b76ed0102f27c38dc],
@@ -3016,7 +3102,7 @@ class Id6e3f69f4cd1eec58c0f94211a5f66b23(
 
 
 class Id73ddecc00270b21ad3fb847e79607e50(
-    RootModel[
+    HomelabRootModel[
         bool | Id73ddecc00270b21ad3fb847e79607e501 | IdE5d79a5de968009a7b4a832ca91042ea
     ]
 ):
@@ -3030,7 +3116,7 @@ class Id73ddecc00270b21ad3fb847e79607e50(
 
 
 class Id7c2846c9b466517f2dc34573f1b2e932(
-    RootModel[
+    HomelabRootModel[
         bool | Id7c2846c9b466517f2dc34573f1b2e9321 | IdA19527553901cb803d03ed8c04383470
     ]
 ):
@@ -3044,7 +3130,9 @@ class Id7c2846c9b466517f2dc34573f1b2e932(
 
 
 class Id8e1fcc63a67be14220d248d0225ed5b7(
-    RootModel[Id8e1fcc63a67be14220d248d0225ed5b71 | IdFdf62d09f0edc601bbd1dd5a126d8dbc]
+    HomelabRootModel[
+        Id8e1fcc63a67be14220d248d0225ed5b71 | IdFdf62d09f0edc601bbd1dd5a126d8dbc
+    ]
 ):
     root: Annotated[
         Id8e1fcc63a67be14220d248d0225ed5b71 | IdFdf62d09f0edc601bbd1dd5a126d8dbc,
@@ -3056,7 +3144,7 @@ class Id8e1fcc63a67be14220d248d0225ed5b7(
 
 
 class Id8fee4af1900e0d2f64f1ee66a27254ef(
-    RootModel[
+    HomelabRootModel[
         bool | Id8fee4af1900e0d2f64f1ee66a27254ef1 | IdA50f2b8caf358a90c40554620f54e199
     ]
 ):
@@ -3070,7 +3158,7 @@ class Id8fee4af1900e0d2f64f1ee66a27254ef(
 
 
 class Id930a40c1f62ccd05adebb753afc31217(
-    RootModel[
+    HomelabRootModel[
         list[Id930a40c1f62ccd05adebb753afc312171 | IdB88443d3eba9c9dfad608c2a71614d0d]
     ]
 ):
@@ -3081,7 +3169,9 @@ class Id930a40c1f62ccd05adebb753afc31217(
 
 
 class Id94210984cb45797ad8ac9de467d98489(
-    RootModel[IdC20492a9908e894b76ed0102f27c38dc | Id6e3f69f4cd1eec58c0f94211a5f66b23]
+    HomelabRootModel[
+        IdC20492a9908e894b76ed0102f27c38dc | Id6e3f69f4cd1eec58c0f94211a5f66b23
+    ]
 ):
     root: Annotated[
         IdC20492a9908e894b76ed0102f27c38dc | Id6e3f69f4cd1eec58c0f94211a5f66b23,
@@ -3137,7 +3227,7 @@ class FieldHeaders1Item(FieldHeaders):
     pass
 
 
-class FieldHeaders1(RootModel[list[FieldHeaders1Item]]):
+class FieldHeaders1(HomelabRootModel[list[FieldHeaders1Item]]):
     root: Annotated[
         list[FieldHeaders1Item],
         Field(
@@ -3156,7 +3246,7 @@ class Headers1Item(FieldHeaders):
     pass
 
 
-class Headers1(RootModel[list[Headers1Item]]):
+class Headers1(HomelabRootModel[list[Headers1Item]]):
     root: Annotated[
         list[Headers1Item],
         Field(
@@ -3175,7 +3265,7 @@ class Headers3Item(FieldHeaders):
     pass
 
 
-class Headers3(RootModel[list[Headers3Item]]):
+class Headers3(HomelabRootModel[list[Headers3Item]]):
     root: Annotated[
         list[Headers3Item],
         Field(
@@ -3194,7 +3284,7 @@ class HeadersAppend1Item(FieldHeaders):
     pass
 
 
-class HeadersAppend1(RootModel[list[HeadersAppend1Item]]):
+class HeadersAppend1(HomelabRootModel[list[HeadersAppend1Item]]):
     root: Annotated[
         list[HeadersAppend1Item],
         Field(
@@ -3213,7 +3303,7 @@ class HeadersPrepend1Item(FieldHeaders):
     pass
 
 
-class HeadersPrepend1(RootModel[list[HeadersPrepend1Item]]):
+class HeadersPrepend1(HomelabRootModel[list[HeadersPrepend1Item]]):
     root: Annotated[
         list[HeadersPrepend1Item],
         Field(
@@ -3305,7 +3395,7 @@ class IdAc68e24112f7466d1d5141d04c491c8c(HomelabBaseModel):
 
 
 class IdBc7a8ba8f54f45b25490b5dae9d7d3e2(
-    RootModel[list[IdAc68e24112f7466d1d5141d04c491c8c]]
+    HomelabRootModel[list[IdAc68e24112f7466d1d5141d04c491c8c]]
 ):
     root: Annotated[
         list[IdAc68e24112f7466d1d5141d04c491c8c],
@@ -3520,7 +3610,7 @@ class IdDda514fa7d7b07fd5cd5e88b788715d11(HomelabBaseModel):
 
 
 class IdDda514fa7d7b07fd5cd5e88b788715d1(
-    RootModel[
+    HomelabRootModel[
         IdDda514fa7d7b07fd5cd5e88b788715d11
         | Id2ca6a44f0bb5aa131cb5f092c9e98d10
         | IdDda514fa7d7b07fd5cd5e88b788715d12
@@ -3582,7 +3672,7 @@ class IdE61f589a6ce6dba6d1329fb1b9c029dd(HomelabBaseModel):
 
 
 class IdF859f484fd3c41a21f89c97b3c8add1b(
-    RootModel[list[IdE61f589a6ce6dba6d1329fb1b9c029dd]]
+    HomelabRootModel[list[IdE61f589a6ce6dba6d1329fb1b9c029dd]]
 ):
     root: Annotated[
         list[IdE61f589a6ce6dba6d1329fb1b9c029dd],
@@ -3591,7 +3681,9 @@ class IdF859f484fd3c41a21f89c97b3c8add1b(
 
 
 class IdFba55e7c724d1978f8496e3c1ba2bb58(
-    RootModel[IdE61f589a6ce6dba6d1329fb1b9c029dd | IdF859f484fd3c41a21f89c97b3c8add1b]
+    HomelabRootModel[
+        IdE61f589a6ce6dba6d1329fb1b9c029dd | IdF859f484fd3c41a21f89c97b3c8add1b
+    ]
 ):
     root: Annotated[
         IdE61f589a6ce6dba6d1329fb1b9c029dd | IdF859f484fd3c41a21f89c97b3c8add1b,
@@ -3603,7 +3695,7 @@ class IdFba55e7c724d1978f8496e3c1ba2bb58(
 
 
 class Id052a168c104bb25ef25e3e09f86a7c03(
-    RootModel[list[IdAc68e24112f7466d1d5141d04c491c8c]]
+    HomelabRootModel[list[IdAc68e24112f7466d1d5141d04c491c8c]]
 ):
     root: Annotated[
         list[IdAc68e24112f7466d1d5141d04c491c8c],
@@ -3612,7 +3704,9 @@ class Id052a168c104bb25ef25e3e09f86a7c03(
 
 
 class Id169a8a109f5202e4e730ddb575c1282c(
-    RootModel[Id169a8a109f5202e4e730ddb575c1282c1 | Id930a40c1f62ccd05adebb753afc31217]
+    HomelabRootModel[
+        Id169a8a109f5202e4e730ddb575c1282c1 | Id930a40c1f62ccd05adebb753afc31217
+    ]
 ):
     root: Annotated[
         Id169a8a109f5202e4e730ddb575c1282c1 | Id930a40c1f62ccd05adebb753afc31217,
@@ -3827,7 +3921,7 @@ class Id3c76d5de2387afe5a7919aad456046441(HomelabBaseModel):
 
 
 class Id3c76d5de2387afe5a7919aad45604644(
-    RootModel[
+    HomelabRootModel[
         Id3c76d5de2387afe5a7919aad456046441
         | IdC20492a9908e894b76ed0102f27c38dc
         | Id3c76d5de2387afe5a7919aad456046442
@@ -3845,7 +3939,9 @@ class Id3c76d5de2387afe5a7919aad45604644(
 
 
 class Id734e7052ffb3742969c96ccff9d0e7b2(
-    RootModel[IdAc68e24112f7466d1d5141d04c491c8c | IdBc7a8ba8f54f45b25490b5dae9d7d3e2]
+    HomelabRootModel[
+        IdAc68e24112f7466d1d5141d04c491c8c | IdBc7a8ba8f54f45b25490b5dae9d7d3e2
+    ]
 ):
     root: Annotated[
         IdAc68e24112f7466d1d5141d04c491c8c | IdBc7a8ba8f54f45b25490b5dae9d7d3e2,
@@ -3857,7 +3953,7 @@ class Id734e7052ffb3742969c96ccff9d0e7b2(
 
 
 class Id8dc244da59b67cffbcc6e5de402cffb5(
-    RootModel[list[IdAc68e24112f7466d1d5141d04c491c8c]]
+    HomelabRootModel[list[IdAc68e24112f7466d1d5141d04c491c8c]]
 ):
     root: Annotated[
         list[IdAc68e24112f7466d1d5141d04c491c8c],
@@ -3866,7 +3962,9 @@ class Id8dc244da59b67cffbcc6e5de402cffb5(
 
 
 class Id8ed79f73925689de4526f415d4bf639d(
-    RootModel[IdAc68e24112f7466d1d5141d04c491c8c | Id052a168c104bb25ef25e3e09f86a7c03]
+    HomelabRootModel[
+        IdAc68e24112f7466d1d5141d04c491c8c | Id052a168c104bb25ef25e3e09f86a7c03
+    ]
 ):
     root: Annotated[
         IdAc68e24112f7466d1d5141d04c491c8c | Id052a168c104bb25ef25e3e09f86a7c03,
@@ -3878,7 +3976,7 @@ class Id8ed79f73925689de4526f415d4bf639d(
 
 
 class Id9e7d0d652e41d4a0ab871e99b638b398(
-    RootModel[list[IdAc68e24112f7466d1d5141d04c491c8c]]
+    HomelabRootModel[list[IdAc68e24112f7466d1d5141d04c491c8c]]
 ):
     root: Annotated[
         list[IdAc68e24112f7466d1d5141d04c491c8c],
@@ -3887,7 +3985,9 @@ class Id9e7d0d652e41d4a0ab871e99b638b398(
 
 
 class IdB03ccdd7899cd5486625a0e514a03d2c(
-    RootModel[IdAc68e24112f7466d1d5141d04c491c8c | Id8dc244da59b67cffbcc6e5de402cffb5]
+    HomelabRootModel[
+        IdAc68e24112f7466d1d5141d04c491c8c | Id8dc244da59b67cffbcc6e5de402cffb5
+    ]
 ):
     root: Annotated[
         IdAc68e24112f7466d1d5141d04c491c8c | Id8dc244da59b67cffbcc6e5de402cffb5,
@@ -4318,7 +4418,9 @@ class Model(HomelabBaseModel):
 
 
 class Id1fcb7f2138c894ddc8b954809daf9590(
-    RootModel[IdAc68e24112f7466d1d5141d04c491c8c | Id9e7d0d652e41d4a0ab871e99b638b398]
+    HomelabRootModel[
+        IdAc68e24112f7466d1d5141d04c491c8c | Id9e7d0d652e41d4a0ab871e99b638b398
+    ]
 ):
     root: Annotated[
         IdAc68e24112f7466d1d5141d04c491c8c | Id9e7d0d652e41d4a0ab871e99b638b398,

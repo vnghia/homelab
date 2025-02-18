@@ -1,7 +1,7 @@
-from pydantic import RootModel
+from homelab_pydantic import HomelabRootModel
 
 
-class DaguDagParamsModel(RootModel[dict[str, str]]):
+class DaguDagParamsModel(HomelabRootModel[dict[str, str]]):
     root: dict[str, str]
 
     def to_key_command(self, key: str) -> str:

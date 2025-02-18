@@ -1,7 +1,6 @@
 from enum import StrEnum, auto
 
-from homelab_pydantic import HomelabBaseModel
-from pydantic import RootModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 
 class Platform(StrEnum):
@@ -17,7 +16,7 @@ class PlatformFullString(HomelabBaseModel):
         return self.template.format(platform=self.platform[platform])
 
 
-class PlatformString(RootModel[str | PlatformFullString]):
+class PlatformString(HomelabRootModel[str | PlatformFullString]):
     def to_str(self, platform: Platform) -> str:
         root = self.root
         if isinstance(root, PlatformFullString):

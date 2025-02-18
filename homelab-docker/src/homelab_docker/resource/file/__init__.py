@@ -128,11 +128,11 @@ class FileVolumeProxy:
                     with tempfile.TemporaryDirectory() as tmpdir:
                         name = stat["name"]
                         tar.extract(name, path=tmpdir, set_attrs=False)
-                        return props.model_copy(
-                            update={
-                                "content": open(Path(tmpdir) / name).read(),
-                                "mode": stat["mode"],
-                            }
+                        return props.__replace__(
+                            data=FileDataModel(
+                                content=open(Path(tmpdir) / name).read(),
+                                mode=stat["mode"],
+                            )
                         )
             except NotFound:
                 return None

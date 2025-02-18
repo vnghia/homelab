@@ -1,7 +1,7 @@
-from pydantic import RootModel
+from homelab_pydantic import HomelabRootModel
 
 from ..model.plugin import PluginModel
 
 
-class PluginConfig(RootModel[dict[str, PluginModel]]):
+class PluginConfig(HomelabRootModel[dict[str, PluginModel]]):
     root: dict[str, PluginModel]

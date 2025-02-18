@@ -1,9 +1,8 @@
 import typing
 from typing import Any
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import ResourceOptions
-from pydantic import RootModel
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
@@ -32,7 +31,7 @@ class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
 
 
 class TraefikDynamicMiddlewareConfig(
-    RootModel[str | TraefikDynamicMiddlewareFullConfig]
+    HomelabRootModel[str | TraefikDynamicMiddlewareFullConfig]
 ):
     @property
     def name(self) -> str:

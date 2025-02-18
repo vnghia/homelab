@@ -1,10 +1,11 @@
-from pydantic import PositiveInt, RootModel
+from homelab_pydantic import HomelabRootModel
+from pydantic import PositiveInt
 
 from .volume import ContainerVolumesConfig
 from .volume_path import ContainerVolumePath
 
 
-class ContainerString(RootModel[ContainerVolumePath | bool | PositiveInt | str]):
+class ContainerString(HomelabRootModel[ContainerVolumePath | bool | PositiveInt | str]):
     def to_str(
         self, container_volumes_config: ContainerVolumesConfig | None = None
     ) -> str:

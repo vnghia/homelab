@@ -1,9 +1,10 @@
 import pulumi_cloudflare as cloudflare
+from homelab_pydantic import HomelabRootModel
 from pulumi import Input, Output, ResourceOptions
-from pydantic import IPvAnyAddress, RootModel
+from pydantic import IPvAnyAddress
 
 
-class RecordModel(RootModel[str]):
+class RecordModel(HomelabRootModel[str]):
     def build_resource(
         self,
         resource_name: str,

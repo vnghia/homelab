@@ -3,13 +3,13 @@ from typing import Any
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_pydantic import HomelabRootModel
 from pulumi import Input
-from pydantic import RootModel
 
 from .docker import DaguDagStepDockerExecutorModel
 
 
-class DaguDagStepExecutorModel(RootModel[DaguDagStepDockerExecutorModel]):
+class DaguDagStepExecutorModel(HomelabRootModel[DaguDagStepDockerExecutorModel]):
     root: DaguDagStepDockerExecutorModel
 
     def to_executor[T](

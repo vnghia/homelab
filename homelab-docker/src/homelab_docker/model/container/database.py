@@ -1,8 +1,8 @@
 import typing
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Output
-from pydantic import Field, PositiveInt, RootModel
+from pydantic import Field, PositiveInt
 
 from ..database.source import DatabaseSourceModel
 from ..database.source.postgres.url import PostgresDatabaseSourceUrlEnvs
@@ -53,7 +53,7 @@ class ContainerPostgresDatabaseConfig(HomelabBaseModel):
             return {}
 
 
-class ContainerDatabaseConfig(RootModel[ContainerPostgresDatabaseConfig]):
+class ContainerDatabaseConfig(HomelabRootModel[ContainerPostgresDatabaseConfig]):
     def to_database_version(self, database_config: "DatabaseConfig") -> PositiveInt:
         return self.root.to_database_version(database_config)
 

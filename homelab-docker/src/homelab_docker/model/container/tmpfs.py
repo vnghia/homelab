@@ -1,6 +1,6 @@
 import pulumi_docker as docker
-from homelab_pydantic import AbsolutePath, HomelabBaseModel
-from pydantic import PositiveInt, RootModel
+from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
+from pydantic import PositiveInt
 
 
 class ContainerTmpfsFullConfig(HomelabBaseModel):
@@ -8,7 +8,7 @@ class ContainerTmpfsFullConfig(HomelabBaseModel):
     size: PositiveInt | None = None
 
 
-class ContainerTmpfsConfig(RootModel[AbsolutePath | ContainerTmpfsFullConfig]):
+class ContainerTmpfsConfig(HomelabRootModel[AbsolutePath | ContainerTmpfsFullConfig]):
     def to_args(self) -> docker.ContainerMountArgs:
         root = self.root
         target = root.path if isinstance(root, ContainerTmpfsFullConfig) else root

@@ -1,14 +1,14 @@
 from typing import Mapping
 
+from homelab_pydantic import HomelabRootModel
 from pulumi import Input, ResourceOptions
-from pydantic import RootModel
 
 from ...model.container.volume_path import ContainerVolumePath
 from ..volume import VolumeResource
 from .config import ConfigDumper, ConfigFileResource
 
 
-class DotenvModel(RootModel[dict[str, str]]):
+class DotenvModel(HomelabRootModel[dict[str, str]]):
     pass
 
 

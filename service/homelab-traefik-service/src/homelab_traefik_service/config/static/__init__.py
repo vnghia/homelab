@@ -38,8 +38,8 @@ class TraefikStaticConfigResource(
             if traefik_service_model.container.command
             else None
         )
-        self.dynamic_directory_container_volume_path = container_volume_path.model_copy(
-            update={"path": traefik_config.provider.file}
+        self.dynamic_directory_container_volume_path = (
+            container_volume_path.__replace__(path=traefik_config.provider.file)
         )
 
         super().__init__(

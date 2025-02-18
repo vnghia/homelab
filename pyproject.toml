@@ -65,3 +65,4 @@ extend-select = ["TID251"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "pydantic.BaseModel".msg = "Use homelab_pydantic.HomelabBaseModel instead"
+"pydantic.RootModel".msg = "Use homelab_pydantic.HomelabRootModel instead"

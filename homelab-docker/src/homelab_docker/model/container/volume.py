@@ -2,9 +2,8 @@ import typing
 from pathlib import PosixPath
 
 import pulumi_docker as docker
-from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
-from pydantic import RootModel
 
 from homelab_docker.model.container.docker_socket import ContainerDockerSocketConfig
 
@@ -28,7 +27,7 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
         )
 
 
-class ContainerVolumeConfig(RootModel[AbsolutePath | ContainerVolumeFullConfig]):
+class ContainerVolumeConfig(HomelabRootModel[AbsolutePath | ContainerVolumeFullConfig]):
     def to_container_path(self) -> PosixPath:
         root = self.root
         if isinstance(root, PosixPath):
@@ -46,7 +45,7 @@ class ContainerVolumeConfig(RootModel[AbsolutePath | ContainerVolumeFullConfig])
             return root.to_args(volume_name)
 
 
-class ContainerVolumesConfig(RootModel[dict[str, ContainerVolumeConfig]]):
+class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]]):
     root: dict[str, ContainerVolumeConfig] = {}
 
     def __getitem__(self, key: str) -> ContainerVolumeConfig:
@@ -63,10 +62,8 @@ class ContainerVolumesConfig(RootModel[dict[str, ContainerVolumeConfig]]):
             (
                 [
                     volume.to_args(volume_name=volume_resource[name].name)
-                    for name, volume in self.__pydantic_extra__.items()
+                    for name, volume in self.root.items()
                 ]
-                if self.__pydantic_extra__
-                else []
             )
             + (
                 [

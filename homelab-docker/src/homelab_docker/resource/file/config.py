@@ -5,9 +5,9 @@ from typing import Any, Generic, Mapping, TypeVar
 
 import tomlkit
 import yaml
-from homelab_pydantic import BaseModel
+from homelab_pydantic import BaseModel, HomelabRootModel
 from pulumi import Output, ResourceOptions
-from pydantic import RootModel, TypeAdapter
+from pydantic import TypeAdapter
 
 from ...model.container.volume_path import ContainerVolumePath
 from ..volume import VolumeResource
@@ -16,7 +16,7 @@ from . import FileResource
 T = TypeVar("T", bound=BaseModel)
 
 
-class JsonDefaultModel(RootModel[dict[str, Any]]):
+class JsonDefaultModel(HomelabRootModel[dict[str, Any]]):
     root: dict[str, Any]
 
 
