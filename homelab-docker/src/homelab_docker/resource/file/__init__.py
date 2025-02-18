@@ -8,7 +8,7 @@ from typing import Any, Iterator
 import pulumi
 from docker.errors import NotFound
 from docker.models.containers import Container
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
     ConfigureRequest,
@@ -73,7 +73,7 @@ class FileProviderProps(HomelabBaseModel):
 
 class FileVolumeProxy:
     IMAGE = "busybox"
-    WORKING_DIR = PosixPath("/mnt/volume/")
+    WORKING_DIR = AbsolutePath(PosixPath("/mnt/volume"))
 
     @classmethod
     @contextmanager
@@ -104,7 +104,7 @@ class FileVolumeProxy:
                     file.flush()
                     tar.add(
                         file.name,
-                        arcname=props.location.path,
+                        arcname=props.location.path.root,
                         filter=lambda x: x.replace(mode=props.data.mode, deep=False),
                     )
             tar_file.seek(0)
@@ -225,5 +225,5 @@ class FileResource(Resource, module="docker", name="File"):
 
     def to_container_path(
         self, container_volumes_config: ContainerVolumesConfig
-    ) -> PosixPath:
+    ) -> AbsolutePath:
         return self.container_volume_path.to_container_path(container_volumes_config)

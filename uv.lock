@@ -348,6 +348,7 @@ dependencies = [
     { name = "homelab-restic-service" },
     { name = "homelab-tailscale-service" },
     { name = "homelab-traefik-service" },
+    { name = "json-fix" },
     { name = "pulumi" },
 ]
 
@@ -371,6 +372,7 @@ requires-dist = [
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
+    { name = "json-fix", specifier = ">=1.0.0" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
 
@@ -714,6 +716,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/af/92/b3130cbbf5591acf9ade8708c365f3238046ac7cb8ccba6e81abccb0ccff/jinja2-3.1.5.tar.gz", hash = "sha256:8fefff8dc3034e27bb80d67c671eb8a9bc424c0ef4c0826edbff304cceff43bb", size = 244674 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/0f/2ba5fbcd631e3e88689309dbe978c5769e883e4b84ebfe7da30b43275c5a/jinja2-3.1.5-py3-none-any.whl", hash = "sha256:aba0f4dc9ed8013c424088f68a5c226f7d6097ed89b246d7749c2ec4175c6adb", size = 134596 },
+]
+
+[[package]]
+name = "json-fix"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/95/f9721bad4ebd1980cc930cc14170079d01645031abfbf5545473baee0941/json_fix-1.0.0.tar.gz", hash = "sha256:625b3fc2f7c7c8855eb3e6669c366163cc9b95dbf8e8568fa07f42a65b8d4672", size = 3932 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f6/a2/7ab49b838badff7f43bae3338b90d8f0ebef3672eb12634b619305a9db62/json_fix-1.0.0-py3-none-any.whl", hash = "sha256:1b7d622572f3c7dd653ce9e5a87a4c645a437be7ee622bc916bccb145789055b", size = 3837 },
 ]
 
 [[package]]

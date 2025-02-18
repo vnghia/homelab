@@ -1,5 +1,6 @@
 from pathlib import PosixPath
 
+from homelab_pydantic import RelativePath
 from pulumi import ComponentResource, ResourceOptions
 
 from ...model.container.volume_path import ContainerVolumePath
@@ -25,7 +26,7 @@ class DatabaseGlobalResource(ComponentResource):
             opts=self.child_opts,
             container_volume_path=ContainerVolumePath(
                 volume=PostgresDatabaseModel.DATABASE_ENTRYPOINT_INITDB_VOLUME,
-                path=PosixPath("add-replication-hba-entry.sh"),
+                path=RelativePath(PosixPath("add-replication-hba-entry.sh")),
             ),
             content="#!/bin/bash\nset -eux\necho 'host replication all all scram-sha-256' >> ${PGDATA}/pg_hba.conf\n",
             mode=0o555,

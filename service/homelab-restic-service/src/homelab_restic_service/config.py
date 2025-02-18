@@ -16,7 +16,7 @@ class ResticRepoConfig(HomelabBaseModel):
         return "s3:{}".format(
             urllib.parse.urljoin(
                 str(self.s3.endpoint) or "s3.us-east-1.amazonaws.com",
-                (PosixPath(self.bucket) / self.prefix).as_posix(),
+                (RelativePath(PosixPath(self.bucket)) / self.prefix).as_posix(),
             )
         )
 
@@ -35,4 +35,4 @@ class ResticConfig(HomelabBaseModel):
     repo: ResticRepoConfig
 
     def get_profile_container_volume_path(self, file: str) -> ContainerVolumePath:
-        return self.profile_dir.join(PosixPath(file))
+        return self.profile_dir / file

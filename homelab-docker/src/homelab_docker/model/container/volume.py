@@ -1,5 +1,4 @@
 import typing
-from pathlib import PosixPath
 
 import pulumi_docker as docker
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
@@ -16,7 +15,7 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
     path: AbsolutePath
     read_only: bool = False
 
-    def to_container_path(self) -> PosixPath:
+    def to_container_path(self) -> AbsolutePath:
         return self.path
 
     def to_args(self, volume_name: Input[str]) -> docker.ContainerVolumeArgs:
@@ -28,16 +27,16 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
 
 
 class ContainerVolumeConfig(HomelabRootModel[AbsolutePath | ContainerVolumeFullConfig]):
-    def to_container_path(self) -> PosixPath:
+    def to_container_path(self) -> AbsolutePath:
         root = self.root
-        if isinstance(root, PosixPath):
+        if isinstance(root, AbsolutePath):
             return root
         else:
             return root.to_container_path()
 
     def to_args(self, volume_name: Input[str]) -> docker.ContainerVolumeArgs:
         root = self.root
-        if isinstance(root, PosixPath):
+        if isinstance(root, AbsolutePath):
             return docker.ContainerVolumeArgs(
                 container_path=root.as_posix(), volume_name=volume_name
             )

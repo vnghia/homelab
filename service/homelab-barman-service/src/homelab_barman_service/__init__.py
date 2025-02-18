@@ -68,7 +68,7 @@ class BarmanConfigFileResource(
                     "retention_policy": config.retention_policy,
                     "local_staging_path": config.staging_dir.to_container_path(
                         barman_service_model.container.volumes
-                    ).as_posix(),
+                    ),
                 }
             },
             volume_resource=volume_resource,

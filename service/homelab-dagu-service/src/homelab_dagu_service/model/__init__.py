@@ -36,9 +36,7 @@ class DaguDagModel(HomelabBaseModel):
         dotenv: DotenvFileResource | None,
     ) -> dict[str, Any]:
         return {
-            "dotenv": dotenv.to_container_path(
-                dagu_service.model.container.volumes
-            ).as_posix()
+            "dotenv": dotenv.to_container_path(dagu_service.model.container.volumes)
             if dotenv
             else None,
             "name": self.name,

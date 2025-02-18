@@ -33,5 +33,3 @@ class HomelabRootModel[T](RootModel[T]):
         validate_return=True,
         validation_error_cause=True,
     )
-
-    root: T

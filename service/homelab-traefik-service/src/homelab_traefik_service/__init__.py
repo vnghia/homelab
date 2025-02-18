@@ -6,6 +6,7 @@ from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_network.resource.network import NetworkResource
+from homelab_pydantic import RelativePath
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
@@ -60,4 +61,6 @@ class TraefikService(ServiceResourceBase[TraefikConfig]):
     def get_dynamic_config_container_volume_path(
         self, name: str
     ) -> ContainerVolumePath:
-        return self.static.dynamic_directory_container_volume_path.join(PosixPath(name))
+        return self.static.dynamic_directory_container_volume_path / RelativePath(
+            PosixPath(name)
+        )

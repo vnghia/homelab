@@ -16,6 +16,7 @@ dependencies = [
     "homelab-barman-service",
     "homelab-restic-service",
     "pulumi>=3.148.0",
+    "json-fix>=1.0.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.13.1"
@@ -59,6 +60,10 @@ members = ["homelab-*", "service/homelab-*"]
 
 [tool.mypy]
 strict = true
+
+[[tool.mypy.overrides]]
+module = ["json_fix.*"]
+ignore_missing_imports = true
 
 [tool.ruff.lint]
 extend-select = ["TID251"]

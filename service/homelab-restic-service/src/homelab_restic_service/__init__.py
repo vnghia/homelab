@@ -21,6 +21,7 @@ from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_pydantic import AbsolutePath
 from pulumi import ResourceOptions
 
 from homelab_restic_service.resource.profile.global_ import ResticGlobalProfileResource
@@ -32,7 +33,7 @@ from .resource.repo import ResticRepoResource
 class ResticService(ServiceResourceBase[ResticConfig]):
     PASSWORD_LENGTH = 64
 
-    RESTIC_MOUNT_PREFIX = PosixPath("/")
+    RESTIC_MOUNT_PREFIX = AbsolutePath(PosixPath("/"))
 
     PROFILE_NAME_KEY = "PROFILE"
 

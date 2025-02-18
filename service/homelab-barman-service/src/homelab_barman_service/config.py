@@ -1,7 +1,7 @@
 from pathlib import PosixPath
 
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, RelativePath
 from pydantic import PositiveInt
 
 
@@ -26,4 +26,4 @@ class BarmanConfig(HomelabBaseModel):
     dagu: BarmanDaguConfig
 
     def get_config_container_volume_path(self, file: str) -> ContainerVolumePath:
-        return self.config_dir.join(PosixPath(file))
+        return self.config_dir / file

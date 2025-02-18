@@ -1,3 +1,4 @@
+import json_fix  # noqa
 from homelab_backup_service import BackupService
 from homelab_barman_service import BarmanService
 from homelab_config import Config

@@ -14,12 +14,14 @@ class PostgresDatabaseModel(HomelabBaseModel):
     DATABASE_ENTRYPOINT_INITDB_VOLUME: ClassVar[str] = (
         "postgres-docker-entrypoint-initdb"
     )
-    DATABASE_ENTRYPOINT_INITDB_PATH: ClassVar[AbsolutePath] = PosixPath(
-        "/docker-entrypoint-initdb.d"
+    DATABASE_ENTRYPOINT_INITDB_PATH: ClassVar[AbsolutePath] = AbsolutePath(
+        PosixPath("/docker-entrypoint-initdb.d")
     )
 
-    PGRUN_PATH: ClassVar[AbsolutePath] = PosixPath("/var/run/postgresql")
-    PGDATA_PATH: ClassVar[AbsolutePath] = PosixPath("/var/lib/postgresql/data")
+    PGRUN_PATH: ClassVar[AbsolutePath] = AbsolutePath(PosixPath("/var/run/postgresql"))
+    PGDATA_PATH: ClassVar[AbsolutePath] = AbsolutePath(
+        PosixPath("/var/lib/postgresql/data")
+    )
     PORT: ClassVar[PositiveInt] = 5432
 
     PASSWORD_LENGTH: ClassVar[PositiveInt] = 64

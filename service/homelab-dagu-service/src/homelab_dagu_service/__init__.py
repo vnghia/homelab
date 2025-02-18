@@ -5,6 +5,7 @@ from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_pydantic import RelativePath
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
@@ -46,7 +47,7 @@ class DaguService(ServiceResourceBase[None]):
         self.register_outputs({})
 
     def get_dag_container_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.dagu_directory_container_volume_path.join(PosixPath(name))
+        return self.dagu_directory_container_volume_path / name
 
     def get_dotenv_container_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.dagu_directory_container_volume_path.join(PosixPath(name))
+        return self.dagu_directory_container_volume_path / name

@@ -86,7 +86,7 @@ class TraefikStaticConfigResource(
                     "file": {
                         "directory": self.dynamic_directory_container_volume_path.to_container_path(
                             container_volumes_config
-                        ).as_posix(),
+                        ),
                         "watch": True,
                     },
                 },
@@ -97,7 +97,7 @@ class TraefikStaticConfigResource(
                             "email": traefik_config.acme.email,
                             "storage": traefik_config.acme.storage.public.to_container_path(
                                 container_volumes_config
-                            ).as_posix(),
+                            ),
                             "httpChallenge": {
                                 "entryPoint": traefik_config.entrypoint.public_http
                             },
@@ -109,7 +109,7 @@ class TraefikStaticConfigResource(
                             "email": traefik_config.acme.email,
                             "storage": traefik_config.acme.storage.private.to_container_path(
                                 container_volumes_config
-                            ).as_posix(),
+                            ),
                             "dnsChallenge": {"provider": "cloudflare"},
                         }
                     },
