@@ -2,15 +2,30 @@ from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
+from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from pulumi import ResourceOptions
 
+from .model import DaguDagModel
+from .model.params import DaguDagParamsModel
+from .model.step import DaguDagStepModel
+from .model.step.command import DaguDagStepCommandModel, DaguDagStepCommandParamModel
+from .model.step.executor import DaguDagStepExecutorModel
+from .model.step.executor.docker import (
+    DaguDagStepDockerExecutorModel,
+)
+from .model.step.executor.docker.run import DaguDagStepDockerRunExecutorModel
+from .resource import DaguDagResource
+
 
 class DaguService(ServiceResourceBase[None]):
     DAGS_DIR_ENV = "DAGU_DAGS_DIR"
+
+    DEBUG_DAG_NAME = "debug"
+    DEBUG_DURATION_KEY = "duration"
 
     def __init__(
         self,
@@ -48,3 +63,43 @@ class DaguService(ServiceResourceBase[None]):
 
     def get_dotenv_container_volume_path(self, name: str) -> ContainerVolumePath:
         return self.dagu_directory_container_volume_path / name
+
+    def build_debug_dag[T](
+        self,
+        docker_run_executor: DaguDagStepDockerRunExecutorModel,
+        *,
+        opts: ResourceOptions | None,
+        main_service: ServiceResourceBase[T],
+        container_model_build_args: ContainerModelBuildArgs | None,
+        dotenv: DotenvFileResource | None,
+    ) -> DaguDagResource:
+        return DaguDagModel(
+            name=self.DEBUG_DAG_NAME,
+            path="{}-{}".format(main_service.name(), self.DEBUG_DAG_NAME),
+            group=main_service.name(),
+            tags=[self.DEBUG_DAG_NAME],
+            params=DaguDagParamsModel({self.DEBUG_DURATION_KEY: "30m"}),
+            steps=[
+                DaguDagStepModel(
+                    name=self.DEBUG_DAG_NAME,
+                    command=[
+                        DaguDagStepCommandModel("sleep"),
+                        DaguDagStepCommandModel(
+                            DaguDagStepCommandParamModel(param=self.DEBUG_DURATION_KEY)
+                        ),
+                    ],
+                    executor=DaguDagStepExecutorModel(
+                        DaguDagStepDockerExecutorModel(
+                            docker_run_executor.__replace__(entrypoint=[])
+                        )
+                    ),
+                )
+            ],
+        ).build_resource(
+            self.DEBUG_DAG_NAME,
+            opts=opts,
+            main_service=main_service,
+            dagu_service=self,
+            container_model_build_args=container_model_build_args,
+            dotenv=dotenv,
+        )

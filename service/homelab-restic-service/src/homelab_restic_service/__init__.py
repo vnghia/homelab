@@ -3,10 +3,6 @@ from pathlib import PosixPath
 import pulumi
 import pulumi_random as random
 from homelab_dagu_service import DaguService
-from homelab_dagu_service.model import DaguDagModel
-from homelab_dagu_service.model.params import DaguDagParamsModel
-from homelab_dagu_service.model.step import DaguDagStepModel
-from homelab_dagu_service.model.step.command import DaguDagStepCommandModel
 from homelab_dagu_service.model.step.executor import DaguDagStepExecutorModel
 from homelab_dagu_service.model.step.executor.docker import (
     DaguDagStepDockerExecutorModel,
@@ -79,43 +75,23 @@ class ResticService(ServiceResourceBase[ResticConfig]):
             if model.backup
         }
 
-        self.executor = DaguDagStepExecutorModel(
-            DaguDagStepDockerExecutorModel(
-                DaguDagStepDockerRunExecutorModel(model=None)
-            )
+        self.docker_run_executor = DaguDagStepDockerRunExecutorModel(model=None)
+        self.docker_executor_build_args = ContainerModelBuildArgs(
+            volumes=self.backup_volumes
         )
-        self.restic_executor = DaguDagStepExecutorModel(
-            DaguDagStepDockerExecutorModel(
-                DaguDagStepDockerRunExecutorModel(
-                    model=None, entrypoint=["/usr/bin/restic"]
-                )
-            )
+        self.executor = DaguDagStepExecutorModel(
+            DaguDagStepDockerExecutorModel(self.docker_run_executor)
         )
 
         self.global_ = ResticGlobalProfileResource(
             "global", opts=self.child_opts, hostname=hostname, restic_service=self
         )
 
-        name = "check"
-        self.check = DaguDagModel(
-            name=name,
-            path="{}-{}".format(self.name(), name),
-            group=self.name(),
-            max_active_runs=1,
-            params=DaguDagParamsModel({self.PROFILE_NAME_KEY: "all"}),
-            steps=[
-                DaguDagStepModel(
-                    name=name,
-                    command=[DaguDagStepCommandModel("check")],
-                    executor=self.restic_executor,
-                )
-            ],
-        ).build_resource(
-            name,
+        dagu_service.build_debug_dag(
+            self.docker_run_executor,
             opts=self.child_opts,
             main_service=self,
-            dagu_service=dagu_service,
-            build_args=ContainerModelBuildArgs(volumes=self.backup_volumes),
+            container_model_build_args=self.docker_executor_build_args,
             dotenv=self.dotenv,
         )
 

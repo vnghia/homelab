@@ -39,7 +39,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         entrypoint = (
             self.entrypoint if self.entrypoint is not None else model.build_entrypoint()
         )
-        if entrypoint:
+        if entrypoint is not None:
             container_config["entrypoint"] = entrypoint
         container_config["labels"] = model.build_labels(
             None,

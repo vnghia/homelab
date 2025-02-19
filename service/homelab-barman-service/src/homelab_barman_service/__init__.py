@@ -147,7 +147,7 @@ class BarmanService(ServiceResourceBase[BarmanConfig]):
                 opts=self.child_opts,
                 main_service=self,
                 dagu_service=dagu_service,
-                build_args=None,
+                container_model_build_args=None,
                 dotenv=None,
             )
 

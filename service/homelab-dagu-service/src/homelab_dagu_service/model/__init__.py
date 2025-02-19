@@ -62,9 +62,9 @@ class DaguDagModel(HomelabBaseModel):
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase[T],
         dagu_service: DaguService,
-        build_args: ContainerModelBuildArgs | None,
+        container_model_build_args: ContainerModelBuildArgs | None,
         dotenv: DotenvFileResource | None,
-    ) -> "DaguDagResource":
+    ) -> DaguDagResource:
         from ..resource import DaguDagResource
 
         return DaguDagResource(
@@ -73,6 +73,6 @@ class DaguDagModel(HomelabBaseModel):
             opts=opts,
             main_service=main_service,
             dagu_service=dagu_service,
-            build_args=build_args,
+            container_model_build_args=container_model_build_args,
             dotenv=dotenv,
         )
