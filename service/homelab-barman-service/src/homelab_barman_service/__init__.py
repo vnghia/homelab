@@ -148,7 +148,7 @@ class BarmanService(ServiceResourceBase[BarmanConfig]):
                 main_service=self,
                 dagu_service=dagu_service,
                 container_model_build_args=None,
-                dotenv=None,
+                dotenvs=None,
             )
 
         self.register_outputs({})

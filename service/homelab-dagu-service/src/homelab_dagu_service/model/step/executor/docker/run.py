@@ -18,7 +18,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         self,
         main_service: ServiceResourceBase[T],
         build_args: ContainerModelBuildArgs | None,
-        dotenv: DotenvFileResource | None,
+        dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
         build_args = build_args or ContainerModelBuildArgs()
         model = main_service.get_container_model(self.model)
@@ -50,8 +50,14 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         container_config["env"] = model.build_envs(
             build_args, main_service.docker_resource_args, main_service.args
         ) + (
-            ["{key}=${{{key}}}".format(key=key) for key in dotenv.envs.keys()]
-            if dotenv
+            sum(
+                [
+                    ["{key}=${{{key}}}".format(key=key) for key in dotenv.envs.keys()]
+                    for dotenv in dotenvs
+                ],
+                [],
+            )
+            if dotenvs
             else []
         )
 

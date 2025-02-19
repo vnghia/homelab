@@ -16,6 +16,6 @@ class DaguDagStepExecutorModel(HomelabRootModel[DaguDagStepDockerExecutorModel])
         self,
         main_service: ServiceResourceBase[T],
         build_args: ContainerModelBuildArgs | None,
-        dotenv: DotenvFileResource | None,
+        dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
-        return self.root.to_executor(main_service, build_args, dotenv)
+        return self.root.to_executor(main_service, build_args, dotenvs)

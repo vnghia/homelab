@@ -28,7 +28,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
         main_service: ServiceResourceBase[T],
         dagu_service: DaguService,
         container_model_build_args: ContainerModelBuildArgs | None,
-        dotenv: DotenvFileResource | None,
+        dotenvs: list[DotenvFileResource] | None,
     ):
         super().__init__(
             resource_name,
@@ -37,7 +37,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
                 model.path or resource_name
             ),
             data=model.to_data(
-                main_service, dagu_service, container_model_build_args, dotenv
+                main_service, dagu_service, container_model_build_args, dotenvs
             ),
             volume_resource=dagu_service.docker_resource_args.volume,
         )

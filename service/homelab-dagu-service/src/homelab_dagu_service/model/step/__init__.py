@@ -24,12 +24,12 @@ class DaguDagStepModel(HomelabBaseModel):
         params: "DaguDagParamsModel | None",
         main_service: ServiceResourceBase[T],
         build_args: ContainerModelBuildArgs | None,
-        dotenv: DotenvFileResource | None,
+        dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
         return {
             "name": self.name,
             "command": " ".join(command.to_str(params) for command in self.command),
-            "executor": self.executor.to_executor(main_service, build_args, dotenv)
+            "executor": self.executor.to_executor(main_service, build_args, dotenvs)
             if self.executor
             else None,
         }

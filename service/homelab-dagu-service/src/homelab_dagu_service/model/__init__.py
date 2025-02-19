@@ -35,11 +35,14 @@ class DaguDagModel(HomelabBaseModel):
         main_service: ServiceResourceBase[T],
         dagu_service: DaguService,
         build_args: ContainerModelBuildArgs | None,
-        dotenv: DotenvFileResource | None,
+        dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Any]:
         return {
-            "dotenv": dotenv.to_container_path(dagu_service.model.container.volumes)
-            if dotenv
+            "dotenv": [
+                dotenv.to_container_path(dagu_service.model.container.volumes)
+                for dotenv in dotenvs
+            ]
+            if dotenvs
             else None,
             "name": self.name,
             "group": self.group,
@@ -50,7 +53,7 @@ class DaguDagModel(HomelabBaseModel):
             if self.params
             else None,
             "steps": [
-                step.to_step(self.params, main_service, build_args, dotenv)
+                step.to_step(self.params, main_service, build_args, dotenvs)
                 for step in self.steps
             ],
         }
@@ -63,7 +66,7 @@ class DaguDagModel(HomelabBaseModel):
         main_service: ServiceResourceBase[T],
         dagu_service: DaguService,
         container_model_build_args: ContainerModelBuildArgs | None,
-        dotenv: DotenvFileResource | None,
+        dotenvs: list[DotenvFileResource] | None,
     ) -> DaguDagResource:
         from ..resource import DaguDagResource
 
@@ -74,5 +77,5 @@ class DaguDagModel(HomelabBaseModel):
             main_service=main_service,
             dagu_service=dagu_service,
             container_model_build_args=container_model_build_args,
-            dotenv=dotenv,
+            dotenvs=dotenvs,
         )

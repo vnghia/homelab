@@ -60,15 +60,17 @@ class ResticService(ServiceResourceBase[ResticConfig]):
             image_resource=self.docker_resource_args.image,
         )
 
-        self.dotenv = DotenvFileResource(
-            self.name(),
-            opts=self.child_opts,
-            container_volume_path=dagu_service.get_dotenv_container_volume_path(
-                self.name()
-            ),
-            envs=self.config.repo.to_envs(self.password),
-            volume_resource=self.docker_resource_args.volume,
-        )
+        self.dotenvs = [
+            DotenvFileResource(
+                self.name(),
+                opts=self.child_opts,
+                container_volume_path=dagu_service.get_dotenv_container_volume_path(
+                    self.name()
+                ),
+                envs=self.config.repo.to_envs(self.password),
+                volume_resource=self.docker_resource_args.volume,
+            )
+        ]
 
         self.backup_volumes = {
             volume: ContainerVolumeConfig(self.get_volume_path(volume))
@@ -105,7 +107,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
                 opts=self.child_opts,
                 main_service=self,
                 container_model_build_args=self.docker_executor_build_args,
-                dotenv=self.dotenv,
+                dotenvs=self.dotenvs,
             )
         }
 

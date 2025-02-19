@@ -71,7 +71,7 @@ class DaguService(ServiceResourceBase[None]):
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase[T],
         container_model_build_args: ContainerModelBuildArgs | None,
-        dotenv: DotenvFileResource | None,
+        dotenvs: list[DotenvFileResource] | None,
     ) -> DaguDagResource:
         return DaguDagModel(
             name=self.DEBUG_DAG_NAME,
@@ -101,5 +101,5 @@ class DaguService(ServiceResourceBase[None]):
             main_service=main_service,
             dagu_service=self,
             container_model_build_args=container_model_build_args,
-            dotenv=dotenv,
+            dotenvs=dotenvs,
         )

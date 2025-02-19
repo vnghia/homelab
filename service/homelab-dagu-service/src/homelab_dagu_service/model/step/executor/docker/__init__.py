@@ -21,12 +21,12 @@ class DaguDagStepDockerExecutorModel(
         self,
         main_service: ServiceResourceBase[T],
         build_args: ContainerModelBuildArgs | None,
-        dotenv: DotenvFileResource | None,
+        dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
         root = self.root
         return {
             "type": "docker",
-            "config": root.to_executor_config(main_service, build_args, dotenv)
+            "config": root.to_executor_config(main_service, build_args, dotenvs)
             if isinstance(root, DaguDagStepDockerRunExecutorModel)
             else root.to_executor_config(main_service),
         }

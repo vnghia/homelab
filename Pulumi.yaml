@@ -33,7 +33,7 @@ config:
             tag: "0.24.0"
           dagu:
             repo: ghcr.io/dagu-org/dagu
-            tag: "1.16.2"
+            tag: "1.16.3"
           minideb:
             repo: bitnami/minideb
             tag: "bookworm"
