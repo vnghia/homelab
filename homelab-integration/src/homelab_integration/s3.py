@@ -2,7 +2,7 @@ from homelab_pydantic import HomelabBaseModel
 from pydantic import Field, HttpUrl
 
 
-class S3IntegrationConfig(HomelabBaseModel):
+class S3Integration(HomelabBaseModel):
     key_id: str = Field(alias="key-id")
     access_key: str = Field(alias="access-key")
     region: str

@@ -2,14 +2,14 @@ import urllib.parse
 from pathlib import PosixPath
 
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_integration.config.s3 import S3IntegrationConfig
+from homelab_integration import S3Integration
 from homelab_pydantic import HomelabBaseModel, RelativePath
 
 
 class ResticRepoConfig(HomelabBaseModel):
     bucket: str
     prefix: RelativePath
-    s3: S3IntegrationConfig
+    s3: S3Integration
 
     @property
     def repo(self) -> str:
