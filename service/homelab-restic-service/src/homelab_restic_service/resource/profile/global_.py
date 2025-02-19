@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import typing
 
 from homelab_docker.resource.file.config import ConfigFileResource, YamlDumper
@@ -60,6 +61,13 @@ class ResticGlobalProfileResource(
                             "source": ["."],
                         },
                     }
+                },
+                "groups": {"all": {"profiles": [profile.name for profile in profiles]}}
+                | {
+                    service: {"profiles": [profile.name for profile in group]}
+                    for service, group in itertools.groupby(
+                        profiles, key=lambda x: x.service
+                    )
                 },
             },
             volume_resource=restic_service.docker_resource_args.volume,
