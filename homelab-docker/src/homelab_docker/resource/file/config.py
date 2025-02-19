@@ -1,13 +1,14 @@
 import abc
 import configparser
 import io
-from typing import Any, Generic, Mapping, TypeVar
+from typing import Any, ClassVar, Generic, Mapping, TypeVar
 
+import jsonschema
 import tomlkit
 import yaml
 from homelab_pydantic import BaseModel, HomelabRootModel
 from pulumi import Output, ResourceOptions
-from pydantic import TypeAdapter
+from pydantic import TypeAdapter, model_validator
 
 from ...model.container.volume_path import ContainerVolumePath
 from ..volume import VolumeResource
@@ -17,7 +18,16 @@ T = TypeVar("T", bound=BaseModel)
 
 
 class JsonDefaultModel(HomelabRootModel[dict[str, Any]]):
+    jsonschema: ClassVar[Any | None] = None
+
     root: dict[str, Any]
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_jsonschema(cls, data: Any) -> Any:
+        if cls.jsonschema:
+            jsonschema.validate(data, cls.jsonschema)
+        return data
 
 
 class ConfigDumper(Generic[T]):

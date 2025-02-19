@@ -1,7 +1,5 @@
-from pathlib import PosixPath
-
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_pydantic import HomelabBaseModel, RelativePath
+from homelab_pydantic import HomelabBaseModel
 from pydantic import PositiveInt
 
 

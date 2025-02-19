@@ -34,6 +34,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
     PASSWORD_LENGTH = 64
 
     RESTIC_MOUNT_PREFIX = AbsolutePath(PosixPath("/"))
+    RESTIC_CACHE_ENV = "RESTIC_CACHE_DIR"
 
     PROFILE_NAME_KEY = "PROFILE"
 
@@ -42,6 +43,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
         model: ServiceModel[ResticConfig],
         *,
         opts: ResourceOptions | None,
+        hostname: str,
         volume_config: VolumeConfig,
         dagu_service: DaguService,
         docker_resource_args: DockerResourceArgs,
@@ -91,7 +93,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
         )
 
         self.global_ = ResticGlobalProfileResource(
-            "global", opts=self.child_opts, restic_service=self
+            "global", opts=self.child_opts, hostname=hostname, restic_service=self
         )
 
         name = "check"

@@ -1,11 +1,8 @@
-from pathlib import PosixPath
-
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_pydantic import RelativePath
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig

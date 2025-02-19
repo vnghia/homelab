@@ -11,6 +11,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
     model: str | None
     auto_remove: bool = True
     pull: bool = False
+
     entrypoint: list[str] | None = None
 
     def to_executor_config[T](

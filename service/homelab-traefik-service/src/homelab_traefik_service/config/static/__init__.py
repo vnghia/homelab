@@ -31,13 +31,13 @@ class TraefikStaticConfigResource(
         traefik_service: TraefikService,
         tailscale_service: TailscaleService,
     ) -> None:
-        traefik_service_model = traefik_service.model
-        container_volumes_config = traefik_service_model.container.volumes
-        traefik_config = traefik_service_model.config
+        traefik_config = traefik_service.model.config
+        traefik_service_model = traefik_service.model.container
+        container_volumes_config = traefik_service_model.volumes
 
         container_volume_path = ContainerVolumePath.model_validate(
-            traefik_service_model.container.command[-1].root
-            if traefik_service_model.container.command
+            traefik_service_model.command[-1].root
+            if traefik_service_model.command
             else None
         )
         self.dynamic_directory_container_volume_path = (
