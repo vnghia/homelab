@@ -20,9 +20,9 @@ from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import AbsolutePath
 from pulumi import ResourceOptions
 
-from homelab_restic_service.resource.profile.global_ import ResticGlobalProfileResource
-
 from .config import ResticConfig
+from .model import ResticProfileModel
+from .resource.profile.global_ import ResticGlobalProfileResource
 from .resource.repo import ResticRepoResource
 
 
@@ -32,6 +32,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
     RESTIC_MOUNT_PREFIX = AbsolutePath(PosixPath("/"))
     RESTIC_CACHE_ENV = "RESTIC_CACHE_DIR"
 
+    BASE_PROFILE_NAME = "base"
     PROFILE_NAME_KEY = "PROFILE"
 
     def __init__(
@@ -53,7 +54,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
         ).result
         self.repo = ResticRepoResource(
             "repo",
-            self.config.repo,
+            self.config,
             opts=self.child_opts,
             password=self.password,
             image_resource=self.docker_resource_args.image,
@@ -70,32 +71,48 @@ class ResticService(ServiceResourceBase[ResticConfig]):
         )
 
         self.backup_volumes = {
-            name: ContainerVolumeConfig(self.RESTIC_MOUNT_PREFIX / self.name() / name)
-            for name, model in volume_config.local.items()
+            volume: ContainerVolumeConfig(self.get_volume_path(volume))
+            for volume, model in volume_config.local.items()
             if model.backup
         }
 
         self.docker_run_executor = DaguDagStepDockerRunExecutorModel(model=None)
-        self.docker_executor_build_args = ContainerModelBuildArgs(
-            volumes=self.backup_volumes
-        )
+
         self.executor = DaguDagStepExecutorModel(
             DaguDagStepDockerExecutorModel(self.docker_run_executor)
         )
 
+        self.profiles = [
+            ResticProfileModel(volume=volume).build_resource(
+                opts=self.child_opts, restic_service=self
+            )
+            for volume in self.backup_volumes.keys()
+        ]
         self.global_ = ResticGlobalProfileResource(
-            "global", opts=self.child_opts, hostname=hostname, restic_service=self
+            opts=self.child_opts,
+            hostname=hostname,
+            profiles=self.profiles,
+            restic_service=self,
         )
 
-        dagu_service.build_debug_dag(
-            self.docker_run_executor,
-            opts=self.child_opts,
-            main_service=self,
-            container_model_build_args=self.docker_executor_build_args,
-            dotenv=self.dotenv,
+        self.docker_executor_build_args = ContainerModelBuildArgs(
+            volumes=self.backup_volumes,
+            files=[profile for profile in self.profiles] + [self.global_],
         )
+        self.dagu_dags = {
+            dagu_service.DEBUG_DAG_NAME: dagu_service.build_debug_dag(
+                self.docker_run_executor,
+                opts=self.child_opts,
+                main_service=self,
+                container_model_build_args=self.docker_executor_build_args,
+                dotenv=self.dotenv,
+            )
+        }
 
         pulumi.export("restic.repo", self.repo.id)
         pulumi.export("restic.password", self.password)
 
         self.register_outputs({})
+
+    def get_volume_path(self, volume: str) -> AbsolutePath:
+        return self.RESTIC_MOUNT_PREFIX / self.name() / volume

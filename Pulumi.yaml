@@ -313,6 +313,7 @@ config:
                 read-only: true
         restic:
           config:
+            image: resticprofile
             profile-dir:
               volume: restic-profile
             repo:
@@ -324,10 +325,12 @@ config:
               default-bridge: true
               internal-bridge: false
             volumes:
-              restic-cache: /tmp/restic
+              restic-cache: /cache
               restic-profile:
                 path: /etc/resticprofile
                 read-only: true
+            tmpfs:
+              - /tmp
             envs:
               RESTIC_CACHE_DIR:
                 volume: restic-cache

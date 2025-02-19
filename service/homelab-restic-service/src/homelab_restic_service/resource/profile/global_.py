@@ -9,6 +9,7 @@ from . import schema
 
 if typing.TYPE_CHECKING:
     from ... import ResticService
+    from . import ResticProfileResource
 
 
 class ResticGlobalProfileResource(
@@ -19,16 +20,17 @@ class ResticGlobalProfileResource(
 
     def __init__(
         self,
-        resource_name: str,
         *,
         opts: ResourceOptions | None,
         hostname: str,
+        profiles: list[ResticProfileResource],
         restic_service: ResticService,
     ):
         restic_service_model = restic_service.model.container
+        restic_volumes_config = restic_service_model.volumes
 
         super().__init__(
-            resource_name,
+            "global",
             opts=opts,
             container_volume_path=restic_service.config.get_profile_container_volume_path(
                 "profiles"
@@ -39,18 +41,23 @@ class ResticGlobalProfileResource(
                     "command-output": "console",
                     "initialize": False,
                 },
+                "includes": [
+                    profile.to_container_path(restic_volumes_config)
+                    for profile in profiles
+                ],
                 "profiles": {
-                    "base": {
+                    restic_service.BASE_PROFILE_NAME: {
                         "cache-dir": restic_service_model.envs[
                             restic_service.RESTIC_CACHE_ENV
                         ]
                         .as_container_volume_path()
-                        .to_container_path(restic_service_model.volumes),
+                        .to_container_path(restic_volumes_config),
                         "cleanup-cache": True,
                         "backup": {
                             "check-after": True,
                             "source-relative": True,
                             "host": hostname,
+                            "source": ["."],
                         },
                     }
                 },

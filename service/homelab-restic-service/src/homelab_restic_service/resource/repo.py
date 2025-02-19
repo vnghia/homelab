@@ -1,4 +1,4 @@
-from typing import Any, ClassVar
+from typing import Any
 
 from docker.errors import ContainerError
 from homelab_docker.client import DockerClient
@@ -7,12 +7,10 @@ from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider
 
-from ..config import ResticRepoConfig
+from ..config import ResticConfig, ResticRepoConfig
 
 
 class ResticRepoProviderProps(HomelabBaseModel):
-    RESTIC_IMAGE_KEY: ClassVar[str] = "resticprofile"
-
     image: str
     restic: ResticRepoConfig
 
@@ -78,7 +76,7 @@ class ResticRepoResource(Resource, module="restic", name="Repo"):
     def __init__(
         self,
         resource_name: str,
-        config: ResticRepoConfig,
+        config: ResticConfig,
         *,
         opts: ResourceOptions | None,
         password: Input[str],
@@ -88,10 +86,8 @@ class ResticRepoResource(Resource, module="restic", name="Repo"):
             ResticRepoProvider(),
             resource_name,
             {
-                "image": image_resource.remotes[
-                    ResticRepoProviderProps.RESTIC_IMAGE_KEY
-                ].image_id,
-                "restic": config.model_dump(mode="json", by_alias=True),
+                "image": image_resource.remotes[config.image].image_id,
+                "restic": config.repo.model_dump(mode="json", by_alias=True),
                 "password": password,
             },
             opts,

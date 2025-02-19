@@ -31,6 +31,7 @@ class ResticRepoConfig(HomelabBaseModel):
 
 
 class ResticConfig(HomelabBaseModel):
+    image: str
     profile_dir: ContainerVolumePath
     repo: ResticRepoConfig
 
