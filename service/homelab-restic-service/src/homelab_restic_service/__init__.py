@@ -97,9 +97,9 @@ class ResticService(ServiceResourceBase[ResticConfig]):
             restic_service=self,
         )
 
+        # No need to specify file dependencies because the file are created after `pulumi up`
         self.docker_executor_build_args = ContainerModelBuildArgs(
-            volumes=self.backup_volumes,
-            files=[profile for profile in self.profiles] + [self.global_],
+            volumes=self.backup_volumes
         )
         self.dagu_dags = {
             dagu_service.DEBUG_DAG_NAME: dagu_service.build_debug_dag(

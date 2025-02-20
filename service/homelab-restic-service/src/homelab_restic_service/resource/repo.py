@@ -7,7 +7,8 @@ from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider
 
-from ..config import ResticConfig, ResticRepoConfig
+from ..config import ResticConfig
+from ..config.repo import ResticRepoConfig
 
 
 class ResticRepoProviderProps(HomelabBaseModel):

@@ -291,6 +291,9 @@ config:
             staging-dir:
               volume: barman-home
               path: staging
+            minimum-redundancy: 5
+            last-backup-maximum-age: 1 WEEKS
+            retention-policy: RECOVERY WINDOW OF 1 WEEKS
             dagu:
               tasks:
                 check:
@@ -320,6 +323,9 @@ config:
               volume: restic-profile
             repo:
               prefix: backup/restic
+            keep:
+              last:
+                daily: 7
           container:
             active: false
             image: resticprofile

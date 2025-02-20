@@ -1,7 +1,6 @@
 import urllib.parse
 from pathlib import PosixPath
 
-from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_integration import S3Integration
 from homelab_pydantic import HomelabBaseModel, RelativePath
 
@@ -28,12 +27,3 @@ class ResticRepoConfig(HomelabBaseModel):
             "RESTIC_REPOSITORY": self.repo,
             "RESTIC_PASSWORD": password,
         }
-
-
-class ResticConfig(HomelabBaseModel):
-    image: str
-    profile_dir: ContainerVolumePath
-    repo: ResticRepoConfig
-
-    def get_profile_container_volume_path(self, file: str) -> ContainerVolumePath:
-        return self.profile_dir / file

@@ -30,6 +30,10 @@ class ResticGlobalProfileResource(
         restic_service_model = restic_service.model.container
         restic_volumes_config = restic_service_model.volumes
 
+        forget_options = {"prune": True} | {
+            "keep-{}".format(timeframe): number
+            for timeframe, number in restic_service.config.keep.last.items()
+        }
         super().__init__(
             "global",
             opts=opts,
@@ -55,11 +59,14 @@ class ResticGlobalProfileResource(
                         .to_container_path(restic_volumes_config),
                         "cleanup-cache": True,
                         "backup": {
+                            "check-before": True,
                             "check-after": True,
                             "source-relative": True,
                             "host": hostname,
                             "source": ["."],
                         },
+                        "forget": forget_options,
+                        "retention": {"after-backup": True} | forget_options,
                     }
                 },
                 "groups": {"all": {"profiles": [profile.name for profile in profiles]}}

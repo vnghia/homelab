@@ -17,9 +17,9 @@ class BarmanConfig(HomelabBaseModel):
     config_dir: ContainerVolumePath
     staging_dir: ContainerVolumePath
 
-    minimum_redundancy: PositiveInt = 5
-    last_backup_maximum_age: str = "1 WEEKS"
-    retention_policy: str = "RECOVERY WINDOW OF 1 WEEKS"
+    minimum_redundancy: PositiveInt
+    last_backup_maximum_age: str
+    retention_policy: str
 
     dagu: BarmanDaguConfig
 
