@@ -4,6 +4,7 @@ import typing
 from typing import Any
 
 from homelab_docker.model.container import ContainerModelBuildArgs
+from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
@@ -34,6 +35,7 @@ class DaguDagModel(HomelabBaseModel):
         self,
         main_service: ServiceResourceBase[T],
         dagu_service: DaguService,
+        logdir: ContainerVolumePath | None,
         build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Any]:
@@ -47,6 +49,9 @@ class DaguDagModel(HomelabBaseModel):
             "name": self.name,
             "group": self.group,
             "tags": self.tags,
+            "logDir": logdir.to_container_path(dagu_service.model.container.volumes)
+            if logdir
+            else None,
             "schedule": self.schedule,
             "maxActiveRuns": self.max_active_runs,
             "params": [{key: param} for key, param in self.params.root.items()]

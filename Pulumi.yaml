@@ -76,6 +76,8 @@ config:
             backup: false
           restic-cache:
             backup: false
+          restic-tmp:
+            backup: false
           restic-profile:
             backup: false
           postgres-docker-entrypoint-initdb:
@@ -326,11 +328,10 @@ config:
               internal-bridge: false
             volumes:
               restic-cache: /cache
+              restic-tmp: /tmp
               restic-profile:
                 path: /etc/resticprofile
                 read-only: true
-            tmpfs:
-              - /tmp
             envs:
               RESTIC_CACHE_DIR:
                 volume: restic-cache

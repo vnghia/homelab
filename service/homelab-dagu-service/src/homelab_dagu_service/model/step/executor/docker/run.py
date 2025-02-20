@@ -85,11 +85,11 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
                 {"type": mount.type, "target": mount.target}
                 | (
                     {
-                        "tmpfsOptions": {
-                            "sizeBytes": Output.from_input(mount.tmpfs_options).apply(
-                                lambda x: x.size_bytes
+                        "tmpfsOptions": Output.from_input(mount.tmpfs_options).apply(
+                            lambda x: (
+                                {"sizeBytes": x.size_bytes} if x.size_bytes else {}
                             )
-                        }
+                        )
                     }
                     if mount.tmpfs_options
                     else {}

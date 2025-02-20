@@ -23,6 +23,7 @@ from .resource import DaguDagResource
 
 class DaguService(ServiceResourceBase[None]):
     DAGS_DIR_ENV = "DAGU_DAGS_DIR"
+    LOG_DIR_ENV = "DAGU_LOG_DIR"
 
     DEBUG_DAG_NAME = "debug"
     DEBUG_DURATION_KEY = "duration"
@@ -37,9 +38,13 @@ class DaguService(ServiceResourceBase[None]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.dagu_directory_container_volume_path = self.model.container.envs[
+        self.dags_directory_container_volume_path = self.model.container.envs[
             self.DAGS_DIR_ENV
         ].as_container_volume_path()
+        self.log_directory_container_volume_path = self.model.container.envs[
+            self.LOG_DIR_ENV
+        ].as_container_volume_path()
+
         self.build_containers(
             options={
                 None: ContainerModelBuildArgs(
@@ -59,10 +64,13 @@ class DaguService(ServiceResourceBase[None]):
         self.register_outputs({})
 
     def get_dag_container_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.dagu_directory_container_volume_path / name
+        return self.dags_directory_container_volume_path / name
 
     def get_dotenv_container_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.dagu_directory_container_volume_path / name
+        return self.dags_directory_container_volume_path / name
+
+    def get_log_directory_container_volume_path(self, name: str) -> ContainerVolumePath:
+        return self.log_directory_container_volume_path / name
 
     def build_debug_dag[T](
         self,
