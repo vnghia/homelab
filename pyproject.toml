@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 dependencies = [
+    "homelab-backup",
     "homelab-config",
     "homelab-docker",
     "homelab-network",
@@ -35,6 +36,7 @@ dev-dependencies = [
 ]
 
 [tool.uv.sources]
+homelab-backup = { workspace = true }
 homelab-config = { workspace = true }
 homelab-docker = { workspace = true }
 homelab-integration = { workspace = true }

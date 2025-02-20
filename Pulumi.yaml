@@ -342,4 +342,4 @@ config:
               RESTIC_CACHE_DIR:
                 volume: restic-cache
         backup:
-          config:
+          config: {}

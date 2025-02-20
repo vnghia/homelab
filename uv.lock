@@ -5,6 +5,7 @@ requires-python = ">=3.13.1"
 [manifest]
 members = [
     "homelab",
+    "homelab-backup",
     "homelab-backup-service",
     "homelab-barman-service",
     "homelab-config",
@@ -337,6 +338,7 @@ name = "homelab"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "homelab-backup" },
     { name = "homelab-backup-service" },
     { name = "homelab-barman-service" },
     { name = "homelab-config" },
@@ -361,6 +363,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "homelab-backup", editable = "homelab-backup" },
     { name = "homelab-backup-service", editable = "service/homelab-backup-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
     { name = "homelab-config", editable = "homelab-config" },
@@ -384,27 +387,40 @@ dev = [
 ]
 
 [[package]]
+name = "homelab-backup"
+version = "0.1.0"
+source = { editable = "homelab-backup" }
+dependencies = [
+    { name = "homelab-pydantic" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "homelab-pydantic", editable = "homelab-pydantic" }]
+
+[[package]]
 name = "homelab-backup-service"
 version = "0.1.0"
 source = { editable = "service/homelab-backup-service" }
 dependencies = [
-    { name = "docker" },
+    { name = "homelab-backup" },
+    { name = "homelab-barman-service" },
+    { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
-    { name = "homelab-integration" },
     { name = "homelab-pydantic" },
+    { name = "homelab-restic-service" },
     { name = "pulumi" },
-    { name = "pulumi-random" },
     { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "docker", specifier = ">=7.1.0" },
+    { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
+    { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-integration", editable = "homelab-integration" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "pulumi", specifier = ">=3.148.0" },
-    { name = "pulumi-random", specifier = ">=4.17.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
@@ -413,6 +429,7 @@ name = "homelab-barman-service"
 version = "0.1.0"
 source = { editable = "service/homelab-barman-service" }
 dependencies = [
+    { name = "homelab-backup" },
     { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
@@ -422,6 +439,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "homelab-backup", editable = "homelab-backup" },
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
@@ -591,6 +609,7 @@ name = "homelab-restic-service"
 version = "0.1.0"
 source = { editable = "service/homelab-restic-service" }
 dependencies = [
+    { name = "homelab-backup" },
     { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
     { name = "homelab-integration" },
@@ -602,6 +621,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "homelab-backup", editable = "homelab-backup" },
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-integration", editable = "homelab-integration" },

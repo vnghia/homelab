@@ -2,6 +2,7 @@ from pathlib import PosixPath
 
 import pulumi
 import pulumi_random as random
+from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
 from homelab_dagu_service.model.step.executor import DaguDagStepExecutorModel
 from homelab_dagu_service.model.step.executor.docker import (
@@ -33,7 +34,6 @@ class ResticService(ServiceResourceBase[ResticConfig]):
     RESTIC_CACHE_ENV = "RESTIC_CACHE_DIR"
 
     BASE_PROFILE_NAME = "base"
-    PROFILE_NAME_KEY = "PROFILE"
 
     def __init__(
         self,
@@ -42,10 +42,13 @@ class ResticService(ServiceResourceBase[ResticConfig]):
         opts: ResourceOptions | None,
         hostname: str,
         volume_config: VolumeConfig,
+        backup_config: BackupConfig,
         dagu_service: DaguService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+
+        self.backup_config = backup_config
 
         self.password = random.RandomPassword(
             "password",

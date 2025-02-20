@@ -6,11 +6,12 @@ requires-python = ">=3.13.1"
 dependencies = [
     "homelab-pydantic",
     "homelab-docker",
-    "homelab-integration",
+    "homelab-backup",
+    "homelab-dagu-service",
+    "homelab-barman-service",
+    "homelab-restic-service",
     "pulumi>=3.148.0",
-    "pulumi-random>=4.17.0",
     "pydantic>=2.10.6",
-    "docker>=7.1.0",
 ]
 
 [build-system]

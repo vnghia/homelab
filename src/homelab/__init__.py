@@ -77,6 +77,7 @@ class Homelab:
         self.barman = BarmanService(
             self.docker.services_config.barman,
             opts=None,
+            backup_config=self.docker.services_config.backup.config,
             dagu_service=self.dagu,
             docker_resource_args=self.docker.resource_args,
         )
@@ -85,13 +86,15 @@ class Homelab:
             opts=None,
             hostname=self.project_prefix,
             volume_config=self.config.docker.volumes,
+            backup_config=self.docker.services_config.backup.config,
             dagu_service=self.dagu,
             docker_resource_args=self.docker.resource_args,
         )
         self.backup = BackupService(
             self.docker.services_config.backup,
             opts=None,
-            volume_config=self.docker.config.volumes,
             dagu_service=self.dagu,
+            barman_service=self.barman,
+            restic_service=self.restic,
             docker_resource_args=self.docker.resource_args,
         )
