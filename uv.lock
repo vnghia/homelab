@@ -600,11 +600,15 @@ name = "homelab-pydantic"
 version = "0.1.0"
 source = { editable = "homelab-pydantic" }
 dependencies = [
+    { name = "deepmerge" },
     { name = "pydantic" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pydantic", specifier = ">=2.10.6" }]
+requires-dist = [
+    { name = "deepmerge", specifier = ">=2.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
 
 [[package]]
 name = "homelab-restic-service"

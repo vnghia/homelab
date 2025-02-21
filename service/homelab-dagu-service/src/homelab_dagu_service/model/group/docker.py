@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import typing
-from typing import Any
 
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
-from pydantic import field_validator
 
 from .. import DaguDagModel
 from ..step.command import DaguDagStepCommandModel
@@ -17,15 +15,8 @@ if typing.TYPE_CHECKING:
 
 
 class DaguDagDockerGroupModel(HomelabBaseModel):
-    dag: DaguDagModel
+    dag: DaguDagModel = DaguDagModel()
     command: list[DaguDagStepCommandModel]
-
-    @field_validator("dag", mode="before")
-    @classmethod
-    def add_default_steps(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            data["steps"] = []
-        return data
 
     def build_model[T](
         self,

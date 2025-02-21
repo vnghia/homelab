@@ -298,10 +298,12 @@ config:
               executor:
                 exec:
                   container:
-              tags: ["backup"]
-              params:
-                types:
-                  backup:
+              dag:
+                max-active-runs: 1
+                params:
+                  types:
+                    backup:
+                tags: ["backup"]
               command:
                 prefix: ["barman"]
                 suffix:
@@ -310,17 +312,12 @@ config:
               dags:
                 check:
                   dag:
-                    max-active-runs: 1
                     # Run `barman check` at 2am every day
                     schedule: "* 2 * * *"
                   command: ["check"]
                 backup:
-                  dag:
-                    max-active-runs: 1
                   command: ["backup", "--wait"]
                 switch-wal:
-                  dag:
-                    max-active-runs: 1
                   command: ["switch-wal", "--force", "--archive"]
           container:
             image:
@@ -347,10 +344,12 @@ config:
               executor:
                 run:
                   model:
-              tags: ["backup"]
-              params:
-                types:
-                  backup:
+              dag:
+                max-active-runs: 1
+                params:
+                  types:
+                    backup:
+                tags: ["backup"]
               command:
                 prefix:
                   - "-n"
@@ -358,8 +357,6 @@ config:
                       type: backup
               dags:
                 backup:
-                  dag:
-                    max-active-runs: 1
                   command: ["backup"]
           container:
             active: false

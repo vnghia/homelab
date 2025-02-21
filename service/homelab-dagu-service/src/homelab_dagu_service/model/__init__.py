@@ -29,7 +29,7 @@ class DaguDagModel(HomelabBaseModel):
     max_active_runs: PositiveInt | None = None
     params: DaguDagParamsModel = DaguDagParamsModel()
 
-    steps: list[DaguDagStepModel]
+    steps: list[DaguDagStepModel] = []
 
     def to_data[T](
         self,

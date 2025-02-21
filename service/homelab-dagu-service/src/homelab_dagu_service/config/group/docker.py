@@ -1,8 +1,6 @@
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
 
-from homelab_dagu_service.model.params import DaguDagParamsModel
-
 from ...model import DaguDagModel
 from ...model.group.docker import DaguDagDockerGroupModel
 from ...model.step.executor.docker import DaguDagStepDockerExecutorModel
@@ -31,8 +29,7 @@ class DaguDagDockerExecGroupConfig(HomelabBaseModel):
 class DaguDagDockerGroupConfig(HomelabBaseModel):
     executor: DaguDagDockerRunGroupConfig | DaguDagDockerExecGroupConfig
 
-    tags: list[str] = []
-    params: DaguDagParamsModel = DaguDagParamsModel()
+    dag: DaguDagModel = DaguDagModel()
     command: DaguDagStepCommandConfig = DaguDagStepCommandConfig()
 
     dags: dict[str, DaguDagDockerGroupModel]
@@ -40,16 +37,9 @@ class DaguDagDockerGroupConfig(HomelabBaseModel):
     def build_models[T](
         self, *, main_service: ServiceResourceBase[T]
     ) -> dict[str, DaguDagModel]:
+        global_dag = self.dag
         return {
-            name: model.__replace__(
-                dag=model.dag.__replace__(
-                    tags=self.tags,
-                    params=DaguDagParamsModel(
-                        main=self.params.main | model.dag.params.main,
-                        types=self.params.types | model.dag.params.types,
-                    ),
-                )
-            ).build_model(
+            name: model.__replace__(dag=global_dag.model_merge(model.dag)).build_model(
                 name,
                 main_service=main_service,
                 docker_executor=DaguDagStepDockerExecutorModel(self.executor.model),

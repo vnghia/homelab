@@ -1,5 +1,6 @@
-from typing import Any
+from typing import Any, Self
 
+import deepmerge
 from pydantic import BaseModel, ConfigDict, RootModel, model_validator
 
 
@@ -22,6 +23,26 @@ class HomelabBaseModel(BaseModel):
         if isinstance(data, dict):
             data.pop("__provider", None)
         return data
+
+    def model_merge(self, other: Self) -> Self:
+        return self.__class__(
+            **deepmerge.always_merger.merge(
+                self.model_dump(
+                    mode="json",
+                    by_alias=True,
+                    exclude_defaults=True,
+                    exclude_none=True,
+                    exclude_unset=True,
+                ),
+                other.model_dump(
+                    mode="json",
+                    by_alias=True,
+                    exclude_defaults=True,
+                    exclude_none=True,
+                    exclude_unset=True,
+                ),
+            )
+        )
 
 
 class HomelabRootModel[T](RootModel[T]):
