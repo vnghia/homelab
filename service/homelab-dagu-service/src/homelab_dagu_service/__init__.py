@@ -9,14 +9,13 @@ from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from pulumi import ResourceOptions
 
+from .config.group.docker import DaguDagDockerGroupConfig, DaguDagDockerRunGroupConfig
 from .model import DaguDagModel
 from .model.params import DaguDagParamsModel
 from .model.step import DaguDagStepModel
 from .model.step.command import DaguDagStepCommandModel, DaguDagStepCommandParamModel
 from .model.step.executor import DaguDagStepExecutorModel
-from .model.step.executor.docker import (
-    DaguDagStepDockerExecutorModel,
-)
+from .model.step.executor.docker import DaguDagStepDockerExecutorModel
 from .model.step.executor.docker.run import DaguDagStepDockerRunExecutorModel
 from .resource import DaguDagResource
 
@@ -111,3 +110,36 @@ class DaguService(ServiceResourceBase[None]):
             container_model_build_args=container_model_build_args,
             dotenvs=dotenvs,
         )
+
+    def build_docker_group_dags[T](
+        self,
+        docker_group_config: DaguDagDockerGroupConfig,
+        *,
+        opts: ResourceOptions | None,
+        main_service: ServiceResourceBase[T],
+        container_model_build_args: ContainerModelBuildArgs | None,
+        dotenvs: list[DotenvFileResource] | None,
+    ) -> dict[str, DaguDagResource]:
+        executor_config = docker_group_config.executor
+        if isinstance(executor_config, DaguDagDockerRunGroupConfig):
+            docker_executor = executor_config.run
+            if executor_config.debug:
+                self.build_debug_dag(
+                    docker_executor,
+                    opts=opts,
+                    main_service=main_service,
+                    container_model_build_args=container_model_build_args,
+                    dotenvs=dotenvs,
+                )
+
+        return {
+            name: model.build_resource(
+                name,
+                opts=opts,
+                main_service=main_service,
+                dagu_service=self,
+                container_model_build_args=container_model_build_args,
+                dotenvs=dotenvs,
+            )
+            for name, model in docker_group_config.build_models(main_service).items()
+        }
