@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
 dependencies = [
+    "homelab-backup",
     "homelab-pydantic",
     "homelab-docker",
     "homelab-traefik-service",

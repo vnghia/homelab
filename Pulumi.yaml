@@ -299,8 +299,14 @@ config:
                 exec:
                   container:
               tags: ["backup"]
+              params:
+                types:
+                  backup:
               command:
                 prefix: ["barman"]
+                suffix:
+                  - param:
+                      type: backup
               dags:
                 check:
                   dag:

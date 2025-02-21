@@ -11,9 +11,13 @@ from pulumi import ResourceOptions
 
 from .config.group.docker import DaguDagDockerGroupConfig, DaguDagDockerRunGroupConfig
 from .model import DaguDagModel
-from .model.params import DaguDagParamsModel
+from .model.params import DaguDagParamsModel, DaguDagParamType
 from .model.step import DaguDagStepModel
-from .model.step.command import DaguDagStepCommandModel, DaguDagStepCommandParamModel
+from .model.step.command import (
+    DaguDagStepCommandModel,
+    DaguDagStepCommandParamModel,
+    DaguDagStepCommandParamTypeModel,
+)
 from .model.step.executor import DaguDagStepExecutorModel
 from .model.step.executor.docker import DaguDagStepDockerExecutorModel
 from .model.step.executor.docker.run import DaguDagStepDockerRunExecutorModel
@@ -25,7 +29,6 @@ class DaguService(ServiceResourceBase[None]):
     LOG_DIR_ENV = "DAGU_LOG_DIR"
 
     DEBUG_DAG_NAME = "debug"
-    DEBUG_DURATION_KEY = "duration"
 
     def __init__(
         self,
@@ -85,14 +88,18 @@ class DaguService(ServiceResourceBase[None]):
             path="{}-{}".format(main_service.name(), self.DEBUG_DAG_NAME),
             group=main_service.name(),
             tags=[self.DEBUG_DAG_NAME],
-            params=DaguDagParamsModel({self.DEBUG_DURATION_KEY: "30m"}),
+            params=DaguDagParamsModel(types={DaguDagParamType.DEBUG: None}),
             steps=[
                 DaguDagStepModel(
                     name=self.DEBUG_DAG_NAME,
                     command=[
                         DaguDagStepCommandModel("sleep"),
                         DaguDagStepCommandModel(
-                            DaguDagStepCommandParamModel(param=self.DEBUG_DURATION_KEY)
+                            DaguDagStepCommandParamModel(
+                                param=DaguDagStepCommandParamTypeModel(
+                                    type=DaguDagParamType.DEBUG
+                                )
+                            )
                         ),
                     ],
                     executor=DaguDagStepExecutorModel(

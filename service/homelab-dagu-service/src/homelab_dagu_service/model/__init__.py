@@ -27,7 +27,7 @@ class DaguDagModel(HomelabBaseModel):
     tags: list[str] = []
     schedule: str | None = None
     max_active_runs: PositiveInt | None = None
-    params: DaguDagParamsModel | None = None
+    params: DaguDagParamsModel = DaguDagParamsModel()
 
     steps: list[DaguDagStepModel]
 
@@ -54,9 +54,7 @@ class DaguDagModel(HomelabBaseModel):
             else None,
             "schedule": self.schedule,
             "maxActiveRuns": self.max_active_runs,
-            "params": [{key: param} for key, param in self.params.root.items()]
-            if self.params
-            else None,
+            "params": self.params.to_params() if self.params else None,
             "steps": [
                 step.to_step(self.params, main_service, build_args, dotenvs)
                 for step in self.steps

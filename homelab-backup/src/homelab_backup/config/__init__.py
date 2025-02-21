@@ -4,5 +4,5 @@ from homelab_pydantic import HomelabBaseModel
 
 
 class BackupConfig(HomelabBaseModel):
-    BACKUP_PROFILE_KEY: ClassVar[str] = "BACKUP_PROFILE"
-    BACKUP_PROFILE_VALUE: ClassVar[str] = "all"
+    BACKUP_KEY: ClassVar[str] = "BACKUP_KEY"
+    BACKUP_KEY_VALUE: ClassVar[str] = "all"
