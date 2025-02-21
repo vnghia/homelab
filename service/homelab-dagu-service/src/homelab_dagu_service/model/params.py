@@ -1,8 +1,14 @@
+from __future__ import annotations
+
+import typing
 from enum import StrEnum, auto
 from typing import ClassVar
 
 from homelab_backup.config import BackupConfig
 from homelab_pydantic import HomelabBaseModel
+
+if typing.TYPE_CHECKING:
+    from ..model import DaguDagModel
 
 
 class DaguDagParamType(StrEnum):
@@ -37,8 +43,30 @@ class DaguDagParamsModel(HomelabBaseModel):
             self.main[key]
             return self.to_key_command_unchecked(key)
 
-    def to_params(self) -> list[dict[str, str]]:
-        return [{key: value} for key, value in self.main.items()] + [
-            {self.PARAM_VALUE[key][0]: value or self.PARAM_VALUE[key][1]}
-            for key, value in self.types.items()
-        ]
+    def to_params(self, dag: DaguDagModel) -> list[dict[str, str]] | None:
+        from ..model.step.command import (
+            DaguDagStepCommandParamModel,
+            DaguDagStepCommandParamTypeModel,
+        )
+
+        used_params = {
+            (
+                command.root.param.type
+                if isinstance(command.root.param, DaguDagStepCommandParamTypeModel)
+                else command.root.param
+            )
+            for step in dag.steps
+            for command in step.command
+            if isinstance(command.root, DaguDagStepCommandParamModel)
+        }
+
+        params = []
+        for key, value in self.main.items():
+            if key in used_params:
+                params.append({key: value})
+        for key, default_value in self.types.items():
+            if key in used_params:
+                param_value = self.PARAM_VALUE[key]
+                params.append({param_value[0]: default_value or param_value[1]})
+
+        return params or None

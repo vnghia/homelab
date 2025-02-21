@@ -54,7 +54,7 @@ class DaguDagModel(HomelabBaseModel):
             else None,
             "schedule": self.schedule,
             "maxActiveRuns": self.max_active_runs,
-            "params": self.params.to_params() if self.params else None,
+            "params": self.params.to_params(self) if self.params else None,
             "steps": [
                 step.to_step(self.params, main_service, build_args, dotenvs)
                 for step in self.steps
