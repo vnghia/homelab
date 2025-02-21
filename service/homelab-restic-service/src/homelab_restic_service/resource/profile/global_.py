@@ -51,7 +51,7 @@ class ResticGlobalProfileResource(
                     for profile in profiles
                 ],
                 "profiles": {
-                    restic_service.BASE_PROFILE_NAME: {
+                    restic_service.DEFAULT_PROFILE_NAME: {
                         "cache-dir": restic_service_model.envs[
                             restic_service.RESTIC_CACHE_ENV
                         ]

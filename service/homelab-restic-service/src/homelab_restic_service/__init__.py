@@ -4,13 +4,6 @@ import pulumi
 import pulumi_random as random
 from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
-from homelab_dagu_service.model.step.executor import DaguDagStepExecutorModel
-from homelab_dagu_service.model.step.executor.docker import (
-    DaguDagStepDockerExecutorModel,
-)
-from homelab_dagu_service.model.step.executor.docker.run import (
-    DaguDagStepDockerRunExecutorModel,
-)
 from homelab_docker.config.volume import VolumeConfig
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume import ContainerVolumeConfig
@@ -33,7 +26,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
     RESTIC_MOUNT_PREFIX = AbsolutePath(PosixPath("/"))
     RESTIC_CACHE_ENV = "RESTIC_CACHE_DIR"
 
-    BASE_PROFILE_NAME = "base"
+    DEFAULT_PROFILE_NAME = "default"
 
     def __init__(
         self,
@@ -81,12 +74,6 @@ class ResticService(ServiceResourceBase[ResticConfig]):
             if model.backup
         }
 
-        self.docker_run_executor = DaguDagStepDockerRunExecutorModel(model=None)
-
-        self.executor = DaguDagStepExecutorModel(
-            DaguDagStepDockerExecutorModel(self.docker_run_executor)
-        )
-
         self.profiles = [
             ResticProfileModel(volume=volume).build_resource(
                 opts=self.child_opts, restic_service=self
@@ -104,15 +91,14 @@ class ResticService(ServiceResourceBase[ResticConfig]):
         self.docker_executor_build_args = ContainerModelBuildArgs(
             volumes=self.backup_volumes
         )
-        self.dagu_dags = {
-            dagu_service.DEBUG_DAG_NAME: dagu_service.build_debug_dag(
-                self.docker_run_executor,
-                opts=self.child_opts,
-                main_service=self,
-                container_model_build_args=self.docker_executor_build_args,
-                dotenvs=self.dotenvs,
-            )
-        }
+
+        self.dagu_dags = dagu_service.build_docker_group_dags(
+            self.config.dagu,
+            opts=self.child_opts,
+            main_service=self,
+            container_model_build_args=self.docker_executor_build_args,
+            dotenvs=self.dotenvs,
+        )
 
         pulumi.export("restic.repo", self.repo.id)
         pulumi.export("restic.password", self.password)

@@ -41,7 +41,7 @@ class ResticProfileResource(
                 "profiles": {
                     self.name: {
                         "base-dir": restic_service.get_volume_path(self.name),
-                        "inherit": restic_service.BASE_PROFILE_NAME,
+                        "inherit": restic_service.DEFAULT_PROFILE_NAME,
                         "backup": {
                             "tag": ",".join([self.DOCKER_TAG, self.service]),
                         },

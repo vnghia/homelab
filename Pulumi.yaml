@@ -343,6 +343,24 @@ config:
             keep:
               last:
                 daily: 7
+            dagu:
+              executor:
+                run:
+                  model:
+              tags: ["backup"]
+              params:
+                types:
+                  backup:
+              command:
+                prefix:
+                  - "-n"
+                  - param:
+                      type: backup
+              dags:
+                backup:
+                  dag:
+                    max-active-runs: 1
+                  command: ["backup"]
           container:
             active: false
             image: resticprofile
