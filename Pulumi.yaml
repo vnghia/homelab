@@ -312,8 +312,7 @@ config:
               dags:
                 check:
                   dag:
-                    # Run `barman check` at 2am every day
-                    schedule: "* 2 * * *"
+                    schedule: "0 2 * * *" # 2am every day
                   command: ["check"]
                 backup:
                   command: ["backup", "--wait"]
@@ -350,14 +349,25 @@ config:
                   types:
                     backup:
                 tags: ["backup"]
-              command:
-                prefix:
-                  - "-n"
-                  - param:
-                      type: backup
               dags:
+                check:
+                  dag:
+                    schedule: "0 2 * * sat" # 2am every saturday
+                  command: ["check", "--read-data"]
+                snapshots:
+                  command: ["snapshots"]
                 backup:
-                  command: ["backup"]
+                  command:
+                    - "-n"
+                    - param:
+                        type: backup
+                    - "backup"
+                forget:
+                  command:
+                    - "-n"
+                    - param:
+                        type: backup
+                    - "backup"
           container:
             active: false
             image: resticprofile
