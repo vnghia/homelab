@@ -1,16 +1,7 @@
+from homelab_dagu_service.config.group.docker import DaguDagDockerGroupConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_pydantic import HomelabBaseModel
 from pydantic import PositiveInt
-
-
-class BarmanDaguTaskConfig(HomelabBaseModel):
-    schedule: str | None = None
-    command: list[str]
-
-
-class BarmanDaguConfig(HomelabBaseModel):
-    tasks: dict[str, BarmanDaguTaskConfig]
-    tags: list[str]
 
 
 class BarmanConfig(HomelabBaseModel):
@@ -21,7 +12,7 @@ class BarmanConfig(HomelabBaseModel):
     last_backup_maximum_age: str
     retention_policy: str
 
-    dagu: BarmanDaguConfig
+    dagu: DaguDagDockerGroupConfig
 
     def get_config_container_volume_path(self, file: str) -> ContainerVolumePath:
         return self.config_dir / file

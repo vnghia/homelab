@@ -7,11 +7,13 @@ from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
 from pydantic import field_validator
 
+from .. import DaguDagModel
+from ..step.command import DaguDagStepCommandModel
+from ..step.executor import DaguDagStepExecutorModel
+from ..step.executor.docker import DaguDagStepDockerExecutorModel
+
 if typing.TYPE_CHECKING:
-    from .. import DaguDagModel
-    from ..step.command import DaguDagStepCommandModel
-    from ..step.executor import DaguDagStepExecutorModel
-    from ..step.executor.docker import DaguDagStepDockerExecutorModel
+    from ...config.step.command import DaguDagStepCommandConfig
 
 
 class DaguDagDockerGroupModel(HomelabBaseModel):
@@ -28,8 +30,10 @@ class DaguDagDockerGroupModel(HomelabBaseModel):
     def build_model[T](
         self,
         name: str,
-        docker_executor: DaguDagStepDockerExecutorModel,
+        *,
         main_service: ServiceResourceBase[T],
+        docker_executor: DaguDagStepDockerExecutorModel,
+        command_config: DaguDagStepCommandConfig,
     ) -> DaguDagModel:
         from ..step import DaguDagStepModel
 
@@ -40,7 +44,9 @@ class DaguDagDockerGroupModel(HomelabBaseModel):
             steps=[
                 DaguDagStepModel(
                     name=name,
-                    command=self.command,
+                    command=command_config.prefix
+                    + self.command
+                    + command_config.suffix,
                     executor=DaguDagStepExecutorModel(docker_executor),
                 )
             ],

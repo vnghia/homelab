@@ -1,20 +1,5 @@
 from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
-from homelab_dagu_service.model import DaguDagModel
-from homelab_dagu_service.model.params import DaguDagParamsModel
-from homelab_dagu_service.model.step import DaguDagStepModel
-from homelab_dagu_service.model.step.command import (
-    DaguDagStepCommandModel,
-    DaguDagStepCommandParamModel,
-)
-from homelab_dagu_service.model.step.executor import DaguDagStepExecutorModel
-from homelab_dagu_service.model.step.executor.docker import (
-    DaguDagStepDockerExecutorModel,
-)
-from homelab_dagu_service.model.step.executor.docker.exec import (
-    DaguDagStepDockerExecExecutorModel,
-)
-from homelab_dagu_service.resource import DaguDagResource
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
 from homelab_docker.model.service import ServiceModel
@@ -63,48 +48,12 @@ class BarmanService(ServiceResourceBase[BarmanConfig]):
             options={None: ContainerModelBuildArgs(files=self.configs)}
         )
 
-        self.executor = DaguDagStepExecutorModel(
-            DaguDagStepDockerExecutorModel(
-                DaguDagStepDockerExecExecutorModel(container=None)
-            )
+        self.dagu_dags = dagu_service.build_docker_group_dags(
+            self.config.dagu,
+            opts=self.child_opts,
+            main_service=self,
+            container_model_build_args=None,
+            dotenvs=None,
         )
-
-        self.dagu_dags: dict[str, DaguDagResource] = {}
-        for name, task in self.config.dagu.tasks.items():
-            self.dagu_dags[name] = DaguDagModel(
-                name=name,
-                path="{}-{}".format(self.name(), name),
-                group=self.name(),
-                tags=self.config.dagu.tags,
-                schedule=task.schedule,
-                max_active_runs=1,
-                params=DaguDagParamsModel(
-                    {
-                        self.backup_config.BACKUP_PROFILE_KEY: self.backup_config.BACKUP_PROFILE_VALUE
-                    }
-                ),
-                steps=[
-                    DaguDagStepModel(
-                        name=name,
-                        command=[DaguDagStepCommandModel("barman")]
-                        + [DaguDagStepCommandModel(command) for command in task.command]
-                        + [
-                            DaguDagStepCommandModel(
-                                DaguDagStepCommandParamModel(
-                                    param=self.backup_config.BACKUP_PROFILE_KEY
-                                )
-                            )
-                        ],
-                        executor=self.executor,
-                    )
-                ],
-            ).build_resource(
-                name,
-                opts=self.child_opts,
-                main_service=self,
-                dagu_service=dagu_service,
-                container_model_build_args=None,
-                dotenvs=None,
-            )
 
         self.register_outputs({})

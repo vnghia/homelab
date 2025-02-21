@@ -295,16 +295,27 @@ config:
             last-backup-maximum-age: 1 WEEKS
             retention-policy: RECOVERY WINDOW OF 1 WEEKS
             dagu:
-              tasks:
+              executor:
+                exec:
+                  container:
+              tags: ["backup"]
+              command:
+                prefix: ["barman"]
+              dags:
                 check:
+                  dag:
+                    max-active-runs: 1
+                    # Run `barman check` at 2am every day
+                    schedule: "* 2 * * *"
                   command: ["check"]
-                  # Run `barman check` at 2am every day
-                  schedule: "* 2 * * *"
                 backup:
+                  dag:
+                    max-active-runs: 1
                   command: ["backup", "--wait"]
                 switch-wal:
+                  dag:
+                    max-active-runs: 1
                   command: ["switch-wal", "--force", "--archive"]
-              tags: ["backup"]
           container:
             image:
               build: barman

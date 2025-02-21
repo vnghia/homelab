@@ -141,5 +141,7 @@ class DaguService(ServiceResourceBase[None]):
                 container_model_build_args=container_model_build_args,
                 dotenvs=dotenvs,
             )
-            for name, model in docker_group_config.build_models(main_service).items()
+            for name, model in docker_group_config.build_models(
+                main_service=main_service
+            ).items()
         }
