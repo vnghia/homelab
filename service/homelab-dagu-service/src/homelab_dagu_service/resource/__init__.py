@@ -35,11 +35,11 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
         super().__init__(
             resource_name,
             opts=opts,
-            container_volume_path=dagu_service.get_dag_container_volume_path(self.path),
+            volume_path=dagu_service.get_dag_volume_path(self.path),
             data=self.model.to_data(
                 main_service,
                 dagu_service,
-                dagu_service.get_log_directory_container_volume_path(self.path),
+                dagu_service.get_log_directory_volume_path(self.path),
                 container_model_build_args,
                 dotenvs,
             ),

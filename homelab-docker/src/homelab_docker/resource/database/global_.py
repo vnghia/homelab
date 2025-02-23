@@ -24,7 +24,7 @@ class DatabaseGlobalResource(ComponentResource):
         FileResource(
             "replication",
             opts=self.child_opts,
-            container_volume_path=ContainerVolumePath(
+            volume_path=ContainerVolumePath(
                 volume=PostgresDatabaseModel.DATABASE_ENTRYPOINT_INITDB_VOLUME,
                 path=RelativePath(PosixPath("add-replication-hba-entry.sh")),
             ),

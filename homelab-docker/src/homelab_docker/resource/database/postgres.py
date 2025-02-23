@@ -4,16 +4,18 @@ from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
 from ...model.container import ContainerModel, ContainerModelBuildArgs
+from ...model.container.extract import ContainerExtract
+from ...model.container.extract.source import ContainerExtractSource
+from ...model.container.extract.source.simple import ContainerExtractSimpleSource
+from ...model.container.extract.source.volume import ContainerExtractVolumeSource
 from ...model.container.healthcheck import ContainerHealthCheckConfig
 from ...model.container.image import ContainerImageModelConfig
-from ...model.container.string import ContainerString
 from ...model.container.tmpfs import ContainerTmpfsConfig
 from ...model.container.volume import (
     ContainerVolumeConfig,
     ContainerVolumeFullConfig,
     ContainerVolumesConfig,
 )
-from ...model.container.volume_path import ContainerVolumePath
 from ...model.database.postgres import PostgresDatabaseModel
 from ...model.database.source import DatabaseSourceModel
 from .. import DockerResourceArgs
@@ -77,9 +79,21 @@ class PostgresDatabaseResource(ComponentResource):
                     }
                 ),
                 envs={
-                    "POSTGRES_USER": ContainerString(self.username),
-                    "POSTGRES_DB": ContainerString(self.database),
-                    "PGDATA": ContainerString(ContainerVolumePath(volume=full_name)),
+                    "POSTGRES_USER": ContainerExtract(
+                        source=ContainerExtractSource(
+                            ContainerExtractSimpleSource(self.username)
+                        )
+                    ),
+                    "POSTGRES_DB": ContainerExtract(
+                        source=ContainerExtractSource(
+                            ContainerExtractSimpleSource(self.database)
+                        )
+                    ),
+                    "PGDATA": ContainerExtract(
+                        source=ContainerExtractSource(
+                            ContainerExtractVolumeSource(volume=full_name)
+                        )
+                    ),
                 },
             ).build_resource(
                 full_name,

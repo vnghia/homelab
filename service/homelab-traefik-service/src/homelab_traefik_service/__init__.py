@@ -58,9 +58,5 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
 
         self.register_outputs({})
 
-    def get_dynamic_config_container_volume_path(
-        self, name: str
-    ) -> ContainerVolumePath:
-        return self.static.dynamic_directory_container_volume_path / RelativePath(
-            PosixPath(name)
-        )
+    def get_dynamic_config_volume_path(self, name: str) -> ContainerVolumePath:
+        return self.static.dynamic_directory_volume_path / RelativePath(PosixPath(name))

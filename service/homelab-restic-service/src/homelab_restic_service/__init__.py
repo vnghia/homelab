@@ -60,9 +60,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             DotenvFileResource(
                 self.name(),
                 opts=self.child_opts,
-                container_volume_path=dagu_service.get_dotenv_container_volume_path(
-                    self.name()
-                ),
+                volume_path=dagu_service.get_dotenv_volume_path(self.name()),
                 envs=self.config.repo.to_envs(self.password),
                 volume_resource=self.docker_resource_args.volume,
             )

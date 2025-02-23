@@ -14,5 +14,5 @@ class BarmanConfig(HomelabBaseModel):
 
     dagu: DaguDagDockerGroupConfig
 
-    def get_config_container_volume_path(self, file: str) -> ContainerVolumePath:
+    def get_config_volume_path(self, file: str) -> ContainerVolumePath:
         return self.config_dir / file

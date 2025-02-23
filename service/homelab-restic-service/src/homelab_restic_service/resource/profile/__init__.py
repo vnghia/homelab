@@ -33,9 +33,7 @@ class ResticProfileResource(
         super().__init__(
             self.name,
             opts=opts,
-            container_volume_path=restic_service.config.get_profile_container_volume_path(
-                self.name
-            ),
+            volume_path=restic_service.config.get_profile_volume_path(self.name),
             data={
                 "version": "2",
                 "profiles": {

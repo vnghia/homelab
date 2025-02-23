@@ -37,9 +37,7 @@ class ResticGlobalProfileResource(
         super().__init__(
             "global",
             opts=opts,
-            container_volume_path=restic_service.config.get_profile_container_volume_path(
-                "profiles"
-            ),
+            volume_path=restic_service.config.get_profile_volume_path("profiles"),
             data={
                 "version": "2",
                 "global": {
@@ -53,7 +51,7 @@ class ResticGlobalProfileResource(
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
                         "cache-dir": restic_model.envs[restic_service.RESTIC_CACHE_ENV]
-                        .as_container_volume_path()
+                        .as_volume_path()
                         .to_container_path(restic_volumes_config),
                         "cleanup-cache": True,
                         "backup": {

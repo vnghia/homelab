@@ -202,20 +202,20 @@ class FileResource(Resource, module="docker", name="File"):
         resource_name: str,
         *,
         opts: ResourceOptions | None,
-        container_volume_path: ContainerVolumePath,
+        volume_path: ContainerVolumePath,
         content: Input[str],
         mode: int,
         volume_resource: VolumeResource,
     ):
-        self.container_volume_path = container_volume_path
-        volume = volume_resource[container_volume_path.volume]
+        self.volume_path = volume_path
+        volume = volume_resource[volume_path.volume]
         super().__init__(
             FileProvider(),
             resource_name,
             {
                 "location": {
                     "volume": volume.name,
-                    "path": container_volume_path.path.as_posix(),
+                    "path": volume_path.path.as_posix(),
                 },
                 "data": {"content": content, "mode": mode},
                 "hash": None,
@@ -226,4 +226,4 @@ class FileResource(Resource, module="docker", name="File"):
     def to_container_path(
         self, container_volumes_config: ContainerVolumesConfig
     ) -> AbsolutePath:
-        return self.container_volume_path.to_container_path(container_volumes_config)
+        return self.volume_path.to_container_path(container_volumes_config)

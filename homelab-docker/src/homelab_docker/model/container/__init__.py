@@ -10,11 +10,11 @@ from pulumi import Input, Output, Resource, ResourceOptions
 
 from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
+from .extract import ContainerExtract
 from .healthcheck import ContainerHealthCheckConfig
 from .image import ContainerImageModelConfig
 from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
-from .string import ContainerString
 from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
 
@@ -39,10 +39,10 @@ class ContainerModel(HomelabBaseModel):
     image: ContainerImageModelConfig
 
     capabilities: list[str] | None = None
-    command: list[ContainerString] | None = None
+    command: list[ContainerExtract] | None = None
     database: ContainerDatabaseConfig | None = None
     docker_socket: ContainerDockerSocketConfig | None = None
-    entrypoint: list[ContainerString] | None = None
+    entrypoint: list[ContainerExtract] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
     init: bool | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
@@ -56,25 +56,19 @@ class ContainerModel(HomelabBaseModel):
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
 
-    envs: dict[str, ContainerString] = {}
+    envs: dict[str, ContainerExtract] = {}
     labels: dict[str, str] = {}
 
     def build_command(self) -> list[str] | None:
         return (
-            [
-                command.to_str(container_volumes_config=self.volumes)
-                for command in self.command
-            ]
+            [command.extract_str(self) for command in self.command]
             if self.command is not None
             else None
         )
 
     def build_entrypoint(self) -> list[str] | None:
         return (
-            [
-                entrypoint.to_str(container_volumes_config=self.volumes)
-                for entrypoint in self.entrypoint
-            ]
+            [entrypoint.extract_str(self) for entrypoint in self.entrypoint]
             if self.entrypoint is not None
             else None
         )
@@ -102,25 +96,16 @@ class ContainerModel(HomelabBaseModel):
             )
 
         return [
-            Output.concat(
-                k,
-                "=",
-                Output.from_input(v).apply(
-                    lambda x: x.to_str(container_volumes_config=self.volumes)
-                    if isinstance(x, ContainerString)
-                    else x
-                ),
-            )
+            Output.concat(k, "=", v)
             for k, v in sorted(
                 (
-                    {
-                        "TZ": Output.from_input(
-                            ContainerString(docker_resource_args.timezone)
-                        )
-                    }
-                    | self.envs
+                    {"TZ": Output.from_input(str(docker_resource_args.timezone))}
                     | {
-                        k: Output.from_input(v).apply(ContainerString)
+                        k: Output.from_input(v.extract_str(self))
+                        for k, v in self.envs.items()
+                    }
+                    | {
+                        k: Output.from_input(v)
                         for k, v in (dict(build_args.envs) | database_envs).items()
                     }
                 ).items(),

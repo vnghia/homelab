@@ -105,16 +105,14 @@ class ConfigFileResource(Generic[T], FileResource):
         resource_name: str,
         *,
         opts: ResourceOptions | None,
-        container_volume_path: ContainerVolumePath,
+        volume_path: ContainerVolumePath,
         data: Mapping[str, Any],
         volume_resource: VolumeResource,
     ):
         super().__init__(
             resource_name,
             opts=opts,
-            container_volume_path=container_volume_path.with_suffix(
-                self.suffix or self.dumper.suffix()
-            ),
+            volume_path=volume_path.with_suffix(self.suffix or self.dumper.suffix()),
             content=Output.json_dumps(data).apply(self.dumps),
             mode=0o444,
             volume_resource=volume_resource,

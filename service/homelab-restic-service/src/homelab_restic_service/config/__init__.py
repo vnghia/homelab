@@ -15,5 +15,5 @@ class ResticConfig(HomelabBaseModel):
 
     dagu: DaguDagDockerGroupConfig
 
-    def get_profile_container_volume_path(self, file: str) -> ContainerVolumePath:
+    def get_profile_volume_path(self, file: str) -> ContainerVolumePath:
         return self.profile_dir / file

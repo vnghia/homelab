@@ -32,9 +32,7 @@ class BarmanConfigFileResource(
         super().__init__(
             resource_name,
             opts=opts,
-            container_volume_path=config.get_config_container_volume_path(
-                resource_name
-            ),
+            volume_path=config.get_config_volume_path(resource_name),
             data={
                 resource_name: {
                     "description": resource_name,

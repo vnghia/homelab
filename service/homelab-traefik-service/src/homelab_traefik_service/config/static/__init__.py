@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
@@ -37,17 +36,19 @@ class TraefikStaticConfigResource(
 
         traefik_volumes_config = traefik_model.volumes
 
-        static_container_volume_path = ContainerVolumePath.model_validate(
-            traefik_model.command[-1].root if traefik_model.command else None
+        if traefik_model.command is None:
+            raise ValueError("Could not extract static config path from command")
+        static_volume_path = traefik_model.command[-1].extract_volume_path(
+            traefik_model
         )
-        self.dynamic_directory_container_volume_path = (
-            static_container_volume_path.__replace__(path=traefik_config.provider.file)
+        self.dynamic_directory_volume_path = static_volume_path.__replace__(
+            path=traefik_config.provider.file
         )
 
         super().__init__(
             "static",
             opts=opts,
-            container_volume_path=static_container_volume_path,
+            volume_path=static_volume_path,
             data={
                 "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
                 "accessLog": {"format": "json"},
@@ -86,7 +87,7 @@ class TraefikStaticConfigResource(
                 },
                 "providers": {
                     "file": {
-                        "directory": self.dynamic_directory_container_volume_path.to_container_path(
+                        "directory": self.dynamic_directory_volume_path.to_container_path(
                             traefik_volumes_config
                         ),
                         "watch": True,
