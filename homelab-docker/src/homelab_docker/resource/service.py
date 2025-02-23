@@ -2,11 +2,12 @@ import dataclasses
 
 import pulumi
 import pulumi_docker as docker
+from homelab_pydantic import HomelabBaseModel
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from homelab_docker.model.container import ContainerModel, ContainerModelBuildArgs
-from homelab_docker.model.service import ServiceModel
+from homelab_docker.model.service import ServiceModel, ServiceWithConfigModel
 
 from ..config.database import DatabaseConfig
 from ..config.database.source import DatabaseSourceConfig
@@ -27,13 +28,13 @@ class ServiceResourceArgs:
     database: ServiceDatabaseArgs | None = None
 
 
-class ServiceResourceBase[T](ComponentResource):
+class ServiceResourceBase(ComponentResource):
     CONTAINERS: dict[str, docker.Container] = {}
     DATABASE_SOURCE_CONFIGS: dict[str, DatabaseSourceConfig] = {}
 
     def __init__(
         self,
-        model: ServiceModel[T],
+        model: ServiceModel,
         *,
         opts: ResourceOptions | None,
         docker_resource_args: DockerResourceArgs,
@@ -53,10 +54,6 @@ class ServiceResourceBase[T](ComponentResource):
     @classmethod
     def name(cls) -> str:
         return to_snake(cls.__name__.removesuffix("Service")).replace("_", "-")
-
-    @property
-    def config(self) -> T:
-        return self.model.config
 
     @classmethod
     def add_service_name_cls(cls, service_name: str, name: str | None) -> str:
@@ -127,3 +124,15 @@ class ServiceResourceBase[T](ComponentResource):
             name = self.add_service_name(name)
             self.CONTAINERS[name] = container
             pulumi.export("container.{}".format(name), container.name)
+
+
+class ServiceWithConfigResourceBase[T: HomelabBaseModel](ServiceResourceBase):
+    def __init__(
+        self,
+        model: ServiceWithConfigModel[T],
+        *,
+        opts: ResourceOptions | None,
+        docker_resource_args: DockerResourceArgs,
+    ) -> None:
+        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        self.config = model.config

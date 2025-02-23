@@ -2,9 +2,9 @@ import binascii
 
 import pulumi_random as random
 from homelab_docker.model.container import ContainerModelBuildArgs
-from homelab_docker.model.service import ServiceModel
+from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
@@ -13,12 +13,12 @@ from pulumi import ResourceOptions
 from .config import NgheConfig
 
 
-class NgheService(ServiceResourceBase[NgheConfig]):
+class NgheService(ServiceWithConfigResourceBase[NgheConfig]):
     KEY_LENGTH = 16
 
     def __init__(
         self,
-        model: ServiceModel[NgheConfig],
+        model: ServiceWithConfigModel[NgheConfig],
         *,
         opts: ResourceOptions | None,
         traefik_service: TraefikService,
@@ -43,9 +43,9 @@ class NgheService(ServiceResourceBase[NgheConfig]):
                         "NGHE_DATABASE__KEY": self.key.apply(
                             lambda x: binascii.hexlify(x.encode()).decode("ascii")
                         ),
-                        "NGHE_INTEGRATION__SPOTIFY__ID": self.model.config.spotify.id,
-                        "NGHE_INTEGRATION__SPOTIFY__SECRET": self.model.config.spotify.secret,
-                        "NGHE_INTEGRATION__LASTFM__KEY": self.model.config.lastfm.key,
+                        "NGHE_INTEGRATION__SPOTIFY__ID": self.config.spotify.id,
+                        "NGHE_INTEGRATION__SPOTIFY__SECRET": self.config.spotify.secret,
+                        "NGHE_INTEGRATION__LASTFM__KEY": self.config.lastfm.key,
                         **s3_envs,
                     }
                 )

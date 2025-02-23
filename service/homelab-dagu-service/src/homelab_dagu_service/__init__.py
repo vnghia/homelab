@@ -25,7 +25,7 @@ from .model.step.run.command import (
 from .resource import DaguDagResource
 
 
-class DaguService(ServiceResourceBase[None]):
+class DaguService(ServiceResourceBase):
     DAGS_DIR_ENV = "DAGU_DAGS_DIR"
     LOG_DIR_ENV = "DAGU_LOG_DIR"
 
@@ -35,7 +35,7 @@ class DaguService(ServiceResourceBase[None]):
 
     def __init__(
         self,
-        model: ServiceModel[None],
+        model: ServiceModel,
         *,
         opts: ResourceOptions | None,
         traefik_service: TraefikService,
@@ -77,12 +77,12 @@ class DaguService(ServiceResourceBase[None]):
     def get_log_directory_container_volume_path(self, name: str) -> ContainerVolumePath:
         return self.log_directory_container_volume_path / name
 
-    def build_debug_dag[T](
+    def build_debug_dag(
         self,
         docker_run_executor: DaguDagStepDockerRunExecutorModel,
         *,
         opts: ResourceOptions | None,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         container_model_build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> DaguDagResource:
@@ -123,12 +123,12 @@ class DaguService(ServiceResourceBase[None]):
             dotenvs=dotenvs,
         )
 
-    def build_docker_group_dags[T](
+    def build_docker_group_dags(
         self,
         docker_group_config: DaguDagDockerGroupConfig,
         *,
         opts: ResourceOptions | None,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         container_model_build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, DaguDagResource]:

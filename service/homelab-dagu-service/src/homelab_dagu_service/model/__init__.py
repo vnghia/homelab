@@ -31,9 +31,9 @@ class DaguDagModel(HomelabBaseModel):
 
     steps: list[DaguDagStepModel] = []
 
-    def to_data[T](
+    def to_data(
         self,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         dagu_service: DaguService,
         logdir: ContainerVolumePath | None,
         build_args: ContainerModelBuildArgs | None,
@@ -63,12 +63,12 @@ class DaguDagModel(HomelabBaseModel):
             ],
         }
 
-    def build_resource[T](
+    def build_resource(
         self,
         resource_name: str,
         *,
         opts: ResourceOptions | None,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         dagu_service: DaguService,
         container_model_build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,

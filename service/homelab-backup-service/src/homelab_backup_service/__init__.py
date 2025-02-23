@@ -6,17 +6,17 @@ from homelab_dagu_service.model.step import DaguDagStepModel
 from homelab_dagu_service.model.step.continue_on import DaguDagStepContinueOnModel
 from homelab_dagu_service.model.step.run import DaguDagStepRunModel
 from homelab_dagu_service.model.step.run.subdag import DaguDagStepRunSubdagModel
-from homelab_docker.model.service import ServiceModel
+from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_restic_service import ResticService
 from pulumi import ResourceOptions
 
 
-class BackupService(ServiceResourceBase[BackupConfig]):
+class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
     def __init__(
         self,
-        model: ServiceModel[BackupConfig],
+        model: ServiceWithConfigModel[BackupConfig],
         *,
         opts: ResourceOptions | None,
         dagu_service: DaguService,

@@ -13,10 +13,10 @@ from homelab_traefik_service.config.dynamic.service import TraefikDynamicService
 from pulumi import ResourceOptions
 
 
-class DozzleService(ServiceResourceBase[None]):
+class DozzleService(ServiceResourceBase):
     def __init__(
         self,
-        model: ServiceModel[None],
+        model: ServiceModel,
         *,
         opts: ResourceOptions | None,
         traefik_service: TraefikService,

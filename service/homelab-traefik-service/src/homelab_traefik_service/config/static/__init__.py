@@ -31,7 +31,7 @@ class TraefikStaticConfigResource(
         traefik_service: TraefikService,
         tailscale_service: TailscaleService,
     ) -> None:
-        traefik_config = traefik_service.model.config
+        traefik_config = traefik_service.config
         traefik_service_model = traefik_service.model.container
         container_volumes_config = traefik_service_model.volumes
 

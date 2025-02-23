@@ -7,10 +7,10 @@ from homelab_traefik_service.config.dynamic.service import TraefikDynamicService
 from pulumi import ResourceOptions
 
 
-class MemosService(ServiceResourceBase[None]):
+class MemosService(ServiceResourceBase):
     def __init__(
         self,
-        model: ServiceModel[None],
+        model: ServiceModel,
         *,
         opts: ResourceOptions | None,
         traefik_service: TraefikService,

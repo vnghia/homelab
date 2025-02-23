@@ -34,8 +34,8 @@ class DaguDagDockerGroupConfig(HomelabBaseModel):
 
     dags: dict[str, DaguDagDockerGroupModel]
 
-    def build_models[T](
-        self, *, main_service: ServiceResourceBase[T]
+    def build_models(
+        self, *, main_service: ServiceResourceBase
     ) -> dict[str, DaguDagModel]:
         global_dag = self.dag
         return {

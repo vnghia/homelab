@@ -24,10 +24,10 @@ class DaguDagStepModel(HomelabBaseModel):
     continue_on: DaguDagStepContinueOnModel | None = None
     executor: DaguDagStepExecutorModel | None = None
 
-    def to_step[T](
+    def to_step(
         self,
         params: DaguDagParamsModel,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         dagu_service: DaguService,
         build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,

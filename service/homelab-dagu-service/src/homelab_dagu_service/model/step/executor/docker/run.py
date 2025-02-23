@@ -14,9 +14,9 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
 
     entrypoint: list[str] | None = None
 
-    def to_executor_config[T](
+    def to_executor_config(
         self,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:

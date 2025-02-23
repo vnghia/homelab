@@ -19,13 +19,13 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
     validator = schema.Model
     dumper = YamlDumper
 
-    def __init__[T](
+    def __init__(
         self,
         resource_name: str,
         model: DaguDagModel,
         *,
         opts: ResourceOptions | None,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         dagu_service: DaguService,
         container_model_build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,

@@ -10,10 +10,10 @@ from pulumi import InvokeOutputOptions, Output, ResourceOptions
 from pydantic import IPvAnyAddress
 
 
-class TailscaleService(ServiceResourceBase[None]):
+class TailscaleService(ServiceResourceBase):
     def __init__(
         self,
-        model: ServiceModel[None],
+        model: ServiceModel,
         *,
         opts: ResourceOptions | None,
         hostname: str,

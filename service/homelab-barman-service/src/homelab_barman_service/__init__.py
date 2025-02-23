@@ -2,19 +2,19 @@ from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
-from homelab_docker.model.service import ServiceModel
+from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from pulumi import ResourceOptions
 
 from .config import BarmanConfig
 from .resource import BarmanConfigFileResource
 
 
-class BarmanService(ServiceResourceBase[BarmanConfig]):
+class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
     def __init__(
         self,
-        model: ServiceModel[BarmanConfig],
+        model: ServiceWithConfigModel[BarmanConfig],
         *,
         opts: ResourceOptions | None,
         backup_config: BackupConfig,

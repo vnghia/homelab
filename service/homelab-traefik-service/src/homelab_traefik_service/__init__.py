@@ -2,9 +2,9 @@ from pathlib import PosixPath
 
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.service import ServiceModel
+from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_network.resource.network import NetworkResource
 from homelab_pydantic import RelativePath
 from homelab_tailscale_service import TailscaleService
@@ -16,10 +16,10 @@ from .config.dynamic.service import TraefikDynamicServiceConfig
 from .config.static import TraefikStaticConfigResource
 
 
-class TraefikService(ServiceResourceBase[TraefikConfig]):
+class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
     def __init__(
         self,
-        model: ServiceModel[TraefikConfig],
+        model: ServiceWithConfigModel[TraefikConfig],
         *,
         opts: ResourceOptions | None,
         tailscale_service: TailscaleService,

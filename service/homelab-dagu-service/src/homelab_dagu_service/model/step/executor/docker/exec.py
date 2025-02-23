@@ -8,8 +8,8 @@ from pulumi import Input
 class DaguDagStepDockerExecExecutorModel(HomelabBaseModel):
     container: str | None
 
-    def to_executor_config[T](
+    def to_executor_config(
         self,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
     ) -> dict[str, Input[Any]]:
         return {"containerName": main_service.containers[self.container].name}

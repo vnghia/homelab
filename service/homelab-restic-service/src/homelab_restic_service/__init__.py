@@ -7,10 +7,10 @@ from homelab_dagu_service import DaguService
 from homelab_docker.config.volume import VolumeConfig
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume import ContainerVolumeConfig
-from homelab_docker.model.service import ServiceModel
+from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_pydantic import AbsolutePath
 from pulumi import ResourceOptions
 
@@ -20,7 +20,7 @@ from .resource.profile.global_ import ResticGlobalProfileResource
 from .resource.repo import ResticRepoResource
 
 
-class ResticService(ServiceResourceBase[ResticConfig]):
+class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
     PASSWORD_LENGTH = 64
 
     RESTIC_MOUNT_PREFIX = AbsolutePath(PosixPath("/"))
@@ -30,7 +30,7 @@ class ResticService(ServiceResourceBase[ResticConfig]):
 
     def __init__(
         self,
-        model: ServiceModel[ResticConfig],
+        model: ServiceWithConfigModel[ResticConfig],
         *,
         opts: ResourceOptions | None,
         hostname: str,

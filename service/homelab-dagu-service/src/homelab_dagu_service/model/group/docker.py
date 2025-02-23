@@ -19,11 +19,11 @@ class DaguDagDockerGroupModel(HomelabBaseModel):
     dag: DaguDagModel = DaguDagModel()
     command: DaguDagStepRunCommandModel
 
-    def build_model[T](
+    def build_model(
         self,
         name: str,
         *,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         docker_executor: DaguDagStepDockerExecutorModel,
         command_config: DaguDagStepRunCommandsConfig,
     ) -> DaguDagModel:

@@ -12,9 +12,9 @@ from .docker import DaguDagStepDockerExecutorModel
 class DaguDagStepExecutorModel(HomelabRootModel[DaguDagStepDockerExecutorModel]):
     root: DaguDagStepDockerExecutorModel
 
-    def to_executor[T](
+    def to_executor(
         self,
-        main_service: ServiceResourceBase[T],
+        main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
