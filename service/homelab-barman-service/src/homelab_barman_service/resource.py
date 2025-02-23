@@ -48,7 +48,7 @@ class BarmanConfigFileResource(
                     "last_backup_maximum_age": config.last_backup_maximum_age,
                     "retention_policy": config.retention_policy,
                     "local_staging_path": config.staging_dir.to_container_path(
-                        barman_service.model.container.volumes
+                        barman_service.model[None].volumes
                     ),
                 }
             },

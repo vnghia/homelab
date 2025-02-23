@@ -22,7 +22,7 @@ class DaguDagStepRunSubdagModel(HomelabBaseModel):
         params = self.params.to_params(dag.model)
 
         data: dict[str, Any] = {
-            "run": dag.to_container_path(dagu_service.model.container.volumes)
+            "run": dag.to_container_path(dagu_service.model[None].volumes)
         }
         if params:
             data["params"] = " ".join(

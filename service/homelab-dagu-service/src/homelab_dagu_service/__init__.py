@@ -28,6 +28,7 @@ from .resource import DaguDagResource
 class DaguService(ServiceResourceBase):
     DAGS_DIR_ENV = "DAGU_DAGS_DIR"
     LOG_DIR_ENV = "DAGU_LOG_DIR"
+    PORT_ENV = "DAGU_PORT"
 
     DEBUG_DAG_NAME = "debug"
 
@@ -43,12 +44,12 @@ class DaguService(ServiceResourceBase):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.dags_directory_container_volume_path = self.model.container.envs[
-            self.DAGS_DIR_ENV
-        ].as_container_volume_path()
-        self.log_directory_container_volume_path = self.model.container.envs[
-            self.LOG_DIR_ENV
-        ].as_container_volume_path()
+        self.dags_directory_container_volume_path = (
+            self.model[None].envs[self.DAGS_DIR_ENV].as_container_volume_path()
+        )
+        self.log_directory_container_volume_path = (
+            self.model[None].envs[self.LOG_DIR_ENV].as_container_volume_path()
+        )
 
         self.build_containers(
             options={
@@ -62,7 +63,7 @@ class DaguService(ServiceResourceBase):
             name=self.name(),
             public=False,
             service=TraefikDynamicServiceConfig(
-                int(self.model.container.envs["DAGU_PORT"].to_str())
+                int(self.model[None].envs[self.PORT_ENV].to_str())
             ),
         ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
 

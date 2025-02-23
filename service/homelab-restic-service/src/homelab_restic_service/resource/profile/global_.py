@@ -27,8 +27,8 @@ class ResticGlobalProfileResource(
         profiles: list[ResticProfileResource],
         restic_service: ResticService,
     ):
-        restic_service_model = restic_service.model.container
-        restic_volumes_config = restic_service_model.volumes
+        restic_model = restic_service.model[None]
+        restic_volumes_config = restic_model.volumes
 
         forget_options = {"prune": True} | {
             "keep-{}".format(timeframe): number
@@ -52,9 +52,7 @@ class ResticGlobalProfileResource(
                 ],
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
-                        "cache-dir": restic_service_model.envs[
-                            restic_service.RESTIC_CACHE_ENV
-                        ]
+                        "cache-dir": restic_model.envs[restic_service.RESTIC_CACHE_ENV]
                         .as_container_volume_path()
                         .to_container_path(restic_volumes_config),
                         "cleanup-cache": True,

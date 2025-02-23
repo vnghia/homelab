@@ -14,6 +14,9 @@ from pulumi import ResourceOptions
 
 
 class DozzleService(ServiceResourceBase):
+    BASE_ENV = "DOZZLE_BASE"
+    ADDR_ENV = "DOZZLE_ADDR"
+
     def __init__(
         self,
         model: ServiceModel,
@@ -36,7 +39,7 @@ class DozzleService(ServiceResourceBase):
             }
         )
 
-        self.prefix = self.model.container.envs["DOZZLE_BASE"].to_str()
+        self.prefix = self.model[None].envs[self.BASE_ENV].to_str()
 
         self.traefik = TraefikHttpDynamicConfig(
             name=self.name(),
@@ -44,7 +47,7 @@ class DozzleService(ServiceResourceBase):
             hostname="system",
             prefix=self.prefix,
             service=TraefikDynamicServiceConfig(
-                int(self.model.container.envs["DOZZLE_ADDR"].to_str()[1:])
+                int(self.model[None].envs[self.ADDR_ENV].to_str()[1:])
             ),
         ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
         self.traefik_redirect = TraefikHttpDynamicConfig(

@@ -32,22 +32,22 @@ class TraefikStaticConfigResource(
         tailscale_service: TailscaleService,
     ) -> None:
         traefik_config = traefik_service.config
-        traefik_service_model = traefik_service.model.container
-        container_volumes_config = traefik_service_model.volumes
+        traefik_model = traefik_service.model[None]
+        tailscale_model = tailscale_service.model[None]
 
-        container_volume_path = ContainerVolumePath.model_validate(
-            traefik_service_model.command[-1].root
-            if traefik_service_model.command
-            else None
+        traefik_volumes_config = traefik_model.volumes
+
+        static_container_volume_path = ContainerVolumePath.model_validate(
+            traefik_model.command[-1].root if traefik_model.command else None
         )
         self.dynamic_directory_container_volume_path = (
-            container_volume_path.__replace__(path=traefik_config.provider.file)
+            static_container_volume_path.__replace__(path=traefik_config.provider.file)
         )
 
         super().__init__(
             "static",
             opts=opts,
-            container_volume_path=container_volume_path,
+            container_volume_path=static_container_volume_path,
             data={
                 "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
                 "accessLog": {"format": "json"},
@@ -69,7 +69,7 @@ class TraefikStaticConfigResource(
                     },
                     traefik_config.entrypoint.public_http: {
                         "address": "[::]:{}".format(
-                            tailscale_service.model.container.ports["httpv4"].internal
+                            tailscale_model.ports["httpv4"].internal
                         ),
                         "http": {
                             "redirections": {
@@ -80,14 +80,14 @@ class TraefikStaticConfigResource(
                     traefik_config.entrypoint.private_https: {"address": "[::]:443"},
                     traefik_config.entrypoint.public_https: {
                         "address": "[::]:{}".format(
-                            tailscale_service.model.container.ports["httpsv4"].internal
+                            tailscale_model.ports["httpsv4"].internal
                         ),
                     },
                 },
                 "providers": {
                     "file": {
                         "directory": self.dynamic_directory_container_volume_path.to_container_path(
-                            container_volumes_config
+                            traefik_volumes_config
                         ),
                         "watch": True,
                     },
@@ -98,7 +98,7 @@ class TraefikStaticConfigResource(
                             "caServer": str(traefik_config.acme.server),
                             "email": traefik_config.acme.email,
                             "storage": traefik_config.acme.storage.public.to_container_path(
-                                container_volumes_config
+                                traefik_volumes_config
                             ),
                             "httpChallenge": {
                                 "entryPoint": traefik_config.entrypoint.public_http
@@ -110,7 +110,7 @@ class TraefikStaticConfigResource(
                             "caServer": str(traefik_config.acme.server),
                             "email": traefik_config.acme.email,
                             "storage": traefik_config.acme.storage.private.to_container_path(
-                                container_volumes_config
+                                traefik_volumes_config
                             ),
                             "dnsChallenge": {"provider": "cloudflare"},
                         }

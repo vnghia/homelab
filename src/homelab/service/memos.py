@@ -8,6 +8,8 @@ from pulumi import ResourceOptions
 
 
 class MemosService(ServiceResourceBase):
+    PORT_ENV = "MEMOS_PORT"
+
     def __init__(
         self,
         model: ServiceModel,
@@ -24,7 +26,7 @@ class MemosService(ServiceResourceBase):
             name=self.name(),
             public=True,
             service=TraefikDynamicServiceConfig(
-                int(self.model.container.envs["MEMOS_PORT"].to_str())
+                int(self.model[None].envs[self.PORT_ENV].to_str())
             ),
         ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
 

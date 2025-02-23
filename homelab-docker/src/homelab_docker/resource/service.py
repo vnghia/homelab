@@ -85,9 +85,6 @@ class ServiceResourceBase(ComponentResource):
                 self.CONTAINERS[name] = container
                 pulumi.export("container.{}".format(name), container.name)
 
-    def get_container_model(self, name: str | None) -> ContainerModel:
-        return self.model.containers[name] if name else self.model.container
-
     def build_container(
         self,
         name: str | None,
@@ -110,15 +107,7 @@ class ServiceResourceBase(ComponentResource):
             name: self.build_container(name, model, options.get(name))
             for name, model in self.model.containers.items()
             if model.active
-        } | (
-            {
-                None: self.build_container(
-                    None, self.model.raw_container, options.get(None)
-                )
-            }
-            if self.model.raw_container and self.model.raw_container.active
-            else {}
-        )
+        }
 
         for name, container in self.containers.items():
             name = self.add_service_name(name)

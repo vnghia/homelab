@@ -16,6 +16,8 @@ from .config import NgheConfig
 class NgheService(ServiceWithConfigResourceBase[NgheConfig]):
     KEY_LENGTH = 16
 
+    PORT_ENV = "NGHE_SERVER__PORT"
+
     def __init__(
         self,
         model: ServiceWithConfigModel[NgheConfig],
@@ -56,7 +58,7 @@ class NgheService(ServiceWithConfigResourceBase[NgheConfig]):
             name=self.name(),
             public=True,
             service=TraefikDynamicServiceConfig(
-                int(self.model.container.envs["NGHE_SERVER__PORT"].to_str())
+                int(self.model[None].envs[self.PORT_ENV].to_str())
             ),
         ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
 

@@ -39,19 +39,17 @@ class DaguDagModel(HomelabBaseModel):
         build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Any]:
+        dagu_model = dagu_service.model[None]
         return {
             "dotenv": [
-                dotenv.to_container_path(dagu_service.model.container.volumes)
-                for dotenv in dotenvs
+                dotenv.to_container_path(dagu_model.volumes) for dotenv in dotenvs
             ]
             if dotenvs
             else None,
             "name": self.name,
             "group": self.group,
             "tags": self.tags,
-            "logDir": logdir.to_container_path(dagu_service.model.container.volumes)
-            if logdir
-            else None,
+            "logDir": logdir.to_container_path(dagu_model.volumes) if logdir else None,
             "schedule": self.schedule,
             "maxActiveRuns": self.max_active_runs,
             "params": self.params.to_params(self) if self.params else None,
