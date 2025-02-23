@@ -13,14 +13,15 @@ from .config.group.docker import DaguDagDockerGroupConfig, DaguDagDockerRunGroup
 from .model import DaguDagModel
 from .model.params import DaguDagParamsModel, DaguDagParamType
 from .model.step import DaguDagStepModel
-from .model.step.command import (
-    DaguDagStepCommandModel,
-    DaguDagStepCommandParamModel,
-    DaguDagStepCommandParamTypeModel,
-)
 from .model.step.executor import DaguDagStepExecutorModel
 from .model.step.executor.docker import DaguDagStepDockerExecutorModel
 from .model.step.executor.docker.run import DaguDagStepDockerRunExecutorModel
+from .model.step.run import DaguDagStepRunModel
+from .model.step.run.command import (
+    DaguDagStepRunCommandModel,
+    DaguDagStepRunCommandParamModel,
+    DaguDagStepRunCommandParamTypeModel,
+)
 from .resource import DaguDagResource
 
 
@@ -29,6 +30,8 @@ class DaguService(ServiceResourceBase[None]):
     LOG_DIR_ENV = "DAGU_LOG_DIR"
 
     DEBUG_DAG_NAME = "debug"
+
+    DAGS: dict[str, DaguDagResource] = {}
 
     def __init__(
         self,
@@ -92,16 +95,18 @@ class DaguService(ServiceResourceBase[None]):
             steps=[
                 DaguDagStepModel(
                     name=self.DEBUG_DAG_NAME,
-                    command=[
-                        DaguDagStepCommandModel("sleep"),
-                        DaguDagStepCommandModel(
-                            DaguDagStepCommandParamModel(
-                                param=DaguDagStepCommandParamTypeModel(
-                                    type=DaguDagParamType.DEBUG
-                                )
-                            )
-                        ),
-                    ],
+                    run=DaguDagStepRunModel(
+                        DaguDagStepRunCommandModel(
+                            [
+                                "sleep",
+                                DaguDagStepRunCommandParamModel(
+                                    param=DaguDagStepRunCommandParamTypeModel(
+                                        type=DaguDagParamType.DEBUG
+                                    )
+                                ),
+                            ]
+                        )
+                    ),
                     executor=DaguDagStepExecutorModel(
                         DaguDagStepDockerExecutorModel(
                             docker_run_executor.__replace__(entrypoint=[])
@@ -139,7 +144,7 @@ class DaguService(ServiceResourceBase[None]):
                     dotenvs=dotenvs,
                 )
 
-        return {
+        dags = {
             name: model.build_resource(
                 name,
                 opts=opts,
@@ -152,3 +157,7 @@ class DaguService(ServiceResourceBase[None]):
                 main_service=main_service
             ).items()
         }
+        self.DAGS |= {
+            "{}-{}".format(main_service.name(), name): dag for name, dag in dags.items()
+        }
+        return dags

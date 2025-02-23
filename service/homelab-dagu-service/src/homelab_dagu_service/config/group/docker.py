@@ -6,7 +6,7 @@ from ...model.group.docker import DaguDagDockerGroupModel
 from ...model.step.executor.docker import DaguDagStepDockerExecutorModel
 from ...model.step.executor.docker.exec import DaguDagStepDockerExecExecutorModel
 from ...model.step.executor.docker.run import DaguDagStepDockerRunExecutorModel
-from ..step.command import DaguDagStepCommandConfig
+from ..step.run.command import DaguDagStepRunCommandsConfig
 
 
 class DaguDagDockerRunGroupConfig(HomelabBaseModel):
@@ -30,7 +30,7 @@ class DaguDagDockerGroupConfig(HomelabBaseModel):
     executor: DaguDagDockerRunGroupConfig | DaguDagDockerExecGroupConfig
 
     dag: DaguDagModel = DaguDagModel()
-    command: DaguDagStepCommandConfig = DaguDagStepCommandConfig()
+    command: DaguDagStepRunCommandsConfig = DaguDagStepRunCommandsConfig()
 
     dags: dict[str, DaguDagDockerGroupModel]
 

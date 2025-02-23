@@ -34,31 +34,38 @@ class DaguDagParamsModel(HomelabBaseModel):
     def to_key_command_unchecked(self, key: str) -> str:
         return "${{{}}}".format(key)
 
-    def to_key_command(self, key: DaguDagParamType | str) -> str:
+    def check_key(self, key: DaguDagParamType | str) -> str:
         if isinstance(key, DaguDagParamType):
             self.types[key]
-            return self.to_key_command_unchecked(self.PARAM_VALUE[key][0])
+            return self.PARAM_VALUE[key][0]
 
         else:
             self.main[key]
-            return self.to_key_command_unchecked(key)
+            return key
+
+    def to_key_command(self, key: DaguDagParamType | str) -> str:
+        return self.to_key_command_unchecked(self.check_key(key))
 
     def to_params(self, dag: DaguDagModel) -> list[dict[str, str]] | None:
-        from ..model.step.command import (
-            DaguDagStepCommandParamModel,
-            DaguDagStepCommandParamTypeModel,
+        from ..model.step.run.command import (
+            DaguDagStepRunCommandModel,
+            DaguDagStepRunCommandParamModel,
+            DaguDagStepRunCommandParamTypeModel,
         )
 
-        used_params = {
-            (
-                command.root.param.type
-                if isinstance(command.root.param, DaguDagStepCommandParamTypeModel)
-                else command.root.param
-            )
-            for step in dag.steps
-            for command in step.command
-            if isinstance(command.root, DaguDagStepCommandParamModel)
-        }
+        used_params = set()
+        for step in dag.steps:
+            run = step.run.root
+            if isinstance(run, DaguDagStepRunCommandModel):
+                for command in run.root:
+                    if isinstance(command, DaguDagStepRunCommandParamModel):
+                        used_params.add(
+                            command.param.type
+                            if isinstance(
+                                command.param, DaguDagStepRunCommandParamTypeModel
+                            )
+                            else command.param
+                        )
 
         params = []
         for key, value in self.main.items():
