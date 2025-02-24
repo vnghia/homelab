@@ -55,7 +55,6 @@ class NgheService(ServiceWithConfigResourceBase[NgheConfig]):
         )
 
         self.traefik = TraefikHttpDynamicConfig(
-            name=self.name(),
             public=True,
             service=TraefikDynamicServiceConfig(
                 int(self.model[None].envs[self.PORT_ENV].extract_str(self.model[None]))

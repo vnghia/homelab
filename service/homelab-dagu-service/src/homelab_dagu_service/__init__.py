@@ -60,7 +60,6 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
         )
 
         self.traefik = TraefikHttpDynamicConfig(
-            name=self.name(),
             public=False,
             service=TraefikDynamicServiceConfig(
                 int(self.model[None].envs[self.PORT_ENV].extract_str(self.model[None]))

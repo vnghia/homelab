@@ -23,7 +23,6 @@ class MemosService(ServiceResourceBase):
         self.build_containers(options={})
 
         self.traefik = TraefikHttpDynamicConfig(
-            name=self.name(),
             public=True,
             service=TraefikDynamicServiceConfig(
                 int(self.model[None].envs[self.PORT_ENV].extract_str(self.model[None]))

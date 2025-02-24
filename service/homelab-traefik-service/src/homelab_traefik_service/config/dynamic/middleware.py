@@ -16,10 +16,13 @@ class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
     name: str
     data: Any
 
+    def to_section(self, main_service: ServiceResourceBase) -> dict[str, Any]:
+        return {main_service.add_service_name(self.name): self.data}
+
     def to_data(
-        self, _main_service: ServiceResourceBase, _traefik_service: TraefikService
+        self, main_service: ServiceResourceBase, _traefik_service: TraefikService
     ) -> dict[str, Any]:
-        return {"http": {"middlewares": {self.name: self.data}}}
+        return {"http": {"middlewares": self.to_section(main_service)}}
 
     def build_resource(
         self,
@@ -43,16 +46,18 @@ class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
 class TraefikDynamicMiddlewareConfig(
     HomelabRootModel[str | TraefikDynamicMiddlewareFullConfig]
 ):
-    @property
-    def name(self) -> str:
+    def get_name(self, main_service: ServiceResourceBase) -> str:
         root = self.root
         return (
-            root.name if isinstance(root, TraefikDynamicMiddlewareFullConfig) else root
+            main_service.add_service_name(root.name)
+            if isinstance(root, TraefikDynamicMiddlewareFullConfig)
+            else root
         )
 
-    @property
-    def data(self) -> Any:
+    def to_section(self, main_service: ServiceResourceBase) -> dict[str, Any]:
         root = self.root
         return (
-            root.data if isinstance(root, TraefikDynamicMiddlewareFullConfig) else None
+            root.to_section(main_service)
+            if isinstance(root, TraefikDynamicMiddlewareFullConfig)
+            else {}
         )

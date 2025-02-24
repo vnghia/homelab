@@ -42,7 +42,6 @@ class DozzleService(ServiceResourceBase):
         self.prefix = self.model[None].envs[self.BASE_ENV].extract_str(self.model[None])
 
         self.traefik = TraefikHttpDynamicConfig(
-            name=self.name(),
             public=False,
             hostname="system",
             prefix=self.prefix,
@@ -60,14 +59,14 @@ class DozzleService(ServiceResourceBase):
             traefik_service=traefik_service,
         )
         self.traefik_redirect = TraefikHttpDynamicConfig(
-            name="{}-redirect".format(self.name()),
+            name="redirect",
             public=False,
             hostname="system",
             service=TraefikDynamicServiceConfig(self.name()),
             middlewares=[
                 TraefikDynamicMiddlewareConfig(
                     TraefikDynamicMiddlewareFullConfig(
-                        name="{}-redirect".format(self.name()),
+                        name="redirect",
                         data={"addPrefix": {"prefix": self.prefix}},
                     )
                 )

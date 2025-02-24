@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import operator
 import typing
+from functools import reduce
 from typing import Any
 
 from homelab_docker.resource.service import ServiceResourceBase
@@ -16,7 +18,7 @@ if typing.TYPE_CHECKING:
 
 
 class TraefikHttpDynamicConfig(HomelabBaseModel):
-    name: str
+    name: str | None = None
     public: bool
     hostname: str | None = None
     prefix: str | None = None
@@ -29,17 +31,18 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
         self, main_service: ServiceResourceBase, traefik_service: TraefikService
     ) -> dict[str, Any]:
         entrypoint = traefik_service.config.entrypoint
+        router_name = main_service.add_service_name(self.name)
         hostname = (
             traefik_service.network_resource.public.hostnames
             if self.public
             else traefik_service.network_resource.private.hostnames
-        )[self.hostname or self.name]
+        )[self.hostname or router_name]
 
         data: dict[str, Any] = {
             "http": {
                 "routers": {
-                    self.name: {
-                        "service": self.service.to_service_name(self.name),
+                    router_name: {
+                        "service": self.service.to_service_name(router_name),
                         "entryPoints": [
                             entrypoint.public_https
                             if self.public
@@ -57,7 +60,8 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
                             )
                         ),
                         "middlewares": [
-                            middleware.name for middleware in self.middlewares
+                            middleware.get_name(main_service)
+                            for middleware in self.middlewares
                         ],
                         "tls": {
                             "certResolver": traefik_service.static.PUBLIC_CERT_RESOLVER
@@ -72,14 +76,14 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
         service_full = self.service.full
         if service_full:
             data["http"]["services"] = service_full.to_http_service(
-                TraefikDynamicServiceType.HTTP, self.name, main_service
+                TraefikDynamicServiceType.HTTP, router_name, main_service
             )
 
-        middlewares = {
-            middleware.name: middleware.data
-            for middleware in self.middlewares
-            if middleware.data is not None
-        }
+        middlewares: dict[str, Any] = reduce(
+            operator.or_,
+            [middleware.to_section(main_service) for middleware in self.middlewares],
+            {},
+        )
         if middlewares:
             data["http"]["middlewares"] = middlewares
 

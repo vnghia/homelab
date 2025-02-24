@@ -32,7 +32,7 @@ class TraefikDynamicConfigResource(
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ):
-        self.name = config.name
+        self.name = main_service.add_service_name(config.name)
         super().__init__(
             resource_name or self.name,
             opts=opts,
