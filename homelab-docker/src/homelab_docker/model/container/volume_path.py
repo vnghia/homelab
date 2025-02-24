@@ -1,20 +1,20 @@
 from __future__ import annotations
 
+import typing
 from pathlib import PosixPath
 
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, RelativePath
 
-from .volume import ContainerVolumesConfig
+if typing.TYPE_CHECKING:
+    from . import ContainerModel
 
 
 class ContainerVolumePath(HomelabBaseModel):
     volume: str
     path: RelativePath = RelativePath(PosixPath(""))
 
-    def to_container_path(
-        self, container_volumes_config: ContainerVolumesConfig
-    ) -> AbsolutePath:
-        path = container_volumes_config[self.volume].to_container_path()
+    def to_path(self, model: ContainerModel) -> AbsolutePath:
+        path = model.volumes[self.volume].to_path()
         return path / self.path if self.path else path
 
     def __truediv__(self, path: str | RelativePath) -> ContainerVolumePath:

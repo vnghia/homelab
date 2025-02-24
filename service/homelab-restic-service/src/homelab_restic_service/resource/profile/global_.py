@@ -27,8 +27,8 @@ class ResticGlobalProfileResource(
         profiles: list[ResticProfileResource],
         restic_service: ResticService,
     ):
-        restic_model = restic_service.model[None]
-        restic_volumes_config = restic_model.volumes
+        restic_config = restic_service.config
+        restic_model = restic_service.model[restic_config.profile_dir.service]
 
         forget_options = {"prune": True} | {
             "keep-{}".format(timeframe): number
@@ -37,22 +37,21 @@ class ResticGlobalProfileResource(
         super().__init__(
             "global",
             opts=opts,
-            volume_path=restic_service.config.get_profile_volume_path("profiles"),
+            volume_path=restic_config.get_profile_volume_path(
+                restic_service, "profiles"
+            ),
             data={
                 "version": "2",
                 "global": {
                     "command-output": "console",
                     "initialize": False,
                 },
-                "includes": [
-                    profile.to_container_path(restic_volumes_config)
-                    for profile in profiles
-                ],
+                "includes": [profile.to_path(restic_model) for profile in profiles],
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
-                        "cache-dir": restic_model.envs[restic_service.RESTIC_CACHE_ENV]
-                        .as_volume_path()
-                        .to_container_path(restic_volumes_config),
+                        "cache-dir": restic_config.cache_dir.extract_volume_path(
+                            restic_service.model
+                        ),
                         "cleanup-cache": True,
                         "backup": {
                             "check-before": True,

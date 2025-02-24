@@ -34,8 +34,6 @@ class TraefikStaticConfigResource(
         traefik_model = traefik_service.model[None]
         tailscale_model = tailscale_service.model[None]
 
-        traefik_volumes_config = traefik_model.volumes
-
         if traefik_model.command is None:
             raise ValueError("Could not extract static config path from command")
         static_volume_path = traefik_model.command[-1].extract_volume_path(
@@ -87,8 +85,8 @@ class TraefikStaticConfigResource(
                 },
                 "providers": {
                     "file": {
-                        "directory": self.dynamic_directory_volume_path.to_container_path(
-                            traefik_volumes_config
+                        "directory": self.dynamic_directory_volume_path.to_path(
+                            traefik_model
                         ),
                         "watch": True,
                     },
@@ -98,8 +96,8 @@ class TraefikStaticConfigResource(
                         "acme": {
                             "caServer": str(traefik_config.acme.server),
                             "email": traefik_config.acme.email,
-                            "storage": traefik_config.acme.storage.public.to_container_path(
-                                traefik_volumes_config
+                            "storage": traefik_config.acme.storage.public.to_path(
+                                traefik_model
                             ),
                             "httpChallenge": {
                                 "entryPoint": traefik_config.entrypoint.public_http
@@ -110,8 +108,8 @@ class TraefikStaticConfigResource(
                         "acme": {
                             "caServer": str(traefik_config.acme.server),
                             "email": traefik_config.acme.email,
-                            "storage": traefik_config.acme.storage.private.to_container_path(
-                                traefik_volumes_config
+                            "storage": traefik_config.acme.storage.private.to_path(
+                                traefik_model
                             ),
                             "dnsChallenge": {"provider": "cloudflare"},
                         }

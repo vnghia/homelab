@@ -29,7 +29,7 @@ from pydantic import (
 
 from homelab_docker.client import DockerClient
 
-from ...model.container.volume import ContainerVolumesConfig
+from ...model.container import ContainerModel
 from ...model.container.volume_path import ContainerVolumePath
 from ...model.file import FileDataModel, FileLocationModel
 from ..volume import VolumeResource
@@ -223,7 +223,5 @@ class FileResource(Resource, module="docker", name="File"):
             ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),
         )
 
-    def to_container_path(
-        self, container_volumes_config: ContainerVolumesConfig
-    ) -> AbsolutePath:
-        return self.volume_path.to_container_path(container_volumes_config)
+    def to_path(self, container_model: ContainerModel) -> AbsolutePath:
+        return self.volume_path.to_path(container_model)

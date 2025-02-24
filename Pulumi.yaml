@@ -333,7 +333,11 @@ config:
           config:
             image: resticprofile
             profile-dir:
-              volume: restic-profile
+              extract:
+                volume: restic-profile
+            cache-dir:
+              extract:
+                env: RESTIC_CACHE_DIR
             repo:
               prefix: backup/restic
             keep:

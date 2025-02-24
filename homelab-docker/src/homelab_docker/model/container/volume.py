@@ -17,24 +17,24 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
     path: AbsolutePath
     read_only: bool = False
 
-    def to_container_path(self) -> AbsolutePath:
+    def to_path(self) -> AbsolutePath:
         return self.path
 
     def to_args(self, volume_name: Input[str]) -> docker.ContainerVolumeArgs:
         return docker.ContainerVolumeArgs(
-            container_path=self.to_container_path().as_posix(),
+            container_path=self.to_path().as_posix(),
             read_only=self.read_only,
             volume_name=volume_name,
         )
 
 
 class ContainerVolumeConfig(HomelabRootModel[AbsolutePath | ContainerVolumeFullConfig]):
-    def to_container_path(self) -> AbsolutePath:
+    def to_path(self) -> AbsolutePath:
         root = self.root
         if isinstance(root, AbsolutePath):
             return root
         else:
-            return root.to_container_path()
+            return root.to_path()
 
     def to_args(self, volume_name: Input[str]) -> docker.ContainerVolumeArgs:
         root = self.root

@@ -24,7 +24,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
     PASSWORD_LENGTH = 64
 
     RESTIC_MOUNT_PREFIX = AbsolutePath(PosixPath("/"))
-    RESTIC_CACHE_ENV = "RESTIC_CACHE_DIR"
 
     DEFAULT_PROFILE_NAME = "default"
 
