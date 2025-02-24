@@ -1,5 +1,6 @@
 from homelab_integration import S3Integration
 from homelab_pydantic import HomelabBaseModel
+from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 
 
 class NgheLastFmConfig(HomelabBaseModel):
@@ -15,3 +16,4 @@ class NgheConfig(HomelabBaseModel):
     lastfm: NgheLastFmConfig
     spotify: NgheSpotifyConfig
     s3: S3Integration | None = None
+    traefik: TraefikHttpDynamicConfig

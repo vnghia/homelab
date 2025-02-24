@@ -6,8 +6,6 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_traefik_service import TraefikService
-from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
-from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from pulumi import ResourceOptions
 
 from .config import NgheConfig
@@ -15,8 +13,6 @@ from .config import NgheConfig
 
 class NgheService(ServiceWithConfigResourceBase[NgheConfig]):
     KEY_LENGTH = 16
-
-    PORT_ENV = "NGHE_SERVER__PORT"
 
     def __init__(
         self,
@@ -54,12 +50,7 @@ class NgheService(ServiceWithConfigResourceBase[NgheConfig]):
             }
         )
 
-        self.traefik = TraefikHttpDynamicConfig(
-            public=True,
-            service=TraefikDynamicServiceConfig(
-                int(self.model[None].envs[self.PORT_ENV].extract_str(self.model[None]))
-            ),
-        ).build_resource(
+        self.traefik = self.config.traefik.build_resource(
             None,
             opts=self.child_opts,
             main_service=self,

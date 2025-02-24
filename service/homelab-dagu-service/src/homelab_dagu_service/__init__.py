@@ -8,8 +8,6 @@ from homelab_docker.resource.service import (
     ServiceWithConfigResourceBase,
 )
 from homelab_traefik_service import TraefikService
-from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
-from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from pulumi import ResourceOptions
 
 from .config import DaguConfig
@@ -59,12 +57,7 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
             }
         )
 
-        self.traefik = TraefikHttpDynamicConfig(
-            public=False,
-            service=TraefikDynamicServiceConfig(
-                int(self.model[None].envs[self.PORT_ENV].extract_str(self.model[None]))
-            ),
-        ).build_resource(
+        self.traefik = self.config.traefik.build_resource(
             None,
             opts=self.child_opts,
             main_service=self,

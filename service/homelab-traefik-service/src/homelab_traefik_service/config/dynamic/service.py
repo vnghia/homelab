@@ -1,9 +1,10 @@
 from enum import StrEnum, auto
 from typing import Any
 
+from homelab_docker.model.container.extract import ContainerExtract
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
-from pydantic import AnyUrl, PositiveInt
+from pydantic import AnyUrl, PositiveInt, TypeAdapter
 
 
 class TraefikDynamicServiceType(StrEnum):
@@ -12,7 +13,7 @@ class TraefikDynamicServiceType(StrEnum):
 
 class TraefikDynamicServiceFullConfig(HomelabBaseModel):
     container: str | None = None
-    port: PositiveInt
+    port: ContainerExtract
 
     def to_url(
         self,
@@ -22,7 +23,11 @@ class TraefikDynamicServiceFullConfig(HomelabBaseModel):
         main_service.containers[self.container]
         return AnyUrl(
             "{}://{}:{}".format(
-                type_.value, main_service.add_service_name(self.container), self.port
+                type_.value,
+                main_service.add_service_name(self.container),
+                TypeAdapter(PositiveInt).validate_python(
+                    int(self.port.extract_str(main_service.model[self.container]))
+                ),
             )
         )
 
@@ -42,14 +47,12 @@ class TraefikDynamicServiceFullConfig(HomelabBaseModel):
 
 
 class TraefikDynamicServiceConfig(
-    HomelabRootModel[str | PositiveInt | TraefikDynamicServiceFullConfig]
+    HomelabRootModel[str | TraefikDynamicServiceFullConfig]
 ):
     @property
     def full(self) -> TraefikDynamicServiceFullConfig | None:
         root = self.root
-        if isinstance(root, int):
-            return TraefikDynamicServiceFullConfig(port=root)
-        elif isinstance(root, TraefikDynamicServiceFullConfig):
+        if isinstance(root, TraefikDynamicServiceFullConfig):
             return root
         else:
             return None
