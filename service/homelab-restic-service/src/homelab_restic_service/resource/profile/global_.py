@@ -37,9 +37,7 @@ class ResticGlobalProfileResource(
         super().__init__(
             "global",
             opts=opts,
-            volume_path=restic_config.get_profile_volume_path(
-                restic_service, "profiles"
-            ),
+            volume_path=restic_service.get_profile_volume_path("profiles"),
             data={
                 "version": "2",
                 "global": {

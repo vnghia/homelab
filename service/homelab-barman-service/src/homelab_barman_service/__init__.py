@@ -1,6 +1,7 @@
 from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
 from homelab_docker.model.container import ContainerModelBuildArgs
+from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.postgres import PostgresDatabaseModel
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
@@ -57,3 +58,6 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         )
 
         self.register_outputs({})
+
+    def get_config_volume_path(self, name: str) -> ContainerVolumePath:
+        return self.config.config_dir.extract_volume_path(self.model) / name

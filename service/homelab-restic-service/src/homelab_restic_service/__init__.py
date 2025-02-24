@@ -7,6 +7,7 @@ from homelab_dagu_service import DaguService
 from homelab_docker.config.volume import VolumeConfig
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume import ContainerVolumeConfig
+from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
@@ -104,3 +105,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
     def get_volume_path(self, volume: str) -> AbsolutePath:
         return self.RESTIC_MOUNT_PREFIX / self.name() / volume
+
+    def get_profile_volume_path(self, name: str) -> ContainerVolumePath:
+        return self.config.profile_dir.extract_volume_path(self.model) / name

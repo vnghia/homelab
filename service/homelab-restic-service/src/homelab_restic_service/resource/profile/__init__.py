@@ -27,16 +27,13 @@ class ResticProfileResource(
         opts: ResourceOptions | None,
         restic_service: ResticService,
     ):
-        restic_config = restic_service.config
         self.name = model.volume
         self.service = self.name.split("-", maxsplit=1)[0]
 
         super().__init__(
             self.name,
             opts=opts,
-            volume_path=restic_config.get_profile_volume_path(
-                restic_service, self.name
-            ),
+            volume_path=restic_service.get_profile_volume_path(self.name),
             data={
                 "version": "2",
                 "profiles": {

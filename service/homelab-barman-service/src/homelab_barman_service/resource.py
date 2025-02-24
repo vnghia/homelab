@@ -29,12 +29,11 @@ class BarmanConfigFileResource(
         barman_service: BarmanService,
     ):
         barman_config = barman_service.config
-        barman_model = barman_service.model[None]
 
         super().__init__(
             resource_name,
             opts=opts,
-            volume_path=barman_config.get_config_volume_path(resource_name),
+            volume_path=barman_service.get_config_volume_path(resource_name),
             data={
                 resource_name: {
                     "description": resource_name,
@@ -47,8 +46,8 @@ class BarmanConfigFileResource(
                     "minimum_redundancy": str(barman_config.minimum_redundancy),
                     "last_backup_maximum_age": barman_config.last_backup_maximum_age,
                     "retention_policy": barman_config.retention_policy,
-                    "local_staging_path": barman_config.staging_dir.to_path(
-                        barman_model
+                    "local_staging_path": barman_config.staging_dir.extract_volume_path(
+                        barman_service.model
                     ),
                 }
             },
