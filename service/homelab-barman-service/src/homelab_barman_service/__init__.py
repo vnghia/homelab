@@ -26,6 +26,10 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
 
         self.backup_config = backup_config
 
+        self.config_dir_volume_path = self.config.config_dir.extract_volume_path(
+            self.model
+        )
+
         self.configs: list[BarmanConfigFileResource] = []
         for (
             service_name,
@@ -60,4 +64,4 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         self.register_outputs({})
 
     def get_config_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.config.config_dir.extract_volume_path(self.model) / name
+        return self.config_dir_volume_path / name

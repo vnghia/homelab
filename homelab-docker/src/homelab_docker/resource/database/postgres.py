@@ -80,17 +80,17 @@ class PostgresDatabaseResource(ComponentResource):
                 ),
                 envs={
                     "POSTGRES_USER": ContainerExtract(
-                        source=ContainerExtractSource(
+                        ContainerExtractSource(
                             ContainerExtractSimpleSource(self.username)
                         )
                     ),
                     "POSTGRES_DB": ContainerExtract(
-                        source=ContainerExtractSource(
+                        ContainerExtractSource(
                             ContainerExtractSimpleSource(self.database)
                         )
                     ),
                     "PGDATA": ContainerExtract(
-                        source=ContainerExtractSource(
+                        ContainerExtractSource(
                             ContainerExtractVolumeSource(volume=full_name)
                         )
                     ),

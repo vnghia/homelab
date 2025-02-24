@@ -39,7 +39,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
             data=self.model.to_data(
                 main_service,
                 dagu_service,
-                dagu_service.get_log_directory_volume_path(self.path),
+                dagu_service.get_log_dir_volume_path(self.path),
                 container_model_build_args,
                 dotenvs,
             ),

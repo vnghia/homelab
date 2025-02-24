@@ -43,6 +43,10 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.backup_config = backup_config
 
+        self.profile_dir_volume_path = self.config.profile_dir.extract_volume_path(
+            self.model
+        )
+
         self.password = random.RandomPassword(
             "password",
             opts=ResourceOptions.merge(self.child_opts, ResourceOptions(protect=True)),
@@ -107,4 +111,4 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         return self.RESTIC_MOUNT_PREFIX / self.name() / volume
 
     def get_profile_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.config.profile_dir.extract_volume_path(self.model) / name
+        return self.profile_dir_volume_path / name

@@ -22,3 +22,6 @@ class ContainerVolumePath(HomelabBaseModel):
 
     def with_suffix(self, suffix: str) -> ContainerVolumePath:
         return self.__replace__(path=self.path.with_suffix(suffix))
+
+    def __json__(self) -> str:
+        raise TypeError("Could not serialize {} to JSON".format(self))

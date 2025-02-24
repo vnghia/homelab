@@ -1,14 +1,18 @@
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.service import ServiceModel
+from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import (
+    ServiceResourceBase,
+    ServiceWithConfigResourceBase,
+)
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.dynamic.http import TraefikHttpDynamicConfig
 from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from pulumi import ResourceOptions
 
+from .config import DaguConfig
 from .config.group.docker import DaguDagDockerGroupConfig, DaguDagDockerRunGroupConfig
 from .model import DaguDagModel
 from .model.params import DaguDagParamsModel, DaguDagParamType
@@ -25,7 +29,7 @@ from .model.step.run.command import (
 from .resource import DaguDagResource
 
 
-class DaguService(ServiceResourceBase):
+class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
     DAGS_DIR_ENV = "DAGU_DAGS_DIR"
     LOG_DIR_ENV = "DAGU_LOG_DIR"
     PORT_ENV = "DAGU_PORT"
@@ -36,7 +40,7 @@ class DaguService(ServiceResourceBase):
 
     def __init__(
         self,
-        model: ServiceModel,
+        model: ServiceWithConfigModel[DaguConfig],
         *,
         opts: ResourceOptions | None,
         traefik_service: TraefikService,
@@ -44,12 +48,8 @@ class DaguService(ServiceResourceBase):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.dags_directory_volume_path = (
-            self.model[None].envs[self.DAGS_DIR_ENV].as_volume_path()
-        )
-        self.log_directory_volume_path = (
-            self.model[None].envs[self.LOG_DIR_ENV].as_volume_path()
-        )
+        self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self.model)
+        self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self.model)
 
         self.build_containers(
             options={
@@ -63,20 +63,20 @@ class DaguService(ServiceResourceBase):
             name=self.name(),
             public=False,
             service=TraefikDynamicServiceConfig(
-                int(self.model[None].envs[self.PORT_ENV].to_str())
+                int(self.model[None].envs[self.PORT_ENV].extract_str(self.model[None]))
             ),
         ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
 
         self.register_outputs({})
 
     def get_dag_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.dags_directory_volume_path / name
+        return self.dags_dir_volume_path / name
 
     def get_dotenv_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.dags_directory_volume_path / name
+        return self.dags_dir_volume_path / name
 
-    def get_log_directory_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.log_directory_volume_path / name
+    def get_log_dir_volume_path(self, name: str) -> ContainerVolumePath:
+        return self.log_dir_volume_path / name
 
     def build_debug_dag(
         self,

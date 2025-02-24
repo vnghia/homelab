@@ -18,12 +18,12 @@ class DaguDagStepRunSubdagModel(HomelabBaseModel):
     def to_run(
         self, dagu_service: DaguService, params_: DaguDagParamsModel
     ) -> dict[str, Any]:
+        dagu_config = dagu_service.config
+        dagu_model = dagu_service.model[dagu_config.dags_dir.service]
         dag = dagu_service.DAGS[self.dag]
         params = self.params.to_params(dag.model)
 
-        data: dict[str, Any] = {
-            "run": dag.to_container_path(dagu_service.model[None].volumes)
-        }
+        data: dict[str, Any] = {"run": dag.to_path(dagu_model)}
         if params:
             data["params"] = " ".join(
                 '{}="{}"'.format(key, value.replace('"', '\\"'))
