@@ -197,13 +197,15 @@ config:
                 env: NGHE_DATABASE__URL
             healthcheck:
               tests:
-                [
-                  "CMD",
-                  "wget",
-                  "--spider",
-                  "-q",
-                  "http://localhost:3000/rest/health",
-                ]
+                - "CMD"
+                - "wget"
+                - "--spider"
+                - "-q"
+                - source:
+                    env: NGHE_SERVER__PORT
+                  transform:
+                    string:
+                      template: "http://localhost:{value}/rest/health"
               interval: 1s
               timeout: 5s
             network:
@@ -225,13 +227,15 @@ config:
                 env: MEMOS_DSN
             healthcheck:
               tests:
-                [
-                  "CMD",
-                  "wget",
-                  "--spider",
-                  "-q",
-                  "http://localhost:5230/healthz",
-                ]
+                - "CMD"
+                - "wget"
+                - "--spider"
+                - "-q"
+                - source:
+                    env: MEMOS_PORT
+                  transform:
+                    string:
+                      template: "http://localhost:{value}/healthz"
               interval: 1s
               timeout: 5s
             volumes:
@@ -257,14 +261,16 @@ config:
             entrypoint: ["dagu"]
             healthcheck:
               tests:
-                [
-                  "CMD",
-                  "wget",
-                  "-q",
-                  "http://localhost:8080/api/v1/health",
-                  "-O",
-                  "/dev/null",
-                ]
+                - "CMD"
+                - "wget"
+                - "-q"
+                - source:
+                    env: DAGU_PORT
+                  transform:
+                    string:
+                      template: "http://localhost:{value}/api/v1/health"
+                - "-O"
+                - "/dev/null"
               interval: 1s
               timeout: 5s
             tmpfs:

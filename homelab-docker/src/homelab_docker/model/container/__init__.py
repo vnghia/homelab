@@ -178,7 +178,7 @@ class ContainerModel(HomelabBaseModel):
             else None,
             command=self.build_command(),
             entrypoints=self.build_entrypoint(),
-            healthcheck=self.healthcheck.to_args() if self.healthcheck else None,
+            healthcheck=self.healthcheck.to_args(self) if self.healthcheck else None,
             init=self.init,
             mounts=self.build_tmpfs(),
             network_mode=network_args.mode,

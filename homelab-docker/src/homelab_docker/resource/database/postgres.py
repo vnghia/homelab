@@ -60,7 +60,12 @@ class PostgresDatabaseResource(ComponentResource):
                     self.model.get_short_name_version(None, version)
                 ),
                 healthcheck=ContainerHealthCheckConfig(
-                    tests=["CMD", "pg_isready", "-U", self.database],
+                    tests=[
+                        ContainerExtract(
+                            ContainerExtractSource(ContainerExtractSimpleSource(test))
+                        )
+                        for test in ["CMD", "pg_isready", "-U", self.database]
+                    ],
                     interval="5s",
                     timeout="5s",
                     retries=5,
