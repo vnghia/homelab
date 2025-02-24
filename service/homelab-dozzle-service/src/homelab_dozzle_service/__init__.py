@@ -53,7 +53,12 @@ class DozzleService(ServiceResourceBase):
                     .extract_str(self.model[None])[1:]
                 )
             ),
-        ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
+        ).build_resource(
+            None,
+            opts=self.child_opts,
+            main_service=self,
+            traefik_service=traefik_service,
+        )
         self.traefik_redirect = TraefikHttpDynamicConfig(
             name="{}-redirect".format(self.name()),
             public=False,
@@ -67,6 +72,11 @@ class DozzleService(ServiceResourceBase):
                     )
                 )
             ],
-        ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
+        ).build_resource(
+            None,
+            opts=self.child_opts,
+            main_service=self,
+            traefik_service=traefik_service,
+        )
 
         self.register_outputs({})

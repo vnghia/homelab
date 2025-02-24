@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from typing import Any
 
+from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
 
@@ -24,7 +25,9 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
     service: TraefikDynamicServiceConfig
     middlewares: list[TraefikDynamicMiddlewareConfig] = []
 
-    def to_data(self, traefik_service: TraefikService) -> dict[str, Any]:
+    def to_data(
+        self, main_service: ServiceResourceBase, traefik_service: TraefikService
+    ) -> dict[str, Any]:
         entrypoint = traefik_service.config.entrypoint
         hostname = (
             traefik_service.network_resource.public.hostnames
@@ -69,7 +72,7 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
         service_full = self.service.full
         if service_full:
             data["http"]["services"] = service_full.to_http_service(
-                TraefikDynamicServiceType.HTTP, self.name, traefik_service.args
+                TraefikDynamicServiceType.HTTP, self.name, main_service
             )
 
         middlewares = {
@@ -87,10 +90,15 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
         resource_name: str | None,
         *,
         opts: ResourceOptions | None,
+        main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> TraefikDynamicConfigResource:
         from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
 
         return TraefikDynamicConfigResource(
-            resource_name, self, opts=opts, traefik_service=traefik_service
+            resource_name,
+            self,
+            opts=opts,
+            main_service=main_service,
+            traefik_service=traefik_service,
         )

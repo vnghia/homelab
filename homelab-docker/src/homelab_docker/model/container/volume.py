@@ -9,7 +9,7 @@ from pulumi import Input, Output
 from homelab_docker.model.container.docker_socket import ContainerDockerSocketConfig
 
 if typing.TYPE_CHECKING:
-    from ...resource import DockerResourceArgs
+    from ...resource.service import ServiceResourceBase
     from . import ContainerModelBuildArgs
 
 
@@ -55,10 +55,10 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
     def to_args(
         self,
         docker_socket_config: ContainerDockerSocketConfig | None,
+        main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs,
-        docker_resource_args: DockerResourceArgs,
     ) -> list[docker.ContainerVolumeArgs]:
-        volume_resource = docker_resource_args.volume
+        volume_resource = main_service.docker_resource_args.volume
         return (
             (
                 [
@@ -100,8 +100,8 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
     def to_binds(
         self,
         docker_socket_config: ContainerDockerSocketConfig | None,
+        main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs,
-        docker_resource_args: DockerResourceArgs,
     ) -> list[Output[str]]:
         def to_bind(arg: docker.ContainerVolumeArgs) -> Output[str]:
             return Output.format(
@@ -119,7 +119,5 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
 
         return [
             to_bind(arg)
-            for arg in self.to_args(
-                docker_socket_config, build_args, docker_resource_args
-            )
+            for arg in self.to_args(docker_socket_config, main_service, build_args)
         ]

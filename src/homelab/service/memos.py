@@ -28,6 +28,11 @@ class MemosService(ServiceResourceBase):
             service=TraefikDynamicServiceConfig(
                 int(self.model[None].envs[self.PORT_ENV].extract_str(self.model[None]))
             ),
-        ).build_resource(None, opts=self.child_opts, traefik_service=traefik_service)
+        ).build_resource(
+            None,
+            opts=self.child_opts,
+            main_service=self,
+            traefik_service=traefik_service,
+        )
 
         self.register_outputs({})

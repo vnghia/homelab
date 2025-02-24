@@ -54,7 +54,9 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             hostname="system",
             prefix=self.config.path,
             service=TraefikDynamicServiceConfig("api@internal"),
-        ).build_resource(None, opts=self.child_opts, traefik_service=self)
+        ).build_resource(
+            None, opts=self.child_opts, main_service=self, traefik_service=self
+        )
 
         self.register_outputs({})
 

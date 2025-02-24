@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import typing
+
 import pulumi_docker as docker
 import pulumi_random as random
 from pulumi import ComponentResource, ResourceOptions
@@ -18,7 +22,9 @@ from ...model.container.volume import (
 )
 from ...model.database.postgres import PostgresDatabaseModel
 from ...model.database.source import DatabaseSourceModel
-from .. import DockerResourceArgs
+
+if typing.TYPE_CHECKING:
+    from ..service import ServiceResourceBase
 
 
 class PostgresDatabaseResource(ComponentResource):
@@ -27,12 +33,9 @@ class PostgresDatabaseResource(ComponentResource):
         model: PostgresDatabaseModel,
         *,
         opts: ResourceOptions,
-        service_name: str,
+        main_service: ServiceResourceBase,
         name: str | None,
-        docker_resource_args: DockerResourceArgs,
     ) -> None:
-        from ..service import ServiceResourceArgs
-
         self.model = model
         self.name = name
 
@@ -41,7 +44,7 @@ class PostgresDatabaseResource(ComponentResource):
         )
         self.child_opts = ResourceOptions(parent=self)
 
-        self.service_name = service_name
+        self.service_name = main_service.name()
 
         self.username = self.model.username or self.service_name
         self.password = random.RandomPassword(
@@ -103,15 +106,11 @@ class PostgresDatabaseResource(ComponentResource):
             ).build_resource(
                 full_name,
                 opts=self.child_opts,
-                service_name=service_name,
+                main_service=main_service,
                 build_args=ContainerModelBuildArgs(
                     envs={
                         "POSTGRES_PASSWORD": self.password.result,
                     }
-                ),
-                docker_resource_args=docker_resource_args,
-                service_resource_args=ServiceResourceArgs(
-                    containers={}, database_source_configs={}
                 ),
             )
             self.containers[version] = container

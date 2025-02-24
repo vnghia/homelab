@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
+from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
 from homelab_traefik_service.config.dynamic.middleware import (
@@ -28,6 +29,7 @@ class TraefikDynamicConfigResource(
         config: TraefikHttpDynamicConfig | TraefikDynamicMiddlewareFullConfig,
         *,
         opts: ResourceOptions | None,
+        main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ):
         self.name = config.name
@@ -35,6 +37,6 @@ class TraefikDynamicConfigResource(
             resource_name or self.name,
             opts=opts,
             volume_path=traefik_service.get_dynamic_config_volume_path(self.name),
-            data=config.to_data(traefik_service),
+            data=config.to_data(main_service, traefik_service),
             volume_resource=traefik_service.docker_resource_args.volume,
         )

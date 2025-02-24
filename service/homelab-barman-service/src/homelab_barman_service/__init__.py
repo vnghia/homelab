@@ -34,7 +34,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         for (
             service_name,
             source_config,
-        ) in self.args.database_source_configs.items():
+        ) in self.DATABASE_SOURCE_CONFIGS.items():
             for name, sources in source_config.postgres.items():
                 for version, source in sources.items():
                     full_name = PostgresDatabaseModel.get_full_name_version(

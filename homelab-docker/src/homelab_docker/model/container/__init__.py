@@ -19,9 +19,8 @@ from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
 
 if typing.TYPE_CHECKING:
-    from ...resource import DockerResourceArgs
     from ...resource.file import FileResource
-    from ...resource.service import ServiceResourceArgs
+    from ...resource.service import ServiceResourceBase
 
 
 @dataclasses.dataclass
@@ -78,28 +77,31 @@ class ContainerModel(HomelabBaseModel):
 
     def build_envs(
         self,
+        main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs,
-        docker_resource_args: DockerResourceArgs,
-        service_resource_args: ServiceResourceArgs,
     ) -> list[Output[str]]:
         database_envs: dict[str, Output[str]] = {}
 
         if self.database:
-            if not service_resource_args.database:
+            if not main_service.database_args:
                 raise ValueError(
-                    "service args is required if database config is not None"
+                    "database args is required if database config is not None"
                 )
 
             database_envs = self.database.build_envs(
-                service_resource_args.database.config,
-                service_resource_args.database.source_config,
+                main_service.database_args.config,
+                main_service.database_args.source_config,
             )
 
         return [
             Output.concat(k, "=", v)
             for k, v in sorted(
                 (
-                    {"TZ": Output.from_input(str(docker_resource_args.timezone))}
+                    {
+                        "TZ": Output.from_input(
+                            str(main_service.docker_resource_args.timezone)
+                        )
+                    }
                     | {
                         k: Output.from_input(v.extract_str(self))
                         for k, v in self.envs.items()
@@ -116,16 +118,15 @@ class ContainerModel(HomelabBaseModel):
     def build_labels(
         self,
         resource_name: str | None,
-        service_name: str,
+        main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs,
-        docker_resource_args: DockerResourceArgs,
     ) -> dict[Output[str], Output[str]]:
         return {
             Output.from_input(k): Output.from_input(v)
             for k, v in (
-                docker_resource_args.project_labels
+                main_service.docker_resource_args.project_labels
                 | self.labels
-                | {"dev.dozzle.group": service_name}
+                | {"dev.dozzle.group": main_service.name()}
                 | ({"dev.dozzle.name": resource_name} if resource_name else {})
             ).items()
         } | {file.id: file.hash for file in build_args.files}
@@ -135,29 +136,27 @@ class ContainerModel(HomelabBaseModel):
         resource_name: str,
         *,
         opts: ResourceOptions | None,
-        service_name: str,
+        main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs | None,
-        docker_resource_args: DockerResourceArgs,
-        service_resource_args: ServiceResourceArgs,
     ) -> docker.Container:
+        docker_resource_args = main_service.docker_resource_args
+
         build_args = build_args or ContainerModelBuildArgs()
-        network_args = self.network.to_args(
-            resource_name, docker_resource_args.network, service_resource_args
-        )
+        network_args = self.network.to_args(resource_name, main_service)
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
 
         if self.database:
-            if not service_resource_args.database:
+            if not main_service.database_args:
                 raise ValueError(
-                    "service args is required if database config is not None"
+                    "database args is required if database config is not None"
                 )
 
             depends_on.append(
-                service_resource_args.containers[
+                main_service.CONTAINERS[
                     self.database.to_container_name(
-                        service_name, service_resource_args.database.config
+                        main_service.name(), main_service.database_args.config
                     )
                 ]
             )
@@ -189,19 +188,13 @@ class ContainerModel(HomelabBaseModel):
             restart=self.restart,
             sysctls=self.sysctls,
             user=self.user,
-            volumes=self.volumes.to_args(
-                self.docker_socket, build_args, docker_resource_args
-            ),
+            volumes=self.volumes.to_args(self.docker_socket, main_service, build_args),
             wait=self.wait if self.healthcheck else False,
-            envs=self.build_envs(
-                build_args, docker_resource_args, service_resource_args
-            ),
+            envs=self.build_envs(main_service, build_args),
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
-                    self.build_labels(
-                        resource_name, service_name, build_args, docker_resource_args
-                    )
+                    self.build_labels(resource_name, main_service, build_args)
                     | {
                         "pulumi.image.id": self.image.to_image_id(
                             docker_resource_args.image

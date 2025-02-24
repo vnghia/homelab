@@ -1,10 +1,16 @@
+from __future__ import annotations
+
+import typing
+
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
 from ...config.database import DatabaseConfig
 from ...config.database.source import DatabaseSourceConfig
-from .. import DockerResourceArgs
 from .postgres import PostgresDatabaseResource
+
+if typing.TYPE_CHECKING:
+    from ..service import ServiceResourceBase
 
 
 class DatabaseResource(ComponentResource):
@@ -15,19 +21,14 @@ class DatabaseResource(ComponentResource):
         model: DatabaseConfig,
         *,
         opts: ResourceOptions,
-        service_name: str,
-        docker_resource_args: DockerResourceArgs,
+        main_service: ServiceResourceBase,
     ) -> None:
-        super().__init__(self.RESOURCE_NAME, service_name, None, opts)
+        super().__init__(self.RESOURCE_NAME, main_service.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.postgres = {
             name: PostgresDatabaseResource(
-                model,
-                opts=self.child_opts,
-                service_name=service_name,
-                name=name,
-                docker_resource_args=docker_resource_args,
+                model, opts=self.child_opts, main_service=main_service, name=name
             )
             for name, model in model.postgres.items()
         }

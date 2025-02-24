@@ -21,13 +21,6 @@ class ServiceDatabaseArgs:
     source_config: DatabaseSourceConfig
 
 
-@dataclasses.dataclass
-class ServiceResourceArgs:
-    containers: dict[str, docker.Container]
-    database_source_configs: dict[str, DatabaseSourceConfig]
-    database: ServiceDatabaseArgs | None = None
-
-
 class ServiceResourceBase(ComponentResource):
     CONTAINERS: dict[str, docker.Container] = {}
     DATABASE_SOURCE_CONFIGS: dict[str, DatabaseSourceConfig] = {}
@@ -45,11 +38,6 @@ class ServiceResourceBase(ComponentResource):
         self.model = model
         self.docker_resource_args = docker_resource_args
         self.build_databases()
-        self.args = ServiceResourceArgs(
-            containers=self.CONTAINERS,
-            database_source_configs=self.DATABASE_SOURCE_CONFIGS,
-            database=self.database_args,
-        )
 
     @classmethod
     def name(cls) -> str:
@@ -65,20 +53,17 @@ class ServiceResourceBase(ComponentResource):
     def build_databases(self) -> None:
         self.database_args: ServiceDatabaseArgs | None = None
         if self.model.databases:
-            self.database = DatabaseResource(
-                self.model.databases,
-                opts=self.child_opts,
-                service_name=self.name(),
-                docker_resource_args=self.docker_resource_args,
+            database = DatabaseResource(
+                self.model.databases, opts=self.child_opts, main_service=self
             )
             self.database_args = ServiceDatabaseArgs(
                 config=self.model.databases,
-                source_config=self.database.source_config,
+                source_config=database.source_config,
             )
             self.DATABASE_SOURCE_CONFIGS[self.name()] = self.database_args.source_config
 
             self.database_containers = {
-                name: container for name, container in self.database.containers.items()
+                name: container for name, container in database.containers.items()
             }
             for name, container in self.database_containers.items():
                 name = self.add_service_name(name)
@@ -94,10 +79,8 @@ class ServiceResourceBase(ComponentResource):
         return model.build_resource(
             self.add_service_name(name),
             opts=self.child_opts,
-            service_name=self.name(),
+            main_service=self,
             build_args=container_model_build_args,
-            docker_resource_args=self.docker_resource_args,
-            service_resource_args=self.args,
         )
 
     def build_containers(

@@ -41,15 +41,8 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         )
         if entrypoint is not None:
             container_config["entrypoint"] = entrypoint
-        container_config["labels"] = model.build_labels(
-            None,
-            main_service.name(),
-            build_args,
-            main_service.docker_resource_args,
-        )
-        container_config["env"] = model.build_envs(
-            build_args, main_service.docker_resource_args, main_service.args
-        ) + (
+        container_config["labels"] = model.build_labels(None, main_service, build_args)
+        container_config["env"] = model.build_envs(main_service, build_args) + (
             sum(
                 [
                     ["{key}=${{{key}}}".format(key=key) for key in dotenv.envs.keys()]
@@ -62,12 +55,10 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         )
 
         host_config["binds"] = model.volumes.to_binds(
-            model.docker_socket, build_args, main_service.docker_resource_args
+            model.docker_socket, main_service, build_args
         )
 
-        network_args = model.network.to_args(
-            None, main_service.docker_resource_args.network, main_service.args
-        )
+        network_args = model.network.to_args(None, main_service)
         if network_args.advanced:
             network_config["endpointsConfig"] = {
                 network.name: {"aliases": network.aliases}

@@ -1,7 +1,7 @@
 from enum import StrEnum, auto
 from typing import Any
 
-from homelab_docker.resource.service import ServiceResourceArgs
+from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pydantic import AnyUrl, PositiveInt
 
@@ -18,27 +18,23 @@ class TraefikDynamicServiceFullConfig(HomelabBaseModel):
         self,
         type_: TraefikDynamicServiceType,
         router_name: str,
-        service_resource_args: ServiceResourceArgs,
+        main_service: ServiceResourceBase,
     ) -> AnyUrl:
         container = self.container or router_name
-        service_resource_args.containers[container]
+        main_service.containers[container]
         return AnyUrl("{}://{}:{}".format(type_.value, container, self.port))
 
     def to_http_service(
         self,
         type_: TraefikDynamicServiceType,
         router_name: str,
-        service_resource_args: ServiceResourceArgs,
+        main_service: ServiceResourceBase,
     ) -> dict[str, Any]:
         return {
             router_name: {
                 "loadBalancer": {
                     "servers": [
-                        {
-                            "url": str(
-                                self.to_url(type_, router_name, service_resource_args)
-                            )
-                        }
+                        {"url": str(self.to_url(type_, router_name, main_service))}
                     ]
                 }
             }

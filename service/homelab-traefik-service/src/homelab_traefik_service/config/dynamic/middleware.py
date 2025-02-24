@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from typing import Any
 
+from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import ResourceOptions
 
@@ -15,7 +16,9 @@ class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
     name: str
     data: Any
 
-    def to_data(self, _traefik_service: TraefikService) -> dict[str, Any]:
+    def to_data(
+        self, _main_service: ServiceResourceBase, _traefik_service: TraefikService
+    ) -> dict[str, Any]:
         return {"http": {"middlewares": {self.name: self.data}}}
 
     def build_resource(
@@ -23,12 +26,17 @@ class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
         resource_name: str | None,
         *,
         opts: ResourceOptions | None,
+        main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> TraefikDynamicConfigResource:
         from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
 
         return TraefikDynamicConfigResource(
-            resource_name, self, opts=opts, traefik_service=traefik_service
+            resource_name,
+            self,
+            opts=opts,
+            main_service=main_service,
+            traefik_service=traefik_service,
         )
 
 
