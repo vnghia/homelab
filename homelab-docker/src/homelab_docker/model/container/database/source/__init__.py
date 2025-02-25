@@ -7,7 +7,7 @@ from pydantic import PositiveInt
 
 
 @dataclasses.dataclass
-class DatabaseSourceModel:
+class ContainerDatabaseSourceModel:
     username: Input[str]
     password: Input[str]
     database: Input[str]

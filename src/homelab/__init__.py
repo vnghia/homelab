@@ -5,7 +5,7 @@ from homelab_config import Config
 from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource.database.global_ import DatabaseGlobalResource
+from homelab_docker.resource.database import DatabaseResource
 from homelab_dozzle_service import DozzleService
 from homelab_network.resource.network import NetworkResource
 from homelab_restic_service import ResticService
@@ -24,7 +24,7 @@ class Homelab:
         self.project_prefix = Config.get_name(None, project=True, stack=True)
         self.docker = Docker(self.config, self.project_prefix)
 
-        self.datbase_global = DatabaseGlobalResource(
+        self.datbase_global = DatabaseResource(
             opts=None, volume_resource=self.docker.resource.volume
         )
 

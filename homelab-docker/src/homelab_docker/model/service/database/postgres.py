@@ -4,11 +4,11 @@ from typing import ClassVar
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pydantic import PositiveInt
 
-from ..container.network import ContainerNetworkConfig
-from .type import DatabaseType
+from ...container.network import ContainerNetworkConfig
+from ...database.type import DatabaseType
 
 
-class PostgresDatabaseModel(HomelabBaseModel):
+class ServicePostgresDatabaseModel(HomelabBaseModel):
     DATABASE_TYPE: ClassVar[DatabaseType] = DatabaseType.POSTGRES
     DATABASE_VERSION: ClassVar[PositiveInt] = 16
 

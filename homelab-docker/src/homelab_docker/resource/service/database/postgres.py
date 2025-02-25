@@ -7,30 +7,30 @@ import pulumi_random as random
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
-from ...model.container import ContainerModel, ContainerModelBuildArgs
-from ...model.container.extract import ContainerExtract
-from ...model.container.extract.source import ContainerExtractSource
-from ...model.container.extract.source.simple import ContainerExtractSimpleSource
-from ...model.container.extract.source.volume import ContainerExtractVolumeSource
-from ...model.container.healthcheck import ContainerHealthCheckConfig
-from ...model.container.image import ContainerImageModelConfig
-from ...model.container.tmpfs import ContainerTmpfsConfig
-from ...model.container.volume import (
+from ....model.container import ContainerModel, ContainerModelBuildArgs
+from ....model.container.database.source import ContainerDatabaseSourceModel
+from ....model.container.extract import ContainerExtract
+from ....model.container.extract.source import ContainerExtractSource
+from ....model.container.extract.source.simple import ContainerExtractSimpleSource
+from ....model.container.extract.source.volume import ContainerExtractVolumeSource
+from ....model.container.healthcheck import ContainerHealthCheckConfig
+from ....model.container.image import ContainerImageModelConfig
+from ....model.container.tmpfs import ContainerTmpfsConfig
+from ....model.container.volume import (
     ContainerVolumeConfig,
     ContainerVolumeFullConfig,
     ContainerVolumesConfig,
 )
-from ...model.database.postgres import PostgresDatabaseModel
-from ...model.database.source import DatabaseSourceModel
+from ....model.service.database.postgres import ServicePostgresDatabaseModel
 
 if typing.TYPE_CHECKING:
-    from ..service import ServiceResourceBase
+    from ...service import ServiceResourceBase
 
 
-class PostgresDatabaseResource(ComponentResource):
+class ServicePostgresDatabaseResource(ComponentResource):
     def __init__(
         self,
-        model: PostgresDatabaseModel,
+        model: ServicePostgresDatabaseModel,
         *,
         opts: ResourceOptions,
         main_service: ServiceResourceBase,
@@ -39,9 +39,7 @@ class PostgresDatabaseResource(ComponentResource):
         self.model = model
         self.name = name
 
-        super().__init__(
-            PostgresDatabaseModel.DATABASE_TYPE, self.short_name, None, opts
-        )
+        super().__init__(model.DATABASE_TYPE, self.short_name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.service_name = main_service.name()
@@ -129,8 +127,8 @@ class PostgresDatabaseResource(ComponentResource):
             self.service_name, self.name, version
         )
 
-    def to_source_model(self, version: PositiveInt) -> DatabaseSourceModel:
-        return DatabaseSourceModel(
+    def to_source_model(self, version: PositiveInt) -> ContainerDatabaseSourceModel:
+        return ContainerDatabaseSourceModel(
             username=self.username,
             password=self.password.result,
             database=self.database,

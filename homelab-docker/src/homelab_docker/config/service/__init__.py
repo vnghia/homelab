@@ -6,8 +6,8 @@ from homelab_pydantic import HomelabBaseModel
 from pydantic import ConfigDict
 
 if typing.TYPE_CHECKING:
-    from ..config.database import DatabaseConfig
-    from ..model.service import ServiceModel
+    from ...model.service import ServiceModel
+    from .database import ServiceDatabaseConfig
 
 
 class ServiceConfigBase(HomelabBaseModel):
@@ -21,7 +21,7 @@ class ServiceConfigBase(HomelabBaseModel):
 
     @property
     def services(self) -> dict[str, ServiceModel]:
-        from ..model.service import ServiceModel
+        from ...model.service import ServiceModel
 
         class AllowExtraServiceModel(ServiceModel):
             model_config = ConfigDict(extra="allow")
@@ -31,7 +31,7 @@ class ServiceConfigBase(HomelabBaseModel):
         } | self.extra(AllowExtraServiceModel)
 
     @property
-    def databases(self) -> dict[str, DatabaseConfig]:
+    def databases(self) -> dict[str, ServiceDatabaseConfig]:
         return {
             name: service.databases
             for name, service in self.services.items()

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.model.database.source import DatabaseSourceModel
+from homelab_docker.model.container.database.source import ContainerDatabaseSourceModel
 from homelab_docker.resource.file.config import (
     ConfigFileResource,
     IniDumper,
@@ -25,7 +25,7 @@ class BarmanConfigFileResource(
         resource_name: str,
         *,
         opts: ResourceOptions | None,
-        database_source_model: DatabaseSourceModel,
+        database_source_model: ContainerDatabaseSourceModel,
         barman_service: BarmanService,
     ):
         barman_config = barman_service.config

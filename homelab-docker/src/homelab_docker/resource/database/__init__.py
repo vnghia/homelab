@@ -1,18 +1,12 @@
-from __future__ import annotations
+from pathlib import PosixPath
 
-import typing
-
-import pulumi_docker as docker
+from homelab_pydantic import RelativePath
 from pulumi import ComponentResource, ResourceOptions
-from pydantic import PositiveInt
 
-from ...config.database import DatabaseConfig
-from ...config.database.source import DatabaseSourceConfig
-from ...model.database.type import DatabaseType
-from .postgres import PostgresDatabaseResource
-
-if typing.TYPE_CHECKING:
-    from ..service import ServiceResourceBase
+from ...model.container.volume_path import ContainerVolumePath
+from ...model.service.database.postgres import ServicePostgresDatabaseModel
+from ..file import FileResource
+from ..volume import VolumeResource
 
 
 class DatabaseResource(ComponentResource):
@@ -20,33 +14,21 @@ class DatabaseResource(ComponentResource):
 
     def __init__(
         self,
-        model: DatabaseConfig,
         *,
-        opts: ResourceOptions,
-        main_service: ServiceResourceBase,
+        opts: ResourceOptions | None,
+        volume_resource: VolumeResource,
     ) -> None:
-        super().__init__(self.RESOURCE_NAME, main_service.name(), None, opts)
+        super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.postgres = {
-            name: PostgresDatabaseResource(
-                model, opts=self.child_opts, main_service=main_service, name=name
-            )
-            for name, model in model.root[DatabaseType.POSTGRES].items()
-        }
-
-    @property
-    def containers(self) -> dict[str | None, dict[PositiveInt, docker.Container]]:
-        return {name: versions.containers for name, versions in self.postgres.items()}
-
-    @property
-    def source_config(self) -> DatabaseSourceConfig:
-        return DatabaseSourceConfig(
-            postgres={
-                name: {
-                    version: resource.to_source_model(version)
-                    for version in resource.model.versions
-                }
-                for name, resource in self.postgres.items()
-            }
+        FileResource(
+            "replication",
+            opts=self.child_opts,
+            volume_path=ContainerVolumePath(
+                volume=ServicePostgresDatabaseModel.DATABASE_ENTRYPOINT_INITDB_VOLUME,
+                path=RelativePath(PosixPath("add-replication-hba-entry.sh")),
+            ),
+            content="#!/bin/bash\nset -eux\necho 'host replication all all scram-sha-256' >> ${PGDATA}/pg_hba.conf\n",
+            mode=0o555,
+            volume_resource=volume_resource,
         )

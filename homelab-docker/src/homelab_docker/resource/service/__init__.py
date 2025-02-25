@@ -7,24 +7,24 @@ from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 from pydantic.alias_generators import to_snake
 
-from ..config.database import DatabaseConfig
-from ..config.database.source import DatabaseSourceConfig
-from ..model.container import ContainerModel, ContainerModelBuildArgs
-from ..model.service import ServiceModel, ServiceWithConfigModel
-from . import DockerResourceArgs
-from .database import DatabaseResource
+from ...config.service.database import ServiceDatabaseConfig
+from ...config.service.database.source import ServiceDatabaseSourceConfig
+from ...model.container import ContainerModel, ContainerModelBuildArgs
+from ...model.service import ServiceModel, ServiceWithConfigModel
+from .. import DockerResourceArgs
+from .database import ServiceDatabaseResource
 
 
 @dataclasses.dataclass
 class ServiceDatabaseArgs:
-    config: DatabaseConfig
-    source_config: DatabaseSourceConfig
+    config: ServiceDatabaseConfig
+    source_config: ServiceDatabaseSourceConfig
     containers: dict[str | None, dict[PositiveInt, docker.Container]]
 
 
 class ServiceResourceBase(ComponentResource):
     CONTAINER_RESOURCE: dict[str, dict[str | None, docker.Container]] = {}
-    DATABASE_SOURCE_CONFIGS: dict[str, DatabaseSourceConfig] = {}
+    DATABASE_SOURCE_CONFIGS: dict[str, ServiceDatabaseSourceConfig] = {}
 
     def __init__(
         self,
@@ -54,7 +54,7 @@ class ServiceResourceBase(ComponentResource):
     def build_databases(self) -> None:
         self.database_args: ServiceDatabaseArgs | None = None
         if self.model.databases:
-            database = DatabaseResource(
+            database = ServiceDatabaseResource(
                 self.model.databases, opts=self.child_opts, main_service=self
             )
             self.database_args = ServiceDatabaseArgs(

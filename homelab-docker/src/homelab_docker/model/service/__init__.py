@@ -3,12 +3,12 @@ from functools import cached_property
 from homelab_pydantic import HomelabBaseModel
 from pydantic import Field
 
-from ...config.database import DatabaseConfig
+from ...config.service.database import ServiceDatabaseConfig
 from ..container import ContainerModel
 
 
 class ServiceModel(HomelabBaseModel):
-    databases: DatabaseConfig | None = None
+    databases: ServiceDatabaseConfig | None = None
     container_: ContainerModel | None = Field(None, alias="container")
     containers_: dict[str, ContainerModel] = Field({}, alias="containers")
 
