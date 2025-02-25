@@ -4,13 +4,13 @@ import pulumi
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ComponentResource, ResourceOptions
+from pydantic import PositiveInt
 from pydantic.alias_generators import to_snake
-
-from homelab_docker.model.container import ContainerModel, ContainerModelBuildArgs
-from homelab_docker.model.service import ServiceModel, ServiceWithConfigModel
 
 from ..config.database import DatabaseConfig
 from ..config.database.source import DatabaseSourceConfig
+from ..model.container import ContainerModel, ContainerModelBuildArgs
+from ..model.service import ServiceModel, ServiceWithConfigModel
 from . import DockerResourceArgs
 from .database import DatabaseResource
 
@@ -19,10 +19,11 @@ from .database import DatabaseResource
 class ServiceDatabaseArgs:
     config: DatabaseConfig
     source_config: DatabaseSourceConfig
+    containers: dict[str | None, dict[PositiveInt, docker.Container]]
 
 
 class ServiceResourceBase(ComponentResource):
-    CONTAINERS: dict[str, docker.Container] = {}
+    CONTAINER_RESOURCE: dict[str, dict[str | None, docker.Container]] = {}
     DATABASE_SOURCE_CONFIGS: dict[str, DatabaseSourceConfig] = {}
 
     def __init__(
@@ -59,16 +60,14 @@ class ServiceResourceBase(ComponentResource):
             self.database_args = ServiceDatabaseArgs(
                 config=self.model.databases,
                 source_config=database.source_config,
+                containers=database.containers,
             )
             self.DATABASE_SOURCE_CONFIGS[self.name()] = self.database_args.source_config
 
-            self.database_containers = {
-                name: container for name, container in database.containers.items()
-            }
-            for name, container in self.database_containers.items():
-                name = self.add_service_name(name)
-                self.CONTAINERS[name] = container
-                pulumi.export("container.{}".format(name), container.name)
+            for name, versions in self.database_args.containers.items():
+                for version, container in versions.items():
+                    name = self.add_service_name(name)
+                    pulumi.export("container.{}".format(name), container.name)
 
     def build_container(
         self,
@@ -92,10 +91,12 @@ class ServiceResourceBase(ComponentResource):
             if model.active
         }
 
+        self.CONTAINER_RESOURCE[self.name()] = {}
         for name, container in self.containers.items():
-            name = self.add_service_name(name)
-            self.CONTAINERS[name] = container
-            pulumi.export("container.{}".format(name), container.name)
+            self.CONTAINER_RESOURCE[self.name()][name] = container
+            pulumi.export(
+                "container.{}".format(self.add_service_name(name)), container.name
+            )
 
 
 class ServiceWithConfigResourceBase[T: HomelabBaseModel](ServiceResourceBase):

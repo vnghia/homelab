@@ -8,6 +8,7 @@ from pydantic import Field, PositiveInt
 
 from ..database.source import DatabaseSourceModel
 from ..database.source.postgres.url import PostgresDatabaseSourceUrlEnvs
+from ..database.type import DatabaseType
 
 if typing.TYPE_CHECKING:
     from ...config.database import DatabaseConfig
@@ -20,15 +21,15 @@ class ContainerPostgresDatabaseConfig(HomelabBaseModel):
     envs: PostgresDatabaseSourceUrlEnvs | None = None
 
     def to_database_version(self, database_config: DatabaseConfig) -> PositiveInt:
-        model = database_config.postgres[self.name]
+        model = database_config.root[DatabaseType.POSTGRES][self.name]
         return self.version or model.versions[0]
 
     def to_container_name(
         self, service_name: str, database_config: DatabaseConfig
     ) -> str:
-        from ..database.postgres import PostgresDatabaseModel
+        from ..database.type import DatabaseType
 
-        return PostgresDatabaseModel.get_full_name_version(
+        return DatabaseType.POSTGRES.get_full_name_version(
             service_name, self.name, self.to_database_version(database_config)
         )
 

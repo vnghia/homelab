@@ -5,10 +5,11 @@ from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pydantic import PositiveInt
 
 from ..container.network import ContainerNetworkConfig
+from .type import DatabaseType
 
 
 class PostgresDatabaseModel(HomelabBaseModel):
-    DATABASE_TYPE: ClassVar[str] = "postgres"
+    DATABASE_TYPE: ClassVar[DatabaseType] = DatabaseType.POSTGRES
     DATABASE_VERSION: ClassVar[PositiveInt] = 16
 
     DATABASE_ENTRYPOINT_INITDB_VOLUME: ClassVar[str] = (
@@ -26,35 +27,10 @@ class PostgresDatabaseModel(HomelabBaseModel):
 
     PASSWORD_LENGTH: ClassVar[PositiveInt] = 64
 
-    image: str = DATABASE_TYPE
+    image: str = DatabaseType.POSTGRES
     versions: list[PositiveInt] = [DATABASE_VERSION]
 
     username: str | None = None
     database: str | None = None
 
     network: ContainerNetworkConfig = ContainerNetworkConfig()
-
-    @classmethod
-    def get_key(cls, name: str | None) -> str | None:
-        return None if name == cls.DATABASE_TYPE else name
-
-    @classmethod
-    def get_short_name(cls, name: str | None) -> str:
-        if name:
-            return "{}-{}".format(cls.DATABASE_TYPE, name)
-        else:
-            return cls.DATABASE_TYPE
-
-    @classmethod
-    def get_short_name_version(cls, name: str | None, version: PositiveInt) -> str:
-        return "{}-{}".format(cls.get_short_name(name), version)
-
-    @classmethod
-    def get_full_name(cls, service_name: str, name: str | None) -> str:
-        return "{}-{}".format(service_name, cls.get_short_name(name))
-
-    @classmethod
-    def get_full_name_version(
-        cls, service_name: str, name: str | None, version: PositiveInt
-    ) -> str:
-        return "{}-{}".format(cls.get_full_name(service_name, name), version)

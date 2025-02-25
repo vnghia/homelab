@@ -29,12 +29,17 @@ class VolumeResource(ComponentResource):
         }
 
         for service_name, database in config.services.databases.items():
-            for name, model in database.postgres.items():
-                for version in model.versions:
-                    full_name = model.get_full_name_version(service_name, name, version)
-                    self.volumes[full_name] = LocalVolumeModel().build_resource(
-                        full_name, opts=self.child_opts, project_labels=project_labels
-                    )
+            for type_, database_config in database.root.items():
+                for name, model in database_config.items():
+                    for version in model.versions:
+                        full_name = type_.get_full_name_version(
+                            service_name, name, version
+                        )
+                        self.volumes[full_name] = LocalVolumeModel().build_resource(
+                            full_name,
+                            opts=self.child_opts,
+                            project_labels=project_labels,
+                        )
 
         export = {name: volume.name for name, volume in self.volumes.items()}
         for name, value in export.items():

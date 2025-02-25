@@ -19,14 +19,16 @@ class ContainerNetworkArgs:
 
 
 class ContainerNetworkModeConfig(HomelabBaseModel):
-    container: str
+    service: str
+    container: str | None = None
 
     def to_args(
         self, _resource_name: str | None, main_service: ServiceResourceBase
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
             mode=Output.format(
-                "container:{0}", main_service.CONTAINERS[self.container].id
+                "container:{0}",
+                main_service.CONTAINER_RESOURCE[self.service][self.container].id,
             ),
             advanced=[],
         )

@@ -1,17 +1,20 @@
-from homelab_pydantic import HomelabBaseModel
-from pydantic import field_validator
+from typing import Self
+
+from homelab_pydantic import HomelabRootModel
+from pydantic import model_validator
 
 from ...model.database.postgres import PostgresDatabaseModel
+from ...model.database.type import DatabaseType
 
 
-class DatabaseConfig(HomelabBaseModel):
-    postgres: dict[str | None, PostgresDatabaseModel] = {}
-
-    @field_validator("postgres", mode="after")
-    def set_postgres_none_key(
-        cls, postgres: dict[str | None, PostgresDatabaseModel]
-    ) -> dict[str | None, PostgresDatabaseModel]:
-        return {
-            PostgresDatabaseModel.get_key(name): model
-            for name, model in postgres.items()
-        }
+class DatabaseConfig(
+    HomelabRootModel[dict[DatabaseType, dict[str | None, PostgresDatabaseModel]]]
+):
+    @model_validator(mode="after")
+    def set_none_key(self) -> Self:
+        return self.model_construct(
+            root={
+                type_: {type_.get_key(name): model for name, model in config.items()}
+                for type_, config in self.root.items()
+            }
+        )

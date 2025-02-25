@@ -153,13 +153,13 @@ class ContainerModel(HomelabBaseModel):
                     "database args is required if database config is not None"
                 )
 
-            depends_on.append(
-                main_service.CONTAINERS[
-                    self.database.to_container_name(
-                        main_service.name(), main_service.database_args.config
-                    )
-                ]
-            )
+            # depends_on.append(
+            #     main_service.CONTAINERS[
+            #         self.database.to_container_name(
+            #             main_service.name(), main_service.database_args.config
+            #         )
+            #     ]
+            # )
 
         return docker.Container(
             resource_name,

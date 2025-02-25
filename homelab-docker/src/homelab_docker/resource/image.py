@@ -2,7 +2,6 @@ import pulumi
 from pulumi import ComponentResource, ResourceOptions
 
 from ..config.image import ImageConfig
-from ..model.database.postgres import PostgresDatabaseModel
 from ..model.platform import Platform
 
 
@@ -37,14 +36,15 @@ class ImageResource(ComponentResource):
             for name, model in config.build.items()
         }
 
-        for name, versions in config.postgres.items():
-            for version, model in versions.items():
-                image_name = PostgresDatabaseModel.get_short_name_version(name, version)
-                self.remotes[image_name] = model.build_resource(
-                    image_name,
-                    opts=self.child_opts,
-                    platform=platform,
-                )
+        for type_, database in config.database.items():
+            for name, versions in database.items():
+                for version, model in versions.items():
+                    image_name = type_.get_short_name_version(name, version)
+                    self.remotes[image_name] = model.build_resource(
+                        image_name,
+                        opts=self.child_opts,
+                        platform=platform,
+                    )
 
         export = {name: image.image_id for name, image in self.remotes.items()} | {
             name: image.ref for name, image in self.builds.items()

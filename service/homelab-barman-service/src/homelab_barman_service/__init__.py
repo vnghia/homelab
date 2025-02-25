@@ -2,7 +2,7 @@ from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.model.database.postgres import PostgresDatabaseModel
+from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
@@ -37,7 +37,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         ) in self.DATABASE_SOURCE_CONFIGS.items():
             for name, sources in source_config.postgres.items():
                 for version, source in sources.items():
-                    full_name = PostgresDatabaseModel.get_full_name_version(
+                    full_name = DatabaseType.POSTGRES.get_full_name_version(
                         service_name, name, version
                     )
                     self.configs.append(

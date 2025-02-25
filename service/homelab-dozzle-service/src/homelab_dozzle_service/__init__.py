@@ -41,41 +41,41 @@ class DozzleService(ServiceResourceBase):
 
         self.prefix = self.model[None].envs[self.BASE_ENV].extract_str(self.model[None])
 
-        self.traefik = TraefikHttpDynamicConfig(
-            public=False,
-            hostname="system",
-            prefix=self.prefix,
-            service=TraefikDynamicServiceConfig(
-                int(
-                    self.model[None]
-                    .envs[self.ADDR_ENV]
-                    .extract_str(self.model[None])[1:]
-                )
-            ),
-        ).build_resource(
-            None,
-            opts=self.child_opts,
-            main_service=self,
-            traefik_service=traefik_service,
-        )
-        self.traefik_redirect = TraefikHttpDynamicConfig(
-            name="redirect",
-            public=False,
-            hostname="system",
-            service=TraefikDynamicServiceConfig(self.name()),
-            middlewares=[
-                TraefikDynamicMiddlewareConfig(
-                    TraefikDynamicMiddlewareFullConfig(
-                        name="redirect",
-                        data={"addPrefix": {"prefix": self.prefix}},
-                    )
-                )
-            ],
-        ).build_resource(
-            None,
-            opts=self.child_opts,
-            main_service=self,
-            traefik_service=traefik_service,
-        )
+        # self.traefik = TraefikHttpDynamicConfig(
+        #     public=False,
+        #     hostname="system",
+        #     prefix=self.prefix,
+        #     service=TraefikDynamicServiceConfig(
+        #         int(
+        #             self.model[None]
+        #             .envs[self.ADDR_ENV]
+        #             .extract_str(self.model[None])[1:]
+        #         )
+        #     ),
+        # ).build_resource(
+        #     None,
+        #     opts=self.child_opts,
+        #     main_service=self,
+        #     traefik_service=traefik_service,
+        # )
+        # self.traefik_redirect = TraefikHttpDynamicConfig(
+        #     name="redirect",
+        #     public=False,
+        #     hostname="system",
+        #     service=TraefikDynamicServiceConfig(self.name()),
+        #     middlewares=[
+        #         TraefikDynamicMiddlewareConfig(
+        #             TraefikDynamicMiddlewareFullConfig(
+        #                 name="redirect",
+        #                 data={"addPrefix": {"prefix": self.prefix}},
+        #             )
+        #         )
+        #     ],
+        # ).build_resource(
+        #     None,
+        #     opts=self.child_opts,
+        #     main_service=self,
+        #     traefik_service=traefik_service,
+        # )
 
         self.register_outputs({})

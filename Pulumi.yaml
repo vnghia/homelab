@@ -46,15 +46,16 @@ config:
             context:
               location: service/homelab-barman-service/image
               base: minideb
-        postgres:
+        database:
           postgres:
-            # TODO: use postgres 17 after https://github.com/EnterpriseDB/barman/issues/1041
-            "17":
-              repo: postgres
-              tag: "17.2-bookworm"
-            "16":
-              repo: postgres
-              tag: "16.6-bookworm"
+            postgres:
+              # TODO: use postgres 17 after https://github.com/EnterpriseDB/barman/issues/1041
+              "17":
+                repo: postgres
+                tag: "17.2-bookworm"
+              "16":
+                repo: postgres
+                tag: "16.6-bookworm"
       plugins:
         rclone:
           repo: rclone/docker-volume-rclone
@@ -163,7 +164,7 @@ config:
               timeout: 5s
               retries: 5
             network:
-              container: tailscale
+              service: tailscale
             volumes:
               traefik-config:
                 path: /etc/traefik/config

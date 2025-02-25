@@ -60,7 +60,7 @@ class PostgresDatabaseResource(ComponentResource):
             full_name = self.get_full_name_version(version)
             container = ContainerModel(
                 image=ContainerImageModelConfig(
-                    self.model.get_short_name_version(None, version)
+                    self.model.DATABASE_TYPE.get_short_name_version(None, version)
                 ),
                 healthcheck=ContainerHealthCheckConfig(
                     tests=[
@@ -119,13 +119,15 @@ class PostgresDatabaseResource(ComponentResource):
 
     @property
     def short_name(self) -> str:
-        return self.model.get_short_name(self.name)
+        return self.model.DATABASE_TYPE.get_short_name(self.name)
 
     def get_short_name_version(self, version: PositiveInt) -> str:
-        return self.model.get_short_name_version(self.name, version)
+        return self.model.DATABASE_TYPE.get_short_name_version(self.name, version)
 
     def get_full_name_version(self, version: PositiveInt) -> str:
-        return self.model.get_full_name_version(self.service_name, self.name, version)
+        return self.model.DATABASE_TYPE.get_full_name_version(
+            self.service_name, self.name, version
+        )
 
     def to_source_model(self, version: PositiveInt) -> DatabaseSourceModel:
         return DatabaseSourceModel(
