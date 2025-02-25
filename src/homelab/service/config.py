@@ -14,7 +14,6 @@ class ServiceConfig(ServiceConfigBase):
     traefik: ServiceWithConfigModel[TraefikConfig]
     dozzle: ServiceModel
     nghe: ServiceWithConfigModel[NgheConfig]
-    memos: ServiceModel
     dagu: ServiceWithConfigModel[DaguConfig]
     barman: ServiceWithConfigModel[BarmanConfig]
     restic: ServiceWithConfigModel[ResticConfig]

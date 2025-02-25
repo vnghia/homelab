@@ -1,9 +1,10 @@
-import json_fix  # noqa
+import json_fix as json_fix
 from homelab_backup_service import BackupService
 from homelab_barman_service import BarmanService
 from homelab_config import Config
 from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
+from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.database.global_ import DatabaseGlobalResource
 from homelab_dozzle_service import DozzleService
 from homelab_network.resource.network import NetworkResource
@@ -13,7 +14,7 @@ from homelab_traefik_service import TraefikService
 
 from .docker import Docker
 from .service.config import ServiceConfig
-from .service.memos import MemosService
+from .service.extra import ExtraConfig, ExtraService
 from .service.nghe import NgheService
 
 
@@ -60,18 +61,26 @@ class Homelab:
             traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )
-        self.memos = MemosService(
-            self.docker.services_config.memos,
-            opts=None,
-            traefik_service=self.traefik,
-            docker_resource_args=self.docker.resource_args,
-        )
         self.dagu = DaguService(
             self.docker.services_config.dagu,
             opts=None,
             traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )
+
+        self.extra_services = {
+            service: type(
+                "{}Service".format(service.capitalize()), (ExtraService,), {}
+            )(
+                model,
+                opts=None,
+                traefik_service=self.traefik,
+                docker_resource_args=self.docker.resource_args,
+            )
+            for service, model in self.docker.services_config.extra(
+                ServiceWithConfigModel[ExtraConfig]
+            ).items()
+        }
 
         # It should always be the last service
         self.barman = BarmanService(

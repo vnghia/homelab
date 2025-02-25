@@ -222,6 +222,12 @@ config:
               NGHE_SERVER__PORT: 3000
               NGHE_S3__ENABLE: true
         memos:
+          config:
+            traefik:
+              public: true
+              service:
+                port:
+                  env: MEMOS_PORT
           databases:
             postgres:
               postgres: {}
