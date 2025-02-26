@@ -40,7 +40,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     continue_on=DaguDagStepContinueOnModel(failure=True),
                     run=DaguDagStepRunModel(
                         DaguDagStepRunSubdagModel(
-                            dag="{}-{}".format(barman_service.name(), self.name())
+                            service=barman_service.name(), dag=self.name()
                         )
                     ),
                 ),
@@ -48,7 +48,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     name=restic_service.name(),
                     run=DaguDagStepRunModel(
                         DaguDagStepRunSubdagModel(
-                            dag="{}-{}".format(restic_service.name(), self.name())
+                            service=restic_service.name(), dag=self.name()
                         )
                     ),
                 ),

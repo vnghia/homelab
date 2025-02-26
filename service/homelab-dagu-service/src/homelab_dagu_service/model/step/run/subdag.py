@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
 
 
 class DaguDagStepRunSubdagModel(HomelabBaseModel):
+    service: str
     dag: str
     params: DaguDagParamsModel = DaguDagParamsModel()
 
@@ -20,7 +21,7 @@ class DaguDagStepRunSubdagModel(HomelabBaseModel):
     ) -> dict[str, Any]:
         dagu_config = dagu_service.config
         dagu_model = dagu_service.model[dagu_config.dags_dir.service]
-        dag = dagu_service.DAGS[self.dag]
+        dag = dagu_service.DAGS[self.service][self.dag]
         params = self.params.to_params(dag.model)
 
         data: dict[str, Any] = {"run": dag.to_path(dagu_model)}

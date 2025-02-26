@@ -34,7 +34,7 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
 
     DEBUG_DAG_NAME = "debug"
 
-    DAGS: dict[str, DaguDagResource] = {}
+    DAGS: dict[str, dict[str, DaguDagResource]] = {}
 
     def __init__(
         self,
@@ -142,7 +142,10 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
                     dotenvs=dotenvs,
                 )
 
-        dags = {
+        if main_service.name() not in self.DAGS:
+            self.DAGS[main_service.name()] = {}
+
+        self.DAGS[main_service.name()] |= {
             name: model.build_resource(
                 name,
                 opts=opts,
@@ -155,7 +158,5 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
                 main_service=main_service
             ).items()
         }
-        self.DAGS |= {
-            "{}-{}".format(main_service.name(), name): dag for name, dag in dags.items()
-        }
-        return dags
+
+        return self.DAGS[main_service.name()]
