@@ -84,7 +84,7 @@ class ContainerModel(HomelabBaseModel):
 
         if self.database:
             if not main_service.database:
-                raise ValueError("database is required if database config is not None")
+                raise ValueError("Database is required if database config is not None")
             database_envs = self.database.build_envs(main_service.database)
 
         return [
@@ -143,7 +143,7 @@ class ContainerModel(HomelabBaseModel):
 
         if self.database:
             if not main_service.database:
-                raise ValueError("database is required if database config is not None")
+                raise ValueError("Database is required if database config is not None")
             depends_on.append(self.database.to_container(main_service.database))
 
         return docker.Container(

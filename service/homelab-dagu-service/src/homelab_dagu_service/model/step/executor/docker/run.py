@@ -4,7 +4,7 @@ from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
-from pulumi import Input, Output
+from pulumi import Input
 
 
 class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
@@ -70,23 +70,9 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
             host_config["capAdd"] = model.capabilities
         host_config["readonlyRootfs"] = model.read_only
 
-        mounts = model.build_tmpfs()
-        if mounts:
-            host_config["mounts"] = [
-                {"type": mount.type, "target": mount.target}
-                | (
-                    {
-                        "tmpfsOptions": Output.from_input(mount.tmpfs_options).apply(
-                            lambda x: (
-                                {"sizeBytes": x.size_bytes} if x.size_bytes else {}
-                            )
-                        )
-                    }
-                    if mount.tmpfs_options
-                    else {}
-                )
-                for mount in mounts
-            ]
+        tmpfses = model.build_tmpfs()
+        if tmpfses:
+            host_config["tmpfs"] = {tmpfs.target: "" for tmpfs in tmpfses}
         if model.init:
             host_config["init"] = model.init
 
