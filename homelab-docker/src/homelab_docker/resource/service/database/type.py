@@ -68,7 +68,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
             container = self.config.container.model_merge(
                 ContainerModel(
                     image=ContainerImageModelConfig(
-                        self.get_short_name_version(version)
+                        self.type.get_short_name_version(self.model.image, version)
                     ),
                     volumes=ContainerVolumesConfig(
                         {full_name: ContainerVolumeConfig(self.config.data_dir)}

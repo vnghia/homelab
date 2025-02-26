@@ -6,13 +6,10 @@ from homelab_docker.model.service import ServiceModel, ServiceWithConfigModel
 from homelab_restic_service.config import ResticConfig
 from homelab_traefik_service.config import TraefikConfig
 
-from .nghe.config import NgheConfig
-
 
 class ServiceConfig(ServiceConfigBase):
     tailscale: ServiceModel
     traefik: ServiceWithConfigModel[TraefikConfig]
-    nghe: ServiceWithConfigModel[NgheConfig]
     dagu: ServiceWithConfigModel[DaguConfig]
     barman: ServiceWithConfigModel[BarmanConfig]
     restic: ServiceWithConfigModel[ResticConfig]

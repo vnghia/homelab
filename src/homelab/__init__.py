@@ -14,7 +14,6 @@ from homelab_traefik_service import TraefikService
 from .docker import Docker
 from .service.config import ServiceConfig
 from .service.extra import ExtraConfig, ExtraService
-from .service.nghe import NgheService
 
 
 class Homelab:
@@ -46,12 +45,6 @@ class Homelab:
             opts=None,
             network_resource=self.network,
             tailscale_service=self.tailscale,
-            docker_resource_args=self.docker.resource_args,
-        )
-        self.nghe = NgheService(
-            self.docker.services_config.nghe,
-            opts=None,
-            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )
         self.dagu = DaguService(

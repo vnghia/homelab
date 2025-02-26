@@ -275,7 +275,16 @@ config:
               nghe-cache: /tmp/nghe
             envs:
               NGHE_SERVER__PORT: 3000
+              NGHE_DATABASE__KEY:
+                source:
+                  secret: key
+                transform:
+                  secret:
+                    encode: hex
               NGHE_S3__ENABLE: true
+              NGHE_INTEGRATION__SPOTIFY__ID:
+              NGHE_INTEGRATION__SPOTIFY__SECRET:
+              NGHE_INTEGRATION__LASTFM__KEY:
         memos:
           config:
             traefik:
