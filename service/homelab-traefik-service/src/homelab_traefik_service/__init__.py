@@ -1,8 +1,14 @@
 from pathlib import PosixPath
 
 from homelab_docker.model.container import ContainerModelBuildArgs
+from homelab_docker.model.container.extract import ContainerExtract
+from homelab_docker.model.container.extract.source import ContainerExtractSource
+from homelab_docker.model.container.extract.source.simple import (
+    ContainerExtractSimpleSource,
+)
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
+from homelab_docker.model.service.extract import ServiceExtract
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_network.resource.network import NetworkResource
@@ -52,7 +58,13 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             name="dashboard",
             public=False,
             hostname="system",
-            prefix=self.config.path,
+            prefix=ServiceExtract(
+                extract=ContainerExtract(
+                    ContainerExtractSource(
+                        ContainerExtractSimpleSource(self.config.path)
+                    )
+                )
+            ),
             service=TraefikDynamicServiceModel("api@internal"),
         ).build_resource(
             None, opts=self.child_opts, main_service=self, traefik_service=self

@@ -5,6 +5,7 @@ import typing
 from functools import reduce
 from typing import Any
 
+from homelab_docker.model.service.extract import ServiceExtract
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
@@ -21,9 +22,9 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
     name: str | None = None
     public: bool
     hostname: str | None = None
-    prefix: str | None = None
+    prefix: ServiceExtract | None = None
 
-    rules: list[str] = []
+    rules: list[ServiceExtract] = []
     service: TraefikDynamicServiceModel
     middlewares: list[TraefikDynamicMiddlewareModel] = []
 
@@ -52,11 +53,18 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
                             lambda x: " && ".join(
                                 ["Host(`{}`)".format(x)]
                                 + (
-                                    ["PathPrefix(`{}`)".format(self.prefix)]
+                                    [
+                                        "PathPrefix(`{}`)".format(
+                                            self.prefix.extract_str(main_service.model)
+                                        )
+                                    ]
                                     if self.prefix
                                     else []
                                 )
-                                + self.rules
+                                + [
+                                    rule.extract_str(main_service.model)
+                                    for rule in self.rules
+                                ]
                             )
                         ),
                         "middlewares": [

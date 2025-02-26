@@ -195,6 +195,25 @@ config:
                 read-only: true
               traefik-cert: /etc/traefik/cert
         dozzle:
+          config:
+            traefik:
+              traefik:
+                public: false
+                hostname: system
+                service:
+                  port:
+                    source:
+                      env: DOZZLE_ADDR
+                    transform:
+                      string:
+                        capture: ":(.+)"
+                middlewares:
+                  - name: redirect
+                    data:
+                      addPrefix:
+                        prefix:
+                          extract:
+                            env: DOZZLE_BASE
           container:
             image: dozzle
             docker-socket:

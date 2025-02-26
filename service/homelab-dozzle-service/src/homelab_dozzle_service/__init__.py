@@ -1,19 +1,21 @@
 from homelab_config import Config
 from homelab_docker.model.container import ContainerModelBuildArgs
-from homelab_docker.model.service import ServiceModel
+from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 
+from .config import DozzleConfig
 
-class DozzleService(ServiceResourceBase):
+
+class DozzleService(ServiceWithConfigResourceBase[DozzleConfig]):
     BASE_ENV = "DOZZLE_BASE"
     ADDR_ENV = "DOZZLE_ADDR"
 
     def __init__(
         self,
-        model: ServiceModel,
+        model: ServiceWithConfigModel[DozzleConfig],
         *,
         opts: ResourceOptions | None,
         traefik_service: TraefikService,
@@ -33,43 +35,8 @@ class DozzleService(ServiceResourceBase):
             }
         )
 
-        self.prefix = self.model[None].envs[self.BASE_ENV].extract_str(self.model[None])
-
-        # self.traefik = TraefikHttpDynamicConfig(
-        #     public=False,
-        #     hostname="system",
-        #     prefix=self.prefix,
-        #     service=TraefikDynamicServiceConfig(
-        #         int(
-        #             self.model[None]
-        #             .envs[self.ADDR_ENV]
-        #             .extract_str(self.model[None])[1:]
-        #         )
-        #     ),
-        # ).build_resource(
-        #     None,
-        #     opts=self.child_opts,
-        #     main_service=self,
-        #     traefik_service=traefik_service,
-        # )
-        # self.traefik_redirect = TraefikHttpDynamicConfig(
-        #     name="redirect",
-        #     public=False,
-        #     hostname="system",
-        #     service=TraefikDynamicServiceConfig(self.name()),
-        #     middlewares=[
-        #         TraefikDynamicMiddlewareConfig(
-        #             TraefikDynamicMiddlewareFullConfig(
-        #                 name="redirect",
-        #                 data={"addPrefix": {"prefix": self.prefix}},
-        #             )
-        #         )
-        #     ],
-        # ).build_resource(
-        #     None,
-        #     opts=self.child_opts,
-        #     main_service=self,
-        #     traefik_service=traefik_service,
-        # )
+        self.traefik = self.config.traefik.build_resources(
+            opts=self.child_opts, main_service=self, traefik_service=traefik_service
+        )
 
         self.register_outputs({})

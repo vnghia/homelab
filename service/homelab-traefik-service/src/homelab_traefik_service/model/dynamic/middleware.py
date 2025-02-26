@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from typing import Any
 
+from homelab_docker.model.service.extract import ServiceExtract
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import ResourceOptions
@@ -17,7 +18,11 @@ class TraefikDynamicMiddlewareFullModel(HomelabBaseModel):
     data: Any
 
     def to_section(self, main_service: ServiceResourceBase) -> dict[str, Any]:
-        return {main_service.add_service_name(self.name): self.data}
+        return {
+            main_service.add_service_name(
+                self.name
+            ): ServiceExtract.extract_recursively(self.data, main_service.model)
+        }
 
     def to_data(
         self, main_service: ServiceResourceBase, _traefik_service: TraefikService
