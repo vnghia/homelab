@@ -14,10 +14,10 @@ from .service import TraefikDynamicServiceConfig, TraefikDynamicServiceType
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
-    from ..dynamic import TraefikDynamicConfigResource
+    from ...resource.dynamic import TraefikDynamicConfigResource
 
 
-class TraefikHttpDynamicConfig(HomelabBaseModel):
+class TraefikDynamicHttpConfig(HomelabBaseModel):
     name: str | None = None
     public: bool
     hostname: str | None = None
@@ -97,7 +97,7 @@ class TraefikHttpDynamicConfig(HomelabBaseModel):
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> TraefikDynamicConfigResource:
-        from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
+        from ...resource.dynamic import TraefikDynamicConfigResource
 
         return TraefikDynamicConfigResource(
             resource_name,

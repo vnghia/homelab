@@ -9,7 +9,7 @@ from pulumi import ResourceOptions
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
-    from ..dynamic import TraefikDynamicConfigResource
+    from ...resource.dynamic import TraefikDynamicConfigResource
 
 
 class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
@@ -32,7 +32,7 @@ class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> TraefikDynamicConfigResource:
-        from homelab_traefik_service.config.dynamic import TraefikDynamicConfigResource
+        from ...resource.dynamic import TraefikDynamicConfigResource
 
         return TraefikDynamicConfigResource(
             resource_name,
