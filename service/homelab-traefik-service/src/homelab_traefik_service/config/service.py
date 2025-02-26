@@ -1,35 +1,25 @@
 from __future__ import annotations
 
 import typing
-from typing import Self
 
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_pydantic import HomelabRootModel
+from homelab_pydantic import HomelabServiceConfigDict
 from pulumi import ResourceOptions
-from pydantic import model_validator
 
+from .. import TraefikService
 from ..model.dynamic.http import TraefikDynamicHttpModel
 from ..model.dynamic.middleware import TraefikDynamicMiddlewareFullModel
 
 if typing.TYPE_CHECKING:
-    from .. import TraefikService
     from ..resource.dynamic import TraefikDynamicConfigResource
 
 
 class TraefikServiceConfig(
-    HomelabRootModel[
-        dict[str | None, TraefikDynamicHttpModel | TraefikDynamicMiddlewareFullModel]
+    HomelabServiceConfigDict[
+        TraefikDynamicHttpModel | TraefikDynamicMiddlewareFullModel
     ]
 ):
-    @model_validator(mode="after")
-    def set_none_key(self) -> Self:
-        from .. import TraefikService
-
-        return self.model_construct(
-            root={
-                TraefikService.get_key(name): model for name, model in self.root.items()
-            }
-        )
+    NONE_KEY = TraefikService.name()
 
     def build_resources(
         self,

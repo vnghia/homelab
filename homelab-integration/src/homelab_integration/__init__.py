@@ -1,1 +1,1 @@
-from .s3 import S3Integration as S3Integration
+from .s3 import S3Config as S3Config

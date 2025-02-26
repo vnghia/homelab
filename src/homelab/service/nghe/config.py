@@ -1,4 +1,4 @@
-from homelab_integration import S3Integration
+from homelab_integration import S3Config
 from homelab_pydantic import HomelabBaseModel
 from homelab_traefik_service.config.service import TraefikServiceConfig
 
@@ -15,5 +15,5 @@ class NgheSpotifyConfig(HomelabBaseModel):
 class NgheConfig(HomelabBaseModel):
     lastfm: NgheLastFmConfig
     spotify: NgheSpotifyConfig
-    s3: S3Integration | None = None
+    s3: S3Config | None = None
     traefik: TraefikServiceConfig

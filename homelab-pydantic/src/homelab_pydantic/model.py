@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 import deepmerge
 from pydantic import BaseModel, ConfigDict, RootModel, model_validator
@@ -54,3 +54,16 @@ class HomelabRootModel[T](RootModel[T]):
         validate_return=True,
         validation_error_cause=True,
     )
+
+
+class HomelabServiceConfigDict[T](RootModel[dict[str | None, T]]):
+    NONE_KEY: ClassVar[str]
+
+    @model_validator(mode="after")
+    def set_none_key(self) -> Self:
+        return self.model_construct(
+            root={
+                None if key == self.NONE_KEY else key: model
+                for key, model in self.root.items()
+            }
+        )

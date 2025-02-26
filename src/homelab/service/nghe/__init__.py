@@ -26,10 +26,7 @@ class NgheService(ServiceWithConfigResourceBase[NgheConfig]):
 
         s3_envs: dict[str, str] = {}
         if self.config.s3:
-            s3_envs = {
-                k: v
-                for k, v in self.config.s3.to_envs(use_default_region=False).items()
-            }
+            s3_envs = {k: v for k, v in self.config.s3.to_envs().items()}
 
         self.key = random.RandomPassword(
             "key", opts=self.child_opts, length=self.KEY_LENGTH, special=False
