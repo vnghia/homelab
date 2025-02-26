@@ -50,14 +50,10 @@ config:
         postgres:
           images:
             postgres:
-              # TODO: use postgres 17 after https://github.com/EnterpriseDB/barman/issues/1041
               "17":
                 repo: postgres
-                tag: "17.2-bookworm"
-              "16":
-                repo: postgres
-                tag: "16.6-bookworm"
-          version: 16
+                tag: "17.4-bookworm"
+          version: 17
           port: 5432
           data-dir: /var/lib/postgresql/data
           env:
@@ -429,7 +425,8 @@ config:
                     schedule: "0 2 * * *" # 2am every day
                   command: ["check"]
                 backup:
-                  command: ["backup", "--wait"]
+                  # TODO: re-enable --wait option after https://github.com/EnterpriseDB/barman/issues/1041
+                  command: ["backup"]
                 switch-wal:
                   command: ["switch-wal", "--force", "--archive"]
           container:
