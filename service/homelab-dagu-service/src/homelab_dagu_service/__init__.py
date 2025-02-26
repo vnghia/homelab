@@ -46,16 +46,10 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self.model)
-        self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self.model)
+        self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self)
+        self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self)
 
-        self.build_containers(
-            options={
-                None: ContainerModelBuildArgs(
-                    envs={"DAGU_TZ": str(self.docker_resource_args.timezone)}
-                )
-            }
-        )
+        self.build_containers(options={})
 
         self.traefik = self.config.traefik.build_resources(
             opts=self.child_opts,

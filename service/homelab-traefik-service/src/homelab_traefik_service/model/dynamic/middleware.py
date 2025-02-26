@@ -21,7 +21,7 @@ class TraefikDynamicMiddlewareFullModel(HomelabBaseModel):
         return {
             main_service.add_service_name(
                 self.name
-            ): ServiceExtract.extract_recursively(self.data, main_service.model)
+            ): ServiceExtract.extract_recursively(self.data, main_service)
         }
 
     def to_data(

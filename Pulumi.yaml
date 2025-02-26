@@ -232,6 +232,8 @@ config:
             envs:
               DOZZLE_BASE: /log
               DOZZLE_ADDR: ":8080"
+              DOZZLE_FILTER:
+                global: "label=pulumi.stack={stack}"
               DOZZLE_NO_ANALYTICS: true
               DOZZLE_ENABLE_ACTIONS: true
         nghe:
@@ -355,6 +357,8 @@ config:
                 read-only: true
             envs:
               DAGU_PORT: 8080
+              DAGU_TZ:
+                global: "{timezone}"
               DAGU_DAGS_DIR:
                 volume: dagu-dags
               DAGU_BASE_CONFIG:

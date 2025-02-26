@@ -26,9 +26,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
 
         self.backup_config = backup_config
 
-        self.config_dir_volume_path = self.config.config_dir.extract_volume_path(
-            self.model
-        )
+        self.config_dir_volume_path = self.config.config_dir.extract_volume_path(self)
 
         self.configs: list[BarmanConfigFileResource] = []
         for (

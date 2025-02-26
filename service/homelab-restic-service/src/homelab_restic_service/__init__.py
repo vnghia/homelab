@@ -41,9 +41,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.backup_config = backup_config
 
-        self.profile_dir_volume_path = self.config.profile_dir.extract_volume_path(
-            self.model
-        )
+        self.profile_dir_volume_path = self.config.profile_dir.extract_volume_path(self)
 
         self.password = random.RandomPassword(
             "password",

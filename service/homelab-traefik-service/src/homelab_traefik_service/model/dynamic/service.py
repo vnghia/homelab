@@ -26,7 +26,11 @@ class TraefikDynamicServiceFullModel(HomelabBaseModel):
                 type_.value,
                 main_service.add_service_name(self.container),
                 TypeAdapter(PositiveInt).validate_python(
-                    int(self.port.extract_str(main_service.model[self.container]))
+                    int(
+                        self.port.extract_str(
+                            main_service.model[self.container], main_service
+                        )
+                    )
                 ),
             )
         )

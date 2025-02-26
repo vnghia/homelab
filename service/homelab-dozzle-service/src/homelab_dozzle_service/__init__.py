@@ -1,5 +1,3 @@
-from homelab_config import Config
-from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
@@ -23,17 +21,7 @@ class DozzleService(ServiceWithConfigResourceBase[DozzleConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.build_containers(
-            options={
-                None: ContainerModelBuildArgs(
-                    envs={
-                        "DOZZLE_FILTER": "label=pulumi.stack={}".format(
-                            Config.PROJECT_STACK
-                        ),
-                    },
-                )
-            }
-        )
+        self.build_containers(options={})
 
         self.traefik = self.config.traefik.build_resources(
             opts=self.child_opts, main_service=self, traefik_service=traefik_service

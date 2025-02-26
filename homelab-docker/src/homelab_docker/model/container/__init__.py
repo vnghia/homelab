@@ -58,16 +58,19 @@ class ContainerModel(HomelabBaseModel):
     envs: dict[str, ContainerExtract] = {}
     labels: dict[str, str] = {}
 
-    def build_command(self) -> list[str] | None:
+    def build_command(self, main_service: ServiceResourceBase) -> list[str] | None:
         return (
-            [command.extract_str(self) for command in self.command]
+            [command.extract_str(self, main_service) for command in self.command]
             if self.command is not None
             else None
         )
 
-    def build_entrypoint(self) -> list[str] | None:
+    def build_entrypoint(self, main_service: ServiceResourceBase) -> list[str] | None:
         return (
-            [entrypoint.extract_str(self) for entrypoint in self.entrypoint]
+            [
+                entrypoint.extract_str(self, main_service)
+                for entrypoint in self.entrypoint
+            ]
             if self.entrypoint is not None
             else None
         )
@@ -93,11 +96,11 @@ class ContainerModel(HomelabBaseModel):
                 (
                     {
                         "TZ": Output.from_input(
-                            str(main_service.docker_resource_args.timezone)
+                            main_service.docker_resource_args.timezone
                         )
                     }
                     | {
-                        k: Output.from_input(v.extract_str(self))
+                        k: Output.from_input(v.extract_str(self, main_service))
                         for k, v in self.envs.items()
                     }
                     | {
@@ -160,9 +163,11 @@ class ContainerModel(HomelabBaseModel):
             capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
             if self.capabilities
             else None,
-            command=self.build_command(),
-            entrypoints=self.build_entrypoint(),
-            healthcheck=self.healthcheck.to_args(self) if self.healthcheck else None,
+            command=self.build_command(main_service),
+            entrypoints=self.build_entrypoint(main_service),
+            healthcheck=self.healthcheck.to_args(self, main_service)
+            if self.healthcheck
+            else None,
             init=self.init,
             mounts=self.build_tmpfs(),
             network_mode=network_args.mode,
