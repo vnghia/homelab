@@ -210,10 +210,15 @@ config:
                 middlewares:
                   - name: redirect
                     data:
-                      addPrefix:
-                        prefix:
+                      redirectRegex:
+                        regex: "^https://([^/]+)/?$"
+                        replacement:
                           extract:
-                            env: DOZZLE_BASE
+                            source:
+                              env: DOZZLE_BASE
+                            transform:
+                              string:
+                                template: "https://${{1}}{value}/"
           container:
             image: dozzle
             docker-socket:
