@@ -3,7 +3,7 @@ import dataclasses
 from pulumi import ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 
-from ..config import DockerConfig
+from ..config import DockerConfig, DockerNoServiceConfig
 from ..config.service import ServiceConfigBase
 from .image import ImageResource
 from .network import NetworkResource
@@ -24,7 +24,7 @@ class DockerResource:
             config=config.network, opts=opts, project_labels=project_labels
         )
         self.image = ImageResource(
-            config=config.images,
+            config=config,
             opts=opts,
             platform=config.platform,
             project_prefix=project_prefix,
@@ -41,6 +41,7 @@ class DockerResource:
 @dataclasses.dataclass
 class DockerResourceArgs:
     timezone: TimeZoneName
+    config: DockerNoServiceConfig
     resource: DockerResource
     project_labels: dict[str, str]
 

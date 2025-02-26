@@ -4,11 +4,11 @@ from homelab_pydantic import HomelabRootModel
 from pydantic import model_validator
 
 from ....model.database.type import DatabaseType
-from ....model.service.database.postgres import ServicePostgresDatabaseModel
+from ....model.service.database import ServiceDatabaseModel
 
 
 class ServiceDatabaseConfig(
-    HomelabRootModel[dict[DatabaseType, dict[str | None, ServicePostgresDatabaseModel]]]
+    HomelabRootModel[dict[DatabaseType, dict[str | None, ServiceDatabaseModel]]]
 ):
     @model_validator(mode="after")
     def set_none_key(self) -> Self:

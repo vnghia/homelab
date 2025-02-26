@@ -1,7 +1,7 @@
 import pulumi
 from pulumi import ComponentResource, ResourceOptions
 
-from ..config.image import ImageConfig
+from ..config import DockerNoServiceConfig
 from ..model.platform import Platform
 
 
@@ -10,7 +10,7 @@ class ImageResource(ComponentResource):
 
     def __init__(
         self,
-        config: ImageConfig,
+        config: DockerNoServiceConfig,
         *,
         opts: ResourceOptions,
         platform: Platform,
@@ -22,7 +22,7 @@ class ImageResource(ComponentResource):
 
         self.remotes = {
             name: model.build_resource(name, opts=self.child_opts, platform=platform)
-            for name, model in config.remote.items()
+            for name, model in config.images.remote.items()
         }
 
         self.builds = {
@@ -33,11 +33,11 @@ class ImageResource(ComponentResource):
                 project_prefix=project_prefix,
                 project_labels=project_labels,
             )
-            for name, model in config.build.items()
+            for name, model in config.images.build.items()
         }
 
-        for type_, database in config.database.items():
-            for name, versions in database.items():
+        for type_, database in config.database.root.items():
+            for name, versions in database.images.items():
                 for version, model in versions.items():
                     image_name = type_.get_short_name_version(name, version)
                     self.remotes[image_name] = model.build_resource(

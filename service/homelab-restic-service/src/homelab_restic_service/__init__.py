@@ -4,7 +4,6 @@ import pulumi
 import pulumi_random as random
 from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
-from homelab_docker.config.volume import VolumeConfig
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
@@ -34,7 +33,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         *,
         opts: ResourceOptions | None,
         hostname: str,
-        volume_config: VolumeConfig,
         backup_config: BackupConfig,
         dagu_service: DaguService,
         docker_resource_args: DockerResourceArgs,
@@ -72,7 +70,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.backup_volumes = {
             volume: ContainerVolumeConfig(self.get_volume_path(volume))
-            for volume, model in volume_config.local.items()
+            for volume, model in self.docker_resource_args.config.volumes.local.items()
             if model.backup
         }
 

@@ -23,6 +23,7 @@ class Docker(ComponentResource):
         self.services_config = self.config.services
         self.resource_args = DockerResourceArgs(
             timezone=self.config.timezone,
+            config=self.config,
             resource=self.resource,
             project_labels=Config.PROJECT_LABELS,
         )

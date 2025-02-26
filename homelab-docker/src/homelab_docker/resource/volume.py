@@ -31,7 +31,7 @@ class VolumeResource(ComponentResource):
         for service_name, database in config.services.databases.items():
             for type_, database_config in database.root.items():
                 for name, model in database_config.items():
-                    for version in model.versions:
+                    for version in config.database.root[type_].get_versions(model):
                         full_name = type_.get_full_name_version(
                             service_name, name, version
                         )

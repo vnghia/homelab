@@ -94,7 +94,6 @@ class Homelab:
             self.docker.services_config.restic,
             opts=None,
             hostname=self.project_prefix,
-            volume_config=self.config.docker.volumes,
             backup_config=self.docker.services_config.backup.config,
             dagu_service=self.dagu,
             docker_resource_args=self.docker.resource_args,

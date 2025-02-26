@@ -83,15 +83,9 @@ class ContainerModel(HomelabBaseModel):
         database_envs: dict[str, Output[str]] = {}
 
         if self.database:
-            if not main_service.database_args:
-                raise ValueError(
-                    "database args is required if database config is not None"
-                )
-
-            database_envs = self.database.build_envs(
-                main_service.database_args.config,
-                main_service.database_args.source_config,
-            )
+            if not main_service.database:
+                raise ValueError("database is required if database config is not None")
+            database_envs = self.database.build_envs(main_service.database)
 
         return [
             Output.concat(k, "=", v)
@@ -148,18 +142,9 @@ class ContainerModel(HomelabBaseModel):
         depends_on.extend(build_args.files)
 
         if self.database:
-            if not main_service.database_args:
-                raise ValueError(
-                    "database args is required if database config is not None"
-                )
-
-            # depends_on.append(
-            #     main_service.CONTAINERS[
-            #         self.database.to_container_name(
-            #             main_service.name(), main_service.database_args.config
-            #         )
-            #     ]
-            # )
+            if not main_service.database:
+                raise ValueError("database is required if database config is not None")
+            depends_on.append(self.database.to_container(main_service.database))
 
         return docker.Container(
             resource_name,
