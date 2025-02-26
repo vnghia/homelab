@@ -9,6 +9,7 @@ from ...model.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from .. import DockerResourceArgs
 from .database import ServiceDatabaseResource
+from .secret import ServiceSecretResouse
 
 
 class ServiceResourceBase(ComponentResource):
@@ -28,6 +29,7 @@ class ServiceResourceBase(ComponentResource):
         self.model = model
         self.docker_resource_args = docker_resource_args
         self.build_databases()
+        self.build_secrets()
 
     @classmethod
     def name(cls) -> str:
@@ -61,6 +63,19 @@ class ServiceResourceBase(ComponentResource):
                             ),
                             container.name,
                         )
+
+    def build_secrets(self) -> None:
+        self.secret: ServiceSecretResouse | None = None
+        if self.model.secrets:
+            self.secret = ServiceSecretResouse(
+                self.model.secrets, opts=self.child_opts, main_service=self
+            )
+
+            for name, secret in self.secret.secrets.items():
+                pulumi.export(
+                    "secret.{}".format(self.add_service_name(name)),
+                    secret.result,
+                )
 
     def build_container(
         self,
