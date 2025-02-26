@@ -11,7 +11,6 @@ members = [
     "homelab-config",
     "homelab-dagu-service",
     "homelab-docker",
-    "homelab-dozzle-service",
     "homelab-integration",
     "homelab-network",
     "homelab-pydantic",
@@ -344,7 +343,6 @@ dependencies = [
     { name = "homelab-config" },
     { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
-    { name = "homelab-dozzle-service" },
     { name = "homelab-integration" },
     { name = "homelab-network" },
     { name = "homelab-restic-service" },
@@ -369,7 +367,6 @@ requires-dist = [
     { name = "homelab-config", editable = "homelab-config" },
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-dozzle-service", editable = "service/homelab-dozzle-service" },
     { name = "homelab-integration", editable = "homelab-integration" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
@@ -540,25 +537,6 @@ dev = [
     { name = "types-docker", specifier = ">=7.1.0.20241229" },
     { name = "types-jsonschema", specifier = ">=4.23.0.20241208" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20241230" },
-]
-
-[[package]]
-name = "homelab-dozzle-service"
-version = "0.1.0"
-source = { editable = "service/homelab-dozzle-service" }
-dependencies = [
-    { name = "homelab-docker" },
-    { name = "homelab-pydantic" },
-    { name = "homelab-traefik-service" },
-    { name = "pulumi" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
-    { name = "pulumi", specifier = ">=3.148.0" },
 ]
 
 [[package]]

@@ -28,10 +28,6 @@ from .resource import DaguDagResource
 
 
 class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
-    DAGS_DIR_ENV = "DAGU_DAGS_DIR"
-    LOG_DIR_ENV = "DAGU_LOG_DIR"
-    PORT_ENV = "DAGU_PORT"
-
     DEBUG_DAG_NAME = "debug"
 
     DAGS: dict[str, dict[str, DaguDagResource]] = {}

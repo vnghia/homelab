@@ -6,7 +6,6 @@ from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.database import DatabaseResource
-from homelab_dozzle_service import DozzleService
 from homelab_network.resource.network import NetworkResource
 from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
@@ -47,12 +46,6 @@ class Homelab:
             opts=None,
             network_resource=self.network,
             tailscale_service=self.tailscale,
-            docker_resource_args=self.docker.resource_args,
-        )
-        self.dozzle = DozzleService(
-            self.docker.services_config.dozzle,
-            opts=None,
-            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )
         self.nghe = NgheService(
