@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import typing
+from typing import Never
 
-from homelab_pydantic import AbsolutePath, HomelabRootModel
+from homelab_pydantic import HomelabRootModel
 from pydantic import PositiveInt
-
-from ...volume_path import ContainerVolumePath
 
 if typing.TYPE_CHECKING:
     from .....resource.service import ServiceResourceBase
@@ -24,10 +23,10 @@ class ContainerExtractSimpleSource(HomelabRootModel[bool | PositiveInt | str]):
 
     def extract_path(
         self, _model: ContainerModel, _main_service: ServiceResourceBase
-    ) -> AbsolutePath:
+    ) -> Never:
         raise TypeError("Can not extract path from simple source")
 
     def extract_volume_path(
         self, _model: ContainerModel, _main_service: ServiceResourceBase
-    ) -> ContainerVolumePath:
+    ) -> Never:
         raise TypeError("Can not extract volume path from simple source")

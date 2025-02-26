@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from pulumi import Output
 
 from ...volume_path import ContainerVolumePath
 
@@ -20,7 +21,7 @@ class ContainerExtractEnvSource(HomelabBaseModel):
 
     def extract_str(
         self, model: ContainerModel, main_service: ServiceResourceBase
-    ) -> str:
+    ) -> Output[str]:
         return self.get_env(model).extract_str(model, main_service)
 
     def extract_path(

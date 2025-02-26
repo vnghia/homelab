@@ -4,6 +4,7 @@ from typing import Any
 from homelab_docker.model.container.extract import ContainerExtract
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from pulumi import Output
 from pydantic import AnyUrl, PositiveInt, TypeAdapter
 
 
@@ -19,21 +20,16 @@ class TraefikDynamicServiceFullModel(HomelabBaseModel):
         self,
         type_: TraefikDynamicServiceType,
         main_service: ServiceResourceBase,
-    ) -> AnyUrl:
+    ) -> Output[AnyUrl]:
         main_service.containers[self.container]
-        return AnyUrl(
-            "{}://{}:{}".format(
-                type_.value,
-                main_service.add_service_name(self.container),
-                TypeAdapter(PositiveInt).validate_python(
-                    int(
-                        self.port.extract_str(
-                            main_service.model[self.container], main_service
-                        )
-                    )
-                ),
-            )
-        )
+        return Output.format(
+            "{}://{}:{}",
+            type_.value,
+            main_service.add_service_name(self.container),
+            self.port.extract_str(
+                main_service.model[self.container], main_service
+            ).apply(lambda x: TypeAdapter(PositiveInt).validate_python(int(x))),
+        ).apply(AnyUrl)
 
     def to_http_service(
         self,
@@ -44,7 +40,7 @@ class TraefikDynamicServiceFullModel(HomelabBaseModel):
         return {
             router_name: {
                 "loadBalancer": {
-                    "servers": [{"url": str(self.to_url(type_, main_service))}]
+                    "servers": [{"url": self.to_url(type_, main_service).apply(str)}]
                 }
             }
         }

@@ -8,7 +8,7 @@ from typing import Any
 from homelab_docker.model.service.extract import ServiceExtract
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
-from pulumi import ResourceOptions
+from pulumi import Output, ResourceOptions
 
 from .middleware import TraefikDynamicMiddlewareModel
 from .service import TraefikDynamicServiceModel, TraefikDynamicServiceType
@@ -49,14 +49,15 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
                             if self.public
                             else entrypoint.private_https
                         ],
-                        "rule": hostname.apply(
-                            lambda x: " && ".join(
-                                ["Host(`{}`)".format(x)]
+                        "rule": Output.all(
+                            *(
+                                [Output.format("Host(`{}`)", hostname)]
                                 + (
                                     [
-                                        "PathPrefix(`{}`)".format(
-                                            self.prefix.extract_str(main_service)
-                                        )
+                                        Output.format(
+                                            "PathPrefix(`{}`)",
+                                            self.prefix.extract_str(main_service),
+                                        ),
                                     ]
                                     if self.prefix
                                     else []
@@ -66,7 +67,7 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
                                     for rule in self.rules
                                 ]
                             )
-                        ),
+                        ).apply(lambda args: " && ".join(args)),
                         "middlewares": [
                             middleware.get_name(main_service)
                             for middleware in self.middlewares

@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import typing
 
+import pulumi_random as random
 from homelab_pydantic import AbsolutePath, HomelabRootModel
+from pulumi import Output
 
 from ...volume_path import ContainerVolumePath
 from .env import ContainerExtractEnvSource
 from .global_ import ContainerExtractGlobalSource
+from .secret import ContainerExtractSecretSource
 from .simple import ContainerExtractSimpleSource
 from .volume import ContainerExtractVolumeSource
 
@@ -21,11 +24,12 @@ class ContainerExtractSource(
         | ContainerExtractEnvSource
         | ContainerExtractVolumeSource
         | ContainerExtractSimpleSource
+        | ContainerExtractSecretSource
     ]
 ):
     def extract_str(
         self, model: ContainerModel, main_service: ServiceResourceBase
-    ) -> str:
+    ) -> str | Output[str] | random.RandomPassword:
         return self.root.extract_str(model, main_service)
 
     def extract_path(

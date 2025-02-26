@@ -4,6 +4,7 @@ import typing
 from typing import Any
 
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from pulumi import Output
 from pydantic import ValidationError
 
 from ...model.container.extract import ContainerExtract
@@ -17,7 +18,7 @@ class ServiceExtract(HomelabBaseModel):
     service: str | None = None
     extract: ContainerExtract
 
-    def extract_str(self, main_service: ServiceResourceBase) -> str:
+    def extract_str(self, main_service: ServiceResourceBase) -> Output[str]:
         return self.extract.extract_str(main_service.model[self.service], main_service)
 
     def extract_path(self, main_service: ServiceResourceBase) -> AbsolutePath:

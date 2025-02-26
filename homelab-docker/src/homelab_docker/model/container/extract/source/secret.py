@@ -3,34 +3,30 @@ from __future__ import annotations
 import typing
 from typing import Never
 
+import pulumi_random as random
 from homelab_pydantic import HomelabBaseModel
-from pydantic import Field
 
 if typing.TYPE_CHECKING:
     from .....resource.service import ServiceResourceBase
     from ... import ContainerModel
 
 
-class ContainerExtractGlobalSource(HomelabBaseModel):
-    global_: str = Field(alias="global")
+class ContainerExtractSecretSource(HomelabBaseModel):
+    secret: str
 
     def extract_str(
         self, _model: ContainerModel, main_service: ServiceResourceBase
-    ) -> str:
-        return self.global_.format(
-            timezone=main_service.docker_resource_args.timezone,
-            **{
-                k.strip("pulumi."): v
-                for k, v in main_service.docker_resource_args.project_labels.items()
-            },
-        )
+    ) -> random.RandomPassword:
+        if not main_service.secret:
+            raise ValueError("secret is required for extracting from secret source")
+        return main_service.secret[self.secret]
 
     def extract_path(
         self, _model: ContainerModel, _main_service: ServiceResourceBase
     ) -> Never:
-        raise TypeError("Can not extract path from global source")
+        raise TypeError("Can not extract path from secret source")
 
     def extract_volume_path(
         self, _model: ContainerModel, _main_service: ServiceResourceBase
     ) -> Never:
-        raise TypeError("Can not extract volume path from global source")
+        raise TypeError("Can not extract volume path from secret source")

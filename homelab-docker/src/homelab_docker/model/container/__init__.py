@@ -58,14 +58,18 @@ class ContainerModel(HomelabBaseModel):
     envs: dict[str, ContainerExtract] = {}
     labels: dict[str, str] = {}
 
-    def build_command(self, main_service: ServiceResourceBase) -> list[str] | None:
+    def build_command(
+        self, main_service: ServiceResourceBase
+    ) -> list[Output[str]] | None:
         return (
             [command.extract_str(self, main_service) for command in self.command]
             if self.command is not None
             else None
         )
 
-    def build_entrypoint(self, main_service: ServiceResourceBase) -> list[str] | None:
+    def build_entrypoint(
+        self, main_service: ServiceResourceBase
+    ) -> list[Output[str]] | None:
         return (
             [
                 entrypoint.extract_str(self, main_service)

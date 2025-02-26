@@ -250,7 +250,6 @@ config:
           secrets:
             key:
               length: 16
-              special: false
           container:
             image: nghe
             database:

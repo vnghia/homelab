@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
+from pulumi import Output
 
 from ..volume_path import ContainerVolumePath
 from .source import ContainerExtractSource
@@ -19,14 +20,15 @@ class ContainerFullExtract(HomelabBaseModel):
 
     def extract_str(
         self, model: ContainerModel, main_service: ServiceResourceBase
-    ) -> str:
+    ) -> Output[str]:
         try:
-            value = self.transform.transform_path(
+            value_path = self.transform.transform_path(
                 self.source.extract_path(model, main_service)
             ).as_posix()
+            return self.transform.transform_string(value_path)
         except TypeError:
-            value = self.source.extract_str(model, main_service)
-        return self.transform.transform_string(value)
+            value_str = self.source.extract_str(model, main_service)
+            return self.transform.transform_string(value_str)
 
     def extract_path(
         self, model: ContainerModel, main_service: ServiceResourceBase
@@ -46,8 +48,14 @@ class ContainerFullExtract(HomelabBaseModel):
 class ContainerExtract(HomelabRootModel[ContainerFullExtract | ContainerExtractSource]):
     def extract_str(
         self, model: ContainerModel, main_service: ServiceResourceBase
-    ) -> str:
-        return self.root.extract_str(model, main_service)
+    ) -> Output[str]:
+        root = self.root
+        if isinstance(root, ContainerFullExtract):
+            return root.extract_str(model, main_service)
+        else:
+            return ContainerExtractTransform().transform_string(
+                root.extract_str(model, main_service)
+            )
 
     def extract_path(
         self, model: ContainerModel, main_service: ServiceResourceBase
