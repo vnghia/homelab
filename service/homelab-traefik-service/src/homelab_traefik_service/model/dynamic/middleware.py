@@ -12,7 +12,7 @@ if typing.TYPE_CHECKING:
     from ...resource.dynamic import TraefikDynamicConfigResource
 
 
-class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
+class TraefikDynamicMiddlewareFullModel(HomelabBaseModel):
     name: str
     data: Any
 
@@ -43,14 +43,14 @@ class TraefikDynamicMiddlewareFullConfig(HomelabBaseModel):
         )
 
 
-class TraefikDynamicMiddlewareConfig(
-    HomelabRootModel[str | TraefikDynamicMiddlewareFullConfig]
+class TraefikDynamicMiddlewareModel(
+    HomelabRootModel[str | TraefikDynamicMiddlewareFullModel]
 ):
     def get_name(self, main_service: ServiceResourceBase) -> str:
         root = self.root
         return (
             main_service.add_service_name(root.name)
-            if isinstance(root, TraefikDynamicMiddlewareFullConfig)
+            if isinstance(root, TraefikDynamicMiddlewareFullModel)
             else root
         )
 
@@ -58,6 +58,6 @@ class TraefikDynamicMiddlewareConfig(
         root = self.root
         return (
             root.to_section(main_service)
-            if isinstance(root, TraefikDynamicMiddlewareFullConfig)
+            if isinstance(root, TraefikDynamicMiddlewareFullModel)
             else {}
         )

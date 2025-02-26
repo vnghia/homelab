@@ -11,7 +11,7 @@ class TraefikDynamicServiceType(StrEnum):
     HTTP = auto()
 
 
-class TraefikDynamicServiceFullConfig(HomelabBaseModel):
+class TraefikDynamicServiceFullModel(HomelabBaseModel):
     container: str | None = None
     port: ContainerExtract
 
@@ -46,13 +46,13 @@ class TraefikDynamicServiceFullConfig(HomelabBaseModel):
         }
 
 
-class TraefikDynamicServiceConfig(
-    HomelabRootModel[str | TraefikDynamicServiceFullConfig]
+class TraefikDynamicServiceModel(
+    HomelabRootModel[str | TraefikDynamicServiceFullModel]
 ):
     @property
-    def full(self) -> TraefikDynamicServiceFullConfig | None:
+    def full(self) -> TraefikDynamicServiceFullModel | None:
         root = self.root
-        if isinstance(root, TraefikDynamicServiceFullConfig):
+        if isinstance(root, TraefikDynamicServiceFullModel):
             return root
         else:
             return None
@@ -61,6 +61,6 @@ class TraefikDynamicServiceConfig(
         root = self.root
         return (
             router_name
-            if isinstance(root, (TraefikDynamicServiceFullConfig, int))
+            if isinstance(root, (TraefikDynamicServiceFullModel, int))
             else root
         )

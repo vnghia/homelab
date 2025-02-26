@@ -3,12 +3,12 @@ from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_pydantic.model import HomelabBaseModel
 from homelab_traefik_service import TraefikService
-from homelab_traefik_service.config.dynamic.http import TraefikDynamicHttpConfig
+from homelab_traefik_service.config.service import TraefikServiceConfig
 from pulumi import ResourceOptions
 
 
 class ExtraConfig(HomelabBaseModel):
-    traefik: TraefikDynamicHttpConfig | None = None
+    traefik: TraefikServiceConfig = TraefikServiceConfig({})
 
 
 class ExtraService(ServiceWithConfigResourceBase[ExtraConfig]):
@@ -24,9 +24,8 @@ class ExtraService(ServiceWithConfigResourceBase[ExtraConfig]):
 
         self.build_containers(options={})
 
-        if self.config.traefik:
-            self.traefik = self.config.traefik.build_resource(
-                None,
+        if self.config.traefik.root:
+            self.traefik = self.config.traefik.build_resources(
                 opts=self.child_opts,
                 main_service=self,
                 traefik_service=traefik_service,

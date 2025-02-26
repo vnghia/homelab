@@ -11,8 +11,8 @@ from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
 from .config import TraefikConfig
-from .config.dynamic.http import TraefikDynamicHttpConfig
-from .config.dynamic.service import TraefikDynamicServiceConfig
+from .model.dynamic.http import TraefikDynamicHttpModel
+from .model.dynamic.service import TraefikDynamicServiceModel
 from .resource.static import TraefikStaticConfigResource
 
 
@@ -48,12 +48,12 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             }
         )
 
-        TraefikDynamicHttpConfig(
+        TraefikDynamicHttpModel(
             name="dashboard",
             public=False,
             hostname="system",
             prefix=self.config.path,
-            service=TraefikDynamicServiceConfig("api@internal"),
+            service=TraefikDynamicServiceModel("api@internal"),
         ).build_resource(
             None, opts=self.child_opts, main_service=self, traefik_service=self
         )

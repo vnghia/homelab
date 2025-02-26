@@ -213,10 +213,11 @@ config:
         nghe:
           config:
             traefik:
-              public: true
-              service:
-                port:
-                  env: NGHE_SERVER__PORT
+              traefik:
+                public: true
+                service:
+                  port:
+                    env: NGHE_SERVER__PORT
           databases:
             postgres:
               postgres: {}
@@ -249,10 +250,11 @@ config:
         memos:
           config:
             traefik:
-              public: true
-              service:
-                port:
-                  env: MEMOS_PORT
+              traefik:
+                public: true
+                service:
+                  port:
+                    env: MEMOS_PORT
           databases:
             postgres:
               postgres: {}
@@ -291,10 +293,11 @@ config:
               extract:
                 env: DAGU_LOG_DIR
             traefik:
-              public: false
-              service:
-                port:
-                  env: DAGU_PORT
+              traefik:
+                public: false
+                service:
+                  port:
+                    env: DAGU_PORT
           container:
             image: dagu
             command: ["start-all"]

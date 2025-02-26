@@ -9,23 +9,23 @@ from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
 
-from .middleware import TraefikDynamicMiddlewareConfig
-from .service import TraefikDynamicServiceConfig, TraefikDynamicServiceType
+from .middleware import TraefikDynamicMiddlewareModel
+from .service import TraefikDynamicServiceModel, TraefikDynamicServiceType
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
     from ...resource.dynamic import TraefikDynamicConfigResource
 
 
-class TraefikDynamicHttpConfig(HomelabBaseModel):
+class TraefikDynamicHttpModel(HomelabBaseModel):
     name: str | None = None
     public: bool
     hostname: str | None = None
     prefix: str | None = None
 
     rules: list[str] = []
-    service: TraefikDynamicServiceConfig
-    middlewares: list[TraefikDynamicMiddlewareConfig] = []
+    service: TraefikDynamicServiceModel
+    middlewares: list[TraefikDynamicMiddlewareModel] = []
 
     def to_data(
         self, main_service: ServiceResourceBase, traefik_service: TraefikService

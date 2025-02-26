@@ -57,8 +57,7 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
             }
         )
 
-        self.traefik = self.config.traefik.build_resource(
-            None,
+        self.traefik = self.config.traefik.build_resources(
             opts=self.child_opts,
             main_service=self,
             traefik_service=traefik_service,

@@ -34,11 +34,12 @@ class ServiceResourceBase(ComponentResource):
         return to_snake(cls.__name__.removesuffix("Service")).replace("_", "-")
 
     @classmethod
-    def add_service_name_cls(cls, service_name: str, name: str | None) -> str:
-        return "{}-{}".format(service_name, name) if name else service_name
+    def add_service_name(cls, name: str | None) -> str:
+        return "{}-{}".format(cls.name(), name) if name else cls.name()
 
-    def add_service_name(self, name: str | None) -> str:
-        return self.add_service_name_cls(self.name(), name)
+    @classmethod
+    def get_key(cls, name: str | None) -> str | None:
+        return None if name == cls.name() else name
 
     def build_databases(self) -> None:
         self.database: ServiceDatabaseResource | None = None

@@ -4,12 +4,6 @@ from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_traefik_service import TraefikService
-from homelab_traefik_service.config.dynamic.http import TraefikDynamicHttpConfig
-from homelab_traefik_service.config.dynamic.middleware import (
-    TraefikDynamicMiddlewareConfig,
-    TraefikDynamicMiddlewareFullConfig,
-)
-from homelab_traefik_service.config.dynamic.service import TraefikDynamicServiceConfig
 from pulumi import ResourceOptions
 
 
