@@ -1,10 +1,10 @@
 from homelab_pydantic import HomelabBaseModel, HomelabServiceConfigDict
-from pydantic import Field, HttpUrl
+from pydantic import HttpUrl
 
 
 class S3Config(HomelabBaseModel):
-    key_id: str = Field(alias="key-id")
-    access_key: str = Field(alias="access-key")
+    key_id: str
+    access_key: str
     region: str
     endpoint: HttpUrl | None = None
 
