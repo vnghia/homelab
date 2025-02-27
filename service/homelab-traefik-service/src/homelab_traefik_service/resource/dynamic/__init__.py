@@ -29,12 +29,11 @@ class TraefikDynamicConfigResource(
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ):
-        self.model = model
-        self.name = main_service.add_service_name(self.model.name)
+        self.name = main_service.add_service_name(model.name)
         super().__init__(
             resource_name or self.name,
             opts=opts,
             volume_path=traefik_service.get_dynamic_config_volume_path(self.name),
-            data=self.model.to_data(main_service, traefik_service),
+            data=model.to_data(main_service, traefik_service),
             volume_resource=traefik_service.docker_resource_args.volume,
         )

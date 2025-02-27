@@ -20,7 +20,7 @@ class ContainerExtractGlobalSource(HomelabBaseModel):
         return self.global_.format(
             timezone=main_service.docker_resource_args.timezone,
             **{
-                k.strip("pulumi."): v
+                k.removeprefix("pulumi."): v
                 for k, v in main_service.docker_resource_args.project_labels.items()
             },
         )

@@ -15,7 +15,7 @@ from .service import TraefikDynamicServiceModel, TraefikDynamicServiceType
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
-    from ...resource.dynamic import TraefikDynamicConfigResource
+    from ...resource.dynamic.router import TraefikDynamicRouterConfigResource
 
 
 class TraefikDynamicHttpModel(HomelabBaseModel):
@@ -68,7 +68,10 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
                                 ]
                             )
                         ).apply(lambda args: " && ".join(args)),
-                        "middlewares": [
+                        "middlewares": (
+                            [traefik_service.crowdsec.name] if self.public else []
+                        )
+                        + [
                             middleware.get_name(main_service)
                             for middleware in self.middlewares
                         ],
@@ -108,10 +111,10 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
-    ) -> TraefikDynamicConfigResource:
-        from ...resource.dynamic import TraefikDynamicConfigResource
+    ) -> TraefikDynamicRouterConfigResource:
+        from ...resource.dynamic.router import TraefikDynamicRouterConfigResource
 
-        return TraefikDynamicConfigResource(
+        return TraefikDynamicRouterConfigResource(
             resource_name,
             self,
             opts=opts,

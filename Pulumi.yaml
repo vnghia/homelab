@@ -249,6 +249,9 @@ config:
             envs:
               BOUNCER_KEY_traefik:
                 secret: traefik
+              ENROLL_KEY:
+              ENROLL_INSTANCE_NAME:
+                global: "{project}-{stack}"
               COLLECTIONS: crowdsecurity/traefik
             network:
               default-bridge: true

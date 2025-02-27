@@ -60,22 +60,6 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             }
         )
 
-        self.dashboard = TraefikDynamicHttpModel(
-            name="dashboard",
-            public=False,
-            hostname="system",
-            prefix=ServiceExtract(
-                extract=ContainerExtract(
-                    ContainerExtractSource(
-                        ContainerExtractSimpleSource(self.config.path)
-                    )
-                )
-            ),
-            service=TraefikDynamicServiceModel("api@internal"),
-        ).build_resource(
-            None, opts=self.child_opts, main_service=self, traefik_service=self
-        )
-
         self.crowdsec = TraefikDynamicMiddlewareFullModel(
             name=crowdsec_service.name(),
             data={
@@ -88,6 +72,22 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
                 ),
             },
             plugin=crowdsec_service.name(),
+        ).build_resource(
+            None, opts=self.child_opts, main_service=self, traefik_service=self
+        )
+
+        self.dashboard = TraefikDynamicHttpModel(
+            name="dashboard",
+            public=False,
+            hostname="system",
+            prefix=ServiceExtract(
+                extract=ContainerExtract(
+                    ContainerExtractSource(
+                        ContainerExtractSimpleSource(self.config.path)
+                    )
+                )
+            ),
+            service=TraefikDynamicServiceModel("api@internal"),
         ).build_resource(
             None, opts=self.child_opts, main_service=self, traefik_service=self
         )

@@ -10,7 +10,7 @@ from pulumi import ResourceOptions
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
-    from ...resource.dynamic import TraefikDynamicConfigResource
+    from ...resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
 
 
 class TraefikDynamicMiddlewareFullModel(HomelabBaseModel):
@@ -42,10 +42,10 @@ class TraefikDynamicMiddlewareFullModel(HomelabBaseModel):
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
-    ) -> TraefikDynamicConfigResource:
-        from ...resource.dynamic import TraefikDynamicConfigResource
+    ) -> TraefikDynamicMiddlwareConfigResource:
+        from ...resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
 
-        return TraefikDynamicConfigResource(
+        return TraefikDynamicMiddlwareConfigResource(
             resource_name,
             self,
             opts=opts,
