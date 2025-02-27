@@ -131,6 +131,15 @@ class TraefikStaticConfigResource(
                         }
                     },
                 },
+                "experimental": {
+                    "plugins": {
+                        name: {
+                            "moduleName": model.name,
+                            "version": model.version,
+                        }
+                        for name, model in traefik_config.plugins.items()
+                    },
+                },
             },
             volume_resource=traefik_service.docker_resource_args.volume,
         )

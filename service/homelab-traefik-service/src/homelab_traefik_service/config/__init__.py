@@ -29,9 +29,15 @@ class TraefikProxyProtocolConfig(HomelabBaseModel):
     ips: list[IPvAnyAddress] = []
 
 
+class TraefikPluginConfig(HomelabBaseModel):
+    name: str
+    version: str
+
+
 class TraefikConfig(HomelabBaseModel):
     path: str
     acme: TraefikAcmeConfig
     provider: TraefikProviderConfig
     entrypoint: TraefikEntrypointConfig
     proxy_protocol: TraefikProxyProtocolConfig = TraefikProxyProtocolConfig()
+    plugins: dict[str, TraefikPluginConfig] = {}

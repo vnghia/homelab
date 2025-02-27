@@ -8,6 +8,7 @@ dependencies = [
     "homelab-docker",
     "homelab-network",
     "homelab-tailscale-service",
+    "homelab-crowdsec-service",
     "pydantic>=2.10.6",
     "pulumi>=3.148.0",
 ]

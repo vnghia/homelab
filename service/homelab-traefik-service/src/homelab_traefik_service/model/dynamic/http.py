@@ -90,7 +90,10 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
 
         middlewares: dict[str, Any] = reduce(
             operator.or_,
-            [middleware.to_section(main_service) for middleware in self.middlewares],
+            [
+                middleware.to_section(main_service, traefik_service)
+                for middleware in self.middlewares
+            ],
             {},
         )
         if middlewares:

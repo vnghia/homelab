@@ -92,6 +92,8 @@ config:
           traefik-config:
             backup: false
           traefik-cert: {}
+          traefik-plugin:
+            backup: false
           nghe-cache: {}
           memos-data: {}
           dagu-home: {}
@@ -186,6 +188,10 @@ config:
               private-http: "private-http"
               public-https: "public-https"
               private-https: "private-https"
+            plugins:
+              crowdsec:
+                name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+                version: "v1.4.1"
           container:
             image: traefik
             command:
@@ -210,6 +216,7 @@ config:
                 path: /etc/traefik/config
                 read-only: true
               traefik-cert: /etc/traefik/cert
+              traefik-plugin: /plugins-storage
         crowdsec:
           config:
             docker:
