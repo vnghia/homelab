@@ -33,11 +33,9 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
     ) -> dict[str, Any]:
         entrypoint = traefik_service.config.entrypoint
         router_name = main_service.add_service_name(self.name)
-        hostname = (
-            traefik_service.network_resource.public.hostnames
-            if self.public
-            else traefik_service.network_resource.private.hostnames
-        )[self.hostname or router_name]
+        hostname = traefik_service.docker_resource_args.hostnames[self.public][
+            self.hostname or router_name
+        ]
 
         data: dict[str, Any] = {
             "http": {

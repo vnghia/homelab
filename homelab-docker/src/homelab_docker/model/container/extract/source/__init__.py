@@ -9,6 +9,7 @@ from pulumi import Output
 from ...volume_path import ContainerVolumePath
 from .env import ContainerExtractEnvSource
 from .global_ import ContainerExtractGlobalSource
+from .hostname import ContainerExtractHostnameSource
 from .secret import ContainerExtractSecretSource
 from .simple import ContainerExtractSimpleSource
 from .volume import ContainerExtractVolumeSource
@@ -25,6 +26,7 @@ class ContainerExtractSource(
         | ContainerExtractVolumeSource
         | ContainerExtractSimpleSource
         | ContainerExtractSecretSource
+        | ContainerExtractHostnameSource
     ]
 ):
     def extract_str(

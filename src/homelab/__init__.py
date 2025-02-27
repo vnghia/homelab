@@ -41,6 +41,7 @@ class Homelab:
             private_ips=self.tailscale.ips,
             project_prefix=self.project_prefix,
         )
+        self.docker.resource_args.hostnames |= self.network.hostnames
 
         self.crowdsec = CrowdsecService(
             self.docker.services_config.crowdsec,
@@ -55,6 +56,7 @@ class Homelab:
             crowdsec_service=self.crowdsec,
             docker_resource_args=self.docker.resource_args,
         )
+
         self.ntfy = NtfyService(
             self.docker.services_config.ntfy,
             opts=None,

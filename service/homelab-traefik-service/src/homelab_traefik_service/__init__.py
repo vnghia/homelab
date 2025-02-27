@@ -39,7 +39,6 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
-        self.network_resource = network_resource
 
         self.static = TraefikStaticConfigResource(
             opts=self.child_opts,

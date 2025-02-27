@@ -1,6 +1,6 @@
 from typing import Mapping
 
-from pulumi import ComponentResource, Input, ResourceOptions
+from pulumi import ComponentResource, Input, Output, ResourceOptions
 from pydantic import IPvAnyAddress
 
 from homelab_network.config.network import NetworkConfig
@@ -34,3 +34,7 @@ class NetworkResource(ComponentResource):
         )
 
         self.register_outputs({})
+
+    @property
+    def hostnames(self) -> dict[bool, dict[str, Output[str]]]:
+        return {True: self.public.hostnames, False: self.private.hostnames}

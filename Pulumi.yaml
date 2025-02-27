@@ -273,6 +273,13 @@ config:
             image: ntfy
             command: ["serve"]
             envs:
+              NTFY_BASE_URL:
+                source:
+                  hostname: ntfy
+                  public: true
+                transform:
+                  string:
+                    template: "https://{value}"
               NTFY_LISTEN_HTTP: ":8080"
               NTFY_CACHE_FILE:
                 source:
