@@ -41,6 +41,9 @@ config:
           resticprofile:
             repo: creativeprojects/resticprofile
             tag: "0.29.1"
+          crowdsec:
+            repo: ghcr.io/crowdsecurity/crowdsec
+            tag: "v1.6.5"
         build:
           barman:
             context:
@@ -94,6 +97,8 @@ config:
           dagu-home: {}
           dagu-dags:
             backup: false
+          crowdsec-data: {}
+          crowdsec-config: {}
           barman-home: {}
           barman-config:
             backup: false
@@ -195,6 +200,9 @@ config:
               interval: 1s
               timeout: 5s
               retries: 5
+            labels:
+              crowdsec.enable: true
+              crowdsec.labels.type: traefik
             network:
               service: tailscale
             volumes:
@@ -202,6 +210,29 @@ config:
                 path: /etc/traefik/config
                 read-only: true
               traefik-cert: /etc/traefik/cert
+        crowdsec:
+          config:
+            docker:
+              acquis-dir:
+                extract:
+                  source:
+                    volume: crowdsec-config
+                  transform:
+                    path: acquis.d
+              check-interval: 10s
+          container:
+            image: crowdsec
+            docker-socket:
+              write: false
+            envs:
+              COLLECTIONS: crowdsecurity/traefik
+            network:
+              default-bridge: true
+            tmpfs:
+              - /tmp
+            volumes:
+              crowdsec-data: /var/lib/crowdsec/data
+              crowdsec-config: /etc/crowdsec
         dozzle:
           config:
             traefik:

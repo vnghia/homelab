@@ -2,6 +2,7 @@ import json_fix as json_fix
 from homelab_backup_service import BackupService
 from homelab_barman_service import BarmanService
 from homelab_config import Config
+from homelab_crowdsec_service import CrowdsecService
 from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -49,6 +50,12 @@ class Homelab:
         )
         self.dagu = DaguService(
             self.docker.services_config.dagu,
+            opts=None,
+            traefik_service=self.traefik,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.crowdsec = CrowdsecService(
+            self.docker.services_config.crowdsec,
             opts=None,
             traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
