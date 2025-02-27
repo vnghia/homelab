@@ -1,6 +1,6 @@
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_pydantic import HomelabBaseModel, RelativePath
-from pydantic import Field, HttpUrl
+from pydantic import HttpUrl, IPvAnyAddress
 
 
 class TraefikAcmeStorageConfig(HomelabBaseModel):
@@ -19,10 +19,14 @@ class TraefikProviderConfig(HomelabBaseModel):
 
 
 class TraefikEntrypointConfig(HomelabBaseModel):
-    public_http: str = Field(alias="public-http")
-    private_http: str = Field(alias="private-http")
-    public_https: str = Field(alias="public-https")
-    private_https: str = Field(alias="private-https")
+    public_http: str
+    private_http: str
+    public_https: str
+    private_https: str
+
+
+class TraefikProxyProtocolConfig(HomelabBaseModel):
+    ips: list[IPvAnyAddress] = []
 
 
 class TraefikConfig(HomelabBaseModel):
@@ -30,3 +34,4 @@ class TraefikConfig(HomelabBaseModel):
     acme: TraefikAcmeConfig
     provider: TraefikProviderConfig
     entrypoint: TraefikEntrypointConfig
+    proxy_protocol: TraefikProxyProtocolConfig = TraefikProxyProtocolConfig()

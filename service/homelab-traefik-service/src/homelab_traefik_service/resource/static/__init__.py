@@ -43,6 +43,16 @@ class TraefikStaticConfigResource(
             path=traefik_config.provider.file
         )
 
+        proxy_protocol = (
+            {
+                "proxyProtocol": {
+                    "trustedIPs": [str(ip) for ip in traefik_config.proxy_protocol.ips]
+                }
+            }
+            if traefik_config.proxy_protocol.ips
+            else {}
+        )
+
         super().__init__(
             "static",
             opts=opts,
@@ -75,13 +85,15 @@ class TraefikStaticConfigResource(
                                 "entryPoint": {"to": ":443", "scheme": "https"}
                             }
                         },
-                    },
+                    }
+                    | proxy_protocol,
                     traefik_config.entrypoint.private_https: {"address": "[::]:443"},
                     traefik_config.entrypoint.public_https: {
                         "address": "[::]:{}".format(
                             tailscale_model.ports["httpsv4"].internal
                         ),
-                    },
+                    }
+                    | proxy_protocol,
                 },
                 "providers": {
                     "file": {
