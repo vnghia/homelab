@@ -87,11 +87,15 @@ class TraefikStaticConfigResource(
                         },
                     }
                     | proxy_protocol,
-                    traefik_config.entrypoint.private_https: {"address": "[::]:443"},
+                    traefik_config.entrypoint.private_https: {
+                        "address": "[::]:443",
+                        "http3": {},
+                    },
                     traefik_config.entrypoint.public_https: {
                         "address": "[::]:{}".format(
                             tailscale_model.ports["httpsv4"].internal
                         ),
+                        "http3": {},
                     }
                     | proxy_protocol,
                 },

@@ -135,10 +135,22 @@ config:
                 internal: 444
                 external: 443
                 ip: "0.0.0.0"
+                protocol: tcp
               httpsv6:
                 internal: 444
                 external: 443
                 ip: "::"
+                protocol: tcp
+              httpsv4-udp:
+                internal: 444
+                external: 443
+                ip: "0.0.0.0"
+                protocol: udp
+              httpsv6-udp:
+                internal: 444
+                external: 443
+                ip: "::"
+                protocol: udp
             tmpfs:
               - /tmp
               - /run
