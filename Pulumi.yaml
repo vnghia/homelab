@@ -72,7 +72,7 @@ config:
                 - "-U"
                 - source:
                     env: POSTGRES_DB
-              interval: 15s
+              interval: 30s
               retries: 5
               timeout: 5s
             tmpfs:
@@ -123,7 +123,7 @@ config:
                   "-q",
                   "http://localhost:9002/healthz",
                 ]
-              interval: 15s
+              interval: 30s
               timeout: 5s
             network:
               default-bridge: true
@@ -197,7 +197,7 @@ config:
                   path: static.toml
             healthcheck:
               tests: ["CMD", "traefik", "healthcheck", "--ping"]
-              interval: 15s
+              interval: 30s
               timeout: 5s
               retries: 5
             labels:
@@ -237,7 +237,7 @@ config:
                   "-q",
                   "http://localhost:8080/health",
                 ]
-              interval: 15s
+              interval: 30s
               timeout: 5s
             envs:
               BOUNCER_KEY_traefik:
@@ -281,7 +281,7 @@ config:
               write: false
             healthcheck:
               tests: ["CMD", "/dozzle", "healthcheck"]
-              interval: 15s
+              interval: 30s
               timeout: 30s
               retries: 5
               start-period: 30s
@@ -323,7 +323,7 @@ config:
                   transform:
                     string:
                       template: "http://localhost:{value}/rest/health"
-              interval: 15s
+              interval: 30s
               timeout: 5s
             network:
               default-bridge: true
@@ -369,7 +369,7 @@ config:
                   transform:
                     string:
                       template: "http://localhost:{value}/healthz"
-              interval: 15s
+              interval: 30s
               timeout: 5s
             volumes:
               memos-data: /var/opt/memos
@@ -410,7 +410,7 @@ config:
                       template: "http://localhost:{value}/api/v1/health"
                 - "-O"
                 - "/dev/null"
-              interval: 15s
+              interval: 30s
               timeout: 5s
             tmpfs:
               - /tmp
