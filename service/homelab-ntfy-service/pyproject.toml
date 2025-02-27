@@ -1,14 +1,15 @@
 [project]
-name = "homelab-crowdsec-service"
+name = "homelab-ntfy-service"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
 dependencies = [
     "homelab-pydantic",
     "homelab-docker",
-    "pulumi>=3.150.0",
-    "pulumi-random>=4.17.0",
+    "homelab-traefik-service",
     "pydantic>=2.10.6",
+    "pulumi-random>=4.17.0",
+    "pulumi>=3.148.0",
 ]
 
 [build-system]

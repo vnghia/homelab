@@ -8,6 +8,7 @@ from homelab_docker.config import DockerConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.database import DatabaseResource
 from homelab_network.resource.network import NetworkResource
+from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
@@ -52,6 +53,12 @@ class Homelab:
             network_resource=self.network,
             tailscale_service=self.tailscale,
             crowdsec_service=self.crowdsec,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.ntfy = NtfyService(
+            self.docker.services_config.ntfy,
+            opts=None,
+            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )
         self.dagu = DaguService(

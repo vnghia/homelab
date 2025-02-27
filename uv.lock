@@ -14,6 +14,7 @@ members = [
     "homelab-docker",
     "homelab-integration",
     "homelab-network",
+    "homelab-ntfy-service",
     "homelab-pydantic",
     "homelab-restic-service",
     "homelab-tailscale-service",
@@ -347,6 +348,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-integration" },
     { name = "homelab-network" },
+    { name = "homelab-ntfy-service" },
     { name = "homelab-restic-service" },
     { name = "homelab-tailscale-service" },
     { name = "homelab-traefik-service" },
@@ -372,6 +374,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-integration", editable = "homelab-integration" },
     { name = "homelab-network", editable = "homelab-network" },
+    { name = "homelab-ntfy-service", editable = "service/homelab-ntfy-service" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
@@ -598,6 +601,29 @@ requires-dist = [
 ]
 
 [[package]]
+name = "homelab-ntfy-service"
+version = "0.1.0"
+source = { editable = "service/homelab-ntfy-service" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-pydantic" },
+    { name = "homelab-traefik-service" },
+    { name = "pulumi" },
+    { name = "pulumi-random" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pulumi-random", specifier = ">=4.17.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
 name = "homelab-pydantic"
 version = "0.1.0"
 source = { editable = "homelab-pydantic" }
@@ -665,6 +691,7 @@ name = "homelab-traefik-service"
 version = "0.1.0"
 source = { editable = "service/homelab-traefik-service" }
 dependencies = [
+    { name = "homelab-crowdsec-service" },
     { name = "homelab-docker" },
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
@@ -675,6 +702,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "homelab-crowdsec-service", editable = "service/homelab-crowdsec-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },

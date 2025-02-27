@@ -44,6 +44,9 @@ config:
           crowdsec:
             repo: ghcr.io/crowdsecurity/crowdsec
             tag: "v1.6.5"
+          ntfy:
+            repo: binwiederhier/ntfy
+            tag: "v2.11.0"
         build:
           barman:
             context:
@@ -260,6 +263,12 @@ config:
             volumes:
               crowdsec-data: /var/lib/crowdsec/data
               crowdsec-config: /etc/crowdsec
+        ntfy:
+          config:
+            traefik: {}
+          container:
+            image: ntfy
+            command: ["serve"]
         dozzle:
           config:
             traefik:
