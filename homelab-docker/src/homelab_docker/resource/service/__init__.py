@@ -48,6 +48,10 @@ class ServiceResourceBase(ComponentResource):
         return None if name == cls.name() else name
 
     @property
+    def container(self) -> docker.Container:
+        return self.containers[None]
+
+    @property
     def database(self) -> ServiceDatabaseResource:
         if not self._database:
             raise ValueError(

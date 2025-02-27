@@ -104,6 +104,9 @@ config:
             backup: false
           crowdsec-data: {}
           crowdsec-config: {}
+          ntfy-cache: {}
+          ntfy-data:
+            backup: false
           barman-home: {}
           barman-config:
             backup: false
@@ -269,6 +272,32 @@ config:
           container:
             image: ntfy
             command: ["serve"]
+            envs:
+              NTFY_LISTEN_HTTP: ":8080"
+              NTFY_CACHE_FILE:
+                source:
+                  volume: ntfy-cache
+                transform:
+                  path: cache.db
+              NTFY_AUTH_FILE:
+                source:
+                  volume: ntfy-data
+                transform:
+                  path: auth.db
+              NTFY_AUTH_DEFAULT_ACCESS: "deny-all"
+              NTFY_BEHIND_PROXY: true
+              NTFY_ATTACHMENT_CACHE_DIR:
+                source:
+                  volume: ntfy-cache
+                transform:
+                  path: attachment
+              NTFY_ENABLE_SIGNUP: false
+              NTFY_ENABLE_RESERVATIONS: false
+              NTFY_ENABLE_METRICS: false
+              NTFY_LOG_FORMAT: json
+            volumes:
+              ntfy-cache: /var/cache/ntfy
+              ntfy-data: /var/lib/ntfy
         dozzle:
           config:
             traefik:

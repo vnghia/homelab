@@ -68,7 +68,7 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
                 "crowdseclapikey": crowdsec_service.secret[self.name()].result,
                 "crowdsecLapiScheme": "http",
                 "crowdsecLapiHost": Output.format(
-                    "{}:8080", crowdsec_service.containers[None].name
+                    "{}:8080", crowdsec_service.container.name
                 ),
             },
             plugin=crowdsec_service.name(),
