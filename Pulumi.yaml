@@ -23,7 +23,7 @@ config:
             repo: traefik
             tag: "v3.3.2"
           dozzle:
-            repo: amir20/dozzle
+            repo: ghcr.io/amir20/dozzle
             tag: "v8.10.7"
           nghe:
             repo: ghcr.io/vnghia/nghe-musl
