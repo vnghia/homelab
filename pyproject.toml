@@ -15,6 +15,7 @@ dependencies = [
     "homelab-backup-service",
     "homelab-barman-service",
     "homelab-restic-service",
+    "homelab-crowdsec-service",
     "pulumi>=3.148.0",
     "json-fix>=1.0.0",
 ]
@@ -44,6 +45,7 @@ homelab-network = { workspace = true }
 
 homelab-backup-service = { workspace = true }
 homelab-barman-service = { workspace = true }
+homelab-crowdsec-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }
