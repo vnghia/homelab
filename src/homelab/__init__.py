@@ -41,6 +41,11 @@ class Homelab:
             project_prefix=self.project_prefix,
         )
 
+        self.crowdsec = CrowdsecService(
+            self.docker.services_config.crowdsec,
+            opts=None,
+            docker_resource_args=self.docker.resource_args,
+        )
         self.traefik = TraefikService(
             self.docker.services_config.traefik,
             opts=None,
@@ -50,12 +55,6 @@ class Homelab:
         )
         self.dagu = DaguService(
             self.docker.services_config.dagu,
-            opts=None,
-            traefik_service=self.traefik,
-            docker_resource_args=self.docker.resource_args,
-        )
-        self.crowdsec = CrowdsecService(
-            self.docker.services_config.crowdsec,
             opts=None,
             traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,

@@ -72,7 +72,7 @@ config:
                 - "-U"
                 - source:
                     env: POSTGRES_DB
-              interval: 5s
+              interval: 15s
               retries: 5
               timeout: 5s
             tmpfs:
@@ -123,7 +123,7 @@ config:
                   "-q",
                   "http://localhost:9002/healthz",
                 ]
-              interval: 1s
+              interval: 15s
               timeout: 5s
             network:
               default-bridge: true
@@ -197,7 +197,7 @@ config:
                   path: static.toml
             healthcheck:
               tests: ["CMD", "traefik", "healthcheck", "--ping"]
-              interval: 1s
+              interval: 15s
               timeout: 5s
               retries: 5
             labels:
@@ -220,11 +220,28 @@ config:
                   transform:
                     path: acquis.d
               check-interval: 10s
+          secrets:
+            traefik:
+              length: 32
+              special: false
           container:
             image: crowdsec
             docker-socket:
               write: false
+            healthcheck:
+              tests:
+                [
+                  "CMD",
+                  "wget",
+                  "--spider",
+                  "-q",
+                  "http://localhost:8080/health",
+                ]
+              interval: 15s
+              timeout: 5s
             envs:
+              BOUNCER_KEY_traefik:
+                secret: traefik
               COLLECTIONS: crowdsecurity/traefik
             network:
               default-bridge: true
@@ -264,7 +281,7 @@ config:
               write: false
             healthcheck:
               tests: ["CMD", "/dozzle", "healthcheck"]
-              interval: 3s
+              interval: 15s
               timeout: 30s
               retries: 5
               start-period: 30s
@@ -306,7 +323,7 @@ config:
                   transform:
                     string:
                       template: "http://localhost:{value}/rest/health"
-              interval: 1s
+              interval: 15s
               timeout: 5s
             network:
               default-bridge: true
@@ -352,7 +369,7 @@ config:
                   transform:
                     string:
                       template: "http://localhost:{value}/healthz"
-              interval: 1s
+              interval: 15s
               timeout: 5s
             volumes:
               memos-data: /var/opt/memos
@@ -393,7 +410,7 @@ config:
                       template: "http://localhost:{value}/api/v1/health"
                 - "-O"
                 - "/dev/null"
-              interval: 1s
+              interval: 15s
               timeout: 5s
             tmpfs:
               - /tmp

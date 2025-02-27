@@ -9,7 +9,6 @@ from homelab_docker.resource.file.config import (
     YamlDumper,
 )
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
-from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 
 from .config import CrowdsecConfig
@@ -50,7 +49,6 @@ class CrowdsecService(ServiceWithConfigResourceBase[CrowdsecConfig]):
         model: ServiceWithConfigModel[CrowdsecConfig],
         *,
         opts: ResourceOptions | None,
-        traefik_service: TraefikService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
