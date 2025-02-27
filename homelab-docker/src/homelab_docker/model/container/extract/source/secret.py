@@ -17,8 +17,6 @@ class ContainerExtractSecretSource(HomelabBaseModel):
     def extract_str(
         self, _model: ContainerModel, main_service: ServiceResourceBase
     ) -> random.RandomPassword:
-        if not main_service.secret:
-            raise ValueError("secret is required for extracting from secret source")
         return main_service.secret[self.secret]
 
     def extract_path(

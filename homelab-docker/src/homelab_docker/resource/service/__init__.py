@@ -28,6 +28,10 @@ class ServiceResourceBase(ComponentResource):
 
         self.model = model
         self.docker_resource_args = docker_resource_args
+
+        self._database: ServiceDatabaseResource | None = None
+        self._secret: ServiceSecretResouse | None = None
+
         self.build_databases()
         self.build_secrets()
 
@@ -43,18 +47,33 @@ class ServiceResourceBase(ComponentResource):
     def get_key(cls, name: str | None) -> str | None:
         return None if name == cls.name() else name
 
+    @property
+    def database(self) -> ServiceDatabaseResource:
+        if not self._database:
+            raise ValueError(
+                "{} service is not configured with database".format(self.name())
+            )
+        return self._database
+
+    @property
+    def secret(self) -> ServiceSecretResouse:
+        if not self._secret:
+            raise ValueError(
+                "{} service is not configured with secret".format(self.name())
+            )
+        return self._secret
+
     def build_databases(self) -> None:
-        self.database: ServiceDatabaseResource | None = None
         if self.model.databases:
-            self.database = ServiceDatabaseResource(
+            self._database = ServiceDatabaseResource(
                 self.model.databases,
                 opts=self.child_opts,
                 database_config=self.docker_resource_args.config.database,
                 main_service=self,
             )
-            self.DATABASE_SOURCE_CONFIGS[self.name()] = self.database.source_config
+            self.DATABASE_SOURCE_CONFIGS[self.name()] = self._database.source_config
 
-            for type_, containers in self.database.containers.items():
+            for type_, containers in self._database.containers.items():
                 for name, versions in containers.items():
                     for version, container in versions.items():
                         pulumi.export(
@@ -65,13 +84,12 @@ class ServiceResourceBase(ComponentResource):
                         )
 
     def build_secrets(self) -> None:
-        self.secret: ServiceSecretResouse | None = None
         if self.model.secrets:
-            self.secret = ServiceSecretResouse(
+            self._secret = ServiceSecretResouse(
                 self.model.secrets, opts=self.child_opts, main_service=self
             )
 
-            for name, secret in self.secret.secrets.items():
+            for name, secret in self._secret.secrets.items():
                 pulumi.export(
                     "secret.{}".format(self.add_service_name(name)),
                     secret.result,
