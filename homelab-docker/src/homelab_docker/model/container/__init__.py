@@ -56,7 +56,7 @@ class ContainerModel(HomelabBaseModel):
     wait: bool = True
 
     envs: dict[str, ContainerExtract] = {}
-    labels: dict[str, str] = {}
+    labels: dict[str, ContainerExtract] = {}
 
     def build_command(
         self, main_service: ServiceResourceBase
@@ -122,15 +122,21 @@ class ContainerModel(HomelabBaseModel):
         main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs,
     ) -> dict[Output[str], Output[str]]:
-        return {
-            Output.from_input(k): Output.from_input(v)
-            for k, v in (
-                main_service.docker_resource_args.project_labels
-                | self.labels
-                | {"dev.dozzle.group": main_service.name()}
-                | ({"dev.dozzle.name": resource_name} if resource_name else {})
-            ).items()
-        } | {file.id: file.hash for file in build_args.files}
+        return (
+            {
+                Output.from_input(k): Output.from_input(v)
+                for k, v in (
+                    main_service.docker_resource_args.project_labels
+                    | {"dev.dozzle.group": main_service.name()}
+                    | ({"dev.dozzle.name": resource_name} if resource_name else {})
+                ).items()
+            }
+            | {
+                Output.from_input(k): v.extract_str(self, main_service)
+                for k, v in self.labels.items()
+            }
+            | {file.id: file.hash for file in build_args.files}
+        )
 
     def build_resource(
         self,
