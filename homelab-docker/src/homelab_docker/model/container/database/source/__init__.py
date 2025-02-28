@@ -1,7 +1,9 @@
 import dataclasses
 import json
 import urllib.parse
+from abc import abstractmethod
 
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
 from pydantic import PositiveInt
 
@@ -43,3 +45,16 @@ class ContainerDatabaseSourceModel:
                 "{}={}".format(k, v) for k, v in (json.loads(x) | query).items()
             )
         )
+
+
+class ContainerDatabaseSourceEnvsBase(HomelabBaseModel):
+    @abstractmethod
+    def to_envs(self, model: ContainerDatabaseSourceModel) -> dict[str, Output[str]]:
+        pass
+
+
+class ContainerDatabaseSourceEnvsRootBase[T: ContainerDatabaseSourceEnvsBase](
+    HomelabRootModel[T]
+):
+    def to_envs(self, model: ContainerDatabaseSourceModel) -> dict[str, Output[str]]:
+        return self.root.to_envs(model)

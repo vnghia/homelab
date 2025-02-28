@@ -1,15 +1,9 @@
-from __future__ import annotations
-
-import typing
-
-from homelab_pydantic import HomelabBaseModel
 from pulumi import Output
 
-if typing.TYPE_CHECKING:
-    from .. import ContainerDatabaseSourceModel
+from .. import ContainerDatabaseSourceEnvsBase, ContainerDatabaseSourceModel
 
 
-class ContainerPostgresDatabaseSourceUrlEnvs(HomelabBaseModel):
+class ContainerDatabasePostgresSourceUrlEnvs(ContainerDatabaseSourceEnvsBase):
     env: str
     scheme: str = "postgres"
     query: dict[str, str] = {"sslmode": "disable"}

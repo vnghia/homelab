@@ -39,7 +39,7 @@ class ContainerModel(HomelabBaseModel):
 
     capabilities: list[str] | None = None
     command: list[ContainerExtract] | None = None
-    database: ContainerDatabaseConfig | None = None
+    databases: list[ContainerDatabaseConfig] | None = None
     docker_socket: ContainerDockerSocketConfig | None = None
     entrypoint: list[ContainerExtract] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
@@ -88,8 +88,9 @@ class ContainerModel(HomelabBaseModel):
         build_args: ContainerModelBuildArgs,
     ) -> list[Output[str]]:
         database_envs: dict[str, Output[str]] = {}
-        if self.database:
-            database_envs = self.database.build_envs(main_service.database)
+        if self.databases:
+            for database in self.databases:
+                database_envs |= database.build_envs(main_service.database)
 
         return [
             Output.concat(k, "=", v)
@@ -150,8 +151,9 @@ class ContainerModel(HomelabBaseModel):
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
-        if self.database:
-            depends_on.append(self.database.to_container(main_service.database))
+        if self.databases:
+            for database in self.databases:
+                depends_on.append(database.to_container(main_service.database))
 
         return docker.Container(
             resource_name,

@@ -398,10 +398,10 @@ config:
               length: 16
           container:
             image: nghe
-            database:
-              postgres:
-              envs:
-                env: NGHE_DATABASE__URL
+            databases:
+              - postgres:
+                envs:
+                  env: NGHE_DATABASE__URL
             healthcheck:
               tests:
                 - "CMD"
@@ -444,10 +444,10 @@ config:
               postgres: {}
           container:
             image: memos
-            database:
-              postgres:
-              envs:
-                env: MEMOS_DSN
+            databases:
+              - postgres:
+                envs:
+                  env: MEMOS_DSN
             healthcheck:
               tests:
                 - "CMD"
