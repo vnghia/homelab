@@ -5,9 +5,13 @@ from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 
 from .config import NtfyConfig
+from .resource.user import NtfyUserAclConfig, NtfyUserAclPermission, NtfyUserResource
 
 
 class NtfyService(ServiceWithConfigResourceBase[NtfyConfig]):
+    ADMIN_ROLE = "admin"
+    USER_ROLE = "user"
+
     def __init__(
         self,
         model: ServiceWithConfigModel[NtfyConfig],
@@ -20,11 +24,29 @@ class NtfyService(ServiceWithConfigResourceBase[NtfyConfig]):
 
         self.build_containers(options={})
 
-        if self.config.traefik.root:
-            self.traefik = self.config.traefik.build_resources(
-                opts=self.child_opts,
-                main_service=self,
-                traefik_service=traefik_service,
-            )
+        self.admin = NtfyUserResource(
+            self.ADMIN_ROLE,
+            opts=self.child_opts,
+            container=self.container.name,
+            username=self.secret["{}-username".format(self.ADMIN_ROLE)].result,
+            password=self.secret["{}-password".format(self.ADMIN_ROLE)].result,
+            role=self.ADMIN_ROLE,
+            acl=NtfyUserAclConfig(),
+        )
+        self.user = NtfyUserResource(
+            self.USER_ROLE,
+            opts=self.child_opts,
+            container=self.container.name,
+            username=self.secret["{}-username".format(self.USER_ROLE)].result,
+            password=self.secret["{}-password".format(self.USER_ROLE)].result,
+            role=self.USER_ROLE,
+            acl=NtfyUserAclConfig({"*": NtfyUserAclPermission.WRITE_ONLY}),
+        )
+
+        self.traefik = self.config.traefik.build_resources(
+            opts=self.child_opts,
+            main_service=self,
+            traefik_service=traefik_service,
+        )
 
         self.register_outputs({})

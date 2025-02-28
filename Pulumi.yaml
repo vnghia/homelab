@@ -270,6 +270,15 @@ config:
         ntfy:
           config:
             traefik: {}
+          secrets:
+            admin-username:
+              length: 16
+              special: false
+            admin-password: {}
+            user-username:
+              length: 16
+              special: false
+            user-password: {}
           container:
             image: ntfy
             command: ["serve"]
