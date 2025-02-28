@@ -5,6 +5,7 @@ from pydantic import PositiveInt
 
 class DatabaseType(StrEnum):
     POSTGRES = auto()
+    REDIS = auto()
 
     def get_key(self, name: str | None) -> str | None:
         return None if name == self.value else name
@@ -23,3 +24,8 @@ class DatabaseType(StrEnum):
         self, service_name: str, name: str | None, version: PositiveInt
     ) -> str:
         return "{}-{}".format(self.get_full_name(service_name, name), version)
+
+    def get_full_name_version_tmp(
+        self, service_name: str, name: str | None, version: PositiveInt
+    ) -> str:
+        return "{}-{}-tmp".format(self.get_full_name(service_name, name), version)

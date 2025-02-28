@@ -31,7 +31,8 @@ class VolumeResource(ComponentResource):
         for service_name, database in config.services.databases.items():
             for type_, database_config in database.root.items():
                 for name, model in database_config.items():
-                    for version in config.database.root[type_].get_versions(model):
+                    type_config = config.database.root[type_]
+                    for version in type_config.get_versions(model):
                         full_name = type_.get_full_name_version(
                             service_name, name, version
                         )
@@ -40,6 +41,18 @@ class VolumeResource(ComponentResource):
                             opts=self.child_opts,
                             project_labels=project_labels,
                         )
+
+                        if type_config.tmp_dir:
+                            full_tmp_name = type_.get_full_name_version_tmp(
+                                service_name, name, version
+                            )
+                            self.volumes[full_tmp_name] = (
+                                LocalVolumeModel().build_resource(
+                                    full_tmp_name,
+                                    opts=self.child_opts,
+                                    project_labels=project_labels,
+                                )
+                            )
 
         export = {name: volume.name for name, volume in self.volumes.items()}
         for name, value in export.items():

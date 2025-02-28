@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from homelab_pydantic.path import AbsolutePath
@@ -16,7 +16,9 @@ if typing.TYPE_CHECKING:
 
 
 class DatabaseTypeEnvConfig(HomelabBaseModel):
-    username: str
+    DEFAULT_USERNAME: ClassVar[str] = "default"
+
+    username: str | None = None
     password: str
     database: str
     data_dir: str
@@ -26,7 +28,10 @@ class DatabaseTypeConfig(HomelabBaseModel):
     images: dict[str | None, dict[PositiveInt, RemoteImageModel]]
     version: PositiveInt
     port: PositiveInt
+
     data_dir: AbsolutePath
+    tmp_dir: AbsolutePath | None = None
+
     env: DatabaseTypeEnvConfig
     container: ContainerModel
 

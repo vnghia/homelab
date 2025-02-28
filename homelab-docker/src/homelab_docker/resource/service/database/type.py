@@ -7,7 +7,7 @@ import pulumi_random as random
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
-from ....config.database import DatabaseConfig
+from ....config.database import DatabaseConfig, DatabaseTypeEnvConfig
 from ....model.container import ContainerModel, ContainerModelBuildArgs
 from ....model.container.database.source import ContainerDatabaseSourceModel
 from ....model.container.extract import ContainerExtract
@@ -72,13 +72,17 @@ class ServiceDatabaseTypeResource(ComponentResource):
                     ),
                     volumes=ContainerVolumesConfig(
                         {full_name: ContainerVolumeConfig(self.config.data_dir)}
+                        | (
+                            {
+                                self.get_full_name_version_tmp(
+                                    version
+                                ): ContainerVolumeConfig(self.config.tmp_dir)
+                            }
+                            if self.config.tmp_dir
+                            else {}
+                        )
                     ),
                     envs={
-                        self.config.env.username: ContainerExtract(
-                            ContainerExtractSource(
-                                ContainerExtractSimpleSource(self.username)
-                            )
-                        ),
                         self.config.env.database: ContainerExtract(
                             ContainerExtractSource(
                                 ContainerExtractSimpleSource(self.database)
@@ -89,7 +93,18 @@ class ServiceDatabaseTypeResource(ComponentResource):
                                 ContainerExtractVolumeSource(volume=full_name)
                             )
                         ),
-                    },
+                    }
+                    | (
+                        {
+                            self.config.env.username: ContainerExtract(
+                                ContainerExtractSource(
+                                    ContainerExtractSimpleSource(self.username)
+                                )
+                            )
+                        }
+                        if self.config.env.username
+                        else {}
+                    ),
                 )
             ).build_resource(
                 full_name,
@@ -113,9 +128,16 @@ class ServiceDatabaseTypeResource(ComponentResource):
     def get_full_name_version(self, version: PositiveInt) -> str:
         return self.type.get_full_name_version(self.service_name, self.name, version)
 
+    def get_full_name_version_tmp(self, version: PositiveInt) -> str:
+        return self.type.get_full_name_version_tmp(
+            self.service_name, self.name, version
+        )
+
     def to_source_model(self, version: PositiveInt) -> ContainerDatabaseSourceModel:
         return ContainerDatabaseSourceModel(
-            username=self.username,
+            username=self.username
+            if self.config.env.username
+            else DatabaseTypeEnvConfig.DEFAULT_USERNAME,
             password=self.password.result,
             database=self.database,
             host=self.get_full_name_version(version),
