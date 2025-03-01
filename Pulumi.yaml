@@ -294,7 +294,17 @@ config:
               crowdsec-config: /etc/crowdsec
         ntfy:
           config:
-            traefik: {}
+            traefik:
+              traefik:
+                public: true
+                hostname: ntfy
+                service:
+                  port:
+                    source:
+                      env: NTFY_LISTEN_HTTP
+                    transform:
+                      string:
+                        capture: ":(\\d+)"
           secrets:
             admin-username:
               length: 16
@@ -307,6 +317,20 @@ config:
           container:
             image: ntfy
             command: ["serve"]
+            healthcheck:
+              tests:
+                - "CMD"
+                - "wget"
+                - "--spider"
+                - "-q"
+                - source:
+                    env: NTFY_LISTEN_HTTP
+                  transform:
+                    string:
+                      capture: ":(\\d+)"
+                      template: "http://localhost:{value}/v1/health"
+              interval: 30s
+              timeout: 5s
             envs:
               NTFY_BASE_URL:
                 source:
@@ -352,7 +376,7 @@ config:
                       env: DOZZLE_ADDR
                     transform:
                       string:
-                        capture: ":(.+)"
+                        capture: ":(\\d+)"
                 middlewares:
                   - name: redirect
                     data:
