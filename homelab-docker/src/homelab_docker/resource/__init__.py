@@ -5,6 +5,7 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 
 from ..config import DockerConfig, DockerNoServiceConfig
 from ..config.service import ServiceConfigBase
+from ..model.service import ServiceModel
 from .image import ImageResource
 from .network import NetworkResource
 from .plugin import PluginResource
@@ -43,6 +44,7 @@ class DockerResourceArgs:
     timezone: TimeZoneName
     config: DockerNoServiceConfig
     resource: DockerResource
+    models: dict[str, ServiceModel]
     project_labels: dict[str, str]
     hostnames: dict[bool, dict[str, Output[str]]] = dataclasses.field(
         default_factory=dict

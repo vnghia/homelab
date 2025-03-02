@@ -17,6 +17,7 @@ from .secret import ServiceSecretResouse
 class ServiceResourceBase(ComponentResource):
     CONTAINER_RESOURCE: dict[str, dict[str | None, docker.Container]] = {}
     DATABASE_SOURCE_CONFIGS: dict[str, ServiceDatabaseSourceConfig] = {}
+    SERVICES: dict[str, Any] = {}
 
     def __init__(
         self,
@@ -36,6 +37,8 @@ class ServiceResourceBase(ComponentResource):
 
         self.build_databases()
         self.build_secrets()
+
+        self.SERVICES[self.name()] = self
 
     @classmethod
     def name(cls) -> str:
@@ -132,8 +135,6 @@ class ServiceResourceBase(ComponentResource):
 
 
 class ServiceWithConfigResourceBase[T: HomelabBaseModel](ServiceResourceBase):
-    SERVICES_WITH_CONFIG: list[Any] = []
-
     def __init__(
         self,
         model: ServiceWithConfigModel[T],
@@ -143,4 +144,3 @@ class ServiceWithConfigResourceBase[T: HomelabBaseModel](ServiceResourceBase):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
         self.config = model.config
-        self.SERVICES_WITH_CONFIG.append(self)

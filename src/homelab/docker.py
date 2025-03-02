@@ -25,6 +25,7 @@ class Docker(ComponentResource):
             timezone=self.config.timezone,
             config=self.config,
             resource=self.resource,
+            models=config.docker.services.services,
             project_labels=Config.PROJECT_LABELS,
         )
 
