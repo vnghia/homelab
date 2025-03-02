@@ -1,3 +1,5 @@
+from typing import Any
+
 import pulumi
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
@@ -130,6 +132,8 @@ class ServiceResourceBase(ComponentResource):
 
 
 class ServiceWithConfigResourceBase[T: HomelabBaseModel](ServiceResourceBase):
+    SERVICES_WITH_CONFIG: list[Any] = []
+
     def __init__(
         self,
         model: ServiceWithConfigModel[T],
@@ -139,3 +143,4 @@ class ServiceWithConfigResourceBase[T: HomelabBaseModel](ServiceResourceBase):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
         self.config = model.config
+        self.SERVICES_WITH_CONFIG.append(self)

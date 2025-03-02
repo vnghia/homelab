@@ -7,8 +7,6 @@ from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_integration.s3 import S3ServiceConfig
 from homelab_pydantic import HomelabBaseModel
 from homelab_traefik_config import TraefikServiceConfigBase
-from homelab_traefik_service import TraefikService
-from homelab_traefik_service.config.service import TraefikServiceConfigBuilder
 from pulumi import ResourceOptions
 
 
@@ -22,7 +20,6 @@ class ExtraService(ServiceWithConfigResourceBase[ExtraConfig]):
         model: ServiceWithConfigModel[ExtraConfig],
         *,
         opts: ResourceOptions | None,
-        traefik_service: TraefikService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
@@ -34,14 +31,5 @@ class ExtraService(ServiceWithConfigResourceBase[ExtraConfig]):
             options[name].envs = {**options[name].envs, **s3.to_envs()}
 
         self.build_containers(options=options)
-
-        if self.config.traefik.root:
-            self.traefik = TraefikServiceConfigBuilder(
-                self.config.traefik
-            ).build_resources(
-                opts=self.child_opts,
-                main_service=self,
-                traefik_service=traefik_service,
-            )
 
         self.register_outputs({})

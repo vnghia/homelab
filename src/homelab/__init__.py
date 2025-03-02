@@ -61,25 +61,18 @@ class Homelab:
         self.ntfy = NtfyService(
             self.docker.services_config.ntfy,
             opts=None,
-            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )
         self.dagu = DaguService(
             self.docker.services_config.dagu,
             opts=None,
-            traefik_service=self.traefik,
             docker_resource_args=self.docker.resource_args,
         )
 
         self.extra_services = {
             service: type(
                 "{}Service".format(service.capitalize()), (ExtraService,), {}
-            )(
-                model,
-                opts=None,
-                traefik_service=self.traefik,
-                docker_resource_args=self.docker.resource_args,
-            )
+            )(model, opts=None, docker_resource_args=self.docker.resource_args)
             for service, model in self.docker.services_config.extra(
                 ServiceWithConfigModel[ExtraConfig]
             ).items()
@@ -110,4 +103,4 @@ class Homelab:
             docker_resource_args=self.docker.resource_args,
         )
 
-        self.file = File()
+        self.file = File(traefik_service=self.traefik)
