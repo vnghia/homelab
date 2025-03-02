@@ -239,6 +239,14 @@ config:
               crowdsec:
                 name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
                 version: "v1.4.1"
+            traefik:
+              dashboard:
+                name: dashboard
+                public: false
+                hostname: system
+                prefix:
+                  variable: API_PATH
+                service: "api@internal"
           container:
             image: traefik
             command:
