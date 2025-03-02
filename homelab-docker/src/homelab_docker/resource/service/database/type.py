@@ -7,10 +7,9 @@ import pulumi_random as random
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
-from homelab_docker.extract import GlobalExtract, GlobalExtractFull
+from homelab_docker.extract import GlobalExtract, GlobalExtractSource
 from homelab_docker.extract.container import ContainerExtract
 from homelab_docker.extract.container.volume import ContainerExtractVolumeSource
-from homelab_docker.extract.service import ServiceExtract
 from homelab_docker.extract.simple import GlobalExtractSimpleSource
 
 from ....config.database import DatabaseConfig, DatabaseTypeEnvConfig
@@ -82,22 +81,22 @@ class ServiceDatabaseTypeResource(ComponentResource):
                     ),
                     envs={
                         self.config.env.database: GlobalExtract(
-                            GlobalExtractSimpleSource(self.database)
+                            GlobalExtractSource(
+                                GlobalExtractSimpleSource(self.database)
+                            )
                         ),
                         self.config.env.data_dir: GlobalExtract(
-                            GlobalExtractFull(
-                                extract=ServiceExtract(
-                                    extract=ContainerExtract(
-                                        ContainerExtractVolumeSource(volume=full_name)
-                                    )
-                                )
+                            ContainerExtract(
+                                ContainerExtractVolumeSource(volume=full_name)
                             )
                         ),
                     }
                     | (
                         {
                             self.config.env.username: GlobalExtract(
-                                GlobalExtractSimpleSource(self.username)
+                                GlobalExtractSource(
+                                    GlobalExtractSimpleSource(self.username)
+                                )
                             )
                         }
                         if self.config.env.username

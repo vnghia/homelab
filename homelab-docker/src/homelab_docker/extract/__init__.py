@@ -7,13 +7,15 @@ from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
 from pulumi import Output
 from pydantic import ValidationError
 
+from .container import ContainerExtract
 from .docker import GlobalExtractDockerSource
 from .hostname import GlobalExtractHostnameSource
-from .service import ServiceExtract
+from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
 from .transform import ExtractTransform
 
 if typing.TYPE_CHECKING:
+    from ..model.container import ContainerModel
     from ..model.container.volume_path import ContainerVolumePath
     from ..resource.service import ServiceResourceBase
 
@@ -25,14 +27,18 @@ class GlobalExtractSource(
         | GlobalExtractSimpleSource
     ]
 ):
-    def extract_str(self, main_service: ServiceResourceBase) -> str | Output[str]:
+    def extract_str(
+        self, main_service: ServiceResourceBase, _model: ContainerModel | None
+    ) -> str | Output[str]:
         return self.root.extract_str(main_service)
 
-    def extract_path(self, main_service: ServiceResourceBase) -> AbsolutePath:
+    def extract_path(
+        self, main_service: ServiceResourceBase, _model: ContainerModel | None
+    ) -> AbsolutePath:
         return self.root.extract_path(main_service)
 
     def extract_volume_path(
-        self, main_service: ServiceResourceBase
+        self, main_service: ServiceResourceBase, _model: ContainerModel | None
     ) -> ContainerVolumePath:
         return self.root.extract_volume_path(main_service)
 
@@ -42,74 +48,96 @@ class GlobalExtractFull(HomelabBaseModel):
     extract: ServiceExtract | GlobalExtractSource
     transform: ExtractTransform = ExtractTransform()
 
-    def extract_str(self, main_service: ServiceResourceBase) -> Output[str]:
+    def extract_str(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> Output[str]:
         extract = self.extract
         transform = self.transform
         main_service = (
             main_service.SERVICES[self.service] if self.service else main_service
         )
+        model = None if self.service else model
 
         try:
             value_path = transform.transform_path(
-                extract.extract_path(main_service)
+                extract.extract_path(main_service, model)
             ).as_posix()
             return transform.transform_string(value_path)
         except TypeError:
-            value_str = extract.extract_str(main_service)
+            value_str = extract.extract_str(main_service, model)
             return transform.transform_string(value_str)
 
-    def extract_path(self, main_service: ServiceResourceBase) -> AbsolutePath:
+    def extract_path(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> AbsolutePath:
         extract = self.extract
         transform = self.transform
         main_service = (
             main_service.SERVICES[self.service] if self.service else main_service
         )
+        model = None if self.service else model
 
-        return transform.transform_path(extract.extract_path(main_service))
+        return transform.transform_path(extract.extract_path(main_service, model))
 
     def extract_volume_path(
-        self, main_service: ServiceResourceBase
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
         extract = self.extract
         transform = self.transform
         main_service = (
             main_service.SERVICES[self.service] if self.service else main_service
         )
+        model = None if self.service else model
 
         return transform.transform_volume_path(
-            extract.extract_volume_path(main_service)
+            extract.extract_volume_path(main_service, model)
         )
 
 
-class GlobalExtract(HomelabRootModel[GlobalExtractSimpleSource | GlobalExtractFull]):
-    def extract_str(self, main_service: ServiceResourceBase) -> Output[str]:
+class GlobalExtract(
+    HomelabRootModel[
+        ContainerExtract
+        | ServiceExtractSource
+        | GlobalExtractSource
+        | GlobalExtractFull
+    ]
+):
+    def extract_str(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> Output[str]:
         root = self.root
 
         if isinstance(root, GlobalExtractFull):
-            return root.extract_str(main_service)
+            return root.extract_str(main_service, model)
         else:
-            return ExtractTransform().transform_string(root.extract_str(main_service))
+            return ExtractTransform().transform_string(
+                root.extract_str(main_service, model)
+            )
 
-    def extract_path(self, main_service: ServiceResourceBase) -> AbsolutePath:
-        return self.root.extract_path(main_service)
+    def extract_path(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> AbsolutePath:
+        return self.root.extract_path(main_service, model)
 
     def extract_volume_path(
-        self, main_service: ServiceResourceBase
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
-        return self.root.extract_volume_path(main_service)
+        return self.root.extract_volume_path(main_service, model)
 
     @classmethod
-    def extract_recursively(cls, data: Any, main_service: ServiceResourceBase) -> Any:
+    def extract_recursively(
+        cls, data: Any, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> Any:
         if isinstance(data, dict):
             result_dict = {}
             for key, value in data.items():
                 if isinstance(value, dict):
                     try:
-                        extract = cls(**value).extract_str(main_service)
+                        extract = cls(**value).extract_str(main_service, model)
                     except ValidationError:
-                        extract = cls.extract_recursively(value, main_service)
+                        extract = cls.extract_recursively(value, main_service, model)
                 else:
-                    extract = cls.extract_recursively(value, main_service)
+                    extract = cls.extract_recursively(value, main_service, model)
                 result_dict[key] = extract
             return result_dict
         elif isinstance(data, list):
@@ -117,11 +145,11 @@ class GlobalExtract(HomelabRootModel[GlobalExtractSimpleSource | GlobalExtractFu
             for value in data:
                 if isinstance(value, dict):
                     try:
-                        extract = cls(**value).extract_str(main_service)
+                        extract = cls(**value).extract_str(main_service, model)
                     except ValidationError:
-                        extract = cls.extract_recursively(value, main_service)
+                        extract = cls.extract_recursively(value, main_service, model)
                 else:
-                    extract = cls.extract_recursively(value, main_service)
+                    extract = cls.extract_recursively(value, main_service, model)
                 result_list.append(extract)
             return result_list
         else:

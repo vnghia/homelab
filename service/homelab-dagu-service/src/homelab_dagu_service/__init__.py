@@ -40,8 +40,8 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self)
-        self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self)
+        self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self, None)
+        self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self, None)
 
         self.build_containers(options={})
 

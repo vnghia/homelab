@@ -53,14 +53,14 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                                     [
                                         Output.format(
                                             "PathPrefix(`{}`)",
-                                            root.prefix.extract_str(main_service),
+                                            root.prefix.extract_str(main_service, None),
                                         ),
                                     ]
                                     if root.prefix
                                     else []
                                 )
                                 + [
-                                    rule.extract_str(main_service)
+                                    rule.extract_str(main_service, None)
                                     for rule in root.rules
                                 ]
                             )

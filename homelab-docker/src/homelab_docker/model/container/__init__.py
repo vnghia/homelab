@@ -62,7 +62,7 @@ class ContainerModel(HomelabBaseModel):
         self, main_service: ServiceResourceBase
     ) -> list[Output[str]] | None:
         return (
-            [command.extract_str(main_service) for command in self.command]
+            [command.extract_str(main_service, self) for command in self.command]
             if self.command is not None
             else None
         )
@@ -71,7 +71,10 @@ class ContainerModel(HomelabBaseModel):
         self, main_service: ServiceResourceBase
     ) -> list[Output[str]] | None:
         return (
-            [entrypoint.extract_str(main_service) for entrypoint in self.entrypoint]
+            [
+                entrypoint.extract_str(main_service, self)
+                for entrypoint in self.entrypoint
+            ]
             if self.entrypoint is not None
             else None
         )
@@ -99,7 +102,7 @@ class ContainerModel(HomelabBaseModel):
                         )
                     }
                     | {
-                        k: Output.from_input(v.extract_str(main_service))
+                        k: Output.from_input(v.extract_str(main_service, self))
                         for k, v in self.envs.items()
                     }
                     | {
@@ -127,7 +130,7 @@ class ContainerModel(HomelabBaseModel):
                 ).items()
             }
             | {
-                Output.from_input(k): v.extract_str(main_service)
+                Output.from_input(k): v.extract_str(main_service, self)
                 for k, v in self.labels.items()
             }
             | {file.id: file.hash for file in build_args.files}
@@ -168,7 +171,7 @@ class ContainerModel(HomelabBaseModel):
             else None,
             command=self.build_command(main_service),
             entrypoints=self.build_entrypoint(main_service),
-            healthcheck=self.healthcheck.to_args(main_service)
+            healthcheck=self.healthcheck.to_args(main_service, self)
             if self.healthcheck
             else None,
             init=self.init,

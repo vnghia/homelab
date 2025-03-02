@@ -10,6 +10,7 @@ from ...extract import GlobalExtract
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
+    from . import ContainerModel
 
 
 class ContainerHealthCheckConfig(HomelabBaseModel):
@@ -20,10 +21,10 @@ class ContainerHealthCheckConfig(HomelabBaseModel):
     timeout: str | None = None
 
     def to_args(
-        self, main_service: ServiceResourceBase
+        self, main_service: ServiceResourceBase, model: ContainerModel
     ) -> docker.ContainerHealthcheckArgs:
         return docker.ContainerHealthcheckArgs(
-            tests=[test.extract_str(main_service) for test in self.tests],
+            tests=[test.extract_str(main_service, model) for test in self.tests],
             interval=self.interval,
             retries=self.retries,
             start_period=self.start_period,

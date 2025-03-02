@@ -48,7 +48,7 @@ class ResticGlobalProfileResource(
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
                         "cache-dir": restic_config.cache_dir.extract_path(
-                            restic_service
+                            restic_service, None
                         ),
                         "cleanup-cache": True,
                         "backup": {

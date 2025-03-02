@@ -74,8 +74,7 @@ config:
                 - "CMD"
                 - "pg_isready"
                 - "-U"
-                - source:
-                    env: POSTGRES_DB
+                - env: POSTGRES_DB
               interval: 30s
               retries: 5
               timeout: 5s
@@ -150,13 +149,11 @@ config:
               - NET_ADMIN
             healthcheck:
               tests:
-                [
-                  "CMD",
-                  "wget",
-                  "--spider",
-                  "-q",
-                  "http://localhost:9002/healthz",
-                ]
+                - "CMD"
+                - "wget"
+                - "--spider"
+                - "-q"
+                - "http://localhost:9002/healthz"
               interval: 30s
               timeout: 5s
             network:
@@ -229,7 +226,7 @@ config:
             command:
               - "traefik"
               - "--configFile"
-              - source:
+              - extract:
                   volume: traefik-config
                 transform:
                   path: static.toml
@@ -254,10 +251,9 @@ config:
             docker:
               acquis-dir:
                 extract:
-                  source:
-                    volume: crowdsec-config
-                  transform:
-                    path: acquis.d
+                  volume: crowdsec-config
+                transform:
+                  path: acquis.d
               check-interval: 10s
           secrets:
             traefik:
@@ -269,13 +265,11 @@ config:
               write: false
             healthcheck:
               tests:
-                [
-                  "CMD",
-                  "wget",
-                  "--spider",
-                  "-q",
-                  "http://localhost:8080/health",
-                ]
+                - "CMD"
+                - "wget"
+                - "--spider"
+                - "-q"
+                - "http://localhost:8080/health"
               interval: 30s
               timeout: 5s
             envs:
@@ -283,7 +277,7 @@ config:
                 secret: traefik
               ENROLL_KEY:
               ENROLL_INSTANCE_NAME:
-                global: "{project}-{stack}"
+                docker: "{project}-{stack}"
               COLLECTIONS: crowdsecurity/traefik
             network:
               default-bridge: true
@@ -300,7 +294,7 @@ config:
                 hostname: ntfy
                 service:
                   port:
-                    source:
+                    extract:
                       env: NTFY_LISTEN_HTTP
                     transform:
                       string:
@@ -323,7 +317,7 @@ config:
                 - "wget"
                 - "--spider"
                 - "-q"
-                - source:
+                - extract:
                     env: NTFY_LISTEN_HTTP
                   transform:
                     string:
@@ -333,7 +327,7 @@ config:
               timeout: 5s
             envs:
               NTFY_BASE_URL:
-                source:
+                extract:
                   hostname: ntfy
                   public: true
                 transform:
@@ -341,19 +335,19 @@ config:
                     template: "https://{value}"
               NTFY_LISTEN_HTTP: ":8080"
               NTFY_CACHE_FILE:
-                source:
+                extract:
                   volume: ntfy-cache
                 transform:
                   path: cache.db
               NTFY_AUTH_FILE:
-                source:
+                extract:
                   volume: ntfy-data
                 transform:
                   path: auth.db
               NTFY_AUTH_DEFAULT_ACCESS: "deny-all"
               NTFY_BEHIND_PROXY: true
               NTFY_ATTACHMENT_CACHE_DIR:
-                source:
+                extract:
                   volume: ntfy-cache
                 transform:
                   path: attachment
@@ -372,7 +366,7 @@ config:
                 hostname: system
                 service:
                   port:
-                    source:
+                    extract:
                       env: DOZZLE_ADDR
                     transform:
                       string:
@@ -384,11 +378,10 @@ config:
                         regex: "^https://([^/]+)/?$"
                         replacement:
                           extract:
-                            source:
-                              env: DOZZLE_BASE
-                            transform:
-                              string:
-                                template: "https://${{1}}{value}/"
+                            env: DOZZLE_BASE
+                          transform:
+                            string:
+                              template: "https://${{1}}{value}/"
           container:
             image: dozzle
             docker-socket:
@@ -403,7 +396,7 @@ config:
               DOZZLE_BASE: /log
               DOZZLE_ADDR: ":8080"
               DOZZLE_FILTER:
-                global: "label=pulumi.stack={stack}"
+                docker: "label=pulumi.stack={stack}"
               DOZZLE_NO_ANALYTICS: true
               DOZZLE_ENABLE_ACTIONS: true
         nghe:
@@ -432,7 +425,7 @@ config:
                 - "wget"
                 - "--spider"
                 - "-q"
-                - source:
+                - extract:
                     env: NGHE_SERVER__PORT
                   transform:
                     string:
@@ -446,7 +439,7 @@ config:
             envs:
               NGHE_SERVER__PORT: 3000
               NGHE_DATABASE__KEY:
-                source:
+                extract:
                   secret: key
                 transform:
                   secret:
@@ -478,7 +471,7 @@ config:
                 - "wget"
                 - "--spider"
                 - "-q"
-                - source:
+                - extract:
                     env: MEMOS_PORT
                   transform:
                     string:
@@ -517,7 +510,7 @@ config:
                 - "CMD"
                 - "wget"
                 - "-q"
-                - source:
+                - extract:
                     env: DAGU_PORT
                   transform:
                     string:
@@ -536,45 +529,43 @@ config:
             envs:
               DAGU_PORT: 8080
               DAGU_TZ:
-                global: "{timezone}"
+                docker: "{timezone}"
               DAGU_DAGS_DIR:
                 volume: dagu-dags
               DAGU_BASE_CONFIG:
-                source:
+                extract:
                   volume: dagu-dags
                 transform:
                   path: base.yaml
               DAGU_LOG_DIR:
-                source:
+                extract:
                   volume: dagu-home
                 transform:
                   path: logs
               DAGU_DATA_DIR:
-                source:
+                extract:
                   volume: dagu-home
                 transform:
                   path: data
               DAGU_SUSPEND_FLAGS_DIR:
-                source:
+                extract:
                   volume: dagu-home
                 transform:
                   path: suspend
               DAGU_ADMIN_LOG_DIR:
-                source:
+                extract:
                   volume: dagu-home
                 transform:
                   path: admin
         barman:
           config:
             config-dir:
-              extract:
-                volume: barman-config
+              volume: barman-config
             staging-dir:
               extract:
-                source:
-                  volume: barman-home
-                transform:
-                  path: staging
+                volume: barman-home
+              transform:
+                path: staging
             minimum-redundancy: 5
             last-backup-maximum-age: 1 WEEKS
             retention-policy: RECOVERY WINDOW OF 1 WEEKS
@@ -618,13 +609,9 @@ config:
           config:
             image: resticprofile
             profile-dir:
-              extract:
-                source:
-                  volume: restic-profile
+              volume: restic-profile
             cache-dir:
-              extract:
-                source:
-                  env: RESTIC_CACHE_DIR
+              env: RESTIC_CACHE_DIR
             repo:
               prefix: backup/restic
             keep:
@@ -674,8 +661,7 @@ config:
                 read-only: true
             envs:
               RESTIC_CACHE_DIR:
-                source:
-                  volume: restic-cache
+                volume: restic-cache
         backup:
           config:
             schedule: "0 0 * * *"

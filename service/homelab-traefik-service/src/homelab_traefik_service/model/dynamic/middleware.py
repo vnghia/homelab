@@ -26,7 +26,7 @@ class TraefikDynamicMiddlewareFullModelBuilder(
         root = self.root
 
         name = main_service.add_service_name(root.name)
-        section = GlobalExtract.extract_recursively(root.data, main_service)
+        section = GlobalExtract.extract_recursively(root.data, main_service, None)
 
         if root.plugin:
             traefik_service.config.plugins[root.plugin]

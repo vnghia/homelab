@@ -20,16 +20,16 @@ class ContainerExtractEnvSource(HomelabBaseModel):
         return model.envs[self.env]
 
     def extract_str(
-        self, model: ContainerModel, main_service: ServiceResourceBase
+        self, main_service: ServiceResourceBase, model: ContainerModel
     ) -> str | Output[str] | random.RandomPassword:
-        return self.get_env(model).extract_str(main_service)
+        return self.get_env(model).extract_str(main_service, model)
 
     def extract_path(
-        self, model: ContainerModel, main_service: ServiceResourceBase
+        self, main_service: ServiceResourceBase, model: ContainerModel
     ) -> AbsolutePath:
-        return self.get_env(model).extract_path(main_service)
+        return self.get_env(model).extract_path(main_service, model)
 
     def extract_volume_path(
-        self, model: ContainerModel, main_service: ServiceResourceBase
+        self, main_service: ServiceResourceBase, model: ContainerModel
     ) -> ContainerVolumePath:
-        return self.get_env(model).extract_volume_path(main_service)
+        return self.get_env(model).extract_volume_path(main_service, model)

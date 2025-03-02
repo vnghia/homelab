@@ -37,7 +37,7 @@ class TraefikStaticConfigResource(
         if traefik_model.command is None:
             raise ValueError("Could not extract static config path from command")
         static_volume_path = traefik_model.command[-1].extract_volume_path(
-            traefik_service
+            traefik_service, None
         )
         self.dynamic_directory_volume_path = static_volume_path.__replace__(
             path=traefik_config.provider.file

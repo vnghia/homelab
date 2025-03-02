@@ -31,7 +31,7 @@ class DockerAcquisConfigResource(
             resource_name,
             opts=opts,
             volume_path=crowdsec_service.config.docker.acquis_dir.extract_volume_path(
-                crowdsec_service
+                crowdsec_service, None
             )
             / "docker",
             data={

@@ -26,9 +26,9 @@ class TraefikDynamicServiceFullModelBuilder(
             "{}://{}:{}",
             type_.value,
             main_service.add_service_name(root.container),
-            root.port.extract_str(main_service).apply(
-                lambda x: TypeAdapter(PositiveInt).validate_python(int(x))
-            ),
+            root.port.extract_str(
+                main_service, main_service.model[root.container]
+            ).apply(lambda x: TypeAdapter(PositiveInt).validate_python(int(x))),
         ).apply(AnyUrl)
 
     def to_http_service(
