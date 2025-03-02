@@ -7,7 +7,6 @@ from homelab_pydantic import AbsolutePath, HomelabRootModel
 from pulumi import Output
 
 from .env import ContainerExtractEnvSource
-from .simple import ContainerExtractSimpleSource
 from .volume import ContainerExtractVolumeSource
 
 if typing.TYPE_CHECKING:
@@ -17,11 +16,7 @@ if typing.TYPE_CHECKING:
 
 
 class ContainerExtract(
-    HomelabRootModel[
-        ContainerExtractEnvSource
-        | ContainerExtractSimpleSource
-        | ContainerExtractVolumeSource
-    ]
+    HomelabRootModel[ContainerExtractEnvSource | ContainerExtractVolumeSource]
 ):
     def extract_str(
         self, model: ContainerModel, main_service: ServiceResourceBase

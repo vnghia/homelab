@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from homelab_docker.model.service.extract import ServiceExtract
+from homelab_docker.extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
 from .middleware import TraefikDynamicMiddlewareModel
@@ -11,8 +11,8 @@ class TraefikDynamicHttpModel(HomelabBaseModel):
     name: str | None = None
     public: bool
     hostname: str | None = None
-    prefix: ServiceExtract | None = None
+    prefix: GlobalExtract | None = None
 
-    rules: list[ServiceExtract] = []
+    rules: list[GlobalExtract] = []
     service: TraefikDynamicServiceModel
     middlewares: list[TraefikDynamicMiddlewareModel] = []

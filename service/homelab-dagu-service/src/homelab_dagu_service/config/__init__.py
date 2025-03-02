@@ -1,4 +1,4 @@
-from homelab_docker.model.service.extract import ServiceExtract
+from homelab_docker.extract.service import ServiceExtract
 from homelab_traefik_config import TraefikServiceConfigBase
 
 

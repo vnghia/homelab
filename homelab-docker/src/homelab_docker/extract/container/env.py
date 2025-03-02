@@ -10,26 +10,26 @@ if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
     from ...model.container.volume_path import ContainerVolumePath
     from ...resource.service import ServiceResourceBase
-    from . import ContainerExtract
+    from .. import GlobalExtract
 
 
 class ContainerExtractEnvSource(HomelabBaseModel):
     env: str
 
-    def get_env(self, model: ContainerModel) -> ContainerExtract:
+    def get_env(self, model: ContainerModel) -> GlobalExtract:
         return model.envs[self.env]
 
     def extract_str(
         self, model: ContainerModel, main_service: ServiceResourceBase
     ) -> str | Output[str] | random.RandomPassword:
-        return self.get_env(model).extract_str(model, main_service)
+        return self.get_env(model).extract_str(main_service)
 
     def extract_path(
         self, model: ContainerModel, main_service: ServiceResourceBase
     ) -> AbsolutePath:
-        return self.get_env(model).extract_path(model, main_service)
+        return self.get_env(model).extract_path(main_service)
 
     def extract_volume_path(
         self, model: ContainerModel, main_service: ServiceResourceBase
     ) -> ContainerVolumePath:
-        return self.get_env(model).extract_volume_path(model, main_service)
+        return self.get_env(model).extract_volume_path(main_service)

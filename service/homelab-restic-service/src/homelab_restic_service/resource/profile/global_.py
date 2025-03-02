@@ -28,7 +28,7 @@ class ResticGlobalProfileResource(
         restic_service: ResticService,
     ):
         restic_config = restic_service.config
-        restic_model = restic_service.model[restic_config.profile_dir.service]
+        restic_model = restic_service.model[restic_config.profile_dir.container]
 
         forget_options = {"prune": True} | {
             "keep-{}".format(timeframe): number

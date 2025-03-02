@@ -1,9 +1,9 @@
-from homelab_docker.model.service.extract import ServiceExtract
+from homelab_docker.extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
 
 class CrowdsecDockerConfig(HomelabBaseModel):
-    acquis_dir: ServiceExtract
+    acquis_dir: GlobalExtract
     check_interval: str
 
 

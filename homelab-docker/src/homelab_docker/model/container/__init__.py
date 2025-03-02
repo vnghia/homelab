@@ -8,9 +8,9 @@ import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, Output, Resource, ResourceOptions
 
+from ...extract import GlobalExtract
 from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
-from .extract import ContainerExtract
 from .healthcheck import ContainerHealthCheckConfig
 from .image import ContainerImageModelConfig
 from .network import ContainerNetworkConfig
@@ -38,10 +38,10 @@ class ContainerModel(HomelabBaseModel):
     image: ContainerImageModelConfig
 
     capabilities: list[str] | None = None
-    command: list[ContainerExtract] | None = None
+    command: list[GlobalExtract] | None = None
     databases: list[ContainerDatabaseConfig] | None = None
     docker_socket: ContainerDockerSocketConfig | None = None
-    entrypoint: list[ContainerExtract] | None = None
+    entrypoint: list[GlobalExtract] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
     init: bool | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
@@ -55,14 +55,14 @@ class ContainerModel(HomelabBaseModel):
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
 
-    envs: dict[str, ContainerExtract] = {}
-    labels: dict[str, ContainerExtract] = {}
+    envs: dict[str, GlobalExtract] = {}
+    labels: dict[str, GlobalExtract] = {}
 
     def build_command(
         self, main_service: ServiceResourceBase
     ) -> list[Output[str]] | None:
         return (
-            [command.extract_str(self, main_service) for command in self.command]
+            [command.extract_str(main_service) for command in self.command]
             if self.command is not None
             else None
         )
@@ -71,10 +71,7 @@ class ContainerModel(HomelabBaseModel):
         self, main_service: ServiceResourceBase
     ) -> list[Output[str]] | None:
         return (
-            [
-                entrypoint.extract_str(self, main_service)
-                for entrypoint in self.entrypoint
-            ]
+            [entrypoint.extract_str(main_service) for entrypoint in self.entrypoint]
             if self.entrypoint is not None
             else None
         )
@@ -102,7 +99,7 @@ class ContainerModel(HomelabBaseModel):
                         )
                     }
                     | {
-                        k: Output.from_input(v.extract_str(self, main_service))
+                        k: Output.from_input(v.extract_str(main_service))
                         for k, v in self.envs.items()
                     }
                     | {
@@ -130,7 +127,7 @@ class ContainerModel(HomelabBaseModel):
                 ).items()
             }
             | {
-                Output.from_input(k): v.extract_str(self, main_service)
+                Output.from_input(k): v.extract_str(main_service)
                 for k, v in self.labels.items()
             }
             | {file.id: file.hash for file in build_args.files}
@@ -171,7 +168,7 @@ class ContainerModel(HomelabBaseModel):
             else None,
             command=self.build_command(main_service),
             entrypoints=self.build_entrypoint(main_service),
-            healthcheck=self.healthcheck.to_args(self, main_service)
+            healthcheck=self.healthcheck.to_args(main_service)
             if self.healthcheck
             else None,
             init=self.init,

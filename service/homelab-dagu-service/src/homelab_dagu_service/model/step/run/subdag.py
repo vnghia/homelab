@@ -20,7 +20,7 @@ class DaguDagStepRunSubdagModel(HomelabBaseModel):
         self, dagu_service: DaguService, params_: DaguDagParamsModel
     ) -> dict[str, Any]:
         dagu_config = dagu_service.config
-        dagu_model = dagu_service.model[dagu_config.dags_dir.service]
+        dagu_model = dagu_service.model[dagu_config.dags_dir.container]
         dag = dagu_service.DAGS[self.service][self.dag]
         params = self.params.to_params(dag.model)
 

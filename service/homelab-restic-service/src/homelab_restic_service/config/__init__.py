@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from homelab_dagu_service.config.group.docker import DaguDagDockerGroupConfig
-from homelab_docker.model.service.extract import ServiceExtract
+from homelab_docker.extract.service import ServiceExtract
 from homelab_pydantic import HomelabBaseModel
 
 from .keep import ResticKeepConfig

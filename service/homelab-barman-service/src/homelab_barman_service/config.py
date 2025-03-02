@@ -1,12 +1,12 @@
 from homelab_dagu_service.config.group.docker import DaguDagDockerGroupConfig
-from homelab_docker.model.service.extract import ServiceExtract
+from homelab_docker.extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from pydantic import PositiveInt
 
 
 class BarmanConfig(HomelabBaseModel):
-    config_dir: ServiceExtract
-    staging_dir: ServiceExtract
+    config_dir: GlobalExtract
+    staging_dir: GlobalExtract
 
     minimum_redundancy: PositiveInt
     last_backup_maximum_age: str

@@ -7,17 +7,15 @@ import pulumi_random as random
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
+from homelab_docker.extract import GlobalExtract, GlobalExtractFull
+from homelab_docker.extract.container import ContainerExtract
+from homelab_docker.extract.container.volume import ContainerExtractVolumeSource
+from homelab_docker.extract.service import ServiceExtract
+from homelab_docker.extract.simple import GlobalExtractSimpleSource
+
 from ....config.database import DatabaseConfig, DatabaseTypeEnvConfig
 from ....model.container import ContainerModel, ContainerModelBuildArgs
 from ....model.container.database.source import ContainerDatabaseSourceModel
-from ....model.container.extract import ContainerExtract
-from ....model.container.extract.source import ContainerExtractSource
-from ....model.container.extract.source.simple import (
-    ContainerExtractSimpleSource,
-)
-from ....model.container.extract.source.volume import (
-    ContainerExtractVolumeSource,
-)
 from ....model.container.image import ContainerImageModelConfig
 from ....model.container.volume import (
     ContainerVolumeConfig,
@@ -83,23 +81,23 @@ class ServiceDatabaseTypeResource(ComponentResource):
                         )
                     ),
                     envs={
-                        self.config.env.database: ContainerExtract(
-                            ContainerExtractSource(
-                                ContainerExtractSimpleSource(self.database)
-                            )
+                        self.config.env.database: GlobalExtract(
+                            GlobalExtractSimpleSource(self.database)
                         ),
-                        self.config.env.data_dir: ContainerExtract(
-                            ContainerExtractSource(
-                                ContainerExtractVolumeSource(volume=full_name)
+                        self.config.env.data_dir: GlobalExtract(
+                            GlobalExtractFull(
+                                extract=ServiceExtract(
+                                    extract=ContainerExtract(
+                                        ContainerExtractVolumeSource(volume=full_name)
+                                    )
+                                )
                             )
                         ),
                     }
                     | (
                         {
-                            self.config.env.username: ContainerExtract(
-                                ContainerExtractSource(
-                                    ContainerExtractSimpleSource(self.username)
-                                )
+                            self.config.env.username: GlobalExtract(
+                                GlobalExtractSimpleSource(self.username)
                             )
                         }
                         if self.config.env.username

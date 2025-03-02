@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 from typing import Any
 
-from homelab_docker.model.service.extract import ServiceExtract
+from homelab_docker.extract import GlobalExtract
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.middleware import (
@@ -26,7 +26,7 @@ class TraefikDynamicMiddlewareFullModelBuilder(
         root = self.root
 
         name = main_service.add_service_name(root.name)
-        section = ServiceExtract.extract_recursively(root.data, main_service)
+        section = GlobalExtract.extract_recursively(root.data, main_service)
 
         if root.plugin:
             traefik_service.config.plugins[root.plugin]
