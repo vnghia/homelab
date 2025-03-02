@@ -20,8 +20,7 @@ class TraefikStaticConfigResource(
     validator = schema.TraefikV3StaticConfiguration
     dumper = TomlDumper[schema.TraefikV3StaticConfiguration]
 
-    PUBLIC_CERT_RESOLVER = "public-cert-resolver"
-    PRIVATE_CERT_RESOLVER = "private-cert-resolver"
+    CERT_RESOLVER = "cert-resolver"
 
     def __init__(
         self,
@@ -34,13 +33,8 @@ class TraefikStaticConfigResource(
         traefik_model = traefik_service.model[None]
         tailscale_model = tailscale_service.model[None]
 
-        if traefik_model.command is None:
-            raise ValueError("Could not extract static config path from command")
-        static_volume_path = traefik_model.command[-1].extract_volume_path(
+        static_volume_path = traefik_service.config.path.static.extract_volume_path(
             traefik_service, None
-        )
-        self.dynamic_directory_volume_path = static_volume_path.__replace__(
-            path=traefik_config.provider.file
         )
 
         proxy_protocol = (
@@ -61,7 +55,9 @@ class TraefikStaticConfigResource(
                 "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
                 "accessLog": {"format": "json"},
                 "api": {
-                    "basePath": traefik_config.path.extract_str(traefik_service, None),
+                    "basePath": traefik_config.path.api.extract_str(
+                        traefik_service, None
+                    ),
                     "dashboard": True,
                     "disableDashboardAd": True,
                 },
@@ -101,31 +97,19 @@ class TraefikStaticConfigResource(
                 },
                 "providers": {
                     "file": {
-                        "directory": self.dynamic_directory_volume_path.to_path(
+                        "directory": traefik_service.dynamic_directory_volume_path.to_path(
                             traefik_model
                         ),
                         "watch": True,
                     },
                 },
                 "certificatesResolvers": {
-                    self.PUBLIC_CERT_RESOLVER: {
+                    self.CERT_RESOLVER: {
                         "acme": {
                             "caServer": str(traefik_config.acme.server),
                             "email": traefik_config.acme.email,
-                            "storage": traefik_config.acme.storage.public.to_path(
-                                traefik_model
-                            ),
-                            "httpChallenge": {
-                                "entryPoint": traefik_config.entrypoint.public_http
-                            },
-                        }
-                    },
-                    self.PRIVATE_CERT_RESOLVER: {
-                        "acme": {
-                            "caServer": str(traefik_config.acme.server),
-                            "email": traefik_config.acme.email,
-                            "storage": traefik_config.acme.storage.private.to_path(
-                                traefik_model
+                            "storage": traefik_config.acme.storage.extract_path(
+                                traefik_service, None
                             ),
                             "dnsChallenge": {"provider": "cloudflare"},
                         }

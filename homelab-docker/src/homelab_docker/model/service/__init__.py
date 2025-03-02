@@ -3,14 +3,15 @@ from functools import cached_property
 from homelab_pydantic import HomelabBaseModel
 from pydantic import Field
 
+from homelab_docker.extract import GlobalExtract
+
 from ...config.service.database import ServiceDatabaseConfig
 from ...config.service.secret import ServiceSecretConfig
-from ...extract.simple import GlobalExtractSimpleSource
 from ..container import ContainerModel
 
 
 class ServiceModel(HomelabBaseModel):
-    variables: dict[str, GlobalExtractSimpleSource] = {}
+    variables: dict[str, GlobalExtract] = {}
     databases: ServiceDatabaseConfig | None = None
     secrets: ServiceSecretConfig | None = None
     container_: ContainerModel | None = Field(None, alias="container")

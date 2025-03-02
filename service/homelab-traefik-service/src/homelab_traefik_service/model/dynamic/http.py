@@ -73,11 +73,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                             )
                             for middleware in root.middlewares
                         ],
-                        "tls": {
-                            "certResolver": traefik_service.static.PUBLIC_CERT_RESOLVER
-                            if root.public
-                            else traefik_service.static.PRIVATE_CERT_RESOLVER
-                        },
+                        "tls": {"certResolver": traefik_service.static.CERT_RESOLVER},
                     }
                 },
             }

@@ -28,6 +28,9 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
+        self.dynamic_directory_volume_path = (
+            self.config.path.dynamic.extract_volume_path(self, None)
+        )
         self.static = TraefikStaticConfigResource(
             opts=self.child_opts,
             traefik_service=self,
@@ -82,4 +85,4 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         self.register_outputs({})
 
     def get_dynamic_config_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.static.dynamic_directory_volume_path / RelativePath(PosixPath(name))
+        return self.dynamic_directory_volume_path / RelativePath(PosixPath(name))

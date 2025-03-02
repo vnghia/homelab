@@ -200,21 +200,36 @@ config:
               TS_ENABLE_HEALTH_CHECK: true
         traefik:
           variables:
+            CERT_PATH:
+              extract:
+                volume: traefik-cert
+              transform:
+                path: acme.json
+            CONFIG_PATH:
+              volume: traefik-config
+            STATIC_PATH:
+              extract:
+                variable: CONFIG_PATH
+              transform:
+                path: static.toml
+            DYNAMIC_PATH:
+              extract:
+                variable: CONFIG_PATH
+              transform:
+                path: dynamic
             API_PATH: /proxy
           config:
             path:
-              variable: API_PATH
+              static:
+                variable: STATIC_PATH
+              dynamic:
+                variable: DYNAMIC_PATH
+              api:
+                variable: API_PATH
             acme:
               server: https://acme-v02.api.letsencrypt.org/directory
               storage:
-                public:
-                  volume: traefik-cert
-                  path: acme-public.json
-                private:
-                  volume: traefik-cert
-                  path: acme-private.json
-            provider:
-              file: dynamic
+                variable: CERT_PATH
             entrypoint:
               public-http: "public-http"
               private-http: "private-http"
@@ -229,10 +244,7 @@ config:
             command:
               - "traefik"
               - "--configFile"
-              - extract:
-                  volume: traefik-config
-                transform:
-                  path: static.toml
+              - variable: STATIC_PATH
             healthcheck:
               tests: ["CMD", "traefik", "healthcheck", "--ping"]
               interval: 30s

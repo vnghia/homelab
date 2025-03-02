@@ -1,22 +1,18 @@
 from homelab_docker.extract.service import ServiceExtract
-from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_pydantic import HomelabBaseModel, RelativePath
+from homelab_pydantic import HomelabBaseModel
 from pydantic import HttpUrl, IPvAnyAddress
 
 
-class TraefikAcmeStorageConfig(HomelabBaseModel):
-    public: ContainerVolumePath
-    private: ContainerVolumePath
+class TraefikPathConfig(HomelabBaseModel):
+    static: ServiceExtract
+    dynamic: ServiceExtract
+    api: ServiceExtract
 
 
 class TraefikAcmeConfig(HomelabBaseModel):
     server: HttpUrl
     email: str
-    storage: TraefikAcmeStorageConfig
-
-
-class TraefikProviderConfig(HomelabBaseModel):
-    file: RelativePath
+    storage: ServiceExtract
 
 
 class TraefikEntrypointConfig(HomelabBaseModel):
@@ -36,9 +32,8 @@ class TraefikPluginConfig(HomelabBaseModel):
 
 
 class TraefikConfig(HomelabBaseModel):
-    path: ServiceExtract
+    path: TraefikPathConfig
     acme: TraefikAcmeConfig
-    provider: TraefikProviderConfig
     entrypoint: TraefikEntrypointConfig
     proxy_protocol: TraefikProxyProtocolConfig = TraefikProxyProtocolConfig()
     plugins: dict[str, TraefikPluginConfig] = {}
