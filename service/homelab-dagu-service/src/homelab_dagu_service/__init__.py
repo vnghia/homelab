@@ -47,12 +47,6 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
 
         self.build_containers(options={})
 
-        self.traefik = self.config.traefik.build_resources(
-            opts=self.child_opts,
-            main_service=self,
-            traefik_service=traefik_service,
-        )
-
         self.register_outputs({})
 
     def get_dag_volume_path(self, name: str) -> ContainerVolumePath:

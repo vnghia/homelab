@@ -2,28 +2,16 @@ from pathlib import PosixPath
 
 from homelab_crowdsec_service import CrowdsecService
 from homelab_docker.model.container import ContainerModelBuildArgs
-from homelab_docker.model.container.extract import ContainerExtract
-from homelab_docker.model.container.extract.source import ContainerExtractSource
-from homelab_docker.model.container.extract.source.simple import (
-    ContainerExtractSimpleSource,
-)
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.model.service.extract import ServiceExtract
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_network.resource.network import NetworkResource
 from homelab_pydantic import RelativePath
 from homelab_tailscale_service import TailscaleService
-from pulumi import Output, ResourceOptions
-
-from homelab_traefik_service.model.dynamic.middleware import (
-    TraefikDynamicMiddlewareFullModel,
-)
+from pulumi import ResourceOptions
 
 from .config import TraefikConfig
-from .model.dynamic.http import TraefikDynamicHttpModel
-from .model.dynamic.service import TraefikDynamicServiceModel
 from .resource.static import TraefikStaticConfigResource
 
 
@@ -59,37 +47,37 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             }
         )
 
-        self.crowdsec = TraefikDynamicMiddlewareFullModel(
-            name=crowdsec_service.name(),
-            data={
-                "enabled": True,
-                "crowdsecMode": "stream",
-                "crowdseclapikey": crowdsec_service.secret[self.name()].result,
-                "crowdsecLapiScheme": "http",
-                "crowdsecLapiHost": Output.format(
-                    "{}:8080", crowdsec_service.container.name
-                ),
-            },
-            plugin=crowdsec_service.name(),
-        ).build_resource(
-            None, opts=self.child_opts, main_service=self, traefik_service=self
-        )
+        # self.crowdsec = TraefikDynamicMiddlewareFullModel(
+        #     name=crowdsec_service.name(),
+        #     data={
+        #         "enabled": True,
+        #         "crowdsecMode": "stream",
+        #         "crowdseclapikey": crowdsec_service.secret[self.name()].result,
+        #         "crowdsecLapiScheme": "http",
+        #         "crowdsecLapiHost": Output.format(
+        #             "{}:8080", crowdsec_service.container.name
+        #         ),
+        #     },
+        #     plugin=crowdsec_service.name(),
+        # ).build_resource(
+        #     None, opts=self.child_opts, main_service=self, traefik_service=self
+        # )
 
-        self.dashboard = TraefikDynamicHttpModel(
-            name="dashboard",
-            public=False,
-            hostname="system",
-            prefix=ServiceExtract(
-                extract=ContainerExtract(
-                    ContainerExtractSource(
-                        ContainerExtractSimpleSource(self.config.path)
-                    )
-                )
-            ),
-            service=TraefikDynamicServiceModel("api@internal"),
-        ).build_resource(
-            None, opts=self.child_opts, main_service=self, traefik_service=self
-        )
+        # self.dashboard = TraefikDynamicHttpModel(
+        #     name="dashboard",
+        #     public=False,
+        #     hostname="system",
+        #     prefix=ServiceExtract(
+        #         extract=ContainerExtract(
+        #             ContainerExtractSource(
+        #                 ContainerExtractSimpleSource(self.config.path)
+        #             )
+        #         )
+        #     ),
+        #     service=TraefikDynamicServiceModel("api@internal"),
+        # ).build_resource(
+        #     None, opts=self.child_opts, main_service=self, traefik_service=self
+        # )
 
         self.register_outputs({})
 

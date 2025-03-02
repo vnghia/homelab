@@ -43,10 +43,4 @@ class NtfyService(ServiceWithConfigResourceBase[NtfyConfig]):
             acl=NtfyUserAclConfig({"*": NtfyUserAclPermission.WRITE_ONLY}),
         )
 
-        self.traefik = self.config.traefik.build_resources(
-            opts=self.child_opts,
-            main_service=self,
-            traefik_service=traefik_service,
-        )
-
         self.register_outputs({})

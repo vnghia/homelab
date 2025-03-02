@@ -2,17 +2,12 @@ from __future__ import annotations
 
 from homelab_pydantic import HomelabBaseModel, HomelabServiceConfigDict
 
-from .model.dynamic.http import TraefikDynamicHttpModel
-from .model.dynamic.middleware import TraefikDynamicMiddlewareFullModel
+from .model.dynamic import TraefikDynamicModel
 
 
-class TraefikServiceConfig(
-    HomelabServiceConfigDict[
-        TraefikDynamicHttpModel | TraefikDynamicMiddlewareFullModel
-    ]
-):
+class TraefikServiceConfig(HomelabServiceConfigDict[TraefikDynamicModel]):
     NONE_KEY = "traefik"
 
 
 class TraefikServiceConfigBase(HomelabBaseModel):
-    traefik: TraefikServiceConfig
+    traefik: TraefikServiceConfig = TraefikServiceConfig({})

@@ -65,9 +65,8 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                                 ]
                             )
                         ).apply(lambda args: " && ".join(args)),
-                        "middlewares": (
-                            [traefik_service.crowdsec.name] if root.public else []
-                        )
+                        # TODO: change to container extract
+                        "middlewares": (["traefik-crowdsec"] if root.public else [])
                         + [
                             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
                                 main_service

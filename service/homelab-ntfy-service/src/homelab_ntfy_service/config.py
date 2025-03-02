@@ -1,6 +1,5 @@
-from homelab_pydantic import HomelabBaseModel
-from homelab_traefik_service.config.service import TraefikServiceConfig
+from homelab_traefik_config import TraefikServiceConfigBase
 
 
-class NtfyConfig(HomelabBaseModel):
-    traefik: TraefikServiceConfig = TraefikServiceConfig({})
+class NtfyConfig(TraefikServiceConfigBase):
+    pass

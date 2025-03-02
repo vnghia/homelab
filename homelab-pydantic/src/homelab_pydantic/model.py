@@ -56,7 +56,7 @@ class HomelabRootModel[T](RootModel[T]):
     )
 
 
-class HomelabServiceConfigDict[T](RootModel[dict[str | None, T]]):
+class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
     NONE_KEY: ClassVar[str]
 
     @model_validator(mode="after")

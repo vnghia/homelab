@@ -3,24 +3,18 @@ from __future__ import annotations
 import typing
 
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_pydantic import HomelabServiceConfigDict
+from homelab_pydantic.model import HomelabRootModel
+from homelab_traefik_config import TraefikServiceConfig
 from pulumi import ResourceOptions
 
 from .. import TraefikService
-from ..model.dynamic.http import TraefikDynamicHttpModel
-from ..model.dynamic.middleware import TraefikDynamicMiddlewareFullModel
+from ..model.dynamic import TraefikDynamicModelBuilder
 
 if typing.TYPE_CHECKING:
     from ..resource.dynamic import TraefikDynamicConfigResource
 
 
-class TraefikServiceConfig(
-    HomelabServiceConfigDict[
-        TraefikDynamicHttpModel | TraefikDynamicMiddlewareFullModel
-    ]
-):
-    NONE_KEY = TraefikService.name()
-
+class TraefikServiceConfigBuilder(HomelabRootModel[TraefikServiceConfig]):
     def build_resources(
         self,
         *,
@@ -28,12 +22,14 @@ class TraefikServiceConfig(
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> dict[str | None, TraefikDynamicConfigResource]:
+        root = self.root.root
+
         return {
-            name: model.build_resource(
+            name: TraefikDynamicModelBuilder(model).build_resource(
                 name,
                 opts=opts,
                 main_service=main_service,
                 traefik_service=traefik_service,
             )
-            for name, model in self.root.items()
+            for name, model in root.items()
         }
