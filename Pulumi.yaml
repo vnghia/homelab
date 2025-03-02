@@ -199,8 +199,11 @@ config:
               TS_AUTH_ONCE: true
               TS_ENABLE_HEALTH_CHECK: true
         traefik:
+          variables:
+            API_PATH: /proxy
           config:
-            path: /proxy
+            path:
+              variable: API_PATH
             acme:
               server: https://acme-v02.api.letsencrypt.org/directory
               storage:

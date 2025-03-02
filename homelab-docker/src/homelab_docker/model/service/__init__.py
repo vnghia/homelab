@@ -5,10 +5,12 @@ from pydantic import Field
 
 from ...config.service.database import ServiceDatabaseConfig
 from ...config.service.secret import ServiceSecretConfig
+from ...extract.simple import GlobalExtractSimpleSource
 from ..container import ContainerModel
 
 
 class ServiceModel(HomelabBaseModel):
+    variables: dict[str, GlobalExtractSimpleSource] = {}
     databases: ServiceDatabaseConfig | None = None
     secrets: ServiceSecretConfig | None = None
     container_: ContainerModel | None = Field(None, alias="container")

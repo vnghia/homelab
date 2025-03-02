@@ -61,7 +61,7 @@ class TraefikStaticConfigResource(
                 "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
                 "accessLog": {"format": "json"},
                 "api": {
-                    "basePath": traefik_config.path,
+                    "basePath": traefik_config.path.extract_str(traefik_service, None),
                     "dashboard": True,
                     "disableDashboardAd": True,
                 },

@@ -1,3 +1,4 @@
+from homelab_docker.extract.service import ServiceExtract
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_pydantic import HomelabBaseModel, RelativePath
 from pydantic import HttpUrl, IPvAnyAddress
@@ -35,7 +36,7 @@ class TraefikPluginConfig(HomelabBaseModel):
 
 
 class TraefikConfig(HomelabBaseModel):
-    path: str
+    path: ServiceExtract
     acme: TraefikAcmeConfig
     provider: TraefikProviderConfig
     entrypoint: TraefikEntrypointConfig

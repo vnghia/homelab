@@ -8,6 +8,7 @@ from pulumi import Output
 
 from ..container import ContainerExtract
 from .secret import ServiceExtractSecretSource
+from .variable import ServiceExtractVariableSource
 
 if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
@@ -15,7 +16,9 @@ if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
 
 
-class ServiceExtractSource(HomelabRootModel[ServiceExtractSecretSource]):
+class ServiceExtractSource(
+    HomelabRootModel[ServiceExtractSecretSource | ServiceExtractVariableSource]
+):
     def extract_str(
         self, main_service: ServiceResourceBase, _model: ContainerModel | None
     ) -> str | Output[str] | random.RandomPassword:
