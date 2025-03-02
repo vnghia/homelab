@@ -9,6 +9,7 @@ dependencies = [
     "homelab-docker",
     "homelab-network",
     "homelab-integration",
+    "homelab-traefik-config",
     "homelab-tailscale-service",
     "homelab-traefik-service",
     "homelab-dagu-service",
@@ -44,6 +45,8 @@ homelab-integration = { workspace = true }
 homelab-pydantic = { workspace = true }
 homelab-network = { workspace = true }
 
+homelab-traefik-config = { workspace = true }
+
 homelab-backup-service = { workspace = true }
 homelab-barman-service = { workspace = true }
 homelab-crowdsec-service = { workspace = true }
@@ -60,7 +63,7 @@ allow-direct-references = true
 packages = ["src/homelab"]
 
 [tool.uv.workspace]
-members = ["homelab-*", "service/homelab-*"]
+members = ["homelab-*", "config/homelab-*", "service/homelab-*"]
 
 [tool.mypy]
 strict = true

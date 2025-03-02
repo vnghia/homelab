@@ -6,8 +6,8 @@ from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
-from ...model.dynamic.http import TraefikDynamicHttpModel
-from ...model.dynamic.middleware import TraefikDynamicMiddlewareFullModel
+from ...model.dynamic.http import TraefikDynamicHttpModelBuilder
+from ...model.dynamic.middleware import TraefikDynamicMiddlewareFullModelBuilder
 from . import schema
 
 if typing.TYPE_CHECKING:
@@ -23,13 +23,14 @@ class TraefikDynamicConfigResource(
     def __init__(
         self,
         resource_name: str | None,
-        model: TraefikDynamicHttpModel | TraefikDynamicMiddlewareFullModel,
+        model: TraefikDynamicHttpModelBuilder
+        | TraefikDynamicMiddlewareFullModelBuilder,
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ):
-        self.name = main_service.add_service_name(model.name)
+        self.name = main_service.add_service_name(model.root.name)
         super().__init__(
             resource_name or self.name,
             opts=opts,

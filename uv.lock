@@ -18,6 +18,7 @@ members = [
     "homelab-pydantic",
     "homelab-restic-service",
     "homelab-tailscale-service",
+    "homelab-traefik-config",
     "homelab-traefik-service",
 ]
 
@@ -351,6 +352,7 @@ dependencies = [
     { name = "homelab-ntfy-service" },
     { name = "homelab-restic-service" },
     { name = "homelab-tailscale-service" },
+    { name = "homelab-traefik-config" },
     { name = "homelab-traefik-service" },
     { name = "json-fix" },
     { name = "pulumi" },
@@ -377,6 +379,7 @@ requires-dist = [
     { name = "homelab-ntfy-service", editable = "service/homelab-ntfy-service" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
+    { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
     { name = "json-fix", specifier = ">=1.0.0" },
     { name = "pulumi", specifier = ">=3.148.0" },
@@ -687,6 +690,25 @@ requires-dist = [
 ]
 
 [[package]]
+name = "homelab-traefik-config"
+version = "0.1.0"
+source = { editable = "config/homelab-traefik-config" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-pydantic" },
+    { name = "homelab-tailscale-service" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
 name = "homelab-traefik-service"
 version = "0.1.0"
 source = { editable = "service/homelab-traefik-service" }
@@ -696,6 +718,7 @@ dependencies = [
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "homelab-tailscale-service" },
+    { name = "homelab-traefik-config" },
     { name = "pulumi" },
     { name = "pydantic" },
 ]
@@ -707,6 +730,7 @@ requires-dist = [
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
+    { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]

@@ -5,7 +5,7 @@ import typing
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
-from ...model.dynamic.http import TraefikDynamicHttpModel
+from ...model.dynamic.http import TraefikDynamicHttpModelBuilder
 from . import TraefikDynamicConfigResource
 
 if typing.TYPE_CHECKING:
@@ -18,7 +18,7 @@ class TraefikDynamicRouterConfigResource(
     def __init__(
         self,
         resource_name: str | None,
-        model: TraefikDynamicHttpModel,
+        model: TraefikDynamicHttpModelBuilder,
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,

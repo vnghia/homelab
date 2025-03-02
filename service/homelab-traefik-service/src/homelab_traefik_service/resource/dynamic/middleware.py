@@ -5,7 +5,7 @@ import typing
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
-from ...model.dynamic.middleware import TraefikDynamicMiddlewareFullModel
+from ...model.dynamic.middleware import TraefikDynamicMiddlewareFullModelBuilder
 from . import TraefikDynamicConfigResource
 
 if typing.TYPE_CHECKING:
@@ -18,7 +18,7 @@ class TraefikDynamicMiddlwareConfigResource(
     def __init__(
         self,
         resource_name: str | None,
-        model: TraefikDynamicMiddlewareFullModel,
+        model: TraefikDynamicMiddlewareFullModelBuilder,
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,

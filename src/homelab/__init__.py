@@ -14,6 +14,7 @@ from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 
 from .docker import Docker
+from .file import File
 from .service.config import ServiceConfig
 from .service.extra import ExtraConfig, ExtraService
 
@@ -108,3 +109,5 @@ class Homelab:
             restic_service=self.restic,
             docker_resource_args=self.docker.resource_args,
         )
+
+        self.file = File()

@@ -1,17 +1,13 @@
 [project]
-name = "homelab-traefik-service"
+name = "homelab-traefik-config"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
 dependencies = [
     "homelab-pydantic",
     "homelab-docker",
-    "homelab-network",
-    "homelab-traefik-config",
     "homelab-tailscale-service",
-    "homelab-crowdsec-service",
     "pydantic>=2.10.6",
-    "pulumi>=3.148.0",
 ]
 
 [build-system]
