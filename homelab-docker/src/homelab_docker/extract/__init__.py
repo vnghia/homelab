@@ -10,6 +10,7 @@ from pydantic import ValidationError
 from .container import ContainerExtract
 from .docker import GlobalExtractDockerSource
 from .hostname import GlobalExtractHostnameSource
+from .name import GlobalExtractNameSource
 from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
 from .transform import ExtractTransform
@@ -24,6 +25,7 @@ class GlobalExtractSource(
     HomelabRootModel[
         GlobalExtractDockerSource
         | GlobalExtractHostnameSource
+        | GlobalExtractNameSource
         | GlobalExtractSimpleSource
     ]
 ):
@@ -129,28 +131,17 @@ class GlobalExtract(
         cls, data: Any, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> Any:
         if isinstance(data, dict):
-            result_dict = {}
-            for key, value in data.items():
-                if isinstance(value, dict):
-                    try:
-                        extract = cls(**value).extract_str(main_service, model)
-                    except ValidationError:
-                        extract = cls.extract_recursively(value, main_service, model)
-                else:
-                    extract = cls.extract_recursively(value, main_service, model)
-                result_dict[key] = extract
-            return result_dict
+            try:
+                return cls(**data).extract_str(main_service, model)
+            except ValidationError:
+                result = {}
+                for key, value in data.items():
+                    result[key] = cls.extract_recursively(value, main_service, model)
+                return result
         elif isinstance(data, list):
             result_list = []
             for value in data:
-                if isinstance(value, dict):
-                    try:
-                        extract = cls(**value).extract_str(main_service, model)
-                    except ValidationError:
-                        extract = cls.extract_recursively(value, main_service, model)
-                else:
-                    extract = cls.extract_recursively(value, main_service, model)
-                result_list.append(extract)
+                result_list.append(cls.extract_recursively(value, main_service, model))
             return result_list
         else:
             return data

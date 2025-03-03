@@ -111,7 +111,10 @@ class TraefikStaticConfigResource(
                             "storage": traefik_config.acme.storage.extract_path(
                                 traefik_service, None
                             ),
-                            "dnsChallenge": {"provider": "cloudflare"},
+                            "dnsChallenge": {
+                                "provider": "cloudflare",
+                                "resolvers": ["1.1.1.1:53", "8.8.8.8:53"],
+                            },
                         }
                     },
                 },

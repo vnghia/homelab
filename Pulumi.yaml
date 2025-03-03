@@ -240,6 +240,23 @@ config:
                 name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
                 version: "v1.4.1"
             traefik:
+              crowdsec:
+                name: crowdsec
+                plugin: crowdsec
+                data:
+                  enabled: true
+                  crowdsecMode: stream
+                  crowdseclapikey:
+                    service: crowdsec
+                    extract:
+                      secret: traefik
+                  crowdsecLapiHost:
+                    service: crowdsec
+                    extract:
+                      name:
+                    transform:
+                      string:
+                        template: "{value}:8080"
               dashboard:
                 name: dashboard
                 public: false

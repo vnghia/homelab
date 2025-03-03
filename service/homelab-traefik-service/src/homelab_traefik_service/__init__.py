@@ -1,6 +1,5 @@
 from pathlib import PosixPath
 
-from homelab_crowdsec_service import CrowdsecService
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -22,7 +21,6 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         *,
         opts: ResourceOptions | None,
         tailscale_service: TailscaleService,
-        crowdsec_service: CrowdsecService,
         network_resource: NetworkResource,
         docker_resource_args: DockerResourceArgs,
     ) -> None:

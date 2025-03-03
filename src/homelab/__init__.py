@@ -54,7 +54,6 @@ class Homelab:
             opts=None,
             network_resource=self.network,
             tailscale_service=self.tailscale,
-            crowdsec_service=self.crowdsec,
             docker_resource_args=self.docker.resource_args,
         )
 

@@ -4,14 +4,13 @@ import typing
 from typing import Never
 
 from homelab_pydantic import HomelabBaseModel
-from pydantic import Field
 
 if typing.TYPE_CHECKING:
     from ..resource.service import ServiceResourceBase
 
 
 class GlobalExtractDockerSource(HomelabBaseModel):
-    docker: str = Field(alias="docker")
+    docker: str
 
     def extract_str(self, main_service: ServiceResourceBase) -> str:
         return self.docker.format(
