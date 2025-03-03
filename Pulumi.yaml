@@ -629,7 +629,6 @@ config:
               - redis:
                 envs:
                   password: REDIS_PASSWORD
-                  database: REDIS_CLUSTER
                   host: REDIS_HOST
                   port: REDIS_PORT
             envs:
@@ -642,7 +641,10 @@ config:
                 hostname: monica
                 public: true
                 scheme: https
+              APP_TIMEZONE:
+                docker: "{timezone}"
               APP_TRUSTED_PROXIES: "*"
+              LOG_STACK: stderr
               DB_CONNECTION: pgsql
               CACHE_STORE: redis
               QUEUE_CONNECTION: redis
@@ -654,6 +656,10 @@ config:
               - /var/run
             volumes:
               monica-data: /var/www/html
+          containers:
+            queue:
+              inherit:
+              command: ["php", "artisan", "queue:work", "redis", "--json"]
         barman:
           config:
             config-dir:
