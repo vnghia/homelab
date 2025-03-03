@@ -9,7 +9,7 @@ from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel
 from pulumi import ResourceOptions
 
 from .http import TraefikDynamicHttpModelBuilder
-from .middleware import TraefikDynamicMiddlewareFullModelBuilder
+from .middleware import TraefikDynamicMiddlewareBuildModelBuilder
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
@@ -25,16 +25,20 @@ class TraefikDynamicModelBuilder(HomelabRootModel[TraefikDynamicModel]):
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> TraefikDynamicConfigResource:
-        from ...resource.dynamic import TraefikDynamicConfigResource
-
         root = self.root.root
 
-        return TraefikDynamicConfigResource(
-            resource_name,
-            TraefikDynamicHttpModelBuilder(root)
+        return (
+            TraefikDynamicHttpModelBuilder(root).build_resource(
+                resource_name,
+                opts=opts,
+                main_service=main_service,
+                traefik_service=traefik_service,
+            )
             if isinstance(root, TraefikDynamicHttpModel)
-            else TraefikDynamicMiddlewareFullModelBuilder(root),
-            opts=opts,
-            main_service=main_service,
-            traefik_service=traefik_service,
+            else TraefikDynamicMiddlewareBuildModelBuilder(root).build_resource(
+                resource_name,
+                opts=opts,
+                main_service=main_service,
+                traefik_service=traefik_service,
+            )
         )

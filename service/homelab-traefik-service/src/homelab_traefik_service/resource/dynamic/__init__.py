@@ -7,7 +7,7 @@ from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
 from ...model.dynamic.http import TraefikDynamicHttpModelBuilder
-from ...model.dynamic.middleware import TraefikDynamicMiddlewareFullModelBuilder
+from ...model.dynamic.middleware import TraefikDynamicMiddlewareBuildModelBuilder
 from . import schema
 
 if typing.TYPE_CHECKING:
@@ -24,7 +24,7 @@ class TraefikDynamicConfigResource(
         self,
         resource_name: str | None,
         model: TraefikDynamicHttpModelBuilder
-        | TraefikDynamicMiddlewareFullModelBuilder,
+        | TraefikDynamicMiddlewareBuildModelBuilder,
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,

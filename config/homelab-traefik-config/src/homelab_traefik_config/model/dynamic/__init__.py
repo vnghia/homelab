@@ -1,10 +1,10 @@
 from homelab_pydantic import HomelabRootModel
 
 from .http import TraefikDynamicHttpModel
-from .middleware import TraefikDynamicMiddlewareFullModel
+from .middleware import TraefikDynamicMiddlewareBuildModel
 
 
 class TraefikDynamicModel(
-    HomelabRootModel[TraefikDynamicHttpModel | TraefikDynamicMiddlewareFullModel]
+    HomelabRootModel[TraefikDynamicHttpModel | TraefikDynamicMiddlewareBuildModel]
 ):
     pass

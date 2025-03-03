@@ -5,13 +5,20 @@ from typing import Any
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 
-class TraefikDynamicMiddlewareFullModel(HomelabBaseModel):
+class TraefikDynamicMiddlewareUseModel(HomelabBaseModel):
+    service: str | None = None
+    name: str | None
+
+
+class TraefikDynamicMiddlewareBuildModel(HomelabBaseModel):
     name: str
     data: Any
     plugin: str | None = None
 
 
 class TraefikDynamicMiddlewareModel(
-    HomelabRootModel[str | TraefikDynamicMiddlewareFullModel]
+    HomelabRootModel[
+        TraefikDynamicMiddlewareUseModel | TraefikDynamicMiddlewareBuildModel
+    ]
 ):
     pass

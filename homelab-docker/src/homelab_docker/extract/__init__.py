@@ -134,14 +134,13 @@ class GlobalExtract(
             try:
                 return cls(**data).extract_str(main_service, model)
             except ValidationError:
-                result = {}
-                for key, value in data.items():
-                    result[key] = cls.extract_recursively(value, main_service, model)
-                return result
+                return {
+                    key: cls.extract_recursively(value, main_service, model)
+                    for key, value in data.items()
+                }
         elif isinstance(data, list):
-            result_list = []
-            for value in data:
-                result_list.append(cls.extract_recursively(value, main_service, model))
-            return result_list
+            return [
+                cls.extract_recursively(value, main_service, model) for value in data
+            ]
         else:
             return data

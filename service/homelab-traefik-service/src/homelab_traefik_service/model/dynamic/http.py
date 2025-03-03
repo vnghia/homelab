@@ -3,11 +3,15 @@ from __future__ import annotations
 import operator
 import typing
 from functools import reduce
-from typing import Any
+from typing import Any, ClassVar
 
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel
+from homelab_traefik_config.model.dynamic.middleware import (
+    TraefikDynamicMiddlewareModel,
+    TraefikDynamicMiddlewareUseModel,
+)
 from homelab_traefik_config.model.dynamic.service import TraefikDynamicServiceType
 from pulumi import Output, ResourceOptions
 
@@ -23,6 +27,8 @@ if typing.TYPE_CHECKING:
 
 
 class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
+    CROWDSEC_MIDDLEWARE: ClassVar[str] = "crowdsec"
+
     def to_data(
         self, main_service: ServiceResourceBase, traefik_service: TraefikService
     ) -> dict[str, Any]:
@@ -65,13 +71,25 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                                 ]
                             )
                         ).apply(lambda args: " && ".join(args)),
-                        # TODO: change to container extract
-                        "middlewares": (["traefik-crowdsec"] if root.public else [])
-                        + [
+                        "middlewares": [
                             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
-                                main_service
+                                main_service, traefik_service
                             )
-                            for middleware in root.middlewares
+                            for middleware in (
+                                (
+                                    [
+                                        TraefikDynamicMiddlewareModel(
+                                            TraefikDynamicMiddlewareUseModel(
+                                                service=traefik_service.name(),
+                                                name=self.CROWDSEC_MIDDLEWARE,
+                                            )
+                                        )
+                                    ]
+                                    if root.public
+                                    else []
+                                )
+                                + root.middlewares
+                            )
                         ],
                         "tls": {"certResolver": traefik_service.static.CERT_RESOLVER},
                     }
@@ -110,10 +128,12 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
     ) -> TraefikDynamicRouterConfigResource:
         from ...resource.dynamic.router import TraefikDynamicRouterConfigResource
 
-        return TraefikDynamicRouterConfigResource(
+        resource = TraefikDynamicRouterConfigResource(
             resource_name,
             self,
             opts=opts,
             main_service=main_service,
             traefik_service=traefik_service,
         )
+        traefik_service.routers[main_service.name()][resource_name] = resource
+        return resource

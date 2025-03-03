@@ -1,3 +1,4 @@
+from collections import defaultdict
 from pathlib import PosixPath
 
 from homelab_docker.model.container import ContainerModelBuildArgs
@@ -11,6 +12,8 @@ from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
 from .config import TraefikConfig
+from .resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
+from .resource.dynamic.router import TraefikDynamicRouterConfigResource
 from .resource.static import TraefikStaticConfigResource
 
 
@@ -48,37 +51,12 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             }
         )
 
-        # self.crowdsec = TraefikDynamicMiddlewareFullModel(
-        #     name=crowdsec_service.name(),
-        #     data={
-        #         "enabled": True,
-        #         "crowdsecMode": "stream",
-        #         "crowdseclapikey": crowdsec_service.secret[self.name()].result,
-        #         "crowdsecLapiScheme": "http",
-        #         "crowdsecLapiHost": Output.format(
-        #             "{}:8080", crowdsec_service.container.name
-        #         ),
-        #     },
-        #     plugin=crowdsec_service.name(),
-        # ).build_resource(
-        #     None, opts=self.child_opts, main_service=self, traefik_service=self
-        # )
-
-        # self.dashboard = TraefikDynamicHttpModel(
-        #     name="dashboard",
-        #     public=False,
-        #     hostname="system",
-        #     prefix=ServiceExtract(
-        #         extract=ContainerExtract(
-        #             ContainerExtractSource(
-        #                 ContainerExtractSimpleSource(self.config.path)
-        #             )
-        #         )
-        #     ),
-        #     service=TraefikDynamicServiceModel("api@internal"),
-        # ).build_resource(
-        #     None, opts=self.child_opts, main_service=self, traefik_service=self
-        # )
+        self.routers: dict[
+            str, dict[str | None, TraefikDynamicRouterConfigResource]
+        ] = defaultdict(dict)
+        self.middlewares: dict[
+            str, dict[str | None, TraefikDynamicMiddlwareConfigResource]
+        ] = defaultdict(dict)
 
         self.register_outputs({})
 

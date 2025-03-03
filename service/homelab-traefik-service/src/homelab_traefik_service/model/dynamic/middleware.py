@@ -7,7 +7,7 @@ from homelab_docker.extract import GlobalExtract
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.middleware import (
-    TraefikDynamicMiddlewareFullModel,
+    TraefikDynamicMiddlewareBuildModel,
     TraefikDynamicMiddlewareModel,
 )
 from pulumi import ResourceOptions
@@ -17,8 +17,8 @@ if typing.TYPE_CHECKING:
     from ...resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
 
 
-class TraefikDynamicMiddlewareFullModelBuilder(
-    HomelabRootModel[TraefikDynamicMiddlewareFullModel]
+class TraefikDynamicMiddlewareBuildModelBuilder(
+    HomelabRootModel[TraefikDynamicMiddlewareBuildModel]
 ):
     def to_section(
         self, main_service: ServiceResourceBase, traefik_service: TraefikService
@@ -49,25 +49,31 @@ class TraefikDynamicMiddlewareFullModelBuilder(
     ) -> TraefikDynamicMiddlwareConfigResource:
         from ...resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
 
-        return TraefikDynamicMiddlwareConfigResource(
+        resource = TraefikDynamicMiddlwareConfigResource(
             resource_name,
             self,
             opts=opts,
             main_service=main_service,
             traefik_service=traefik_service,
         )
+        traefik_service.middlewares[main_service.name()][resource_name] = resource
+        return resource
 
 
 class TraefikDynamicMiddlewareModelBuilder(
     HomelabRootModel[TraefikDynamicMiddlewareModel]
 ):
-    def get_name(self, main_service: ServiceResourceBase) -> str:
+    def get_name(
+        self, main_service: ServiceResourceBase, traefik_service: TraefikService
+    ) -> str:
         root = self.root.root
 
         return (
             main_service.add_service_name(root.name)
-            if isinstance(root, TraefikDynamicMiddlewareFullModel)
-            else root
+            if isinstance(root, TraefikDynamicMiddlewareBuildModel)
+            else traefik_service.middlewares[root.service or main_service.name()][
+                root.name
+            ].name
         )
 
     def to_section(
@@ -76,9 +82,9 @@ class TraefikDynamicMiddlewareModelBuilder(
         root = self.root.root
 
         return (
-            TraefikDynamicMiddlewareFullModelBuilder(root).to_section(
+            TraefikDynamicMiddlewareBuildModelBuilder(root).to_section(
                 main_service, traefik_service
             )
-            if isinstance(root, TraefikDynamicMiddlewareFullModel)
+            if isinstance(root, TraefikDynamicMiddlewareBuildModel)
             else {}
         )
