@@ -35,12 +35,6 @@ class DatabaseTypeConfig(HomelabBaseModel):
     env: DatabaseTypeEnvConfig
     container: ContainerModel
 
-    @field_validator("container", mode="before")
-    def set_container_image(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            data["image"] = "image"
-        return data
-
     def get_versions(self, model: ServiceDatabaseModel) -> list[PositiveInt]:
         return model.versions or [self.version]
 

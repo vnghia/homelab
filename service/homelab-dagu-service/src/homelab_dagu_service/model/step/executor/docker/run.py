@@ -21,7 +21,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
         build_args = build_args or ContainerModelBuildArgs()
-        model = main_service.model[self.model]
+        model = main_service.model[self.model].model(main_service)
 
         config: dict[str, Any] = {}
         container_config: dict[str, Any] = {}

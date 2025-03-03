@@ -25,24 +25,10 @@ class HomelabBaseModel(BaseModel):
         return data
 
     def model_merge(self, other: Self) -> Self:
-        return self.__class__(
-            **deepmerge.always_merger.merge(
-                self.model_dump(
-                    mode="json",
-                    by_alias=True,
-                    exclude_defaults=True,
-                    exclude_none=True,
-                    exclude_unset=True,
-                ),
-                other.model_dump(
-                    mode="json",
-                    by_alias=True,
-                    exclude_defaults=True,
-                    exclude_none=True,
-                    exclude_unset=True,
-                ),
-            )
-        )
+        left_data = self.model_dump(mode="json", by_alias=True, exclude_unset=True)
+        right_data = other.model_dump(mode="json", by_alias=True, exclude_unset=True)
+
+        return self.__class__(**deepmerge.always_merger.merge(left_data, right_data))
 
 
 class HomelabRootModel[T](RootModel[T]):
