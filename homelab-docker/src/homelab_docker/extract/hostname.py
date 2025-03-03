@@ -13,9 +13,15 @@ if typing.TYPE_CHECKING:
 class GlobalExtractHostnameSource(HomelabBaseModel):
     hostname: str
     public: bool
+    scheme: str | None = None
 
     def extract_str(self, main_service: ServiceResourceBase) -> Output[str]:
-        return main_service.docker_resource_args.hostnames[self.public][self.hostname]
+        hostname = main_service.docker_resource_args.hostnames[self.public][
+            self.hostname
+        ]
+        if self.scheme:
+            hostname = Output.format("{}://{}", self.scheme, hostname)
+        return hostname
 
     def extract_path(self, _main_service: ServiceResourceBase) -> Never:
         raise TypeError("Can not extract path from hostname source")
