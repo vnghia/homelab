@@ -7,7 +7,6 @@ dependencies = [
     "homelab-pydantic",
     "homelab-docker",
     "pulumi>=3.150.0",
-    "pulumi-random>=4.17.0",
     "pydantic>=2.10.6",
 ]
 

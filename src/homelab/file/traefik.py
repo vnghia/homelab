@@ -18,16 +18,17 @@ class TraefikFile(ComponentResource):
             if isinstance(service, ServiceWithConfigResourceBase) and isinstance(
                 service.config, TraefikServiceConfigBase
             ):
-                service_opts = ResourceOptions(
-                    parent=ComponentResource(
-                        service.name(), service.name(), None, opts=self.child_opts
+                if service.config.traefik:
+                    service_opts = ResourceOptions(
+                        parent=ComponentResource(
+                            service.name(), service.name(), None, opts=self.child_opts
+                        )
                     )
-                )
 
-                TraefikServiceConfigBuilder(service.config.traefik).build_resources(
-                    opts=service_opts,
-                    main_service=service,
-                    traefik_service=traefik_service,
-                )
+                    TraefikServiceConfigBuilder(service.config.traefik).build_resources(
+                        opts=service_opts,
+                        main_service=service,
+                        traefik_service=traefik_service,
+                    )
 
         self.register_outputs({})

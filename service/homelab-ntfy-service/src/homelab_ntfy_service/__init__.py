@@ -1,26 +1,26 @@
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.service import ServiceWithConfigResourceBase
+from homelab_extra_service import ExtraService
+from homelab_extra_service.config import ExtraConfig
 from pulumi import ResourceOptions
 
-from .config import NtfyConfig
 from .resource.user import NtfyUserAclConfig, NtfyUserAclPermission, NtfyUserResource
 
 
-class NtfyService(ServiceWithConfigResourceBase[NtfyConfig]):
+class NtfyService(ExtraService):
+    REGISTER_OUTPUT = False
+
     ADMIN_ROLE = "admin"
     USER_ROLE = "user"
 
     def __init__(
         self,
-        model: ServiceWithConfigModel[NtfyConfig],
+        model: ServiceWithConfigModel[ExtraConfig],
         *,
         opts: ResourceOptions | None,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
-
-        self.build_containers(options={})
 
         self.admin = NtfyUserResource(
             self.ADMIN_ROLE,

@@ -52,6 +52,7 @@ homelab-backup-service = { workspace = true }
 homelab-barman-service = { workspace = true }
 homelab-crowdsec-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
+homelab-extra-service = { workspace = true }
 homelab-ntfy-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }

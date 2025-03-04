@@ -10,6 +10,8 @@ from .config import ExtraConfig
 
 
 class ExtraService(ServiceWithConfigResourceBase[ExtraConfig]):
+    REGISTER_OUTPUT = True
+
     def __init__(
         self,
         model: ServiceWithConfigModel[ExtraConfig],
@@ -27,4 +29,5 @@ class ExtraService(ServiceWithConfigResourceBase[ExtraConfig]):
 
         self.build_containers(options=options)
 
-        self.register_outputs({})
+        if self.REGISTER_OUTPUT:
+            self.register_outputs({})
