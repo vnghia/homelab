@@ -7,6 +7,8 @@ from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.database import DatabaseResource
+from homelab_extra_service import ExtraService
+from homelab_extra_service.config import ExtraConfig
 from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
@@ -16,7 +18,6 @@ from homelab_traefik_service import TraefikService
 from .docker import Docker
 from .file import File
 from .service.config import ServiceConfig
-from .service.extra import ExtraConfig, ExtraService
 
 
 class Homelab:

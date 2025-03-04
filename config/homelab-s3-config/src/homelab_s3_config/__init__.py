@@ -24,4 +24,4 @@ class S3ServiceConfig(HomelabServiceConfigDict[S3Config]):
 
 
 class S3ServiceConfigBase(HomelabBaseModel):
-    s3: S3ServiceConfig
+    s3: S3ServiceConfig = S3ServiceConfig({})
