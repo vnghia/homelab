@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 
 from homelab_docker.resource.file.config import ConfigFileResource, YamlDumper
-from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
@@ -26,7 +25,6 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
-        dotenvs: list[DotenvFileResource] | None,
     ):
         self.model = model.root
         self.path = self.model.path or resource_name
@@ -38,7 +36,6 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
                 main_service,
                 dagu_service,
                 dagu_service.get_log_dir_volume_path(self.path),
-                dotenvs,
             ),
             volume_resource=dagu_service.docker_resource_args.volume,
         )

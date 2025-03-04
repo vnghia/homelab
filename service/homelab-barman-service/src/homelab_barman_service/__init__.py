@@ -52,7 +52,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         self.build_containers()
 
         self.dagu_dags = dagu_service.build_docker_group_dags(
-            self.config.dagu, opts=self.child_opts, main_service=self, dotenvs=None
+            self.config.dagu, opts=self.child_opts, main_service=self
         )
 
         self.register_outputs({})

@@ -1,11 +1,11 @@
 from homelab_pydantic import HomelabBaseModel
 
 from .group.docker import DaguDagDockerGroupConfig
-from .model.dotenv import DaguDotenvModel
+from .model.dotenv import DaguDagDotenvModel
 
 
 class DaguServiceConfig(HomelabBaseModel):
-    dotenvs: list[DaguDotenvModel] = []
+    dotenvs: list[DaguDagDotenvModel] = []
     docker: DaguDagDockerGroupConfig | None = None
 
 

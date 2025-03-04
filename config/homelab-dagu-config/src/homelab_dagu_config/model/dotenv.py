@@ -6,7 +6,7 @@ from homelab_s3_config import S3Config
 from pulumi import Output
 
 
-class DaguDotenvModel(HomelabBaseModel):
+class DaguDagDotenvModel(HomelabBaseModel):
     s3: S3Config | None = None
     envs: dict[str, GlobalExtract] = {}
 

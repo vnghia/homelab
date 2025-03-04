@@ -61,7 +61,6 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             opts=self.child_opts,
             main_service=self,
             dagu_service=dagu_service,
-            dotenvs=None,
         )
 
         self.register_outputs({})

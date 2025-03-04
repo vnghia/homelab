@@ -47,6 +47,10 @@ class DaguService(ExtraService[DaguConfig]):
 
         self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self, None)
         self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self, None)
+
+        self.dotenvs: defaultdict[str, dict[str | None, DotenvFileResource]] = (
+            defaultdict(dict)
+        )
         self.dags: defaultdict[str, dict[str, DaguDagResource]] = defaultdict(dict)
 
     def get_dag_volume_path(self, name: str) -> ContainerVolumePath:
@@ -64,7 +68,6 @@ class DaguService(ExtraService[DaguConfig]):
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
-        dotenvs: list[DotenvFileResource] | None,
     ) -> DaguDagResource:
         return DaguDagModelBuilder(
             DaguDagModel(
@@ -97,11 +100,7 @@ class DaguService(ExtraService[DaguConfig]):
                 ],
             )
         ).build_resource(
-            self.DEBUG_DAG_NAME,
-            opts=opts,
-            main_service=main_service,
-            dagu_service=self,
-            dotenvs=dotenvs,
+            self.DEBUG_DAG_NAME, opts=opts, main_service=main_service, dagu_service=self
         )
 
     def build_docker_group_dags(
@@ -110,26 +109,18 @@ class DaguService(ExtraService[DaguConfig]):
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
-        dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, DaguDagResource]:
         executor_config = docker_group_config.executor
         if isinstance(executor_config, DaguDagDockerRunGroupConfig):
             docker_executor = executor_config.run
             if executor_config.debug:
                 self.build_debug_dag(
-                    docker_executor,
-                    opts=opts,
-                    main_service=main_service,
-                    dotenvs=dotenvs,
+                    docker_executor, opts=opts, main_service=main_service
                 )
 
         self.dags[main_service.name()] |= {
             name: DaguDagModelBuilder(model).build_resource(
-                name,
-                opts=opts,
-                main_service=main_service,
-                dagu_service=self,
-                dotenvs=dotenvs,
+                name, opts=opts, main_service=main_service, dagu_service=self
             )
             for name, model in docker_group_config.build_models(
                 main_service=main_service

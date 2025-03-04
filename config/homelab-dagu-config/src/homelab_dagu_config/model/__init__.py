@@ -8,6 +8,7 @@ from .step import DaguDagStepModel
 
 
 class DaguDagModel(HomelabBaseModel):
+    dotenvs: list[str | None] = []
     name: str | None = None
     path: str | None = None
 

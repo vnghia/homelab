@@ -5,7 +5,6 @@ from typing import Any
 
 from homelab_dagu_config.model import DaguDagModel
 from homelab_docker.model.container.volume_path import ContainerVolumePath
-from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
@@ -23,10 +22,18 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
         log_dir: ContainerVolumePath | None,
-        dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Any]:
         root = self.root
         dagu_config = dagu_service.config
+
+        dotenvs = (
+            [
+                dagu_service.dotenvs[main_service.name()][dotenv]
+                for dotenv in root.dotenvs
+            ]
+            if root.dotenvs
+            else None
+        )
 
         return {
             "dotenv": [
@@ -59,7 +66,6 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
-        dotenvs: list[DotenvFileResource] | None,
     ) -> DaguDagResource:
         from ..resource import DaguDagResource
 
@@ -69,5 +75,4 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
             opts=opts,
             main_service=main_service,
             dagu_service=dagu_service,
-            dotenvs=dotenvs,
         )

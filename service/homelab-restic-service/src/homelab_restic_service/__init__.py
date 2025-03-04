@@ -80,10 +80,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self.options[None].volumes = self.backup_volumes
 
         self.dagu_dags = dagu_service.build_docker_group_dags(
-            self.config.dagu,
-            opts=self.child_opts,
-            main_service=self,
-            dotenvs=self.dotenvs,
+            self.config.dagu, opts=self.child_opts, main_service=self
         )
 
         self.register_outputs({})
