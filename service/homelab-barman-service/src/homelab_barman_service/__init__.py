@@ -1,5 +1,4 @@
 from homelab_backup.config import BackupConfig
-from homelab_dagu_service import DaguService
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -18,7 +17,6 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         *,
         opts: ResourceOptions | None,
         backup_config: BackupConfig,
-        dagu_service: DaguService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
@@ -50,10 +48,6 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
 
         self.options[None].files = self.configs
         self.build_containers()
-
-        self.dagu_dags = dagu_service.build_docker_group_dags(
-            self.config.dagu, opts=self.child_opts, main_service=self
-        )
 
         self.register_outputs({})
 

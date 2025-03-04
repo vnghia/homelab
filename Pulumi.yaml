@@ -671,30 +671,31 @@ config:
             last-backup-maximum-age: 1 WEEKS
             retention-policy: RECOVERY WINDOW OF 1 WEEKS
             dagu:
-              executor:
-                exec:
-                  container:
-              dag:
-                max-active-runs: 1
-                params:
-                  types:
-                    backup:
-                tags: ["backup"]
-              command:
-                prefix: ["barman"]
-                suffix:
-                  - param:
-                      type: backup
-              dags:
-                check:
-                  dag:
-                    schedule: "0 2 * * *" # 2am every day
-                  command: ["check"]
-                backup:
-                  # TODO: re-enable --wait option after https://github.com/EnterpriseDB/barman/issues/1041
-                  command: ["backup"]
-                switch-wal:
-                  command: ["switch-wal", "--force", "--archive"]
+              docker:
+                executor:
+                  exec:
+                    container:
+                dag:
+                  max-active-runs: 1
+                  params:
+                    types:
+                      backup:
+                  tags: ["backup"]
+                command:
+                  prefix: ["barman"]
+                  suffix:
+                    - param:
+                        type: backup
+                dags:
+                  check:
+                    dag:
+                      schedule: "0 2 * * *" # 2am every day
+                    command: ["check"]
+                  backup:
+                    # TODO: re-enable --wait option after https://github.com/EnterpriseDB/barman/issues/1041
+                    command: ["backup"]
+                  switch-wal:
+                    command: ["switch-wal", "--force", "--archive"]
           container:
             image:
               build: barman
