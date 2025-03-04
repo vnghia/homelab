@@ -59,3 +59,5 @@ class CrowdsecService(ServiceWithConfigResourceBase[CrowdsecConfig]):
         self.build_containers(
             options={None: ContainerModelBuildArgs(files=[self.docker])}
         )
+
+        self.register_outputs({})

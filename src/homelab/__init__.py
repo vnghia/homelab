@@ -72,7 +72,12 @@ class Homelab:
         self.extra_services = {
             service: type(
                 "{}Service".format(service.capitalize()), (ExtraService,), {}
-            )(model, opts=None, docker_resource_args=self.docker.resource_args)
+            )(
+                model,
+                opts=None,
+                docker_resource_args=self.docker.resource_args,
+                options=None,
+            )
             for service, model in self.docker.services_config.extra(
                 ServiceWithConfigModel[ExtraConfig]
             ).items()

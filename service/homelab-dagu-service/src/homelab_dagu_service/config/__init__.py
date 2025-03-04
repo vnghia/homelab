@@ -1,7 +1,7 @@
 from homelab_docker.extract.service import ServiceExtract
-from homelab_traefik_config import TraefikServiceConfigBase
+from homelab_extra_service.config import ExtraConfig
 
 
-class DaguConfig(TraefikServiceConfigBase):
+class DaguConfig(ExtraConfig):
     dags_dir: ServiceExtract
     log_dir: ServiceExtract

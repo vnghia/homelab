@@ -3,10 +3,8 @@ from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
-from homelab_docker.resource.service import (
-    ServiceResourceBase,
-    ServiceWithConfigResourceBase,
-)
+from homelab_docker.resource.service import ServiceResourceBase
+from homelab_extra_service import ExtraService
 from pulumi import ResourceOptions
 
 from .config import DaguConfig
@@ -26,7 +24,7 @@ from .model.step.run.command import (
 from .resource import DaguDagResource
 
 
-class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
+class DaguService(ExtraService[DaguConfig]):
     DEBUG_DAG_NAME = "debug"
 
     DAGS: dict[str, dict[str, DaguDagResource]] = {}
@@ -38,14 +36,12 @@ class DaguService(ServiceWithConfigResourceBase[DaguConfig]):
         opts: ResourceOptions | None,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(
+            model, opts=opts, docker_resource_args=docker_resource_args, options=None
+        )
 
         self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self, None)
         self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self, None)
-
-        self.build_containers(options={})
-
-        self.register_outputs({})
 
     def get_dag_volume_path(self, name: str) -> ContainerVolumePath:
         return self.dags_dir_volume_path / name

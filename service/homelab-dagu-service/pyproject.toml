@@ -7,7 +7,7 @@ dependencies = [
     "homelab-backup",
     "homelab-pydantic",
     "homelab-docker",
-    "homelab-traefik-service",
+    "homelab-extra-service",
     "pydantic>=2.10.6",
     "pulumi>=3.148.0",
 ]

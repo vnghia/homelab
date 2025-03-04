@@ -7,7 +7,7 @@ from pulumi import ResourceOptions
 from .resource.user import NtfyUserAclConfig, NtfyUserAclPermission, NtfyUserResource
 
 
-class NtfyService(ExtraService):
+class NtfyService(ExtraService[ExtraConfig]):
     REGISTER_OUTPUT = False
 
     ADMIN_ROLE = "admin"
@@ -20,7 +20,9 @@ class NtfyService(ExtraService):
         opts: ResourceOptions | None,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(
+            model, opts=opts, docker_resource_args=docker_resource_args, options=None
+        )
 
         self.admin = NtfyUserResource(
             self.ADMIN_ROLE,
