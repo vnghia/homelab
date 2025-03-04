@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Any
 
 import pulumi
@@ -37,6 +38,10 @@ class ServiceResourceBase(ComponentResource):
 
         self.build_databases()
         self.build_secrets()
+
+        self.options: defaultdict[str | None, ContainerModelBuildArgs] = defaultdict(
+            ContainerModelBuildArgs
+        )
 
         self.SERVICES[self.name()] = self
 
@@ -117,11 +122,9 @@ class ServiceResourceBase(ComponentResource):
             build_args=container_model_build_args,
         )
 
-    def build_containers(
-        self, options: dict[str | None, ContainerModelBuildArgs]
-    ) -> None:
+    def build_containers(self) -> None:
         self.containers = {
-            name: self.build_container(name, model, options.get(name))
+            name: self.build_container(name, model, self.options.get(name))
             for name, model in self.model.containers.items()
             if model.active
         }

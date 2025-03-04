@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.resource.file.config import ConfigFileResource, YamlDumper
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
@@ -27,7 +26,6 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
-        container_model_build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ):
         self.model = model
@@ -40,7 +38,6 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
                 main_service,
                 dagu_service,
                 dagu_service.get_log_dir_volume_path(self.path),
-                container_model_build_args,
                 dotenvs,
             ),
             volume_resource=dagu_service.docker_resource_args.volume,

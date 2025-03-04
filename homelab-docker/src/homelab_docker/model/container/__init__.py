@@ -31,7 +31,7 @@ class ContainerModelBuildArgs:
     volumes: Mapping[str, ContainerVolumeConfig] = dataclasses.field(
         default_factory=dict
     )
-    files: Sequence["FileResource"] = dataclasses.field(default_factory=list)
+    files: Sequence[FileResource] = dataclasses.field(default_factory=list)
 
 
 class ContainerModel(HomelabBaseModel):

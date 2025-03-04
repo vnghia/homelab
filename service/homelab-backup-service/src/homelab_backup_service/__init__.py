@@ -26,7 +26,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.build_containers(options={})
+        self.build_containers()
 
         self.backup_dag = DaguDagModel(
             name=self.name(),
@@ -58,7 +58,6 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             opts=self.child_opts,
             main_service=self,
             dagu_service=dagu_service,
-            container_model_build_args=None,
             dotenvs=None,
         )
 

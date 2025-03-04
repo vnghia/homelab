@@ -2,7 +2,6 @@ from pathlib import PosixPath
 
 from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
-from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -78,15 +77,12 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         )
 
         # No need to specify file dependencies because the file are created after `pulumi up`
-        self.docker_executor_build_args = ContainerModelBuildArgs(
-            volumes=self.backup_volumes
-        )
+        self.options[None].volumes = self.backup_volumes
 
         self.dagu_dags = dagu_service.build_docker_group_dags(
             self.config.dagu,
             opts=self.child_opts,
             main_service=self,
-            container_model_build_args=self.docker_executor_build_args,
             dotenvs=self.dotenvs,
         )
 

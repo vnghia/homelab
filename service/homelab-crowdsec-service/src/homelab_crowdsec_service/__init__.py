@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import (
@@ -56,8 +55,7 @@ class CrowdsecService(ServiceWithConfigResourceBase[CrowdsecConfig]):
         self.docker = DockerAcquisConfigResource(
             "docker", opts=self.child_opts, crowdsec_service=self
         )
-        self.build_containers(
-            options={None: ContainerModelBuildArgs(files=[self.docker])}
-        )
+        self.options[None].files = [self.docker]
+        self.build_containers()
 
         self.register_outputs({})

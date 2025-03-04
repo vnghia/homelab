@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 from typing import Any
 
-from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
@@ -36,7 +35,6 @@ class DaguDagModel(HomelabBaseModel):
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
         log_dir: ContainerVolumePath | None,
-        build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Any]:
         dagu_config = dagu_service.config
@@ -58,9 +56,7 @@ class DaguDagModel(HomelabBaseModel):
             "maxActiveRuns": self.max_active_runs,
             "params": self.params.to_params(self) if self.params else None,
             "steps": [
-                step.to_step(
-                    self.params, main_service, dagu_service, build_args, dotenvs
-                )
+                step.to_step(self.params, main_service, dagu_service, dotenvs)
                 for step in self.steps
             ],
         }
@@ -72,7 +68,6 @@ class DaguDagModel(HomelabBaseModel):
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
-        container_model_build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> DaguDagResource:
         from ..resource import DaguDagResource
@@ -83,6 +78,5 @@ class DaguDagModel(HomelabBaseModel):
             opts=opts,
             main_service=main_service,
             dagu_service=dagu_service,
-            container_model_build_args=container_model_build_args,
             dotenvs=dotenvs,
         )

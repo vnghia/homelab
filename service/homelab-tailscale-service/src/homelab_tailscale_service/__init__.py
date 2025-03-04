@@ -22,17 +22,14 @@ class TailscaleService(ServiceResourceBase):
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
         self.hostname = hostname
-        self.build_containers(
-            options={
-                None: ContainerModelBuildArgs(
-                    opts=ResourceOptions(delete_before_replace=True),
-                    envs={
-                        "TS_AUTHKEY": self.build_authkey().key,
-                        "TS_HOSTNAME": self.hostname,
-                    },
-                )
-            }
+        self.options[None] = ContainerModelBuildArgs(
+            opts=ResourceOptions(delete_before_replace=True),
+            envs={
+                "TS_AUTHKEY": self.build_authkey().key,
+                "TS_HOSTNAME": self.hostname,
+            },
         )
+        self.build_containers()
 
         self.device = tailscale.get_device_output(
             hostname=self.hostname,

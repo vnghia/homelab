@@ -1,4 +1,3 @@
-from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
@@ -36,9 +35,7 @@ class DaguService(ExtraService[DaguConfig]):
         opts: ResourceOptions | None,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
-        super().__init__(
-            model, opts=opts, docker_resource_args=docker_resource_args, options=None
-        )
+        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
         self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self, None)
         self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self, None)
@@ -58,7 +55,6 @@ class DaguService(ExtraService[DaguConfig]):
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
-        container_model_build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> DaguDagResource:
         return DaguDagModel(
@@ -94,7 +90,6 @@ class DaguService(ExtraService[DaguConfig]):
             opts=opts,
             main_service=main_service,
             dagu_service=self,
-            container_model_build_args=container_model_build_args,
             dotenvs=dotenvs,
         )
 
@@ -104,7 +99,6 @@ class DaguService(ExtraService[DaguConfig]):
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
-        container_model_build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, DaguDagResource]:
         executor_config = docker_group_config.executor
@@ -115,7 +109,6 @@ class DaguService(ExtraService[DaguConfig]):
                     docker_executor,
                     opts=opts,
                     main_service=main_service,
-                    container_model_build_args=container_model_build_args,
                     dotenvs=dotenvs,
                 )
 
@@ -128,7 +121,6 @@ class DaguService(ExtraService[DaguConfig]):
                 opts=opts,
                 main_service=main_service,
                 dagu_service=self,
-                container_model_build_args=container_model_build_args,
                 dotenvs=dotenvs,
             )
             for name, model in docker_group_config.build_models(

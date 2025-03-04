@@ -1,6 +1,5 @@
 from typing import Any
 
-from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
@@ -20,13 +19,12 @@ class DaguDagStepDockerExecutorModel(
     def to_executor(
         self,
         main_service: ServiceResourceBase,
-        build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
         root = self.root
         return {
             "type": "docker",
-            "config": root.to_executor_config(main_service, build_args, dotenvs)
+            "config": root.to_executor_config(main_service, dotenvs)
             if isinstance(root, DaguDagStepDockerRunExecutorModel)
             else root.to_executor_config(main_service),
         }

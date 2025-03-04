@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 from typing import Any
 
-from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
@@ -29,13 +28,12 @@ class DaguDagStepModel(HomelabBaseModel):
         params: DaguDagParamsModel,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
-        build_args: ContainerModelBuildArgs | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
         return (
             {
                 "name": self.name,
-                "executor": self.executor.to_executor(main_service, build_args, dotenvs)
+                "executor": self.executor.to_executor(main_service, dotenvs)
                 if self.executor
                 else None,
             }

@@ -38,18 +38,15 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             tailscale_service=tailscale_service,
         )
 
-        self.build_containers(
-            options={
-                None: ContainerModelBuildArgs(
-                    opts=ResourceOptions(delete_before_replace=True),
-                    envs={
-                        "CF_ZONE_API_TOKEN": network_resource.token.read.value,
-                        "CF_DNS_API_TOKEN": network_resource.token.write.value,
-                    },
-                    files=[self.static],
-                )
-            }
+        self.options[None] = ContainerModelBuildArgs(
+            opts=ResourceOptions(delete_before_replace=True),
+            envs={
+                "CF_ZONE_API_TOKEN": network_resource.token.read.value,
+                "CF_DNS_API_TOKEN": network_resource.token.write.value,
+            },
+            files=[self.static],
         )
+        self.build_containers()
 
         self.routers: dict[
             str, dict[str | None, TraefikDynamicRouterConfigResource]
