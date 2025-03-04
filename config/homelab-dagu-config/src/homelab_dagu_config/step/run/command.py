@@ -1,6 +1,6 @@
 from homelab_pydantic import HomelabBaseModel
 
-from ....model.step.run.command import DaguDagStepRunCommandModel
+from ...model.step.run.command import DaguDagStepRunCommandModel
 
 
 class DaguDagStepRunCommandsConfig(HomelabBaseModel):

@@ -3,33 +3,21 @@ from __future__ import annotations
 import typing
 from typing import Any
 
+from homelab_dagu_config.model import DaguDagModel
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
-from pydantic import PositiveInt
 
-from .params import DaguDagParamsModel
-from .step import DaguDagStepModel
+from .step import DaguDagStepModelBuilder
 
 if typing.TYPE_CHECKING:
     from .. import DaguService
     from ..resource import DaguDagResource
 
 
-class DaguDagModel(HomelabBaseModel):
-    name: str | None = None
-    path: str | None = None
-
-    group: str | None = None
-    tags: list[str] = []
-    schedule: str | None = None
-    max_active_runs: PositiveInt | None = None
-    params: DaguDagParamsModel = DaguDagParamsModel()
-
-    steps: list[DaguDagStepModel] = []
-
+class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
     def to_data(
         self,
         main_service: ServiceResourceBase,
@@ -37,6 +25,7 @@ class DaguDagModel(HomelabBaseModel):
         log_dir: ContainerVolumePath | None,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Any]:
+        root = self.root
         dagu_config = dagu_service.config
 
         return {
@@ -46,18 +35,20 @@ class DaguDagModel(HomelabBaseModel):
             ]
             if dotenvs
             else None,
-            "name": self.name,
-            "group": self.group,
-            "tags": self.tags,
+            "name": root.name,
+            "group": root.group,
+            "tags": root.tags,
             "logDir": log_dir.to_path(dagu_service.model[dagu_config.log_dir.container])
             if log_dir
             else None,
-            "schedule": self.schedule,
-            "maxActiveRuns": self.max_active_runs,
-            "params": self.params.to_params(self) if self.params else None,
+            "schedule": root.schedule,
+            "maxActiveRuns": root.max_active_runs,
+            "params": root.params.to_params(root) if root.params else None,
             "steps": [
-                step.to_step(self.params, main_service, dagu_service, dotenvs)
-                for step in self.steps
+                DaguDagStepModelBuilder(step).to_step(
+                    root.params, main_service, dagu_service, dotenvs
+                )
+                for step in root.steps
             ],
         }
 

@@ -1,3 +1,25 @@
+from collections import defaultdict
+
+from homelab_dagu_config.group.docker import (
+    DaguDagDockerGroupConfig,
+    DaguDagDockerRunGroupConfig,
+)
+from homelab_dagu_config.model import DaguDagModel
+from homelab_dagu_config.model.params import DaguDagParamsModel, DaguDagParamType
+from homelab_dagu_config.model.step import DaguDagStepModel
+from homelab_dagu_config.model.step.executor import DaguDagStepExecutorModel
+from homelab_dagu_config.model.step.executor.docker import (
+    DaguDagStepDockerExecutorModel,
+)
+from homelab_dagu_config.model.step.executor.docker.run import (
+    DaguDagStepDockerRunExecutorModel,
+)
+from homelab_dagu_config.model.step.run import DaguDagStepRunModel
+from homelab_dagu_config.model.step.run.command import (
+    DaguDagStepRunCommandModel,
+    DaguDagStepRunCommandParamModel,
+    DaguDagStepRunCommandParamTypeModel,
+)
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
@@ -7,26 +29,12 @@ from homelab_extra_service import ExtraService
 from pulumi import ResourceOptions
 
 from .config import DaguConfig
-from .config.group.docker import DaguDagDockerGroupConfig, DaguDagDockerRunGroupConfig
-from .model import DaguDagModel
-from .model.params import DaguDagParamsModel, DaguDagParamType
-from .model.step import DaguDagStepModel
-from .model.step.executor import DaguDagStepExecutorModel
-from .model.step.executor.docker import DaguDagStepDockerExecutorModel
-from .model.step.executor.docker.run import DaguDagStepDockerRunExecutorModel
-from .model.step.run import DaguDagStepRunModel
-from .model.step.run.command import (
-    DaguDagStepRunCommandModel,
-    DaguDagStepRunCommandParamModel,
-    DaguDagStepRunCommandParamTypeModel,
-)
+from .model import DaguDagModelBuilder
 from .resource import DaguDagResource
 
 
 class DaguService(ExtraService[DaguConfig]):
     DEBUG_DAG_NAME = "debug"
-
-    DAGS: dict[str, dict[str, DaguDagResource]] = {}
 
     def __init__(
         self,
@@ -39,6 +47,7 @@ class DaguService(ExtraService[DaguConfig]):
 
         self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self, None)
         self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self, None)
+        self.dags: defaultdict[str, dict[str, DaguDagResource]] = defaultdict(dict)
 
     def get_dag_volume_path(self, name: str) -> ContainerVolumePath:
         return self.dags_dir_volume_path / name
@@ -57,34 +66,36 @@ class DaguService(ExtraService[DaguConfig]):
         main_service: ServiceResourceBase,
         dotenvs: list[DotenvFileResource] | None,
     ) -> DaguDagResource:
-        return DaguDagModel(
-            name=self.DEBUG_DAG_NAME,
-            path="{}-{}".format(main_service.name(), self.DEBUG_DAG_NAME),
-            group=main_service.name(),
-            tags=[self.DEBUG_DAG_NAME],
-            params=DaguDagParamsModel(types={DaguDagParamType.DEBUG: None}),
-            steps=[
-                DaguDagStepModel(
-                    name=self.DEBUG_DAG_NAME,
-                    run=DaguDagStepRunModel(
-                        DaguDagStepRunCommandModel(
-                            [
-                                "sleep",
-                                DaguDagStepRunCommandParamModel(
-                                    param=DaguDagStepRunCommandParamTypeModel(
-                                        type=DaguDagParamType.DEBUG
-                                    )
-                                ),
-                            ]
-                        )
-                    ),
-                    executor=DaguDagStepExecutorModel(
-                        DaguDagStepDockerExecutorModel(
-                            docker_run_executor.__replace__(entrypoint=[])
-                        )
-                    ),
-                )
-            ],
+        return DaguDagModelBuilder(
+            DaguDagModel(
+                name=self.DEBUG_DAG_NAME,
+                path="{}-{}".format(main_service.name(), self.DEBUG_DAG_NAME),
+                group=main_service.name(),
+                tags=[self.DEBUG_DAG_NAME],
+                params=DaguDagParamsModel(types={DaguDagParamType.DEBUG: None}),
+                steps=[
+                    DaguDagStepModel(
+                        name=self.DEBUG_DAG_NAME,
+                        run=DaguDagStepRunModel(
+                            DaguDagStepRunCommandModel(
+                                [
+                                    "sleep",
+                                    DaguDagStepRunCommandParamModel(
+                                        param=DaguDagStepRunCommandParamTypeModel(
+                                            type=DaguDagParamType.DEBUG
+                                        )
+                                    ),
+                                ]
+                            )
+                        ),
+                        executor=DaguDagStepExecutorModel(
+                            DaguDagStepDockerExecutorModel(
+                                docker_run_executor.__replace__(entrypoint=[])
+                            )
+                        ),
+                    )
+                ],
+            )
         ).build_resource(
             self.DEBUG_DAG_NAME,
             opts=opts,
@@ -112,11 +123,8 @@ class DaguService(ExtraService[DaguConfig]):
                     dotenvs=dotenvs,
                 )
 
-        if main_service.name() not in self.DAGS:
-            self.DAGS[main_service.name()] = {}
-
-        self.DAGS[main_service.name()] |= {
-            name: model.build_resource(
+        self.dags[main_service.name()] |= {
+            name: DaguDagModelBuilder(model).build_resource(
                 name,
                 opts=opts,
                 main_service=main_service,
@@ -128,4 +136,4 @@ class DaguService(ExtraService[DaguConfig]):
             ).items()
         }
 
-        return self.DAGS[main_service.name()]
+        return self.dags[main_service.name()]

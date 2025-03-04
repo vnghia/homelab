@@ -28,17 +28,12 @@ class TraefikDynamicModelBuilder(HomelabRootModel[TraefikDynamicModel]):
         root = self.root.root
 
         return (
-            TraefikDynamicHttpModelBuilder(root).build_resource(
-                resource_name,
-                opts=opts,
-                main_service=main_service,
-                traefik_service=traefik_service,
-            )
+            TraefikDynamicHttpModelBuilder(root)
             if isinstance(root, TraefikDynamicHttpModel)
-            else TraefikDynamicMiddlewareBuildModelBuilder(root).build_resource(
-                resource_name,
-                opts=opts,
-                main_service=main_service,
-                traefik_service=traefik_service,
-            )
+            else TraefikDynamicMiddlewareBuildModelBuilder(root)
+        ).build_resource(
+            resource_name,
+            opts=opts,
+            main_service=main_service,
+            traefik_service=traefik_service,
         )

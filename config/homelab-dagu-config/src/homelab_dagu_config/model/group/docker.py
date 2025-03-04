@@ -12,7 +12,7 @@ from ..step.run import DaguDagStepRunModel
 from ..step.run.command import DaguDagStepRunCommandModel
 
 if typing.TYPE_CHECKING:
-    from ...config.step.run.command import DaguDagStepRunCommandsConfig
+    from ...step.run.command import DaguDagStepRunCommandsConfig
 
 
 class DaguDagDockerGroupModel(HomelabBaseModel):

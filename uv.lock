@@ -522,6 +522,7 @@ version = "0.1.0"
 source = { editable = "service/homelab-dagu-service" }
 dependencies = [
     { name = "homelab-backup" },
+    { name = "homelab-dagu-config" },
     { name = "homelab-docker" },
     { name = "homelab-extra-service" },
     { name = "homelab-pydantic" },
@@ -532,6 +533,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },

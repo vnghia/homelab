@@ -7,7 +7,7 @@ from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
-from ..model import DaguDagModel
+from ..model import DaguDagModelBuilder
 from . import schema
 
 if typing.TYPE_CHECKING:
@@ -21,20 +21,20 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
     def __init__(
         self,
         resource_name: str,
-        model: DaguDagModel,
+        model: DaguDagModelBuilder,
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
         dotenvs: list[DotenvFileResource] | None,
     ):
-        self.model = model
+        self.model = model.root
         self.path = self.model.path or resource_name
         super().__init__(
             resource_name,
             opts=opts,
             volume_path=dagu_service.get_dag_volume_path(self.path),
-            data=self.model.to_data(
+            data=model.to_data(
                 main_service,
                 dagu_service,
                 dagu_service.get_log_dir_volume_path(self.path),

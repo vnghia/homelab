@@ -1,4 +1,4 @@
-from homelab_dagu_service.config.group.docker import DaguDagDockerGroupConfig
+from homelab_dagu_config.group.docker import DaguDagDockerGroupConfig
 from homelab_docker.extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from pydantic import PositiveInt
