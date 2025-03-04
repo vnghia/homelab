@@ -10,6 +10,7 @@ dependencies = [
     "homelab-network",
     "homelab-integration",
     "homelab-traefik-config",
+    "homelab-dagu-config",
     "homelab-tailscale-service",
     "homelab-traefik-service",
     "homelab-dagu-service",
@@ -45,6 +46,7 @@ homelab-integration = { workspace = true }
 homelab-pydantic = { workspace = true }
 homelab-network = { workspace = true }
 
+homelab-dagu-config = { workspace = true }
 homelab-traefik-config = { workspace = true }
 
 homelab-backup-service = { workspace = true }

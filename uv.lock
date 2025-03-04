@@ -10,6 +10,7 @@ members = [
     "homelab-barman-service",
     "homelab-config",
     "homelab-crowdsec-service",
+    "homelab-dagu-config",
     "homelab-dagu-service",
     "homelab-docker",
     "homelab-integration",
@@ -345,6 +346,7 @@ dependencies = [
     { name = "homelab-barman-service" },
     { name = "homelab-config" },
     { name = "homelab-crowdsec-service" },
+    { name = "homelab-dagu-config" },
     { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
     { name = "homelab-integration" },
@@ -372,6 +374,7 @@ requires-dist = [
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
     { name = "homelab-config", editable = "homelab-config" },
     { name = "homelab-crowdsec-service", editable = "service/homelab-crowdsec-service" },
+    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-integration", editable = "homelab-integration" },
@@ -494,6 +497,23 @@ requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.150.0" },
     { name = "pulumi-random", specifier = ">=4.17.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-dagu-config"
+version = "0.1.0"
+source = { editable = "config/homelab-dagu-config" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-pydantic" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
@@ -696,7 +716,6 @@ source = { editable = "config/homelab-traefik-config" }
 dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
-    { name = "homelab-tailscale-service" },
     { name = "pydantic" },
 ]
 
@@ -704,7 +723,6 @@ dependencies = [
 requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
