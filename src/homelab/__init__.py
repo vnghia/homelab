@@ -103,4 +103,4 @@ class Homelab:
             docker_resource_args=self.docker.resource_args,
         )
 
-        self.file = File(traefik_service=self.traefik)
+        self.file = File(traefik_service=self.traefik, dagu_service=self.dagu)
