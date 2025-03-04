@@ -504,6 +504,7 @@ source = { editable = "config/homelab-dagu-config" }
 dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
+    { name = "homelab-s3-config" },
     { name = "pydantic" },
 ]
 
@@ -511,6 +512,7 @@ dependencies = [
 requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

@@ -8,16 +8,13 @@ from ..volume import VolumeResource
 from .config import ConfigDumper, ConfigFileResource
 
 
-class DotenvModel(HomelabRootModel[dict[str, str]]):
-    pass
-
-
-class DotenvDumper(ConfigDumper[DotenvModel]):
+class DotenvDumper(ConfigDumper[HomelabRootModel[dict[str, str]]]):
     @staticmethod
-    def dumps(data: DotenvModel) -> str:
+    def dumps(data: HomelabRootModel[dict[str, str]]) -> str:
         return (
             "\n".join(
-                '{}="{}"'.format(k, v.replace('"', '\\"')) for k, v in data.root.items()
+                '{}="{}"'.format(k, v.replace('"', '\\"'))
+                for k, v in sorted(data.root.items(), key=lambda x: x[0])
             )
             + "\n"
         )
@@ -28,9 +25,9 @@ class DotenvDumper(ConfigDumper[DotenvModel]):
 
 
 class DotenvFileResource(
-    ConfigFileResource[DotenvModel], module="docker", name="Dotenv"
+    ConfigFileResource[HomelabRootModel[dict[str, str]]], module="docker", name="Dotenv"
 ):
-    validator = DotenvModel
+    validator = HomelabRootModel[dict[str, str]]
     dumper = DotenvDumper
 
     def __init__(

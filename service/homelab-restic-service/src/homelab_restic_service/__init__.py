@@ -1,9 +1,7 @@
 from pathlib import PosixPath
 
-import pulumi
 from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
-from homelab_docker.extract.transform import ExtractTransform
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
@@ -21,8 +19,6 @@ from .resource.repo import ResticRepoResource
 
 
 class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
-    PASSWORD_LENGTH = 64
-
     RESTIC_MOUNT_PREFIX = AbsolutePath(PosixPath("/"))
 
     DEFAULT_PROFILE_NAME = "default"
@@ -45,13 +41,11 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             self, None
         )
 
-        self.password = self.config.password.extract_output_str(self, None)
         self.repo = ResticRepoResource(
             "repo",
-            self.config,
             opts=self.child_opts,
-            password=self.password,
-            image_resource=self.docker_resource_args.image,
+            image=self.docker_resource_args.image.remotes[self.config.image].image_id,
+            envs=self.config.dotenv.to_envs(self, None),
         )
 
         self.dotenvs = [
@@ -59,7 +53,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 self.name(),
                 opts=self.child_opts,
                 volume_path=dagu_service.get_dotenv_volume_path(self.name()),
-                envs=self.config.repo.to_envs(self.password),
+                envs=self.config.dotenv.to_envs(self, None),
                 volume_resource=self.docker_resource_args.volume,
             )
         ]
@@ -95,9 +89,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             container_model_build_args=self.docker_executor_build_args,
             dotenvs=self.dotenvs,
         )
-
-        pulumi.export("restic.repo", self.repo.id)
-        pulumi.export("restic.password", self.password)
 
         self.register_outputs({})
 

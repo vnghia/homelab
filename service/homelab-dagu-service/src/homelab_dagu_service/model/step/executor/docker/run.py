@@ -45,12 +45,17 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
             container_config["entrypoint"] = entrypoint
         container_config["labels"] = model.build_labels(None, main_service, build_args)
         container_config["env"] = model.build_envs(main_service, build_args) + (
-            sum(
-                [
-                    ["{key}=${{{key}}}".format(key=key) for key in dotenv.envs.keys()]
-                    for dotenv in dotenvs
-                ],
-                [],
+            sorted(
+                sum(
+                    [
+                        [
+                            "{key}=${{{key}}}".format(key=key)
+                            for key in dotenv.envs.keys()
+                        ]
+                        for dotenv in dotenvs
+                    ],
+                    [],
+                )
             )
             if dotenvs
             else []
