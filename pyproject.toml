@@ -8,7 +8,6 @@ dependencies = [
     "homelab-config",
     "homelab-docker",
     "homelab-network",
-    "homelab-integration",
     "homelab-traefik-config",
     "homelab-dagu-config",
     "homelab-tailscale-service",
@@ -42,11 +41,11 @@ dev-dependencies = [
 homelab-backup = { workspace = true }
 homelab-config = { workspace = true }
 homelab-docker = { workspace = true }
-homelab-integration = { workspace = true }
 homelab-pydantic = { workspace = true }
 homelab-network = { workspace = true }
 
 homelab-dagu-config = { workspace = true }
+homelab-s3-config = { workspace = true }
 homelab-traefik-config = { workspace = true }
 
 homelab-backup-service = { workspace = true }

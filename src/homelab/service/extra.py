@@ -4,8 +4,8 @@ from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
-from homelab_integration.s3 import S3ServiceConfig
 from homelab_pydantic import HomelabBaseModel
+from homelab_s3_config import S3ServiceConfig
 from homelab_traefik_config import TraefikServiceConfigBase
 from pulumi import ResourceOptions
 

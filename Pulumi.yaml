@@ -218,18 +218,16 @@ config:
                 variable: CONFIG_PATH
               transform:
                 path: static.toml
-            DYNAMIC_PATH:
-              extract:
-                variable: CONFIG_PATH
-              transform:
-                path: dynamic
             API_PATH: /proxy
           config:
             path:
               static:
                 variable: STATIC_PATH
               dynamic:
-                variable: DYNAMIC_PATH
+                extract:
+                  variable: CONFIG_PATH
+                transform:
+                  path: dynamic
               api:
                 variable: API_PATH
             acme:

@@ -1,8 +1,8 @@
 import urllib.parse
 from pathlib import PosixPath
 
-from homelab_integration import S3Config
 from homelab_pydantic import HomelabBaseModel, RelativePath
+from homelab_s3_config import S3Config
 
 
 class ResticRepoConfig(HomelabBaseModel):

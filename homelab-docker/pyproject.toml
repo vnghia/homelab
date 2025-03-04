@@ -26,7 +26,7 @@ build-backend = "hatchling.build"
 dev = [
     "types-docker>=7.1.0.20241229",
     "types-jsonschema>=4.23.0.20241208",
- "types-pyyaml>=6.0.12.20241230",
+    "types-pyyaml>=6.0.12.20241230",
 ]
 
 [tool.ruff]
