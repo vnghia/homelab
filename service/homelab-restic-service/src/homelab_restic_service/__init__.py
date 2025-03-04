@@ -1,9 +1,9 @@
 from pathlib import PosixPath
 
 import pulumi
-import pulumi_random as random
 from homelab_backup.config import BackupConfig
 from homelab_dagu_service import DaguService
+from homelab_docker.extract.transform import ExtractTransform
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
@@ -45,11 +45,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             self, None
         )
 
-        self.password = random.RandomPassword(
-            "password",
-            opts=ResourceOptions.merge(self.child_opts, ResourceOptions(protect=True)),
-            length=self.PASSWORD_LENGTH,
-        ).result
+        self.password = self.config.password.extract_output_str(self, None)
         self.repo = ResticRepoResource(
             "repo",
             self.config,

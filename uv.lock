@@ -675,7 +675,6 @@ dependencies = [
     { name = "homelab-pydantic" },
     { name = "homelab-s3-config" },
     { name = "pulumi" },
-    { name = "pulumi-random" },
     { name = "pydantic" },
 ]
 
@@ -687,7 +686,6 @@ requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
     { name = "pulumi", specifier = ">=3.150.0" },
-    { name = "pulumi-random", specifier = ">=4.17.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

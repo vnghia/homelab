@@ -715,6 +715,8 @@ config:
               env: RESTIC_CACHE_DIR
             repo:
               prefix: backup/restic
+            password:
+              secret: password
             keep:
               last:
                 daily: 7
@@ -747,6 +749,9 @@ config:
                     - param:
                         type: backup
                     - "backup"
+          secrets:
+            password:
+              protect: true
           container:
             active: false
             image: resticprofile

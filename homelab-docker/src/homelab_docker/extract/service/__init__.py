@@ -98,3 +98,10 @@ class ServiceExtract(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
         return self.root.extract_volume_path(main_service, model)
+
+    def extract_output_str(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> Output[str]:
+        return ExtractTransform().transform_string(
+            self.root.extract_str(main_service, model)
+        )

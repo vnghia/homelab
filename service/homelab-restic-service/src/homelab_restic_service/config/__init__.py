@@ -14,6 +14,7 @@ class ResticConfig(HomelabBaseModel):
     cache_dir: ServiceExtract
 
     repo: ResticRepoConfig
+    password: ServiceExtract
     keep: ResticKeepConfig
 
     dagu: DaguDagDockerGroupConfig

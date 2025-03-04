@@ -26,7 +26,12 @@ class ServiceSecretResouse(ComponentResource):
 
         self.secrets = {
             name: random.RandomPassword(
-                name, opts=self.child_opts, length=model.length, special=model.special
+                name,
+                opts=ResourceOptions.merge(
+                    self.child_opts, ResourceOptions(protect=model.protect)
+                ),
+                length=model.length,
+                special=model.special,
             )
             for name, model in config.root.items()
         }

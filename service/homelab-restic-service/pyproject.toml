@@ -10,7 +10,6 @@ dependencies = [
     "homelab-s3-config",
     "homelab-dagu-service",
     "pulumi>=3.150.0",
-    "pulumi-random>=4.17.0",
     "pydantic>=2.10.6",
 ]
 
