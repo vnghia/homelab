@@ -1,7 +1,3 @@
-from __future__ import annotations
-
-import typing
-
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic.model import HomelabRootModel
 from homelab_traefik_config import TraefikServiceConfig
@@ -9,9 +5,7 @@ from pulumi import ResourceOptions
 
 from .. import TraefikService
 from ..model.dynamic import TraefikDynamicModelBuilder
-
-if typing.TYPE_CHECKING:
-    from ..resource.dynamic import TraefikDynamicConfigResource
+from ..resource.dynamic import TraefikDynamicConfigResource
 
 
 class TraefikServiceConfigBuilder(HomelabRootModel[TraefikServiceConfig]):

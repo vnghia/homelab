@@ -91,9 +91,11 @@ class Homelab:
             opts=None,
             hostname=self.project_prefix,
             backup_config=self.docker.services_config.backup.config,
-            dagu_service=self.dagu,
             docker_resource_args=self.docker.resource_args,
         )
+
+        self.file = File(traefik_service=self.traefik, dagu_service=self.dagu)
+
         self.backup = BackupService(
             self.docker.services_config.backup,
             opts=None,
@@ -102,5 +104,3 @@ class Homelab:
             restic_service=self.restic,
             docker_resource_args=self.docker.resource_args,
         )
-
-        self.file = File(traefik_service=self.traefik, dagu_service=self.dagu)

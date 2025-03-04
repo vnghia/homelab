@@ -56,3 +56,6 @@ class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
 
     def __bool__(self) -> bool:
         return bool(self.root)
+
+    def __getitem__(self, key: str | None) -> T:
+        return self.root[key]

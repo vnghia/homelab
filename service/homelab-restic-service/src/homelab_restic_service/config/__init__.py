@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-from homelab_dagu_config.group.docker import DaguDagDockerGroupConfig
-from homelab_dagu_config.model.dotenv import DaguDagDotenvModel
+from homelab_dagu_config import DaguServiceConfigBase
 from homelab_docker.extract.service import ServiceExtract
-from homelab_pydantic import HomelabBaseModel
 
 from .keep import ResticKeepConfig
 from .repo import ResticRepoConfig
 
 
-class ResticConfig(HomelabBaseModel):
+class ResticConfig(DaguServiceConfigBase):
     image: str
     profile_dir: ServiceExtract
     cache_dir: ServiceExtract
@@ -17,6 +15,3 @@ class ResticConfig(HomelabBaseModel):
     repo: ResticRepoConfig
     password: ServiceExtract
     keep: ResticKeepConfig
-
-    dagu: DaguDagDockerGroupConfig
-    dotenv: DaguDagDotenvModel

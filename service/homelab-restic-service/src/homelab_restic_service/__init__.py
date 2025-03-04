@@ -1,12 +1,10 @@
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupConfig
-from homelab_dagu_service import DaguService
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
-from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_pydantic import AbsolutePath
 from pulumi import ResourceOptions
@@ -29,7 +27,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         opts: ResourceOptions | None,
         hostname: str,
         backup_config: BackupConfig,
-        dagu_service: DaguService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
@@ -44,18 +41,8 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             "repo",
             opts=self.child_opts,
             image=self.docker_resource_args.image.remotes[self.config.image].image_id,
-            envs=self.config.dotenv.to_envs(self, None),
+            envs=self.config.dagu.dotenvs[None].to_envs(self, None),
         )
-
-        self.dotenvs = [
-            DotenvFileResource(
-                self.name(),
-                opts=self.child_opts,
-                volume_path=dagu_service.get_dotenv_volume_path(self.name()),
-                envs=self.config.dotenv.to_envs(self, None),
-                volume_resource=self.docker_resource_args.volume,
-            )
-        ]
 
         self.backup_volumes = {
             volume: ContainerVolumeConfig(self.get_volume_path(volume))
@@ -78,10 +65,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         # No need to specify file dependencies because the file are created after `pulumi up`
         self.options[None].volumes = self.backup_volumes
-
-        self.dagu_dags = dagu_service.build_docker_group_dags(
-            self.config.dagu, opts=self.child_opts, main_service=self
-        )
 
         self.register_outputs({})
 

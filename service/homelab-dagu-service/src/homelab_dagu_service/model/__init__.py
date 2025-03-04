@@ -69,10 +69,12 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
     ) -> DaguDagResource:
         from ..resource import DaguDagResource
 
-        return DaguDagResource(
+        resource = DaguDagResource(
             resource_name,
             self,
             opts=opts,
             main_service=main_service,
             dagu_service=dagu_service,
         )
+        dagu_service.dags[main_service.name()][resource_name] = resource
+        return resource

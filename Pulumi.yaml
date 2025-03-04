@@ -721,34 +721,39 @@ config:
               last:
                 daily: 7
             dagu:
-              executor:
-                run:
-                  model:
-              dag:
-                max-active-runs: 1
-                params:
-                  types:
-                    backup:
-                tags: ["backup"]
-              dags:
-                check:
-                  dag:
-                    schedule: "0 2 * * sat" # 2am every saturday
-                  command: ["check", "--read-data"]
-                snapshots:
-                  command: ["snapshots"]
-                backup:
-                  command:
-                    - "-n"
-                    - param:
-                        type: backup
-                    - "backup"
-                forget:
-                  command:
-                    - "-n"
-                    - param:
-                        type: backup
-                    - "backup"
+              dotenvs:
+                dotenv:
+              docker:
+                executor:
+                  run:
+                    model:
+                dag:
+                  dotenvs:
+                    - null
+                  max-active-runs: 1
+                  params:
+                    types:
+                      backup:
+                  tags: ["backup"]
+                dags:
+                  check:
+                    dag:
+                      schedule: "0 2 * * sat" # 2am every saturday
+                    command: ["check", "--read-data"]
+                  snapshots:
+                    command: ["snapshots"]
+                  backup:
+                    command:
+                      - "-n"
+                      - param:
+                          type: backup
+                      - "backup"
+                  forget:
+                    command:
+                      - "-n"
+                      - param:
+                          type: backup
+                      - "backup"
           secrets:
             password:
               protect: true
