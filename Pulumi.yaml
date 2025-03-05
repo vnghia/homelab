@@ -670,7 +670,16 @@ config:
           containers:
             queue:
               inherit:
-              command: ["php", "artisan", "queue:work", "redis", "--json"]
+              command:
+                [
+                  "php",
+                  "artisan",
+                  "queue:work",
+                  "redis",
+                  "--queue",
+                  "high,default,low",
+                  "--json",
+                ]
         barman:
           config:
             config-dir:
