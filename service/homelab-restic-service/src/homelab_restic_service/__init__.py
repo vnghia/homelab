@@ -54,7 +54,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             ResticProfileModel(volume=volume).build_resource(
                 opts=self.child_opts, restic_service=self
             )
-            for volume in self.backup_volumes.keys()
+            for volume in sorted(self.backup_volumes.keys())
         ]
         self.global_ = ResticGlobalProfileResource(
             opts=self.child_opts,

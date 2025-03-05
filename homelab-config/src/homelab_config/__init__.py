@@ -1,7 +1,9 @@
+from pathlib import Path
 from typing import Any, ClassVar, Self, Type
 
 import deepmerge
 import pulumi
+import yaml
 from homelab_docker.config import DockerConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_network.config.network import NetworkConfig
@@ -20,9 +22,17 @@ class Config[T: ServiceConfigBase](HomelabBaseModel):
 
     @classmethod
     def get_key(cls, key: str) -> Any:
+        data = pulumi.Config().get_object(key, {})
+
+        for file in (
+            (Path(__file__).parent.parent.parent.parent / "config" / key)
+            .resolve(True)
+            .glob("*.yaml")
+        ):
+            data = deepmerge.always_merger.merge(data, yaml.full_load(open(file)))
+
         return deepmerge.always_merger.merge(
-            pulumi.Config().get_object(key, {}),
-            pulumi.Config().get_object("stack-{}".format(key), {}),
+            data, pulumi.Config().get_object("stack-{}".format(key), {})
         )
 
     @classmethod

@@ -1,0 +1,35 @@
+database:
+  postgres:
+    images:
+      postgres:
+        "17":
+          repo: postgres
+          tag: "17.4-bookworm"
+    version: 17
+    port: 5432
+    data-dir: /var/lib/postgresql/data
+    env:
+      username: POSTGRES_USER
+      password: POSTGRES_PASSWORD
+      database: POSTGRES_DB
+      data-dir: PGDATA
+    container:
+      healthcheck:
+        tests:
+          - "CMD"
+          - "pg_isready"
+          - "-U"
+          - env: POSTGRES_DB
+        interval: 30s
+        retries: 5
+        timeout: 5s
+      tmpfs:
+        - /var/run/postgresql
+      volumes:
+        postgres-docker-entrypoint-initdb:
+          path: /docker-entrypoint-initdb.d
+          read-only: true
+volumes:
+  local:
+    postgres-docker-entrypoint-initdb:
+      backup: false

@@ -1,0 +1,83 @@
+images:
+  remote:
+    dagu:
+      repo: ghcr.io/dagu-org/dagu
+      tag: "1.16.3"
+volumes:
+  local:
+    dagu-home: {}
+    dagu-dags:
+      backup: false
+services:
+  dagu:
+    config:
+      dags-dir:
+        extract:
+          env: DAGU_DAGS_DIR
+      log-dir:
+        extract:
+          env: DAGU_LOG_DIR
+      traefik:
+        traefik:
+          public: false
+          service:
+            port:
+              env: DAGU_PORT
+    container:
+      image: dagu
+      command: ["start-all"]
+      docker-socket:
+        write: true
+      entrypoint: ["dagu"]
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "-q"
+          - extract:
+              env: DAGU_PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/api/v1/health"
+          - "-O"
+          - "/dev/null"
+        interval: 30s
+        timeout: 5s
+      tmpfs:
+        - /tmp
+      volumes:
+        dagu-home: /config
+        dagu-dags:
+          path: /config/dags
+          read-only: true
+      envs:
+        DAGU_PORT: 8080
+        DAGU_TZ:
+          docker: "{timezone}"
+        DAGU_DAGS_DIR:
+          volume: dagu-dags
+        DAGU_BASE_CONFIG:
+          extract:
+            volume: dagu-dags
+          transform:
+            path: base.yaml
+        DAGU_LOG_DIR:
+          extract:
+            volume: dagu-home
+          transform:
+            path: logs
+        DAGU_DATA_DIR:
+          extract:
+            volume: dagu-home
+          transform:
+            path: data
+        DAGU_SUSPEND_FLAGS_DIR:
+          extract:
+            volume: dagu-home
+          transform:
+            path: suspend
+        DAGU_ADMIN_LOG_DIR:
+          extract:
+            volume: dagu-home
+          transform:
+            path: admin

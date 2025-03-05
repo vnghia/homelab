@@ -1,0 +1,81 @@
+images:
+  remote:
+    ntfy:
+      repo: binwiederhier/ntfy
+      tag: "v2.11.0"
+volumes:
+  local:
+    ntfy-cache: {}
+    ntfy-data:
+      backup: false
+services:
+  ntfy:
+    config:
+      traefik:
+        traefik:
+          public: true
+          hostname: ntfy
+          service:
+            port:
+              extract:
+                env: NTFY_LISTEN_HTTP
+              transform:
+                string:
+                  capture: ":(\\d+)"
+    secrets:
+      admin-username:
+        length: 16
+        special: false
+      admin-password: {}
+      user-username:
+        length: 16
+        special: false
+      user-password: {}
+    container:
+      image: ntfy
+      command: ["serve"]
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              env: NTFY_LISTEN_HTTP
+            transform:
+              string:
+                capture: ":(\\d+)"
+                template: "http://localhost:{value}/v1/health"
+        interval: 30s
+        timeout: 5s
+      envs:
+        NTFY_BASE_URL:
+          extract:
+            hostname: ntfy
+            public: true
+            scheme: https
+        NTFY_LISTEN_HTTP: ":8080"
+        NTFY_CACHE_FILE:
+          extract:
+            volume: ntfy-cache
+          transform:
+            path: cache.db
+        NTFY_AUTH_FILE:
+          extract:
+            volume: ntfy-data
+          transform:
+            path: auth.db
+        NTFY_AUTH_DEFAULT_ACCESS: "deny-all"
+        NTFY_BEHIND_PROXY: true
+        NTFY_ATTACHMENT_CACHE_DIR:
+          extract:
+            volume: ntfy-cache
+          transform:
+            path: attachment
+        NTFY_ENABLE_SIGNUP: false
+        NTFY_ENABLE_RESERVATIONS: false
+        NTFY_ENABLE_METRICS: false
+        NTFY_LOG_FORMAT: json
+      volumes:
+        ntfy-cache: /var/cache/ntfy
+        ntfy-data: /var/lib/ntfy

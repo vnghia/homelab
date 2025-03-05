@@ -1,0 +1,99 @@
+images:
+  remote:
+    traefik:
+      repo: traefik
+      tag: "v3.3.2"
+volumes:
+  local:
+    traefik-config:
+      backup: false
+    traefik-cert: {}
+    traefik-plugin:
+      backup: false
+services:
+  traefik:
+    variables:
+      CERT_PATH:
+        extract:
+          volume: traefik-cert
+        transform:
+          path: acme.json
+      CONFIG_PATH:
+        volume: traefik-config
+      STATIC_PATH:
+        extract:
+          variable: CONFIG_PATH
+        transform:
+          path: static.toml
+      API_PATH: /proxy
+    config:
+      path:
+        static:
+          variable: STATIC_PATH
+        dynamic:
+          extract:
+            variable: CONFIG_PATH
+          transform:
+            path: dynamic
+        api:
+          variable: API_PATH
+      acme:
+        server: https://acme-v02.api.letsencrypt.org/directory
+        storage:
+          variable: CERT_PATH
+      entrypoint:
+        public-http: "public-http"
+        private-http: "private-http"
+        public-https: "public-https"
+        private-https: "private-https"
+      plugins:
+        crowdsec:
+          name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+          version: "v1.4.1"
+      traefik:
+        crowdsec:
+          name: crowdsec
+          plugin: crowdsec
+          data:
+            enabled: true
+            crowdsecMode: stream
+            crowdseclapikey:
+              service: crowdsec
+              extract:
+                secret: traefik
+            crowdsecLapiHost:
+              service: crowdsec
+              extract:
+                name:
+              transform:
+                string:
+                  template: "{value}:8080"
+        dashboard:
+          name: dashboard
+          public: false
+          hostname: system
+          prefix:
+            variable: API_PATH
+          service: "api@internal"
+    container:
+      image: traefik
+      command:
+        - "traefik"
+        - "--configFile"
+        - variable: STATIC_PATH
+      healthcheck:
+        tests: ["CMD", "traefik", "healthcheck", "--ping"]
+        interval: 30s
+        timeout: 5s
+        retries: 5
+      labels:
+        crowdsec.enable: true
+        crowdsec.labels.type: traefik
+      network:
+        service: tailscale
+      volumes:
+        traefik-config:
+          path: /etc/traefik/config
+          read-only: true
+        traefik-cert: /etc/traefik/cert
+        traefik-plugin: /plugins-storage

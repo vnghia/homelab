@@ -80,7 +80,9 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
             + (
                 [
                     volume.to_args(volume_name=volume_resource[name].name)
-                    for name, volume in build_args.volumes.items()
+                    for name, volume in sorted(
+                        build_args.volumes.items(), key=lambda x: x[0]
+                    )
                 ]
             )
             + [

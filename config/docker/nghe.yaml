@@ -1,0 +1,58 @@
+images:
+  remote:
+    nghe:
+      repo: ghcr.io/vnghia/nghe-musl
+      tag: "0.10.1"
+volumes:
+  local:
+    nghe-cache: {}
+services:
+  nghe:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              env: NGHE_SERVER__PORT
+    databases:
+      postgres:
+        postgres: {}
+    secrets:
+      key:
+        length: 16
+    container:
+      image: nghe
+      databases:
+        - postgres:
+          envs:
+            env: NGHE_DATABASE__URL
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              env: NGHE_SERVER__PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/rest/health"
+        interval: 30s
+        timeout: 5s
+      network:
+        default-bridge: true
+      volumes:
+        nghe-cache: /tmp/nghe
+      envs:
+        NGHE_SERVER__PORT: 3000
+        NGHE_DATABASE__KEY:
+          extract:
+            secret: key
+          transform:
+            secret:
+              encode: hex
+        NGHE_S3__ENABLE: true
+        NGHE_INTEGRATION__SPOTIFY__ID:
+        NGHE_INTEGRATION__SPOTIFY__SECRET:
+        NGHE_INTEGRATION__LASTFM__KEY:

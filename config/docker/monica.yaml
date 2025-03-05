@@ -1,0 +1,92 @@
+images:
+  remote:
+    monica:
+      repo: ghcr.io/monicahq/monica-next
+      tag: "main"
+      delete-before-replace: true
+volumes:
+  local:
+    monica-data:
+      backup: false
+services:
+  monica:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port: 80
+      dagu:
+        docker:
+          executor:
+            exec:
+              container:
+          dag:
+            max-active-runs: 1
+            tags: ["monica"]
+          dags:
+            schedule:
+              dag:
+                schedule: "* * * * *"
+              command: ["php", "artisan", "schedule:run"]
+    databases:
+      postgres:
+        postgres: {}
+      redis:
+        redis: {}
+    secrets:
+      key:
+        length: 32
+    container:
+      image: monica
+      databases:
+        - postgres:
+          envs:
+            username: DB_USERNAME
+            password: DB_PASSWORD
+            database: DB_DATABASE
+            host: DB_HOST
+            port: DB_PORT
+        - redis:
+          envs:
+            password: REDIS_PASSWORD
+            host: REDIS_HOST
+            port: REDIS_PORT
+      envs:
+        APP_NAME:
+        APP_ENV: production
+        APP_KEY:
+          secret: key
+        APP_DEBUG: false
+        APP_URL:
+          hostname: monica
+          public: true
+          scheme: https
+        APP_TIMEZONE:
+          docker: "{timezone}"
+        APP_TRUSTED_PROXIES: "*"
+        LOG_STACK: stderr
+        DB_CONNECTION: pgsql
+        CACHE_STORE: redis
+        QUEUE_CONNECTION: redis
+        SESSION_DRIVER: redis
+        DEFAULT_STORAGE_LIMIT: 0
+      network:
+        default-bridge: true
+      tmpfs:
+        - /var/run
+      volumes:
+        monica-data: /var/www/html
+    containers:
+      queue:
+        inherit:
+        command:
+          [
+            "php",
+            "artisan",
+            "queue:work",
+            "redis",
+            "--queue",
+            "high,default,low",
+            "--json",
+          ]

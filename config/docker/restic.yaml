@@ -1,0 +1,82 @@
+images:
+  remote:
+    resticprofile:
+      repo: creativeprojects/resticprofile
+      tag: "0.29.1"
+volumes:
+  local:
+    restic-cache:
+      backup: false
+    restic-profile:
+      backup: false
+services:
+  restic:
+    config:
+      image: resticprofile
+      profile-dir:
+        volume: restic-profile
+      cache-dir:
+        env: RESTIC_CACHE_DIR
+      repo:
+        prefix: backup/restic
+      password:
+        secret: password
+      keep:
+        last:
+          daily: 7
+      dagu:
+        dotenvs:
+          dotenv:
+            envs:
+              RESTIC_PASSWORD:
+                secret: password
+        docker:
+          executor:
+            run:
+              model:
+          dag:
+            dotenvs:
+              - null
+            max-active-runs: 1
+            params:
+              types:
+                backup:
+            tags: ["backup"]
+          dags:
+            check:
+              dag:
+                schedule: "0 2 * * sat" # 2am every saturday
+              command: ["check", "--read-data"]
+            snapshots:
+              command: ["snapshots"]
+            backup:
+              command:
+                - "-n"
+                - param:
+                    type: backup
+                - "backup"
+            forget:
+              command:
+                - "-n"
+                - param:
+                    type: backup
+                - "backup"
+    secrets:
+      password:
+        protect: true
+    container:
+      active: false
+      image: resticprofile
+      network:
+        default-bridge: true
+        internal-bridge: false
+      tmpfs:
+        - /tmp
+      volumes:
+        restic-cache: /cache
+        restic-profile:
+          path: /etc/resticprofile
+          read-only: true
+      envs:
+        RESTIC_CACHE_DIR:
+          volume: restic-cache

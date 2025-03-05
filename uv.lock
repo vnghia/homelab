@@ -466,6 +466,12 @@ dependencies = [
     { name = "homelab-pydantic" },
     { name = "pulumi" },
     { name = "pydantic" },
+    { name = "pyyaml" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "types-pyyaml" },
 ]
 
 [package.metadata]
@@ -476,7 +482,11 @@ requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.147.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "types-pyyaml", specifier = ">=6.0.12.20241230" }]
 
 [[package]]
 name = "homelab-crowdsec-service"

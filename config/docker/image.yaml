@@ -1,0 +1,6 @@
+images:
+  remote:
+    minideb:
+      repo: bitnami/minideb
+      tag: "bookworm"
+      delete-before-replace: true

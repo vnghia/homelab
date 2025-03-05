@@ -1,0 +1,46 @@
+images:
+  remote:
+    memos:
+      repo: ghcr.io/usememos/memos
+      tag: "0.24.0"
+volumes:
+  local:
+    memos-data: {}
+services:
+  memos:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              env: MEMOS_PORT
+    databases:
+      postgres:
+        postgres: {}
+    container:
+      image: memos
+      databases:
+        - postgres:
+          envs:
+            env: MEMOS_DSN
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              env: MEMOS_PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/healthz"
+        interval: 30s
+        timeout: 5s
+      volumes:
+        memos-data: /var/opt/memos
+      envs:
+        MEMOS_PORT: 5230
+        MEMOS_DATA:
+          volume: memos-data
+        MEMOS_DRIVER: postgres

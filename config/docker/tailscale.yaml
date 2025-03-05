@@ -1,0 +1,65 @@
+images:
+  remote:
+    tailscale:
+      repo: tailscale/tailscale
+      tag: "v1.78.3"
+volumes:
+  local:
+    tailscale-data: {}
+services:
+  tailscale:
+    container:
+      image: tailscale
+      capabilities:
+        - NET_ADMIN
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - "http://localhost:9002/healthz"
+        interval: 30s
+        timeout: 5s
+      network:
+        default-bridge: true
+      ports:
+        httpv4:
+          internal: 81
+          external: 80
+          ip: "0.0.0.0"
+        httpv6:
+          internal: 81
+          external: 80
+          ip: "::"
+        httpsv4:
+          internal: 444
+          external: 443
+          ip: "0.0.0.0"
+          protocol: tcp
+        httpsv6:
+          internal: 444
+          external: 443
+          ip: "::"
+          protocol: tcp
+        httpsv4-udp:
+          internal: 444
+          external: 443
+          ip: "0.0.0.0"
+          protocol: udp
+        httpsv6-udp:
+          internal: 444
+          external: 443
+          ip: "::"
+          protocol: udp
+      tmpfs:
+        - /tmp
+        - /run
+      volumes:
+        tailscale-data: /var/lib/tailscale
+      envs:
+        TS_STATE_DIR:
+          volume: tailscale-data
+        TS_USERSPACE: false
+        TS_AUTH_ONCE: true
+        TS_ENABLE_HEALTH_CHECK: true

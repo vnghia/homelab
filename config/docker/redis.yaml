@@ -1,0 +1,26 @@
+database:
+  redis:
+    images:
+      redis:
+        "7":
+          repo: bitnami/redis
+          tag: "7.4.2"
+    version: 7
+    port: 6379
+    data-dir: /bitnami/redis/data
+    tmp-dir: /opt/bitnami/redis
+    env:
+      password: REDIS_PASSWORD
+      database: REDIS_DATABASE
+      data-dir: REDIS_DATA_DIR
+    container:
+      healthcheck:
+        tests:
+          - "CMD"
+          - "redis-cli"
+          - "--raw"
+          - "incr"
+          - "ping"
+        interval: 30s
+        retries: 5
+        timeout: 5s
