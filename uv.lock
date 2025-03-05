@@ -595,6 +595,7 @@ name = "homelab-extra-service"
 version = "0.1.0"
 source = { editable = "service/homelab-extra-service" }
 dependencies = [
+    { name = "homelab-dagu-config" },
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
     { name = "homelab-s3-config" },
@@ -605,6 +606,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
