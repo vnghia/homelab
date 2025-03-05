@@ -1,4 +1,4 @@
-from homelab_backup.config import BackupConfig
+from homelab_backup.config import BackupGlobalConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -16,7 +16,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         model: ServiceWithConfigModel[BarmanConfig],
         *,
         opts: ResourceOptions | None,
-        backup_config: BackupConfig,
+        backup_config: BackupGlobalConfig,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)

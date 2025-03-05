@@ -776,5 +776,22 @@ config:
                 volume: restic-cache
         backup:
           config:
-            schedule: "0 0 * * *"
-            tags: ["backup"]
+            dagu:
+              dag:
+                dag:
+                  name: backup
+                  group: backup
+                  tags: ["backup"]
+                  schedule: "0 0 * * *"
+                  max-active-runs: 1
+                  steps:
+                    - name: barman
+                      continue-on:
+                        failure: true
+                      run:
+                        service: barman
+                        dag: backup
+                    - name: restic
+                      run:
+                        service: restic
+                        dag: backup

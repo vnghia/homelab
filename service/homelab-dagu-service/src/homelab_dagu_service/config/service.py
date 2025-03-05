@@ -34,7 +34,7 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
-    ) -> dict[str, DaguDagResource]:
+    ) -> dict[str | None, DaguDagResource]:
         root = self.root
 
         for name, dotenv in root.dotenvs.root.items():
@@ -45,6 +45,16 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
         self.build_docker_group_dags(
             opts=opts, main_service=main_service, dagu_service=dagu_service
         )
+
+        {
+            name: DaguDagModelBuilder(model).build_resource(
+                name,
+                opts=opts,
+                main_service=main_service,
+                dagu_service=dagu_service,
+            )
+            for name, model in root.dag.root.items()
+        }
 
         return dagu_service.dags[main_service.name()]
 

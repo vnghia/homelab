@@ -1,6 +1,6 @@
 from pathlib import PosixPath
 
-from homelab_backup.config import BackupConfig
+from homelab_backup.config import BackupGlobalConfig
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -26,7 +26,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         *,
         opts: ResourceOptions | None,
         hostname: str,
-        backup_config: BackupConfig,
+        backup_config: BackupGlobalConfig,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)

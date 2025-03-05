@@ -61,7 +61,7 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
 
     def build_resource(
         self,
-        resource_name: str,
+        resource_name: str | None,
         *,
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,

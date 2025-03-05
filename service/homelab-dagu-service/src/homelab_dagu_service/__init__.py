@@ -29,7 +29,9 @@ class DaguService(ExtraService[DaguConfig]):
         self.dotenvs: defaultdict[str, dict[str | None, DotenvFileResource]] = (
             defaultdict(dict)
         )
-        self.dags: defaultdict[str, dict[str, DaguDagResource]] = defaultdict(dict)
+        self.dags: defaultdict[str, dict[str | None, DaguDagResource]] = defaultdict(
+            dict
+        )
 
     def get_dag_volume_path(self, name: str) -> ContainerVolumePath:
         return self.dags_dir_volume_path / name

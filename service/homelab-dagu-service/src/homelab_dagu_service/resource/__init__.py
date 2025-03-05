@@ -19,7 +19,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
 
     def __init__(
         self,
-        resource_name: str,
+        resource_name: str | None,
         model: DaguDagModelBuilder,
         *,
         opts: ResourceOptions | None,
@@ -27,6 +27,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
         dagu_service: DaguService,
     ):
         self.model = model.root
+        resource_name = resource_name or main_service.name()
         self.path = self.model.path or resource_name
         super().__init__(
             resource_name,
