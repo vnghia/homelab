@@ -37,6 +37,14 @@ class TraefikStaticConfigResource(
             traefik_service, None
         )
 
+        timeouts = {
+            "respondingTimeouts": {
+                "readTimeout": traefik_config.timeout,
+                "idleTimeout": traefik_config.timeout,
+                "writeTimeout": traefik_config.timeout,
+            }
+        }
+
         proxy_protocol = (
             {
                 "proxyProtocol": {
@@ -86,12 +94,14 @@ class TraefikStaticConfigResource(
                     traefik_config.entrypoint.private_https: {
                         "address": "[::]:443",
                         "http3": {},
+                        "transport": timeouts,
                     },
                     traefik_config.entrypoint.public_https: {
                         "address": "[::]:{}".format(
                             tailscale_model.ports["httpsv4"].internal
                         ),
                         "http3": {},
+                        "transport": timeouts,
                     }
                     | proxy_protocol,
                 },
@@ -114,6 +124,9 @@ class TraefikStaticConfigResource(
                             "dnsChallenge": {
                                 "provider": "cloudflare",
                                 "resolvers": ["1.1.1.1:53", "8.8.8.8:53"],
+                                "propagation": {
+                                    "delayBeforeChecks": traefik_config.acme.delay_before_checks
+                                },
                             },
                         }
                     },

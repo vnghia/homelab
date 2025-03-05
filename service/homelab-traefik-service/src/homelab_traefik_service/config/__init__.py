@@ -14,6 +14,7 @@ class TraefikAcmeConfig(HomelabBaseModel):
     server: HttpUrl
     email: str
     storage: ServiceExtract
+    delay_before_checks: str
 
 
 class TraefikEntrypointConfig(HomelabBaseModel):
@@ -36,5 +37,6 @@ class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):
     path: TraefikPathConfig
     acme: TraefikAcmeConfig
     entrypoint: TraefikEntrypointConfig
+    timeout: str
     proxy_protocol: TraefikProxyProtocolConfig = TraefikProxyProtocolConfig()
     plugins: dict[str, TraefikPluginConfig] = {}
