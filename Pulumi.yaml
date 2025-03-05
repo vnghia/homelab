@@ -606,6 +606,19 @@ config:
                 public: true
                 service:
                   port: 80
+            dagu:
+              docker:
+                executor:
+                  exec:
+                    container:
+                dag:
+                  max-active-runs: 1
+                  tags: ["monica"]
+                dags:
+                  schedule:
+                    dag:
+                      schedule: "* * * * *"
+                    command: ["php", "artisan", "schedule:run"]
           databases:
             postgres:
               postgres: {}
@@ -724,6 +737,9 @@ config:
             dagu:
               dotenvs:
                 dotenv:
+                  envs:
+                    RESTIC_PASSWORD:
+                      secret: password
               docker:
                 executor:
                   run:
