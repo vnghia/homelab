@@ -5,6 +5,7 @@ images:
       tag: "0.10.1"
 volumes:
   local:
+    nghe-music: {}
     nghe-cache: {}
 services:
   nghe:
@@ -43,6 +44,9 @@ services:
       network:
         default-bridge: true
       volumes:
+        nghe-music:
+          path: /music
+          read-only: true
         nghe-cache: /tmp/nghe
       envs:
         NGHE_SERVER__PORT: 3000
