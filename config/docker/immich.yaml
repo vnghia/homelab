@@ -1,0 +1,79 @@
+images:
+  remote:
+    immich-server:
+      repo: ghcr.io/immich-app/immich-server
+      tag: &immich-version "v1.128.0"
+    immich-machine-learning:
+      repo: ghcr.io/immich-app/immich-machine-learning
+      tag: *immich-version
+volumes:
+  local:
+    immich-data: {}
+    immich-machine-learning-cache:
+      backup: false
+    immich-machine-learning-tmp:
+      backup: false
+services:
+  immich:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              env: IMMICH_PORT
+    databases:
+      postgres:
+        postgres:
+          image: pgvector
+          versions: [16]
+      redis:
+        redis: {}
+    container:
+      image: immich-server
+      databases:
+        - postgres:
+          envs:
+            env: DB_URL
+        - redis:
+          envs:
+            username: REDIS_USERNAME
+            password: REDIS_PASSWORD
+            host: REDIS_HOSTNAME
+            port: REDIS_PORT
+      healthcheck:
+        tests:
+          - "CMD"
+          - "immich-healthcheck"
+        interval: 30s
+        timeout: 5s
+      envs:
+        IMMICH_PORT: 2283
+        IMMICH_MEDIA_LOCATION:
+          volume: immich-data
+      volumes:
+        immich-data: /usr/src/app/data
+    containers:
+      machine-learning:
+        image: immich-machine-learning
+        healthcheck:
+          tests:
+            - "CMD"
+            - "python3"
+            - "healthcheck.py"
+          interval: 30s
+          timeout: 5s
+        network:
+          default-bridge: true
+        envs:
+          MACHINE_LEARNING_MODEL_TTL: 300
+          MACHINE_LEARNING_CACHE_FOLDER:
+            volume: immich-machine-learning-cache
+          MPLCONFIGDIR:
+            extract:
+              volume: immich-machine-learning-cache
+            transform:
+              path: matplotlib
+        volumes:
+          immich-machine-learning-cache: /cache
+          immich-machine-learning-tmp: /tmp
