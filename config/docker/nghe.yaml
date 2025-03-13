@@ -2,7 +2,7 @@ images:
   remote:
     nghe:
       repo: ghcr.io/vnghia/nghe-musl
-      tag: "0.10.2"
+      tag: "0.10.6"
 volumes:
   local:
     nghe-music: {}
@@ -56,6 +56,8 @@ services:
           transform:
             secret:
               encode: hex
+        NGHE_LOG__TIME: false
+        NGHE_LOG__FORMAT: json
         NGHE_S3__ENABLE: true
         NGHE_INTEGRATION__SPOTIFY__ID:
         NGHE_INTEGRATION__SPOTIFY__SECRET:
