@@ -3,6 +3,36 @@ images:
     gluetun:
       repo: ghcr.io/qdm12/gluetun
       tag: "v3.40.0"
+volumes:
+  local:
+    gluetun-opvn:
+      backup: false
 services:
   gluetun:
-    config: {}
+    config:
+      opvn_path:
+        env: OPENVPN_CUSTOM_CONFIG
+    container:
+      image: gluetun
+      capabilities:
+        - NET_ADMIN
+      healthcheck:
+        tests: ["CMD", "/gluetun-entrypoint", "healthcheck"]
+        interval: 30s
+        timeout: 5s
+        retries: 1
+        start-period: 10s
+      network:
+        default-bridge: true
+      read-only: false
+      volumes:
+        gluetun-opvn:
+          path: /gluetun/opvn
+          read-only: true
+      envs:
+        VPN_SERVICE_PROVIDER: custom
+        OPENVPN_CUSTOM_CONFIG:
+          extract:
+            volume: gluetun-opvn
+          transform:
+            path: custom.conf
