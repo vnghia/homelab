@@ -1,0 +1,8 @@
+images:
+  remote:
+    gluetun:
+      repo: ghcr.io/qdm12/gluetun
+      tag: "v3.40.0"
+services:
+  gluetun:
+    config: {}

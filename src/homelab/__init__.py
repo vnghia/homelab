@@ -9,6 +9,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.database import DatabaseResource
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
+from homelab_gluetun_service import GluetunService
 from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
@@ -44,6 +45,12 @@ class Homelab:
             project_prefix=self.project_prefix,
         )
         self.docker.resource_args.hostnames |= self.network.hostnames
+
+        self.gluetun = GluetunService(
+            self.docker.services_config.gluetun,
+            opts=None,
+            docker_resource_args=self.docker.resource_args,
+        )
 
         self.crowdsec = CrowdsecService(
             self.docker.services_config.crowdsec,

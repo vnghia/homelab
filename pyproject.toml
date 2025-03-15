@@ -18,6 +18,7 @@ dependencies = [
     "homelab-restic-service",
     "homelab-crowdsec-service",
     "homelab-ntfy-service",
+    "homelab-gluetun-service",
     "pulumi>=3.148.0",
     "json-fix>=1.0.0",
 ]
@@ -53,6 +54,7 @@ homelab-barman-service = { workspace = true }
 homelab-crowdsec-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-extra-service = { workspace = true }
+homelab-gluetun-service = { workspace = true }
 homelab-ntfy-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }
