@@ -1,9 +1,7 @@
 from homelab_docker.extract.service import ServiceExtract
-from homelab_pydantic import HomelabBaseModel
-from pydantic import PositiveInt
+from homelab_vpn_config import VpnConfig
 
 
-class GluetunConfig(HomelabBaseModel):
+class GluetunConfig(VpnConfig):
     opvn: str | None = None
     opvn_path: ServiceExtract
-    forwarding_ports: list[PositiveInt] = []

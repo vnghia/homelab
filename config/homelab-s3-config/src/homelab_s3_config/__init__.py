@@ -19,9 +19,6 @@ class S3Config(HomelabBaseModel):
 class S3ServiceConfig(HomelabServiceConfigDict[S3Config]):
     NONE_KEY = "s3"
 
-    def to_envs(self) -> dict[str | None, dict[str, str]]:
-        return {name: config.to_envs() for name, config in self.root.items()}
-
 
 class S3ServiceConfigBase(HomelabBaseModel):
     s3: S3ServiceConfig = S3ServiceConfig({})
