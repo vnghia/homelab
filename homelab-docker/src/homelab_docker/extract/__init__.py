@@ -65,7 +65,7 @@ class GlobalExtractFull(HomelabBaseModel):
                 extract.extract_path(main_service, model)
             ).as_posix()
             return transform.transform_string(value_path)
-        except TypeError:
+        except (TypeError, ValidationError):
             value_str = extract.extract_str(main_service, model)
             return transform.transform_string(value_str)
 

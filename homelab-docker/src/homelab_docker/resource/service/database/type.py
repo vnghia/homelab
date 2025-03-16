@@ -68,12 +68,30 @@ class ServiceDatabaseTypeResource(ComponentResource):
                         self.type.get_short_name_version(self.model.image, version)
                     ),
                     volumes=ContainerVolumesConfig(
-                        {full_name: ContainerVolumeConfig(self.config.data_dir)}
+                        {
+                            full_name: ContainerVolumeConfig(
+                                GlobalExtract(
+                                    GlobalExtractSource(
+                                        GlobalExtractSimpleSource(
+                                            self.config.data_dir.as_posix()
+                                        )
+                                    )
+                                )
+                            )
+                        }
                         | (
                             {
                                 self.get_full_name_version_tmp(
                                     version
-                                ): ContainerVolumeConfig(self.config.tmp_dir)
+                                ): ContainerVolumeConfig(
+                                    GlobalExtract(
+                                        GlobalExtractSource(
+                                            GlobalExtractSimpleSource(
+                                                self.config.tmp_dir.as_posix()
+                                            )
+                                        )
+                                    )
+                                )
                             }
                             if self.config.tmp_dir
                             else {}

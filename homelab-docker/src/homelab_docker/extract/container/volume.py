@@ -19,9 +19,9 @@ class ContainerExtractVolumeSource(HomelabBaseModel):
         return self.extract_path(main_service, model).as_posix()
 
     def extract_path(
-        self, _main_service: ServiceResourceBase, model: ContainerModel
+        self, main_service: ServiceResourceBase, model: ContainerModel
     ) -> AbsolutePath:
-        return model.volumes[self.volume].to_path()
+        return model.volumes[self.volume].to_path(main_service, model)
 
     def extract_volume_path(
         self, _main_service: ServiceResourceBase, _model: ContainerModel

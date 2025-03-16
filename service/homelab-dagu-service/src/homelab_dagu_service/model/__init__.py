@@ -37,7 +37,9 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
 
         return {
             "dotenv": [
-                dotenv.to_path(dagu_service.model[dagu_config.dags_dir.container])
+                dotenv.to_path(
+                    dagu_service, dagu_service.model[dagu_config.dags_dir.container]
+                )
                 for dotenv in dotenvs
             ]
             if dotenvs
@@ -45,7 +47,9 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
             "name": root.name,
             "group": root.group,
             "tags": root.tags,
-            "logDir": log_dir.to_path(dagu_service.model[dagu_config.log_dir.container])
+            "logDir": log_dir.to_path(
+                dagu_service, dagu_service.model[dagu_config.log_dir.container]
+            )
             if log_dir
             else None,
             "schedule": root.schedule,

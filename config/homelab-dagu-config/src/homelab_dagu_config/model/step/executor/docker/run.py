@@ -60,7 +60,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         )
 
         host_config["binds"] = model.volumes.to_binds(
-            model.docker_socket, main_service, build_args
+            model.docker_socket, main_service, model, build_args
         )
 
         network_args = model.network.to_args(None, main_service)

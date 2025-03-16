@@ -108,7 +108,7 @@ class TraefikStaticConfigResource(
                 "providers": {
                     "file": {
                         "directory": traefik_service.dynamic_directory_volume_path.to_path(
-                            traefik_model
+                            traefik_service, traefik_model
                         ),
                         "watch": True,
                     },

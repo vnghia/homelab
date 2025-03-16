@@ -22,7 +22,7 @@ class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagMode
         dag = dagu_service.dags[root.service][root.dag]
         params = root.params.to_params(dag.model)
 
-        data: dict[str, Any] = {"run": dag.to_path(dagu_model)}
+        data: dict[str, Any] = {"run": dag.to_path(dagu_service, dagu_model)}
         if params:
             data["params"] = " ".join(
                 '{}="{}"'.format(key, value.replace('"', '\\"'))

@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import io
 import tarfile
 import tempfile
+import typing
 from contextlib import contextmanager
 from pathlib import Path, PosixPath
 from typing import Any, Iterator
@@ -27,12 +30,14 @@ from pydantic import (
     model_validator,
 )
 
-from homelab_docker.client import DockerClient
-
+from ...client import DockerClient
 from ...model.container import ContainerModel
 from ...model.container.volume_path import ContainerVolumePath
 from ...model.file import FileDataModel, FileLocationModel
 from ..volume import VolumeResource
+
+if typing.TYPE_CHECKING:
+    from ..service import ServiceResourceBase
 
 
 class FileProviderProps(HomelabBaseModel):
@@ -223,5 +228,7 @@ class FileResource(Resource, module="docker", name="File"):
             ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),
         )
 
-    def to_path(self, container_model: ContainerModel) -> AbsolutePath:
-        return self.volume_path.to_path(container_model)
+    def to_path(
+        self, main_service: ServiceResourceBase, container_model: ContainerModel
+    ) -> AbsolutePath:
+        return self.volume_path.to_path(main_service, container_model)

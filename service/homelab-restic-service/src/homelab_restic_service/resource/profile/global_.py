@@ -44,7 +44,10 @@ class ResticGlobalProfileResource(
                     "command-output": "console",
                     "initialize": False,
                 },
-                "includes": [profile.to_path(restic_model) for profile in profiles],
+                "includes": [
+                    profile.to_path(restic_service, restic_model)
+                    for profile in profiles
+                ],
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
                         "cache-dir": restic_config.cache_dir.extract_path(

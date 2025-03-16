@@ -8,42 +8,61 @@ from pulumi import Input, Output
 
 from homelab_docker.model.container.docker_socket import ContainerDockerSocketConfig
 
+from ...extract import GlobalExtract
+
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
-    from . import ContainerModelBuildArgs
+    from . import ContainerModel, ContainerModelBuildArgs
 
 
 class ContainerVolumeFullConfig(HomelabBaseModel):
-    path: AbsolutePath
+    path: GlobalExtract
     read_only: bool = False
 
-    def to_path(self) -> AbsolutePath:
-        return self.path
+    def to_path(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> AbsolutePath:
+        return self.path.extract_path(main_service, model)
 
-    def to_args(self, volume_name: Input[str]) -> docker.ContainerVolumeArgs:
+    def to_args(
+        self,
+        volume_name: Input[str],
+        main_service: ServiceResourceBase,
+        model: ContainerModel | None,
+    ) -> docker.ContainerVolumeArgs:
         return docker.ContainerVolumeArgs(
-            container_path=self.to_path().as_posix(),
+            container_path=self.to_path(main_service, model).as_posix(),
             read_only=self.read_only,
             volume_name=volume_name,
         )
 
 
-class ContainerVolumeConfig(HomelabRootModel[AbsolutePath | ContainerVolumeFullConfig]):
-    def to_path(self) -> AbsolutePath:
+class ContainerVolumeConfig(
+    HomelabRootModel[GlobalExtract | ContainerVolumeFullConfig]
+):
+    def to_path(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> AbsolutePath:
         root = self.root
-        if isinstance(root, AbsolutePath):
-            return root
+        if isinstance(root, GlobalExtract):
+            return root.extract_path(main_service, model)
         else:
-            return root.to_path()
+            return root.to_path(main_service, model)
 
-    def to_args(self, volume_name: Input[str]) -> docker.ContainerVolumeArgs:
+    def to_args(
+        self,
+        volume_name: Input[str],
+        main_service: ServiceResourceBase,
+        model: ContainerModel | None,
+    ) -> docker.ContainerVolumeArgs:
         root = self.root
-        if isinstance(root, AbsolutePath):
+        if isinstance(root, GlobalExtract):
             return docker.ContainerVolumeArgs(
-                container_path=root.as_posix(), volume_name=volume_name
+                container_path=root.extract_path(main_service, model).as_posix(),
+                volume_name=volume_name,
             )
         else:
-            return root.to_args(volume_name)
+            return root.to_args(volume_name, main_service, model)
 
 
 class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]]):
@@ -56,13 +75,18 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
         self,
         docker_socket_config: ContainerDockerSocketConfig | None,
         main_service: ServiceResourceBase,
+        model: ContainerModel | None,
         build_args: ContainerModelBuildArgs,
     ) -> list[docker.ContainerVolumeArgs]:
         volume_resource = main_service.docker_resource_args.volume
         return (
             (
                 [
-                    volume.to_args(volume_name=volume_resource[name].name)
+                    volume.to_args(
+                        volume_name=volume_resource[name].name,
+                        main_service=main_service,
+                        model=model,
+                    )
                     for name, volume in self.root.items()
                 ]
             )
@@ -79,7 +103,11 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
             )
             + (
                 [
-                    volume.to_args(volume_name=volume_resource[name].name)
+                    volume.to_args(
+                        volume_name=volume_resource[name].name,
+                        main_service=main_service,
+                        model=model,
+                    )
                     for name, volume in sorted(
                         build_args.volumes.items(), key=lambda x: x[0]
                     )
@@ -103,6 +131,7 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
         self,
         docker_socket_config: ContainerDockerSocketConfig | None,
         main_service: ServiceResourceBase,
+        model: ContainerModel | None,
         build_args: ContainerModelBuildArgs,
     ) -> list[Output[str]]:
         def to_bind(arg: docker.ContainerVolumeArgs) -> Output[str]:
@@ -121,5 +150,7 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
 
         return [
             to_bind(arg)
-            for arg in self.to_args(docker_socket_config, main_service, build_args)
+            for arg in self.to_args(
+                docker_socket_config, main_service, model, build_args
+            )
         ]

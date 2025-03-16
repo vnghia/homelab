@@ -203,7 +203,7 @@ class ContainerModel(HomelabBaseModel):
             sysctls=model.sysctls,
             user=model.user,
             volumes=model.volumes.to_args(
-                model.docker_socket, main_service, build_args
+                model.docker_socket, main_service, model, build_args
             ),
             wait=model.wait if model.healthcheck else False,
             envs=model.build_envs(main_service, build_args),
