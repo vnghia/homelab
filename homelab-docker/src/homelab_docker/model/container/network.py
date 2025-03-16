@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import dataclasses
 import typing
+from enum import StrEnum, auto
 
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
+
+from homelab_docker.extract import GlobalExtract
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
@@ -17,20 +20,35 @@ class ContainerNetworkArgs:
     advanced: list[docker.ContainerNetworksAdvancedArgs]
 
 
-class ContainerNetworkModeConfig(HomelabBaseModel):
-    service: str
-    container: str | None = None
+class NetworkMode(StrEnum):
+    VPN = auto()
+
+
+class ContainerNetworkContainerConfig(HomelabBaseModel):
+    container: GlobalExtract
 
     def to_args(
         self, _resource_name: str | None, main_service: ServiceResourceBase
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
             mode=Output.format(
-                "container:{0}",
-                main_service.CONTAINER_RESOURCE[self.service][self.container].id,
+                "container:{0}", self.container.extract_str(main_service, None)
             ),
             advanced=[],
         )
+
+
+class ContainerNetworkModeConfig(HomelabBaseModel):
+    mode: NetworkMode
+
+    def to_args(
+        self, resource_name: str | None, main_service: ServiceResourceBase
+    ) -> ContainerNetworkArgs:
+        match self.mode:
+            case NetworkMode.VPN:
+                return ContainerNetworkContainerConfig(
+                    container=main_service.docker_resource_args.config.vpn.container
+                ).to_args(resource_name, main_service)
 
 
 class ContainerCommonNetworkConfig(HomelabBaseModel):
@@ -62,11 +80,17 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
 
 
 class ContainerNetworkConfig(
-    HomelabRootModel[ContainerCommonNetworkConfig | ContainerNetworkModeConfig]
+    HomelabRootModel[
+        ContainerCommonNetworkConfig
+        | ContainerNetworkContainerConfig
+        | ContainerNetworkModeConfig
+    ]
 ):
-    root: ContainerCommonNetworkConfig | ContainerNetworkModeConfig = (
-        ContainerCommonNetworkConfig()
-    )
+    root: (
+        ContainerCommonNetworkConfig
+        | ContainerNetworkContainerConfig
+        | ContainerNetworkModeConfig
+    ) = ContainerCommonNetworkConfig()
 
     def to_args(
         self, resource_name: str | None, main_service: ServiceResourceBase

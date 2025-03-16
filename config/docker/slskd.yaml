@@ -16,6 +16,8 @@ services:
     config: {}
     container:
       image: slskd
+      network:
+        mode: vpn
       volumes:
         slskd-data: /app
         slskd-download: /mnt/download

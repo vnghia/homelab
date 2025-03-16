@@ -10,6 +10,7 @@ from pydantic import ValidationError
 from .container import ContainerExtract
 from .docker import GlobalExtractDockerSource
 from .hostname import GlobalExtractHostnameSource
+from .id import GlobalExtractIdSource
 from .name import GlobalExtractNameSource
 from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
@@ -25,6 +26,7 @@ class GlobalExtractSource(
     HomelabRootModel[
         GlobalExtractDockerSource
         | GlobalExtractHostnameSource
+        | GlobalExtractIdSource
         | GlobalExtractNameSource
         | GlobalExtractSimpleSource
     ]

@@ -92,7 +92,10 @@ services:
         crowdsec.enable: true
         crowdsec.labels.type: traefik
       network:
-        service: tailscale
+        container:
+          service: tailscale
+          extract:
+            id:
       volumes:
         traefik-config:
           path: /etc/traefik/config
