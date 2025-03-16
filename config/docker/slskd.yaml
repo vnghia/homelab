@@ -13,9 +13,30 @@ volumes:
       backup: false
 services:
   slskd:
-    config: {}
+    config:
+      traefik:
+        traefik:
+          public: false
+          service:
+            port:
+              env: SLSKD_HTTP_PORT
     container:
       image: slskd
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              env: SLSKD_HTTP_PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/health"
+        interval: 30s
+        timeout: 5s
+        retries: 1
+        start-period: 10s
       network:
         mode: vpn
       volumes:

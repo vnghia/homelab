@@ -8,7 +8,8 @@ import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
 
-from homelab_docker.extract import GlobalExtract
+from homelab_docker.extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
+from homelab_docker.extract.id import GlobalExtractIdSource
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
@@ -46,8 +47,16 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     ) -> ContainerNetworkArgs:
         match self.mode:
             case NetworkMode.VPN:
+                vpn_config = main_service.docker_resource_args.config.vpn
                 return ContainerNetworkContainerConfig(
-                    container=main_service.docker_resource_args.config.vpn.container
+                    container=GlobalExtract(
+                        GlobalExtractFull(
+                            service=vpn_config.service,
+                            extract=GlobalExtractSource(
+                                GlobalExtractIdSource(id=vpn_config.container)
+                            ),
+                        )
+                    )
                 ).to_args(resource_name, main_service)
 
 

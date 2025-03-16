@@ -1,5 +1,9 @@
 from typing import Any
 
+from homelab_docker.model.container.network import (
+    ContainerNetworkModeConfig,
+    NetworkMode,
+)
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.service import (
@@ -21,11 +25,23 @@ class TraefikDynamicServiceFullModelBuilder(
     ) -> Output[AnyUrl]:
         root = self.root
 
-        main_service.containers[root.container]
+        network_config = main_service.model.containers[root.container].network.root
+        if (
+            isinstance(network_config, ContainerNetworkModeConfig)
+            and network_config.mode == NetworkMode.VPN
+        ):
+            vpn_config = main_service.docker_resource_args.config.vpn
+            vpn_service = main_service.SERVICES[vpn_config.service]
+            vpn_service.containers[vpn_config.container]
+            service_name = vpn_service.add_service_name(vpn_config.container)
+        else:
+            main_service.containers[root.container]
+            service_name = main_service.add_service_name(root.container)
+
         return Output.format(
             "{}://{}:{}",
             type_.value,
-            main_service.add_service_name(root.container),
+            service_name,
             root.port.extract_str(
                 main_service, main_service.model[root.container]
             ).apply(lambda x: TypeAdapter(PositiveInt).validate_python(int(x))),
