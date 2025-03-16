@@ -1,0 +1,38 @@
+images:
+  remote:
+    slskd:
+      repo: ghcr.io/slskd/slskd
+      tag: "0.22.2"
+volumes:
+  local:
+    slskd-data: {}
+    slskd-download:
+      backup: false
+    slskd-tmp:
+      backup: false
+services:
+  slskd:
+    config: {}
+    container:
+      image: slskd
+      volumes:
+        slskd-data: /app
+        slskd-download: /mnt/download
+        slskd-tmp: /tmp
+      envs:
+        DOTNET_BUNDLE_EXTRACT_BASE_DIR:
+          extract:
+            volume: slskd-tmp
+          transform:
+            path: .net
+        SLSKD_DOWNLOADS_DIR:
+          volume: slskd-download
+        SLSKD_INCOMPLETE_DIR:
+          volume: slskd-download
+        SLSKD_REMOTE_FILE_MANAGEMENT: true
+        SLSKD_SHARED_DIR: /mnt/share
+        SLSKD_SLSK_USERNAME:
+        SLSKD_SLSK_PASSWORD:
+        SLSKD_SLSK_CONNECTION_TIMEOUT: 10000
+        SLSKD_NO_HTTPS: true
+        SLSKD_NO_AUTH: true
