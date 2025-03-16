@@ -44,11 +44,11 @@ homelab-config = { workspace = true }
 homelab-docker = { workspace = true }
 homelab-pydantic = { workspace = true }
 homelab-network = { workspace = true }
+homelab-vpn = { workspace = true }
 
 homelab-dagu-config = { workspace = true }
 homelab-s3-config = { workspace = true }
 homelab-traefik-config = { workspace = true }
-homelab-vpn-config = { workspace = true }
 
 homelab-backup-service = { workspace = true }
 homelab-barman-service = { workspace = true }

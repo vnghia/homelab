@@ -23,7 +23,7 @@ members = [
     "homelab-tailscale-service",
     "homelab-traefik-config",
     "homelab-traefik-service",
-    "homelab-vpn-config",
+    "homelab-vpn",
 ]
 
 [[package]]
@@ -614,7 +614,6 @@ dependencies = [
     { name = "homelab-pydantic" },
     { name = "homelab-s3-config" },
     { name = "homelab-traefik-config" },
-    { name = "homelab-vpn-config" },
     { name = "pulumi" },
     { name = "pydantic" },
 ]
@@ -626,7 +625,6 @@ requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
-    { name = "homelab-vpn-config", editable = "config/homelab-vpn-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -638,7 +636,6 @@ source = { editable = "service/homelab-gluetun-service" }
 dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
-    { name = "homelab-vpn-config" },
     { name = "pulumi" },
     { name = "pydantic" },
 ]
@@ -647,7 +644,6 @@ dependencies = [
 requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-vpn-config", editable = "config/homelab-vpn-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -813,9 +809,9 @@ requires-dist = [
 ]
 
 [[package]]
-name = "homelab-vpn-config"
+name = "homelab-vpn"
 version = "0.1.0"
-source = { editable = "config/homelab-vpn-config" }
+source = { editable = "homelab-vpn" }
 dependencies = [
     { name = "homelab-pydantic" },
     { name = "pydantic" },

@@ -18,6 +18,7 @@ from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
 from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
+from .vpn import ContainerVpnConfig
 
 if typing.TYPE_CHECKING:
     from ...resource.file import FileResource
@@ -56,6 +57,7 @@ class ContainerModel(HomelabBaseModel):
     tmpfs: list[ContainerTmpfsConfig] | None = None
     user: str | None = None
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
+    vpn: ContainerVpnConfig | None = None
     wait: bool = True
 
     envs: dict[str, GlobalExtract] = {}

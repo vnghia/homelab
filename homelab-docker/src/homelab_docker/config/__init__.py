@@ -1,4 +1,5 @@
 from homelab_pydantic import HomelabBaseModel
+from homelab_vpn import VpnConfig
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from ..model.platform import Platform
@@ -14,6 +15,7 @@ class DockerNoServiceConfig(HomelabBaseModel):
     platform: Platform
     timezone: TimeZoneName
     network: NetworkConfig
+    vpn: VpnConfig
     images: ImageConfig
     database: DatabaseConfig
     plugins: PluginConfig

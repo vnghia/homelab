@@ -1,3 +1,7 @@
+vpn:
+  container:
+    name: gluetun
+  ports:
 images:
   remote:
     gluetun:

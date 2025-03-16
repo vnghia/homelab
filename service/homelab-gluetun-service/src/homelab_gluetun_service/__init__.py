@@ -31,7 +31,12 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
             self.options[None].files = [self.opvn]
 
         self.options[None].envs = {
-            "FIREWALL_VPN_INPUT_PORTS": ",".join(map(str, self.config.forwarding_ports))
+            "FIREWALL_VPN_INPUT_PORTS": ",".join(
+                map(
+                    str,
+                    sorted(self.docker_resource_args.config.vpn.ports.values()),
+                )
+            )
         }
         self.build_containers()
 
