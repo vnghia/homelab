@@ -41,6 +41,9 @@ services:
         SLSKD_SHARED_DIR: /mnt/share
         SLSKD_SLSK_USERNAME:
         SLSKD_SLSK_PASSWORD:
+        SLSKD_SLSK_LISTEN_PORT:
+          port: slskd
         SLSKD_SLSK_CONNECTION_TIMEOUT: 10000
+        SLSKD_HTTP_PORT: 38945
         SLSKD_NO_HTTPS: true
         SLSKD_NO_AUTH: true

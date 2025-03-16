@@ -15,6 +15,7 @@ from .name import GlobalExtractNameSource
 from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
 from .transform import ExtractTransform
+from .vpn import GlobalExtractVpnSource
 
 if typing.TYPE_CHECKING:
     from ..model.container import ContainerModel
@@ -29,6 +30,7 @@ class GlobalExtractSource(
         | GlobalExtractIdSource
         | GlobalExtractNameSource
         | GlobalExtractSimpleSource
+        | GlobalExtractVpnSource
     ]
 ):
     def extract_str(
