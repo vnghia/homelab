@@ -42,11 +42,7 @@ services:
       volumes:
         slskd-data: /app
         slskd-download: /mnt/download
-        slskd-incomplete:
-          extract:
-            volume: slskd-download
-          transform:
-            path: .incomplete
+        slskd-incomplete: /mnt/incomplete
         slskd-tmp: /tmp
       envs:
         DOTNET_BUNDLE_EXTRACT_BASE_DIR:
@@ -64,7 +60,8 @@ services:
         SLSKD_SLSK_PASSWORD:
         SLSKD_SLSK_LISTEN_PORT:
           port: slskd
-        SLSKD_SLSK_CONNECTION_TIMEOUT: 10000
+        SLSKD_SLSK_CONNECTION_TIMEOUT: 30000
+        SLSKD_SLSK_INACTIVITY_TIMEOUT: 30000
         SLSKD_HTTP_PORT: 38945
         SLSKD_NO_HTTPS: true
         SLSKD_NO_AUTH: true
