@@ -6,7 +6,8 @@ images:
 volumes:
   local:
     slskd-data: {}
-    slskd-download:
+    slskd-download: {}
+    slskd-incomplete:
       backup: false
     slskd-tmp:
       backup: false
@@ -18,6 +19,11 @@ services:
       volumes:
         slskd-data: /app
         slskd-download: /mnt/download
+        slskd-incomplete:
+          extract:
+            volume: slskd-download
+          transform:
+            path: .incomplete
         slskd-tmp: /tmp
       envs:
         DOTNET_BUNDLE_EXTRACT_BASE_DIR:
@@ -28,7 +34,7 @@ services:
         SLSKD_DOWNLOADS_DIR:
           volume: slskd-download
         SLSKD_INCOMPLETE_DIR:
-          volume: slskd-download
+          volume: slskd-incomplete
         SLSKD_REMOTE_FILE_MANAGEMENT: true
         SLSKD_SHARED_DIR: /mnt/share
         SLSKD_SLSK_USERNAME:
