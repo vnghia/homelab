@@ -29,7 +29,12 @@ class BuildImageModel(HomelabBaseModel):
                 opts, ResourceOptions(delete_before_replace=True)
             ),
             context=self.context.to_args(remote_images),
-            load=True,
+            exports=[
+                docker_build.ExportArgs(
+                    image=docker_build.ExportImageArgs(name_canonical=True)
+                )
+            ],
+            load=False,
             labels=self.labels | project_labels,
             push=False,
             tags=[self.get_name(resource_name, project_prefix)],

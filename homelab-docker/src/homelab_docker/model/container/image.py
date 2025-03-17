@@ -26,4 +26,4 @@ class ContainerImageModelConfig(HomelabRootModel[str | ContainerImageBuildModelC
         if isinstance(root, str):
             return image_resource.remotes[root].image_id
         else:
-            return image_resource.builds[root.build].context_hash
+            return image_resource.builds[root.build].digest
