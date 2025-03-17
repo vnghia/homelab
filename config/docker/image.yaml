@@ -1,6 +1,5 @@
 images:
   remote:
-    minideb:
-      repo: bitnami/minideb
-      tag: "bookworm"
-      delete-before-replace: true
+    alpine:
+      repo: alpine
+      tag: "3.21.3"

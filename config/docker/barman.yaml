@@ -2,8 +2,11 @@ images:
   build:
     barman:
       context:
-        location: service/homelab-barman-service/image
-        base: minideb
+        location: image/barman
+        base: alpine
+      args:
+        BARMAN_VERSION: &barman-version "3.13.0-r0"
+      version: *barman-version
 volumes:
   local:
     barman-home: {}
