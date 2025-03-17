@@ -5,6 +5,7 @@ from pydantic import PositiveInt
 
 class ContainerTmpfsFullConfig(HomelabBaseModel):
     path: AbsolutePath
+    mode: PositiveInt | None = None
     size: PositiveInt | None = None
 
 
@@ -12,9 +13,14 @@ class ContainerTmpfsConfig(HomelabRootModel[AbsolutePath | ContainerTmpfsFullCon
     def to_args(self) -> docker.ContainerMountArgs:
         root = self.root
         target = root.path if isinstance(root, ContainerTmpfsFullConfig) else root
-        size = root.size if isinstance(root, ContainerTmpfsFullConfig) else None
+
+        mode = root.mode if isinstance(root, ContainerTmpfsFullConfig) else None
+        size_bytes = root.size if isinstance(root, ContainerTmpfsFullConfig) else None
+
         return docker.ContainerMountArgs(
             target=target.as_posix(),
             type="tmpfs",
-            tmpfs_options=docker.ContainerMountTmpfsOptionsArgs(size_bytes=size),
+            tmpfs_options=docker.ContainerMountTmpfsOptionsArgs(
+                mode=mode, size_bytes=size_bytes
+            ),
         )
