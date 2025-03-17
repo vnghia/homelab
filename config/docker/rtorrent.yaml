@@ -1,0 +1,5 @@
+images:
+  remote:
+    rtorrent:
+      repo: ghcr.io/crazy-max/rtorrent-rutorrent
+      tag: "5.1.5-7.2"
