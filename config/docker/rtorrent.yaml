@@ -1,5 +1,9 @@
 images:
-  remote:
+  build:
     rtorrent:
-      repo: ghcr.io/crazy-max/rtorrent-rutorrent
-      tag: "5.1.5-7.2"
+      context:
+        location: image/rtorrent
+        base: alpine
+      args:
+        RTORRENT_VERSION: &rtorrent-version "0.15.1-r0"
+      version: *rtorrent-version
