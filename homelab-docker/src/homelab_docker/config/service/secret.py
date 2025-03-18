@@ -1,7 +1,6 @@
 from homelab_pydantic import HomelabRootModel
+from homelab_secret.model import SecretModel
 
-from ...model.service.secret import ServiceSecretModel
 
-
-class ServiceSecretConfig(HomelabRootModel[dict[str, ServiceSecretModel]]):
+class ServiceSecretConfig(HomelabRootModel[dict[str, SecretModel]]):
     pass
