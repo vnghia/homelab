@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 
 import pulumi_docker as docker
-import pulumi_random as random
+from homelab_secret.model import SecretModel
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
@@ -28,8 +28,6 @@ if typing.TYPE_CHECKING:
 
 
 class ServiceDatabaseTypeResource(ComponentResource):
-    PASSWORD_LENGTH = 64
-
     def __init__(
         self,
         type_: DatabaseType,
@@ -50,11 +48,8 @@ class ServiceDatabaseTypeResource(ComponentResource):
 
         self.service_name = main_service.name()
         self.username = self.service_name
-        self.password = random.RandomPassword(
-            self.short_name,
-            opts=self.child_opts,
-            length=self.PASSWORD_LENGTH,
-            special=False,
+        self.password = SecretModel(special=False).build_resource(
+            self.short_name, opts=self.child_opts
         )
         self.database = self.service_name
 
