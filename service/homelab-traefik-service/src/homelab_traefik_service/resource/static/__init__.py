@@ -125,7 +125,10 @@ class TraefikStaticConfigResource(
                                 "provider": "cloudflare",
                                 "resolvers": ["1.1.1.1:53", "8.8.8.8:53"],
                                 "propagation": {
-                                    "delayBeforeChecks": traefik_config.acme.delay_before_checks
+                                    "disableChecks": traefik_config.acme.disable_checks,
+                                    "requireAllRNS": traefik_config.acme.require_all_rns,
+                                    "disableANSChecks": traefik_config.acme.disable_ans_checks,
+                                    "delayBeforeChecks": traefik_config.acme.delay_before_checks,
                                 },
                             },
                         }

@@ -41,7 +41,10 @@ services:
         server: https://acme-v02.api.letsencrypt.org/directory
         storage:
           variable: CERT_PATH
-        delay-before-checks: 300s
+        disable-checks: false
+        require-all-rns: false
+        disable-ans-checks: true
+        delay-before-checks: 60s
       entrypoint:
         public-http: "public-http"
         private-http: "private-http"

@@ -14,6 +14,9 @@ class TraefikAcmeConfig(HomelabBaseModel):
     server: HttpUrl
     email: str
     storage: ServiceExtract
+    disable_checks: bool
+    require_all_rns: bool
+    disable_ans_checks: bool
     delay_before_checks: str
 
 
