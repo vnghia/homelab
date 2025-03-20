@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from collections import defaultdict
-from typing import Any
 
 import pulumi
 import pulumi_docker as docker
@@ -19,7 +20,7 @@ from .secret import ServiceSecretResouse
 class ServiceResourceBase(ComponentResource):
     CONTAINER_RESOURCE: dict[str, dict[str | None, docker.Container]] = {}
     DATABASE_SOURCE_CONFIGS: dict[str, ServiceDatabaseSourceConfig] = {}
-    SERVICES: dict[str, Any] = {}
+    SERVICES: dict[str, ServiceResourceBase] = {}
 
     def __init__(
         self,
@@ -36,7 +37,7 @@ class ServiceResourceBase(ComponentResource):
 
         self._database: ServiceDatabaseResource | None = None
         self._secret: ServiceSecretResouse | None = None
-        self._keepasses: ServiceKeepassResouse | None = None
+        self._keepass: ServiceKeepassResouse | None = None
 
         self.build_databases()
         self.build_secrets()
@@ -79,6 +80,14 @@ class ServiceResourceBase(ComponentResource):
                 "{} service is not configured with secret".format(self.name())
             )
         return self._secret
+
+    @property
+    def keepass(self) -> ServiceKeepassResouse:
+        if not self._keepass:
+            raise ValueError(
+                "{} service is not configured with keepass".format(self.name())
+            )
+        return self._keepass
 
     def build_databases(self) -> None:
         if self.model.databases:

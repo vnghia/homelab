@@ -1,12 +1,11 @@
 import os
 import uuid
-from typing import Any
+from contextlib import contextmanager
+from typing import Any, Iterator
 
 from homelab_pydantic import HomelabBaseModel
 from homelab_pydantic.model import HomelabRootModel
-from pulumi import ResourceOptions
 from pulumi.dynamic import (
-    ConfigureRequest,
     CreateResult,
     DiffResult,
     ReadResult,
@@ -16,12 +15,14 @@ from pulumi.dynamic import (
 )
 from pydantic import HttpUrl
 from pykeepass import PyKeePass
+from pykeepass.entry import Entry
 from pykeepass.group import Group
+
+from .entry import KeepassEntryResource
 
 
 class KeepassEntryProps(HomelabBaseModel):
     username: str
-    email: str | None
     password: str
     hostname: HttpUrl
     urls: list[HttpUrl]
@@ -30,27 +31,54 @@ class KeepassEntryProps(HomelabBaseModel):
 
 class KeepassProviderProps(HomelabRootModel[dict[str, KeepassEntryProps]]):
     @classmethod
-    def open(cls) -> Group | None:
+    @contextmanager
+    def open(cls) -> Iterator[tuple[PyKeePass, Group]]:
         filename = os.environ.get("KEEPASS_DATABASE")
         if filename:
-            database = PyKeePass(
+            keepass = PyKeePass(
                 filename,
                 password=os.environ.get("KEEPASS_PASSWORD"),
                 keyfile=os.environ.get("KEEPASS_KEYFILE"),
             )
-            group = database.find_groups(
-                uuid=uuid.UUID(hex=os.environ["KEEPASS_GROUP"]), first=True
-            )
-            assert isinstance(group, Group)
-            return group
-        else:
-            return None
+            try:
+                group = keepass.find_groups(
+                    uuid=uuid.UUID(hex=os.environ["KEEPASS_GROUP"]), first=True
+                )
+                assert isinstance(group, Group)
+                yield (keepass, group)
+            finally:
+                keepass.save()
 
 
 class KeepassProvider(ResourceProvider):
+    RESOURCE_ID = "keepass"
+
     serialize_as_secret_always = False
+
+    def create(self, props: dict[str, Any]) -> CreateResult:
+        keepass_props = KeepassProviderProps(**props)
+        with keepass_props.open() as (keepass, group):
+            for title, data in keepass_props.root.items():
+                keepass.add_entry(
+                    destination_group=group,
+                    title=title,
+                    username=data.username,
+                    password=data.password,
+                    url=str(data.hostname),
+                )
+        return CreateResult(
+            id_=self.RESOURCE_ID, outs=keepass_props.model_dump(mode="json")
+        )
 
 
 class KeepassResousrce(Resource, module="keepass", name="Keepass"):
-    def __init__(self, *, opts: ResourceOptions | None):
-        super().__init__(KeepassProvider(), self.__class__._name, {}, opts)
+    def __init__(
+        self,
+        keepasses: dict[str, KeepassEntryResource],
+    ):
+        super().__init__(
+            KeepassProvider(),
+            KeepassProvider.RESOURCE_ID,
+            {name: keepass.to_props() for name, keepass in keepasses.items()},
+            None,
+        )

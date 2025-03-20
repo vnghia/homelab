@@ -1,7 +1,7 @@
 from homelab_pydantic import HomelabRootModel
 from pulumi import Output, ResourceOptions
 
-from .. import SecretModel
+from ... import SecretModel
 
 
 class KeepassEntryPasswordModel(HomelabRootModel[SecretModel | str]):

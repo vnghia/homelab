@@ -12,7 +12,7 @@ from .password import KeepassEntryPasswordModel
 from .username import KeepassEntryUsernameModel
 
 if typing.TYPE_CHECKING:
-    from ...resource.keepass.entry import KeepassEntryResource
+    from ....resource.keepass.entry import KeepassEntryResource
 
 
 class KeepassEntryModel(HomelabBaseModel):
@@ -25,6 +25,6 @@ class KeepassEntryModel(HomelabBaseModel):
     def build_resource(
         self, resource_name: str, *, opts: ResourceOptions, hostnames: Hostnames
     ) -> KeepassEntryResource:
-        from ...resource.keepass.entry import KeepassEntryResource
+        from ....resource.keepass.entry import KeepassEntryResource
 
         return KeepassEntryResource(resource_name, self, opts=opts, hostnames=hostnames)

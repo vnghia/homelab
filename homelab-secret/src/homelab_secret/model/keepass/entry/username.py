@@ -1,7 +1,7 @@
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Output, ResourceOptions
 
-from .. import SecretModel
+from ... import SecretModel
 
 
 class KeepassEntryUsernameEmailModel(HomelabBaseModel):
@@ -11,7 +11,9 @@ class KeepassEntryUsernameEmailModel(HomelabBaseModel):
 class KeepassEntryUsernameModel(
     HomelabRootModel[KeepassEntryUsernameEmailModel | SecretModel | str]
 ):
-    root: KeepassEntryUsernameEmailModel | SecretModel | str = SecretModel(length=16)
+    root: KeepassEntryUsernameEmailModel | SecretModel | str = SecretModel(
+        length=16, special=False
+    )
 
     def to_username(self, opts: ResourceOptions | None) -> Output[str]:
         root = self.root

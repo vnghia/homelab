@@ -7,12 +7,14 @@ from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.database import DatabaseResource
+from homelab_docker.resource.service import ServiceResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_gluetun_service import GluetunService
 from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
+from homelab_secret.resource.keepass import KeepassResousrce
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 
@@ -103,6 +105,15 @@ class Homelab:
             self.docker.services_config.backup,
             opts=None,
             docker_resource_args=self.docker.resource_args,
+        )
+
+        self.keepass = KeepassResousrce(
+            {
+                service.add_service_name(name): resource
+                for service in ServiceResourceBase.SERVICES.values()
+                if service._keepass
+                for name, resource in service._keepass.keepasses.items()
+            }
         )
 
         self.file = File(traefik_service=self.traefik, dagu_service=self.dagu)

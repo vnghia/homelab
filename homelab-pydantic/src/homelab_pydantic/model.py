@@ -41,6 +41,13 @@ class HomelabRootModel[T](RootModel[T]):
         validation_error_cause=True,
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def ignore_pulumi_provider(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data.pop("__provider", None)
+        return data
+
 
 class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
     NONE_KEY: ClassVar[str]
