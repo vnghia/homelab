@@ -1,6 +1,7 @@
 import dataclasses
 
-from pulumi import Output, ResourceOptions
+from homelab_network.resource.network import Hostnames
+from pulumi import ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from ..config import DockerConfig, DockerNoServiceConfig
@@ -46,9 +47,7 @@ class DockerResourceArgs:
     resource: DockerResource
     models: dict[str, ServiceModel]
     project_labels: dict[str, str]
-    hostnames: dict[bool, dict[str, Output[str]]] = dataclasses.field(
-        default_factory=dict
-    )
+    hostnames: Hostnames = dataclasses.field(default_factory=Hostnames)
 
     @property
     def network(self) -> NetworkResource:

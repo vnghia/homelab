@@ -12,6 +12,7 @@ from ...model.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from .. import DockerResourceArgs
 from .database import ServiceDatabaseResource
+from .keepass import ServiceKeepassResouse
 from .secret import ServiceSecretResouse
 
 
@@ -35,9 +36,11 @@ class ServiceResourceBase(ComponentResource):
 
         self._database: ServiceDatabaseResource | None = None
         self._secret: ServiceSecretResouse | None = None
+        self._keepasses: ServiceKeepassResouse | None = None
 
         self.build_databases()
         self.build_secrets()
+        self.build_keepasses()
 
         self.options: defaultdict[str | None, ContainerModelBuildArgs] = defaultdict(
             ContainerModelBuildArgs
@@ -108,6 +111,12 @@ class ServiceResourceBase(ComponentResource):
                     "secret.{}".format(self.add_service_name(name)),
                     secret.result,
                 )
+
+    def build_keepasses(self) -> None:
+        if self.model.keepasses:
+            self._keepass = ServiceKeepassResouse(
+                self.model.keepasses, opts=self.child_opts, main_service=self
+            )
 
     def build_container(
         self,

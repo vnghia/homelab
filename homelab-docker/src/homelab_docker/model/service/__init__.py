@@ -3,10 +3,10 @@ from functools import cached_property
 from homelab_pydantic import HomelabBaseModel
 from pydantic import Field
 
-from homelab_docker.extract import GlobalExtract
-
 from ...config.service.database import ServiceDatabaseConfig
+from ...config.service.keepass import ServiceKeepassConfig
 from ...config.service.secret import ServiceSecretConfig
+from ...extract import GlobalExtract
 from ..container import ContainerModel
 
 
@@ -14,6 +14,7 @@ class ServiceModel(HomelabBaseModel):
     variables: dict[str, GlobalExtract] = {}
     databases: ServiceDatabaseConfig | None = None
     secrets: ServiceSecretConfig | None = None
+    keepasses: ServiceKeepassConfig | None = None
     container_: ContainerModel | None = Field(None, alias="container")
     containers_: dict[str, ContainerModel] = Field({}, alias="containers")
 

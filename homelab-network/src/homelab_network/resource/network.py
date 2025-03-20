@@ -9,6 +9,10 @@ from .record import RecordResource
 from .token import TokenResource
 
 
+class Hostnames(dict[bool, dict[str, Output[str]]]):
+    pass
+
+
 class NetworkResource(ComponentResource):
     RESOURCE_NAME = "network"
 
@@ -36,5 +40,5 @@ class NetworkResource(ComponentResource):
         self.register_outputs({})
 
     @property
-    def hostnames(self) -> dict[bool, dict[str, Output[str]]]:
-        return {True: self.public.hostnames, False: self.private.hostnames}
+    def hostnames(self) -> Hostnames:
+        return Hostnames({True: self.public.hostnames, False: self.private.hostnames})

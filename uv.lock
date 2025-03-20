@@ -632,6 +632,7 @@ version = "0.1.0"
 source = { editable = "homelab-docker" }
 dependencies = [
     { name = "docker" },
+    { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "homelab-secret" },
     { name = "homelab-vpn" },
@@ -657,6 +658,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "docker", specifier = ">=7.1.0" },
+    { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "homelab-vpn", editable = "homelab-vpn" },
