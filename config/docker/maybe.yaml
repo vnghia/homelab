@@ -1,0 +1,73 @@
+images:
+  remote:
+    maybe:
+      repo: ghcr.io/maybe-finance/maybe
+      tag: "0.4.3"
+volumes:
+  local:
+    maybe-home:
+      backup: false
+    maybe-storage: {}
+services:
+  maybe:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              env: PORT
+    databases:
+      postgres:
+        postgres: {}
+      redis:
+        redis: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: maybe
+          public: true
+    secrets:
+      key: {}
+    container:
+      image: maybe
+      databases:
+        - postgres:
+          envs:
+            username: POSTGRES_USER
+            password: POSTGRES_PASSWORD
+            database: POSTGRES_DB
+            host: DB_HOST
+            port: DB_PORT
+        - redis:
+          envs:
+            env: REDIS_URL
+      network:
+        default-bridge: true
+      tmpfs:
+        - /tmp
+      volumes:
+        maybe-home: /rails
+        maybe-storage:
+          extract:
+            volume: maybe-home
+          transform:
+            path: storage
+      envs:
+        SELF_HOSTED: true
+        RAILS_FORCE_SSL: false
+        RAILS_ASSUME_SSL: true
+        SECRET_KEY_BASE:
+          secret: key
+        PORT: 3000
+        APP_DOMAIN:
+          hostname: maybe
+          public: true
+        GOOD_JOB_EXECUTION_MODE: async
+    # TODO: use this after the new 0.5.0 is published
+    # containers:
+    #   worker:
+    #     inherit:
+    #     command: ["bundle", "exec", "sidekiq"]
+    #     network:
+    #       default-bridge: false
