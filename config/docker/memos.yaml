@@ -18,6 +18,11 @@ services:
     databases:
       postgres:
         postgres: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: memos
+          public: true
     container:
       image: memos
       databases:

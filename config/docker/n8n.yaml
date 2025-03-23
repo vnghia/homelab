@@ -1,0 +1,68 @@
+images:
+  remote:
+    n8n:
+      repo: ghcr.io/n8n-io/n8n
+      tag: "1.84.1"
+volumes:
+  local:
+    n8n-data: {}
+services:
+  n8n:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              env: N8N_PORT
+    databases:
+      postgres:
+        postgres: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: n8n
+          public: true
+    secrets:
+      key: {}
+      jwt: {}
+    container:
+      image: n8n
+      databases:
+        - postgres:
+          envs:
+            username: DB_POSTGRESDB_USER
+            password: DB_POSTGRESDB_PASSWORD
+            database: DB_POSTGRESDB_DATABASE
+            host: DB_POSTGRESDB_HOST
+            port: DB_POSTGRESDB_PORT
+      network:
+        default-bridge: true
+      tmpfs:
+        - /home/node/.cache/n8n/public
+      volumes:
+        n8n-data: /home/node/.n8n
+      envs:
+        DB_TYPE: postgresdb
+        N8N_ENCRYPTION_KEY:
+          secret: key
+        N8N_PORT: 5678
+        N8N_DIAGNOSTICS_ENABLED: false
+        N8N_VERSION_NOTIFICATIONS_ENABLED: false
+        N8N_TEMPLATES_ENABLED: false
+        EXTERNAL_FRONTEND_HOOKS_URLS: ""
+        N8N_DIAGNOSTICS_CONFIG_FRONTEND: ""
+        N8N_DIAGNOSTICS_CONFIG_BACKEND: ""
+        N8N_HIRING_BANNER_ENABLED: false
+        N8N_PROXY_HOPS: 1
+        N8N_USER_MANAGEMENT_JWT_SECRET:
+          secret: jwt
+        N8N_RUNNERS_ENABLED: true
+        N8N_EDITOR_BASE_URL:
+          hostname: n8n
+          public: true
+          scheme: https
+        WEBHOOK_URL:
+          hostname: n8n
+          public: true
+          scheme: https
