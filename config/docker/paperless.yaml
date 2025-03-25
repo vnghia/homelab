@@ -1,0 +1,86 @@
+images:
+  remote:
+    paperless:
+      repo: ghcr.io/paperless-ngx/paperless-ngx
+      tag: "2.14.7"
+volumes:
+  local:
+    paperless-data: {}
+    paperless-media: {}
+    paperless-static:
+      backup: false
+    paperless-tmp:
+      backup: false
+    paperless-supervisord-log:
+      backup: false
+services:
+  paperless:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              env: PAPERLESS_PORT
+    databases:
+      postgres:
+        postgres: {}
+      redis:
+        redis: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: paperless
+          public: true
+    secrets:
+      key: {}
+    container:
+      image: paperless
+      databases:
+        - postgres:
+          envs:
+            username: PAPERLESS_DBUSER
+            password: PAPERLESS_DBPASS
+            database: PAPERLESS_DBNAME
+            host: PAPERLESS_DBHOST
+            port: PAPERLESS_DBPORT
+        - redis:
+          envs:
+            env: PAPERLESS_REDIS
+      tmpfs:
+        - /var/run/supervisord
+      volumes:
+        paperless-data: /usr/src/paperless/data
+        paperless-media: /usr/src/paperless/media
+        paperless-static: /usr/src/paperless/static
+        paperless-tmp: /tmp
+        paperless-supervisord-log: /var/log/supervisord
+      envs:
+        PAPERLESS_DATA_DIR:
+          volume: paperless-data
+        PAPERLESS_MEDIA_ROOT:
+          volume: paperless-media
+        PAPERLESS_EMPTY_TRASH_DIR:
+          extract:
+            volume: paperless-data
+          transform:
+            path: .trash
+        PAPERLESS_STATICDIR:
+          volume: paperless-static
+        PAPERLESS_SECRET_KEY:
+          secret: key
+        PAPERLESS_URL:
+          hostname: paperless
+          public: true
+          scheme: https
+        PAPERLESS_TIME_ZONE:
+          docker: "{timezone}"
+        PAPERLESS_TRAIN_TASK_CRON: "disable"
+        PAPERLESS_CONVERT_TMPDIR:
+          volume: paperless-tmp
+        PAPERLESS_PORT: 8000
+        PYTHONPYCACHEPREFIX:
+          extract:
+            volume: paperless-tmp
+          transform:
+            path: pycache
