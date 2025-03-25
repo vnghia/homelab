@@ -77,7 +77,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
 
         tmpfses = model.build_tmpfs()
         if tmpfses:
-            host_config["tmpfs"] = {tmpfs.target: "" for tmpfs in tmpfses}
+            host_config["tmpfs"] = tmpfses
         if model.init:
             host_config["init"] = model.init
 

@@ -23,7 +23,7 @@ services:
         mode: vpn
       tmpfs:
         - path: /run
-          mode: 0777
+          exec: true
       volumes:
         qbittorrent-config: /config
         qbittorrent-downloads: /downloads

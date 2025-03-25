@@ -95,8 +95,15 @@ class ContainerModel(HomelabBaseModel):
             else None
         )
 
-    def build_tmpfs(self) -> list[docker.ContainerMountArgs] | None:
-        return [tmpfs.to_args() for tmpfs in self.tmpfs] if self.tmpfs else None
+    def build_tmpfs(self) -> dict[str, str] | None:
+        return (
+            {
+                tmpfs[0].as_posix(): tmpfs[1]
+                for tmpfs in [tmpfs.to_args() for tmpfs in self.tmpfs]
+            }
+            if self.tmpfs
+            else None
+        )
 
     def build_envs(
         self,
@@ -195,7 +202,6 @@ class ContainerModel(HomelabBaseModel):
             if model.hostname
             else None,
             init=model.init,
-            mounts=model.build_tmpfs(),
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
             ports=[port.to_args() for port in sorted(model.ports.values())],
@@ -203,6 +209,7 @@ class ContainerModel(HomelabBaseModel):
             rm=model.remove,
             restart=model.restart,
             sysctls=model.sysctls,
+            tmpfs=model.build_tmpfs(),
             user=model.user,
             volumes=model.volumes.to_args(
                 model.docker_socket, main_service, model, build_args
