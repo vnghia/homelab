@@ -29,6 +29,13 @@ services:
           versions: [16]
       redis:
         redis: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: immich
+          public: true
+        apps:
+          - app.alextran.immich
     container:
       image: immich-server
       databases:

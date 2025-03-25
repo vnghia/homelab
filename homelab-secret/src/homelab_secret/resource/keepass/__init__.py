@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import re
 from contextlib import contextmanager
@@ -14,7 +16,12 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import HttpUrl
+from pydantic import (
+    HttpUrl,
+    ValidationInfo,
+    ValidatorFunctionWrapHandler,
+    field_validator,
+)
 from pykeepass import PyKeePass
 from pykeepass.entry import Entry
 from pykeepass.group import Group
@@ -34,6 +41,27 @@ class KeepassEntryProps(HomelabBaseModel):
     hostname: HttpUrl
     urls: list[HttpUrl]
     apps: list[str]
+
+    @field_validator("username", "password", "hostname", mode="wrap")
+    @classmethod
+    def ignore_pulumi_unknown(
+        cls, data: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo
+    ) -> KeepassEntryProps:
+        if isinstance(data, pulumi.output.Unknown):
+            pulumi.log.warn(
+                "Pulumi unknown output encountered: {}. Validated data: {}".format(
+                    data, info.data
+                )
+            )
+            return KeepassEntryProps(
+                username="",
+                password="",
+                hostname=HttpUrl("http://example.com"),
+                urls=[],
+                apps=[],
+            )
+        else:
+            return handler(data)  # type: ignore[no-any-return]
 
     @classmethod
     def from_entry(cls, entry: Entry) -> Self:

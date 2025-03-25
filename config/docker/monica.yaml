@@ -34,6 +34,13 @@ services:
         postgres: {}
       redis:
         redis: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: monica
+          public: true
+        apps:
+          - at.bitfire.davdroid
     secrets:
       key:
         length: 32
