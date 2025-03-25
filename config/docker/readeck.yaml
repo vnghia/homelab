@@ -1,0 +1,58 @@
+images:
+  remote:
+    readeck:
+      repo: codeberg.org/readeck/readeck
+      tag: "0.17.1"
+volumes:
+  local:
+    readeck-data: {}
+services:
+  readeck:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              env: READECK_SERVER_PORT
+    databases:
+      postgres:
+        postgres: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: readeck
+          public: true
+    secrets:
+      key: {}
+    container:
+      image: readeck
+      databases:
+        - postgres:
+          envs:
+            env: READECK_DATABASE_SOURCE
+      healthcheck:
+        tests:
+          - "CMD"
+          - "/bin/readeck"
+          - "healthcheck"
+          - "-config"
+          - extract:
+              volume: readeck-data
+            transform:
+              path: config.toml
+        interval: 30s
+        timeout: 5s
+      network:
+        default-bridge: true
+      volumes:
+        readeck-data: /readeck
+      envs:
+        READECK_SECRET_KEY:
+          secret: key
+        READECK_DATA_DIRECTORY:
+          volume: readeck-data
+        READECK_SERVER_PORT: 8000
+        READECK_ALLOWED_HOSTS:
+          hostname: readeck
+          public: true
