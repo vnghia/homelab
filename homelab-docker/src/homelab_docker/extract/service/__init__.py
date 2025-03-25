@@ -8,6 +8,7 @@ from pulumi import Output
 
 from ..container import ContainerExtract
 from ..transform import ExtractTransform
+from .keepass import ServiceExtractKeepassSource
 from .secret import ServiceExtractSecretSource
 from .variable import ServiceExtractVariableSource
 
@@ -18,7 +19,11 @@ if typing.TYPE_CHECKING:
 
 
 class ServiceExtractSource(
-    HomelabRootModel[ServiceExtractSecretSource | ServiceExtractVariableSource]
+    HomelabRootModel[
+        ServiceExtractKeepassSource
+        | ServiceExtractSecretSource
+        | ServiceExtractVariableSource
+    ]
 ):
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None

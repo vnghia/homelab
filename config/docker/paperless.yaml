@@ -69,6 +69,12 @@ services:
           volume: paperless-static
         PAPERLESS_SECRET_KEY:
           secret: key
+        PAPERLESS_ADMIN_USER:
+          keepass:
+          info: username
+        PAPERLESS_ADMIN_PASSWORD:
+          keepass:
+          info: password
         PAPERLESS_URL:
           hostname: paperless
           public: true
