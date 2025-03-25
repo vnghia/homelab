@@ -46,6 +46,7 @@ class ContainerModel(HomelabBaseModel):
     docker_socket: ContainerDockerSocketConfig | None = None
     entrypoint: list[GlobalExtract] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
+    hostname: GlobalExtract | None = None
     init: bool | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
     ports: dict[str, ContainerPortConfig] = {}
@@ -189,6 +190,9 @@ class ContainerModel(HomelabBaseModel):
             entrypoints=model.build_entrypoint(main_service),
             healthcheck=model.healthcheck.to_args(main_service, model)
             if model.healthcheck
+            else None,
+            hostname=model.hostname.extract_str(main_service, model)
+            if model.hostname
             else None,
             init=model.init,
             mounts=model.build_tmpfs(),
