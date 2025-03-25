@@ -1,6 +1,7 @@
 import os
+import re
 from contextlib import contextmanager
-from typing import Any, Iterator, Self
+from typing import Any, ClassVar, Iterator, Self
 from uuid import UUID
 
 import pulumi
@@ -22,6 +23,12 @@ from .entry import KeepassEntryResource
 
 
 class KeepassEntryProps(HomelabBaseModel):
+    URL_PREFIX: ClassVar[str] = "KP2A_URL_"
+    URL_PATTERN: ClassVar[re.Pattern[str]] = re.compile("{}(\\d+)".format(URL_PREFIX))
+
+    APP_PREFIX: ClassVar[str] = "AndroidApp"
+    APP_PATTERN: ClassVar[re.Pattern[str]] = re.compile("{}(\\d+)".format(APP_PREFIX))
+
     username: str
     password: str
     hostname: HttpUrl
@@ -30,13 +37,24 @@ class KeepassEntryProps(HomelabBaseModel):
 
     @classmethod
     def from_entry(cls, entry: Entry) -> Self:
+        urls = {
+            int(match[1]): HttpUrl(str(v))
+            for k, v in entry.custom_properties.items()
+            if (match := cls.URL_PATTERN.match(str(k)))
+        }
+        apps = {
+            int(match[1]): HttpUrl(str(v))
+            for k, v in entry.custom_properties.items()
+            if (match := cls.APP_PATTERN.match(str(k)))
+        }
+
         return cls.model_validate(
             {
                 "username": entry.username,
                 "password": entry.password,
                 "hostname": entry.url,
-                "urls": [],
-                "apps": [],
+                "urls": [x[1] for x in sorted(urls.items(), key=lambda x: x[0])],
+                "apps": [x[1] for x in sorted(apps.items(), key=lambda x: x[0])],
             }
         )
 
@@ -97,12 +115,39 @@ class Keepass:
             password=props.password,
             url=str(props.hostname),
         )
+
+        for index, url in enumerate(props.urls):
+            entry.set_custom_property(props.URL_PREFIX + str(index + 1), str(url))
+        for index, app in enumerate(props.apps):
+            entry.set_custom_property(props.APP_PREFIX + str(index + 1), str(app))
+
         self.props.entry_ids[title] = entry.uuid
 
     def update_entry(self, entry: Entry, props: KeepassEntryProps) -> None:
         entry.username = props.username
         entry.password = props.password
         entry.url = str(props.hostname)
+
+        delete_keys = []
+        for key in entry.custom_properties.keys():
+            key = str(key)
+            match = props.URL_PATTERN.match(key)
+            if match:
+                index = int(match[1])
+                if index > len(props.urls):
+                    delete_keys.append(key)
+            match = props.APP_PATTERN.match(key)
+            if match:
+                index = int(match[1])
+                if index > len(props.urls):
+                    delete_keys.append(key)
+        for key in delete_keys:
+            entry.delete_custom_property(key)
+
+        for index, url in enumerate(props.urls):
+            entry.set_custom_property(props.URL_PREFIX + str(index + 1), str(url))
+        for index, app in enumerate(props.apps):
+            entry.set_custom_property(props.APP_PREFIX + str(index + 1), str(app))
 
     def upsert_props(self) -> None:
         for title, entry_props in self.props.entries.items():

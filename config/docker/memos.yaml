@@ -23,6 +23,8 @@ services:
         hostname:
           hostname: memos
           public: true
+        apps:
+          - me.mudkip.moememos
     container:
       image: memos
       databases:
