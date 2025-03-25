@@ -43,7 +43,7 @@ class KeepassEntryProps(HomelabBaseModel):
             if (match := cls.URL_PATTERN.match(str(k)))
         }
         apps = {
-            int(match[1]): HttpUrl(str(v))
+            int(match[1]): str(v)
             for k, v in entry.custom_properties.items()
             if (match := cls.APP_PATTERN.match(str(k)))
         }
@@ -161,6 +161,11 @@ class Keepass:
             if entry.uuid != entry_id:
                 self.keepass.delete_entry(entry)
 
+    def read_props(self) -> KeepassProviderProps:
+        for title in self.props.entries.keys():
+            self.find_entry(title)
+        return self.props
+
     @classmethod
     @contextmanager
     def open(cls, props: KeepassProviderProps) -> Iterator[Self]:
@@ -185,6 +190,28 @@ class KeepassProvider(ResourceProvider):
         return CreateResult(
             id_=self.RESOURCE_ID, outs=keepass_props.model_dump(mode="json")
         )
+
+    def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
+        keepass_olds = KeepassProviderProps(**olds)
+        keepass_news = KeepassProviderProps(**news)
+        return DiffResult(
+            changes=(keepass_olds.entry_ids.keys() != keepass_news.entries.keys())
+            or (keepass_olds.entries != keepass_news.entries)
+        )
+
+    def update(
+        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
+    ) -> UpdateResult:
+        keepass_props = KeepassProviderProps(**news)
+        with Keepass.open(keepass_props) as keepass:
+            keepass.upsert_props()
+        return UpdateResult(outs=keepass_props.model_dump(mode="json"))
+
+    def read(self, id_: str, props: dict[str, Any]) -> ReadResult:
+        keepass_props = KeepassProviderProps(**props)
+        with Keepass.open(keepass_props) as keepass:
+            ReadResult(id_=id_, outs=keepass.read_props().model_dump(mode="json"))
+        return ReadResult(id_=id_, outs=keepass_props.model_dump(mode="json"))
 
 
 class KeepassResousrce(Resource, module="keepass", name="Keepass"):
