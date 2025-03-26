@@ -7,6 +7,7 @@ dependencies = [
     "homelab-backup",
     "homelab-config",
     "homelab-docker",
+    "homelab-mail",
     "homelab-network",
     "homelab-secret",
     "homelab-s3",
@@ -45,6 +46,7 @@ homelab-backup = { workspace = true }
 homelab-config = { workspace = true }
 homelab-docker = { workspace = true }
 homelab-pydantic = { workspace = true }
+homelab-mail = { workspace = true }
 homelab-network = { workspace = true }
 homelab-s3 = { workspace = true }
 homelab-secret = { workspace = true }
