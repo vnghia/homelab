@@ -17,8 +17,6 @@ services:
         volume: restic-profile
       cache-dir:
         env: RESTIC_CACHE_DIR
-      repo:
-        prefix: backup/restic
       password:
         secret: password
       keep:

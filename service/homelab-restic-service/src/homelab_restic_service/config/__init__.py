@@ -4,7 +4,6 @@ from homelab_dagu_config import DaguServiceConfigBase
 from homelab_docker.extract.service import ServiceExtract
 
 from .keep import ResticKeepConfig
-from .repo import ResticRepoConfig
 
 
 class ResticConfig(DaguServiceConfigBase):
@@ -12,6 +11,5 @@ class ResticConfig(DaguServiceConfigBase):
     profile_dir: ServiceExtract
     cache_dir: ServiceExtract
 
-    repo: ResticRepoConfig
     password: ServiceExtract
     keep: ResticKeepConfig

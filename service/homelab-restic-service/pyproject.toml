@@ -7,7 +7,7 @@ dependencies = [
     "homelab-pydantic",
     "homelab-backup",
     "homelab-docker",
-    "homelab-s3-config",
+    "homelab-s3",
     "homelab-dagu-service",
     "pulumi>=3.150.0",
     "pydantic>=2.10.6",

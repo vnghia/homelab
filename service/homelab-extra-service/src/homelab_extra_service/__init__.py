@@ -18,7 +18,8 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        for name, s3 in self.config.s3.root.items():
+        for name, key in self.config.s3.root.items():
+            s3 = self.docker_resource_args.config.s3[key]
             self.options[name].envs = {**self.options[name].envs, **s3.to_envs()}
 
         self.build_containers()

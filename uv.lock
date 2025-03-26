@@ -19,6 +19,7 @@ members = [
     "homelab-ntfy-service",
     "homelab-pydantic",
     "homelab-restic-service",
+    "homelab-s3",
     "homelab-s3-config",
     "homelab-secret",
     "homelab-tailscale-service",
@@ -419,6 +420,7 @@ dependencies = [
     { name = "homelab-network" },
     { name = "homelab-ntfy-service" },
     { name = "homelab-restic-service" },
+    { name = "homelab-s3" },
     { name = "homelab-secret" },
     { name = "homelab-tailscale-service" },
     { name = "homelab-traefik-config" },
@@ -448,6 +450,7 @@ requires-dist = [
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-ntfy-service", editable = "service/homelab-ntfy-service" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
@@ -583,7 +586,7 @@ source = { editable = "config/homelab-dagu-config" }
 dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
-    { name = "homelab-s3-config" },
+    { name = "homelab-s3" },
     { name = "pydantic" },
 ]
 
@@ -591,7 +594,7 @@ dependencies = [
 requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
@@ -628,6 +631,7 @@ dependencies = [
     { name = "docker" },
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
+    { name = "homelab-s3" },
     { name = "homelab-secret" },
     { name = "homelab-vpn" },
     { name = "jsonschema" },
@@ -654,6 +658,7 @@ requires-dist = [
     { name = "docker", specifier = ">=7.1.0" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "homelab-vpn", editable = "homelab-vpn" },
     { name = "jsonschema", specifier = ">=4.23.0" },
@@ -683,7 +688,7 @@ dependencies = [
     { name = "homelab-dagu-config" },
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
-    { name = "homelab-s3-config" },
+    { name = "homelab-s3" },
     { name = "homelab-traefik-config" },
     { name = "pulumi" },
     { name = "pydantic" },
@@ -694,7 +699,7 @@ requires-dist = [
     { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -783,7 +788,7 @@ dependencies = [
     { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
-    { name = "homelab-s3-config" },
+    { name = "homelab-s3" },
     { name = "pulumi" },
     { name = "pydantic" },
 ]
@@ -794,8 +799,23 @@ requires-dist = [
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "pulumi", specifier = ">=3.150.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-s3"
+version = "0.1.0"
+source = { editable = "homelab-s3" }
+dependencies = [
+    { name = "homelab-pydantic" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

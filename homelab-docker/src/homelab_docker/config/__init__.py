@@ -1,4 +1,5 @@
 from homelab_pydantic import HomelabBaseModel
+from homelab_s3 import S3Config
 from homelab_vpn import VpnConfig
 from pydantic_extra_types.timezone_name import TimeZoneName
 
@@ -20,6 +21,7 @@ class DockerNoServiceConfig(HomelabBaseModel):
     database: DatabaseConfig
     plugins: PluginConfig
     volumes: VolumeConfig
+    s3: S3Config = S3Config({})
 
 
 class DockerConfig[T: ServiceConfigBase](DockerNoServiceConfig):

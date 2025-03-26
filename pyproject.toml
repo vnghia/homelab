@@ -9,6 +9,7 @@ dependencies = [
     "homelab-docker",
     "homelab-network",
     "homelab-secret",
+    "homelab-s3",
     "homelab-traefik-config",
     "homelab-dagu-config",
     "homelab-tailscale-service",
@@ -45,6 +46,7 @@ homelab-config = { workspace = true }
 homelab-docker = { workspace = true }
 homelab-pydantic = { workspace = true }
 homelab-network = { workspace = true }
+homelab-s3 = { workspace = true }
 homelab-secret = { workspace = true }
 homelab-vpn = { workspace = true }
 
