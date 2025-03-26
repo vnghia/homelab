@@ -277,6 +277,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Local service
+config/docker/*.local.yaml
+
 !homelab-docker/src/homelab_docker/model/image/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,python,windows,pulumi+stacks,visualstudiocode,direnv
