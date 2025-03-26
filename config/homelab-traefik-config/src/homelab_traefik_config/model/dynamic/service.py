@@ -11,6 +11,7 @@ class TraefikDynamicServiceType(StrEnum):
 class TraefikDynamicServiceFullModel(HomelabBaseModel):
     container: str | None = None
     port: GlobalExtract
+    scheme: str | None = None
 
 
 class TraefikDynamicServiceModel(

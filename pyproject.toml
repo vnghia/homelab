@@ -18,6 +18,7 @@ dependencies = [
     "homelab-dagu-service",
     "homelab-backup-service",
     "homelab-barman-service",
+    "homelab-kanidm-service",
     "homelab-restic-service",
     "homelab-crowdsec-service",
     "homelab-ntfy-service",
@@ -62,6 +63,7 @@ homelab-crowdsec-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-extra-service = { workspace = true }
 homelab-gluetun-service = { workspace = true }
+homelab-kanidm-service = { workspace = true }
 homelab-ntfy-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }

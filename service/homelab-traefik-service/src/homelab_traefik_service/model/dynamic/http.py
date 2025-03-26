@@ -101,7 +101,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         if service_full:
             data["http"]["services"] = TraefikDynamicServiceFullModelBuilder(
                 service_full
-            ).to_http_service(TraefikDynamicServiceType.HTTP, router_name, main_service)
+            ).to_service(TraefikDynamicServiceType.HTTP, router_name, main_service)
 
         middlewares: dict[str, Any] = reduce(
             operator.or_,

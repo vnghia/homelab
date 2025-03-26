@@ -11,6 +11,7 @@ from homelab_docker.resource.service import ServiceResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_gluetun_service import GluetunService
+from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
@@ -67,6 +68,11 @@ class Homelab:
             docker_resource_args=self.docker.resource_args,
         )
 
+        self.kanidm = KanidmService(
+            self.docker.services_config.kanidm,
+            opts=None,
+            docker_resource_args=self.docker.resource_args,
+        )
         self.ntfy = NtfyService(
             self.docker.services_config.ntfy,
             opts=None,

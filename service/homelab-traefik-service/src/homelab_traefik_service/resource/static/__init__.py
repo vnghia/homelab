@@ -113,6 +113,7 @@ class TraefikStaticConfigResource(
                         "watch": True,
                     },
                 },
+                "serversTransport": {"insecureSkipVerify": True},
                 "certificatesResolvers": {
                     self.CERT_RESOLVER: {
                         "acme": {

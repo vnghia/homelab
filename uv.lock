@@ -15,6 +15,7 @@ members = [
     "homelab-docker",
     "homelab-extra-service",
     "homelab-gluetun-service",
+    "homelab-kanidm-service",
     "homelab-mail",
     "homelab-network",
     "homelab-ntfy-service",
@@ -418,6 +419,7 @@ dependencies = [
     { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
     { name = "homelab-gluetun-service" },
+    { name = "homelab-kanidm-service" },
     { name = "homelab-mail" },
     { name = "homelab-network" },
     { name = "homelab-ntfy-service" },
@@ -449,6 +451,7 @@ requires-dist = [
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-gluetun-service", editable = "service/homelab-gluetun-service" },
+    { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
     { name = "homelab-mail", editable = "homelab-mail" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-ntfy-service", editable = "service/homelab-ntfy-service" },
@@ -724,6 +727,29 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-kanidm-service"
+version = "0.1.0"
+source = { editable = "service/homelab-kanidm-service" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-pydantic" },
+    { name = "homelab-traefik-config" },
+    { name = "pulumi" },
+    { name = "pulumi-tls" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pulumi-tls", specifier = ">=5.1.1" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
@@ -1302,6 +1328,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a5/c6/fa6fdec8a5f34829aba8845e712ccde3225bd34a42e37525cecff684e967/pulumi_tailscale-0.18.0.tar.gz", hash = "sha256:cf0bba446b66fb57722acbef6d0f3faf9297d3c86f344607f32254c96ff55b8e", size = 33727 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0c/6d/4b1babce33ee51cbdbf1345a5d5bac9117311b2cbd5c716f11f3e1f0d7cd/pulumi_tailscale-0.18.0-py3-none-any.whl", hash = "sha256:00f234a742545df5c0a11ad290c78feecde0f2ac2cad22487961af4a7824a6e0", size = 61057 },
+]
+
+[[package]]
+name = "pulumi-tls"
+version = "5.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "parver" },
+    { name = "pulumi" },
+    { name = "semver" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e6/24/dd17428b33534e838a6e9d3996f165067d921dffc7287314a210d30158d2/pulumi_tls-5.1.1.tar.gz", hash = "sha256:07442030b23979e097e9a360e81efef9a54d9060b52668110053d2346cd89118", size = 25760 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/76/b8/9be3d272b3abcf0eff12b1d193feb2fe40cb2b576be09f53be35a28581d6/pulumi_tls-5.1.1-py3-none-any.whl", hash = "sha256:b3a78a0abe42d35cdc3426e044f857c37e4ebc9fb76aefd6815276cb24ee69d5", size = 34326 },
 ]
 
 [[package]]

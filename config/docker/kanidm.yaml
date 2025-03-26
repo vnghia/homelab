@@ -1,0 +1,67 @@
+images:
+  remote:
+    kanidm:
+      repo: kanidm/server
+      tag: "1.5.0"
+volumes:
+  local:
+    kanidm-data: {}
+services:
+  kanidm:
+    variables:
+      PORT: 8443
+    config:
+      tls-key:
+        env: KANIDM_TLS_KEY
+      tls-chain:
+        env: KANIDM_TLS_CHAIN
+      traefik:
+        traefik:
+          public: true
+          service:
+            scheme: https
+            port:
+              variable: PORT
+    container:
+      image: kanidm
+      healthcheck:
+        tests:
+          - "CMD"
+          - "/sbin/kanidmd"
+          - "healthcheck"
+        interval: 30s
+        timeout: 5s
+        retries: 5
+        start-period: 10s
+      volumes:
+        kanidm-data: /data
+      envs:
+        KANIDM_BINDADDRESS:
+          extract:
+            variable: PORT
+          transform:
+            string:
+              template: "[::]:{value}"
+        KANIDM_DB_PATH:
+          extract:
+            volume: kanidm-data
+          transform:
+            path: kanidm.db
+        KANIDM_TLS_KEY:
+          extract:
+            volume: kanidm-data
+          transform:
+            path: key.pem
+        KANIDM_TLS_CHAIN:
+          extract:
+            volume: kanidm-data
+          transform:
+            path: chain.pem
+        KANIDM_DOMAIN:
+          hostname: kanidm
+          public: true
+        KANIDM_ORIGIN:
+          hostname: kanidm
+          public: true
+          scheme: https
+        KANIDM_TRUST_X_FORWARD_FOR: true
