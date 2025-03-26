@@ -1,9 +1,0 @@
-images:
-  build:
-    rtorrent:
-      context:
-        location: image/rtorrent
-        base: alpine
-      args:
-        RTORRENT_VERSION: &rtorrent-version "0.15.1-r0"
-      version: *rtorrent-version
