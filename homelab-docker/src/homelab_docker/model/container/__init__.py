@@ -14,6 +14,7 @@ from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
 from .healthcheck import ContainerHealthCheckConfig
 from .image import ContainerImageModelConfig
+from .mail import ContainerMailConfig
 from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
 from .tmpfs import ContainerTmpfsConfig
@@ -48,6 +49,7 @@ class ContainerModel(HomelabBaseModel):
     healthcheck: ContainerHealthCheckConfig | None = None
     hostname: GlobalExtract | None = None
     init: bool | None = None
+    mails: list[ContainerMailConfig] | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
     ports: dict[str, ContainerPortConfig] = {}
     read_only: bool = True
@@ -110,10 +112,13 @@ class ContainerModel(HomelabBaseModel):
         main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs,
     ) -> list[Output[str]]:
-        database_envs: dict[str, Output[str]] = {}
+        additional_envs: dict[str, Output[str]] = {}
         if self.databases:
             for database in self.databases:
-                database_envs |= database.build_envs(main_service.database)
+                additional_envs |= database.build_envs(main_service.database)
+        if self.mails:
+            for mail in self.mails:
+                additional_envs |= mail.to_envs(main_service)
 
         return [
             Output.concat(k, "=", v)
@@ -130,7 +135,7 @@ class ContainerModel(HomelabBaseModel):
                     }
                     | {
                         k: Output.from_input(v)
-                        for k, v in (dict(build_args.envs) | database_envs).items()
+                        for k, v in (dict(build_args.envs) | additional_envs).items()
                     }
                 ).items(),
                 key=lambda x: x[0],

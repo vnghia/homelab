@@ -4,9 +4,10 @@ from pydantic import PositiveInt
 
 
 class MailCredential(HomelabBaseModel):
-    server: str
+    host: str
     port: PositiveInt
-    mail: str
+    address: str
+    username: str | None = None
     password: str
 
 
