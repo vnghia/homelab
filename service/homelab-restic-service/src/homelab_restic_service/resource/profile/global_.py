@@ -55,7 +55,6 @@ class ResticGlobalProfileResource(
                         ),
                         "cleanup-cache": True,
                         "backup": {
-                            "check-before": True,
                             "check-after": True,
                             "source-relative": True,
                             "host": hostname,
