@@ -59,6 +59,13 @@ services:
             password: REDIS_PASSWORD
             host: REDIS_HOST
             port: REDIS_PORT
+      mails:
+        - mail: no-reply
+          host: MAIL_HOST
+          port: MAIL_PORT
+          address: MAIL_FROM_ADDRESS
+          username: MAIL_USERNAME
+          password: MAIL_PASSWORD
       envs:
         APP_NAME:
         APP_ENV: production
@@ -78,6 +85,8 @@ services:
         QUEUE_CONNECTION: redis
         SESSION_DRIVER: redis
         DEFAULT_STORAGE_LIMIT: 0
+        MAIL_MAILER: smtp
+        MAIL_ENCRYPTION: tls
       network:
         default-bridge: true
       tmpfs:
