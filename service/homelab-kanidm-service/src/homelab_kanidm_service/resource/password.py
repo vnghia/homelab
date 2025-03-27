@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 from homelab_docker.client import DockerClient
 from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
-from pulumi.dynamic import CreateResult, Resource, ResourceProvider
+from pulumi.dynamic import CreateResult, Resource, ResourceProvider, UpdateResult
 
 
 class KanidmPasswordProviderProps(HomelabBaseModel):
@@ -38,6 +38,15 @@ class KanidmPasswordProvider(ResourceProvider):
         return CreateResult(
             id_=kanidm_props.account,
             outs=kanidm_props.model_dump(mode="json") | {"password": password},
+        )
+
+    def update(
+        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
+    ) -> UpdateResult:
+        password = olds.pop("password")
+        kanidm_news = KanidmPasswordProviderProps(**news)
+        return UpdateResult(
+            outs=kanidm_news.model_dump(mode="json") | {"password": password},
         )
 
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import subprocess
@@ -10,8 +11,15 @@ from typing import Any, ClassVar
 from homelab_docker.extract import GlobalExtract
 from homelab_docker.resource.file.config import JsonDefaultModel
 from homelab_pydantic import HomelabBaseModel
-from pulumi import ResourceOptions
-from pulumi.dynamic import CreateResult, Resource, ResourceProvider, UpdateResult
+from pulumi import Output, ResourceOptions
+from pulumi.dynamic import (
+    CreateResult,
+    DiffResult,
+    Resource,
+    ResourceProvider,
+    UpdateResult,
+)
+from pydantic import ValidationError, computed_field, model_validator
 from pydantic.alias_generators import to_camel
 
 if typing.TYPE_CHECKING:
@@ -24,6 +32,18 @@ class KanidmStateProviderProps(HomelabBaseModel):
     url: str
     password: str
     state: JsonDefaultModel
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def hash(self) -> str:
+        return hashlib.sha256(self.state.model_dump_json().encode()).hexdigest()
+
+    @model_validator(mode="before")
+    @classmethod
+    def ignore_hash(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data.pop("hash", None)
+        return data
 
     def provision(self) -> None:
         binary = shutil.which(self.binary)
@@ -66,6 +86,14 @@ class KanidmStateProvider(ResourceProvider):
             id_=self.RESOURCE_ID, outs=kanidm_props.model_dump(mode="json")
         )
 
+    def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
+        kanidm_olds = KanidmStateProviderProps(**olds)
+        try:
+            kanidm_news = KanidmStateProviderProps(**news)
+            return DiffResult(changes=kanidm_olds != kanidm_news)
+        except ValidationError:
+            return DiffResult(changes=True)
+
     def update(
         self, _id: str, olds: dict[str, Any], news: dict[str, Any]
     ) -> UpdateResult:
@@ -75,6 +103,8 @@ class KanidmStateProvider(ResourceProvider):
 
 
 class KanidmStateResource(Resource, module="kanidm", name="State"):
+    hash: Output[str]
+
     def __init__(self, opts: ResourceOptions | None, kanidm_service: KanidmService):
         super().__init__(
             KanidmStateProvider(),
@@ -89,6 +119,7 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
                     kanidm_service,
                     None,
                 ),
+                "hash": None,
             },
             opts,
         )
