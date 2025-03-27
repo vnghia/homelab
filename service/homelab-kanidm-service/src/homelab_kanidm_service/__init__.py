@@ -1,3 +1,4 @@
+import pulumi
 import pulumi_tls as tls
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
@@ -6,6 +7,7 @@ from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from pulumi import ResourceOptions
 
 from .config import KandimConfig
+from .resource.password import KanidmPasswordResource
 
 
 class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
@@ -48,5 +50,14 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
 
         self.options[None].files = [self.key_file, self.chain_file]
         self.build_containers()
+
+        self.admin = KanidmPasswordResource(
+            opts=self.child_opts, container=self.container.id, account="admin"
+        )
+        self.idm_admin = KanidmPasswordResource(
+            opts=self.child_opts, container=self.container.id, account="idm_admin"
+        )
+        pulumi.export("kanidm.admin", self.admin.password)
+        pulumi.export("kanidm.idm_admin", self.idm_admin.password)
 
         self.register_outputs({})
