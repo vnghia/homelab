@@ -14,13 +14,16 @@ class GlobalExtractHostnameSource(HomelabBaseModel):
     hostname: str
     public: bool
     scheme: str | None = None
+    append_slash: bool = False
 
     def extract_str(self, main_service: ServiceResourceBase) -> Output[str]:
         hostname = main_service.docker_resource_args.hostnames[self.public][
             self.hostname
         ]
         if self.scheme:
-            hostname = Output.format("{}://{}", self.scheme, hostname)
+            hostname = Output.format(
+                "{}://{}{}", self.scheme, hostname, "/" if self.append_slash else ""
+            )
         return hostname
 
     def extract_path(self, _main_service: ServiceResourceBase) -> Never:

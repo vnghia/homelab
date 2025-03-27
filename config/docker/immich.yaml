@@ -14,6 +14,24 @@ volumes:
     immich-machine-learning-tmp:
       backup: false
 services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            immich:
+              display-name: Immich
+              origin-url:
+                - hostname: immich
+                  public: true
+                  scheme: https
+                  append-slash: true
+              origin-landing:
+                hostname: immich
+                public: true
+                scheme: https
+                append-slash: true
+              prefer-short-username: true
   immich:
     config:
       traefik:
