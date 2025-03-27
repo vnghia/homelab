@@ -8,6 +8,7 @@ from pulumi import ResourceOptions
 
 from .config import KandimConfig
 from .resource.password import KanidmPasswordResource
+from .resource.state import KanidmStateResource
 
 
 class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
@@ -59,5 +60,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         )
         pulumi.export("kanidm.admin", self.admin.password)
         pulumi.export("kanidm.idm_admin", self.idm_admin.password)
+
+        self.state = KanidmStateResource(opts=self.child_opts, kanidm_service=self)
 
         self.register_outputs({})

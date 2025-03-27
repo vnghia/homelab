@@ -242,7 +242,7 @@ class KeepassProvider(ResourceProvider):
         return ReadResult(id_=id_, outs=keepass_props.model_dump(mode="json"))
 
 
-class KeepassResousrce(Resource, module="keepass", name="Keepass"):
+class KeepassResource(Resource, module="keepass", name="Keepass"):
     def __init__(
         self,
         keepasses: dict[str, KeepassEntryResource],

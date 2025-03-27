@@ -15,7 +15,7 @@ from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
-from homelab_secret.resource.keepass import KeepassResousrce
+from homelab_secret.resource.keepass import KeepassResource
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 
@@ -113,7 +113,7 @@ class Homelab:
             docker_resource_args=self.docker.resource_args,
         )
 
-        self.keepass = KeepassResousrce(
+        self.keepass = KeepassResource(
             {
                 service.add_service_name(name): resource
                 for service in ServiceResourceBase.SERVICES.values()

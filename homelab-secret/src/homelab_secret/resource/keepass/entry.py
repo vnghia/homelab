@@ -23,6 +23,8 @@ class KeepassEntryResource(ComponentResource):
         self.password = self.model.password.to_password(opts=self.child_opts)
         self.hostname = self.model.hostname.to_hostname(hostnames)
 
+        self.register_outputs({})
+
     def to_props(self) -> dict[str, Any]:
         return {
             "username": self.username,

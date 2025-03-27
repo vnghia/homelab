@@ -15,6 +15,11 @@ services:
         env: KANIDM_TLS_KEY
       tls-chain:
         env: KANIDM_TLS_CHAIN
+      state:
+        persons:
+          me:
+            present: true
+            display-name: "Me"
       traefik:
         traefik:
           public: true
@@ -22,6 +27,11 @@ services:
             scheme: https
             port:
               variable: PORT
+    keepasses:
+      keepass:
+        hostname:
+          hostname: kanidm
+          public: true
     container:
       image: kanidm
       healthcheck:
