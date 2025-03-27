@@ -19,7 +19,9 @@ class KeepassEntryResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.model = model
-        self.username = self.model.username.to_username(opts=self.child_opts)
+        self.username = self.model.username.to_username(
+            opts=self.child_opts, hostnames=hostnames
+        )
         self.password = self.model.password.to_password(opts=self.child_opts)
         self.hostname = self.model.hostname.to_hostname(hostnames)
 

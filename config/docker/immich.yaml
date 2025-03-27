@@ -49,6 +49,9 @@ services:
         redis: {}
     keepasses:
       keepass:
+        username:
+          hostname: immich
+          public: true
         hostname:
           hostname: immich
           public: true

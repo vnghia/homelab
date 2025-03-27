@@ -4,7 +4,7 @@ from homelab_pydantic import HomelabBaseModel
 
 class KanidmStateSystemOauthModel(HomelabBaseModel):
     present: bool = True
-    public: bool = True
+    public: bool = False
     display_name: GlobalExtract
     origin_url: list[GlobalExtract]
     origin_landing: GlobalExtract
