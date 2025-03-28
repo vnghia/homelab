@@ -7,6 +7,7 @@ from ...model.state.group import KanidmStateGroupModel
 from .group import KanidmStateGroupConfig
 from .person import KanidmStatePersonConfig
 from .system import KanidmStateSystemConfig
+from .system.oauth import KanidmStateSystemOauthConfig
 
 
 class KanidmStateConfig(HomelabBaseModel):
@@ -26,5 +27,13 @@ class KanidmStateConfig(HomelabBaseModel):
                         ]
                     )
                 }
-            )
+            ),
+            systems=KanidmStateSystemConfig(
+                oauth2=KanidmStateSystemOauthConfig(
+                    {
+                        system: model.add_openid_scope(openid_group)
+                        for system, model in self.systems.oauth2.root.items()
+                    }
+                )
+            ),
         )
