@@ -18,6 +18,8 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
     CLIENT_IMAGE = "kanidm-client"
     CLIENT_CACHE_VOLUME = "kanidm-client-cache"
 
+    OPENID_GROUP = "openid"
+
     def __init__(
         self,
         model: ServiceWithConfigModel[KandimConfig],

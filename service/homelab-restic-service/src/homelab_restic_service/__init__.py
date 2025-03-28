@@ -1,8 +1,7 @@
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupGlobalConfig
-from homelab_docker.extract import GlobalExtract, GlobalExtractSource
-from homelab_docker.extract.simple import GlobalExtractSimpleSource
+from homelab_docker.extract import GlobalExtract
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -48,13 +47,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.backup_volumes = {
             volume: ContainerVolumeConfig(
-                GlobalExtract(
-                    GlobalExtractSource(
-                        GlobalExtractSimpleSource(
-                            self.get_volume_path(volume).as_posix()
-                        )
-                    )
-                )
+                GlobalExtract.from_simple(self.get_volume_path(volume).as_posix())
             )
             for volume, model in self.docker_resource_args.config.volumes.local.items()
             if model.backup

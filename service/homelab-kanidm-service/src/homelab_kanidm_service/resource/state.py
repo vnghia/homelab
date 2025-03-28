@@ -106,6 +106,10 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
     hash: Output[str]
 
     def __init__(self, opts: ResourceOptions | None, kanidm_service: KanidmService):
+        state = kanidm_service.config.state.add_openid_group(
+            kanidm_service.OPENID_GROUP
+        )
+
         super().__init__(
             KanidmStateProvider(),
             KanidmStateProvider.RESOURCE_ID,
@@ -115,9 +119,7 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
                 ].apply(lambda x: "https://{}".format(x)),
                 "password": kanidm_service.idm_admin.password,
                 "state": GlobalExtract.extract_recursively(
-                    kanidm_service.config.state.model_dump(mode="json"),
-                    kanidm_service,
-                    None,
+                    state.model_dump(mode="json"), kanidm_service, None
                 ),
                 "hash": None,
             },

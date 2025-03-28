@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any
+from typing import Any, Self
 
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
 from pulumi import Output
@@ -108,6 +108,10 @@ class GlobalExtract(
         | GlobalExtractFull
     ]
 ):
+    @classmethod
+    def from_simple(cls, value: str) -> Self:
+        return cls(GlobalExtractSource(GlobalExtractSimpleSource(value)))
+
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> Output[str]:

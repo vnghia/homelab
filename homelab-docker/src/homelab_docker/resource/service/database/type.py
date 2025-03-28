@@ -7,10 +7,9 @@ from homelab_secret.model import SecretModel
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
-from homelab_docker.extract import GlobalExtract, GlobalExtractSource
+from homelab_docker.extract import GlobalExtract
 from homelab_docker.extract.container import ContainerExtract
 from homelab_docker.extract.container.volume import ContainerExtractVolumeSource
-from homelab_docker.extract.simple import GlobalExtractSimpleSource
 
 from ....config.database import DatabaseConfig, DatabaseTypeEnvConfig
 from ....model.container import ContainerModel, ContainerModelBuildArgs
@@ -65,12 +64,8 @@ class ServiceDatabaseTypeResource(ComponentResource):
                     volumes=ContainerVolumesConfig(
                         {
                             full_name: ContainerVolumeConfig(
-                                GlobalExtract(
-                                    GlobalExtractSource(
-                                        GlobalExtractSimpleSource(
-                                            self.config.data_dir.as_posix()
-                                        )
-                                    )
+                                GlobalExtract.from_simple(
+                                    self.config.data_dir.as_posix()
                                 )
                             )
                         }
@@ -79,12 +74,8 @@ class ServiceDatabaseTypeResource(ComponentResource):
                                 self.get_full_name_version_tmp(
                                     version
                                 ): ContainerVolumeConfig(
-                                    GlobalExtract(
-                                        GlobalExtractSource(
-                                            GlobalExtractSimpleSource(
-                                                self.config.tmp_dir.as_posix()
-                                            )
-                                        )
+                                    GlobalExtract.from_simple(
+                                        self.config.tmp_dir.as_posix()
                                     )
                                 )
                             }
@@ -93,10 +84,8 @@ class ServiceDatabaseTypeResource(ComponentResource):
                         )
                     ),
                     envs={
-                        self.config.env.database: GlobalExtract(
-                            GlobalExtractSource(
-                                GlobalExtractSimpleSource(self.database)
-                            )
+                        self.config.env.database: GlobalExtract.from_simple(
+                            self.database
                         ),
                         self.config.env.data_dir: GlobalExtract(
                             ContainerExtract(
@@ -106,10 +95,8 @@ class ServiceDatabaseTypeResource(ComponentResource):
                     }
                     | (
                         {
-                            self.config.env.username: GlobalExtract(
-                                GlobalExtractSource(
-                                    GlobalExtractSimpleSource(self.username)
-                                )
+                            self.config.env.username: GlobalExtract.from_simple(
+                                self.username
                             )
                         }
                         if self.config.env.username
