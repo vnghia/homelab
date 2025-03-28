@@ -22,16 +22,27 @@ services:
             immich:
               display-name: Immich
               origin-url:
-                - hostname: immich
-                  public: true
-                  scheme: https
-                  append-slash: true
+                - extract:
+                    hostname: immich
+                    public: true
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/auth/login"
+                - extract:
+                    hostname: immich
+                    public: true
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/user-settings"
+                - app.immich:///oauth-callback
               origin-landing:
                 hostname: immich
                 public: true
                 scheme: https
-                append-slash: true
               prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
               claim-maps:
                 preferred_username:
                   user: username
