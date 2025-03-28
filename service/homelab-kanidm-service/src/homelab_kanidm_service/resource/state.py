@@ -22,14 +22,15 @@ from pulumi.dynamic import (
 from pydantic import ValidationError, computed_field, model_validator
 from pydantic.alias_generators import to_camel
 
-from homelab_kanidm_service.config.state.person import KanidmStatePersonConfig
-
 if typing.TYPE_CHECKING:
     from .. import KanidmService
 
 
 class KanidmStateProviderProps(HomelabBaseModel):
-    binary: ClassVar[str] = "kanidm-provision"
+    BINARY: ClassVar[str] = "kanidm-provision"
+    NOT_RENAME_KEYS: ClassVar[set[str]] = set(
+        ["groups", "persons", "oauth2", "scope_maps", "claim_maps", "values_by_group"]
+    )
 
     url: str
     password: str
@@ -48,12 +49,13 @@ class KanidmStateProviderProps(HomelabBaseModel):
         return data
 
     def provision(self) -> None:
-        binary = shutil.which(self.binary)
+        binary = shutil.which(self.BINARY)
         if not binary:
-            raise ValueError("{} is not installed".format(self.binary))
+            raise ValueError("{} is not installed".format(self.BINARY))
 
         with tempfile.NamedTemporaryFile(mode="w") as file:
-            json.dump(self.rename_key(self.state.model_dump(mode="json")), file)
+            state = self.rename_key(self.state.model_dump(mode="json"), True)
+            json.dump(state, file)
             file.flush()
 
             subprocess.check_call(
@@ -62,19 +64,20 @@ class KanidmStateProviderProps(HomelabBaseModel):
             )
 
     @classmethod
-    def rename_key(cls, data: dict[Any, Any] | list[Any]) -> dict[Any, Any] | list[Any]:
+    def rename_key(
+        cls, data: dict[Any, Any] | list[Any], should_rename: bool
+    ) -> dict[Any, Any] | list[Any]:
         if isinstance(data, list):
             return [
-                cls.rename_key(item) if isinstance(item, (dict, list)) else item
+                cls.rename_key(item, True) if isinstance(item, (dict, list)) else item
                 for item in data
             ]
         return {
             (
-                key
-                if not isinstance(key, str)
-                or key.startswith(KanidmStatePersonConfig.GROUP_PREFIX)
-                else to_camel(key)
-            ): cls.rename_key(value) if isinstance(value, (dict, list)) else value
+                key if not isinstance(key, str) or not should_rename else to_camel(key)
+            ): cls.rename_key(value, key not in cls.NOT_RENAME_KEYS)
+            if isinstance(value, (dict, list))
+            else value
             for key, value in data.items()
         }
 
