@@ -47,11 +47,10 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                         "service": TraefikDynamicServiceModelBuilder(
                             root.service
                         ).to_service_name(router_name),
-                        "entryPoints": [
-                            entrypoint.public_https
-                            if root.public
-                            else entrypoint.private_https
-                        ],
+                        "entryPoints": (
+                            [entrypoint.public_https] if root.public else []
+                        )
+                        + [entrypoint.private_https],
                         "rule": Output.all(
                             *(
                                 [Output.format("Host(`{}`)", hostname)]

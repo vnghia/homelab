@@ -17,6 +17,7 @@ class TailscaleService(ServiceResourceBase):
         *,
         opts: ResourceOptions | None,
         hostname: str,
+        aliases: list[str],
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
@@ -28,6 +29,7 @@ class TailscaleService(ServiceResourceBase):
                 "TS_AUTHKEY": self.build_authkey().key,
                 "TS_HOSTNAME": self.hostname,
             },
+            aliases=aliases,
         )
         self.build_containers()
 

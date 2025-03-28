@@ -8,3 +8,6 @@ class NetworkConfig(HomelabBaseModel):
     public_ips: dict[str, IPvAnyAddress]
     public: RecordConfig
     private: RecordConfig
+
+    def __getitem__(self, key: bool) -> RecordConfig:
+        return self.public if key else self.private

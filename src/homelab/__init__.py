@@ -38,6 +38,7 @@ class Homelab:
             self.docker.services_config.tailscale,
             opts=None,
             hostname=self.project_prefix,
+            aliases=[self.config.network[True][KanidmService.name()]],
             docker_resource_args=self.docker.resource_args,
         )
 

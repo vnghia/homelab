@@ -25,9 +25,9 @@ class RecordModel(HomelabRootModel[str]):
             type=type_,
         )
 
-    def hostname(self, zone_name: str) -> str:
+    def hostname(self, domain: str) -> str:
         return "{}{}{}".format(
             "" if self.root == "@" else self.root,
             "" if self.root == "@" else ".",
-            zone_name,
+            domain,
         )
