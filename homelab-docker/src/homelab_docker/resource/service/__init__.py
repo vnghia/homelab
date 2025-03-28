@@ -5,7 +5,7 @@ from collections import defaultdict
 import pulumi
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
-from pulumi import ComponentResource, ResourceOptions
+from pulumi import ComponentResource, Output, ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from ...config.service.database.source import ServiceDatabaseSourceConfig
@@ -38,6 +38,8 @@ class ServiceResourceBase(ComponentResource):
         self._database: ServiceDatabaseResource | None = None
         self._secret: ServiceSecretResouse | None = None
         self._keepass: ServiceKeepassResouse | None = None
+
+        self.exports: dict[str, Output[str]] = {}
 
         self.build_databases()
         self.build_secrets()

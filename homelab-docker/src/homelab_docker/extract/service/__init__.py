@@ -8,6 +8,7 @@ from pulumi import Output
 
 from ..container import ContainerExtract
 from ..transform import ExtractTransform
+from .export import ServiceExtractExportSource
 from .keepass import ServiceExtractKeepassSource
 from .secret import ServiceExtractSecretSource
 from .variable import ServiceExtractVariableSource
@@ -20,7 +21,8 @@ if typing.TYPE_CHECKING:
 
 class ServiceExtractSource(
     HomelabRootModel[
-        ServiceExtractKeepassSource
+        ServiceExtractExportSource
+        | ServiceExtractKeepassSource
         | ServiceExtractSecretSource
         | ServiceExtractVariableSource
     ]

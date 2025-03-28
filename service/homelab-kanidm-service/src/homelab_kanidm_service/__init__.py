@@ -91,7 +91,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             self.client_data, self.idm_admin.password
         ).apply(lambda x: KanidmClient.model_validate_json(x[0]).login(password=x[1]))
 
-        self.oauth_secrets = {
+        self.exports |= {
             system: Output.all(
                 self.client_data, system, self.state.hash, self.login_account
             ).apply(
@@ -101,7 +101,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             )
             for system in self.config.state.systems.oauth2.root.keys()
         }
-        for system, secret in self.oauth_secrets.items():
+        for system, secret in self.exports.items():
             pulumi.export("kanidm.{}.oauth".format(system), secret)
 
         self.register_outputs({})
