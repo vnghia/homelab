@@ -68,4 +68,4 @@ class KanidmClient(HomelabBaseModel):
                 "show-basic-secret",
                 system,
             ]
-        )
+        ).replace("\n", "")

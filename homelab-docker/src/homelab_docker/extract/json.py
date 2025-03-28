@@ -11,13 +11,13 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalExtractJsonSource(HomelabBaseModel):
-    json: Any
+    json_: Any
 
     def extract_str(self, main_service: ServiceResourceBase) -> Output[str]:
         from . import GlobalExtract
 
         return Output.json_dumps(
-            GlobalExtract.extract_recursively(self.json, main_service, None)
+            GlobalExtract.extract_recursively(self.json_, main_service, None)
         )
 
     def extract_path(self, _main_service: ServiceResourceBase) -> Never:

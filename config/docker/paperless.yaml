@@ -2,7 +2,7 @@ images:
   remote:
     paperless:
       repo: ghcr.io/paperless-ngx/paperless-ngx
-      tag: "2.14.7"
+      tag: "2.15.0-beta.rc1"
 volumes:
   local:
     paperless-data: {}
@@ -14,6 +14,26 @@ volumes:
     paperless-supervisord-log:
       backup: false
 services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            paperless:
+              display-name: Paperless
+              origin-url:
+                - extract:
+                    hostname: paperless
+                    public: true
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/accounts/oidc/kanidm/login/callback/"
+              origin-landing:
+                hostname: paperless
+                public: true
+                scheme: https
+              prefer-short-username: true
   paperless:
     config:
       traefik:
@@ -48,6 +68,8 @@ services:
           envs:
             env: PAPERLESS_REDIS
       tmpfs:
+        - path: /run
+          exec: true
         - /var/run/supervisord
       volumes:
         paperless-data: /usr/src/paperless/data
@@ -56,6 +78,7 @@ services:
         paperless-tmp: /tmp
         paperless-supervisord-log: /var/log/supervisord
       envs:
+        S6_READ_ONLY_ROOT: 1
         PAPERLESS_DATA_DIR:
           volume: paperless-data
         PAPERLESS_MEDIA_ROOT:
@@ -81,10 +104,40 @@ services:
           scheme: https
         PAPERLESS_TIME_ZONE:
           docker: "{timezone}"
-        PAPERLESS_TRAIN_TASK_CRON: "disable"
+        PAPERLESS_EMAIL_TASK_CRON: disable
+        PAPERLESS_TRAIN_TASK_CRON: disable
+        PAPERLESS_CONSUMER_DISABLE: true
         PAPERLESS_CONVERT_TMPDIR:
           volume: paperless-tmp
         PAPERLESS_PORT: 8000
+        PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+        PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS: true
+        PAPERLESS_ACCOUNT_ALLOW_SIGNUPS: false
+        PAPERLESS_SOCIALACCOUNT_PROVIDERS:
+          json_:
+            openid_connect:
+              OAUTH_PKCE_ENABLED: true
+              APPS:
+                - provider_id: kanidm
+                  name: Kanidm
+                  client_id: paperless
+                  secret:
+                    service: kanidm
+                    extract:
+                      export: paperless
+                  settings:
+                    server_url:
+                      extract:
+                        hostname: kanidm
+                        public: true
+                        scheme: https
+                      transform:
+                        string:
+                          template: "{value}/oauth2/openid/paperless"
+        PAPERLESS_SOCIAL_AUTO_SIGNUP: true
+        PAPERLESS_SOCIAL_ACCOUNT_DEFAULT_GROUPS: default
+        PAPERLESS_DISABLE_REGULAR_LOGIN: true
+        PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
         PYTHONPYCACHEPREFIX:
           extract:
             volume: paperless-tmp
