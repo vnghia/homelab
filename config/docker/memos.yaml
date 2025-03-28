@@ -7,6 +7,27 @@ volumes:
   local:
     memos-data: {}
 services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            memos:
+              display-name: Memos
+              origin-url:
+                - extract:
+                    hostname: memos
+                    public: true
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/auth/callback"
+              origin-landing:
+                hostname: memos
+                public: true
+                scheme: https
+              prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
   memos:
     config:
       traefik:
