@@ -15,7 +15,7 @@ class KanidmStateConfig(HomelabBaseModel):
     persons: KanidmStatePersonConfig = KanidmStatePersonConfig()
     systems: KanidmStateSystemConfig = KanidmStateSystemConfig()
 
-    def add_openid_group(self, openid_group: str) -> KanidmStateConfig:
+    def build(self, openid_group: str) -> KanidmStateConfig:
         return self.__replace__(
             groups=KanidmStateGroupConfig(
                 self.groups.root
@@ -27,11 +27,19 @@ class KanidmStateConfig(HomelabBaseModel):
                         ]
                     )
                 }
+                | {
+                    KanidmStatePersonConfig.to_group_name(
+                        member
+                    ): KanidmStateGroupModel(
+                        members=[GlobalExtract.from_simple(member)]
+                    )
+                    for member in list(self.persons.root.keys())
+                }
             ),
             systems=KanidmStateSystemConfig(
                 oauth2=KanidmStateSystemOauthConfig(
                     {
-                        system: model.add_openid_scope(openid_group)
+                        system: model.build(openid_group, self)
                         for system, model in self.systems.oauth2.root.items()
                     }
                 )

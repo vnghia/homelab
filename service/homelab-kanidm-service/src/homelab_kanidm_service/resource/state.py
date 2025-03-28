@@ -22,6 +22,8 @@ from pulumi.dynamic import (
 from pydantic import ValidationError, computed_field, model_validator
 from pydantic.alias_generators import to_camel
 
+from homelab_kanidm_service.config.state.person import KanidmStatePersonConfig
+
 if typing.TYPE_CHECKING:
     from .. import KanidmService
 
@@ -67,9 +69,12 @@ class KanidmStateProviderProps(HomelabBaseModel):
                 for item in data
             ]
         return {
-            to_camel(key): cls.rename_key(value)
-            if isinstance(value, (dict, list))
-            else value
+            (
+                key
+                if not isinstance(key, str)
+                or key.startswith(KanidmStatePersonConfig.GROUP_PREFIX)
+                else to_camel(key)
+            ): cls.rename_key(value) if isinstance(value, (dict, list)) else value
             for key, value in data.items()
         }
 
@@ -106,9 +111,7 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
     hash: Output[str]
 
     def __init__(self, opts: ResourceOptions | None, kanidm_service: KanidmService):
-        state = kanidm_service.config.state.add_openid_group(
-            kanidm_service.OPENID_GROUP
-        )
+        state = kanidm_service.config.state.build(kanidm_service.OPENID_GROUP)
 
         super().__init__(
             KanidmStateProvider(),
