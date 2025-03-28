@@ -32,6 +32,9 @@ services:
                 scheme: https
                 append-slash: true
               prefer-short-username: true
+              claim-maps:
+                preferred_username:
+                  user: username
   immich:
     config:
       traefik:
