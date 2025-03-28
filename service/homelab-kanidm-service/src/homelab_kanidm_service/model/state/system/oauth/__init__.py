@@ -20,7 +20,7 @@ class KanidmStateSystemOauthModel(HomelabBaseModel):
     prefer_short_username: bool = False
     allow_insecure_client_disable_pkce: bool = False
     scope_maps: dict[str, list[str]] = {}
-    claim_maps: dict[str, KanidmStateSystemOauthClaimModel]
+    claim_maps: dict[str, KanidmStateSystemOauthClaimModel] = {}
 
     def build(
         self, openid_group: str, kanidm_state: KanidmStateConfig

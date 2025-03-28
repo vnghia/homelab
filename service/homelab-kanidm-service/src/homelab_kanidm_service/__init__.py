@@ -6,7 +6,7 @@ from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from pulumi import Output, ResourceOptions
 
-from .client import KanidmClient, KanidmOauthClient
+from .client import KanidmClient
 from .config import KandimConfig
 from .resource.password import KanidmPasswordResource
 from .resource.state import KanidmStateResource
@@ -91,27 +91,17 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             self.client_data, self.idm_admin.password
         ).apply(lambda x: KanidmClient.model_validate_json(x[0]).login(password=x[1]))
 
-        self.oauths = {
-            system: KanidmOauthClient(
-                id_=Output.all(
-                    self.client_data, system, self.state.hash, self.login_account
-                ).apply(
-                    lambda x: KanidmClient.model_validate_json(x[0]).extract_oauth_id(
-                        x[1]
-                    )
-                ),
-                secret=Output.all(
-                    self.client_data, system, self.state.hash, self.login_account
-                ).apply(
-                    lambda x: KanidmClient.model_validate_json(
-                        x[0]
-                    ).extract_oauth_secret(x[1])
-                ),
+        self.oauth_secrets = {
+            system: Output.all(
+                self.client_data, system, self.state.hash, self.login_account
+            ).apply(
+                lambda x: KanidmClient.model_validate_json(x[0]).extract_oauth_secret(
+                    x[1]
+                )
             )
             for system in self.config.state.systems.oauth2.root.keys()
         }
-        for system, oauth in self.oauths.items():
-            pulumi.export("kanidm.{}.oauth-id".format(system), oauth.id_)
-            pulumi.export("kanidm.{}.oauth-secret".format(system), oauth.secret)
+        for system, secret in self.oauth_secrets.items():
+            pulumi.export("kanidm.{}.oauth".format(system), secret)
 
         self.register_outputs({})

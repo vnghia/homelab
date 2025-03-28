@@ -1,18 +1,10 @@
-import dataclasses
 import re
 from pathlib import PosixPath
 from typing import ClassVar
 
 from homelab_docker.client import DockerClient
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
-from pulumi import Output
 from pydantic import PositiveInt
-
-
-@dataclasses.dataclass
-class KanidmOauthClient:
-    id_: Output[str]
-    secret: Output[str]
 
 
 class KanidmClient(HomelabBaseModel):
@@ -66,17 +58,6 @@ class KanidmClient(HomelabBaseModel):
         if "Login Success for {}@".format(self.ACCOUNT) not in result:
             raise RuntimeError("Could not login to kanidm with log: {}".format(result))
         return self.ACCOUNT
-
-    def extract_oauth_id(self, system: str) -> str:
-        result = self.run(
-            [self.BINARY_PATH.as_posix(), "system", "oauth2", "get", system]
-        )
-        match = self.ID_PATTERN.match(result.replace("\n", " "))
-        if not match:
-            raise RuntimeError(
-                "Could not extract id of {} from log: {}".format(system, result)
-            )
-        return match[1]
 
     def extract_oauth_secret(self, system: str) -> str:
         return self.run(
