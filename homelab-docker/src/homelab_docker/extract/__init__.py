@@ -11,6 +11,7 @@ from .container import ContainerExtract
 from .docker import GlobalExtractDockerSource
 from .hostname import GlobalExtractHostnameSource
 from .id import GlobalExtractIdSource
+from .json import GlobalExtractJsonSource
 from .name import GlobalExtractNameSource
 from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
@@ -28,6 +29,7 @@ class GlobalExtractSource(
         GlobalExtractDockerSource
         | GlobalExtractHostnameSource
         | GlobalExtractIdSource
+        | GlobalExtractJsonSource
         | GlobalExtractNameSource
         | GlobalExtractSimpleSource
         | GlobalExtractVpnSource
