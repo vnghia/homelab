@@ -4,12 +4,18 @@ from homelab_barman_service import BarmanService
 from homelab_dagu_config.model import DaguDagModel
 from homelab_dagu_config.model.params import DaguDagParamsModel, DaguDagParamType
 from homelab_dagu_config.model.step import DaguDagStepModel
+from homelab_dagu_config.model.step.continue_on import DaguDagStepContinueOnModel
+from homelab_dagu_config.model.step.precondition import (
+    DaguDagStepPreConditionFullModel,
+    DaguDagStepPreConditionModel,
+)
 from homelab_dagu_config.model.step.run import DaguDagStepRunModel
 from homelab_dagu_config.model.step.run.command import (
     DaguDagStepRunCommandModel,
     DaguDagStepRunCommandParamModel,
     DaguDagStepRunCommandParamTypeModel,
 )
+from homelab_dagu_config.model.step.run.subdag import DaguDagStepRunSubdagModel
 from homelab_dagu_config.model.step.script import DaguDagStepScriptModel
 from homelab_dagu_service import DaguService
 from homelab_dagu_service.model import DaguDagModelBuilder
@@ -22,6 +28,8 @@ from .config import BackupConfig
 
 
 class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
+    BARMAN_BACKUP_KEY = "BARMAN_BACKUP_KEY"
+
     def __init__(
         self,
         model: ServiceWithConfigModel[BackupConfig],
@@ -61,7 +69,34 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             ]
                         )
                     ),
-                )
+                    output=self.BARMAN_BACKUP_KEY,
+                ),
+                DaguDagStepModel(
+                    name="backup-{}".format(barman_service.name()),
+                    run=DaguDagStepRunModel(
+                        DaguDagStepRunSubdagModel(
+                            service=barman_service.name(),
+                            dag=self.name(),
+                            params=DaguDagParamsModel(
+                                types={
+                                    DaguDagParamType.BACKUP: "${{{}}}".format(
+                                        self.BARMAN_BACKUP_KEY
+                                    )
+                                }
+                            ),
+                        )
+                    ),
+                    continue_on=DaguDagStepContinueOnModel(skipped=True),
+                    depends=["extract-{}".format(barman_service.name())],
+                    preconditions=[
+                        DaguDagStepPreConditionModel(
+                            DaguDagStepPreConditionFullModel(
+                                condition="${{{}}}".format(self.BARMAN_BACKUP_KEY),
+                                expected="re:.+",
+                            )
+                        )
+                    ],
+                ),
             ],
             tags=[self.name()],
             params=DaguDagParamsModel(types={DaguDagParamType.BACKUP: ""}),

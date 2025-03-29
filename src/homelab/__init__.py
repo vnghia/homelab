@@ -108,13 +108,6 @@ class Homelab:
             backup_config=self.docker.services_config.backup.config,
             docker_resource_args=self.docker.resource_args,
         )
-        self.backup = BackupService(
-            self.docker.services_config.backup,
-            opts=None,
-            dagu_service=self.dagu,
-            barman_service=self.barman,
-            docker_resource_args=self.docker.resource_args,
-        )
 
         self.keepass = KeepassResource(
             {
@@ -126,3 +119,11 @@ class Homelab:
         )
 
         self.file = File(traefik_service=self.traefik, dagu_service=self.dagu)
+
+        self.backup = BackupService(
+            self.docker.services_config.backup,
+            opts=None,
+            dagu_service=self.dagu,
+            barman_service=self.barman,
+            docker_resource_args=self.docker.resource_args,
+        )

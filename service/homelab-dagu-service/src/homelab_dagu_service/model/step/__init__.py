@@ -39,6 +39,13 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
                 )
                 if root.script
                 else None,
+                "output": root.output if root.output else None,
+                "depends": root.depends if root.depends else None,
+                "preconditions": [
+                    precondition.to_step() for precondition in root.preconditions
+                ]
+                if root.preconditions
+                else None,
             }
             | (root.continue_on.to_step() if root.continue_on else {})
             | DaguDagStepRunModelBuilder(root.run).to_run(dagu_service, params)

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import operator
 import typing
+from functools import reduce
 from typing import Any
 
 from homelab_dagu_config.model.params import DaguDagParamsModel
@@ -20,12 +22,13 @@ class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagMode
         dagu_config = dagu_service.config
         dagu_model = dagu_service.model[dagu_config.dags_dir.container]
         dag = dagu_service.dags[root.service][root.dag]
-        params = root.params.to_params(dag.model)
+        list_params = root.params.to_params(dag.model)
 
         data: dict[str, Any] = {"run": dag.to_path(dagu_service, dagu_model)}
-        if params:
+        if list_params:
+            params: dict[str, str] = reduce(operator.or_, list_params, {})
             data["params"] = " ".join(
                 '{}="{}"'.format(key, value.replace('"', '\\"'))
-                for key, value in params
+                for key, value in params.items()
             )
         return data
