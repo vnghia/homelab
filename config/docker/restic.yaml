@@ -22,6 +22,8 @@ services:
       keep:
         last:
           daily: 7
+      database:
+        postgres: barman-home
       dagu:
         dotenvs:
           dotenv:

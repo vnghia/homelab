@@ -5,7 +5,7 @@ from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
-from homelab_pydantic import AbsolutePath
+from homelab_pydantic import AbsolutePath, RelativePath
 from pulumi import ResourceOptions
 
 from .config import ResticConfig
@@ -44,11 +44,21 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             envs=self.config.dagu.dotenvs[None].to_envs(self, None),
         )
 
-        self.volume_configs = [
-            ResticVolumeConfig(name=name, model=model)
-            for name, model in self.docker_resource_args.config.volumes.local.items()
-            if model.backup
-        ]
+        self.database_configs = {}
+        self.volume_configs = []
+
+        for (
+            name,
+            volume_model,
+        ) in self.docker_resource_args.config.volumes.local.items():
+            config = ResticVolumeConfig(name=name, model=volume_model)
+            database_type = self.config.database.find(name)
+            if database_type:
+                self.database_configs[database_type] = config.__replace__(
+                    relative=RelativePath(PosixPath(database_type.value))
+                )
+            elif volume_model.backup:
+                self.volume_configs.append(config)
 
         self.profiles = [
             ResticProfileModel(volume=volume).build_resource(
@@ -65,6 +75,9 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         # No need to specify file dependencies because the file are created after `pulumi up`
         self.options[None].volumes = {
+            config.name: config.container_volume_config
+            for config in self.database_configs.values()
+        } | {
             config.name: config.container_volume_config
             for config in self.volume_configs
         }
