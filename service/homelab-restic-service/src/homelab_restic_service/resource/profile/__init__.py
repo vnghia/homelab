@@ -27,21 +27,20 @@ class ResticProfileResource(
         opts: ResourceOptions | None,
         restic_service: ResticService,
     ):
-        self.name = model.volume
-        self.service = self.name.split("-", maxsplit=1)[0]
+        self.volume = model.volume
 
         super().__init__(
-            self.name,
+            self.volume.name,
             opts=opts,
-            volume_path=restic_service.get_profile_volume_path(self.name),
+            volume_path=restic_service.get_profile_volume_path(self.volume.name),
             data={
                 "version": "2",
                 "profiles": {
-                    self.name: {
-                        "base-dir": restic_service.get_volume_path(self.name),
+                    self.volume.name: {
+                        "base-dir": self.volume.path,
                         "inherit": restic_service.DEFAULT_PROFILE_NAME,
                         "backup": {
-                            "tag": ",".join([self.DOCKER_TAG, self.service]),
+                            "tag": ",".join([self.DOCKER_TAG, self.volume.service]),
                         },
                     }
                 },

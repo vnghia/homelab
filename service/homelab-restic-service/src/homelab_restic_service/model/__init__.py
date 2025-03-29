@@ -5,13 +5,15 @@ import typing
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
 
+from ..config.volume import ResticVolumeConfig
+
 if typing.TYPE_CHECKING:
     from .. import ResticService
     from ..resource.profile import ResticProfileResource
 
 
 class ResticProfileModel(HomelabBaseModel):
-    volume: str
+    volume: ResticVolumeConfig
 
     def build_resource(
         self,

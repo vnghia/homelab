@@ -64,11 +64,13 @@ class ResticGlobalProfileResource(
                         "retention": {"after-backup": True} | forget_options,
                     }
                 },
-                "groups": {"all": {"profiles": [profile.name for profile in profiles]}}
+                "groups": {
+                    "all": {"profiles": [profile.volume.name for profile in profiles]}
+                }
                 | {
-                    service: {"profiles": [profile.name for profile in group]}
+                    service: {"profiles": [profile.volume.name for profile in group]}
                     for service, group in itertools.groupby(
-                        profiles, key=lambda x: x.service
+                        profiles, key=lambda x: x.volume.service
                     )
                 },
             },
