@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
 
 class ResticProfileModel(HomelabBaseModel):
     volume: ResticVolumeConfig
+    tags: list[str] = []
 
     def build_resource(
         self,

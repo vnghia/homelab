@@ -106,6 +106,7 @@ class Homelab:
             opts=None,
             hostname=self.project_prefix,
             backup_config=self.docker.services_config.backup.config,
+            barman_service=self.barman,
             docker_resource_args=self.docker.resource_args,
         )
 
@@ -125,5 +126,6 @@ class Homelab:
             opts=None,
             dagu_service=self.dagu,
             barman_service=self.barman,
+            restic_service=self.restic,
             docker_resource_args=self.docker.resource_args,
         )

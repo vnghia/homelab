@@ -1,23 +1,25 @@
+from collections import defaultdict
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupGlobalConfig
+from homelab_barman_service import BarmanService
 from homelab_docker.model.container.volume_path import ContainerVolumePath
+from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
-from homelab_pydantic import AbsolutePath, RelativePath
+from homelab_pydantic import RelativePath
 from pulumi import ResourceOptions
 
 from .config import ResticConfig
 from .config.volume import ResticVolumeConfig
 from .model import ResticProfileModel
+from .model.database import ResticProfileDatabaseModel
 from .resource.profile.global_ import ResticGlobalProfileResource
 from .resource.repo import ResticRepoResource
 
 
 class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
-    RESTIC_MOUNT_PREFIX = AbsolutePath(PosixPath("/"))
-
     DEFAULT_PROFILE_NAME = "default"
 
     def __init__(
@@ -27,6 +29,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         opts: ResourceOptions | None,
         hostname: str,
         backup_config: BackupGlobalConfig,
+        barman_service: BarmanService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
@@ -66,23 +69,45 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             )
             for volume in sorted(self.volume_configs, key=lambda x: x.name)
         ]
+
+        self.service_groups: defaultdict[str, list[str]] = defaultdict(list)
+        for profile in self.profiles:
+            service = profile.volume.service
+            self.service_groups[service].append(profile.volume.name)
+
+        self.database_profiles = [
+            ResticProfileDatabaseModel(
+                type_=DatabaseType.POSTGRES, name=name
+            ).build_resource(opts=self.child_opts, restic_service=self)
+            for names in barman_service.service_maps.values()
+            for name in names
+        ]
+
+        self.service_database_groups: defaultdict[str, list[str]] = defaultdict(list)
+        for profile in self.database_profiles:
+            service = profile.volume.service
+            self.service_database_groups[service].append(profile.volume.name)
+
         self.global_ = ResticGlobalProfileResource(
             opts=self.child_opts,
             hostname=hostname,
-            profiles=self.profiles,
             restic_service=self,
         )
 
         # No need to specify file dependencies because the file are created after `pulumi up`
         self.options[None].volumes = {
             config.name: config.container_volume_config
-            for config in self.database_configs.values()
+            for config in self.volume_configs
         } | {
             config.name: config.container_volume_config
-            for config in self.volume_configs
+            for config in self.database_configs.values()
         }
 
         self.register_outputs({})
 
     def get_profile_volume_path(self, name: str) -> ContainerVolumePath:
         return self.profile_dir_volume_path / name
+
+    @classmethod
+    def get_database_group(cls, service: str) -> str:
+        return "{}-database".format(service)

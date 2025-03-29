@@ -4,7 +4,6 @@ from homelab_barman_service import BarmanService
 from homelab_dagu_config.model import DaguDagModel
 from homelab_dagu_config.model.params import DaguDagParamsModel, DaguDagParamType
 from homelab_dagu_config.model.step import DaguDagStepModel
-from homelab_dagu_config.model.step.continue_on import DaguDagStepContinueOnModel
 from homelab_dagu_config.model.step.precondition import (
     DaguDagStepPreConditionFullModel,
     DaguDagStepPreConditionModel,
@@ -22,6 +21,7 @@ from homelab_dagu_service.model import DaguDagModelBuilder
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
+from homelab_restic_service import ResticService
 from pulumi import ResourceOptions
 
 from .config import BackupConfig
@@ -37,6 +37,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         opts: ResourceOptions | None,
         dagu_service: DaguService,
         barman_service: BarmanService,
+        restic_service: ResticService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
@@ -44,6 +45,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         self.backup_service = DaguDagModel(
             name="service",
             path="{}-service".format(self.name()),
+            max_active_runs=1,
             steps=[
                 DaguDagStepModel(
                     name="extract-{}".format(barman_service.name()),
@@ -86,7 +88,6 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             ),
                         )
                     ),
-                    continue_on=DaguDagStepContinueOnModel(skipped=True),
                     depends=["extract-{}".format(barman_service.name())],
                     preconditions=[
                         DaguDagStepPreConditionModel(
@@ -96,6 +97,43 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             )
                         )
                     ],
+                ),
+                DaguDagStepModel(
+                    name="backup-{}-database".format(restic_service.name()),
+                    run=DaguDagStepRunModel(
+                        DaguDagStepRunSubdagModel(
+                            service=restic_service.name(),
+                            dag=self.name(),
+                            params=DaguDagParamsModel(
+                                types={
+                                    DaguDagParamType.BACKUP: "${{{}}}-database".format(
+                                        DaguDagParamsModel.PARAM_VALUE[
+                                            DaguDagParamType.BACKUP
+                                        ][0]
+                                    )
+                                }
+                            ),
+                        )
+                    ),
+                    depends=["backup-{}".format(barman_service.name())],
+                ),
+                DaguDagStepModel(
+                    name="backup-{}".format(restic_service.name()),
+                    run=DaguDagStepRunModel(
+                        DaguDagStepRunSubdagModel(
+                            service=restic_service.name(),
+                            dag=self.name(),
+                            params=DaguDagParamsModel(
+                                types={
+                                    DaguDagParamType.BACKUP: "${{{}}}".format(
+                                        DaguDagParamsModel.PARAM_VALUE[
+                                            DaguDagParamType.BACKUP
+                                        ][0]
+                                    )
+                                }
+                            ),
+                        )
+                    ),
                 ),
             ],
             tags=[self.name()],

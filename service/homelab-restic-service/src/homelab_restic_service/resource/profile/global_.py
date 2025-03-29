@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import itertools
 import typing
 
 from homelab_docker.resource.file.config import ConfigFileResource, YamlDumper
@@ -10,7 +9,6 @@ from . import schema
 
 if typing.TYPE_CHECKING:
     from ... import ResticService
-    from . import ResticProfileResource
 
 
 class ResticGlobalProfileResource(
@@ -24,11 +22,12 @@ class ResticGlobalProfileResource(
         *,
         opts: ResourceOptions | None,
         hostname: str,
-        profiles: list[ResticProfileResource],
         restic_service: ResticService,
     ):
         restic_config = restic_service.config
         restic_model = restic_service.model[restic_config.profile_dir.container]
+
+        all_profiles = restic_service.profiles + restic_service.database_profiles
 
         forget_options = {"prune": True} | {
             "keep-{}".format(timeframe): number
@@ -46,7 +45,7 @@ class ResticGlobalProfileResource(
                 },
                 "includes": [
                     profile.to_path(restic_service, restic_model)
-                    for profile in profiles
+                    for profile in all_profiles
                 ],
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
@@ -55,7 +54,6 @@ class ResticGlobalProfileResource(
                         ),
                         "cleanup-cache": True,
                         "backup": {
-                            "check-after": True,
                             "source-relative": True,
                             "host": hostname,
                             "source": ["."],
@@ -65,13 +63,17 @@ class ResticGlobalProfileResource(
                     }
                 },
                 "groups": {
-                    "all": {"profiles": [profile.volume.name for profile in profiles]}
+                    "all": {
+                        "profiles": [profile.volume.name for profile in all_profiles]
+                    }
                 }
                 | {
-                    service: {"profiles": [profile.volume.name for profile in group]}
-                    for service, group in itertools.groupby(
-                        profiles, key=lambda x: x.volume.service
-                    )
+                    service: {"profiles": profiles}
+                    for service, profiles in restic_service.service_groups.items()
+                }
+                | {
+                    restic_service.get_database_group(service): {"profiles": profiles}
+                    for service, profiles in restic_service.service_database_groups.items()
                 },
             },
             volume_resource=restic_service.docker_resource_args.volume,
