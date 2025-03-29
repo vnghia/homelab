@@ -12,6 +12,11 @@ if typing.TYPE_CHECKING:
 
 
 class DaguDagStepRunCommandModelBuilder(HomelabRootModel[DaguDagStepRunCommandModel]):
+    def to_command(self, params: DaguDagParamsModel) -> str:
+        return " ".join(
+            self.root.command_to_str(command, params) for command in self.root.root
+        )
+
     def to_run(
         self,
         dagu_service_: DaguService,

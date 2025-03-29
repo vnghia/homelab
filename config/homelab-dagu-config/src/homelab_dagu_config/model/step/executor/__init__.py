@@ -6,11 +6,12 @@ from homelab_pydantic import HomelabRootModel
 from pulumi import Input
 
 from .docker import DaguDagStepDockerExecutorModel
+from .jq import DaguDagStepJqExecutorModel
 
 
-class DaguDagStepExecutorModel(HomelabRootModel[DaguDagStepDockerExecutorModel]):
-    root: DaguDagStepDockerExecutorModel
-
+class DaguDagStepExecutorModel(
+    HomelabRootModel[DaguDagStepDockerExecutorModel | DaguDagStepJqExecutorModel]
+):
     def to_executor(
         self,
         main_service: ServiceResourceBase,

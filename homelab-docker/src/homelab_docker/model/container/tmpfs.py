@@ -7,13 +7,16 @@ class ContainerTmpfsFullConfig(HomelabBaseModel):
 
 
 class ContainerTmpfsConfig(HomelabRootModel[AbsolutePath | ContainerTmpfsFullConfig]):
+    def to_path(self) -> AbsolutePath:
+        root = self.root
+        return root.path if isinstance(root, ContainerTmpfsFullConfig) else root
+
     def to_args(self) -> tuple[AbsolutePath, str]:
         root = self.root
-        target = root.path if isinstance(root, ContainerTmpfsFullConfig) else root
         option = (
             "exec"
             if isinstance(root, ContainerTmpfsFullConfig) and root.exec
             else "noexec"
         )
 
-        return (target, option)
+        return (self.to_path(), option)

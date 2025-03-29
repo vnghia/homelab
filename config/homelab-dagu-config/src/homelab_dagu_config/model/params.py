@@ -38,7 +38,6 @@ class DaguDagParamsModel(HomelabBaseModel):
         if isinstance(key, DaguDagParamType):
             self.types[key]
             return self.PARAM_VALUE[key][0]
-
         else:
             self.main[key]
             return key
@@ -56,16 +55,23 @@ class DaguDagParamsModel(HomelabBaseModel):
         used_params = set()
         for step in dag.steps:
             run = step.run.root
+            script = step.script
+
+            commands = []
             if isinstance(run, DaguDagStepRunCommandModel):
-                for command in run.root:
-                    if isinstance(command, DaguDagStepRunCommandParamModel):
-                        used_params.add(
-                            command.param.type
-                            if isinstance(
-                                command.param, DaguDagStepRunCommandParamTypeModel
-                            )
-                            else command.param
+                commands += run.root
+            if script and isinstance(script.root, DaguDagStepRunCommandModel):
+                commands += script.root.root
+
+            for command in commands:
+                if isinstance(command, DaguDagStepRunCommandParamModel):
+                    used_params.add(
+                        command.param.type
+                        if isinstance(
+                            command.param, DaguDagStepRunCommandParamTypeModel
                         )
+                        else command.param
+                    )
 
         params = []
         for key, value in self.main.items():
@@ -74,6 +80,12 @@ class DaguDagParamsModel(HomelabBaseModel):
         for key, default_value in self.types.items():
             if key in used_params:
                 param_value = self.PARAM_VALUE[key]
-                params.append({param_value[0]: default_value or param_value[1]})
+                params.append(
+                    {
+                        param_value[0]: default_value
+                        if default_value is not None
+                        else param_value[1]
+                    }
+                )
 
         return params or None

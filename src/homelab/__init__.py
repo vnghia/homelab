@@ -111,6 +111,8 @@ class Homelab:
         self.backup = BackupService(
             self.docker.services_config.backup,
             opts=None,
+            dagu_service=self.dagu,
+            barman_service=self.barman,
             docker_resource_args=self.docker.resource_args,
         )
 

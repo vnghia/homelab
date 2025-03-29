@@ -5,6 +5,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_extra_service import ExtraService
+from homelab_pydantic.path import AbsolutePath
 from pulumi import ResourceOptions
 
 from .config import DaguConfig
@@ -41,3 +42,9 @@ class DaguService(ExtraService[DaguConfig]):
 
     def get_log_dir_volume_path(self, name: str) -> ContainerVolumePath:
         return self.log_dir_volume_path / name
+
+    def get_tmp_dir(self) -> AbsolutePath:
+        tmpfs = self.model[None].tmpfs
+        if not tmpfs:
+            raise ValueError("tmpfs is not configured for {}".format(self.name()))
+        return tmpfs[0].to_path()

@@ -78,7 +78,6 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                             path="{}-{}".format(
                                 main_service.name(), self.DEBUG_DAG_NAME
                             ),
-                            group=main_service.name(),
                             tags=[self.DEBUG_DAG_NAME],
                             params=DaguDagParamsModel(
                                 types={DaguDagParamType.DEBUG: None}

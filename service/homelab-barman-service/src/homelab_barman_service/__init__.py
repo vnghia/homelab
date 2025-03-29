@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from homelab_backup.config import BackupGlobalConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
@@ -28,6 +30,8 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         )
 
         self.configs: list[BarmanConfigFileResource] = []
+        self.service_maps: defaultdict[str, list[str]] = defaultdict(list)
+
         for (
             service_name,
             source_config,
@@ -45,6 +49,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
                             barman_service=self,
                         )
                     )
+                    self.service_maps[service_name].append(full_name)
 
         self.options[None].files = self.configs
         self.build_containers()

@@ -32,7 +32,6 @@ class DaguDagDockerGroupModel(HomelabBaseModel):
         return self.dag.__replace__(
             name=name,
             path="{}-{}".format(main_service.name(), name),
-            group=main_service.name(),
             steps=[
                 DaguDagStepModel(
                     name=name,

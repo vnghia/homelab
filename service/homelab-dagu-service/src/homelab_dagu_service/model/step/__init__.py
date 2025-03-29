@@ -11,6 +11,7 @@ from homelab_pydantic import HomelabRootModel
 from pulumi import Input
 
 from .run import DaguDagStepRunModelBuilder
+from .script import DaguDagStepScriptModelBuilder
 
 if typing.TYPE_CHECKING:
     from ... import DaguService
@@ -29,8 +30,14 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
         return (
             {
                 "name": root.name,
+                "dir": root.dir,
                 "executor": root.executor.to_executor(main_service, dotenvs)
                 if root.executor
+                else None,
+                "script": DaguDagStepScriptModelBuilder(root.script).to_script(
+                    dagu_service, params
+                )
+                if root.script
                 else None,
             }
             | (root.continue_on.to_step() if root.continue_on else {})

@@ -13,6 +13,7 @@ class DaguDagStepRunCommandParamTypeModel(HomelabBaseModel):
 
 class DaguDagStepRunCommandParamModel(HomelabBaseModel):
     param: DaguDagStepRunCommandParamTypeModel | str
+    template: str | None = None
 
     def to_key(self) -> DaguDagParamType | str:
         param = self.param
@@ -33,6 +34,10 @@ class DaguDagStepRunCommandModel(
         cls, command: DaguDagStepRunCommandParamModel | str, params: DaguDagParamsModel
     ) -> str:
         if isinstance(command, DaguDagStepRunCommandParamModel):
-            return params.to_key_command(command.to_key())
+            value = params.to_key_command(command.to_key())
+            if command.template:
+                return command.template.format(value=value)
+            else:
+                return value
         else:
             return command
