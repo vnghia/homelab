@@ -184,8 +184,10 @@ class ContainerModel(HomelabBaseModel):
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
         if model.databases:
-            for database in model.databases:
-                depends_on.append(database.to_container(main_service.database))
+            depends_on.extend(
+                database.to_container(main_service.database)
+                for database in model.databases
+            )
 
         return docker.Container(
             resource_name,
