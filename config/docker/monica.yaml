@@ -22,7 +22,6 @@ services:
             exec:
               container:
           dag:
-            max-active-runs: 1
             tags: ["monica"]
           dags:
             schedule:

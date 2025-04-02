@@ -59,7 +59,6 @@ class ResticGlobalProfileResource(
                             "source": ["."],
                         },
                         "forget": forget_options,
-                        "retention": {"after-backup": True} | forget_options,
                     }
                 },
                 "groups": {
@@ -72,7 +71,9 @@ class ResticGlobalProfileResource(
                     for service, profiles in restic_service.service_groups.items()
                 }
                 | {
-                    restic_service.get_database_group(service): {"profiles": profiles}
+                    restic_service.get_database_group(service): {
+                        "profiles": sum(profiles.values(), [])
+                    }
                     for service, profiles in restic_service.service_database_groups.items()
                 },
             },

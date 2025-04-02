@@ -37,7 +37,6 @@ services:
           dag:
             dotenvs:
               - null
-            max-active-runs: 1
             params:
               types:
                 backup:
@@ -56,11 +55,9 @@ services:
                     type: backup
                 - "backup"
             forget:
-              command:
-                - "-n"
-                - param:
-                    type: backup
-                - "backup"
+              dag:
+                schedule: "0 2 * * sun" # 2am every sunday
+              command: ["forget"]
     secrets:
       password:
         protect: true

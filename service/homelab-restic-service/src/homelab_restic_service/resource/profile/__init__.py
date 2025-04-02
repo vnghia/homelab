@@ -5,7 +5,7 @@ import typing
 from homelab_docker.resource.file.config import ConfigFileResource, YamlDumper
 from pulumi import ResourceOptions
 
-from ...model import ResticProfileModel
+from ...model.profile import ResticProfileModel
 from . import schema
 
 if typing.TYPE_CHECKING:

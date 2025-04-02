@@ -31,7 +31,6 @@ services:
             exec:
               container:
           dag:
-            max-active-runs: 1
             params:
               types:
                 backup:

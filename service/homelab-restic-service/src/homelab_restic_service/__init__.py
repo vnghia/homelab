@@ -13,8 +13,8 @@ from pulumi import ResourceOptions
 
 from .config import ResticConfig
 from .config.volume import ResticVolumeConfig
-from .model import ResticProfileModel
-from .model.database import ResticProfileDatabaseModel
+from .model.profile import ResticProfileModel
+from .model.profile.database import ResticProfileDatabaseModel
 from .resource.profile.global_ import ResticGlobalProfileResource
 from .resource.repo import ResticRepoResource
 
@@ -72,8 +72,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.service_groups: defaultdict[str, list[str]] = defaultdict(list)
         for profile in self.profiles:
-            service = profile.volume.service
-            self.service_groups[service].append(profile.volume.name)
+            self.service_groups[profile.volume.service].append(profile.volume.name)
 
         self.database_profiles = [
             ResticProfileDatabaseModel(
@@ -83,10 +82,13 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             for name in names
         ]
 
-        self.service_database_groups: defaultdict[str, list[str]] = defaultdict(list)
+        self.service_database_groups: defaultdict[
+            str, defaultdict[DatabaseType, list[str]]
+        ] = defaultdict(lambda: defaultdict(list))
         for profile in self.database_profiles:
-            service = profile.volume.service
-            self.service_database_groups[service].append(profile.volume.name)
+            self.service_database_groups[profile.volume.service][profile.type_].append(
+                profile.volume.name
+            )
 
         self.global_ = ResticGlobalProfileResource(
             opts=self.child_opts,
