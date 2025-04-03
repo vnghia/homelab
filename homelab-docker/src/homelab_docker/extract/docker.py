@@ -3,17 +3,17 @@ from __future__ import annotations
 import typing
 from typing import Never
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_extract.docker import GlobalExtractDockerSource
+from homelab_pydantic import HomelabRootModel
 
 if typing.TYPE_CHECKING:
     from ..resource.service import ServiceResourceBase
 
 
-class GlobalExtractDockerSource(HomelabBaseModel):
-    docker: str
-
+class GlobalDockerSourceExtractor(HomelabRootModel[GlobalExtractDockerSource]):
     def extract_str(self, main_service: ServiceResourceBase) -> str:
-        return self.docker.format(
+        root = self.root
+        return root.docker.format(
             timezone=main_service.docker_resource_args.timezone,
             **{
                 k.removeprefix("pulumi."): v

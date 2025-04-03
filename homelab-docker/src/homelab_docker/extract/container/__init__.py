@@ -3,11 +3,13 @@ from __future__ import annotations
 import typing
 
 import pulumi_random as random
+from homelab_extract.container import ContainerExtract
+from homelab_extract.container.env import ContainerExtractEnvSource
 from homelab_pydantic import AbsolutePath, HomelabRootModel
 from pulumi import Output
 
-from .env import ContainerExtractEnvSource
-from .volume import ContainerExtractVolumeSource
+from .env import ContainerEnvSourceExtractor
+from .volume import ContainerVolumeSourceExtractor
 
 if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
@@ -15,22 +17,35 @@ if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
 
 
-class ContainerExtract(
-    HomelabRootModel[ContainerExtractEnvSource | ContainerExtractVolumeSource]
-):
+class ContainerExtractor(HomelabRootModel[ContainerExtract]):
+    @property
+    def extractor(
+        self,
+    ) -> ContainerEnvSourceExtractor | ContainerVolumeSourceExtractor:
+        root = self.root.root
+        return (
+            ContainerEnvSourceExtractor(root)
+            if isinstance(root, ContainerExtractEnvSource)
+            else ContainerVolumeSourceExtractor(root)
+        )
+
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> str | Output[str] | random.RandomPassword:
-        return self.root.extract_str(main_service, model or main_service.model[None])
+        return self.extractor.extract_str(
+            main_service, model or main_service.model[None]
+        )
 
     def extract_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
-        return self.root.extract_path(main_service, model or main_service.model[None])
+        return self.extractor.extract_path(
+            main_service, model or main_service.model[None]
+        )
 
     def extract_volume_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
-        return self.root.extract_volume_path(
+        return self.extractor.extract_volume_path(
             main_service, model or main_service.model[None]
         )

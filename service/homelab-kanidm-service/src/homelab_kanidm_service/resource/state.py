@@ -8,7 +8,7 @@ import tempfile
 import typing
 from typing import Any, ClassVar
 
-from homelab_docker.extract import GlobalExtract
+from homelab_docker.extract import GlobalExtractor
 from homelab_docker.resource.file.config import JsonDefaultModel
 from homelab_pydantic import HomelabBaseModel
 from pulumi import Output, ResourceOptions
@@ -124,7 +124,7 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
                     kanidm_service.name()
                 ].apply(lambda x: "https://{}".format(x)),
                 "password": kanidm_service.idm_admin.password,
-                "state": GlobalExtract.extract_recursively(
+                "state": GlobalExtractor.extract_recursively(
                     state.model_dump(mode="json"), kanidm_service, None
                 ),
                 "hash": None,

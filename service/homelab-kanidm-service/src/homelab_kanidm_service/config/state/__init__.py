@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from homelab_docker.extract import GlobalExtract
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
 from ...model.state.group import KanidmStateGroupModel

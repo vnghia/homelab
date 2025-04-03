@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, YamlDumper
 from pulumi import ResourceOptions
 
@@ -49,9 +50,9 @@ class ResticGlobalProfileResource(
                 ],
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
-                        "cache-dir": restic_config.cache_dir.extract_path(
-                            restic_service, None
-                        ),
+                        "cache-dir": ServiceExtractor(
+                            restic_config.cache_dir
+                        ).extract_path(restic_service, None),
                         "cleanup-cache": True,
                         "backup": {
                             "source-relative": True,

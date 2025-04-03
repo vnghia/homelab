@@ -3,21 +3,23 @@ from __future__ import annotations
 import typing
 
 import pulumi_random as random
-from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from homelab_extract.service.variable import ServiceExtractVariableSource
+from homelab_pydantic import AbsolutePath, HomelabRootModel
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
     from ...model.container.volume_path import ContainerVolumePath
     from ...resource.service import ServiceResourceBase
-    from .. import GlobalExtract
+    from .. import GlobalExtractor
 
 
-class ServiceExtractVariableSource(HomelabBaseModel):
-    variable: str
+class ServiceVariableSourceExtractor(HomelabRootModel[ServiceExtractVariableSource]):
+    def get_variable(self, main_service: ServiceResourceBase) -> GlobalExtractor:
+        from .. import GlobalExtractor
 
-    def get_variable(self, main_service: ServiceResourceBase) -> GlobalExtract:
-        return main_service.model.variables[self.variable]
+        root = self.root
+        return GlobalExtractor(main_service.model.variables[root.variable])
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None

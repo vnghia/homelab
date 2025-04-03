@@ -3,21 +3,24 @@ from __future__ import annotations
 import typing
 
 import pulumi_random as random
-from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from homelab_extract.container.env import ContainerExtractEnvSource
+from homelab_pydantic import AbsolutePath
+from homelab_pydantic.model import HomelabRootModel
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
     from ...model.container.volume_path import ContainerVolumePath
     from ...resource.service import ServiceResourceBase
-    from .. import GlobalExtract
+    from .. import GlobalExtractor
 
 
-class ContainerExtractEnvSource(HomelabBaseModel):
-    env: str
+class ContainerEnvSourceExtractor(HomelabRootModel[ContainerExtractEnvSource]):
+    def get_env(self, model: ContainerModel) -> GlobalExtractor:
+        from .. import GlobalExtractor
 
-    def get_env(self, model: ContainerModel) -> GlobalExtract:
-        return model.envs[self.env]
+        root = self.root
+        return GlobalExtractor(model.envs[root.env])
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel

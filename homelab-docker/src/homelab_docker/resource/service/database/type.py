@@ -3,13 +3,12 @@ from __future__ import annotations
 import typing
 
 import pulumi_docker as docker
+from homelab_extract import GlobalExtract
+from homelab_extract.container import ContainerExtract
+from homelab_extract.container.volume import ContainerExtractVolumeSource
 from homelab_secret.model import SecretModel
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
-
-from homelab_docker.extract import GlobalExtract
-from homelab_docker.extract.container import ContainerExtract
-from homelab_docker.extract.container.volume import ContainerExtractVolumeSource
 
 from ....config.database import DatabaseConfig, DatabaseTypeEnvConfig
 from ....model.container import ContainerModel, ContainerModelBuildArgs

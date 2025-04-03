@@ -1,6 +1,7 @@
-from homelab_docker.extract import GlobalExtract
+from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.container import ContainerModel
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from pulumi import Output
 
@@ -23,5 +24,8 @@ class DaguDagDotenvModel(HomelabBaseModel):
                 if self.s3
                 else {}
             ),
-            **{k: v.extract_str(main_service, model) for k, v in self.envs.items()},
+            **{
+                k: GlobalExtractor(v).extract_str(main_service, model)
+                for k, v in self.envs.items()
+            },
         }

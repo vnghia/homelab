@@ -9,6 +9,7 @@ dependencies = [
     "homelab-vpn",
     "homelab-network",
     "homelab-s3",
+    "homelab-extract",
     "pulumi-docker>=4.6.1",
     "pydantic>=2.10.6",
     "pydantic-extra-types>=2.10.2",

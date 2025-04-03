@@ -1,5 +1,5 @@
-from homelab_docker.extract.service import ServiceExtract
 from homelab_extra_service.config import ExtraConfig
+from homelab_extract.service import ServiceExtract
 
 
 class DaguConfig(ExtraConfig):

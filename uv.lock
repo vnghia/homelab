@@ -14,6 +14,7 @@ members = [
     "homelab-dagu-service",
     "homelab-docker",
     "homelab-extra-service",
+    "homelab-extract",
     "homelab-gluetun-service",
     "homelab-kanidm-service",
     "homelab-mail",
@@ -418,6 +419,7 @@ dependencies = [
     { name = "homelab-dagu-config" },
     { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
+    { name = "homelab-extract" },
     { name = "homelab-gluetun-service" },
     { name = "homelab-kanidm-service" },
     { name = "homelab-mail" },
@@ -450,6 +452,7 @@ requires-dist = [
     { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-gluetun-service", editable = "service/homelab-gluetun-service" },
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
     { name = "homelab-mail", editable = "homelab-mail" },
@@ -635,6 +638,7 @@ version = "0.1.0"
 source = { editable = "homelab-docker" }
 dependencies = [
     { name = "docker" },
+    { name = "homelab-extract" },
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "homelab-s3" },
@@ -662,6 +666,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "docker", specifier = ">=7.1.0" },
+    { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-s3", editable = "homelab-s3" },
@@ -708,6 +713,21 @@ requires-dist = [
     { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-extract"
+version = "0.1.0"
+source = { editable = "homelab-extract" }
+dependencies = [
+    { name = "homelab-pydantic" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

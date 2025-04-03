@@ -1,3 +1,4 @@
+from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file import FileResource
@@ -21,7 +22,7 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
             self.opvn = FileResource(
                 "opvn",
                 opts=self.child_opts,
-                volume_path=self.config.opvn_path.extract_volume_path(
+                volume_path=ServiceExtractor(self.config.opvn_path).extract_volume_path(
                     self, self.model.containers[None]
                 ),
                 content=self.config.opvn,

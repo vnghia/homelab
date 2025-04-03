@@ -1,5 +1,6 @@
 from typing import Any
 
+from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.container.network import (
     ContainerNetworkModeConfig,
     NetworkMode,
@@ -42,9 +43,9 @@ class TraefikDynamicServiceFullModelBuilder(
             "{}://{}:{}",
             root.scheme or type_.value,
             service_name,
-            root.port.extract_str(
-                main_service, main_service.model[root.container]
-            ).apply(lambda x: TypeAdapter(PositiveInt).validate_python(int(x))),
+            GlobalExtractor(root.port)
+            .extract_str(main_service, main_service.model[root.container])
+            .apply(lambda x: TypeAdapter(PositiveInt).validate_python(int(x))),
         ).apply(AnyUrl)
 
     def to_service(

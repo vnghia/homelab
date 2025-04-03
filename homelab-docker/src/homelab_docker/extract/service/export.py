@@ -3,7 +3,8 @@ from __future__ import annotations
 import typing
 from typing import Never
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_extract.service.export import ServiceExtractExportSource
+from homelab_pydantic import HomelabRootModel
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
@@ -11,13 +12,12 @@ if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
 
 
-class ServiceExtractExportSource(HomelabBaseModel):
-    export: str
-
+class ServiceExportSourceExtractor(HomelabRootModel[ServiceExtractExportSource]):
     def extract_str(
         self, main_service: ServiceResourceBase, _model: ContainerModel | None
     ) -> Output[str]:
-        return main_service.exports[self.export]
+        root = self.root
+        return main_service.exports[root.export]
 
     def extract_path(
         self, _main_service: ServiceResourceBase, _model: ContainerModel | None

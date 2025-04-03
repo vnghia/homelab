@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
@@ -33,9 +34,9 @@ class TraefikStaticConfigResource(
         traefik_model = traefik_service.model[None]
         tailscale_model = tailscale_service.model[None]
 
-        static_volume_path = traefik_service.config.path.static.extract_volume_path(
-            traefik_service, None
-        )
+        static_volume_path = ServiceExtractor(
+            traefik_service.config.path.static
+        ).extract_volume_path(traefik_service, None)
 
         timeouts = {
             "respondingTimeouts": {
@@ -63,7 +64,7 @@ class TraefikStaticConfigResource(
                 "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
                 "accessLog": {"format": "json"},
                 "api": {
-                    "basePath": traefik_config.path.api.extract_str(
+                    "basePath": ServiceExtractor(traefik_config.path.api).extract_str(
                         traefik_service, None
                     ),
                     "dashboard": True,
@@ -119,9 +120,9 @@ class TraefikStaticConfigResource(
                         "acme": {
                             "caServer": str(traefik_config.acme.server),
                             "email": traefik_config.acme.email,
-                            "storage": traefik_config.acme.storage.extract_path(
-                                traefik_service, None
-                            ),
+                            "storage": ServiceExtractor(
+                                traefik_config.acme.storage
+                            ).extract_path(traefik_service, None),
                             "dnsChallenge": {
                                 "provider": "cloudflare",
                                 "resolvers": ["1.1.1.1:53", "8.8.8.8:53"],

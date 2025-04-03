@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
@@ -24,8 +25,12 @@ class DaguService(ExtraService[DaguConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.dags_dir_volume_path = self.config.dags_dir.extract_volume_path(self, None)
-        self.log_dir_volume_path = self.config.log_dir.extract_volume_path(self, None)
+        self.dags_dir_volume_path = ServiceExtractor(
+            self.config.dags_dir
+        ).extract_volume_path(self, None)
+        self.log_dir_volume_path = ServiceExtractor(
+            self.config.log_dir
+        ).extract_volume_path(self, None)
 
         self.dotenvs: defaultdict[str, dict[str | None, DotenvFileResource]] = (
             defaultdict(dict)

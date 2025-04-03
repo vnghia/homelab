@@ -1,6 +1,7 @@
 from collections import defaultdict
 from pathlib import PosixPath
 
+from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -29,9 +30,9 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.dynamic_directory_volume_path = (
-            self.config.path.dynamic.extract_volume_path(self, None)
-        )
+        self.dynamic_directory_volume_path = ServiceExtractor(
+            self.config.path.dynamic
+        ).extract_volume_path(self, None)
         self.static = TraefikStaticConfigResource(
             opts=self.child_opts,
             traefik_service=self,

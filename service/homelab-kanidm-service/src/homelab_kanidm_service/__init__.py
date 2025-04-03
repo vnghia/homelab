@@ -1,5 +1,6 @@
 import pulumi
 import pulumi_tls as tls
+from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file import FileResource
@@ -43,7 +44,9 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         self.key_file = FileResource(
             "key",
             opts=self.child_opts,
-            volume_path=self.config.tls_key.extract_volume_path(self, None),
+            volume_path=GlobalExtractor(self.config.tls_key).extract_volume_path(
+                self, None
+            ),
             content=self.key.private_key_pem,
             mode=0o440,
             volume_resource=self.docker_resource_args.volume,
@@ -51,7 +54,9 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         self.chain_file = FileResource(
             "chain",
             opts=self.child_opts,
-            volume_path=self.config.tls_chain.extract_volume_path(self, None),
+            volume_path=GlobalExtractor(self.config.tls_chain).extract_volume_path(
+                self, None
+            ),
             content=self.chain.cert_pem,
             mode=0o440,
             volume_resource=self.docker_resource_args.volume,
@@ -74,7 +79,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         self.client_data = Output.json_dumps(
             {
                 "host": self.name(),
-                "port": self.model.variables[self.PORT_VARIABLE]
+                "port": GlobalExtractor(self.model.variables[self.PORT_VARIABLE])
                 .extract_str(self, None)
                 .apply(int),
                 "network": self.docker_resource_args.network.internal_bridge.name,

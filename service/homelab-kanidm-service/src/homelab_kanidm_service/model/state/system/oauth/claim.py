@@ -4,7 +4,7 @@ import typing
 from enum import StrEnum, auto
 from typing import Self
 
-from homelab_docker.extract import GlobalExtract
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 if typing.TYPE_CHECKING:

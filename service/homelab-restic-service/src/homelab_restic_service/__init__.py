@@ -3,6 +3,7 @@ from pathlib import PosixPath
 
 from homelab_backup.config import BackupGlobalConfig
 from homelab_barman_service import BarmanService
+from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -36,9 +37,9 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.backup_config = backup_config
 
-        self.profile_dir_volume_path = self.config.profile_dir.extract_volume_path(
-            self, None
-        )
+        self.profile_dir_volume_path = ServiceExtractor(
+            self.config.profile_dir
+        ).extract_volume_path(self, None)
 
         self.repo = ResticRepoResource(
             "repo",

@@ -3,26 +3,23 @@ from __future__ import annotations
 import typing
 from typing import Never
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_extract.hostname import GlobalExtractHostnameSource
+from homelab_pydantic import HomelabRootModel
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
     from ..resource.service import ServiceResourceBase
 
 
-class GlobalExtractHostnameSource(HomelabBaseModel):
-    hostname: str
-    public: bool
-    scheme: str | None = None
-    append_slash: bool = False
-
+class GlobalHostnameSourceExtractor(HomelabRootModel[GlobalExtractHostnameSource]):
     def extract_str(self, main_service: ServiceResourceBase) -> Output[str]:
-        hostname = main_service.docker_resource_args.hostnames[self.public][
-            self.hostname
+        root = self.root
+        hostname = main_service.docker_resource_args.hostnames[root.public][
+            root.hostname
         ]
-        if self.scheme:
+        if root.scheme:
             hostname = Output.format(
-                "{}://{}{}", self.scheme, hostname, "/" if self.append_slash else ""
+                "{}://{}{}", root.scheme, hostname, "/" if root.append_slash else ""
             )
         return hostname
 

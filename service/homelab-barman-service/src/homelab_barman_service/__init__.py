@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from homelab_backup.config import BackupGlobalConfig
+from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -25,9 +26,9 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
 
         self.backup_config = backup_config
 
-        self.config_dir_volume_path = self.config.config_dir.extract_volume_path(
-            self, None
-        )
+        self.config_dir_volume_path = GlobalExtractor(
+            self.config.config_dir
+        ).extract_volume_path(self, None)
 
         self.configs: list[BarmanConfigFileResource] = []
         self.service_maps: defaultdict[str, list[str]] = defaultdict(list)

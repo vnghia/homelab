@@ -1,23 +1,23 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Never
+from typing import Never
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_extract.json import GlobalExtractJsonSource
+from homelab_pydantic import HomelabRootModel
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
     from ..resource.service import ServiceResourceBase
 
 
-class GlobalExtractJsonSource(HomelabBaseModel):
-    json_: Any
-
+class GlobalJsonSourceExtractor(HomelabRootModel[GlobalExtractJsonSource]):
     def extract_str(self, main_service: ServiceResourceBase) -> Output[str]:
-        from . import GlobalExtract
+        from . import GlobalExtractor
 
+        root = self.root
         return Output.json_dumps(
-            GlobalExtract.extract_recursively(self.json_, main_service, None)
+            GlobalExtractor.extract_recursively(root.json_, main_service, None)
         )
 
     def extract_path(self, _main_service: ServiceResourceBase) -> Never:

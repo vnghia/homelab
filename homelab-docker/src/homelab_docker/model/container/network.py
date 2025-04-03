@@ -5,11 +5,12 @@ import typing
 from enum import StrEnum, auto
 
 import pulumi_docker as docker
+from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
+from homelab_extract.id import GlobalExtractIdSource
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
 
-from homelab_docker.extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
-from homelab_docker.extract.id import GlobalExtractIdSource
+from ...extract import GlobalExtractor
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
@@ -36,7 +37,8 @@ class ContainerNetworkContainerConfig(HomelabBaseModel):
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
             mode=Output.format(
-                "container:{0}", self.container.extract_str(main_service, None)
+                "container:{0}",
+                GlobalExtractor(self.container).extract_str(main_service, None),
             ),
             advanced=[],
         )

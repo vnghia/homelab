@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from homelab_dagu_config import DaguServiceConfigBase
-from homelab_docker.extract.service import ServiceExtract
+from homelab_extract.service import ServiceExtract
 
 from .database import ResticDatabaseConfig
 from .keep import ResticKeepConfig

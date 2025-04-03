@@ -1,12 +1,12 @@
 from functools import cached_property
 
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from pydantic import Field
 
 from ...config.service.database import ServiceDatabaseConfig
 from ...config.service.keepass import ServiceKeepassConfig
 from ...config.service.secret import ServiceSecretConfig
-from ...extract import GlobalExtract
 from ..container import ContainerModel
 
 

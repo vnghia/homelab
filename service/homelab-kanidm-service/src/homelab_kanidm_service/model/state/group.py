@@ -1,4 +1,4 @@
-from homelab_docker.extract import GlobalExtract
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
 

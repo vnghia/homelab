@@ -1,9 +1,9 @@
 from pathlib import PosixPath
 from typing import ClassVar
 
-from homelab_docker.extract import GlobalExtract
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.volume import LocalVolumeModel
+from homelab_extract import GlobalExtract
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, RelativePath
 
 

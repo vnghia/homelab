@@ -1,4 +1,4 @@
-from homelab_docker.extract.service import ServiceExtract
+from homelab_extract.service import ServiceExtract
 from homelab_pydantic import HomelabBaseModel
 
 

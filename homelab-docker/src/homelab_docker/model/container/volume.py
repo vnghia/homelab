@@ -3,12 +3,12 @@ from __future__ import annotations
 import typing
 
 import pulumi_docker as docker
+from homelab_extract import GlobalExtract
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
 
+from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.container.docker_socket import ContainerDockerSocketConfig
-
-from ...extract import GlobalExtract
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
@@ -22,7 +22,7 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
     def to_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
-        return self.path.extract_path(main_service, model)
+        return GlobalExtractor(self.path).extract_path(main_service, model)
 
     def to_args(
         self,
@@ -45,7 +45,7 @@ class ContainerVolumeConfig(
     ) -> AbsolutePath:
         root = self.root
         if isinstance(root, GlobalExtract):
-            return root.extract_path(main_service, model)
+            return GlobalExtractor(root).extract_path(main_service, model)
         else:
             return root.to_path(main_service, model)
 
@@ -58,7 +58,9 @@ class ContainerVolumeConfig(
         root = self.root
         if isinstance(root, GlobalExtract):
             return docker.ContainerVolumeArgs(
-                container_path=root.extract_path(main_service, model).as_posix(),
+                container_path=GlobalExtractor(root)
+                .extract_path(main_service, model)
+                .as_posix(),
                 volume_name=volume_name,
             )
         else:

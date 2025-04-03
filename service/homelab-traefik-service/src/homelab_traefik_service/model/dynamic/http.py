@@ -5,6 +5,7 @@ import typing
 from functools import reduce
 from typing import Any, ClassVar
 
+from homelab_docker.extract import GlobalExtractor
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel
@@ -58,14 +59,18 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                                     [
                                         Output.format(
                                             "PathPrefix(`{}`)",
-                                            root.prefix.extract_str(main_service, None),
+                                            GlobalExtractor(root.prefix).extract_str(
+                                                main_service, None
+                                            ),
                                         ),
                                     ]
                                     if root.prefix
                                     else []
                                 )
                                 + [
-                                    rule.extract_str(main_service, None)
+                                    GlobalExtractor(rule).extract_str(
+                                        main_service, None
+                                    )
                                     for rule in root.rules
                                 ]
                             )

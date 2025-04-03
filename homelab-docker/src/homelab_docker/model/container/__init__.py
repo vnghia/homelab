@@ -5,11 +5,12 @@ import typing
 from typing import Literal, Mapping, Sequence
 
 import pulumi_docker as docker
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from pulumi import Input, Output, Resource, ResourceOptions
 from pydantic import Field
 
-from ...extract import GlobalExtract
+from ...extract import GlobalExtractor
 from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
 from .healthcheck import ContainerHealthCheckConfig
@@ -81,7 +82,10 @@ class ContainerModel(HomelabBaseModel):
         self, main_service: ServiceResourceBase
     ) -> list[Output[str]] | None:
         return (
-            [command.extract_str(main_service, self) for command in self.command]
+            [
+                GlobalExtractor(command).extract_str(main_service, self)
+                for command in self.command
+            ]
             if self.command is not None
             else None
         )
@@ -91,7 +95,7 @@ class ContainerModel(HomelabBaseModel):
     ) -> list[Output[str]] | None:
         return (
             [
-                entrypoint.extract_str(main_service, self)
+                GlobalExtractor(entrypoint).extract_str(main_service, self)
                 for entrypoint in self.entrypoint
             ]
             if self.entrypoint is not None
@@ -131,7 +135,9 @@ class ContainerModel(HomelabBaseModel):
                         )
                     }
                     | {
-                        k: Output.from_input(v.extract_str(main_service, self))
+                        k: Output.from_input(
+                            GlobalExtractor(v).extract_str(main_service, self)
+                        )
                         for k, v in self.envs.items()
                     }
                     | {
@@ -159,7 +165,7 @@ class ContainerModel(HomelabBaseModel):
                 ).items()
             }
             | {
-                Output.from_input(k): v.extract_str(main_service, self)
+                Output.from_input(k): GlobalExtractor(v).extract_str(main_service, self)
                 for k, v in self.labels.items()
             }
             | {file.id: file.hash for file in build_args.files}
@@ -208,7 +214,7 @@ class ContainerModel(HomelabBaseModel):
             healthcheck=model.healthcheck.to_args(main_service, model)
             if model.healthcheck
             else None,
-            hostname=model.hostname.extract_str(main_service, model)
+            hostname=GlobalExtractor(model.hostname).extract_str(main_service, model)
             if model.hostname
             else None,
             init=model.init,

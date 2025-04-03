@@ -4,20 +4,20 @@ import typing
 from typing import Never
 
 import pulumi_random as random
-from homelab_pydantic import HomelabBaseModel
+from homelab_extract.service.secret import ServiceExtractSecretSource
+from homelab_pydantic import HomelabRootModel
 
 if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
     from ...resource.service import ServiceResourceBase
 
 
-class ServiceExtractSecretSource(HomelabBaseModel):
-    secret: str
-
+class ServiceSecretSourceExtractor(HomelabRootModel[ServiceExtractSecretSource]):
     def extract_str(
         self, main_service: ServiceResourceBase, _model: ContainerModel | None
     ) -> random.RandomPassword:
-        return main_service.secret[self.secret]
+        root = self.root
+        return main_service.secret[root.secret]
 
     def extract_path(
         self, _main_service: ServiceResourceBase, _model: ContainerModel | None

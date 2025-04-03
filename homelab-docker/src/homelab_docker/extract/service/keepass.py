@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import typing
-from enum import StrEnum, auto
 from typing import Never
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_extract.service.keepass import (
+    KeepassInfoSource,
+    ServiceExtractKeepassSource,
+)
+from homelab_pydantic import HomelabRootModel
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
@@ -12,20 +15,13 @@ if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
 
 
-class KeepassInfoSource(StrEnum):
-    USERNAME = auto()
-    PASSWORD = auto()
-
-
-class ServiceExtractKeepassSource(HomelabBaseModel):
-    keepass: str | None
-    info: KeepassInfoSource
-
+class ServiceKeepassSourceExtractor(HomelabRootModel[ServiceExtractKeepassSource]):
     def extract_str(
         self, main_service: ServiceResourceBase, _model: ContainerModel | None
     ) -> Output[str]:
-        entry = main_service.keepass[self.keepass]
-        match self.info:
+        root = self.root
+        entry = main_service.keepass[root.keepass]
+        match root.info:
             case KeepassInfoSource.USERNAME:
                 return entry.username
             case KeepassInfoSource.PASSWORD:

@@ -4,16 +4,16 @@ import typing
 from pathlib import PosixPath
 from typing import Never
 
+from homelab_extract.simple import GlobalExtractSimpleSource
 from homelab_pydantic import AbsolutePath, HomelabRootModel
-from pydantic import NonNegativeInt
 
 if typing.TYPE_CHECKING:
     from ..resource.service import ServiceResourceBase
 
 
-class GlobalExtractSimpleSource(HomelabRootModel[NonNegativeInt | bool | str]):
+class GlobalSimpleSourceExtractor(HomelabRootModel[GlobalExtractSimpleSource]):
     def extract_str(self, _main_service: ServiceResourceBase) -> str:
-        root = self.root
+        root = self.root.root
         if isinstance(root, bool):
             return str(root).lower()
         else:

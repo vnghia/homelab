@@ -3,15 +3,24 @@ from __future__ import annotations
 import typing
 
 import pulumi_random as random
-from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
+from homelab_extract.service import (
+    ServiceExtract,
+    ServiceExtractFull,
+    ServiceExtractSource,
+)
+from homelab_extract.service.export import ServiceExtractExportSource
+from homelab_extract.service.keepass import ServiceExtractKeepassSource
+from homelab_extract.service.secret import ServiceExtractSecretSource
+from homelab_extract.transform import ExtractTransform
+from homelab_pydantic import AbsolutePath, HomelabRootModel
 from pulumi import Output
 
-from ..container import ContainerExtract
-from ..transform import ExtractTransform
-from .export import ServiceExtractExportSource
-from .keepass import ServiceExtractKeepassSource
-from .secret import ServiceExtractSecretSource
-from .variable import ServiceExtractVariableSource
+from ..container import ContainerExtractor
+from ..transform import ExtractTransformer
+from .export import ServiceExportSourceExtractor
+from .keepass import ServiceKeepassSourceExtractor
+from .secret import ServiceSecretSourceExtractor
+from .variable import ServiceVariableSourceExtractor
 
 if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
@@ -19,96 +28,127 @@ if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
 
 
-class ServiceExtractSource(
-    HomelabRootModel[
-        ServiceExtractExportSource
-        | ServiceExtractKeepassSource
-        | ServiceExtractSecretSource
-        | ServiceExtractVariableSource
-    ]
-):
+class ServiceSourceExtractor(HomelabRootModel[ServiceExtractSource]):
+    @property
+    def extractor(
+        self,
+    ) -> (
+        ServiceExportSourceExtractor
+        | ServiceKeepassSourceExtractor
+        | ServiceSecretSourceExtractor
+        | ServiceVariableSourceExtractor
+    ):
+        root = self.root.root
+        if isinstance(root, ServiceExtractExportSource):
+            return ServiceExportSourceExtractor(root)
+        elif isinstance(root, ServiceExtractKeepassSource):
+            return ServiceKeepassSourceExtractor(root)
+        elif isinstance(root, ServiceExtractSecretSource):
+            return ServiceSecretSourceExtractor(root)
+        else:
+            return ServiceVariableSourceExtractor(root)
+
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> str | Output[str] | random.RandomPassword:
-        return self.root.extract_str(main_service, model)
+        return self.extractor.extract_str(main_service, model)
 
     def extract_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
-        return self.root.extract_path(main_service, model)
+        return self.extractor.extract_path(main_service, model)
 
     def extract_volume_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
-        return self.root.extract_volume_path(main_service, model)
+        return self.extractor.extract_volume_path(main_service, model)
 
 
-class ServiceExtractFull(HomelabBaseModel):
-    container: str | None = None
-    extract: ContainerExtract | ServiceExtractSource
-    transform: ExtractTransform = ExtractTransform()
+class ServiceFullExtractor(HomelabRootModel[ServiceExtractFull]):
+    @property
+    def extractor(self) -> ServiceSourceExtractor | ContainerExtractor:
+        extract = self.root.extract
+        return (
+            ServiceSourceExtractor(extract)
+            if isinstance(extract, ServiceExtractSource)
+            else ContainerExtractor(extract)
+        )
+
+    @property
+    def transfomer(self) -> ExtractTransformer:
+        transform = self.root.transform
+        return ExtractTransformer(transform)
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> str | Output[str] | random.RandomPassword:
-        extract = self.extract
-        transform = self.transform
+        extractor = self.extractor
+        transformer = self.transfomer
 
         try:
-            value_path = transform.transform_path(
-                extract.extract_path(main_service, model)
+            value_path = transformer.transform_path(
+                extractor.extract_path(main_service, model)
             ).as_posix()
-            return transform.transform_string(value_path)
+            return transformer.transform_string(value_path)
         except TypeError:
-            value_str = extract.extract_str(main_service, model)
-            return transform.transform_string(value_str)
+            value_str = extractor.extract_str(main_service, model)
+            return transformer.transform_string(value_str)
 
     def extract_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
-        extract = self.extract
-        transform = self.transform
+        extractor = self.extractor
+        transformer = self.transfomer
 
-        return transform.transform_path(extract.extract_path(main_service, model))
+        return transformer.transform_path(extractor.extract_path(main_service, model))
 
     def extract_volume_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
-        extract = self.extract
-        transform = self.transform
+        extractor = self.extractor
+        transformer = self.transfomer
 
-        return transform.transform_volume_path(
-            extract.extract_volume_path(main_service, model)
+        return transformer.transform_volume_path(
+            extractor.extract_volume_path(main_service, model)
         )
 
 
-class ServiceExtract(
-    HomelabRootModel[ContainerExtract | ServiceExtractSource | ServiceExtractFull]
-):
+class ServiceExtractor(HomelabRootModel[ServiceExtract]):
     @property
     def container(self) -> str | None:
-        root = self.root
-
+        root = self.root.root
         return root.container if isinstance(root, ServiceExtractFull) else None
+
+    @property
+    def extractor(
+        self,
+    ) -> ContainerExtractor | ServiceSourceExtractor | ServiceFullExtractor:
+        root = self.root.root
+        if isinstance(root, ServiceExtractSource):
+            return ServiceSourceExtractor(root)
+        elif isinstance(root, ServiceExtractFull):
+            return ServiceFullExtractor(root)
+        else:
+            return ContainerExtractor(root)
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> str | Output[str] | random.RandomPassword:
-        return self.root.extract_str(main_service, model)
+        return self.extractor.extract_str(main_service, model)
 
     def extract_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
-        return self.root.extract_path(main_service, model)
+        return self.extractor.extract_path(main_service, model)
 
     def extract_volume_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
-        return self.root.extract_volume_path(main_service, model)
+        return self.extractor.extract_volume_path(main_service, model)
 
     def extract_output_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> Output[str]:
-        return ExtractTransform().transform_string(
-            self.root.extract_str(main_service, model)
+        return ExtractTransformer(ExtractTransform()).transform_string(
+            self.extractor.extract_str(main_service, model)
         )
