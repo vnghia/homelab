@@ -47,6 +47,7 @@ class DaguDagParamsModel(HomelabBaseModel):
 
     def to_params(self, dag: DaguDagModel) -> list[dict[str, str]] | None:
         from ..model.step.run.command import (
+            DaguDagStepRunCommandFullModel,
             DaguDagStepRunCommandModel,
             DaguDagStepRunCommandParamModel,
             DaguDagStepRunCommandParamTypeModel,
@@ -57,20 +58,19 @@ class DaguDagParamsModel(HomelabBaseModel):
             run = step.run.root
             script = step.script
 
-            commands = []
+            commands: list[DaguDagStepRunCommandFullModel] = []
             if isinstance(run, DaguDagStepRunCommandModel):
                 commands += run.root
             if script and isinstance(script.root, DaguDagStepRunCommandModel):
                 commands += script.root.root
 
             for command in commands:
-                if isinstance(command, DaguDagStepRunCommandParamModel):
+                root = command.root
+                if isinstance(root, DaguDagStepRunCommandParamModel):
                     used_params.add(
-                        command.param.type
-                        if isinstance(
-                            command.param, DaguDagStepRunCommandParamTypeModel
-                        )
-                        else command.param
+                        root.param.type
+                        if isinstance(root.param, DaguDagStepRunCommandParamTypeModel)
+                        else root.param
                     )
 
         params = []

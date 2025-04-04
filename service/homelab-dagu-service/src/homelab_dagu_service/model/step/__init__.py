@@ -35,7 +35,7 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
                 if root.executor
                 else None,
                 "script": DaguDagStepScriptModelBuilder(root.script).to_script(
-                    dagu_service, params
+                    params, dagu_service, main_service
                 )
                 if root.script
                 else None,
@@ -48,5 +48,7 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
                 else None,
             }
             | (root.continue_on.to_step() if root.continue_on else {})
-            | DaguDagStepRunModelBuilder(root.run).to_run(dagu_service, params)
+            | DaguDagStepRunModelBuilder(root.run).to_run(
+                dagu_service, main_service, params
+            )
         )

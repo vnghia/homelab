@@ -14,6 +14,7 @@ from homelab_dagu_config.model.step.precondition import (
 )
 from homelab_dagu_config.model.step.run import DaguDagStepRunModel
 from homelab_dagu_config.model.step.run.command import (
+    DaguDagStepRunCommandFullModel,
     DaguDagStepRunCommandModel,
     DaguDagStepRunCommandParamModel,
     DaguDagStepRunCommandParamTypeModel,
@@ -26,6 +27,7 @@ from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
+from homelab_extract import GlobalExtract
 from homelab_extract.transform.string import ExtractTransformString
 from homelab_restic_service import ResticService
 from pulumi import ResourceOptions
@@ -84,25 +86,45 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                 DaguDagStepModel(
                     name="extract-config",
                     dir=dagu_service.get_tmp_dir(),
-                    run=DaguDagStepRunModel(DaguDagStepRunCommandModel(["/bin/bash"])),
+                    run=DaguDagStepRunModel(
+                        DaguDagStepRunCommandModel(
+                            [
+                                DaguDagStepRunCommandFullModel(
+                                    GlobalExtract.from_simple("/bin/bash")
+                                )
+                            ]
+                        )
+                    ),
                     script=DaguDagStepScriptModel(
                         DaguDagStepRunCommandModel(
                             [
-                                "echo '{}'".format(
-                                    self.backup_configs.model_dump_json(
-                                        exclude_unset=True
+                                DaguDagStepRunCommandFullModel(
+                                    GlobalExtract.from_simple(
+                                        "echo '{}'".format(
+                                            self.backup_configs.model_dump_json(
+                                                exclude_unset=True
+                                            )
+                                        )
                                     )
                                 ),
-                                "|",
-                                "jq",
-                                "-c",
-                                DaguDagStepRunCommandParamModel(
-                                    param=DaguDagStepRunCommandParamTypeModel(
-                                        type=DaguDagParamType.BACKUP
-                                    ),
-                                    transform=ExtractTransformString(
-                                        template='".{value}"'
-                                    ),
+                                DaguDagStepRunCommandFullModel(
+                                    GlobalExtract.from_simple("|")
+                                ),
+                                DaguDagStepRunCommandFullModel(
+                                    GlobalExtract.from_simple("jq")
+                                ),
+                                DaguDagStepRunCommandFullModel(
+                                    GlobalExtract.from_simple("-c")
+                                ),
+                                DaguDagStepRunCommandFullModel(
+                                    DaguDagStepRunCommandParamModel(
+                                        param=DaguDagStepRunCommandParamTypeModel(
+                                            type=DaguDagParamType.BACKUP
+                                        ),
+                                        transform=ExtractTransformString(
+                                            template='".{value}"'
+                                        ),
+                                    )
                                 ),
                             ]
                         )
@@ -111,9 +133,19 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                 ),
                 DaguDagStepModel(
                     name="extract-volume",
-                    run=DaguDagStepRunModel(DaguDagStepRunCommandModel([".volume"])),
+                    run=DaguDagStepRunModel(
+                        DaguDagStepRunCommandModel(
+                            [
+                                DaguDagStepRunCommandFullModel(
+                                    GlobalExtract.from_simple(".volume")
+                                )
+                            ]
+                        )
+                    ),
                     script=DaguDagStepScriptModel(
-                        "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
+                        GlobalExtract.from_simple(
+                            "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
+                        )
                     ),
                     executor=DaguDagStepExecutorModel(DaguDagStepJqExecutorModel()),
                     depends=["extract-config"],
@@ -158,14 +190,20 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             run=DaguDagStepRunModel(
                                 DaguDagStepRunCommandModel(
                                     [
-                                        ".databases.{} | select(.!=null)".format(
-                                            type_.value
+                                        DaguDagStepRunCommandFullModel(
+                                            GlobalExtract.from_simple(
+                                                ".databases.{} | select(.!=null)".format(
+                                                    type_.value
+                                                )
+                                            )
                                         )
                                     ]
                                 )
                             ),
                             script=DaguDagStepScriptModel(
-                                "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
+                                GlobalExtract.from_simple(
+                                    "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
+                                )
                             ),
                             executor=DaguDagStepExecutorModel(
                                 DaguDagStepJqExecutorModel()

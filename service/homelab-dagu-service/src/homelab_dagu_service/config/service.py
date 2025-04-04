@@ -11,11 +11,13 @@ from homelab_dagu_config.model.step.executor.docker import (
 )
 from homelab_dagu_config.model.step.run import DaguDagStepRunModel
 from homelab_dagu_config.model.step.run.command import (
+    DaguDagStepRunCommandFullModel,
     DaguDagStepRunCommandModel,
     DaguDagStepRunCommandParamModel,
     DaguDagStepRunCommandParamTypeModel,
 )
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
 
@@ -88,10 +90,14 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                                     run=DaguDagStepRunModel(
                                         DaguDagStepRunCommandModel(
                                             [
-                                                "sleep",
-                                                DaguDagStepRunCommandParamModel(
-                                                    param=DaguDagStepRunCommandParamTypeModel(
-                                                        type=DaguDagParamType.DEBUG
+                                                DaguDagStepRunCommandFullModel(
+                                                    GlobalExtract.from_simple("sleep")
+                                                ),
+                                                DaguDagStepRunCommandFullModel(
+                                                    DaguDagStepRunCommandParamModel(
+                                                        param=DaguDagStepRunCommandParamTypeModel(
+                                                            type=DaguDagParamType.DEBUG
+                                                        )
                                                     )
                                                 ),
                                             ]

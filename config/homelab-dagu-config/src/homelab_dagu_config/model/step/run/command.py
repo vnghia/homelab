@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import Self
 
+from homelab_extract import GlobalExtract
 from homelab_extract.transform.string import ExtractTransformString
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
-from ...params import DaguDagParamsModel, DaguDagParamType
+from ...params import DaguDagParamType
 
 
 class DaguDagStepRunCommandParamTypeModel(HomelabBaseModel):
@@ -24,18 +25,14 @@ class DaguDagStepRunCommandParamModel(HomelabBaseModel):
             return param
 
 
+class DaguDagStepRunCommandFullModel(
+    HomelabRootModel[DaguDagStepRunCommandParamModel | GlobalExtract]
+):
+    pass
+
+
 class DaguDagStepRunCommandModel(
-    HomelabRootModel[list[DaguDagStepRunCommandParamModel | str]]
+    HomelabRootModel[list[DaguDagStepRunCommandFullModel]]
 ):
     def __add__(self, other: Self) -> Self:
         return self.__class__(self.root + other.root)
-
-    @classmethod
-    def command_to_str(
-        cls, command: DaguDagStepRunCommandParamModel | str, params: DaguDagParamsModel
-    ) -> str:
-        if isinstance(command, DaguDagStepRunCommandParamModel):
-            value = params.to_key_command(command.to_key())
-            return command.transform.transform(value)
-        else:
-            return command

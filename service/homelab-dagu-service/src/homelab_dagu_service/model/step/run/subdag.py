@@ -7,6 +7,7 @@ from typing import Any
 
 from homelab_dagu_config.model.params import DaguDagParamsModel
 from homelab_dagu_config.model.step.run.subdag import DaguDagStepRunSubdagModel
+from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic.model import HomelabRootModel
 
 if typing.TYPE_CHECKING:
@@ -15,7 +16,10 @@ if typing.TYPE_CHECKING:
 
 class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagModel]):
     def to_run(
-        self, dagu_service: DaguService, params_: DaguDagParamsModel
+        self,
+        params_: DaguDagParamsModel,
+        dagu_service: DaguService,
+        main_service: ServiceResourceBase,
     ) -> dict[str, Any]:
         root = self.root
 
