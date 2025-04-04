@@ -23,7 +23,9 @@ class KeepassEntryResource(ComponentResource):
             opts=self.child_opts, hostnames=hostnames
         )
         self.password = self.model.password.to_password(opts=self.child_opts)
-        self.hostname = self.model.hostname.to_hostname(hostnames)
+        self.hostname = self.model.hostname.__replace__(scheme="https").to_hostname(
+            hostnames
+        )
 
         self.register_outputs({})
 
@@ -31,7 +33,7 @@ class KeepassEntryResource(ComponentResource):
         return {
             "username": self.username,
             "password": self.password,
-            "hostname": Output.concat("https://", self.hostname),
+            "hostname": self.hostname,
             "urls": self.model.urls,
             "apps": self.model.apps,
         }

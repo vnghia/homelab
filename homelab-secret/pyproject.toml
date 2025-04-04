@@ -6,6 +6,7 @@ requires-python = ">=3.13.1"
 dependencies = [
     "homelab-pydantic",
     "homelab-network",
+    "homelab-extract",
     "pydantic>=2.10.6",
     "pulumi>=3.147.0",
     "pulumi-random>=4.17.0",

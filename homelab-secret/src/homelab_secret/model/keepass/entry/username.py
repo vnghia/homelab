@@ -1,3 +1,4 @@
+from homelab_extract.hostname import GlobalExtractHostnameSource
 from homelab_network.resource.network import Hostnames
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Output, ResourceOptions
@@ -7,14 +8,13 @@ from ... import SecretModel
 
 class KeepassEntryUsernameEmailModel(HomelabBaseModel):
     address: SecretModel = SecretModel(length=8, special=False)
-    hostname: str
-    public: bool
+    hostname: GlobalExtractHostnameSource
 
     def to_email(
         self, opts: ResourceOptions | None, hostnames: Hostnames
     ) -> Output[str]:
         address = self.address.build_resource("address", opts=opts).result
-        return Output.concat(address, "@", hostnames[self.public][self.hostname])
+        return Output.concat(address, "@", self.hostname.to_hostname(hostnames))
 
 
 class KeepassEntryUsernameModel(
