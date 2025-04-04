@@ -26,6 +26,7 @@ from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
+from homelab_extract.transform.string import ExtractTransformString
 from homelab_restic_service import ResticService
 from pulumi import ResourceOptions
 
@@ -99,7 +100,9 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                                     param=DaguDagStepRunCommandParamTypeModel(
                                         type=DaguDagParamType.BACKUP
                                     ),
-                                    template='".{value}"',
+                                    transform=ExtractTransformString(
+                                        template='".{value}"'
+                                    ),
                                 ),
                             ]
                         )

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Self
 
+from homelab_extract.transform.string import ExtractTransformString
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 from ...params import DaguDagParamsModel, DaguDagParamType
@@ -13,7 +14,7 @@ class DaguDagStepRunCommandParamTypeModel(HomelabBaseModel):
 
 class DaguDagStepRunCommandParamModel(HomelabBaseModel):
     param: DaguDagStepRunCommandParamTypeModel | str
-    template: str | None = None
+    transform: ExtractTransformString = ExtractTransformString()
 
     def to_key(self) -> DaguDagParamType | str:
         param = self.param
@@ -35,9 +36,6 @@ class DaguDagStepRunCommandModel(
     ) -> str:
         if isinstance(command, DaguDagStepRunCommandParamModel):
             value = params.to_key_command(command.to_key())
-            if command.template:
-                return command.template.format(value=value)
-            else:
-                return value
+            return command.transform.transform(value)
         else:
             return command

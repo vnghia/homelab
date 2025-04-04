@@ -1,5 +1,6 @@
 from enum import StrEnum, auto
 
+from homelab_extract.transform.string import ExtractTransformString
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 
@@ -9,11 +10,11 @@ class Platform(StrEnum):
 
 
 class PlatformFullString(HomelabBaseModel):
-    template: str
+    transform: ExtractTransformString = ExtractTransformString()
     platform: dict[Platform, str] = {platform: platform.value for platform in Platform}
 
     def to_str(self, platform: Platform) -> str:
-        return self.template.format(platform=self.platform[platform])
+        return self.transform.transform(self.platform[platform])
 
 
 class PlatformString(HomelabRootModel[str | PlatformFullString]):
