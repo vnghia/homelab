@@ -1,10 +1,13 @@
+from typing import Literal
+
 import pulumi_docker as docker
+from homelab_backup.config.volume import BackupVolumeConfig
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import ResourceOptions
 
 
 class LocalVolumeModel(HomelabBaseModel):
-    backup: bool = True
+    backup: Literal[False] | BackupVolumeConfig = BackupVolumeConfig()
 
     bind: AbsolutePath | None = None
     labels: dict[str, str] = {}

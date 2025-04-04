@@ -10,7 +10,9 @@ images:
       delete-before-replace: true
 volumes:
   local:
-    kanidm-data: {}
+    kanidm-data:
+      backup: false
+    kanidm-backup: {}
     kanidm-client-cache:
       backup: false
 services:
@@ -34,6 +36,16 @@ services:
             scheme: https
             port:
               variable: PORT
+      dagu:
+        docker:
+          executor:
+            exec:
+              container:
+          dag:
+            tags: ["backup"]
+          dags:
+            pre-backup:
+              command: ["/sbin/kanidmd"]
     keepasses:
       keepass:
         hostname:
@@ -52,6 +64,7 @@ services:
         start-period: 10s
       volumes:
         kanidm-data: /data
+        kanidm-backup: /backup
       envs:
         KANIDM_BINDADDRESS:
           extract:
