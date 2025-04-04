@@ -19,6 +19,11 @@ services:
   kanidm:
     variables:
       PORT: 8443
+      BACKUP:
+        extract:
+          volume: kanidm-backup
+        transform:
+          path: kanidm.backup.json
     config:
       tls-key:
         env: KANIDM_TLS_KEY
@@ -45,7 +50,11 @@ services:
             tags: ["backup"]
           dags:
             pre-backup:
-              command: ["/sbin/kanidmd"]
+              command:
+                - "/sbin/kanidmd"
+                - "database"
+                - "backup"
+                - variable: BACKUP
     keepasses:
       keepass:
         hostname:
