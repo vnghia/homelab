@@ -5,9 +5,7 @@ from typing import Any
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
-from homelab_dagu_config.model.step.run.command import (
-    DaguDagStepRunCommandParamTypeModel,
-)
+from .run.command import DaguDagStepRunCommandParamTypeModel
 
 if typing.TYPE_CHECKING:
     from ..params import DaguDagParamsModel

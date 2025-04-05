@@ -41,8 +41,9 @@ from .model.service import BackupServiceModel, BackupServiceVolumeModel
 class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
     DEFAULT_BACKUP_MODEL = BackupServiceModel()
 
-    PRE_VOLUME_BACKUP_DAG_KEY = "pre-volume-backup"
+    PRE_BACKUP_VOLUME_DAG_KEY = "pre-backup-volume"
 
+    BACKUP_KEY = DaguDagParamsModel.PARAM_VALUE[DaguDagParamType.BACKUP][0]
     EXTRACT_CONFIG_STEP = "extract-config"
     BACKUP_CONFIG_OUTPUT = "BACKUP_CONFIG_OUTPUT"
 
@@ -68,7 +69,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                 volume_model = BackupServiceVolumeModel()
                 if (
                     service in dagu_service.dags
-                    and self.PRE_VOLUME_BACKUP_DAG_KEY in dagu_service.dags[service]
+                    and self.PRE_BACKUP_VOLUME_DAG_KEY in dagu_service.dags[service]
                 ):
                     volume_model = volume_model.__replace__(pre=True)
                     pre_volume_backups.append(
@@ -76,7 +77,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             name=service,
                             run=DaguDagStepRunModel(
                                 DaguDagStepRunSubdagModel(
-                                    service=service, dag=self.PRE_VOLUME_BACKUP_DAG_KEY
+                                    service=service, dag=self.PRE_BACKUP_VOLUME_DAG_KEY
                                 )
                             ),
                             preconditions=[
@@ -109,8 +110,8 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         self.backup_configs = BackupServiceConfig(backup_configs)
 
         self.pre_volume_backup = DaguDagModel(
-            name=self.PRE_VOLUME_BACKUP_DAG_KEY,
-            path="{}-{}".format(self.name(), self.PRE_VOLUME_BACKUP_DAG_KEY),
+            name=self.PRE_BACKUP_VOLUME_DAG_KEY,
+            path="{}-{}".format(self.name(), self.PRE_BACKUP_VOLUME_DAG_KEY),
             steps=pre_volume_backups,
             tags=[self.name()],
             params=DaguDagParamsModel(types={DaguDagParamType.BACKUP: ""}),
@@ -179,6 +180,34 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     output=self.BACKUP_CONFIG_OUTPUT,
                 ),
                 DaguDagStepModel(
+                    name=self.PRE_BACKUP_VOLUME_DAG_KEY,
+                    run=DaguDagStepRunModel(
+                        DaguDagStepRunSubdagModel(
+                            service=self.name(),
+                            dag=self.PRE_BACKUP_VOLUME_DAG_KEY,
+                            params=DaguDagParamsModel(
+                                types={
+                                    DaguDagParamType.BACKUP: "${{{}}}".format(
+                                        self.BACKUP_KEY
+                                    )
+                                }
+                            ),
+                        )
+                    ),
+                    continue_on=DaguDagStepContinueOnModel(skipped=True),
+                    depends=[self.EXTRACT_CONFIG_STEP],
+                    preconditions=[
+                        DaguDagStepPreConditionModel(
+                            DaguDagStepPreConditionFullModel(
+                                condition=DaguDagStepRunCommandParamTypeModel(
+                                    "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
+                                ),
+                                expected='re:.*"pre".*',
+                            )
+                        )
+                    ],
+                ),
+                DaguDagStepModel(
                     name="backup-volume",
                     run=DaguDagStepRunModel(
                         DaguDagStepRunSubdagModel(
@@ -187,15 +216,13 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             params=DaguDagParamsModel(
                                 types={
                                     DaguDagParamType.BACKUP: "${{{}}}".format(
-                                        DaguDagParamsModel.PARAM_VALUE[
-                                            DaguDagParamType.BACKUP
-                                        ][0]
+                                        self.BACKUP_KEY
                                     )
                                 }
                             ),
                         )
                     ),
-                    depends=[self.EXTRACT_CONFIG_STEP],
+                    depends=[self.PRE_BACKUP_VOLUME_DAG_KEY],
                     preconditions=[
                         DaguDagStepPreConditionModel(
                             DaguDagStepPreConditionFullModel(
@@ -287,9 +314,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             params=DaguDagParamsModel(
                                 types={
                                     DaguDagParamType.BACKUP: "${{{}}}-database".format(
-                                        DaguDagParamsModel.PARAM_VALUE[
-                                            DaguDagParamType.BACKUP
-                                        ][0]
+                                        self.BACKUP_KEY
                                     )
                                 }
                             ),

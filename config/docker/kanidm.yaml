@@ -12,7 +12,10 @@ volumes:
   local:
     kanidm-data:
       backup: false
-    kanidm-backup: {}
+    kanidm-backup:
+      backup:
+        source:
+          variable: BACKUP
     kanidm-client-cache:
       backup: false
 services:
@@ -49,7 +52,7 @@ services:
           dag:
             tags: ["backup"]
           dags:
-            pre-backup:
+            pre-backup-volume:
               command:
                 - "/sbin/kanidmd"
                 - "database"
