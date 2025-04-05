@@ -11,18 +11,12 @@ from ...params import DaguDagParamType
 
 class DaguDagStepRunCommandParamTypeModel(HomelabBaseModel):
     type: DaguDagParamType
+    dollar: bool = True
 
 
 class DaguDagStepRunCommandParamModel(HomelabBaseModel):
     param: DaguDagStepRunCommandParamTypeModel | str
     transform: ExtractTransformString = ExtractTransformString()
-
-    def to_key(self) -> DaguDagParamType | str:
-        param = self.param
-        if isinstance(param, DaguDagStepRunCommandParamTypeModel):
-            return param.type
-        else:
-            return param
 
 
 class DaguDagStepRunCommandFullModel(

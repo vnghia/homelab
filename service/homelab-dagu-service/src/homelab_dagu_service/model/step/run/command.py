@@ -26,7 +26,7 @@ class DaguDagStepRunCommandFullModelBuilder(
     ) -> Output[str]:
         root = self.root.root
         if isinstance(root, DaguDagStepRunCommandParamModel):
-            value = params.to_key_command(root.to_key())
+            value = params.to_key_command(root.param)
             return Output.from_input(root.transform.transform(value))
         else:
             return GlobalExtractor(root).extract_str(main_service, None)

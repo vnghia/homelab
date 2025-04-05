@@ -9,6 +9,7 @@ from homelab_pydantic import HomelabBaseModel
 
 if typing.TYPE_CHECKING:
     from ..model import DaguDagModel
+    from .step.run.command import DaguDagStepRunCommandParamTypeModel
 
 
 class DaguDagParamType(StrEnum):
@@ -31,18 +32,32 @@ class DaguDagParamsModel(HomelabBaseModel):
     def __bool__(self) -> bool:
         return bool(self.main) or bool(self.types)
 
-    def to_key_command_unchecked(self, key: str) -> str:
+    def to_key_command_unchecked(
+        self, key: DaguDagStepRunCommandParamTypeModel | str
+    ) -> str:
+        from ..model.step.run.command import DaguDagStepRunCommandParamTypeModel
+
+        if isinstance(key, DaguDagStepRunCommandParamTypeModel):
+            result = self.PARAM_VALUE[key.type][0]
+            if not key.dollar:
+                return result
+            else:
+                key = result
         return "${{{}}}".format(key)
 
-    def check_key(self, key: DaguDagParamType | str) -> str:
-        if isinstance(key, DaguDagParamType):
-            self.types[key]
-            return self.PARAM_VALUE[key][0]
+    def check_key(
+        self, key: DaguDagStepRunCommandParamTypeModel | str
+    ) -> DaguDagStepRunCommandParamTypeModel | str:
+        from ..model.step.run.command import DaguDagStepRunCommandParamTypeModel
+
+        if isinstance(key, DaguDagStepRunCommandParamTypeModel):
+            self.types[key.type]
+            return key
         else:
             self.main[key]
             return key
 
-    def to_key_command(self, key: DaguDagParamType | str) -> str:
+    def to_key_command(self, key: DaguDagStepRunCommandParamTypeModel | str) -> str:
         return self.to_key_command_unchecked(self.check_key(key))
 
     def to_params(self, dag: DaguDagModel) -> list[dict[str, str]] | None:

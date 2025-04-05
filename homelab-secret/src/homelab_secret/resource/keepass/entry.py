@@ -1,7 +1,7 @@
 from typing import Any
 
 from homelab_network.resource.network import Hostnames
-from pulumi import ComponentResource, Output, ResourceOptions
+from pulumi import ComponentResource, ResourceOptions
 
 from ...model.keepass.entry import KeepassEntryModel
 
