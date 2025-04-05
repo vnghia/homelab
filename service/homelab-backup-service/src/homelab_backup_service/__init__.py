@@ -34,16 +34,16 @@ from pulumi import ResourceOptions
 
 from .config import BackupConfig
 from .config.service import BackupServiceConfig
-from .model.service import BackupServiceModel
+from .model.service import BackupServiceModel, BackupServiceVolumeModel
 
 
 class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
-    BARMAN_BACKUP_KEY = "BARMAN_BACKUP_KEY"
-
     DEFAULT_BACKUP_MODEL = BackupServiceModel()
 
+    PRE_VOLUME_BACKUP_DAG_KEY = "pre-volume-backup"
+
+    EXTRACT_CONFIG_STEP = "extract-config"
     BACKUP_CONFIG_OUTPUT = "BACKUP_CONFIG_OUTPUT"
-    BACKUP_VOLUME_CONFIG_OUTPUT = "BACKUP_VOLUME_CONFIG_OUTPUT"
 
     BACKUP_DATABASE_SUBDAGS = {DatabaseType.POSTGRES: BarmanService.name()}
 
@@ -53,7 +53,6 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         *,
         opts: ResourceOptions | None,
         dagu_service: DaguService,
-        barman_service: BarmanService,
         restic_service: ResticService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
@@ -63,7 +62,13 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         for service in self.SERVICES.keys():
             service_model = self.DEFAULT_BACKUP_MODEL.model_copy()
             if service in restic_service.service_groups:
-                service_model = service_model.__replace__(volume=True)
+                volume_model = BackupServiceVolumeModel()
+                if (
+                    service in dagu_service.dags
+                    and self.PRE_VOLUME_BACKUP_DAG_KEY in dagu_service.dags[service]
+                ):
+                    volume_model = volume_model.__replace__(pre=True)
+                service_model = service_model.__replace__(volume=volume_model)
             if service in restic_service.service_database_groups:
                 service_model = service_model.__replace__(
                     databases={
@@ -84,7 +89,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             max_active_runs=1,
             steps=[
                 DaguDagStepModel(
-                    name="extract-config",
+                    name=self.EXTRACT_CONFIG_STEP,
                     dir=dagu_service.get_tmp_dir(),
                     run=DaguDagStepRunModel(
                         DaguDagStepRunCommandModel(
@@ -132,26 +137,6 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     output=self.BACKUP_CONFIG_OUTPUT,
                 ),
                 DaguDagStepModel(
-                    name="extract-volume",
-                    run=DaguDagStepRunModel(
-                        DaguDagStepRunCommandModel(
-                            [
-                                DaguDagStepRunCommandFullModel(
-                                    GlobalExtract.from_simple(".volume")
-                                )
-                            ]
-                        )
-                    ),
-                    script=DaguDagStepScriptModel(
-                        GlobalExtract.from_simple(
-                            "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
-                        )
-                    ),
-                    executor=DaguDagStepExecutorModel(DaguDagStepJqExecutorModel()),
-                    depends=["extract-config"],
-                    output=self.BACKUP_VOLUME_CONFIG_OUTPUT,
-                ),
-                DaguDagStepModel(
                     name="backup-volume",
                     run=DaguDagStepRunModel(
                         DaguDagStepRunSubdagModel(
@@ -168,14 +153,12 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             ),
                         )
                     ),
-                    depends=["extract-volume"],
+                    depends=[self.EXTRACT_CONFIG_STEP],
                     preconditions=[
                         DaguDagStepPreConditionModel(
                             DaguDagStepPreConditionFullModel(
-                                condition="${{{}}}".format(
-                                    self.BACKUP_VOLUME_CONFIG_OUTPUT
-                                ),
-                                expected="true",
+                                condition="${{{}}}".format(self.BACKUP_CONFIG_OUTPUT),
+                                expected='re:.*"volume".*',
                             )
                         )
                     ],
@@ -184,6 +167,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             + reduce(
                 operator.add,
                 [
+                    # TODO: Remove this after precondition and output json issues are fixed
                     [
                         DaguDagStepModel(
                             name=self.get_extract_database_step(type_),
@@ -208,7 +192,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             executor=DaguDagStepExecutorModel(
                                 DaguDagStepJqExecutorModel()
                             ),
-                            depends=["extract-config"],
+                            depends=[self.EXTRACT_CONFIG_STEP],
                             output=self.get_extract_database_step_output(type_),
                         ),
                         DaguDagStepModel(

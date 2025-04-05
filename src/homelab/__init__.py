@@ -125,7 +125,6 @@ class Homelab:
             self.docker.services_config.backup,
             opts=None,
             dagu_service=self.dagu,
-            barman_service=self.barman,
             restic_service=self.restic,
             docker_resource_args=self.docker.resource_args,
         )

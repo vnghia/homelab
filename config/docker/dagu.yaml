@@ -2,7 +2,7 @@ images:
   remote:
     dagu:
       repo: ghcr.io/dagu-org/dagu
-      tag: "1.16.3"
+      tag: "1.16.7"
 volumes:
   local:
     dagu-home: {}
@@ -23,6 +23,13 @@ services:
           service:
             port:
               env: DAGU_PORT
+      dagu:
+        dag:
+          dag:
+            name: dummy
+            steps:
+              - name: dummy
+                run: ["true"]
     container:
       image: dagu
       command: ["start-all"]
