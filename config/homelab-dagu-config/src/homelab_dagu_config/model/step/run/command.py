@@ -9,13 +9,19 @@ from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from ...params import DaguDagParamType
 
 
-class DaguDagStepRunCommandParamTypeModel(HomelabBaseModel):
+class DaguDagStepRunCommandParamTypeFullModel(HomelabBaseModel):
     type: DaguDagParamType
     dollar: bool = True
 
 
+class DaguDagStepRunCommandParamTypeModel(
+    HomelabRootModel[DaguDagStepRunCommandParamTypeFullModel | str]
+):
+    pass
+
+
 class DaguDagStepRunCommandParamModel(HomelabBaseModel):
-    param: DaguDagStepRunCommandParamTypeModel | str
+    param: DaguDagStepRunCommandParamTypeModel
     transform: ExtractTransformString = ExtractTransformString()
 
 

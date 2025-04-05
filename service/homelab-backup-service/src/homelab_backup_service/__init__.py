@@ -17,6 +17,7 @@ from homelab_dagu_config.model.step.run.command import (
     DaguDagStepRunCommandFullModel,
     DaguDagStepRunCommandModel,
     DaguDagStepRunCommandParamModel,
+    DaguDagStepRunCommandParamTypeFullModel,
     DaguDagStepRunCommandParamTypeModel,
 )
 from homelab_dagu_config.model.step.run.subdag import DaguDagStepRunSubdagModel
@@ -81,10 +82,10 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             preconditions=[
                                 DaguDagStepPreConditionModel(
                                     DaguDagStepPreConditionFullModel(
-                                        condition="${{{}}}".format(
-                                            DaguDagParamsModel.PARAM_VALUE[
-                                                DaguDagParamType.BACKUP
-                                            ][0]
+                                        condition=DaguDagStepRunCommandParamTypeModel(
+                                            DaguDagStepRunCommandParamTypeFullModel(
+                                                type=DaguDagParamType.BACKUP
+                                            )
                                         ),
                                         expected=service,
                                     )
@@ -163,7 +164,9 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                                 DaguDagStepRunCommandFullModel(
                                     DaguDagStepRunCommandParamModel(
                                         param=DaguDagStepRunCommandParamTypeModel(
-                                            type=DaguDagParamType.BACKUP
+                                            DaguDagStepRunCommandParamTypeFullModel(
+                                                type=DaguDagParamType.BACKUP
+                                            )
                                         ),
                                         transform=ExtractTransformString(
                                             template='".{value}"'
@@ -196,7 +199,9 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     preconditions=[
                         DaguDagStepPreConditionModel(
                             DaguDagStepPreConditionFullModel(
-                                condition="${{{}}}".format(self.BACKUP_CONFIG_OUTPUT),
+                                condition=DaguDagStepRunCommandParamTypeModel(
+                                    "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
+                                ),
                                 expected='re:.*"volume".*',
                             )
                         )
@@ -256,8 +261,12 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             preconditions=[
                                 DaguDagStepPreConditionModel(
                                     DaguDagStepPreConditionFullModel(
-                                        condition="${{{}}}".format(
-                                            self.get_extract_database_step_output(type_)
+                                        condition=DaguDagStepRunCommandParamTypeModel(
+                                            "${{{}}}".format(
+                                                self.get_extract_database_step_output(
+                                                    type_
+                                                )
+                                            )
                                         ),
                                         expected="re:.+",
                                     )
@@ -293,7 +302,9 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     preconditions=[
                         DaguDagStepPreConditionModel(
                             DaguDagStepPreConditionFullModel(
-                                condition="${{{}}}".format(self.BACKUP_CONFIG_OUTPUT),
+                                condition=DaguDagStepRunCommandParamTypeModel(
+                                    "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
+                                ),
                                 expected='re:.*"databases".*',
                             )
                         )

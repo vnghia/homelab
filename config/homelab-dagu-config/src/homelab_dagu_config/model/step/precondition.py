@@ -1,22 +1,37 @@
+from __future__ import annotations
+
+import typing
 from typing import Any
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
+from homelab_dagu_config.model.step.run.command import (
+    DaguDagStepRunCommandParamTypeModel,
+)
+
+if typing.TYPE_CHECKING:
+    from ..params import DaguDagParamsModel
+
 
 class DaguDagStepPreConditionFullModel(HomelabBaseModel):
-    condition: str
+    condition: DaguDagStepRunCommandParamTypeModel
     expected: str
 
-    def to_step(self) -> dict[str, Any]:
-        return {"condition": self.condition, "expected": self.expected}
+    def to_step(self, params: DaguDagParamsModel) -> dict[str, Any]:
+        return {
+            "condition": self.condition.root
+            if isinstance(self.condition.root, str)
+            else params.to_key_command(self.condition),
+            "expected": self.expected,
+        }
 
 
 class DaguDagStepPreConditionModel(
     HomelabRootModel[DaguDagStepPreConditionFullModel | str]
 ):
-    def to_step(self) -> str | dict[str, Any]:
+    def to_step(self, params: DaguDagParamsModel) -> str | dict[str, Any]:
         root = self.root
         if isinstance(root, DaguDagStepPreConditionFullModel):
-            return root.to_step()
+            return root.to_step(params)
         else:
             return root

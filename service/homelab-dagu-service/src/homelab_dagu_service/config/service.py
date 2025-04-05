@@ -14,6 +14,7 @@ from homelab_dagu_config.model.step.run.command import (
     DaguDagStepRunCommandFullModel,
     DaguDagStepRunCommandModel,
     DaguDagStepRunCommandParamModel,
+    DaguDagStepRunCommandParamTypeFullModel,
     DaguDagStepRunCommandParamTypeModel,
 )
 from homelab_docker.resource.service import ServiceResourceBase
@@ -96,7 +97,9 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                                                 DaguDagStepRunCommandFullModel(
                                                     DaguDagStepRunCommandParamModel(
                                                         param=DaguDagStepRunCommandParamTypeModel(
-                                                            type=DaguDagParamType.DEBUG
+                                                            DaguDagStepRunCommandParamTypeFullModel(
+                                                                type=DaguDagParamType.DEBUG
+                                                            )
                                                         )
                                                     )
                                                 ),

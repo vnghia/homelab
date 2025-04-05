@@ -32,39 +32,41 @@ class DaguDagParamsModel(HomelabBaseModel):
     def __bool__(self) -> bool:
         return bool(self.main) or bool(self.types)
 
-    def to_key_command_unchecked(
-        self, key: DaguDagStepRunCommandParamTypeModel | str
-    ) -> str:
-        from ..model.step.run.command import DaguDagStepRunCommandParamTypeModel
+    def to_key_command_unchecked(self, key: DaguDagStepRunCommandParamTypeModel) -> str:
+        from ..model.step.run.command import DaguDagStepRunCommandParamTypeFullModel
 
-        if isinstance(key, DaguDagStepRunCommandParamTypeModel):
-            result = self.PARAM_VALUE[key.type][0]
-            if not key.dollar:
+        root = key.root
+        if isinstance(root, DaguDagStepRunCommandParamTypeFullModel):
+            result = self.PARAM_VALUE[root.type][0]
+            if not root.dollar:
                 return result
             else:
-                key = result
-        return "${{{}}}".format(key)
+                root = result
+        return "${{{}}}".format(root)
 
     def check_key(
-        self, key: DaguDagStepRunCommandParamTypeModel | str
-    ) -> DaguDagStepRunCommandParamTypeModel | str:
-        from ..model.step.run.command import DaguDagStepRunCommandParamTypeModel
+        self, key: DaguDagStepRunCommandParamTypeModel
+    ) -> DaguDagStepRunCommandParamTypeModel:
+        from ..model.step.run.command import DaguDagStepRunCommandParamTypeFullModel
 
-        if isinstance(key, DaguDagStepRunCommandParamTypeModel):
-            self.types[key.type]
+        root = key.root
+        if isinstance(root, DaguDagStepRunCommandParamTypeFullModel):
+            self.types[root.type]
             return key
         else:
-            self.main[key]
+            self.main[root]
             return key
 
-    def to_key_command(self, key: DaguDagStepRunCommandParamTypeModel | str) -> str:
+    def to_key_command(self, key: DaguDagStepRunCommandParamTypeModel) -> str:
         return self.to_key_command_unchecked(self.check_key(key))
 
     def to_params(self, dag: DaguDagModel) -> list[dict[str, str]] | None:
+        from ..model.step.precondition import DaguDagStepPreConditionFullModel
         from ..model.step.run.command import (
             DaguDagStepRunCommandFullModel,
             DaguDagStepRunCommandModel,
             DaguDagStepRunCommandParamModel,
+            DaguDagStepRunCommandParamTypeFullModel,
             DaguDagStepRunCommandParamTypeModel,
         )
 
@@ -72,19 +74,37 @@ class DaguDagParamsModel(HomelabBaseModel):
         for step in dag.steps:
             run = step.run.root
             script = step.script
+            preconditions = step.preconditions
 
             commands: list[DaguDagStepRunCommandFullModel] = []
             if isinstance(run, DaguDagStepRunCommandModel):
                 commands += run.root
             if script and isinstance(script.root, DaguDagStepRunCommandModel):
                 commands += script.root.root
+            for precondition in preconditions:
+                if isinstance(
+                    precondition.root, DaguDagStepPreConditionFullModel
+                ) and isinstance(
+                    precondition.root.condition.root,
+                    DaguDagStepRunCommandParamTypeFullModel,
+                ):
+                    commands.append(
+                        DaguDagStepRunCommandFullModel(
+                            DaguDagStepRunCommandParamModel(
+                                param=precondition.root.condition
+                            )
+                        )
+                    )
 
             for command in commands:
                 root = command.root
                 if isinstance(root, DaguDagStepRunCommandParamModel):
                     used_params.add(
-                        root.param.type
+                        root.param.root.type
                         if isinstance(root.param, DaguDagStepRunCommandParamTypeModel)
+                        and isinstance(
+                            root.param.root, DaguDagStepRunCommandParamTypeFullModel
+                        )
                         else root.param
                     )
 
