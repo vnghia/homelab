@@ -24,6 +24,7 @@ services:
           daily: 7
       database:
         postgres: barman-home
+        sqlite: sqlite-backup-data
       dagu:
         dotenvs:
           dotenv:

@@ -1,0 +1,38 @@
+images:
+  build:
+    sqlite-backup:
+      context:
+        location: image/sqlite-backup
+        base: python-alpine
+      args:
+        SQLITE_BACKUP_VERSION: &sqlite-backup-version "0.1.7"
+      version: *sqlite-backup-version
+volumes:
+  local:
+    sqlite-backup-data: {}
+services:
+  sqlite-backup:
+    config:
+      dagu:
+        docker:
+          executor:
+            run:
+              model:
+          dag:
+            params:
+              types:
+                backup:
+            tags: ["backup"]
+          dags:
+            backup:
+              command:
+                - param:
+                    type: backup
+    container:
+      active: false
+      image:
+        build: sqlite-backup
+      tmpfs:
+        - /tmp
+      volumes:
+        sqlite-backup-data: /data

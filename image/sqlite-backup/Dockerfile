@@ -1,0 +1,5 @@
+FROM base
+
+ARG SQLITE_BACKUP_VERSION
+
+RUN pip install sqlite_backup==${SQLITE_BACKUP_VERSION}

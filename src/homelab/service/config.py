@@ -8,6 +8,7 @@ from homelab_extra_service.config import ExtraConfig
 from homelab_gluetun_service.config import GluetunConfig
 from homelab_kanidm_service.config import KandimConfig
 from homelab_restic_service.config import ResticConfig
+from homelab_sqlite_backup_service.config import SqliteBackupConfig
 from homelab_traefik_service.config import TraefikConfig
 
 
@@ -20,5 +21,6 @@ class ServiceConfig(ServiceConfigBase):
     ntfy: ServiceWithConfigModel[ExtraConfig]
     dagu: ServiceWithConfigModel[DaguConfig]
     barman: ServiceWithConfigModel[BarmanConfig]
+    sqlite_backup: ServiceWithConfigModel[SqliteBackupConfig]
     restic: ServiceWithConfigModel[ResticConfig]
     backup: ServiceWithConfigModel[BackupConfig]

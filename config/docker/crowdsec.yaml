@@ -5,7 +5,13 @@ images:
       tag: "v1.6.5"
 volumes:
   local:
-    crowdsec-data: {}
+    crowdsec-data:
+      backup:
+        sqlites:
+          - extract:
+              volume: crowdsec-data
+            transform:
+              path: crowdsec.db
     crowdsec-config: {}
 services:
   crowdsec:

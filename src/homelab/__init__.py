@@ -16,6 +16,7 @@ from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
 from homelab_secret.resource.keepass import KeepassResource
+from homelab_sqlite_backup_service import SqliteBackupService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 
@@ -101,6 +102,13 @@ class Homelab:
             backup_config=self.docker.services_config.backup.config,
             docker_resource_args=self.docker.resource_args,
         )
+        self.sqlite_backup = SqliteBackupService(
+            self.docker.services_config.sqlite_backup,
+            opts=None,
+            backup_config=self.docker.services_config.backup.config,
+            docker_resource_args=self.docker.resource_args,
+        )
+
         self.restic = ResticService(
             self.docker.services_config.restic,
             opts=None,

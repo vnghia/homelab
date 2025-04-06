@@ -25,6 +25,7 @@ members = [
     "homelab-s3",
     "homelab-s3-config",
     "homelab-secret",
+    "homelab-sqlite-backup-service",
     "homelab-tailscale-service",
     "homelab-traefik-config",
     "homelab-traefik-service",
@@ -428,6 +429,7 @@ dependencies = [
     { name = "homelab-restic-service" },
     { name = "homelab-s3" },
     { name = "homelab-secret" },
+    { name = "homelab-sqlite-backup-service" },
     { name = "homelab-tailscale-service" },
     { name = "homelab-traefik-config" },
     { name = "homelab-traefik-service" },
@@ -461,6 +463,7 @@ requires-dist = [
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-secret", editable = "homelab-secret" },
+    { name = "homelab-sqlite-backup-service", editable = "service/homelab-sqlite-backup-service" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
@@ -925,6 +928,29 @@ requires-dist = [
     { name = "pulumi-random", specifier = ">=4.17.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pykeepass", specifier = ">=4.1.1.post1" },
+]
+
+[[package]]
+name = "homelab-sqlite-backup-service"
+version = "0.1.0"
+source = { editable = "service/homelab-sqlite-backup-service" }
+dependencies = [
+    { name = "homelab-backup" },
+    { name = "homelab-dagu-config" },
+    { name = "homelab-docker" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]

@@ -12,6 +12,10 @@ class LocalVolumeModel(HomelabBaseModel):
     bind: AbsolutePath | None = None
     labels: dict[str, str] = {}
 
+    @classmethod
+    def get_service(cls, name: str) -> str:
+        return name.split("-", maxsplit=1)[0]
+
     def build_resource(
         self,
         resource_name: str,

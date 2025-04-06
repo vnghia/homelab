@@ -16,7 +16,7 @@ class ResticVolumeConfig(HomelabBaseModel):
 
     @property
     def service(self) -> str:
-        return self.name.split("-", maxsplit=1)[0]
+        return self.model.get_service(self.name)
 
     @property
     def path(self) -> AbsolutePath:
