@@ -1,7 +1,6 @@
-from pathlib import PosixPath
-
 from homelab_backup.config import BackupGlobalConfig
 from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
@@ -14,8 +13,6 @@ from .config import SqliteBackupConfig
 
 
 class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
-    SQLITE_BACKUP_MOUNT_PATH: AbsolutePath = AbsolutePath(PosixPath("/mnt"))
-
     def __init__(
         self,
         model: ServiceWithConfigModel[SqliteBackupConfig],
@@ -26,7 +23,10 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.database_configs = {}
+        self.source_dir = ServiceExtractor(self.config.source_dir).extract_path(
+            self, None
+        )
+        self.database_configs: dict[str, list[str]] = {}
         self.volume_configs = {}
 
         for (
@@ -36,11 +36,12 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
             if volume_model.backup:
                 if len(volume_model.backup.sqlites) > 0:
                     service = volume_model.get_service(name)
+
+                    self.database_configs[name] = []
                     self.volume_configs[name] = ContainerVolumeConfig(
-                        GlobalExtract.from_simple(
-                            (self.SQLITE_BACKUP_MOUNT_PATH / name).as_posix()
-                        )
+                        GlobalExtract.from_simple(self.get_source_path(name).as_posix())
                     )
+
                     for sqlite in volume_model.backup.sqlites:
                         volume_path = GlobalExtractor(sqlite).extract_volume_path(
                             self.SERVICES[service], None
@@ -51,7 +52,15 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
                                     volume_path.volume, name
                                 )
                             )
+                        self.database_configs[name].append(volume_path.path.as_posix())
 
+        self.options[None].envs = {
+            "HOMELAB_{}".format(name.upper().replace("-", "_")): ",".join(paths)
+            for name, paths in self.database_configs.items()
+        }
         self.options[None].volumes = self.volume_configs
 
         self.register_outputs({})
+
+    def get_source_path(self, name: str) -> AbsolutePath:
+        return self.source_dir / name

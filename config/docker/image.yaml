@@ -5,4 +5,7 @@ images:
       tag: "3.21.3"
     python-alpine:
       repo: python
-      tag: "3.12.9-alpine3.21"
+      tag: "3.13.2-alpine3.21"
+    python-builder:
+      repo: ghcr.io/astral-sh/uv
+      tag: "0.6.12-python3.13-alpine"

@@ -4,15 +4,17 @@ images:
       context:
         location: image/sqlite-backup
         base: python-alpine
-      args:
-        SQLITE_BACKUP_VERSION: &sqlite-backup-version "0.1.7"
-      version: *sqlite-backup-version
+        python-builder:
+          image: python-builder
+      version: "0.1.7"
 volumes:
   local:
     sqlite-backup-data: {}
 services:
   sqlite-backup:
     config:
+      source-dir:
+        env: HOMELAB_SOURCE_DIR
       dagu:
         docker:
           executor:
@@ -26,6 +28,7 @@ services:
           dags:
             backup:
               command:
+                - homelab-sqlite-backup
                 - param:
                     type: backup
     container:
@@ -36,3 +39,7 @@ services:
         - /tmp
       volumes:
         sqlite-backup-data: /data
+      envs:
+        HOMELAB_SOURCE_DIR: /mnt
+        HOMELAB_DESTINATION_DIR:
+          volume: sqlite-backup-data

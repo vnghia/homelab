@@ -84,6 +84,7 @@ members = ["homelab-*", "config/homelab-*", "service/homelab-*"]
 
 [tool.mypy]
 strict = true
+exclude = "image"
 
 [[tool.mypy.overrides]]
 module = ["json_fix.*", "pykeepass.*"]
