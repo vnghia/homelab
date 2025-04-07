@@ -26,8 +26,8 @@ class NtfyService(ExtraService[ExtraConfig]):
             self.ADMIN_ROLE,
             opts=self.child_opts,
             container=self.container.name,
-            username=self.secret["{}-username".format(self.ADMIN_ROLE)].result,
-            password=self.secret["{}-password".format(self.ADMIN_ROLE)].result,
+            username=self.keepass[None].username,
+            password=self.keepass[None].password,
             role=self.ADMIN_ROLE,
             acl=NtfyUserAclConfig(),
         )

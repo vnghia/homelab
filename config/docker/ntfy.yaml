@@ -28,11 +28,14 @@ services:
               transform:
                 string:
                   capture: ":(\\d+)"
+    keepasses:
+      keepass:
+        hostname:
+          hostname: ntfy
+          public: true
+        apps:
+          - io.heckel.ntfy
     secrets:
-      admin-username:
-        length: 16
-        special: false
-      admin-password: {}
       user-username:
         length: 16
         special: false
