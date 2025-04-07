@@ -115,6 +115,7 @@ class Homelab:
             hostname=self.project_prefix,
             backup_config=self.docker.services_config.backup.config,
             barman_service=self.barman,
+            sqlite_backup_service=self.sqlite_backup,
             docker_resource_args=self.docker.resource_args,
         )
 

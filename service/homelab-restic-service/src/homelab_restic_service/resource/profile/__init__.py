@@ -46,6 +46,28 @@ class ResticProfileResource(
                 )
             source = volume_source.path
 
+        exclude = []
+        if len(self.backup_config.sqlites) > 0:
+            for path in self.backup_config.sqlites:
+                volume_path = GlobalExtractor(path).extract_volume_path(
+                    restic_service.SERVICES[self.volume.service], None
+                )
+                if volume_path.volume != self.volume.name:
+                    raise ValueError(
+                        "Got different name for volume ({} vs {})".format(
+                            volume_path.volume, self.volume.name
+                        )
+                    )
+                exclude += [
+                    volume_path.path,
+                    volume_path.path.with_suffix(
+                        "{}-shm".format(volume_path.path.suffix)
+                    ),
+                    volume_path.path.with_suffix(
+                        "{}-wal".format(volume_path.path.suffix)
+                    ),
+                ]
+
         super().__init__(
             self.volume.name,
             opts=opts,
@@ -57,6 +79,7 @@ class ResticProfileResource(
                         "base-dir": self.volume.path,
                         "inherit": restic_service.DEFAULT_PROFILE_NAME,
                         "backup": ({"source": [source]} if source else {})
+                        | ({"exclude": exclude} if exclude else {})
                         | {
                             "tag": ",".join(
                                 [self.DOCKER_TAG, self.volume.service] + model.tags

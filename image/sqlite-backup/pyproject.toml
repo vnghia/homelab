@@ -5,7 +5,7 @@ requires-python = ">=3.13.1"
 dependencies = [
     "loguru>=0.7.3",
     "sqlite-backup>=0.1.7",
- "typed-argument-parser>=1.10.1",
+    "typed-argument-parser>=1.10.1",
 ]
 
 [project.scripts]

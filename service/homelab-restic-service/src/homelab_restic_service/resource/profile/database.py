@@ -33,7 +33,8 @@ class ResticProfileDatabaseResource(
                 volume=ResticVolumeConfig(
                     name=model.name,
                     model=LocalVolumeModel(),
-                    relative=RelativePath(PosixPath(model.type_)) / model.name,
+                    relative=RelativePath(PosixPath(model.type_))
+                    / (model.path or model.name),
                 ),
                 tags=[model.type_.value],
             ),

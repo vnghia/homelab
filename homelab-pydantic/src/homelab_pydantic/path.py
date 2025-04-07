@@ -26,6 +26,10 @@ class RelativePath(HomelabRootModel[PosixPath]):
     def __json__(self) -> str:
         return self.as_posix()
 
+    @property
+    def suffix(self) -> str:
+        return self.root.suffix
+
     def with_suffix(self, suffix: str) -> Self:
         return self.__class__(self.root.with_suffix(suffix))
 
@@ -49,6 +53,10 @@ class AbsolutePath(HomelabRootModel[PosixPath]):
 
     def __json__(self) -> str:
         return self.as_posix()
+
+    @property
+    def suffix(self) -> str:
+        return self.root.suffix
 
     def with_suffix(self, suffix: str) -> Self:
         return self.__class__(self.root.with_suffix(suffix))

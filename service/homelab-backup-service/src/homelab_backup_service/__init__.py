@@ -31,6 +31,7 @@ from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
 from homelab_extract.transform.string import ExtractTransformString
 from homelab_restic_service import ResticService
+from homelab_sqlite_backup_service import SqliteBackupService
 from pulumi import ResourceOptions
 
 from .config import BackupConfig
@@ -47,7 +48,10 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
     EXTRACT_CONFIG_STEP = "extract-config"
     BACKUP_CONFIG_OUTPUT = "BACKUP_CONFIG_OUTPUT"
 
-    BACKUP_DATABASE_SUBDAGS = {DatabaseType.POSTGRES: BarmanService.name()}
+    BACKUP_DATABASE_SUBDAGS = {
+        DatabaseType.POSTGRES: BarmanService.name(),
+        DatabaseType.SQLITE: SqliteBackupService.name(),
+    }
 
     def __init__(
         self,

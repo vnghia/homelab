@@ -26,7 +26,7 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
         self.source_dir = ServiceExtractor(self.config.source_dir).extract_path(
             self, None
         )
-        self.database_configs: dict[str, list[str]] = {}
+        self.service_maps: dict[str, list[str]] = {}
         self.volume_configs = {}
 
         for (
@@ -37,7 +37,7 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
                 if len(volume_model.backup.sqlites) > 0:
                     service = volume_model.get_service(name)
 
-                    self.database_configs[name] = []
+                    self.service_maps[name] = []
                     self.volume_configs[name] = ContainerVolumeConfig(
                         GlobalExtract.from_simple(self.get_source_path(name).as_posix())
                     )
@@ -52,11 +52,11 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
                                     volume_path.volume, name
                                 )
                             )
-                        self.database_configs[name].append(volume_path.path.as_posix())
+                        self.service_maps[name].append(volume_path.path.as_posix())
 
         self.options[None].envs = {
-            "HOMELAB_{}".format(name.upper().replace("-", "_")): ",".join(paths)
-            for name, paths in self.database_configs.items()
+            "HOMELAB_{}_SQLITE".format(name.upper().replace("-", "_")): ",".join(paths)
+            for name, paths in self.service_maps.items()
         }
         self.options[None].volumes = self.volume_configs
 

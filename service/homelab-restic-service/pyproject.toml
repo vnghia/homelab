@@ -10,6 +10,7 @@ dependencies = [
     "homelab-s3",
     "homelab-dagu-service",
     "homelab-barman-service",
+    "homelab-sqlite-backup-service",
     "pulumi>=3.150.0",
     "pydantic>=2.10.6",
 ]
