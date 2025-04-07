@@ -1,4 +1,5 @@
 from homelab_backup.config import BackupGlobalConfig
+from homelab_backup.config.volume import BackupVolumeConfig
 from homelab_docker.extract import GlobalExtractor
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume import ContainerVolumeConfig
@@ -33,7 +34,7 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
             name,
             volume_model,
         ) in self.docker_resource_args.config.volumes.local.items():
-            if volume_model.backup:
+            if isinstance(volume_model.backup, BackupVolumeConfig):
                 if len(volume_model.backup.sqlites) > 0:
                     service = volume_model.get_service(name)
 
@@ -63,4 +64,4 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
         self.register_outputs({})
 
     def get_source_path(self, name: str) -> AbsolutePath:
-        return self.source_dir / name
+        return self.source_dir / "{}-sqlite".format(name)

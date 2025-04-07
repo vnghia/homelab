@@ -5,9 +5,15 @@ images:
       tag: "v2.11.0"
 volumes:
   local:
-    ntfy-cache: {}
+    ntfy-cache:
+      backup:
+        sqlites:
+          - env: NTFY_CACHE_FILE
     ntfy-data:
-      backup: false
+      backup:
+        enabled: false
+        sqlites:
+          - env: NTFY_AUTH_FILE
 services:
   ntfy:
     config:

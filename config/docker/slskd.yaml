@@ -5,7 +5,25 @@ images:
       tag: "0.22.2"
 volumes:
   local:
-    slskd-data: {}
+    slskd-data:
+      backup:
+        sqlites:
+          - extract:
+              volume: slskd-data
+            transform:
+              path: data/events.db
+          - extract:
+              volume: slskd-data
+            transform:
+              path: data/messaging.db
+          - extract:
+              volume: slskd-data
+            transform:
+              path: data/search.db
+          - extract:
+              volume: slskd-data
+            transform:
+              path: data/transfers.db
     slskd-download: {}
     slskd-incomplete:
       backup: false

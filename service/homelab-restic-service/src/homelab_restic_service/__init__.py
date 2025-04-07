@@ -87,7 +87,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             ResticProfileDatabaseModel(
                 type_=DatabaseType.SQLITE,
                 name="{}-{}".format(name, DatabaseType.SQLITE.value),
-                path=RelativePath(PosixPath(name)),
             ).build_resource(opts=self.child_opts, restic_service=self)
             for name in sqlite_backup_service.service_maps.keys()
         ]
