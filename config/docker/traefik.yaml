@@ -99,6 +99,9 @@ services:
           service: tailscale
           extract:
             id:
+      wud:
+        template: https://github.com/traefik/traefik/releases/tag/${original}
+        include-prefix: v
       volumes:
         traefik-config:
           path: /etc/traefik/config
