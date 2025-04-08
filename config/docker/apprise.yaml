@@ -28,6 +28,8 @@ services:
         - /var/lib/nginx/fastcgi
         - /var/lib/nginx/uwsgi
         - /var/lib/nginx/scgi
+      wud:
+        template: https://github.com/caronc/apprise-api/releases/tag/v${original}
       envs:
         PUID: 0
         PGID: 0
