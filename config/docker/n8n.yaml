@@ -42,6 +42,8 @@ services:
         - /home/node/.cache/n8n/public
       volumes:
         n8n-data: /home/node/.n8n
+      wud:
+        template: https://github.com/n8n-io/n8n/releases/tag/n8n@${original}
       envs:
         DB_TYPE: postgresdb
         N8N_ENCRYPTION_KEY:
