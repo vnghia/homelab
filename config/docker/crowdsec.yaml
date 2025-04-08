@@ -51,6 +51,9 @@ services:
         default-bridge: true
       tmpfs:
         - /tmp
+      wud:
+        template: https://github.com/crowdsecurity/crowdsec/releases/tag/${original}
+        include-prefix: v
       volumes:
         crowdsec-data: /var/lib/crowdsec/data
         crowdsec-config: /etc/crowdsec
