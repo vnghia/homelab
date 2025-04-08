@@ -20,6 +20,7 @@ from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
 from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
+from .wud import ContainerWudConfig
 
 if typing.TYPE_CHECKING:
     from ...resource.file import FileResource
@@ -62,6 +63,7 @@ class ContainerModel(HomelabBaseModel):
     user: str | None = None
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
+    wud: ContainerWudConfig | None = None
 
     envs: dict[str, GlobalExtract] = {}
     labels: dict[str, GlobalExtract] = {}
@@ -162,6 +164,7 @@ class ContainerModel(HomelabBaseModel):
                     main_service.docker_resource_args.project_labels
                     | {"dev.dozzle.group": main_service.name()}
                     | ({"dev.dozzle.name": resource_name} if resource_name else {})
+                    | (self.wud.build_labels(resource_name) if self.wud else {})
                 ).items()
             }
             | {
