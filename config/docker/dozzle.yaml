@@ -38,6 +38,9 @@ services:
         timeout: 30s
         retries: 5
         start-period: 30s
+      wud:
+        template: https://github.com/amir20/dozzle/releases/tag/${original}
+        include-prefix: v
       envs:
         DOZZLE_BASE: /log
         DOZZLE_ADDR: ":8080"
