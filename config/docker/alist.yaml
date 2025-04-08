@@ -31,5 +31,10 @@ services:
             volume: alist-data
           transform:
             path: data.db
+      wud:
+        template: https://github.com/AlistGo/alist/releases/tag/v${transformed}
+        include-prefix: v
+        include-suffix: -aio
+        transform: true
       volumes:
         alist-data: /opt/alist/data
