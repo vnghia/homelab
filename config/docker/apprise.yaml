@@ -33,9 +33,15 @@ services:
         PGID: 0
         APPRISE_CONFIG_DIR:
           volume: apprise-config
+        APPRISE_CONFIG_PATH:
+          volume: apprise-config
         APPRISE_STORAGE_DIR:
           volume: apprise-storage
+        APPRISE_STORAGE_PATH:
+          volume: apprise-storage
         APPRISE_ATTACH_DIR:
+          volume: apprise-attach
+        APPRISE_ATTACH_PATH:
           volume: apprise-attach
         APPRISE_STATEFUL_MODE: simple
         APPRISE_CONFIG_LOCK: "yes"

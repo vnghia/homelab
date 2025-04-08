@@ -5,6 +5,7 @@ requires-python = ">=3.13.1"
 [manifest]
 members = [
     "homelab",
+    "homelab-apprise-service",
     "homelab-backup",
     "homelab-backup-service",
     "homelab-barman-service",
@@ -412,6 +413,7 @@ name = "homelab"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "homelab-apprise-service" },
     { name = "homelab-backup" },
     { name = "homelab-backup-service" },
     { name = "homelab-barman-service" },
@@ -446,6 +448,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "homelab-apprise-service", editable = "service/homelab-apprise-service" },
     { name = "homelab-backup", editable = "homelab-backup" },
     { name = "homelab-backup-service", editable = "service/homelab-backup-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
@@ -476,6 +479,25 @@ dev = [
     { name = "datamodel-code-generator", extras = ["http"], specifier = ">=0.28.1" },
     { name = "mypy", specifier = ">=1.14.1" },
     { name = "ruff", specifier = ">=0.9.6" },
+]
+
+[[package]]
+name = "homelab-apprise-service"
+version = "0.1.0"
+source = { editable = "service/homelab-apprise-service" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]
@@ -859,6 +881,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
     { name = "homelab-s3" },
+    { name = "homelab-sqlite-backup-service" },
     { name = "pulumi" },
     { name = "pydantic" },
 ]
@@ -871,6 +894,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-s3", editable = "homelab-s3" },
+    { name = "homelab-sqlite-backup-service", editable = "service/homelab-sqlite-backup-service" },
     { name = "pulumi", specifier = ">=3.150.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]

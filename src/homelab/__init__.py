@@ -1,4 +1,5 @@
 import json_fix as json_fix
+from homelab_apprise_service import AppriseService
 from homelab_backup_service import BackupService
 from homelab_barman_service import BarmanService
 from homelab_config import Config
@@ -77,6 +78,11 @@ class Homelab:
         )
         self.ntfy = NtfyService(
             self.docker.services_config.ntfy,
+            opts=None,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.apprise = AppriseService(
+            self.docker.services_config.apprise,
             opts=None,
             docker_resource_args=self.docker.resource_args,
         )
