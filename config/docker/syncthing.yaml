@@ -59,6 +59,8 @@ services:
           protocol: udp
       volumes:
         syncthing-data: /var/syncthing
+      wud:
+        template: https://github.com/syncthing/syncthing/releases/tag/v${original}
       envs:
         STGUIADDRESS:
           extract:
