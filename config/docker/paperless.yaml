@@ -2,7 +2,7 @@ images:
   remote:
     paperless:
       repo: ghcr.io/paperless-ngx/paperless-ngx
-      tag: "2.15.0-beta.rc1"
+      tag: "2.15.0"
 volumes:
   local:
     paperless-data: {}
@@ -10,8 +10,6 @@ volumes:
     paperless-static:
       backup: false
     paperless-tmp:
-      backup: false
-    paperless-supervisord-log:
       backup: false
 services:
   kanidm:
@@ -70,13 +68,11 @@ services:
       tmpfs:
         - path: /run
           exec: true
-        - /var/run/supervisord
       volumes:
         paperless-data: /usr/src/paperless/data
         paperless-media: /usr/src/paperless/media
         paperless-static: /usr/src/paperless/static
         paperless-tmp: /tmp
-        paperless-supervisord-log: /var/log/supervisord
       wud:
         template: https://github.com/paperless-ngx/paperless-ngx/releases/tag/v${original}
       envs:
