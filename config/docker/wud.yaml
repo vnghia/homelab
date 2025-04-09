@@ -34,7 +34,7 @@ services:
       network:
         default-bridge: true
       volumes:
-        wud-storage: /storage
+        wud-storage: /store
       wud:
         template: https://github.com/getwud/wud/releases/tag/${original}
       envs:
