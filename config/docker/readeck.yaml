@@ -47,6 +47,8 @@ services:
         default-bridge: true
       volumes:
         readeck-data: /readeck
+      wud:
+        template: https://codeberg.org/readeck/readeck/releases/tag/${original}
       envs:
         READECK_SECRET_KEY:
           secret: key
