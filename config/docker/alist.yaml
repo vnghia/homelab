@@ -2,7 +2,7 @@ images:
   remote:
     alist:
       repo: xhofe/alist
-      tag: "v3.42.0-aio"
+      tag: "v3.44.0-aio"
 volumes:
   local:
     alist-data: {}
