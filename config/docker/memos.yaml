@@ -67,6 +67,8 @@ services:
         timeout: 5s
       volumes:
         memos-data: /var/opt/memos
+      wud:
+        template: https://github.com/usememos/memos/releases/tag/v${original}
       envs:
         MEMOS_PORT: 5230
         MEMOS_DATA:
