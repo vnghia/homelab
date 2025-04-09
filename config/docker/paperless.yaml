@@ -77,6 +77,8 @@ services:
         paperless-static: /usr/src/paperless/static
         paperless-tmp: /tmp
         paperless-supervisord-log: /var/log/supervisord
+      wud:
+        template: https://github.com/paperless-ngx/paperless-ngx/releases/tag/v${original}
       envs:
         S6_READ_ONLY_ROOT: 1
         PAPERLESS_DATA_DIR:
