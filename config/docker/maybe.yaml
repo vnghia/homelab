@@ -54,7 +54,7 @@ services:
           transform:
             path: storage
       wud:
-        template: https://github.com/maybe-finance/maybe/releases/tag/${original}
+        template: https://github.com/maybe-finance/maybe/releases/tag/v${original}
       envs:
         SELF_HOSTED: true
         RAILS_FORCE_SSL: false
