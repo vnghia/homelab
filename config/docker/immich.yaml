@@ -89,6 +89,9 @@ services:
           volume: immich-data
       volumes:
         immich-data: /usr/src/app/data
+      wud:
+        template: https://github.com/immich-app/immich/releases/tag/${original}
+        include-prefix: v
     containers:
       machine-learning:
         image: immich-machine-learning
