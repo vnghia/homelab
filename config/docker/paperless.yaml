@@ -77,6 +77,11 @@ services:
         template: https://github.com/paperless-ngx/paperless-ngx/releases/tag/v${original}
       envs:
         S6_READ_ONLY_ROOT: 1
+        XDG_CACHE_HOME:
+          extract:
+            volume: paperless-tmp
+          transform:
+            path: cache
         PAPERLESS_DATA_DIR:
           volume: paperless-data
         PAPERLESS_MEDIA_ROOT:
