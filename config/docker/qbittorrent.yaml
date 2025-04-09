@@ -32,3 +32,4 @@ services:
         WEBUI_PORT: 8080
         TORRENTING_PORT:
           port: qbittorrent
+      wud: {}
