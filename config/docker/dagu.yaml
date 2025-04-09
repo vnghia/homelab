@@ -57,6 +57,8 @@ services:
         dagu-dags:
           path: /config/dags
           read-only: true
+      wud:
+        template: https://github.com/dagu-org/dagu/releases/tag/v${original}
       envs:
         DAGU_PORT: 8080
         DAGU_TZ:
