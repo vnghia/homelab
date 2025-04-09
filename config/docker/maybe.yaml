@@ -53,6 +53,8 @@ services:
             volume: maybe-home
           transform:
             path: storage
+      wud:
+        template: https://github.com/maybe-finance/maybe/releases/tag/${original}
       envs:
         SELF_HOSTED: true
         RAILS_FORCE_SSL: false
