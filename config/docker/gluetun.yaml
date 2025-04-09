@@ -32,6 +32,9 @@ services:
         gluetun-opvn:
           path: /gluetun/opvn
           read-only: true
+      wud:
+        template: https://github.com/qdm12/gluetun/releases/tag/${original}
+        include-prefix: v
       envs:
         VPN_SERVICE_PROVIDER: custom
         OPENVPN_CUSTOM_CONFIG:
