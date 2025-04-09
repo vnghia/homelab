@@ -35,6 +35,8 @@ services:
         default-bridge: true
       volumes:
         wud-storage: /storage
+      wud:
+        template: https://github.com/getwud/wud/releases/tag/${original}
       envs:
         WUD_LOG_FORMAT: json
         WUD_SERVER_PORT: 3000
