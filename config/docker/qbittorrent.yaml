@@ -1,7 +1,7 @@
 images:
   remote:
     qbittorrent:
-      repo: lscr.io/linuxserver/qbittorrent
+      repo: ghcr.io/linuxserver/qbittorrent
       tag: "5.0.4"
 volumes:
   local:
