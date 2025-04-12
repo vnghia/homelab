@@ -2,11 +2,9 @@ images:
   remote:
     maybe:
       repo: ghcr.io/maybe-finance/maybe
-      tag: "0.4.3"
+      tag: "0.5.0"
 volumes:
   local:
-    maybe-home:
-      backup: false
     maybe-storage: {}
 services:
   maybe:
@@ -46,13 +44,9 @@ services:
         default-bridge: true
       tmpfs:
         - /tmp
+        - /rails/tmp/sockets
       volumes:
-        maybe-home: /rails
-        maybe-storage:
-          extract:
-            volume: maybe-home
-          transform:
-            path: storage
+        maybe-storage: /rails/storage
       wud:
         template: https://github.com/maybe-finance/maybe/releases/tag/v${original}
       envs:
@@ -65,11 +59,9 @@ services:
         APP_DOMAIN:
           hostname: maybe
           public: true
-        GOOD_JOB_EXECUTION_MODE: async
-    # TODO: use this after the new 0.5.0 is published
-    # containers:
-    #   worker:
-    #     inherit:
-    #     command: ["bundle", "exec", "sidekiq"]
-    #     network:
-    #       default-bridge: false
+    containers:
+      worker:
+        inherit:
+        command: ["bundle", "exec", "sidekiq"]
+        network:
+          default-bridge: false
