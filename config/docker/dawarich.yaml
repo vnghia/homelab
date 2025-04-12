@@ -86,5 +86,4 @@ services:
         inherit:
         command: ["bundle", "exec", "sidekiq"]
         entrypoint: ["sidekiq-entrypoint.sh"]
-        network:
-          default-bridge: false
+        wud:

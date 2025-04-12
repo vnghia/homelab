@@ -65,3 +65,4 @@ services:
         command: ["bundle", "exec", "sidekiq"]
         network:
           default-bridge: false
+        wud:
