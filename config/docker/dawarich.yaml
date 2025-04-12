@@ -1,0 +1,90 @@
+images:
+  remote:
+    dawarich:
+      repo: freikin/dawarich
+      tag: "0.25.4"
+volumes:
+  local:
+    dawarich-public:
+      backup: false
+    dawarich-storage:
+      backup: false
+services:
+  dawarich:
+    variables:
+      PORT: 3000
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              variable: PORT
+    databases:
+      postgres:
+        postgres:
+          image: postgis
+      redis:
+        redis: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: dawarich
+          public: true
+    secrets:
+      key: {}
+    container:
+      image: dawarich
+      databases:
+        - postgres:
+          envs:
+            username: DATABASE_USERNAME
+            password: DATABASE_PASSWORD
+            database: DATABASE_NAME
+            host: DATABASE_HOST
+            port: DATABASE_PORT
+        - redis:
+          envs:
+            env: REDIS_URL
+      command:
+        - bin/rails
+        - server
+        - "-p"
+        - variable: PORT
+        - "-b"
+        - "::"
+      entrypoint: ["web-entrypoint.sh"]
+      network:
+        default-bridge: true
+      tmpfs:
+        - /tmp
+        - /var/app/tmp/cache
+        - /var/app/tmp/sockets
+      volumes:
+        dawarich-public: /var/app/public
+        dawarich-storage: /var/app/storage
+      wud:
+        template: https://github.com/Freika/dawarich/releases/tag/${original}
+      envs:
+        SELF_HOSTED: true
+        RAILS_ENV: production
+        MIN_MINUTES_SPENT_IN_CITY: 60
+        APPLICATION_HOSTS:
+          hostname: dawarich
+          public: true
+        APPLICATION_PROTOCOL: http
+        TIME_ZONE:
+          docker: "{timezone}"
+        DISTANCE_UNIT: km
+        DISABLE_TELEMETRY: true
+        SECRET_KEY_BASE:
+          secret: key
+        RAILS_LOG_TO_STDOUT: true
+        PIDFILE: /var/app/tmp/cache/server.pid
+    containers:
+      worker:
+        inherit:
+        command: ["bundle", "exec", "sidekiq"]
+        entrypoint: ["sidekiq-entrypoint.sh"]
+        network:
+          default-bridge: false

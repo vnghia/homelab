@@ -9,6 +9,10 @@ database:
         "16":
           repo: ghcr.io/tensorchord/pgvecto-rs
           tag: "pg16-v0.3.0"
+      postgis:
+        "17":
+          repo: postgis/postgis
+          tag: "17-3.5"
     version: 17
     port: 5432
     data-dir: /var/lib/postgresql/data
