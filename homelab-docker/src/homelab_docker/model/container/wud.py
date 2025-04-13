@@ -10,6 +10,7 @@ class ContainerWudConfig(HomelabBaseModel):
     include: str | None = None
     include_prefix: str = ""
     include_suffix: str = ""
+    exclude: str | None = None
     transform: bool = False
 
     def build_labels(
@@ -32,6 +33,7 @@ class ContainerWudConfig(HomelabBaseModel):
                 if self.transform
                 else {}
             )
+            | ({"wud.tag.exclude": self.exclude} if self.exclude else {})
             | {
                 "wud.tag.include": self.include
                 or (

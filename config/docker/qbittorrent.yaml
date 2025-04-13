@@ -32,4 +32,7 @@ services:
         WEBUI_PORT: 8080
         TORRENTING_PORT:
           port: qbittorrent
-      wud: {}
+      wud:
+        # See https://github.com/getwud/wud/issues/498 for context.
+        # To be revisited when qbittorrent reaches 14th version.
+        exclude: "^(14|20).*$"
