@@ -7,6 +7,7 @@ class DatabaseType(StrEnum):
     POSTGRES = auto()
     REDIS = auto()
     SQLITE = auto()
+    MYSQL = auto()
 
     def get_key(self, name: str | None) -> str | None:
         return None if name == self.value else name

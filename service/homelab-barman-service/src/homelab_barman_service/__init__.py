@@ -41,7 +41,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
             if service_name == "immich":
                 continue
 
-            for name, sources in source_config[DatabaseType.POSTGRES].items():
+            for name, sources in source_config.get(DatabaseType.POSTGRES, {}).items():
                 for version, source in sources.items():
                     full_name = DatabaseType.POSTGRES.get_full_name_version(
                         service_name, name, version

@@ -1,0 +1,27 @@
+database:
+  mysql:
+    images:
+      mysql:
+        "11":
+          repo: mariadb
+          tag: "11.7.2-ubi9"
+    version: 11
+    port: 8080
+    data-dir: /var/lib/mysql
+    env:
+      username: MARIADB_USER
+      password: MARIADB_PASSWORD
+      database: MARIADB_DATABASE
+      data-dir: DATADIR
+    container:
+      healthcheck:
+        tests: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+        interval: 10s
+        retries: 5
+        timeout: 5s
+      tmpfs:
+        - /tmp
+        - /run/mariadb
+      envs:
+        MARIADB_AUTO_UPGRADE: true
+        MARIADB_RANDOM_ROOT_PASSWORD: true
