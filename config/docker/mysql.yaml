@@ -14,6 +14,11 @@ database:
       database: MARIADB_DATABASE
       data-dir: DATADIR
     container:
+      command:
+        [
+          "--character-set-server=utf8mb4",
+          "--collation-server=utf8mb4_unicode_ci",
+        ]
       healthcheck:
         tests: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
         interval: 10s
