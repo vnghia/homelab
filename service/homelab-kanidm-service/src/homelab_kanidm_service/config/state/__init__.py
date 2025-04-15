@@ -27,14 +27,6 @@ class KanidmStateConfig(HomelabBaseModel):
                         ]
                     )
                 }
-                | {
-                    KanidmStatePersonConfig.to_group_name(
-                        member
-                    ): KanidmStateGroupModel(
-                        members=[GlobalExtract.from_simple(member)]
-                    )
-                    for member in list(self.persons.root.keys())
-                }
             ),
             systems=KanidmStateSystemConfig(
                 oauth2=KanidmStateSystemOauthConfig(
