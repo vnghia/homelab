@@ -15,6 +15,7 @@ from homelab_gluetun_service import GluetunService
 from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
+from homelab_pydio_service import PydioService
 from homelab_restic_service import ResticService
 from homelab_secret.resource.keepass import KeepassResource
 from homelab_sqlite_backup_service import SqliteBackupService
@@ -88,6 +89,11 @@ class Homelab:
         )
         self.dagu = DaguService(
             self.docker.services_config.dagu,
+            opts=None,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.pydio = PydioService(
+            self.docker.services_config.pydio,
             opts=None,
             docker_resource_args=self.docker.resource_args,
         )

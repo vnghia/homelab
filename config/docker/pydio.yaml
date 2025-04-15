@@ -1,0 +1,19 @@
+images:
+  remote:
+    pydio:
+      repo: pydio/cells
+      tag: "v5-next"
+      delete-before-replace: true
+volumes:
+  local:
+    pydio-cells: {}
+services:
+  pydio:
+    config: {}
+    databases:
+      postgres:
+        postgres: {}
+    container:
+      image: pydio
+      volumes:
+        pydio-cells: /var/cells

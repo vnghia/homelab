@@ -26,6 +26,7 @@ dependencies = [
     "homelab-gluetun-service",
     "homelab-sqlite-backup-service",
     "homelab-apprise-service",
+    "homelab-pydio-service",
     "pulumi>=3.148.0",
     "json-fix>=1.0.0",
 ]
@@ -69,6 +70,7 @@ homelab-dagu-service = { workspace = true }
 homelab-extra-service = { workspace = true }
 homelab-gluetun-service = { workspace = true }
 homelab-kanidm-service = { workspace = true }
+homelab-pydio-service = { workspace = true }
 homelab-ntfy-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-sqlite-backup-service = { workspace = true }

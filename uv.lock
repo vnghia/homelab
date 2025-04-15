@@ -22,6 +22,7 @@ members = [
     "homelab-network",
     "homelab-ntfy-service",
     "homelab-pydantic",
+    "homelab-pydio-service",
     "homelab-restic-service",
     "homelab-s3",
     "homelab-s3-config",
@@ -428,6 +429,7 @@ dependencies = [
     { name = "homelab-mail" },
     { name = "homelab-network" },
     { name = "homelab-ntfy-service" },
+    { name = "homelab-pydio-service" },
     { name = "homelab-restic-service" },
     { name = "homelab-s3" },
     { name = "homelab-secret" },
@@ -463,6 +465,7 @@ requires-dist = [
     { name = "homelab-mail", editable = "homelab-mail" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-ntfy-service", editable = "service/homelab-ntfy-service" },
+    { name = "homelab-pydio-service", editable = "service/homelab-pydio-service" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-secret", editable = "homelab-secret" },
@@ -867,6 +870,27 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "deepmerge", specifier = ">=2.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-pydio-service"
+version = "0.1.0"
+source = { editable = "service/homelab-pydio-service" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-extra-service" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
