@@ -1,0 +1,10 @@
+images:
+  remote:
+    seafile:
+      repo: seafileltd/seafile-md-server
+      tag: "13.0.1-testing"
+services:
+  seafile:
+    config: {}
+    container:
+      image: seafile
