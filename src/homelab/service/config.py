@@ -23,7 +23,6 @@ class ServiceConfig(ServiceConfigBase):
     ntfy: ServiceWithConfigModel[ExtraConfig]
     apprise: ServiceWithConfigModel[AppriseConfig]
     dagu: ServiceWithConfigModel[DaguConfig]
-    pydio: ServiceWithConfigModel[PydioConfig]
     barman: ServiceWithConfigModel[BarmanConfig]
     sqlite_backup: ServiceWithConfigModel[SqliteBackupConfig]
     restic: ServiceWithConfigModel[ResticConfig]
