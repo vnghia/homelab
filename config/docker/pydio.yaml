@@ -11,20 +11,65 @@ volumes:
     pydio-home: {}
 services:
   pydio:
+    variables:
+      PORT: 8080
     config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              variable: PORT
+      s3:
+        s3: global
       install:
-        dbmanualdsn: "${DB_URL}"
+        dbconnectiontype: manual
+        dbmanualdsn: "{$DB_URL}"
+        dbusedefaults: false
+        frontendapplicationtitle: Sea
+        dsname: S3
+        dstype: S3
+        dss3custom: "{$AWS_ENDPOINT_URL}"
+        dss3customregion: "{$AWS_REGION}"
+        dss3apikey: "{$AWS_ACCESS_KEY_ID}"
+        dss3apisecret: "{$AWS_SECRET_ACCESS_KEY}"
+        dss3bucketdefault:
+        dsfolder:
+        frontendlogin:
+          keepass:
+          info: username
+        frontendpassword:
+          keepass:
+          info: password
+        proxyconfigs:
+          - binds:
+              - extract:
+                  variable: PORT
+                transform:
+                  string:
+                    template: "0.0.0.0:{value}"
+            reverseproxyurl:
+              hostname: pydio
+              public: true
+              scheme: https
       install-path:
         env: CELLS_INSTALL_YAML
     databases:
       postgres:
         postgres: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: pydio
+          public: true
     container:
       image: pydio
       databases:
         - postgres:
           envs:
             env: DB_URL
+      network:
+        default-bridge: true
       volumes:
         pydio-install:
           path: /etc/cells
