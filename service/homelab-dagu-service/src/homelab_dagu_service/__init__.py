@@ -24,6 +24,7 @@ class DaguService(ExtraService[DaguConfig]):
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        self.build()
 
         self.dags_dir_volume_path = ServiceExtractor(
             self.config.dags_dir

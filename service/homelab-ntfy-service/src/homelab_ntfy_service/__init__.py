@@ -21,6 +21,7 @@ class NtfyService(ExtraService[ExtraConfig]):
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        self.build()
 
         self.admin = NtfyUserResource(
             self.ADMIN_ROLE,

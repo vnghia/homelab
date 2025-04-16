@@ -6,14 +6,35 @@ images:
       delete-before-replace: true
 volumes:
   local:
-    pydio-cells: {}
+    pydio-install:
+      backup: false
+    pydio-home: {}
 services:
   pydio:
-    config: {}
+    config:
+      install:
+        dbmanualdsn: "${DB_URL}"
+      install-path:
+        env: CELLS_INSTALL_YAML
     databases:
       postgres:
         postgres: {}
     container:
       image: pydio
+      databases:
+        - postgres:
+          envs:
+            env: DB_URL
       volumes:
-        pydio-cells: /var/cells
+        pydio-install:
+          path: /etc/cells
+          read-only: true
+        pydio-home: /var/cells
+      envs:
+        CELLS_INSTALL_YAML:
+          extract:
+            volume: pydio-install
+          transform:
+            path: install.yaml
+        CELLS_WORKING_DIR:
+          volume: pydio-home

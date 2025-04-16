@@ -880,6 +880,7 @@ source = { editable = "service/homelab-pydio-service" }
 dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extra-service" },
+    { name = "homelab-extract" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
     { name = "pydantic" },
@@ -889,6 +890,7 @@ dependencies = [
 requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
+    { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
