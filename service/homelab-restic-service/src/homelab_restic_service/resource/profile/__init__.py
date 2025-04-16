@@ -82,7 +82,7 @@ class ResticProfileResource(
                         | ({"exclude": exclude} if exclude else {})
                         | {
                             "tag": ",".join(
-                                [self.DOCKER_TAG, self.volume.service] + model.tags
+                                [self.DOCKER_TAG, self.volume.service, *model.tags]
                             ),
                         },
                     }

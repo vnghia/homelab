@@ -8,7 +8,6 @@ from homelab_docker.model.service import ServiceModel, ServiceWithConfigModel
 from homelab_extra_service.config import ExtraConfig
 from homelab_gluetun_service.config import GluetunConfig
 from homelab_kanidm_service.config import KandimConfig
-from homelab_pydio_service.config import PydioConfig
 from homelab_restic_service.config import ResticConfig
 from homelab_sqlite_backup_service.config import SqliteBackupConfig
 from homelab_traefik_service.config import TraefikConfig

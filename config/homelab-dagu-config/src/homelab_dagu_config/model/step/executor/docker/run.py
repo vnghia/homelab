@@ -1,3 +1,5 @@
+import functools
+import operator
 from typing import Any
 
 from homelab_docker.resource.file.dotenv import DotenvFileResource
@@ -44,16 +46,13 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         container_config["labels"] = model.build_labels(None, main_service, build_args)
         container_config["env"] = model.build_envs(main_service, build_args) + (
             sorted(
-                sum(
-                    [
+                functools.reduce(operator.iadd, [
                         [
                             "{key}=${{{key}}}".format(key=key)
                             for key in dotenv.envs.keys()
                         ]
                         for dotenv in dotenvs
-                    ],
-                    [],
-                )
+                    ], [])
             )
             if dotenvs
             else []

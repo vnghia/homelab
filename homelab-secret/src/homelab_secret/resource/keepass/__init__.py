@@ -126,7 +126,7 @@ class Keepass:
                 )
                 self.props.entry_ids.pop(title)
 
-        path = list(self.group.path) + [title]
+        path = [*list(self.group.path), title]
         entry = self.keepass.find_entries(path=path)
         if entry:
             assert isinstance(entry, Entry)
