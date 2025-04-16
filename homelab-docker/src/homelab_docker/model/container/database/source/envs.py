@@ -17,7 +17,17 @@ class ContainerDatabaseSourceEnvs(ContainerDatabaseSourceEnvsBase):
     host: str | None = None
     port: str | None = None
 
+    superuser_password: str | None = None
+
     def to_envs(self, model: ContainerDatabaseSourceModel) -> dict[str, Output[str]]:
+        superuser_password_env = {}
+        if self.superuser_password:
+            if not model.superuser_password:
+                raise ValueError(
+                    "Superuser password is not configured for this database"
+                )
+            superuser_password_env[self.superuser_password] = model.superuser_password
+
         return {
             k: Output.from_input(v)
             for k, v in (
@@ -25,5 +35,6 @@ class ContainerDatabaseSourceEnvs(ContainerDatabaseSourceEnvsBase):
                 | ({self.password: model.password} if self.password else {})
                 | ({self.database: model.database} if self.database else {})
                 | ({self.host: model.host} if self.host else {})
+                | superuser_password_env
             ).items()
         } | ({self.port: Output.from_input(model.port).apply(str)} if self.port else {})

@@ -16,6 +16,8 @@ class ContainerDatabaseSourceModel:
     host: Input[str]
     port: Input[PositiveInt]
 
+    superuser_password: Input[str] | None
+
     def to_url(self, scheme: str, query: dict[str, str] = {}) -> Output[str]:
         return Output.format(
             "{scheme}://{username}:{password}@{host}:{port}/{database}",

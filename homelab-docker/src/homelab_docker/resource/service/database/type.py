@@ -51,6 +51,16 @@ class ServiceDatabaseTypeResource(ComponentResource):
         )
         self.database = self.service_name
 
+        self.superuser_password = None
+        superuser_password_env = {}
+        if self.config.env.superuser_password:
+            self.superuser_password = SecretModel(special=False).build_resource(
+                "superuser-{}".format(self.short_name), opts=self.child_opts
+            )
+            superuser_password_env[self.config.env.superuser_password] = (
+                self.superuser_password.result
+            )
+
         self.containers: dict[PositiveInt, docker.Container] = {}
         self.versions = self.config.get_versions(self.model)
         for version in self.versions:
@@ -108,6 +118,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 main_service=main_service,
                 build_args=ContainerModelBuildArgs(
                     envs={self.config.env.password: self.password.result}
+                    | superuser_password_env
                 ),
             )
             self.containers[version] = container
@@ -138,4 +149,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
             database=self.database,
             host=self.get_full_name_version(version),
             port=self.config.port,
+            superuser_password=self.superuser_password.result
+            if self.superuser_password
+            else None,
         )

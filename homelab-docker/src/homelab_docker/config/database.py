@@ -23,6 +23,8 @@ class DatabaseTypeEnvConfig(HomelabBaseModel):
     database: str
     data_dir: str
 
+    superuser_password: str | None = None
+
 
 class DatabaseTypeConfig(HomelabBaseModel):
     images: dict[str | None, dict[PositiveInt, RemoteImageModel]]
