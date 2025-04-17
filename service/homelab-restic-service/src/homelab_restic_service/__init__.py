@@ -88,7 +88,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 type_=DatabaseType.SQLITE,
                 name="{}-{}".format(name, DatabaseType.SQLITE.value),
             ).build_resource(opts=self.child_opts, restic_service=self)
-            for name in sqlite_backup_service.service_maps.keys()
+            for name in sqlite_backup_service.service_maps
         ]
 
         self.service_database_groups: defaultdict[

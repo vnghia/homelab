@@ -24,12 +24,13 @@ class Config[T: ServiceConfigBase](HomelabBaseModel):
     def get_key(cls, key: str) -> Any:
         data = pulumi.Config().get_object(key, {})
 
-        for file in (
+        for path in (
             (Path(__file__).parent.parent.parent.parent / "config" / key)
             .resolve(True)
             .glob("*.yaml")
         ):
-            data = deepmerge.always_merger.merge(data, yaml.full_load(open(file)))
+            with open(path) as file:
+                data = deepmerge.always_merger.merge(data, yaml.full_load(file))
 
         return deepmerge.always_merger.merge(
             data, pulumi.Config().get_object("stack-{}".format(key), {})

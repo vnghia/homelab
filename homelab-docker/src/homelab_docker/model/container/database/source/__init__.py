@@ -18,7 +18,9 @@ class ContainerDatabaseSourceModel:
 
     superuser_password: Input[str] | None
 
-    def to_url(self, scheme: str, query: dict[str, str] = {}) -> Output[str]:
+    def to_url(self, scheme: str, query: dict[str, str] | None = None) -> Output[str]:
+        if query is None:
+            query = {}
         return Output.format(
             "{scheme}://{username}:{password}@{host}:{port}/{database}",
             scheme=scheme,
@@ -33,7 +35,9 @@ class ContainerDatabaseSourceModel:
             .geturl()
         )
 
-    def to_kv(self, query: dict[str, str] = {}) -> Output[str]:
+    def to_kv(self, query: dict[str, str] | None = None) -> Output[str]:
+        if query is None:
+            query = {}
         return Output.json_dumps(
             {
                 "user": self.username,

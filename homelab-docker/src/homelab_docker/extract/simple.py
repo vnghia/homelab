@@ -16,8 +16,7 @@ class GlobalSimpleSourceExtractor(HomelabRootModel[GlobalExtractSimpleSource]):
         root = self.root.root
         if isinstance(root, bool):
             return str(root).lower()
-        else:
-            return str(root)
+        return str(root)
 
     def extract_path(self, main_service: ServiceResourceBase) -> AbsolutePath:
         return AbsolutePath(PosixPath(self.extract_str(main_service)))

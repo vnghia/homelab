@@ -23,7 +23,7 @@ class TraefikDynamicMiddlwareConfigResource(
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
-    ):
+    ) -> None:
         super().__init__(
             resource_name,
             model,

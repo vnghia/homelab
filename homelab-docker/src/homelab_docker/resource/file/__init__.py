@@ -65,8 +65,7 @@ class FileProviderProps(HomelabBaseModel):
                 )
             )
             return FileDataModel(content="", mode=0o444)
-        else:
-            return handler(data)  # type: ignore[no-any-return]
+        return handler(data)  # type: ignore[no-any-return]
 
     @model_validator(mode="before")
     @classmethod
@@ -103,15 +102,17 @@ class FileVolumeProxy:
     def create_file(cls, props: FileProviderProps) -> None:
         def compress_tar() -> io.BytesIO:
             tar_file = io.BytesIO()
-            with tarfile.open(mode="w|", fileobj=tar_file) as tar:
-                with tempfile.NamedTemporaryFile() as file:
-                    file.write(props.data.content.encode())
-                    file.flush()
-                    tar.add(
-                        file.name,
-                        arcname=props.location.path.root,
-                        filter=lambda x: x.replace(mode=props.data.mode, deep=False),
-                    )
+            with (
+                tarfile.open(mode="w|", fileobj=tar_file) as tar,
+                tempfile.NamedTemporaryFile() as file,
+            ):
+                file.write(props.data.content.encode())
+                file.flush()
+                tar.add(
+                    file.name,
+                    arcname=props.location.path.root,
+                    filter=lambda x: x.replace(mode=props.data.mode, deep=False),
+                )
             tar_file.seek(0)
             return tar_file
 
@@ -129,16 +130,18 @@ class FileVolumeProxy:
                 for chunk in stream:
                     tar_file.write(chunk)
                 tar_file.seek(0)
-                with tarfile.open(mode="r", fileobj=tar_file) as tar:
-                    with tempfile.TemporaryDirectory() as tmpdir:
-                        name = stat["name"]
-                        tar.extract(name, path=tmpdir, set_attrs=False)
-                        return props.__replace__(
-                            data=FileDataModel(
-                                content=open(Path(tmpdir) / name).read(),
-                                mode=stat["mode"],
-                            )
+                with (
+                    tarfile.open(mode="r", fileobj=tar_file) as tar,
+                    tempfile.TemporaryDirectory() as tmpdir,
+                ):
+                    name = stat["name"]
+                    tar.extract(name, path=tmpdir, set_attrs=False)
+                    return props.__replace__(
+                        data=FileDataModel(
+                            content=(Path(tmpdir) / name).read_text(),
+                            mode=stat["mode"],
                         )
+                    )
             except NotFound:
                 return None
 
@@ -195,8 +198,7 @@ class FileProvider(ResourceProvider):
         read_props = FileVolumeProxy.read_file(file_props)
         if read_props:
             return ReadResult(id_=id_, outs=read_props.model_dump(mode="json"))
-        else:
-            return ReadResult(outs={})
+        return ReadResult(outs={})
 
 
 class FileResource(Resource, module="docker", name="File"):
@@ -211,7 +213,7 @@ class FileResource(Resource, module="docker", name="File"):
         content: Input[str],
         mode: int,
         volume_resource: VolumeResource,
-    ):
+    ) -> None:
         self.volume_path = volume_path
         volume = volume_resource[volume_path.volume]
         super().__init__(

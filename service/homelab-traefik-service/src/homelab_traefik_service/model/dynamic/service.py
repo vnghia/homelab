@@ -70,8 +70,7 @@ class TraefikDynamicServiceModelBuilder(HomelabRootModel[TraefikDynamicServiceMo
 
         if isinstance(root, TraefikDynamicServiceFullModel):
             return root
-        else:
-            return None
+        return None
 
     def to_service_name(self, router_name: str) -> str:
         root = self.root.root

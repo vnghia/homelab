@@ -77,8 +77,7 @@ class ContainerModel(HomelabBaseModel):
     def model(self, main_service: ServiceResourceBase) -> ContainerModel:
         if "inherit" in self.model_fields_set:
             return main_service.model[self.inherit].model_merge(self)
-        else:
-            return self
+        return self
 
     def build_command(
         self, main_service: ServiceResourceBase

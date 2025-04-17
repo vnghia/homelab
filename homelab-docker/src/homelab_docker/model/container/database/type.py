@@ -59,5 +59,4 @@ class ContainerDatabaseTypeConfig[T: ContainerDatabaseSourceEnvsBase](HomelabBas
         if self.envs:
             source_model = self.to_database_source_model(database_resource)
             return self.envs.to_envs(source_model)
-        else:
-            return {}
+        return {}

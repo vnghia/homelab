@@ -19,10 +19,9 @@ class BuildImageFullContextModel(
         root = self.root
         if isinstance(root, RelativePath):
             return root.as_posix()
-        elif isinstance(root, AnyHttpUrl):
+        if isinstance(root, AnyHttpUrl):
             return str(root)
-        else:
-            return root.to_location(remote_images)
+        return root.to_location(remote_images)
 
     def to_args(
         self, remote_images: dict[str, docker.RemoteImage]

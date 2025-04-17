@@ -26,7 +26,7 @@ class DockerAcquisConfigResource(
         *,
         opts: ResourceOptions | None,
         crowdsec_service: CrowdsecService,
-    ):
+    ) -> None:
         super().__init__(
             resource_name,
             opts=opts,

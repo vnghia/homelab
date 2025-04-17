@@ -60,8 +60,7 @@ class KeepassEntryProps(HomelabBaseModel):
                 urls=[],
                 apps=[],
             )
-        else:
-            return handler(data)  # type: ignore[no-any-return]
+        return handler(data)  # type: ignore[no-any-return]
 
     @classmethod
     def from_entry(cls, entry: Entry) -> Self:
@@ -103,7 +102,8 @@ class Keepass:
         group = self.keepass.find_groups(
             uuid=UUID(hex=os.environ["KEEPASS_GROUP"]), first=True
         )
-        assert isinstance(group, Group)
+        if not isinstance(group, Group):
+            raise RuntimeError()
         self.group = group
 
         self.props = props
@@ -116,24 +116,22 @@ class Keepass:
         if entry_id:
             entry = self.keepass.find_entries(uuid=entry_id, first=True)
             if entry:
-                assert isinstance(entry, Entry)
+                if not isinstance(entry, Entry):
+                    raise RuntimeError()
                 return entry
-            else:
-                pulumi.warn(
-                    "Could not find entry with title {} and id {}".format(
-                        title, entry_id
-                    )
-                )
-                self.props.entry_ids.pop(title)
+            pulumi.warn(
+                "Could not find entry with title {} and id {}".format(title, entry_id)
+            )
+            self.props.entry_ids.pop(title)
 
         path = [*list(self.group.path), title]
         entry = self.keepass.find_entries(path=path)
         if entry:
-            assert isinstance(entry, Entry)
+            if not isinstance(entry, Entry):
+                raise RuntimeError()
             self.props.entry_ids[title] = entry.uuid
             return entry
-        else:
-            return None
+        return None
 
     def add_entry(self, title: str, props: KeepassEntryProps) -> None:
         entry = self.keepass.add_entry(
@@ -157,8 +155,8 @@ class Keepass:
         entry.url = str(props.hostname)
 
         delete_keys = []
-        for key in entry.custom_properties.keys():
-            key = str(key)
+        for raw_key in entry.custom_properties:
+            key = str(raw_key)
             match = props.URL_PATTERN.match(key)
             if match:
                 index = int(match[1])
@@ -190,7 +188,7 @@ class Keepass:
                 self.keepass.delete_entry(entry)
 
     def read_props(self) -> KeepassProviderProps:
-        for title in self.props.entries.keys():
+        for title in self.props.entries:
             self.find_entry(title)
         return self.props
 
@@ -246,7 +244,7 @@ class KeepassResource(Resource, module="keepass", name="Keepass"):
     def __init__(
         self,
         keepasses: dict[str, KeepassEntryResource],
-    ):
+    ) -> None:
         super().__init__(
             KeepassProvider(),
             KeepassProvider.RESOURCE_ID,

@@ -104,7 +104,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
                     x[1]
                 )
             )
-            for system in self.config.state.systems.oauth2.root.keys()
+            for system in self.config.state.systems.oauth2.root
         }
         for system, secret in self.exports.items():
             pulumi.export("kanidm.{}.oauth".format(system), secret)

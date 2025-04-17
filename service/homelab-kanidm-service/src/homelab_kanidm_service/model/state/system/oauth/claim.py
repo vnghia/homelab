@@ -52,7 +52,7 @@ class KanidmStateSystemOauthClaimModel(
                             KanidmStatePersonConfig.to_group_name(person): [
                                 GlobalExtract.from_simple(person)
                             ]
-                            for person in kanidm_state.persons.root.keys()
+                            for person in kanidm_state.persons.root
                         }
                     )
         else:

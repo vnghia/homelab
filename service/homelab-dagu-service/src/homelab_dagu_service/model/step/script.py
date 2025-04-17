@@ -31,5 +31,4 @@ class DaguDagStepScriptModelBuilder(HomelabRootModel[DaguDagStepScriptModel]):
                 params,
                 main_service,
             )
-        else:
-            return GlobalExtractor(root).extract_str(main_service, None)
+        return GlobalExtractor(root).extract_str(main_service, None)

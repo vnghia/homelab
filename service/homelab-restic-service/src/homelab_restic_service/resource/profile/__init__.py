@@ -27,7 +27,7 @@ class ResticProfileResource(
         *,
         opts: ResourceOptions | None,
         restic_service: ResticService,
-    ):
+    ) -> None:
         self.volume = model.volume
         self.backup_config = self.volume.model.backup
         if not self.backup_config:

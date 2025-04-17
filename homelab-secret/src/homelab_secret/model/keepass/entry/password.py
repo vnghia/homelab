@@ -11,5 +11,4 @@ class KeepassEntryPasswordModel(HomelabRootModel[SecretModel | str]):
         root = self.root
         if isinstance(root, SecretModel):
             return root.build_resource("password", opts).result
-        else:
-            return Output.from_input(root)
+        return Output.from_input(root)

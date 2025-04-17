@@ -26,7 +26,7 @@ class ResticGlobalProfileResource(
         opts: ResourceOptions | None,
         hostname: str,
         restic_service: ResticService,
-    ):
+    ) -> None:
         restic_config = restic_service.config
         restic_model = restic_service.model[restic_config.profile_dir.container]
 

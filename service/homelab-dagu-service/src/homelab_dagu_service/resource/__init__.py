@@ -25,7 +25,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
-    ):
+    ) -> None:
         self.model = model.root
         resource_name = resource_name or main_service.name()
         self.path = self.model.path or resource_name

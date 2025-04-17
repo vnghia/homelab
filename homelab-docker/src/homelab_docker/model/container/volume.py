@@ -46,8 +46,7 @@ class ContainerVolumeConfig(
         root = self.root
         if isinstance(root, GlobalExtract):
             return GlobalExtractor(root).extract_path(main_service, model)
-        else:
-            return root.to_path(main_service, model)
+        return root.to_path(main_service, model)
 
     def to_args(
         self,
@@ -63,8 +62,7 @@ class ContainerVolumeConfig(
                 .as_posix(),
                 volume_name=volume_name,
             )
-        else:
-            return root.to_args(volume_name, main_service, model)
+        return root.to_args(volume_name, main_service, model)
 
 
 class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]]):

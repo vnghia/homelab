@@ -38,7 +38,7 @@ class DotenvFileResource(
         volume_path: ContainerVolumePath,
         envs: Mapping[str, Input[str]],
         volume_resource: VolumeResource,
-    ):
+    ) -> None:
         self.envs = envs
         super().__init__(
             resource_name,

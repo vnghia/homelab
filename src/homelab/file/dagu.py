@@ -13,20 +13,21 @@ class DaguFile(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         for service in ServiceWithConfigResourceBase.SERVICES.values():
-            if isinstance(service, ServiceWithConfigResourceBase) and isinstance(
-                service.config, DaguServiceConfigBase
+            if (
+                isinstance(service, ServiceWithConfigResourceBase)
+                and isinstance(service.config, DaguServiceConfigBase)
+                and service.config.dagu
             ):
-                if service.config.dagu:
-                    service_opts = ResourceOptions(
-                        parent=ComponentResource(
-                            service.name(), service.name(), None, opts=self.child_opts
-                        )
+                service_opts = ResourceOptions(
+                    parent=ComponentResource(
+                        service.name(), service.name(), None, opts=self.child_opts
                     )
+                )
 
-                    DaguServiceConfigBuilder(service.config.dagu).build_resources(
-                        opts=service_opts,
-                        main_service=service,
-                        dagu_service=dagu_service,
-                    )
+                DaguServiceConfigBuilder(service.config.dagu).build_resources(
+                    opts=service_opts,
+                    main_service=service,
+                    dagu_service=dagu_service,
+                )
 
         self.register_outputs({})

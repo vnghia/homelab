@@ -49,7 +49,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
                 functools.reduce(operator.iadd, [
                         [
                             "{key}=${{{key}}}".format(key=key)
-                            for key in dotenv.envs.keys()
+                            for key in dotenv.envs
                         ]
                         for dotenv in dotenvs
                     ], [])

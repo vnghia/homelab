@@ -72,56 +72,52 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
 
         if root.docker:
             executor_config = root.docker.executor
-            if isinstance(executor_config, DaguDagDockerRunGroupConfig):
-                if executor_config.debug:
-                    DaguDagModelBuilder(
-                        DaguDagModel(
-                            dotenvs=root.docker.dag.dotenvs,
-                            name=self.DEBUG_DAG_NAME,
-                            path="{}-{}".format(
-                                main_service.name(), self.DEBUG_DAG_NAME
-                            ),
-                            tags=[self.DEBUG_DAG_NAME],
-                            params=DaguDagParamsModel(
-                                types={DaguDagParamType.DEBUG: None}
-                            ),
-                            steps=[
-                                DaguDagStepModel(
-                                    name=self.DEBUG_DAG_NAME,
-                                    run=DaguDagStepRunModel(
-                                        DaguDagStepRunCommandModel(
-                                            [
-                                                DaguDagStepRunCommandFullModel(
-                                                    GlobalExtract.from_simple("sleep")
-                                                ),
-                                                DaguDagStepRunCommandFullModel(
-                                                    DaguDagStepRunCommandParamModel(
-                                                        param=DaguDagStepRunCommandParamTypeModel(
-                                                            DaguDagStepRunCommandParamTypeFullModel(
-                                                                type=DaguDagParamType.DEBUG
-                                                            )
+            if (
+                isinstance(executor_config, DaguDagDockerRunGroupConfig)
+                and executor_config.debug
+            ):
+                DaguDagModelBuilder(
+                    DaguDagModel(
+                        dotenvs=root.docker.dag.dotenvs,
+                        name=self.DEBUG_DAG_NAME,
+                        path="{}-{}".format(main_service.name(), self.DEBUG_DAG_NAME),
+                        tags=[self.DEBUG_DAG_NAME],
+                        params=DaguDagParamsModel(types={DaguDagParamType.DEBUG: None}),
+                        steps=[
+                            DaguDagStepModel(
+                                name=self.DEBUG_DAG_NAME,
+                                run=DaguDagStepRunModel(
+                                    DaguDagStepRunCommandModel(
+                                        [
+                                            DaguDagStepRunCommandFullModel(
+                                                GlobalExtract.from_simple("sleep")
+                                            ),
+                                            DaguDagStepRunCommandFullModel(
+                                                DaguDagStepRunCommandParamModel(
+                                                    param=DaguDagStepRunCommandParamTypeModel(
+                                                        DaguDagStepRunCommandParamTypeFullModel(
+                                                            type=DaguDagParamType.DEBUG
                                                         )
                                                     )
-                                                ),
-                                            ]
-                                        )
-                                    ),
-                                    executor=DaguDagStepExecutorModel(
-                                        DaguDagStepDockerExecutorModel(
-                                            executor_config.run.__replace__(
-                                                entrypoint=[]
-                                            )
-                                        )
-                                    ),
-                                )
-                            ],
-                        )
-                    ).build_resource(
-                        self.DEBUG_DAG_NAME,
-                        opts=opts,
-                        main_service=main_service,
-                        dagu_service=dagu_service,
+                                                )
+                                            ),
+                                        ]
+                                    )
+                                ),
+                                executor=DaguDagStepExecutorModel(
+                                    DaguDagStepDockerExecutorModel(
+                                        executor_config.run.__replace__(entrypoint=[])
+                                    )
+                                ),
+                            )
+                        ],
                     )
+                ).build_resource(
+                    self.DEBUG_DAG_NAME,
+                    opts=opts,
+                    main_service=main_service,
+                    dagu_service=dagu_service,
+                )
 
             return {
                 name: DaguDagModelBuilder(model).build_resource(
@@ -134,5 +130,4 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                     main_service=main_service
                 ).items()
             }
-        else:
-            return {}
+        return {}

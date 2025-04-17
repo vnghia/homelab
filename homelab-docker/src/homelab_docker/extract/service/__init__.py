@@ -41,12 +41,11 @@ class ServiceSourceExtractor(HomelabRootModel[ServiceExtractSource]):
         root = self.root.root
         if isinstance(root, ServiceExtractExportSource):
             return ServiceExportSourceExtractor(root)
-        elif isinstance(root, ServiceExtractKeepassSource):
+        if isinstance(root, ServiceExtractKeepassSource):
             return ServiceKeepassSourceExtractor(root)
-        elif isinstance(root, ServiceExtractSecretSource):
+        if isinstance(root, ServiceExtractSecretSource):
             return ServiceSecretSourceExtractor(root)
-        else:
-            return ServiceVariableSourceExtractor(root)
+        return ServiceVariableSourceExtractor(root)
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
@@ -126,10 +125,9 @@ class ServiceExtractor(HomelabRootModel[ServiceExtract]):
         root = self.root.root
         if isinstance(root, ServiceExtractSource):
             return ServiceSourceExtractor(root)
-        elif isinstance(root, ServiceExtractFull):
+        if isinstance(root, ServiceExtractFull):
             return ServiceFullExtractor(root)
-        else:
-            return ContainerExtractor(root)
+        return ContainerExtractor(root)
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None

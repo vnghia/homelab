@@ -30,7 +30,6 @@ class KeepassEntryUsernameModel(
         root = self.root
         if isinstance(root, KeepassEntryUsernameEmailModel):
             return root.to_email(opts=opts, hostnames=hostnames)
-        elif isinstance(root, SecretModel):
+        if isinstance(root, SecretModel):
             return root.build_resource("username", opts).result
-        else:
-            return Output.from_input(root)
+        return Output.from_input(root)

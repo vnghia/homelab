@@ -40,8 +40,7 @@ class DaguDagParamsModel(HomelabBaseModel):
             result = self.PARAM_VALUE[root.type][0]
             if not root.dollar:
                 return result
-            else:
-                root = result
+            root = result
         return "${{{}}}".format(root)
 
     def check_key(
@@ -53,9 +52,8 @@ class DaguDagParamsModel(HomelabBaseModel):
         if isinstance(root, DaguDagStepRunCommandParamTypeFullModel):
             self.types[root.type]
             return key
-        else:
-            self.main[root]
-            return key
+        self.main[root]
+        return key
 
     def to_key_command(self, key: DaguDagStepRunCommandParamTypeModel) -> str:
         return self.to_key_command_unchecked(self.check_key(key))

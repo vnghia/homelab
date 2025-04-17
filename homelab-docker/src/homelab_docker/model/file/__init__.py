@@ -35,5 +35,4 @@ class FileDataModel(HomelabBaseModel):
                 )
             )
             return ""
-        else:
-            return handler(data)  # type: ignore[no-any-return]
+        return handler(data)  # type: ignore[no-any-return]

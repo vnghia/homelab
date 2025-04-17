@@ -67,7 +67,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         pre_volume_backups = []
 
         backup_configs = {}
-        for service in self.SERVICES.keys():
+        for service in self.SERVICES:
             service_model = self.DEFAULT_BACKUP_MODEL.model_copy()
             if service in restic_service.service_groups:
                 volume_model = BackupServiceVolumeModel()
@@ -324,7 +324,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     ),
                     depends=[
                         self.get_backup_database_step(type_)
-                        for type_ in self.BACKUP_DATABASE_SUBDAGS.keys()
+                        for type_ in self.BACKUP_DATABASE_SUBDAGS
                     ],
                     preconditions=[
                         DaguDagStepPreConditionModel(
@@ -367,7 +367,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                         )
                     ),
                 )
-                for service in self.backup_configs.root.keys()
+                for service in self.backup_configs.root
             ],
             tags=[self.name()],
         )

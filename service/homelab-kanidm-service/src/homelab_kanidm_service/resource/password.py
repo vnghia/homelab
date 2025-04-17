@@ -59,7 +59,7 @@ class KanidmPasswordResource(Resource, module="kanidm", name="Password"):
         opts: ResourceOptions | None,
         container: Input[str],
         account: str,
-    ):
+    ) -> None:
         super().__init__(
             KanidmPasswordProvider(),
             account,

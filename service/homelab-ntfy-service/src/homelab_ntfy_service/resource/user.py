@@ -52,8 +52,7 @@ class NtfyUserProviderProps(HomelabBaseModel):
         if isinstance(data, pulumi.output.Unknown):
             pulumi.log.warn("Pulumi unknown output encountered: {}".format(data))
             return ""
-        else:
-            return data
+        return data
 
     @model_validator(mode="before")
     @classmethod
@@ -87,23 +86,23 @@ class NtfyUserProviderProps(HomelabBaseModel):
         result = result.strip()
         if result == "user {} does not exist".format(self.username):
             return None
-        else:
-            lines = result.splitlines()
-            match_user = self.USER_PATTERN.match(lines[0])
-            if not match_user:
-                raise RuntimeError("Could not extract user information")
-            assert match_user[1] == self.username
-            user = self.__replace__(role=match_user[2])
+        lines = result.splitlines()
+        match_user = self.USER_PATTERN.match(lines[0])
+        if not match_user:
+            raise RuntimeError("Could not extract user information")
+        if match_user[1] != self.username:
+            raise RuntimeError()
+        user = self.__replace__(role=match_user[2])
 
-            acls: dict[str, str] = {}
-            for line in lines[1:]:
-                match_acl = NtfyUserAclConfig.ACL_PATTERN.match(line)
-                if match_acl:
-                    acls[match_acl[2]] = match_acl[1]
-            user = user.__replace__(acl=NtfyUserAclConfig.model_validate(acls))
+        acls: dict[str, str] = {}
+        for line in lines[1:]:
+            match_acl = NtfyUserAclConfig.ACL_PATTERN.match(line)
+            if match_acl:
+                acls[match_acl[2]] = match_acl[1]
+        user = user.__replace__(acl=NtfyUserAclConfig.model_validate(acls))
 
-            user.change_pass()
-            return user
+        user.change_pass()
+        return user
 
     def add(self) -> None:
         self.get_container().exec_run(
@@ -177,8 +176,7 @@ class NtfyUserProvider(ResourceProvider):
         user = user_props.get_user()
         if user:
             return ReadResult(id_=id_, outs=user.model_dump(mode="json"))
-        else:
-            return ReadResult(outs={})
+        return ReadResult(outs={})
 
 
 class NtfyUserResource(Resource, module="ntfy", name="User"):
@@ -194,7 +192,7 @@ class NtfyUserResource(Resource, module="ntfy", name="User"):
         password: Input[str],
         role: Input[str],
         acl: NtfyUserAclConfig,
-    ):
+    ) -> None:
         super().__init__(
             NtfyUserProvider(),
             resource_name,

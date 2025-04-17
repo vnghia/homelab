@@ -49,18 +49,17 @@ class GlobalSourceExtractor(HomelabRootModel[GlobalExtractSource]):
         root = self.root.root
         if isinstance(root, GlobalExtractDockerSource):
             return GlobalDockerSourceExtractor(root)
-        elif isinstance(root, GlobalExtractHostnameSource):
+        if isinstance(root, GlobalExtractHostnameSource):
             return GlobalHostnameSourceExtractor(root)
-        elif isinstance(root, GlobalExtractIdSource):
+        if isinstance(root, GlobalExtractIdSource):
             return GlobalIdSourceExtractor(root)
-        elif isinstance(root, GlobalExtractJsonSource):
+        if isinstance(root, GlobalExtractJsonSource):
             return GlobalJsonSourceExtractor(root)
-        elif isinstance(root, GlobalExtractNameSource):
+        if isinstance(root, GlobalExtractNameSource):
             return GlobalNameSourceExtractor(root)
-        elif isinstance(root, GlobalExtractSimpleSource):
+        if isinstance(root, GlobalExtractSimpleSource):
             return GlobalSimpleSourceExtractor(root)
-        else:
-            return GlobalVpnSourceExtractor(root)
+        return GlobalVpnSourceExtractor(root)
 
     def extract_str(
         self, main_service: ServiceResourceBase, _model: ContainerModel | None
@@ -158,12 +157,11 @@ class GlobalExtractor(HomelabRootModel[GlobalExtract]):
         root = self.root.root
         if isinstance(root, GlobalExtractSource):
             return GlobalSourceExtractor(root)
-        elif isinstance(root, GlobalExtractFull):
+        if isinstance(root, GlobalExtractFull):
             return GlobalFullExtractor(root)
-        elif isinstance(root, ServiceExtractSource):
+        if isinstance(root, ServiceExtractSource):
             return ServiceSourceExtractor(root)
-        else:
-            return ContainerExtractor(root)
+        return ContainerExtractor(root)
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
@@ -172,10 +170,9 @@ class GlobalExtractor(HomelabRootModel[GlobalExtract]):
 
         if isinstance(root, GlobalExtractFull):
             return GlobalFullExtractor(root).extract_str(main_service, model)
-        else:
-            return ExtractTransformer(ExtractTransform()).transform_string(
-                self.extractor.extract_str(main_service, model)
-            )
+        return ExtractTransformer(ExtractTransform()).transform_string(
+            self.extractor.extract_str(main_service, model)
+        )
 
     def extract_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None

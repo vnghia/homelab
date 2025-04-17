@@ -17,8 +17,7 @@ class RelativePath(HomelabRootModel[PosixPath]):
     def __truediv__(self, other: str | Self) -> Self:
         if isinstance(other, str):
             return self / self.__class__(PosixPath(other))
-        else:
-            return self.__class__(self.root / other.root)
+        return self.__class__(self.root / other.root)
 
     def as_posix(self) -> str:
         return self.root.as_posix()
@@ -45,8 +44,7 @@ class AbsolutePath(HomelabRootModel[PosixPath]):
     def __truediv__(self, other: str | RelativePath) -> Self:
         if isinstance(other, str):
             return self / RelativePath(PosixPath(other))
-        else:
-            return self.__class__(self.root / other.root)
+        return self.__class__(self.root / other.root)
 
     def as_posix(self) -> str:
         return self.root.as_posix()

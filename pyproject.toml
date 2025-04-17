@@ -95,8 +95,26 @@ module = ["json_fix.*", "pykeepass.*"]
 ignore_missing_imports = true
 
 [tool.ruff.lint]
-extend-select = ["I", "PERF", "TID251", "RUF"]
-ignore = ["RUF012"]
+extend-select = [
+    "ANN",
+    "B",
+    "C4",
+    "I",
+    "ISC",
+    "PIE",
+    "PERF",
+    "F",
+    "PL",
+    "FURB",
+    "Q",
+    "RET",
+    "SIM",
+    "TID251",
+    "T20",
+    "RUF",
+    "S",
+]
+ignore = ["ANN401", "PLC0414", "PLR0913", "RUF012", "S603", "S610", "PLR0911"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "pydantic.BaseModel".msg = "Use homelab_pydantic.HomelabBaseModel instead"

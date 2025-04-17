@@ -22,5 +22,4 @@ class PlatformString(HomelabRootModel[str | PlatformFullString]):
         root = self.root
         if isinstance(root, PlatformFullString):
             return root.to_str(platform)
-        else:
-            return root
+        return root

@@ -17,6 +17,8 @@ class ResticRepoProviderProps(HomelabBaseModel):
 
 
 class ResticRepo:
+    NOT_INITIALIZED_YET = 10
+
     @classmethod
     def exist(cls, props: ResticRepoProviderProps) -> bool:
         # https://restic.readthedocs.io/en/stable/075_scripting.html#check-if-a-repository-is-already-initialized
@@ -32,10 +34,9 @@ class ResticRepo:
             )
             return True
         except ContainerError as error:
-            if error.exit_status == 10:
+            if error.exit_status == cls.NOT_INITIALIZED_YET:
                 return False
-            else:
-                raise error
+            raise error
 
     @classmethod
     def init(cls, props: ResticRepoProviderProps) -> None:
@@ -70,7 +71,7 @@ class ResticRepoResource(Resource, module="restic", name="Repo"):
         opts: ResourceOptions | None,
         image: Output[str],
         envs: dict[str, Output[str]],
-    ):
+    ) -> None:
         super().__init__(
             ResticRepoProvider(), resource_name, {"image": image, "envs": envs}, opts
         )

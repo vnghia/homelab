@@ -31,5 +31,4 @@ class DaguDagStepPreConditionModel(
         root = self.root
         if isinstance(root, DaguDagStepPreConditionFullModel):
             return root.to_step(params)
-        else:
-            return root
+        return root

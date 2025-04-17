@@ -28,7 +28,7 @@ class BarmanConfigFileResource(
         opts: ResourceOptions | None,
         database_source_model: ContainerDatabaseSourceModel,
         barman_service: BarmanService,
-    ):
+    ) -> None:
         barman_config = barman_service.config
 
         super().__init__(

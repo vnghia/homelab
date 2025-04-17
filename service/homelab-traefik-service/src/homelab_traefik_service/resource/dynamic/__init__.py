@@ -29,7 +29,7 @@ class TraefikDynamicConfigResource(
         opts: ResourceOptions | None,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
-    ):
+    ) -> None:
         self.name = main_service.add_service_name(model.root.name)
         super().__init__(
             resource_name or self.name,

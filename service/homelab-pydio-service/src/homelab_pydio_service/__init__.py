@@ -28,7 +28,7 @@ class PydioInstallConfigResource(
         opts: ResourceOptions | None,
         config: PydioConfig,
         pydio_service: PydioService,
-    ):
+    ) -> None:
         super().__init__(
             resource_name,
             opts=opts,

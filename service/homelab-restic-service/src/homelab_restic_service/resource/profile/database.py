@@ -25,7 +25,7 @@ class ResticProfileDatabaseResource(
         *,
         opts: ResourceOptions | None,
         restic_service: ResticService,
-    ):
+    ) -> None:
         self.type_ = model.type_
 
         super().__init__(

@@ -22,8 +22,7 @@ class ResticVolumeConfig(HomelabBaseModel):
     def path(self) -> AbsolutePath:
         if self.relative:
             return self.MOUNT_PATH / self.relative
-        else:
-            return self.MOUNT_PATH / self.service / self.name
+        return self.MOUNT_PATH / self.service / self.name
 
     @property
     def container_volume_config(self) -> ContainerVolumeConfig:

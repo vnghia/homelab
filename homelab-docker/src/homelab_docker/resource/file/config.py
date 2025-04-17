@@ -71,8 +71,7 @@ class IniDumper(ConfigDumper[T]):
         parser.write(config_content)
         config_content.seek(0)
 
-        content = config_content.read()
-        return content
+        return config_content.read()
 
     @staticmethod
     def suffix() -> str:
@@ -108,7 +107,7 @@ class ConfigFileResource(Generic[T], FileResource):
         volume_path: ContainerVolumePath,
         data: Mapping[str, Any],
         volume_resource: VolumeResource,
-    ):
+    ) -> None:
         super().__init__(
             resource_name,
             opts=opts,

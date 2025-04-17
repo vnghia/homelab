@@ -31,8 +31,7 @@ class TraefikDynamicMiddlewareBuildModelBuilder(
         if root.plugin:
             traefik_service.config.plugins[root.plugin]
             return {name: {"plugin": {root.plugin: section}}}
-        else:
-            return {name: section}
+        return {name: section}
 
     def to_data(
         self, main_service: ServiceResourceBase, traefik_service: TraefikService

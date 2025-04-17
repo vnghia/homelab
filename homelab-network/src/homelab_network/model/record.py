@@ -1,10 +1,14 @@
+from typing import ClassVar
+
 import pulumi_cloudflare as cloudflare
 from homelab_pydantic import HomelabRootModel
 from pulumi import Input, Output, ResourceOptions
-from pydantic import IPvAnyAddress
+from pydantic import IPvAnyAddress, PositiveInt
 
 
 class RecordModel(HomelabRootModel[str]):
+    IPV4_VERSION: ClassVar[PositiveInt] = 4
+
     def build_resource(
         self,
         resource_name: str,
@@ -13,7 +17,9 @@ class RecordModel(HomelabRootModel[str]):
         zone_id: str,
         ip: Input[IPvAnyAddress],
     ) -> cloudflare.Record:
-        type_ = Output.from_input(ip).apply(lambda x: "A" if x.version == 4 else "AAAA")
+        type_ = Output.from_input(ip).apply(
+            lambda x: "A" if x.version == self.IPV4_VERSION else "AAAA"
+        )
         return cloudflare.Record(
             resource_name,
             opts=opts,

@@ -11,7 +11,6 @@ from pydantic import ConfigDict, Field
 
 
 class CertificateResolverTailscaleStruct(HomelabBaseModel):
-    pass
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -43,7 +42,6 @@ class AcmePropagation(HomelabBaseModel):
 
 
 class AcmeTLSChallenge(HomelabBaseModel):
-    pass
     model_config = ConfigDict(
         extra="forbid",
     )

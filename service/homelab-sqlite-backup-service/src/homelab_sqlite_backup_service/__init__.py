@@ -34,26 +34,28 @@ class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
             name,
             volume_model,
         ) in self.docker_resource_args.config.volumes.local.items():
-            if isinstance(volume_model.backup, BackupVolumeConfig):
-                if len(volume_model.backup.sqlites) > 0:
-                    service = volume_model.get_service(name)
+            if (
+                isinstance(volume_model.backup, BackupVolumeConfig)
+                and len(volume_model.backup.sqlites) > 0
+            ):
+                service = volume_model.get_service(name)
 
-                    self.service_maps[name] = []
-                    self.volume_configs[name] = ContainerVolumeConfig(
-                        GlobalExtract.from_simple(self.get_source_path(name).as_posix())
+                self.service_maps[name] = []
+                self.volume_configs[name] = ContainerVolumeConfig(
+                    GlobalExtract.from_simple(self.get_source_path(name).as_posix())
+                )
+
+                for sqlite in volume_model.backup.sqlites:
+                    volume_path = GlobalExtractor(sqlite).extract_volume_path(
+                        self.SERVICES[service], None
                     )
-
-                    for sqlite in volume_model.backup.sqlites:
-                        volume_path = GlobalExtractor(sqlite).extract_volume_path(
-                            self.SERVICES[service], None
-                        )
-                        if volume_path.volume != name:
-                            raise ValueError(
-                                "Got different name for volume ({} vs {})".format(
-                                    volume_path.volume, name
-                                )
+                    if volume_path.volume != name:
+                        raise ValueError(
+                            "Got different name for volume ({} vs {})".format(
+                                volume_path.volume, name
                             )
-                        self.service_maps[name].append(volume_path.path.as_posix())
+                        )
+                    self.service_maps[name].append(volume_path.path.as_posix())
 
         self.options[None].envs = {
             "HOMELAB_{}_SQLITE".format(name.upper().replace("-", "_")): ",".join(paths)
