@@ -8,6 +8,7 @@ database:
     version: 11
     port: 8080
     data-dir: /var/lib/mysql
+    initdb-dir: /docker-entrypoint-initdb.d
     env:
       username: MARIADB_USER
       password: MARIADB_PASSWORD

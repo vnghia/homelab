@@ -33,6 +33,7 @@ class DatabaseTypeConfig(HomelabBaseModel):
 
     data_dir: AbsolutePath
     tmp_dir: AbsolutePath | None = None
+    initdb_dir: AbsolutePath | None = None
 
     env: DatabaseTypeEnvConfig
     container: ContainerModel

@@ -22,6 +22,9 @@ class DatabaseType(StrEnum):
     def get_full_name(self, service_name: str, name: str | None) -> str:
         return "{}-{}".format(service_name, self.get_short_name(name))
 
+    def get_full_name_initdb(self, service_name: str, name: str | None) -> str:
+        return "{}-initdb".format(self.get_full_name(service_name, name))
+
     def get_full_name_version(
         self, service_name: str, name: str | None, version: PositiveInt
     ) -> str:

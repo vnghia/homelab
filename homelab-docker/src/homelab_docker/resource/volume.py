@@ -32,6 +32,19 @@ class VolumeResource(ComponentResource):
             for type_, database_config in database.root.items():
                 for name, model in database_config.items():
                     type_config = config.database.root[type_]
+
+                    if type_config.initdb_dir:
+                        full_initdb_name = type_.get_full_name_initdb(
+                            service_name, name
+                        )
+                        self.volumes[full_initdb_name] = (
+                            LocalVolumeModel().build_resource(
+                                full_initdb_name,
+                                opts=self.child_opts,
+                                project_labels=project_labels,
+                            )
+                        )
+
                     for version in type_config.get_versions(model):
                         full_name = type_.get_full_name_version(
                             service_name, name, version

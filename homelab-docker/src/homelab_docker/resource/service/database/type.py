@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import typing
+from pathlib import PosixPath
 
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
 from homelab_extract.container import ContainerExtract
 from homelab_extract.container.volume import ContainerExtractVolumeSource
+from homelab_pydantic import RelativePath
 from homelab_secret.model import SecretModel
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
@@ -16,10 +18,13 @@ from ....model.container.database.source import ContainerDatabaseSourceModel
 from ....model.container.image import ContainerImageModelConfig
 from ....model.container.volume import (
     ContainerVolumeConfig,
+    ContainerVolumeFullConfig,
     ContainerVolumesConfig,
 )
+from ....model.container.volume_path import ContainerVolumePath
 from ....model.database.type import DatabaseType
 from ....model.service.database import ServiceDatabaseModel
+from ...file import FileResource
 
 if typing.TYPE_CHECKING:
     from ...service import ServiceResourceBase
@@ -61,8 +66,23 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 self.superuser_password.result
             )
 
+        self.scripts = [
+            FileResource(
+                script.path,
+                opts=self.child_opts,
+                volume_path=ContainerVolumePath(
+                    volume=self.full_name_initdb,
+                    path=RelativePath(PosixPath("{:02}-{}".format(i, script.path))),
+                ),
+                content=script.content,
+                mode=0o777,
+                volume_resource=main_service.docker_resource_args.volume,
+            )
+            for i, script in enumerate(model.scripts)
+        ]
+
         self.containers: dict[PositiveInt, docker.Container] = {}
-        self.versions = self.config.get_versions(self.model)
+        self.versions: list[PositiveInt] = self.config.get_versions(self.model)
         for version in self.versions:
             full_name = self.get_full_name_version(version)
             container = self.config.container.model_merge(
@@ -89,6 +109,20 @@ class ServiceDatabaseTypeResource(ComponentResource):
                                 )
                             }
                             if self.config.tmp_dir
+                            else {}
+                        )
+                        | (
+                            {
+                                self.full_name_initdb: ContainerVolumeConfig(
+                                    ContainerVolumeFullConfig(
+                                        path=GlobalExtract.from_simple(
+                                            self.config.initdb_dir.as_posix()
+                                        ),
+                                        read_only=True,
+                                    )
+                                )
+                            }
+                            if self.config.initdb_dir
                             else {}
                         )
                     ),
@@ -118,7 +152,8 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 main_service=main_service,
                 build_args=ContainerModelBuildArgs(
                     envs={self.config.env.password: self.password.result}
-                    | superuser_password_env
+                    | superuser_password_env,
+                    files=self.scripts,
                 ),
             )
             self.containers[version] = container
@@ -128,6 +163,10 @@ class ServiceDatabaseTypeResource(ComponentResource):
     @property
     def short_name(self) -> str:
         return self.type.get_short_name(self.name)
+
+    @property
+    def full_name_initdb(self) -> str:
+        return self.type.get_full_name_initdb(self.service_name, self.name)
 
     def get_short_name_version(self, version: PositiveInt) -> str:
         return self.type.get_short_name_version(self.name, version)
