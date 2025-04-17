@@ -6,5 +6,10 @@ images:
 services:
   seafile:
     config: {}
+    databases:
+      mysql:
+        mysql: {}
+      redis:
+        redis: {}
     container:
       image: seafile
