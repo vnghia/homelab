@@ -26,6 +26,7 @@ members = [
     "homelab-restic-service",
     "homelab-s3",
     "homelab-s3-config",
+    "homelab-seafile-service",
     "homelab-secret",
     "homelab-sqlite-backup-service",
     "homelab-tailscale-service",
@@ -432,6 +433,7 @@ dependencies = [
     { name = "homelab-pydio-service" },
     { name = "homelab-restic-service" },
     { name = "homelab-s3" },
+    { name = "homelab-seafile-service" },
     { name = "homelab-secret" },
     { name = "homelab-sqlite-backup-service" },
     { name = "homelab-tailscale-service" },
@@ -468,6 +470,7 @@ requires-dist = [
     { name = "homelab-pydio-service", editable = "service/homelab-pydio-service" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-s3", editable = "homelab-s3" },
+    { name = "homelab-seafile-service", editable = "service/homelab-seafile-service" },
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "homelab-sqlite-backup-service", editable = "service/homelab-sqlite-backup-service" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
@@ -954,6 +957,29 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-seafile-service"
+version = "0.1.0"
+source = { editable = "service/homelab-seafile-service" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-extra-service" },
+    { name = "homelab-extract" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
+    { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

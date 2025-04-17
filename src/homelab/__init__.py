@@ -15,6 +15,7 @@ from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
+from homelab_seafile_service import SeafileService
 from homelab_secret.resource.keepass import KeepassResource
 from homelab_sqlite_backup_service import SqliteBackupService
 from homelab_tailscale_service import TailscaleService
@@ -83,6 +84,11 @@ class Homelab:
         )
         self.dagu = DaguService(
             self.docker.services_config.dagu,
+            opts=None,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.seafile = SeafileService(
+            self.docker.services_config.seafile,
             opts=None,
             docker_resource_args=self.docker.resource_args,
         )

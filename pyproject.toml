@@ -27,6 +27,7 @@ dependencies = [
     "homelab-sqlite-backup-service",
     "homelab-apprise-service",
     "homelab-pydio-service",
+    "homelab-seafile-service",
     "pulumi>=3.148.0",
     "json-fix>=1.0.0",
 ]
@@ -73,6 +74,7 @@ homelab-kanidm-service = { workspace = true }
 homelab-pydio-service = { workspace = true }
 homelab-ntfy-service = { workspace = true }
 homelab-restic-service = { workspace = true }
+homelab-seafile-service = { workspace = true }
 homelab-sqlite-backup-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }
 homelab-traefik-service = { workspace = true }
