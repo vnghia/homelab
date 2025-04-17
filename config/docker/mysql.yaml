@@ -6,7 +6,7 @@ database:
           repo: mariadb
           tag: "11.7.2-ubi9"
     version: 11
-    port: 8080
+    port: 3306
     data-dir: /var/lib/mysql
     initdb-dir: /docker-entrypoint-initdb.d
     env:
