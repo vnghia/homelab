@@ -7,7 +7,6 @@ from homelab_crowdsec_service import CrowdsecService
 from homelab_dagu_service import DaguService
 from homelab_docker.config import DockerConfig
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource.database import DatabaseResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
@@ -31,10 +30,6 @@ class Homelab:
         self.config = Config[ServiceConfig].build(DockerConfig[ServiceConfig])
         self.project_prefix = Config.get_name(None, project=True, stack=True)
         self.docker = Docker(self.config, self.project_prefix)
-
-        self.datbase_global = DatabaseResource(
-            opts=None, volume_resource=self.docker.resource.volume
-        )
 
         self.tailscale = TailscaleService(
             self.docker.services_config.tailscale,

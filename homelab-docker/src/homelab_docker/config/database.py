@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-import typing
 from typing import ClassVar, Self
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
@@ -10,9 +7,10 @@ from pydantic import PositiveInt, model_validator
 from ..model.container import ContainerModel
 from ..model.database.type import DatabaseType
 from ..model.image import RemoteImageModel
-
-if typing.TYPE_CHECKING:
-    from ..model.service.database import ServiceDatabaseModel
+from ..model.service.database import (
+    ServiceDatabaseInitScriptModel,
+    ServiceDatabaseModel,
+)
 
 
 class DatabaseTypeEnvConfig(HomelabBaseModel):
@@ -34,6 +32,7 @@ class DatabaseTypeConfig(HomelabBaseModel):
     data_dir: AbsolutePath
     tmp_dir: AbsolutePath | None = None
     initdb_dir: AbsolutePath | None = None
+    scripts: list[ServiceDatabaseInitScriptModel] = []
 
     env: DatabaseTypeEnvConfig
     container: ContainerModel
