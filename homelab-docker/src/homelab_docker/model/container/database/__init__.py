@@ -7,6 +7,7 @@ from homelab_pydantic import HomelabRootModel
 from pulumi import Output
 from pydantic import PositiveInt
 
+from .mysql import ContainerDatabaseMysqlConfig
 from .postgres import ContainerDatabasePostgresConfig
 from .redis import ContainerDatabaseRedisConfig
 
@@ -15,7 +16,11 @@ if typing.TYPE_CHECKING:
 
 
 class ContainerDatabaseConfig(
-    HomelabRootModel[ContainerDatabasePostgresConfig | ContainerDatabaseRedisConfig]
+    HomelabRootModel[
+        ContainerDatabaseMysqlConfig
+        | ContainerDatabasePostgresConfig
+        | ContainerDatabaseRedisConfig
+    ]
 ):
     def to_database_version(
         self, database_resource: ServiceDatabaseResource
