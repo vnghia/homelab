@@ -6,6 +6,8 @@ images:
 services:
   seafile:
     config: {}
+    secrets:
+      jwt: {}
     databases:
       mysql:
         mysql:
@@ -23,3 +25,24 @@ services:
         redis: {}
     container:
       image: seafile
+      databases:
+        - mysql:
+          envs:
+            username: SEAFILE_MYSQL_DB_USER
+            password: SEAFILE_MYSQL_DB_PASSWORD
+            database: SEAFILE_MYSQL_DB_SEAFILE_DB_NAME
+            host: SEAFILE_MYSQL_DB_HOST
+            port: SEAFILE_MYSQL_DB_PORT
+        - redis:
+          envs:
+            password: REDIS_PASSWORD
+            host: REDIS_HOST
+            port: REDIS_PORT
+      envs:
+        SEAFILE_MYSQL_DB_CCNET_DB_NAME: ccnet
+        SEAFILE_MYSQL_DB_SEAHUB_DB_NAME: seahub
+        TIME_ZONE:
+          docker: "{timezone}"
+        JWT_PRIVATE_KEY:
+          secret: jwt
+        SEAFILE_LOG_TO_STDOUT: true
