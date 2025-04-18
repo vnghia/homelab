@@ -35,6 +35,7 @@ services:
       state:
         persons:
           me:
+            admin: true
             present: true
             display-name: "Me"
       traefik:

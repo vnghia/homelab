@@ -20,6 +20,8 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
     CLIENT_CACHE_VOLUME = "kanidm-client-cache"
 
     OPENID_GROUP = "openid"
+    ADMIN_GROUP = "role_admin"
+    USER_GROUP = "role_user"
 
     def __init__(
         self,

@@ -7,3 +7,4 @@ class KanidmStatePersonModel(HomelabBaseModel):
     display_name: GlobalExtract
     legal_name: GlobalExtract | None = None
     mail_addresses: list[GlobalExtract] = []
+    admin: bool = False

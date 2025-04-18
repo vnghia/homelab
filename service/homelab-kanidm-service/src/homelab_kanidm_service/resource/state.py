@@ -28,7 +28,14 @@ if typing.TYPE_CHECKING:
 
 class KanidmStateProviderProps(HomelabBaseModel):
     BINARY: ClassVar[str] = "kanidm-provision"
-    NOT_RENAME_KEYS: ClassVar[set[str]] = {"groups", "persons", "oauth2", "scope_maps", "claim_maps", "values_by_group"}
+    NOT_RENAME_KEYS: ClassVar[set[str]] = {
+        "groups",
+        "persons",
+        "oauth2",
+        "scope_maps",
+        "claim_maps",
+        "values_by_group",
+    }
 
     url: str
     password: str
@@ -111,8 +118,14 @@ class KanidmStateProvider(ResourceProvider):
 class KanidmStateResource(Resource, module="kanidm", name="State"):
     hash: Output[str]
 
-    def __init__(self, opts: ResourceOptions | None, kanidm_service: KanidmService) -> None:
-        state = kanidm_service.config.state.build(kanidm_service.OPENID_GROUP)
+    def __init__(
+        self, opts: ResourceOptions | None, kanidm_service: KanidmService
+    ) -> None:
+        state = kanidm_service.config.state.build(
+            kanidm_service.OPENID_GROUP,
+            kanidm_service.ADMIN_GROUP,
+            kanidm_service.USER_GROUP,
+        )
 
         super().__init__(
             KanidmStateProvider(),

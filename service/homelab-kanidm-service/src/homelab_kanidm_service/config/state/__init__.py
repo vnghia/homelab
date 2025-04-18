@@ -15,7 +15,9 @@ class KanidmStateConfig(HomelabBaseModel):
     persons: KanidmStatePersonConfig = KanidmStatePersonConfig()
     systems: KanidmStateSystemConfig = KanidmStateSystemConfig()
 
-    def build(self, openid_group: str) -> KanidmStateConfig:
+    def build(
+        self, openid_group: str, admin_group: str, user_group: str
+    ) -> KanidmStateConfig:
         return self.__replace__(
             groups=KanidmStateGroupConfig(
                 self.groups.root
@@ -23,7 +25,25 @@ class KanidmStateConfig(HomelabBaseModel):
                     openid_group: KanidmStateGroupModel(
                         members=[
                             GlobalExtract.from_simple(member)
-                            for member in list(self.persons.root.keys())
+                            for member in self.persons.root
+                        ]
+                    )
+                }
+                | {
+                    admin_group: KanidmStateGroupModel(
+                        members=[
+                            GlobalExtract.from_simple(member)
+                            for member, model in self.persons.root.items()
+                            if model.admin
+                        ]
+                    )
+                }
+                | {
+                    user_group: KanidmStateGroupModel(
+                        members=[
+                            GlobalExtract.from_simple(member)
+                            for member, model in self.persons.root.items()
+                            if not model.admin
                         ]
                     )
                 }
