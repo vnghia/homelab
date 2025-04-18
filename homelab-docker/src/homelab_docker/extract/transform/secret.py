@@ -10,7 +10,9 @@ from pulumi import Output
 
 
 class ExtractSecretTransformer(HomelabRootModel[ExtractTransformSecret]):
-    def transform(self, value: random.RandomPassword) -> Output[str]:
+    def transform(
+        self, value: random.RandomPassword | random.RandomUuid
+    ) -> Output[str]:
         root = self.root
         match root.encode:
             case ExtractTransformSecretEncode.RAW:

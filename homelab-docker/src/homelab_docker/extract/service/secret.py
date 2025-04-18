@@ -15,7 +15,7 @@ if typing.TYPE_CHECKING:
 class ServiceSecretSourceExtractor(HomelabRootModel[ServiceExtractSecretSource]):
     def extract_str(
         self, main_service: ServiceResourceBase, _model: ContainerModel | None
-    ) -> random.RandomPassword:
+    ) -> random.RandomPassword | random.RandomUuid:
         root = self.root
         return main_service.secret[root.secret]
 

@@ -49,7 +49,7 @@ class ServiceSourceExtractor(HomelabRootModel[ServiceExtractSource]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str] | random.RandomPassword:
+    ) -> str | Output[str] | random.RandomPassword | random.RandomUuid:
         return self.extractor.extract_str(main_service, model)
 
     def extract_path(
@@ -131,7 +131,7 @@ class ServiceExtractor(HomelabRootModel[ServiceExtract]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str] | random.RandomPassword:
+    ) -> str | Output[str] | random.RandomPassword | random.RandomUuid:
         return self.extractor.extract_str(main_service, model)
 
     def extract_path(

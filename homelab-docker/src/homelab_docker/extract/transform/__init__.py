@@ -17,10 +17,10 @@ if typing.TYPE_CHECKING:
 
 class ExtractTransformer(HomelabRootModel[ExtractTransform]):
     def transform_string(
-        self, value: Input[str] | random.RandomPassword
+        self, value: Input[str] | random.RandomPassword | random.RandomUuid
     ) -> Output[str]:
         root = self.root
-        if isinstance(value, random.RandomPassword):
+        if isinstance(value, (random.RandomPassword, random.RandomUuid)):
             value_output = ExtractSecretTransformer(root.secret).transform(value)
         else:
             value_output = Output.from_input(value)

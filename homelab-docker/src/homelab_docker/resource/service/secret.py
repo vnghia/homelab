@@ -31,5 +31,5 @@ class ServiceSecretResouse(ComponentResource):
 
         self.register_outputs({})
 
-    def __getitem__(self, key: str) -> random.RandomPassword:
+    def __getitem__(self, key: str) -> random.RandomPassword | random.RandomUuid:
         return self.secrets[key]
