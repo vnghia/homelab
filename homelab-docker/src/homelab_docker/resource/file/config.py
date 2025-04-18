@@ -33,13 +33,11 @@ class JsonDefaultModel(HomelabRootModel[dict[str, Any]]):
 class ConfigDumper(Generic[T]):
     @staticmethod
     @abc.abstractmethod
-    def dumps(data: T) -> str:
-        pass
+    def dumps(data: T) -> str: ...
 
     @staticmethod
     @abc.abstractmethod
-    def suffix() -> str:
-        pass
+    def suffix() -> str: ...
 
 
 class TomlDumper(ConfigDumper[T]):

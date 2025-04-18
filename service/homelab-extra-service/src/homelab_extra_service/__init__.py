@@ -5,7 +5,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
-from pulumi import Output, ResourceOptions
+from pulumi import ResourceOptions
 
 from .config import ExtraConfig
 
@@ -36,14 +36,8 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
                     volume_path=GlobalExtractor(model.path).extract_volume_path(
                         self, container_model
                     ),
-                    content=Output.format(
-                        model.content,
-                        **{
-                            key: GlobalExtractor(value).extract_str(
-                                self, container_model
-                            )
-                            for key, value in model.values.items()
-                        },
+                    content=GlobalExtractor(model.content).extract_str(
+                        self, container_model
                     ),
                     mode=model.mode,
                     volume_resource=self.docker_resource_args.volume,

@@ -12,6 +12,7 @@ from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
 from .transform import ExtractTransform
 from .vpn import GlobalExtractVpnSource
+from .yaml import GlobalExtractYamlSource
 
 
 class GlobalExtractSource(
@@ -23,6 +24,7 @@ class GlobalExtractSource(
         | GlobalExtractNameSource
         | GlobalExtractSimpleSource
         | GlobalExtractVpnSource
+        | GlobalExtractYamlSource
     ]
 ):
     pass

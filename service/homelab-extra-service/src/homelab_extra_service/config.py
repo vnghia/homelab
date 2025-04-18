@@ -8,9 +8,8 @@ from pydantic import PositiveInt
 
 class ExtraFile(HomelabBaseModel):
     path: GlobalExtract
-    values: dict[str, GlobalExtract] = {}
-    content: str
     mode: PositiveInt = 0o444
+    content: GlobalExtract
 
 
 class ExtraFileConfig(HomelabServiceConfigDict[dict[str, ExtraFile]]):

@@ -12,6 +12,7 @@ from homelab_extract.name import GlobalExtractNameSource
 from homelab_extract.service import ServiceExtractSource
 from homelab_extract.simple import GlobalExtractSimpleSource
 from homelab_extract.transform import ExtractTransform
+from homelab_extract.vpn import GlobalExtractVpnSource
 from homelab_pydantic import AbsolutePath, HomelabRootModel
 from pulumi import Output
 from pydantic import ValidationError
@@ -26,6 +27,7 @@ from .service import ServiceExtractor, ServiceSourceExtractor
 from .simple import GlobalSimpleSourceExtractor
 from .transform import ExtractTransformer
 from .vpn import GlobalVpnSourceExtractor
+from .yaml import GlobalYamlSourceExtractor
 
 if typing.TYPE_CHECKING:
     from ..model.container import ContainerModel
@@ -45,6 +47,7 @@ class GlobalSourceExtractor(HomelabRootModel[GlobalExtractSource]):
         | GlobalNameSourceExtractor
         | GlobalSimpleSourceExtractor
         | GlobalVpnSourceExtractor
+        | GlobalYamlSourceExtractor
     ):
         root = self.root.root
         if isinstance(root, GlobalExtractDockerSource):
@@ -59,7 +62,9 @@ class GlobalSourceExtractor(HomelabRootModel[GlobalExtractSource]):
             return GlobalNameSourceExtractor(root)
         if isinstance(root, GlobalExtractSimpleSource):
             return GlobalSimpleSourceExtractor(root)
-        return GlobalVpnSourceExtractor(root)
+        if isinstance(root, GlobalExtractVpnSource):
+            return GlobalVpnSourceExtractor(root)
+        return GlobalYamlSourceExtractor(root)
 
     def extract_str(
         self, main_service: ServiceResourceBase, _model: ContainerModel | None
