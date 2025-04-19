@@ -46,13 +46,14 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         container_config["labels"] = model.build_labels(None, main_service, build_args)
         container_config["env"] = model.build_envs(main_service, build_args) + (
             sorted(
-                functools.reduce(operator.iadd, [
-                        [
-                            "{key}=${{{key}}}".format(key=key)
-                            for key in dotenv.envs
-                        ]
+                functools.reduce(
+                    operator.iadd,
+                    [
+                        ["{key}=${{{key}}}".format(key=key) for key in dotenv.envs]
                         for dotenv in dotenvs
-                    ], [])
+                    ],
+                    [],
+                )
             )
             if dotenvs
             else []
@@ -62,7 +63,9 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
             model.docker_socket, main_service, model, build_args
         )
 
-        network_args = model.network.to_args(None, build_args.aliases, main_service)
+        network_args = model.network.to_args(
+            None, build_args.internal_aliases, main_service
+        )
         if network_args.advanced:
             network_config["endpointsConfig"] = {
                 network.name: {"aliases": network.aliases}

@@ -32,7 +32,7 @@ class ContainerNetworkContainerConfig(HomelabBaseModel):
     def to_args(
         self,
         _resource_name: str | None,
-        _aliases: list[str],
+        _internal_aliases: list[str],
         main_service: ServiceResourceBase,
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
@@ -50,7 +50,7 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     def to_args(
         self,
         resource_name: str | None,
-        aliases: list[str],
+        internal_aliases: list[str],
         main_service: ServiceResourceBase,
     ) -> ContainerNetworkArgs:
         match self.mode:
@@ -65,7 +65,7 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
                             ),
                         )
                     )
-                ).to_args(resource_name, aliases, main_service)
+                ).to_args(resource_name, internal_aliases, main_service)
 
 
 class ContainerCommonNetworkConfig(HomelabBaseModel):
@@ -75,22 +75,26 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
     def to_args(
         self,
         resource_name: str | None,
-        aliases: list[str],
+        internal_aliases: list[str],
         main_service: ServiceResourceBase,
     ) -> ContainerNetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
-        aliases = ([resource_name] if resource_name else []) + aliases
+        resource_aliases = [resource_name] if resource_name else []
         return ContainerNetworkArgs(
             mode="bridge",
             advanced=(
-                [main_service.docker_resource_args.network.default_bridge_args(aliases)]
+                [
+                    main_service.docker_resource_args.network.default_bridge_args(
+                        resource_aliases
+                    )
+                ]
                 if self.default_bridge
                 else []
             )
             + (
                 [
                     main_service.docker_resource_args.network.internal_bridge_args(
-                        aliases
+                        [*resource_aliases, *internal_aliases]
                     )
                 ]
                 if self.internal_bridge
@@ -115,7 +119,7 @@ class ContainerNetworkConfig(
     def to_args(
         self,
         resource_name: str | None,
-        aliases: list[str],
+        internal_aliases: list[str],
         main_service: ServiceResourceBase,
     ) -> ContainerNetworkArgs:
-        return self.root.to_args(resource_name, aliases, main_service)
+        return self.root.to_args(resource_name, internal_aliases, main_service)
