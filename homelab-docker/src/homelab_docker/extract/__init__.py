@@ -67,19 +67,19 @@ class GlobalSourceExtractor(HomelabRootModel[GlobalExtractSource]):
         return GlobalYamlSourceExtractor(root)
 
     def extract_str(
-        self, main_service: ServiceResourceBase, _model: ContainerModel | None
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> str | Output[str]:
-        return self.extractor.extract_str(main_service)
+        return self.extractor.extract_str(main_service, model)
 
     def extract_path(
-        self, main_service: ServiceResourceBase, _model: ContainerModel | None
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
-        return self.extractor.extract_path(main_service)
+        return self.extractor.extract_path(main_service, model)
 
     def extract_volume_path(
-        self, main_service: ServiceResourceBase, _model: ContainerModel | None
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
-        return self.extractor.extract_volume_path(main_service)
+        return self.extractor.extract_volume_path(main_service, model)
 
 
 class GlobalFullExtractor(HomelabRootModel[GlobalExtractFull]):

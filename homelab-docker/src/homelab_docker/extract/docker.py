@@ -7,11 +7,14 @@ from homelab_extract.docker import GlobalExtractDockerSource
 from homelab_pydantic import HomelabRootModel
 
 if typing.TYPE_CHECKING:
+    from ..model.container import ContainerModel
     from ..resource.service import ServiceResourceBase
 
 
 class GlobalDockerSourceExtractor(HomelabRootModel[GlobalExtractDockerSource]):
-    def extract_str(self, main_service: ServiceResourceBase) -> str:
+    def extract_str(
+        self, main_service: ServiceResourceBase, _model: ContainerModel | None
+    ) -> str:
         root = self.root
         return root.docker.format(
             timezone=main_service.docker_resource_args.timezone,
@@ -21,8 +24,12 @@ class GlobalDockerSourceExtractor(HomelabRootModel[GlobalExtractDockerSource]):
             },
         )
 
-    def extract_path(self, _main_service: ServiceResourceBase) -> Never:
+    def extract_path(
+        self, _main_service: ServiceResourceBase, _model: ContainerModel | None
+    ) -> Never:
         raise TypeError("Can not extract path from global source")
 
-    def extract_volume_path(self, _main_service: ServiceResourceBase) -> Never:
+    def extract_volume_path(
+        self, _main_service: ServiceResourceBase, _model: ContainerModel | None
+    ) -> Never:
         raise TypeError("Can not extract volume path from global source")
