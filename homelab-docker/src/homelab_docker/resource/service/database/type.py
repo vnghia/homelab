@@ -78,7 +78,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 mode=0o777,
                 volume_resource=main_service.docker_resource_args.volume,
             )
-            for i, script in enumerate(model.scripts)
+            for i, script in enumerate(self.config.scripts + model.scripts)
         ]
 
         self.containers: dict[PositiveInt, docker.Container] = {}
