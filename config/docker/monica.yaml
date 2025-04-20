@@ -6,9 +6,45 @@ images:
       delete-before-replace: true
 volumes:
   local:
-    monica-data:
+    monica-storage: {}
+    monica-database:
       backup: false
 services:
+  kanidm:
+    variables:
+      MONICA_REDIRECT_URI:
+        extract:
+          hostname: monica
+          public: true
+          scheme: https
+        transform:
+          string:
+            template: "{value}/auth/kanidm/callback"
+    config:
+      state:
+        systems:
+          oauth2:
+            monica:
+              display-name: Monica
+              origin-url:
+                - variable: MONICA_REDIRECT_URI
+              origin-landing:
+                hostname: monica
+                public: true
+                scheme: https
+              prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
+              # Workaround since Monica requires these claims but Kanidm does not support it.
+              # User can change this value after the first login.
+              claim-maps:
+                family_name:
+                  join-type: csv
+                  values-by-group:
+                    openid: ["Name"]
+                given_name:
+                  join-type: csv
+                  values-by-group:
+                    openid: ["Name"]
   monica:
     config:
       traefik:
@@ -78,7 +114,13 @@ services:
         APP_TIMEZONE:
           docker: "{timezone}"
         APP_TRUSTED_PROXIES: "*"
+        APP_DISABLE_SIGNUP: true
         LOG_STACK: stderr
+        DB_DOC_DATABASE:
+          extract:
+            volume: monica-database
+          transform:
+            path: doc.sqlite
         DB_CONNECTION: pgsql
         CACHE_STORE: redis
         QUEUE_CONNECTION: redis
@@ -86,12 +128,33 @@ services:
         DEFAULT_STORAGE_LIMIT: 0
         MAIL_MAILER: smtp
         MAIL_ENCRYPTION: tls
+        KANIDM_CLIENT_ID: monica
+        KANIDM_CLIENT_SECRET:
+          service: kanidm
+          extract:
+            export: monica
+        KANIDM_REDIRECT_URI:
+          service: kanidm
+          extract:
+            variable: MONICA_REDIRECT_URI
+        KANIDM_BASE_URL:
+          hostname: kanidm
+          public: true
+          scheme: https
+        LOGIN_PROVIDERS: kanidm
       network:
         default-bridge: true
       tmpfs:
         - /var/run
+        - /var/www/html/bootstrap/cache
+        # This prevents the application creating a symlink in a read-only filesystem.
+        # But it will break if we ever need to serve anything from `/var/www/html/storage/app/public`.
+        # If we get to that point, either making this container not read only
+        # or rewriting the nginx config to make it serves that folder directly.
+        - /var/www/html/public/storage
       volumes:
-        monica-data: /var/www/html
+        monica-storage: /var/www/html/storage
+        monica-database: /var/www/html/database/storage
     containers:
       queue:
         inherit:
