@@ -46,21 +46,15 @@ class KeepassEntryProps(HomelabBaseModel):
     @classmethod
     def ignore_pulumi_unknown(
         cls, data: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo
-    ) -> KeepassEntryProps:
+    ) -> Any:
         if isinstance(data, pulumi.output.Unknown):
             pulumi.log.warn(
                 "Pulumi unknown output encountered: {}. Validated data: {}".format(
                     data, info.data
                 )
             )
-            return KeepassEntryProps(
-                username="",
-                password="",
-                hostname=HttpUrl("http://example.com"),
-                urls=[],
-                apps=[],
-            )
-        return handler(data)  # type: ignore[no-any-return]
+            return ""
+        return handler(data)
 
     @classmethod
     def from_entry(cls, entry: Entry) -> Self:
@@ -89,6 +83,20 @@ class KeepassEntryProps(HomelabBaseModel):
 class KeepassProviderProps(HomelabBaseModel):
     entries: dict[str, KeepassEntryProps]
     entry_ids: dict[str, UUID] = {}
+
+    @field_validator("entries", mode="wrap")
+    @classmethod
+    def ignore_pulumi_unknown(
+        cls, data: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo
+    ) -> Any:
+        if isinstance(data, pulumi.output.Unknown):
+            pulumi.log.warn(
+                "Pulumi unknown output encountered: {}. Validated data: {}".format(
+                    data, info.data
+                )
+            )
+            return {}
+        return handler(data)
 
 
 class Keepass:
