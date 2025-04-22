@@ -91,6 +91,7 @@ services:
                     - "'self'"
                   media-src:
                     - "'self'"
+                    - "data:"
                   object-src:
                     - "'self'"
                     - "blob:"
@@ -194,7 +195,7 @@ services:
             string:
               template: "{value}/oauth2/openid/opencloud"
         OC_OIDC_CLIENT_ID: opencloud
-        OC_EXCLUDE_RUN_SERVICES: idp
+        OC_EXCLUDE_RUN_SERVICES: idp,ocm
         PROXY_OIDC_REWRITE_WELLKNOWN: false
         PROXY_USER_OIDC_CLAIM: sub
         PROXY_USER_CS3_CLAIM: username
@@ -216,3 +217,11 @@ services:
         STORAGE_USERS_ID_CACHE_STORE: nats-js-kv
         OC_BASE_DATA_PATH:
           volume: opencloud-data
+        NATS_NATS_HOST: 0.0.0.0
+        NATS_NATS_PORT: 9233
+        STORAGE_USERS_DATA_GATEWAY_URL:
+          extract:
+            env: OC_URL
+          transform:
+            string:
+              template: "{value}/data"
