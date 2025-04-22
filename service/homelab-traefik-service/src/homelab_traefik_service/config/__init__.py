@@ -27,6 +27,12 @@ class TraefikEntrypointConfig(HomelabBaseModel):
     private_https: str
 
 
+class TraefikTimeoutConfig(HomelabBaseModel):
+    read: str
+    write: str
+    idle: str
+
+
 class TraefikProxyProtocolConfig(HomelabBaseModel):
     ips: list[IPvAnyAddress] = []
 
@@ -40,6 +46,6 @@ class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):
     path: TraefikPathConfig
     acme: TraefikAcmeConfig
     entrypoint: TraefikEntrypointConfig
-    timeout: str
+    timeout: TraefikTimeoutConfig
     proxy_protocol: TraefikProxyProtocolConfig = TraefikProxyProtocolConfig()
     plugins: dict[str, TraefikPluginConfig] = {}

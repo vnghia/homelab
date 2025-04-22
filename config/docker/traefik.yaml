@@ -50,7 +50,10 @@ services:
         private-http: "private-http"
         public-https: "public-https"
         private-https: "private-https"
-      timeout: 900s
+      timeout:
+        read: 12h
+        write: 12h
+        idle: 3m
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
