@@ -127,6 +127,8 @@ services:
           path: /etc/opencloud
           read-only: true
         opencloud-data: /var/lib/opencloud
+      wud:
+        template: https://github.com/opencloud-eu/opencloud/releases/tag/v${original}
       envs:
         PROXY_HTTP_ADDR:
           extract:
