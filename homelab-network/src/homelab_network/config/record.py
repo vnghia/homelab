@@ -1,7 +1,7 @@
 import pulumi_cloudflare as cloudflare
 from homelab_pydantic import HomelabBaseModel
 
-from homelab_network.model.record import RecordModel
+from ..model.record import RecordFullModel, RecordModel
 
 
 class RecordConfig(HomelabBaseModel):
@@ -13,3 +13,11 @@ class RecordConfig(HomelabBaseModel):
 
     def __getitem__(self, hostname: str) -> str:
         return self.records[hostname].hostname(self.get_domain())
+
+    @property
+    def aliases(self) -> list[str]:
+        return [
+            self[hostname]
+            for hostname, model in self.records.items()
+            if isinstance(model.root, RecordFullModel) and model.root.alias
+        ]

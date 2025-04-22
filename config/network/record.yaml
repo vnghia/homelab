@@ -1,0 +1,4 @@
+public:
+  records:
+    kanidm:
+      alias: true

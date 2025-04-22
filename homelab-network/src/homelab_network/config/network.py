@@ -9,5 +9,6 @@ class NetworkConfig(HomelabBaseModel):
     public: RecordConfig
     private: RecordConfig
 
-    def __getitem__(self, key: bool) -> RecordConfig:
-        return self.public if key else self.private
+    @property
+    def aliases(self) -> list[str]:
+        return self.public.aliases + self.private.aliases

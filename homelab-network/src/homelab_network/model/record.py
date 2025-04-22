@@ -1,12 +1,17 @@
 from typing import ClassVar
 
 import pulumi_cloudflare as cloudflare
-from homelab_pydantic import HomelabRootModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output, ResourceOptions
 from pydantic import IPvAnyAddress, PositiveInt
 
 
-class RecordModel(HomelabRootModel[str]):
+class RecordFullModel(HomelabBaseModel):
+    name: str
+    alias: bool = False
+
+
+class RecordModel(HomelabRootModel[str | RecordFullModel]):
     IPV4_VERSION: ClassVar[PositiveInt] = 4
 
     def build_resource(
@@ -24,16 +29,22 @@ class RecordModel(HomelabRootModel[str]):
             resource_name,
             opts=opts,
             zone_id=zone_id,
-            name=self.root,
+            name=self.name,
             content=Output.from_input(ip).apply(str),
             comment="record for {}".format(resource_name),
             proxied=False,
             type=type_,
         )
 
+    @property
+    def name(self) -> str:
+        root = self.root
+        return root.name if isinstance(root, RecordFullModel) else root
+
     def hostname(self, domain: str) -> str:
+        name = self.name
         return "{}{}{}".format(
-            "" if self.root == "@" else self.root,
-            "" if self.root == "@" else ".",
+            "" if name == "@" else name,
+            "" if name == "@" else ".",
             domain,
         )
