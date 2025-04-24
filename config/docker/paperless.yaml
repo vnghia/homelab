@@ -2,7 +2,7 @@ images:
   remote:
     paperless:
       repo: ghcr.io/paperless-ngx/paperless-ngx
-      tag: "2.15.0"
+      tag: "2.15.3"
 volumes:
   local:
     paperless-data: {}
