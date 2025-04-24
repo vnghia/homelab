@@ -24,7 +24,8 @@ volumes:
               volume: slskd-data
             transform:
               path: data/transfers.db
-    slskd-download: {}
+    slskd-download:
+      backup: false
     slskd-incomplete:
       backup: false
     slskd-tmp:
