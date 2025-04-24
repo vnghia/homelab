@@ -2,7 +2,7 @@ images:
   remote:
     traefik:
       repo: traefik
-      tag: "v3.3.5"
+      tag: "v3.3.6"
 volumes:
   local:
     traefik-config:
