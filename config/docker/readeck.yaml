@@ -2,7 +2,7 @@ images:
   remote:
     readeck:
       repo: codeberg.org/readeck/readeck
-      tag: "0.17.1"
+      tag: "0.18.0"
 volumes:
   local:
     readeck-data: {}
