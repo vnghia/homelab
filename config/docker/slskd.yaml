@@ -2,7 +2,7 @@ images:
   remote:
     slskd:
       repo: ghcr.io/slskd/slskd
-      tag: "0.22.2"
+      tag: "0.22.5"
 volumes:
   local:
     slskd-data:
