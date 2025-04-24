@@ -5,3 +5,5 @@ public:
     opencloud:
       # TODO: Disable this after https://github.com/opencloud-eu/opencloud/issues/705
       alias: true
+    impress:
+      alias: true
