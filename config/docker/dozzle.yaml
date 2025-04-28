@@ -2,7 +2,7 @@ images:
   remote:
     dozzle:
       repo: ghcr.io/amir20/dozzle
-      tag: "v8.12.10"
+      tag: "v8.12.13"
 services:
   dozzle:
     config:
