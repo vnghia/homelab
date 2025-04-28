@@ -56,6 +56,9 @@ services:
           public: true
     container:
       image: jellyfin
+      devices:
+        - /dev/dri/renderD128
+        - /dev/dri/card0
       network:
         default-bridge: true
       volumes:
@@ -68,6 +71,8 @@ services:
           read-only: true
       tmpfs:
         - /tmp/jellyfin
+      wud:
+        template: https://github.com/jellyfin/jellyfin/releases/tag/v${original}
       envs:
         JELLYFIN_DATA_DIR:
           volume: jellyfin-data
