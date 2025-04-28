@@ -5,7 +5,17 @@ images:
       tag: "10.10.7"
 volumes:
   local:
-    jellyfin-data: {}
+    jellyfin-data:
+      backup:
+        sqlites:
+          - extract:
+              volume: jellyfin-data
+            transform:
+              path: data/library.db
+          - extract:
+              volume: jellyfin-data
+            transform:
+              path: data/jellyfin.db
     jellyfin-config: {}
     jellyfin-cache: {}
     jellyfin-log: {}
