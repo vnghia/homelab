@@ -2,7 +2,7 @@ images:
   remote:
     opencloud:
       repo: opencloudeu/opencloud-rolling
-      tag: "2.1.0"
+      tag: "2.2.0"
 volumes:
   local:
     opencloud-config:
