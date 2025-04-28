@@ -7,6 +7,7 @@ from typing import Literal, Mapping, Sequence
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic.path import AbsolutePath
 from pulumi import Input, Output, Resource, ResourceOptions
 from pydantic import Field
 
@@ -47,6 +48,7 @@ class ContainerModel(HomelabBaseModel):
     capabilities: list[str] | None = None
     command: list[GlobalExtract] | None = None
     databases: list[ContainerDatabaseConfig] | None = None
+    devices: list[AbsolutePath] | None = None
     docker_socket: ContainerDockerSocketConfig | None = None
     entrypoint: list[GlobalExtract] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
@@ -212,6 +214,14 @@ class ContainerModel(HomelabBaseModel):
             if model.capabilities
             else None,
             command=model.build_command(main_service),
+            devices=[
+                docker.ContainerDeviceArgs(
+                    host_path=device.as_posix(), container_path=device.as_posix()
+                )
+                for device in model.devices
+            ]
+            if model.devices
+            else None,
             entrypoints=model.build_entrypoint(main_service),
             healthcheck=model.healthcheck.to_args(main_service, model)
             if model.healthcheck
