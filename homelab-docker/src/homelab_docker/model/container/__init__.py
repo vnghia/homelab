@@ -9,7 +9,7 @@ from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_pydantic.path import AbsolutePath
 from pulumi import Input, Output, Resource, ResourceOptions
-from pydantic import Field
+from pydantic import Field, PositiveInt
 
 from ...extract import GlobalExtractor
 from .database import ContainerDatabaseConfig
@@ -65,6 +65,7 @@ class ContainerModel(HomelabBaseModel):
     user: str | None = None
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
+    wait_timeout: PositiveInt | None = None
     wud: ContainerWudConfig | None = None
 
     envs: dict[str, GlobalExtract] = {}
@@ -243,6 +244,7 @@ class ContainerModel(HomelabBaseModel):
                 model.docker_socket, main_service, model, build_args
             ),
             wait=model.wait if model.healthcheck else False,
+            wait_timeout=model.wait_timeout,
             envs=model.build_envs(main_service, build_args),
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)

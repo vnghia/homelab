@@ -89,6 +89,7 @@ services:
           volume: immich-data
       volumes:
         immich-data: /usr/src/app/data
+      wait-timeout: 120
       wud:
         template: https://github.com/immich-app/immich/releases/tag/${original}
         include-prefix: v
