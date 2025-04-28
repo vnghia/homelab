@@ -1,0 +1,12 @@
+images:
+  remote:
+    radarr:
+      repo: ghcr.io/linuxserver/radarr
+      tag: "5.22.4"
+    sonarr:
+      repo: ghcr.io/linuxserver/sonarr
+      tag: "4.0.14"
+volumes:
+  local:
+    starr-media:
+      backup: false
