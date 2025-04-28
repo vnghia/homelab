@@ -90,3 +90,6 @@ services:
           volume: jellyfin-cache
         JELLYFIN_LOG_DIR:
           volume: jellyfin-log
+        JELLYFIN_PublishedServerUrl:
+          hostname: jellyfin
+          public: true
