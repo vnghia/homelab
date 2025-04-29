@@ -132,21 +132,29 @@ class ServiceExtractor(HomelabRootModel[ServiceExtract]):
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> str | Output[str] | random.RandomPassword | random.RandomUuid:
-        return self.extractor.extract_str(main_service, model)
+        return self.extractor.extract_str(
+            main_service, model or main_service.model[self.container]
+        )
 
     def extract_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
-        return self.extractor.extract_path(main_service, model)
+        return self.extractor.extract_path(
+            main_service, model or main_service.model[self.container]
+        )
 
     def extract_volume_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
-        return self.extractor.extract_volume_path(main_service, model)
+        return self.extractor.extract_volume_path(
+            main_service, model or main_service.model[self.container]
+        )
 
     def extract_output_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> Output[str]:
         return ExtractTransformer(ExtractTransform()).transform_string(
-            self.extractor.extract_str(main_service, model)
+            self.extractor.extract_str(
+                main_service, model or main_service.model[self.container]
+            )
         )
