@@ -18,3 +18,4 @@ class ExtraFileConfig(HomelabServiceConfigDict[dict[str, ExtraFile]]):
 
 class ExtraConfig(TraefikServiceConfigBase, S3ServiceConfigBase, DaguServiceConfigBase):
     files: ExtraFileConfig = ExtraFileConfig({})
+    depends_on: list[str] = []
