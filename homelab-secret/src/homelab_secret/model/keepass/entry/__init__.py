@@ -19,7 +19,7 @@ class KeepassEntryModel(HomelabBaseModel):
     username: KeepassEntryUsernameModel = KeepassEntryUsernameModel()
     password: KeepassEntryPasswordModel = KeepassEntryPasswordModel()
     hostname: GlobalExtractHostnameSource
-    urls: list[HttpUrl] = []
+    urls: list[HttpUrl | GlobalExtractHostnameSource] = []
     apps: list[str] = []
 
     def build_resource(
