@@ -8,5 +8,44 @@ images:
       tag: "4.0.14"
 volumes:
   local:
-    starr-media:
+    starr-data:
       backup: false
+    radarr-config: {}
+services:
+  qbittorrent:
+    keepasses:
+      keepass:
+        urls:
+          - hostname: starr-radarr
+            public: false
+            scheme: https
+  starr:
+    config:
+      traefik:
+        radarr:
+          name: radarr
+          public: false
+          service:
+            container: radarr
+            port:
+              variable: RADARR_PORT
+    keepasses:
+      radarr:
+        hostname:
+          hostname: starr-radarr
+          public: false
+    variables:
+      RADARR_PORT: 7878
+    containers:
+      radarr:
+        image: radarr
+        network:
+          default-bridge: true
+        tmpfs:
+          - path: /run
+            exec: true
+        volumes:
+          starr-data: /starr
+          radarr-config: /config
+        envs:
+          S6_READ_ONLY_ROOT: 1

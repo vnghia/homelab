@@ -19,6 +19,8 @@ volumes:
     jellyfin-config: {}
     jellyfin-cache: {}
     jellyfin-log: {}
+    jellyfin-starr:
+      backup: false
 services:
   kanidm:
     config:
@@ -74,8 +76,8 @@ services:
         jellyfin-data: /mnt/jellyfin/data
         jellyfin-log: /mnt/jellyfin/log
         jellyfin-cache: /mnt/jellyfin/cache
-        starr-media:
-          path: /data/media
+        jellyfin-starr:
+          path: /starr/media
           read-only: true
       tmpfs:
         - /tmp/jellyfin
