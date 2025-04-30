@@ -11,14 +11,8 @@ volumes:
     starr-data:
       backup: false
     radarr-config: {}
+    sonarr-config: {}
 services:
-  qbittorrent:
-    keepasses:
-      keepass:
-        urls:
-          - hostname: starr-radarr
-            public: false
-            scheme: https
   starr:
     config:
       traefik:
@@ -29,13 +23,25 @@ services:
             container: radarr
             port:
               variable: RADARR_PORT
+        sonarr:
+          name: sonarr
+          public: false
+          service:
+            container: sonarr
+            port:
+              variable: SONARR_PORT
     keepasses:
       radarr:
         hostname:
           hostname: starr-radarr
           public: false
+      sonarr:
+        hostname:
+          hostname: starr-sonarr
+          public: false
     variables:
       RADARR_PORT: 7878
+      SONARR_PORT: 8989
     containers:
       radarr:
         image: radarr
@@ -47,5 +53,17 @@ services:
         volumes:
           starr-data: /starr
           radarr-config: /config
+        envs:
+          S6_READ_ONLY_ROOT: 1
+      sonarr:
+        image: sonarr
+        network:
+          default-bridge: true
+        tmpfs:
+          - path: /run
+            exec: true
+        volumes:
+          starr-data: /starr
+          sonarr-config: /config
         envs:
           S6_READ_ONLY_ROOT: 1
