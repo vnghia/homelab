@@ -1,0 +1,35 @@
+images:
+  remote:
+    chromium:
+      repo: ghcr.io/browserless/chromium
+      tag: "v2.29.0"
+services:
+  chromium:
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              variable: PORT
+    secrets:
+      token:
+        special: false
+    variables:
+      PORT: 3000
+    container:
+      image: chromium
+      network:
+        default-bridge: true
+      read-only: false
+      envs:
+        TIMEOUT: 10000
+        CONCURRENT: 5
+        TOKEN:
+          secret: token
+        HEALTH: true
+        PROXY_HOST:
+          hostname: chromium
+          public: true
+        PROXY_PORT: 443
+        PROXY_SSL: true
