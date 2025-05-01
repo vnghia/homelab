@@ -37,6 +37,7 @@ services:
         include-prefix: v
       envs:
         VPN_SERVICE_PROVIDER: custom
+        OPENVPN_VERSION: "2.5"
         OPENVPN_CUSTOM_CONFIG:
           extract:
             volume: gluetun-opvn
