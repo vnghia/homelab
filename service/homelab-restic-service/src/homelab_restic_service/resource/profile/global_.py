@@ -32,10 +32,17 @@ class ResticGlobalProfileResource(
 
         all_profiles = restic_service.profiles + restic_service.database_profiles
 
-        forget_options = {"prune": True} | {
+        group_by_options = "tags,path"
+        snapshot_options = {
+            "group-by": group_by_options,
+            "path": True,
+            "tag": True,
+        }
+        forget_options = snapshot_options | {
             "keep-{}".format(timeframe): number
             for timeframe, number in restic_service.config.keep.last.items()
         }
+
         super().__init__(
             "global",
             opts=opts,
@@ -60,7 +67,9 @@ class ResticGlobalProfileResource(
                             "source-relative": True,
                             "host": hostname,
                             "source": ["."],
+                            "group-by": group_by_options,
                         },
+                        "snapshots": snapshot_options,
                         "forget": forget_options,
                     }
                 },
@@ -75,7 +84,9 @@ class ResticGlobalProfileResource(
                 }
                 | {
                     restic_service.get_database_group(service): {
-                        "profiles": functools.reduce(operator.iadd, profiles.values(), [])
+                        "profiles": functools.reduce(
+                            operator.iadd, profiles.values(), []
+                        )
                     }
                     for service, profiles in restic_service.service_database_groups.items()
                 },

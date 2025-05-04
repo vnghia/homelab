@@ -48,7 +48,11 @@ services:
                 schedule: "0 2 * * sat" # 2am every saturday
               command: ["check", "--read-data"]
             snapshots:
-              command: ["snapshots"]
+              command:
+                - "-n"
+                - param:
+                    type: backup
+                - "snapshots"
             backup:
               command:
                 - "-n"
@@ -56,9 +60,29 @@ services:
                     type: backup
                 - "backup"
             forget:
-              dag:
-                schedule: "0 2 * * sun" # 2am every sunday
-              command: ["forget"]
+              command:
+                - "-n"
+                - param:
+                    type: backup
+                - "forget"
+            prune:
+              command: ["prune"]
+        dag:
+          forget-and-prune:
+            name: forget-and-prune
+            path: restic-forget-and-prune
+            schedule: "0 2 * * sun" # 2am every sunday
+            steps:
+              - name: forget
+                run:
+                  service: restic
+                  dag: forget
+              - name: prune
+                run:
+                  service: restic
+                  dag: prune
+                depends:
+                  - forget
     secrets:
       password:
         protect: true
