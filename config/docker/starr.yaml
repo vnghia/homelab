@@ -16,10 +16,67 @@ volumes:
   local:
     starr-data:
       backup: false
-    radarr-config: {}
-    sonarr-config: {}
-    prowlarr-config: {}
-    bazarr-config: {}
+    starr-radarr-config:
+      backup:
+        sqlites:
+          - service:
+            extract:
+              container: radarr
+              extract:
+                volume: starr-radarr-config
+              transform:
+                path: logs.db
+          - service:
+            extract:
+              container: radarr
+              extract:
+                volume: starr-radarr-config
+              transform:
+                path: radarr.db
+    starr-sonarr-config:
+      backup:
+        sqlites:
+          - service:
+            extract:
+              container: sonarr
+              extract:
+                volume: starr-sonarr-config
+              transform:
+                path: logs.db
+          - service:
+            extract:
+              container: sonarr
+              extract:
+                volume: starr-sonarr-config
+              transform:
+                path: sonarr.db
+    starr-prowlarr-config:
+      backup:
+        sqlites:
+          - service:
+            extract:
+              container: prowlarr
+              extract:
+                volume: starr-prowlarr-config
+              transform:
+                path: logs.db
+          - service:
+            extract:
+              container: prowlarr
+              extract:
+                volume: starr-prowlarr-config
+              transform:
+                path: prowlarr.db
+    starr-bazarr-config:
+      backup:
+        sqlites:
+          - service:
+            extract:
+              container: bazarr
+              extract:
+                volume: starr-bazarr-config
+              transform:
+                path: db/bazarr.db
 services:
   starr:
     config:
@@ -84,7 +141,7 @@ services:
             exec: true
         volumes:
           starr-data: /starr
-          radarr-config: /config
+          starr-radarr-config: /config
         envs:
           S6_READ_ONLY_ROOT: 1
       sonarr:
@@ -96,7 +153,7 @@ services:
             exec: true
         volumes:
           starr-data: /starr
-          sonarr-config: /config
+          starr-sonarr-config: /config
         envs:
           S6_READ_ONLY_ROOT: 1
       prowlarr:
@@ -107,7 +164,7 @@ services:
           - path: /run
             exec: true
         volumes:
-          prowlarr-config: /config
+          starr-prowlarr-config: /config
         envs:
           S6_READ_ONLY_ROOT: 1
       bazarr:
@@ -119,6 +176,6 @@ services:
             exec: true
         volumes:
           starr-data: /starr
-          bazarr-config: /config
+          starr-bazarr-config: /config
         envs:
           S6_READ_ONLY_ROOT: 1
