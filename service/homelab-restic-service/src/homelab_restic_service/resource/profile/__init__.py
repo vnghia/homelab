@@ -33,11 +33,13 @@ class ResticProfileResource(
         if not self.backup_config:
             raise ValueError("`False` backup config should be skipped sooner")
 
+        self.main_service = restic_service.SERVICES[self.volume.service]
+
         source = None
         if self.backup_config.source:
             volume_source = GlobalExtractor(
                 self.backup_config.source
-            ).extract_volume_path(restic_service.SERVICES[self.volume.service], None)
+            ).extract_volume_path(self.main_service, None)
             if volume_source.volume != self.volume.name:
                 raise ValueError(
                     "Got different name for volume ({} vs {})".format(
@@ -46,11 +48,11 @@ class ResticProfileResource(
                 )
             source = volume_source.path
 
-        exclude = []
+        exclude = self.backup_config.excludes
         if len(self.backup_config.sqlites) > 0:
             for path in self.backup_config.sqlites:
                 volume_path = GlobalExtractor(path).extract_volume_path(
-                    restic_service.SERVICES[self.volume.service], None
+                    self.main_service, None
                 )
                 if volume_path.volume != self.volume.name:
                     raise ValueError(
