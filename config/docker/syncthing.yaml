@@ -5,7 +5,10 @@ images:
       tag: "1.29.4"
 volumes:
   local:
-    syncthing-data: {}
+    syncthing-data:
+      backup:
+        excludes:
+          - "**/*.tmp"
 services:
   syncthing:
     variables:
