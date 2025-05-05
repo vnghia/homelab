@@ -1,12 +1,16 @@
 from collections import defaultdict
+from pathlib import PosixPath
 
 from homelab_backup.config import BackupGlobalConfig
 from homelab_docker.extract import GlobalExtractor
+from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
+from homelab_extract import GlobalExtract
+from homelab_pydantic import AbsolutePath
 from pulumi import ResourceOptions
 
 from .config import BarmanConfig
@@ -14,6 +18,8 @@ from .resource import BarmanConfigFileResource
 
 
 class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
+    PREFIX_PATH = AbsolutePath(PosixPath("/mnt/data"))
+
     def __init__(
         self,
         model: ServiceWithConfigModel[BarmanConfig],
@@ -57,6 +63,12 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
                     self.service_maps[service_name].append(full_name)
 
         self.options[None].files = self.configs
+        self.options[None].volumes = {
+            config.name: ContainerVolumeConfig(
+                GlobalExtract.from_simple((self.PREFIX_PATH / config.name).as_posix())
+            )
+            for config in self.configs
+        }
         self.build_containers()
 
         self.register_outputs({})

@@ -30,14 +30,15 @@ class BarmanConfigFileResource(
         barman_service: BarmanService,
     ) -> None:
         barman_config = barman_service.config
+        self.name = resource_name
 
         super().__init__(
-            resource_name,
+            self.name,
             opts=opts,
-            volume_path=barman_service.get_config_volume_path(resource_name),
+            volume_path=barman_service.get_config_volume_path(self.name),
             data={
-                resource_name: {
-                    "description": resource_name,
+                self.name: {
+                    "description": self.name,
                     "conninfo": database_source_model.to_kv({"sslmode": "disable"}),
                     "backup_method": "postgres",
                     "archiver": "off",

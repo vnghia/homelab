@@ -55,6 +55,7 @@ services:
         build: barman
       init: true
       tmpfs:
+        - /tmp
         - /var/run
       volumes:
         barman-config:
