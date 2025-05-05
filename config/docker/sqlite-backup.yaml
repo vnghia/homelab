@@ -29,6 +29,13 @@ services:
             backup:
               command:
                 - homelab-sqlite-backup
+                - backup
+                - param:
+                    type: backup
+            restore:
+              command:
+                - homelab-sqlite-backup
+                - restore
                 - param:
                     type: backup
     container:
