@@ -65,7 +65,6 @@ class DaguDagParamsModel(HomelabBaseModel):
             DaguDagStepRunCommandModel,
             DaguDagStepRunCommandParamModel,
             DaguDagStepRunCommandParamTypeFullModel,
-            DaguDagStepRunCommandParamTypeModel,
         )
 
         used_params = set()
@@ -99,20 +98,16 @@ class DaguDagParamsModel(HomelabBaseModel):
                 if isinstance(root, DaguDagStepRunCommandParamModel):
                     used_params.add(
                         root.param.root.type
-                        if isinstance(root.param, DaguDagStepRunCommandParamTypeModel)
-                        and isinstance(
+                        if isinstance(
                             root.param.root, DaguDagStepRunCommandParamTypeFullModel
                         )
-                        else root.param
+                        else root.param.root
                     )
 
         params = []
-        for key, value in self.main.items():
-            if key in used_params:
-                params.append({key: value})
-        for key, default_value in self.types.items():
-            if key in used_params:
-                param_value = self.PARAM_VALUE[key]
+        for key_type, default_value in self.types.items():
+            if key_type in used_params:
+                param_value = self.PARAM_VALUE[key_type]
                 params.append(
                     {
                         param_value[0]: default_value
@@ -120,5 +115,8 @@ class DaguDagParamsModel(HomelabBaseModel):
                         else param_value[1]
                     }
                 )
+        for key_main, value in self.main.items():
+            if key_main in used_params:
+                params.append({key_main: value})
 
         return params or None

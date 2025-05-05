@@ -71,6 +71,12 @@ class ResticGlobalProfileResource(
                         },
                         "snapshots": snapshot_options,
                         "forget": forget_options,
+                        "ls": {
+                            "human-readable": True,
+                            "long": True,
+                            "path": True,
+                            "tag": True,
+                        },
                     }
                 },
                 "groups": {

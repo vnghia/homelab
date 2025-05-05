@@ -59,6 +59,17 @@ services:
                 - param:
                     type: backup
                 - "backup"
+            ls:
+              dag:
+                params:
+                  main:
+                    SNAPSHOT_ID: latest
+              command:
+                - "-n"
+                - param:
+                    type: backup
+                - "ls"
+                - param: SNAPSHOT_ID
             forget:
               command:
                 - "-n"
