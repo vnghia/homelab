@@ -87,6 +87,11 @@ class ResticProfileResource(
                                 [self.DOCKER_TAG, self.volume.service, *model.tags]
                             ),
                         },
+                        "restore": {
+                            "target": (self.volume.path / source)
+                            if source
+                            else self.volume.path
+                        },
                     }
                 },
             },

@@ -32,16 +32,16 @@ class ResticGlobalProfileResource(
 
         all_profiles = restic_service.profiles + restic_service.database_profiles
 
-        group_by_options = "tags,path"
-        snapshot_options = {
-            "group-by": group_by_options,
-            "path": True,
-            "tag": True,
-        }
-        forget_options = snapshot_options | {
-            "keep-{}".format(timeframe): number
-            for timeframe, number in restic_service.config.keep.last.items()
-        }
+        group_by_options = {"group-by": "tags,path"}
+        snapshot_options = {"path": True, "tag": True}
+        forget_options = (
+            group_by_options
+            | snapshot_options
+            | {
+                "keep-{}".format(timeframe): number
+                for timeframe, number in restic_service.config.keep.last.items()
+            }
+        )
 
         super().__init__(
             "global",
@@ -67,16 +67,12 @@ class ResticGlobalProfileResource(
                             "source-relative": True,
                             "host": hostname,
                             "source": ["."],
-                            "group-by": group_by_options,
-                        },
-                        "snapshots": snapshot_options,
+                        }
+                        | group_by_options,
+                        "snapshots": group_by_options | snapshot_options,
                         "forget": forget_options,
-                        "ls": {
-                            "human-readable": True,
-                            "long": True,
-                            "path": True,
-                            "tag": True,
-                        },
+                        "ls": {"human-readable": True, "long": True} | snapshot_options,
+                        "restore": {"verify": True} | snapshot_options,
                     }
                 },
                 "groups": {

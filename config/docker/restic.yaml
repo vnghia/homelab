@@ -70,6 +70,17 @@ services:
                     type: backup
                 - "ls"
                 - param: SNAPSHOT_ID
+            restore:
+              dag:
+                params:
+                  main:
+                    SNAPSHOT_ID: latest
+              command:
+                - "-n"
+                - param:
+                    type: backup
+                - "restore"
+                - param: SNAPSHOT_ID
             forget:
               command:
                 - "-n"
