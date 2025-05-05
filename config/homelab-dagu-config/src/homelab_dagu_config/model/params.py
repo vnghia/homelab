@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
 
 class DaguDagParamType(StrEnum):
     BACKUP = auto()
+    SNAPSHOT = auto()
     DEBUG = auto()
 
 
@@ -22,6 +23,10 @@ class DaguDagParamsModel(HomelabBaseModel):
         DaguDagParamType.BACKUP: (
             BackupGlobalConfig.BACKUP_KEY,
             BackupGlobalConfig.BACKUP_KEY_VALUE,
+        ),
+        DaguDagParamType.SNAPSHOT: (
+            BackupGlobalConfig.SNAPSHOT_KEY,
+            BackupGlobalConfig.SNAPSHOT_KEY_VALUE,
         ),
         DaguDagParamType.DEBUG: ("SLEEP_DURATION", "30m"),
     }

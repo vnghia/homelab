@@ -41,6 +41,7 @@ services:
             params:
               types:
                 backup:
+                snapshot:
             tags: ["backup"]
           dags:
             check:
@@ -60,27 +61,21 @@ services:
                     type: backup
                 - "backup"
             ls:
-              dag:
-                params:
-                  main:
-                    SNAPSHOT_ID: latest
               command:
                 - "-n"
                 - param:
                     type: backup
                 - "ls"
-                - param: SNAPSHOT_ID
+                - param:
+                    type: snapshot
             restore:
-              dag:
-                params:
-                  main:
-                    SNAPSHOT_ID: latest
               command:
                 - "-n"
                 - param:
                     type: backup
                 - "restore"
-                - param: SNAPSHOT_ID
+                - param:
+                    type: snapshot
             forget:
               command:
                 - "-n"
