@@ -10,6 +10,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
+from homelab_frp_service import FrpService
 from homelab_gluetun_service import GluetunService
 from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
@@ -36,6 +37,11 @@ class Homelab:
             opts=None,
             hostname=self.project_prefix,
             internal_aliases=self.config.network.aliases,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.frp = FrpService(
+            self.docker.services_config.frp,
+            opts=None,
             docker_resource_args=self.docker.resource_args,
         )
 

@@ -15,6 +15,7 @@ dependencies = [
     "homelab-traefik-config",
     "homelab-dagu-config",
     "homelab-tailscale-service",
+    "homelab-frp-service",
     "homelab-traefik-service",
     "homelab-dagu-service",
     "homelab-backup-service",
@@ -69,6 +70,7 @@ homelab-barman-service = { workspace = true }
 homelab-crowdsec-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-extra-service = { workspace = true }
+homelab-frp-service = { workspace = true }
 homelab-gluetun-service = { workspace = true }
 homelab-kanidm-service = { workspace = true }
 homelab-pydio-service = { workspace = true }
