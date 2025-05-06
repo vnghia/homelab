@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -eux
+
+barman restore $1 $2 /tmp/data
+rm -rf /mnt/data/$1/*
+cp -r /tmp/data/. /mnt/data/$1/
+chown -R 999:ping /mnt/data/$1/

@@ -13,5 +13,6 @@ RUN apk add --update --no-cache \
 
 COPY ./barman.conf /etc/barman.conf
 COPY ./crontab /var/spool/cron/crontabs/root
+COPY --chmod=0755 ./restore /usr/bin/restore
 
 CMD [ "crond", "-f", "-l", "2" ]

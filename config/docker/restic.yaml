@@ -88,6 +88,7 @@ services:
           forget-and-prune:
             name: forget-and-prune
             path: restic-forget-and-prune
+            tags: ["backup"]
             schedule: "0 2 * * sun" # 2am every sunday
             steps:
               - name: forget

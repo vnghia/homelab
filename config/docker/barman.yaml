@@ -50,6 +50,25 @@ services:
               command: ["backup"]
             switch-wal:
               command: ["switch-wal", "--force", "--archive"]
+        dag:
+          restore:
+            name: restore
+            path: barman-restore
+            params:
+              types:
+                backup:
+                snapshot:
+            tags: ["backup"]
+            steps:
+              - name: restore
+                executor:
+                  container:
+                run:
+                  - "restore"
+                  - param:
+                      type: backup
+                  - param:
+                      type: snapshot
     container:
       image:
         build: barman
