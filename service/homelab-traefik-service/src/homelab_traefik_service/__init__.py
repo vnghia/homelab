@@ -9,7 +9,6 @@ from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_network.resource.network import NetworkResource
 from homelab_pydantic import RelativePath
-from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
 from .config import TraefikConfig
@@ -24,7 +23,6 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         model: ServiceWithConfigModel[TraefikConfig],
         *,
         opts: ResourceOptions | None,
-        tailscale_service: TailscaleService,
         network_resource: NetworkResource,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
@@ -36,7 +34,7 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         self.static = TraefikStaticConfigResource(
             opts=self.child_opts,
             traefik_service=self,
-            tailscale_service=tailscale_service,
+            port=network_resource.config.port,
         )
 
         self.options[None] = ContainerModelBuildArgs(

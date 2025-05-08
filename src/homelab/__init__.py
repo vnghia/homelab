@@ -68,7 +68,6 @@ class Homelab:
             self.docker.services_config.traefik,
             opts=None,
             network_resource=self.network,
-            tailscale_service=self.tailscale,
             docker_resource_args=self.docker.resource_args,
         )
 

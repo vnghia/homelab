@@ -24,33 +24,19 @@ services:
       network:
         default-bridge: true
       ports:
-        httpv4:
-          internal: 81
+        http:
+          internal: 80
           external: 80
           ip: "0.0.0.0"
-        httpv6:
-          internal: 81
-          external: 80
-          ip: "::"
-        httpsv4:
-          internal: 444
+        https:
+          internal: 443
           external: 443
           ip: "0.0.0.0"
           protocol: tcp
-        httpsv6:
-          internal: 444
-          external: 443
-          ip: "::"
-          protocol: tcp
-        httpsv4-udp:
+        h3:
           internal: 444
           external: 443
           ip: "0.0.0.0"
-          protocol: udp
-        httpsv6-udp:
-          internal: 444
-          external: 443
-          ip: "::"
           protocol: udp
       tmpfs:
         - /tmp

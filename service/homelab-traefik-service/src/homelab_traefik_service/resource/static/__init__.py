@@ -4,7 +4,7 @@ import typing
 
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
-from homelab_tailscale_service import TailscaleService
+from homelab_network.config.port import NetworkPortConfig
 from pulumi import ResourceOptions
 
 from . import schema
@@ -28,11 +28,10 @@ class TraefikStaticConfigResource(
         *,
         opts: ResourceOptions | None,
         traefik_service: TraefikService,
-        tailscale_service: TailscaleService,
+        port: NetworkPortConfig,
     ) -> None:
         traefik_config = traefik_service.config
         traefik_model = traefik_service.model[None]
-        tailscale_model = tailscale_service.model[None]
 
         static_volume_path = ServiceExtractor(
             traefik_service.config.path.static
@@ -74,34 +73,36 @@ class TraefikStaticConfigResource(
                 "ping": {},
                 "entryPoints": {
                     traefik_config.entrypoint.private_http: {
-                        "address": "[::]:80",
+                        "address": "[::]:{}".format(port.HTTP),
                         "http": {
                             "redirections": {
-                                "entryPoint": {"to": ":443", "scheme": "https"}
+                                "entryPoint": {
+                                    "to": ":{}".format(port.HTTPS),
+                                    "scheme": "https",
+                                }
                             }
                         },
                     },
                     traefik_config.entrypoint.public_http: {
-                        "address": "[::]:{}".format(
-                            tailscale_model.ports["httpv4"].internal
-                        ),
+                        "address": "[::]:{}".format(port.internal.http),
                         "http": {
                             "redirections": {
-                                "entryPoint": {"to": ":443", "scheme": "https"}
+                                "entryPoint": {
+                                    "to": ":{}".format(port.external.https),
+                                    "scheme": "https",
+                                }
                             }
                         },
                     }
                     | proxy_protocol,
                     traefik_config.entrypoint.private_https: {
-                        "address": "[::]:443",
+                        "address": "[::]:{}".format(port.HTTPS),
                         "http3": {},
                         "transport": timeouts,
                     },
                     traefik_config.entrypoint.public_https: {
-                        "address": "[::]:{}".format(
-                            tailscale_model.ports["httpsv4"].internal
-                        ),
-                        "http3": {},
+                        "address": "[::]:{}".format(port.internal.https),
+                        "http3": {"advertisedPort": port.external.https},
                         "transport": timeouts,
                     }
                     | proxy_protocol,
