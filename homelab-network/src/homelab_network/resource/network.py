@@ -3,7 +3,7 @@ from typing import Mapping
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 from pydantic import IPvAnyAddress
 
-from homelab_network.config.network import NetworkConfig
+from homelab_network.config import NetworkConfig
 
 from .record import RecordResource
 from .token import TokenResource

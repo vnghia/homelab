@@ -6,7 +6,7 @@ import pulumi
 import yaml
 from homelab_docker.config import DockerConfig
 from homelab_docker.config.service import ServiceConfigBase
-from homelab_network.config.network import NetworkConfig
+from homelab_network.config import NetworkConfig
 from homelab_pydantic import HomelabBaseModel
 
 from .constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK

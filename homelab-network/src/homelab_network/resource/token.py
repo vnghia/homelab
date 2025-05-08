@@ -1,7 +1,7 @@
 import pulumi_cloudflare as cloudflare
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_network.config.network import NetworkConfig
+from homelab_network.config import NetworkConfig
 
 
 class TokenResource(ComponentResource):
