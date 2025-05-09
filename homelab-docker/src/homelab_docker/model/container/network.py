@@ -14,6 +14,7 @@ from ...extract import GlobalExtractor
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
+    from . import ContainerModelBuildArgs
 
 
 @dataclasses.dataclass
@@ -32,8 +33,8 @@ class ContainerNetworkContainerConfig(HomelabBaseModel):
     def to_args(
         self,
         _resource_name: str | None,
-        _internal_aliases: list[str],
         main_service: ServiceResourceBase,
+        _build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
             mode=Output.format(
@@ -50,8 +51,8 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     def to_args(
         self,
         resource_name: str | None,
-        internal_aliases: list[str],
         main_service: ServiceResourceBase,
+        build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         match self.mode:
             case NetworkMode.VPN:
@@ -65,7 +66,7 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
                             ),
                         )
                     )
-                ).to_args(resource_name, internal_aliases, main_service)
+                ).to_args(resource_name, main_service, build_args)
 
 
 class ContainerCommonNetworkConfig(HomelabBaseModel):
@@ -76,9 +77,11 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
     def to_args(
         self,
         resource_name: str | None,
-        internal_aliases: list[str],
         main_service: ServiceResourceBase,
+        build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
+        from ...config.network import NetworkConfig
+
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
         resource_aliases = [resource_name] if resource_name else []
         return ContainerNetworkArgs(
@@ -86,7 +89,10 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
             advanced=(
                 [
                     main_service.docker_resource_args.network.default_bridge_args(
-                        resource_aliases
+                        [
+                            *resource_aliases,
+                            *build_args.aliases.get(NetworkConfig.DEFAULT_BRIDGE, []),
+                        ]
                     )
                 ]
                 if self.default_bridge
@@ -95,7 +101,10 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
             + (
                 [
                     main_service.docker_resource_args.network.internal_bridge_args(
-                        [*resource_aliases, *internal_aliases]
+                        [
+                            *resource_aliases,
+                            *build_args.aliases.get(NetworkConfig.INTERNAL_BRIDGE, []),
+                        ]
                     )
                 ]
                 if self.internal_bridge
@@ -104,7 +113,10 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
             + (
                 [
                     main_service.docker_resource_args.network.proxy_bridge_args(
-                        resource_aliases
+                        [
+                            *resource_aliases,
+                            *build_args.aliases.get(NetworkConfig.PROXY_BRIDGE, []),
+                        ]
                     )
                 ]
                 if self.proxy_bridge
@@ -129,7 +141,7 @@ class ContainerNetworkConfig(
     def to_args(
         self,
         resource_name: str | None,
-        internal_aliases: list[str],
         main_service: ServiceResourceBase,
+        build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
-        return self.root.to_args(resource_name, internal_aliases, main_service)
+        return self.root.to_args(resource_name, main_service, build_args)

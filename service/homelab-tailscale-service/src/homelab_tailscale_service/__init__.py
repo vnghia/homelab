@@ -2,6 +2,7 @@ from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_tailscale as tailscale
+from homelab_docker.config.network import NetworkConfig
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource import DockerResourceArgs
@@ -29,7 +30,7 @@ class TailscaleService(ServiceResourceBase):
                 "TS_AUTHKEY": self.build_authkey().key,
                 "TS_HOSTNAME": self.hostname,
             },
-            internal_aliases=internal_aliases,
+            aliases={NetworkConfig.INTERNAL_BRIDGE: internal_aliases},
         )
         self.build_containers()
 

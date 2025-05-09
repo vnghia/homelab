@@ -36,7 +36,7 @@ class ContainerModelBuildArgs:
         default_factory=dict
     )
     files: Sequence[FileResource] = dataclasses.field(default_factory=list)
-    internal_aliases: list[str] = dataclasses.field(default_factory=list)
+    aliases: dict[str, list[str]] = dataclasses.field(default_factory=dict)
 
 
 class ContainerModel(HomelabBaseModel):
@@ -188,9 +188,7 @@ class ContainerModel(HomelabBaseModel):
         model = self.model(main_service)
 
         build_args = build_args or ContainerModelBuildArgs()
-        network_args = model.network.to_args(
-            resource_name, build_args.internal_aliases, main_service
-        )
+        network_args = model.network.to_args(resource_name, main_service, build_args)
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
