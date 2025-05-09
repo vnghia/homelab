@@ -9,6 +9,7 @@ from homelab_docker.resource.file.config import (
     TomlDumper,
 )
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
+from homelab_network.resource.network import NetworkResource
 from pulumi import ResourceOptions
 
 from .config import FrpConfig
@@ -25,8 +26,10 @@ class FrpClientConfigResource(
         resource_name: str,
         *,
         opts: ResourceOptions | None,
+        network_resource: NetworkResource,
         frp_service: FrpService,
     ) -> None:
+        port_config = network_resource.config.port
         config = frp_service.config
         super().__init__(
             resource_name,
@@ -44,6 +47,31 @@ class FrpClientConfigResource(
                     "tls": {"enable": False},
                     "poolCount": config.pool,
                 },
+                "proxies": [
+                    {
+                        "name": "http",
+                        "type": "tcp",
+                        "localIP": "tailscale",
+                        "localPort": port_config.internal.http,
+                        "remotePort": port_config.external.http,
+                        "transport": {"proxyProtocolVersion": "v2"},
+                    },
+                    {
+                        "name": "https",
+                        "type": "tcp",
+                        "localIP": "tailscale",
+                        "localPort": port_config.internal.https,
+                        "remotePort": port_config.external.https,
+                        "transport": {"proxyProtocolVersion": "v2"},
+                    },
+                    {
+                        "name": "h3",
+                        "type": "udp",
+                        "localIP": "tailscale",
+                        "localPort": port_config.internal.https,
+                        "remotePort": port_config.external.https,
+                    },
+                ],
             },
             volume_resource=frp_service.docker_resource_args.volume,
         )
@@ -55,12 +83,16 @@ class FrpService(ServiceWithConfigResourceBase[FrpConfig]):
         model: ServiceWithConfigModel[FrpConfig],
         *,
         opts: ResourceOptions | None,
+        network_resource: NetworkResource,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
         self.client_config = FrpClientConfigResource(
-            "client=config", opts=self.child_opts, frp_service=self
+            "client-config",
+            opts=self.child_opts,
+            network_resource=network_resource,
+            frp_service=self,
         )
         self.options[None].files = [self.client_config]
         self.build_containers()

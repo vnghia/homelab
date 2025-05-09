@@ -39,11 +39,6 @@ class Homelab:
             internal_aliases=self.config.network.aliases,
             docker_resource_args=self.docker.resource_args,
         )
-        self.frp = FrpService(
-            self.docker.services_config.frp,
-            opts=None,
-            docker_resource_args=self.docker.resource_args,
-        )
 
         self.network = NetworkResource(
             self.config.network,
@@ -66,6 +61,12 @@ class Homelab:
         )
         self.traefik = TraefikService(
             self.docker.services_config.traefik,
+            opts=None,
+            network_resource=self.network,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.frp = FrpService(
+            self.docker.services_config.frp,
             opts=None,
             network_resource=self.network,
             docker_resource_args=self.docker.resource_args,
