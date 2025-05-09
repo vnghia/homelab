@@ -24,10 +24,14 @@ class NetworkResource(ComponentResource):
         self.internal_bridge = config.internal_bridge.build_resource(
             config.INTERNAL_BRIDGE, opts=self.child_opts, project_labels=project_labels
         )
+        self.proxy_bridge = config.proxy_bridge.build_resource(
+            config.PROXY_BRIDGE, opts=self.child_opts, project_labels=project_labels
+        )
 
         export = {
             config.DEFAULT_BRIDGE: self.default_bridge.name,
             config.INTERNAL_BRIDGE: self.internal_bridge.name,
+            config.PROXY_BRIDGE: self.proxy_bridge.name,
         }
         for name, value in export.items():
             pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
@@ -45,4 +49,11 @@ class NetworkResource(ComponentResource):
     ) -> docker.ContainerNetworksAdvancedArgs:
         return docker.ContainerNetworksAdvancedArgs(
             name=self.internal_bridge.name, aliases=aliases
+        )
+
+    def proxy_bridge_args(
+        self, aliases: list[str]
+    ) -> docker.ContainerNetworksAdvancedArgs:
+        return docker.ContainerNetworksAdvancedArgs(
+            name=self.proxy_bridge.name, aliases=aliases
         )

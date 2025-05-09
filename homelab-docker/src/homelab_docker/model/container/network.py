@@ -71,6 +71,7 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
 class ContainerCommonNetworkConfig(HomelabBaseModel):
     default_bridge: bool = False
     internal_bridge: bool = True
+    proxy_bridge: bool = False
 
     def to_args(
         self,
@@ -98,6 +99,15 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
                     )
                 ]
                 if self.internal_bridge
+                else []
+            )
+            + (
+                [
+                    main_service.docker_resource_args.network.proxy_bridge_args(
+                        resource_aliases
+                    )
+                ]
+                if self.proxy_bridge
                 else []
             ),
         )
