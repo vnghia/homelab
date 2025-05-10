@@ -16,12 +16,7 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import (
-    HttpUrl,
-    ValidationInfo,
-    ValidatorFunctionWrapHandler,
-    field_validator,
-)
+from pydantic import HttpUrl, ValidatorFunctionWrapHandler, field_validator
 from pykeepass import PyKeePass
 from pykeepass.entry import Entry
 from pykeepass.group import Group
@@ -45,13 +40,11 @@ class KeepassEntryProps(HomelabBaseModel):
     @field_validator("username", "password", "hostname", mode="wrap")
     @classmethod
     def ignore_pulumi_unknown(
-        cls, data: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo
+        cls, data: Any, handler: ValidatorFunctionWrapHandler
     ) -> Any:
         if isinstance(data, pulumi.output.Unknown):
             pulumi.log.warn(
-                "Pulumi unknown output encountered: {}. Validated data: {}".format(
-                    data, info.data
-                )
+                "Pulumi unknown output encountered with {}.".format(cls.__name__)
             )
             return ""
         return handler(data)
@@ -87,13 +80,11 @@ class KeepassProviderProps(HomelabBaseModel):
     @field_validator("entries", mode="wrap")
     @classmethod
     def ignore_pulumi_unknown(
-        cls, data: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo
+        cls, data: Any, handler: ValidatorFunctionWrapHandler
     ) -> Any:
         if isinstance(data, pulumi.output.Unknown):
             pulumi.log.warn(
-                "Pulumi unknown output encountered: {}. Validated data: {}".format(
-                    data, info.data
-                )
+                "Pulumi unknown output encountered with {}.".format(cls.__name__)
             )
             return {}
         return handler(data)
