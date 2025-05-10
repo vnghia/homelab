@@ -45,15 +45,20 @@ class TraefikStaticConfigResource(
             }
         }
 
-        proxy_protocol = (
-            {
-                "proxyProtocol": {
-                    "trustedIPs": [str(ip) for ip in traefik_config.proxy_protocol.ips]
-                }
+        proxy_protocol = {
+            "proxyProtocol": {
+                "trustedIPs": traefik_service.docker_resource_args.network.proxy_bridge.ipam_configs.apply(
+                    lambda ipam_configs: [
+                        str(ip) for ip in traefik_config.proxy_protocol.ips
+                    ]
+                    + [
+                        ipam_config.subnet
+                        for ipam_config in ipam_configs
+                        if ipam_config.subnet
+                    ]
+                )
             }
-            if traefik_config.proxy_protocol.ips
-            else {}
-        )
+        }
 
         super().__init__(
             "static",

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from homelab_docker.config.network import NetworkConfig
 from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
@@ -51,7 +52,7 @@ class FrpClientConfigResource(
                     {
                         "name": "http",
                         "type": "tcp",
-                        "localIP": "tailscale",
+                        "localIP": NetworkConfig.PROXY_ALIAS,
                         "localPort": port_config.internal.http,
                         "remotePort": port_config.external.http,
                         "transport": {"proxyProtocolVersion": "v2"},
@@ -59,7 +60,7 @@ class FrpClientConfigResource(
                     {
                         "name": "https",
                         "type": "tcp",
-                        "localIP": "tailscale",
+                        "localIP": NetworkConfig.PROXY_ALIAS,
                         "localPort": port_config.internal.https,
                         "remotePort": port_config.external.https,
                         "transport": {"proxyProtocolVersion": "v2"},
@@ -67,7 +68,7 @@ class FrpClientConfigResource(
                     {
                         "name": "h3",
                         "type": "udp",
-                        "localIP": "tailscale",
+                        "localIP": NetworkConfig.PROXY_ALIAS,
                         "localPort": port_config.internal.https,
                         "remotePort": port_config.external.https,
                     },

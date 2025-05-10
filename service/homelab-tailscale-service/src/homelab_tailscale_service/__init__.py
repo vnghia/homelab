@@ -30,7 +30,10 @@ class TailscaleService(ServiceResourceBase):
                 "TS_AUTHKEY": self.build_authkey().key,
                 "TS_HOSTNAME": self.hostname,
             },
-            aliases={NetworkConfig.INTERNAL_BRIDGE: internal_aliases},
+            aliases={
+                NetworkConfig.INTERNAL_BRIDGE: internal_aliases,
+                NetworkConfig.PROXY_BRIDGE: [NetworkConfig.PROXY_ALIAS],
+            },
         )
         self.build_containers()
 

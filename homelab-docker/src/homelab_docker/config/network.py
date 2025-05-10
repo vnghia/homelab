@@ -11,6 +11,8 @@ class NetworkConfig(HomelabBaseModel):
     INTERNAL_BRIDGE: ClassVar[str] = "internal-bridge"
     PROXY_BRIDGE: ClassVar[str] = "proxy-bridge"
 
+    PROXY_ALIAS: ClassVar[str] = "reverse-proxy"
+
     default_bridge: BridgeNetworkModel
     internal_bridge: BridgeNetworkModel
     proxy_bridge: BridgeNetworkModel

@@ -27,6 +27,7 @@ services:
         - variable: CONFIG_PATH
       network:
         default-bridge: true
+        proxy-bridge: true
       volumes:
         frp-config:
           path: /etc/frp

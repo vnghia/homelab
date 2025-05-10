@@ -23,6 +23,7 @@ services:
         timeout: 5s
       network:
         default-bridge: true
+        proxy-bridge: true
       ports:
         http:
           internal: 80
