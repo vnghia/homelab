@@ -1,7 +1,6 @@
 from typing import ClassVar
 
 from homelab_dagu_config import DaguServiceConfig
-from homelab_dagu_config.group.docker import DaguDagDockerRunGroupConfig
 from homelab_dagu_config.model import DaguDagModel
 from homelab_dagu_config.model.params import DaguDagParamsModel, DaguDagParamType
 from homelab_dagu_config.model.step import DaguDagStepModel
@@ -72,10 +71,7 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
 
         if root.docker:
             executor_config = root.docker.executor
-            if (
-                isinstance(executor_config, DaguDagDockerRunGroupConfig)
-                and executor_config.debug
-            ):
+            if executor_config.debug:
                 DaguDagModelBuilder(
                     DaguDagModel(
                         dotenvs=root.docker.dag.dotenvs,
@@ -106,7 +102,9 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                                 ),
                                 executor=DaguDagStepExecutorModel(
                                     DaguDagStepDockerExecutorModel(
-                                        executor_config.run.__replace__(entrypoint=[])
+                                        executor_config.run_executor.__replace__(
+                                            entrypoint=[]
+                                        )
                                     )
                                 ),
                             )

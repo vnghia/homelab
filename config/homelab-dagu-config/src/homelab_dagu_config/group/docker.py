@@ -17,13 +17,22 @@ class DaguDagDockerRunGroupConfig(HomelabBaseModel):
     def model(self) -> DaguDagStepDockerRunExecutorModel:
         return self.run
 
+    @property
+    def run_executor(self) -> DaguDagStepDockerRunExecutorModel:
+        return self.run
+
 
 class DaguDagDockerExecGroupConfig(HomelabBaseModel):
     exec: DaguDagStepDockerExecExecutorModel
+    debug: bool = True
 
     @property
     def model(self) -> DaguDagStepDockerExecExecutorModel:
         return self.exec
+
+    @property
+    def run_executor(self) -> DaguDagStepDockerRunExecutorModel:
+        return DaguDagStepDockerRunExecutorModel(model=self.exec.container)
 
 
 class DaguDagDockerGroupConfig(HomelabBaseModel):
