@@ -68,7 +68,6 @@ services:
       image: jellyfin
       devices:
         - /dev/dri/renderD128
-        - /dev/dri/card0
       network:
         default-bridge: true
       volumes:
