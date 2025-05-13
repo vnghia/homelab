@@ -51,6 +51,7 @@ class ContainerModel(HomelabBaseModel):
     devices: list[AbsolutePath] | None = None
     docker_socket: ContainerDockerSocketConfig | None = None
     entrypoint: list[GlobalExtract] | None = None
+    group_adds: list[str] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
     hostname: GlobalExtract | None = None
     init: bool | None = None
@@ -221,6 +222,7 @@ class ContainerModel(HomelabBaseModel):
             ]
             if model.devices
             else None,
+            group_adds=model.group_adds,
             entrypoints=model.build_entrypoint(main_service),
             healthcheck=model.healthcheck.to_args(main_service, model)
             if model.healthcheck
