@@ -6,6 +6,8 @@ images:
 volumes:
   local:
     qbittorrent-config: {}
+    qbittorrent-downloads:
+      backup: false
     qbittorrent-starr:
       backup: false
 services:
@@ -31,6 +33,7 @@ services:
           exec: true
       volumes:
         qbittorrent-config: /config
+        qbittorrent-downloads: /downloads
         qbittorrent-starr: /starr/torrents
       envs:
         S6_READ_ONLY_ROOT: 1
