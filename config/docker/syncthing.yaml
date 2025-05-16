@@ -40,25 +40,15 @@ services:
       network:
         default-bridge: true
       ports:
-        tcpv4:
+        tcp:
           internal: 22000
           external: 22000
           ip: "0.0.0.0"
           protocol: tcp
-        tcpv6:
-          internal: 22000
-          external: 22000
-          ip: "::"
-          protocol: tcp
-        quicv4:
+        quic:
           internal: 22000
           external: 22000
           ip: "0.0.0.0"
-          protocol: udp
-        quicv6:
-          internal: 22000
-          external: 22000
-          ip: "::"
           protocol: udp
       volumes:
         syncthing-data: /var/syncthing
