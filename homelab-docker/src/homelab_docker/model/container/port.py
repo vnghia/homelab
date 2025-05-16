@@ -6,11 +6,16 @@ from homelab_pydantic import HomelabBaseModel
 from pydantic import IPvAnyAddress, PositiveInt
 
 
+class ContainerPortForwardConfig(HomelabBaseModel):
+    alias: str | None = None
+
+
 class ContainerPortConfig(HomelabBaseModel):
     internal: PositiveInt
     external: PositiveInt
     ip: IPvAnyAddress
     protocol: str | None = None
+    forward: ContainerPortForwardConfig | None = None
 
     def to_args(self) -> docker.ContainerPortArgs:
         return docker.ContainerPortArgs(

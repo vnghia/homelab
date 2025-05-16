@@ -56,8 +56,9 @@ class ServiceResourceBase(ComponentResource):
         return to_snake(cls.__name__.removesuffix("Service")).replace("_", "-")
 
     @classmethod
-    def add_service_name(cls, name: str | None) -> str:
-        return "{}-{}".format(cls.name(), name) if name else cls.name()
+    def add_service_name(cls, name: str | None, prefix: str | None = None) -> str:
+        prefix = prefix or cls.name()
+        return "{}-{}".format(prefix, name) if name else prefix
 
     @classmethod
     def get_key(cls, name: str | None) -> str | None:

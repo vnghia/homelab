@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from homelab_docker.config.network import NetworkConfig
 from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -12,6 +14,7 @@ from homelab_docker.resource.file.config import (
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_network.resource.network import NetworkResource
 from pulumi import ResourceOptions
+from pydantic import PositiveInt
 
 from .config import FrpConfig
 
@@ -30,6 +33,26 @@ class FrpClientConfigResource(
         network_resource: NetworkResource,
         frp_service: FrpService,
     ) -> None:
+        proxies = []
+        for prefix, service in frp_service.docker_resource_args.models.items():
+            for name, container in service.containers.items():
+                for key, port in container.ports.items():
+                    if port.forward:
+                        proxy_name = frp_service.add_service_name(key, prefix=prefix)
+                        alias = port.forward.alias or frp_service.add_service_name(
+                            name, prefix=prefix
+                        )
+                        proxy = (
+                            self.build_tcp(
+                                proxy_name, alias, port.internal, port.external, False
+                            )
+                            if port.protocol == "tcp"
+                            else self.build_udp(
+                                proxy_name, alias, port.internal, port.external
+                            )
+                        )
+                        proxies.append(proxy)
+
         port_config = network_resource.config.port
         config = frp_service.config
         super().__init__(
@@ -49,33 +72,71 @@ class FrpClientConfigResource(
                     "poolCount": config.pool,
                 },
                 "proxies": [
-                    {
-                        "name": "http",
-                        "type": "tcp",
-                        "localIP": NetworkConfig.PROXY_ALIAS,
-                        "localPort": port_config.internal.http,
-                        "remotePort": port_config.external.http,
-                        "transport": {"proxyProtocolVersion": "v2"},
-                    },
-                    {
-                        "name": "https",
-                        "type": "tcp",
-                        "localIP": NetworkConfig.PROXY_ALIAS,
-                        "localPort": port_config.internal.https,
-                        "remotePort": port_config.external.https,
-                        "transport": {"proxyProtocolVersion": "v2"},
-                    },
-                    {
-                        "name": "h3",
-                        "type": "udp",
-                        "localIP": NetworkConfig.PROXY_ALIAS,
-                        "localPort": port_config.internal.https,
-                        "remotePort": port_config.external.https,
-                    },
+                    self.build_tcp(
+                        "http",
+                        NetworkConfig.PROXY_ALIAS,
+                        port_config.internal.http,
+                        port_config.external.http,
+                        True,
+                    ),
+                    self.build_tcp(
+                        "https",
+                        NetworkConfig.PROXY_ALIAS,
+                        port_config.internal.https,
+                        port_config.external.https,
+                        True,
+                    ),
+                    self.build_udp(
+                        "h3",
+                        NetworkConfig.PROXY_ALIAS,
+                        port_config.internal.https,
+                        port_config.external.https,
+                    ),
+                    *proxies,
                 ],
             },
             volume_resource=frp_service.docker_resource_args.volume,
         )
+
+    @classmethod
+    def build_common(
+        cls,
+        name: str,
+        local_ip: str,
+        local_port: PositiveInt,
+        remote_port: PositiveInt,
+    ) -> dict[str, Any]:
+        return {
+            "name": name,
+            "localIP": local_ip,
+            "localPort": local_port,
+            "remotePort": remote_port,
+        }
+
+    @classmethod
+    def build_tcp(
+        cls,
+        name: str,
+        local_ip: str,
+        local_port: PositiveInt,
+        remote_port: PositiveInt,
+        proxy_protocol: bool,
+    ) -> dict[str, Any]:
+        return (
+            cls.build_common(name, local_ip, local_port, remote_port)
+            | {
+                "type": "tcp",
+            }
+            | ({"transport": {"proxyProtocolVersion": "v2"}} if proxy_protocol else {})
+        )
+
+    @classmethod
+    def build_udp(
+        cls, name: str, local_ip: str, local_port: PositiveInt, remote_port: PositiveInt
+    ) -> dict[str, Any]:
+        return cls.build_common(name, local_ip, local_port, remote_port) | {
+            "type": "udp",
+        }
 
 
 class FrpService(ServiceWithConfigResourceBase[FrpConfig]):
