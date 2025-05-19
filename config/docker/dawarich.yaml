@@ -2,7 +2,7 @@ images:
   remote:
     dawarich:
       repo: freikin/dawarich
-      tag: "0.26.0"
+      tag: "0.26.3"
 volumes:
   local:
     dawarich-public:
@@ -75,7 +75,6 @@ services:
         APPLICATION_PROTOCOL: http
         TIME_ZONE:
           docker: "{timezone}"
-        DISTANCE_UNIT: km
         DISABLE_TELEMETRY: true
         SECRET_KEY_BASE:
           secret: key
