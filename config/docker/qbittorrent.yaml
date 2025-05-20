@@ -34,7 +34,7 @@ services:
       volumes:
         qbittorrent-config: /config
         qbittorrent-downloads: /downloads
-        qbittorrent-starr: /starr/torrents
+        qbittorrent-starr: /starr/sources/torrents
       envs:
         S6_READ_ONLY_ROOT: 1
         WEBUI_PORT: 8080
