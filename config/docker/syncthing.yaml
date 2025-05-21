@@ -5,6 +5,7 @@ images:
       tag: "1.29.4"
 volumes:
   local:
+    syncthing-config: {}
     syncthing-data:
       backup:
         excludes:
@@ -53,7 +54,8 @@ services:
           protocol: udp
           forward: {}
       volumes:
-        syncthing-data: /var/syncthing
+        syncthing-config: /var/syncthing/config
+        syncthing-data: /var/syncthing/data
       wud:
         template: https://github.com/syncthing/syncthing/releases/tag/v${original}
       envs:
