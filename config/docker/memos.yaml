@@ -2,7 +2,7 @@ images:
   remote:
     memos:
       repo: ghcr.io/usememos/memos
-      tag: "0.24.2"
+      tag: "0.24.3"
 volumes:
   local:
     memos-data: {}
