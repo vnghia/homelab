@@ -2,7 +2,7 @@ images:
   remote:
     impress-backend:
       repo: lasuite/impress-backend
-      tag: &impress-version "v3.1.0"
+      tag: &impress-version "v3.3.0"
     impress-frontend:
       repo: lasuite/impress-frontend
       tag: *impress-version
@@ -30,7 +30,6 @@ services:
                 public: true
                 scheme: https
               prefer-short-username: true
-              allow-insecure-client-disable-pkce: true
   impress:
     variables:
       BACKEND_PORT: 8000
@@ -174,6 +173,7 @@ services:
             hostname: impress
             public: true
             scheme: https
+          OIDC_USE_PKCE: true
           OIDC_REDIRECT_REQUIRE_HTTPS: true
           OIDC_REDIRECT_ALLOWED_HOSTS:
             hostname: impress
@@ -182,6 +182,7 @@ services:
           OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION: false
           USER_OIDC_FIELDS_TO_FULLNAME: name
           USER_OIDC_FIELD_TO_SHORTNAME: preferred_username
+          FRONTEND_HOMEPAGE_FEATURE_ENABLED: false
           COLLABORATION_SERVER_SECRET:
             secret: collaboration
           COLLABORATION_API_URL:
