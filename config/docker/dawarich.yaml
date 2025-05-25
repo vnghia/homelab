@@ -2,7 +2,7 @@ images:
   remote:
     dawarich:
       repo: freikin/dawarich
-      tag: "0.26.3"
+      tag: "0.26.6"
 volumes:
   local:
     dawarich-public:
