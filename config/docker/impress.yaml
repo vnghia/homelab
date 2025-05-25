@@ -106,6 +106,9 @@ services:
           default-bridge: true
         tmpfs:
           - /tmp
+        wud:
+          template: https://github.com/suitenumerique/docs/releases/tag/${original}
+          include-prefix: v
         envs:
           DJANGO_ALLOWED_HOSTS:
             hostname: impress
