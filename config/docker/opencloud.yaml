@@ -2,7 +2,7 @@ images:
   remote:
     opencloud:
       repo: opencloudeu/opencloud-rolling
-      tag: "2.2.0"
+      tag: "2.3.0"
 volumes:
   local:
     opencloud-config:
@@ -195,14 +195,15 @@ services:
             string:
               template: "{value}/oauth2/openid/opencloud"
         OC_OIDC_CLIENT_ID: opencloud
-        OC_EXCLUDE_RUN_SERVICES: idp,ocm
+        OC_EXCLUDE_RUN_SERVICES: idp
         PROXY_OIDC_REWRITE_WELLKNOWN: false
         PROXY_USER_OIDC_CLAIM: sub
         PROXY_USER_CS3_CLAIM: username
-        PROXY_AUTOPROVISION_CLAIM_USERNAME: preferred_username
+        PROXY_AUTOPROVISION_CLAIM_USERNAME: sub
         PROXY_AUTOPROVISION_CLAIM_EMAIL: email
         PROXY_AUTOPROVISION_CLAIM_DISPLAYNAME: name
         PROXY_AUTOPROVISION_ACCOUNTS: true
+        SETTINGS_SETUP_DEFAULT_ASSIGNMENTS: false
         GRAPH_USERNAME_MATCH: none
         PROXY_ROLE_ASSIGNMENT_DRIVER: oidc
         GRAPH_ASSIGN_DEFAULT_USER_ROLE: false
