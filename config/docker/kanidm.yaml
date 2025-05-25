@@ -18,6 +18,7 @@ volumes:
       backup:
         source:
           variable: BACKUP
+        file: true
     kanidm-client-cache:
       backup: false
 services:

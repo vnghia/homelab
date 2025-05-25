@@ -29,6 +29,10 @@ class RelativePath(HomelabRootModel[PosixPath]):
     def suffix(self) -> str:
         return self.root.suffix
 
+    @property
+    def parent(self) -> Self:
+        return self.__class__(self.root.parent)
+
     def with_suffix(self, suffix: str) -> Self:
         return self.__class__(self.root.with_suffix(suffix))
 

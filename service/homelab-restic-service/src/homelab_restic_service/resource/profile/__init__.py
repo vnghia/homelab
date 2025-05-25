@@ -47,6 +47,14 @@ class ResticProfileResource(
                     )
                 )
             source = volume_source.path
+        target = (
+            (
+                self.volume.path
+                / (source if not self.backup_config.file else source.parent)
+            )
+            if source
+            else self.volume.path
+        )
 
         exclude = self.backup_config.excludes
         if len(self.backup_config.sqlites) > 0:
@@ -87,11 +95,7 @@ class ResticProfileResource(
                                 [self.DOCKER_TAG, self.volume.service, *model.tags]
                             ),
                         },
-                        "restore": {
-                            "target": (self.volume.path / source)
-                            if source
-                            else self.volume.path
-                        },
+                        "restore": {"target": target},
                     }
                 },
             },
