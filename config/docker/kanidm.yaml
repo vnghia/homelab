@@ -10,6 +10,8 @@ images:
       delete-before-replace: true
 volumes:
   local:
+    kanidm-config:
+      backup: false
     kanidm-data:
       backup: false
     kanidm-backup:
@@ -22,16 +24,44 @@ services:
   kanidm:
     variables:
       PORT: 8443
+      CONFIG:
+        extract:
+          volume: kanidm-config
+        transform:
+          path: server.toml
       BACKUP:
         extract:
           volume: kanidm-backup
         transform:
           path: kanidm.backup.json
     config:
-      tls-key:
-        env: KANIDM_TLS_KEY
-      tls-chain:
-        env: KANIDM_TLS_CHAIN
+      path:
+        config:
+          variable: CONFIG
+        tls-key:
+          extract:
+            volume: kanidm-data
+          transform:
+            path: key.pem
+        tls-chain:
+          extract:
+            volume: kanidm-data
+          transform:
+            path: chain.pem
+        db:
+          extract:
+            volume: kanidm-data
+          transform:
+            path: kanidm.db
+      port:
+        variable: PORT
+      domain:
+        hostname: kanidm
+        public: true
+      origin:
+        hostname: kanidm
+        public: true
+        scheme: https
       state:
         persons:
           me:
@@ -58,6 +88,8 @@ services:
                 - "/sbin/kanidmd"
                 - "database"
                 - "backup"
+                - "-c"
+                - variable: CONFIG
                 - variable: BACKUP
     keepasses:
       keepass:
@@ -66,45 +98,25 @@ services:
           public: true
     container:
       image: kanidm
+      command:
+        - "/sbin/kanidmd"
+        - "server"
+        - "-c"
+        - variable: CONFIG
       healthcheck:
         tests:
           - "CMD"
           - "/sbin/kanidmd"
           - "healthcheck"
+          - "-c"
+          - variable: CONFIG
         interval: 30s
         timeout: 5s
         retries: 5
         start-period: 10s
       volumes:
+        kanidm-config: /config
         kanidm-data: /data
         kanidm-backup: /backup
       envs:
-        KANIDM_BINDADDRESS:
-          extract:
-            variable: PORT
-          transform:
-            string:
-              template: "[::]:{value}"
-        KANIDM_DB_PATH:
-          extract:
-            volume: kanidm-data
-          transform:
-            path: kanidm.db
-        KANIDM_TLS_KEY:
-          extract:
-            volume: kanidm-data
-          transform:
-            path: key.pem
-        KANIDM_TLS_CHAIN:
-          extract:
-            volume: kanidm-data
-          transform:
-            path: chain.pem
-        KANIDM_DOMAIN:
-          hostname: kanidm
-          public: true
-        KANIDM_ORIGIN:
-          hostname: kanidm
-          public: true
-          scheme: https
         KANIDM_TRUST_X_FORWARD_FOR: true

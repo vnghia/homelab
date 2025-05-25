@@ -1,9 +1,16 @@
+from __future__ import annotations
+
 import pulumi
 import pulumi_tls as tls
 from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file import FileResource
+from homelab_docker.resource.file.config import (
+    ConfigFileResource,
+    JsonDefaultModel,
+    TomlDumper,
+)
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from pulumi import Output, ResourceOptions
 
@@ -13,9 +20,50 @@ from .resource.password import KanidmPasswordResource
 from .resource.state import KanidmStateResource
 
 
-class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
-    PORT_VARIABLE = "PORT"
+class KanidmServerConfigResource(
+    ConfigFileResource[JsonDefaultModel], module="kanidm", name="ServerConfig"
+):
+    validator = JsonDefaultModel
+    dumper = TomlDumper
 
+    def __init__(
+        self,
+        resource_name: str,
+        *,
+        opts: ResourceOptions | None,
+        kanidm_service: KanidmService,
+    ) -> None:
+        config = kanidm_service.config
+
+        super().__init__(
+            resource_name,
+            opts=opts,
+            volume_path=GlobalExtractor(
+                kanidm_service.config.path.config
+            ).extract_volume_path(kanidm_service, None),
+            data={
+                "bindaddress": Output.format("[::]:{}", kanidm_service.port),
+                "db_path": GlobalExtractor(config.path.db).extract_path(
+                    kanidm_service, None
+                ),
+                "tls_key": GlobalExtractor(config.path.tls_key).extract_path(
+                    kanidm_service, None
+                ),
+                "tls_chain": GlobalExtractor(config.path.tls_chain).extract_path(
+                    kanidm_service, None
+                ),
+                "domain": GlobalExtractor(config.domain).extract_str(
+                    kanidm_service, None
+                ),
+                "origin": GlobalExtractor(config.origin).extract_str(
+                    kanidm_service, None
+                ),
+            },
+            volume_resource=kanidm_service.docker_resource_args.volume,
+        )
+
+
+class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
     CLIENT_IMAGE = "kanidm-client"
     CLIENT_CACHE_VOLUME = "kanidm-client-cache"
 
@@ -32,6 +80,8 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
+        self.port = GlobalExtractor(self.config.port).extract_str(self, None).apply(int)
+
         self.key = tls.PrivateKey(
             "key", opts=self.child_opts, algorithm="ECDSA", ecdsa_curve="P256"
         )
@@ -46,7 +96,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         self.key_file = FileResource(
             "key",
             opts=self.child_opts,
-            volume_path=GlobalExtractor(self.config.tls_key).extract_volume_path(
+            volume_path=GlobalExtractor(self.config.path.tls_key).extract_volume_path(
                 self, None
             ),
             content=self.key.private_key_pem,
@@ -56,7 +106,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         self.chain_file = FileResource(
             "chain",
             opts=self.child_opts,
-            volume_path=GlobalExtractor(self.config.tls_chain).extract_volume_path(
+            volume_path=GlobalExtractor(self.config.path.tls_chain).extract_volume_path(
                 self, None
             ),
             content=self.chain.cert_pem,
@@ -64,7 +114,11 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             volume_resource=self.docker_resource_args.volume,
         )
 
-        self.options[None].files = [self.key_file, self.chain_file]
+        self.config_file = KanidmServerConfigResource(
+            "server", opts=self.child_opts, kanidm_service=self
+        )
+
+        self.options[None].files = [self.key_file, self.chain_file, self.config_file]
         self.build_containers()
 
         self.admin = KanidmPasswordResource(
@@ -81,9 +135,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         self.client_data = Output.json_dumps(
             {
                 "host": self.name(),
-                "port": GlobalExtractor(self.model.variables[self.PORT_VARIABLE])
-                .extract_str(self, None)
-                .apply(int),
+                "port": self.port,
                 "network": self.docker_resource_args.network.internal_bridge.name,
                 "image": self.docker_resource_args.image.remotes[
                     self.CLIENT_IMAGE
