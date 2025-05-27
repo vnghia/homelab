@@ -21,11 +21,11 @@ class RecordModel(HomelabRootModel[str | RecordFullModel]):
         opts: ResourceOptions | None,
         zone_id: str,
         ip: Input[IPvAnyAddress],
-    ) -> cloudflare.Record:
+    ) -> cloudflare.DnsRecord:
         type_ = Output.from_input(ip).apply(
             lambda x: "A" if x.version == self.IPV4_VERSION else "AAAA"
         )
-        return cloudflare.Record(
+        return cloudflare.DnsRecord(
             resource_name,
             opts=opts,
             zone_id=zone_id,
@@ -33,6 +33,7 @@ class RecordModel(HomelabRootModel[str | RecordFullModel]):
             content=Output.from_input(ip).apply(str),
             comment="record for {}".format(resource_name),
             proxied=False,
+            ttl=1,
             type=type_,
         )
 

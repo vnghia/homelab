@@ -131,9 +131,11 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
             KanidmStateProvider(),
             KanidmStateProvider.RESOURCE_ID,
             {
-                "url": kanidm_service.docker_resource_args.hostnames[True][
-                    kanidm_service.name()
-                ].apply(lambda x: "https://{}".format(x)),
+                "url": "https://{}".format(
+                    kanidm_service.docker_resource_args.hostnames[True][
+                        kanidm_service.name()
+                    ]
+                ),
                 "password": kanidm_service.idm_admin.password,
                 "state": GlobalExtractor.extract_recursively(
                     state.model_dump(mode="json"), kanidm_service, None

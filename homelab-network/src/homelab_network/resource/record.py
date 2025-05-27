@@ -33,7 +33,7 @@ class RecordResource(ComponentResource):
             ]
             for key, record in config.records.items()
         }
-        self.hostnames = {k: v[0].hostname for k, v in self.records.items()}
+        self.hostnames = config.hostnames
 
         for key, hostname in self.hostnames.items():
             pulumi.export("record.{}.{}".format(name, key), hostname)

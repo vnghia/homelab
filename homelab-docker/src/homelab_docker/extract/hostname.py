@@ -5,7 +5,6 @@ from typing import Never
 
 from homelab_extract.hostname import GlobalExtractHostnameSource
 from homelab_pydantic import HomelabRootModel
-from pulumi import Output
 
 if typing.TYPE_CHECKING:
     from ..model.container import ContainerModel
@@ -15,7 +14,7 @@ if typing.TYPE_CHECKING:
 class GlobalHostnameSourceExtractor(HomelabRootModel[GlobalExtractHostnameSource]):
     def extract_str(
         self, main_service: ServiceResourceBase, _model: ContainerModel | None
-    ) -> Output[str]:
+    ) -> str:
         return self.root.to_hostname(main_service.docker_resource_args.hostnames)
 
     def extract_path(

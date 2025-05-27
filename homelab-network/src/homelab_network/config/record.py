@@ -15,6 +15,10 @@ class RecordConfig(HomelabBaseModel):
         return self.records[hostname].hostname(self.get_domain())
 
     @property
+    def hostnames(self) -> dict[str, str]:
+        return {hostname: self[hostname] for hostname in self.records}
+
+    @property
     def aliases(self) -> list[str]:
         return [
             self[hostname]

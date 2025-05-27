@@ -18,6 +18,7 @@ class ContainerHealthCheckConfig(HomelabBaseModel):
     tests: list[GlobalExtract]
     interval: str | None = None
     retries: PositiveInt | None = None
+    start_interval: str | None = None
     start_period: str | None = None
     timeout: str | None = None
 
@@ -31,6 +32,7 @@ class ContainerHealthCheckConfig(HomelabBaseModel):
             ],
             interval=self.interval,
             retries=self.retries,
+            start_interval=self.start_interval,
             start_period=self.start_period,
             timeout=self.timeout,
         )

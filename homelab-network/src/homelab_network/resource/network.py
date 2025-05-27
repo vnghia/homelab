@@ -1,6 +1,6 @@
 from typing import Mapping
 
-from pulumi import ComponentResource, Input, Output, ResourceOptions
+from pulumi import ComponentResource, Input, ResourceOptions
 from pydantic import IPvAnyAddress
 
 from homelab_network.config import NetworkConfig
@@ -9,7 +9,7 @@ from .record import RecordResource
 from .token import TokenResource
 
 
-class Hostnames(dict[bool, dict[str, Output[str]]]):
+class Hostnames(dict[bool, dict[str, str]]):
     pass
 
 

@@ -17,7 +17,7 @@ class TokenResource(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        permission_groups = cloudflare.get_api_token_permission_groups()
+        permission_groups = cloudflare.get_api_token_permission_groups_list_output()
         self.resources = {
             "com.cloudflare.api.account.zone.{}".format(v): "*"
             for v in [config.public.zone_id, config.private.zone_id]
@@ -31,7 +31,14 @@ class TokenResource(ComponentResource):
             name="{}-acme-read-token".format(project_prefix),
             policies=[
                 cloudflare.ApiTokenPolicyArgs(
-                    permission_groups=[permission_groups.zone["Zone Read"]],
+                    effect="allow",
+                    permission_groups=permission_groups.apply(
+                        lambda groups: [
+                            cloudflare.ApiTokenPolicyPermissionGroupArgs(id=group.id)
+                            for group in groups.results
+                            if group.name == "Zone Read"
+                        ]
+                    ),
                     resources=self.resources,
                 )
             ],
@@ -44,7 +51,14 @@ class TokenResource(ComponentResource):
             name="{}-acme-write-token".format(project_prefix),
             policies=[
                 cloudflare.ApiTokenPolicyArgs(
-                    permission_groups=[permission_groups.zone["DNS Write"]],
+                    effect="allow",
+                    permission_groups=permission_groups.apply(
+                        lambda groups: [
+                            cloudflare.ApiTokenPolicyPermissionGroupArgs(id=group.id)
+                            for group in groups.results
+                            if group.name == "DNS Write"
+                        ]
+                    ),
                     resources=self.resources,
                 )
             ],
