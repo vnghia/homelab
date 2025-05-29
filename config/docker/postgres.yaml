@@ -5,10 +5,14 @@ database:
         "17":
           repo: postgres
           tag: "17.4-bookworm"
-      pgvector:
-        "16":
-          repo: ghcr.io/tensorchord/pgvecto-rs
-          tag: "pg16-v0.3.0"
+      vectorchord:
+        "17":
+          repo: ghcr.io/immich-app/postgres
+          tag: "17-vectorchord0.3.0"
+          container:
+            healthcheck:
+            tmpfs:
+              - /etc/postgresql
       postgis:
         "17":
           repo: postgis/postgis
