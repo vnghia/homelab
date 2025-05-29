@@ -43,10 +43,6 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
             service_name,
             source_config,
         ) in self.DATABASE_SOURCE_CONFIGS.items():
-            # TODO: Immich backup is broken because of pgvecto.rs
-            if service_name == "immich":
-                continue
-
             for name, sources in source_config.get(DatabaseType.POSTGRES, {}).items():
                 for version, source in sources.items():
                     full_name = DatabaseType.POSTGRES.get_full_name_version(
