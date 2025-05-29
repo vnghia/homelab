@@ -24,8 +24,12 @@ class DatabaseTypeEnvConfig(HomelabBaseModel):
     superuser_password: str | None = None
 
 
+class DatabaseRemoteImageModel(RemoteImageModel):
+    container: ContainerModel | None = None
+
+
 class DatabaseTypeConfig(HomelabBaseModel):
-    images: dict[str | None, dict[PositiveInt, RemoteImageModel]]
+    images: dict[str | None, dict[PositiveInt, DatabaseRemoteImageModel]]
     version: PositiveInt
     port: PositiveInt
 

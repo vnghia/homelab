@@ -85,7 +85,13 @@ class ServiceDatabaseTypeResource(ComponentResource):
         self.versions: list[PositiveInt] = self.config.get_versions(self.model)
         for version in self.versions:
             full_name = self.get_full_name_version(version)
-            container = self.config.container.model_merge(
+            container_model = self.config.container
+            image_container_model = self.config.images[self.model.image][
+                version
+            ].container
+            if image_container_model:
+                container_model = container_model.model_merge(image_container_model)
+            container = container_model.model_merge(
                 ContainerModel(
                     image=ContainerImageModelConfig(
                         self.type.get_short_name_version(self.model.image, version)
