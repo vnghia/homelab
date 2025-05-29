@@ -42,7 +42,6 @@ services:
                 public: true
                 scheme: https
               prefer-short-username: true
-              allow-insecure-client-disable-pkce: true
   immich:
     config:
       traefik:
