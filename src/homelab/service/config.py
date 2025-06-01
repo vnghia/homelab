@@ -1,4 +1,3 @@
-from homelab_apprise_service.config import AppriseConfig
 from homelab_backup_service.config import BackupConfig
 from homelab_barman_service.config import BarmanConfig
 from homelab_crowdsec_service.config import CrowdsecConfig
@@ -22,7 +21,6 @@ class ServiceConfig(ServiceConfigBase):
     crowdsec: ServiceWithConfigModel[CrowdsecConfig]
     kanidm: ServiceWithConfigModel[KandimConfig]
     ntfy: ServiceWithConfigModel[ExtraConfig]
-    apprise: ServiceWithConfigModel[AppriseConfig]
     dagu: ServiceWithConfigModel[DaguConfig]
     barman: ServiceWithConfigModel[BarmanConfig]
     sqlite_backup: ServiceWithConfigModel[SqliteBackupConfig]
