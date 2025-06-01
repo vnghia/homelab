@@ -2,7 +2,7 @@ images:
   remote:
     ntfy:
       repo: binwiederhier/ntfy
-      tag: "v2.11.0"
+      tag: "v2.12.0"
 volumes:
   local:
     ntfy-cache:
