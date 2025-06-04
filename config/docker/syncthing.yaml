@@ -2,7 +2,7 @@ images:
   remote:
     syncthing:
       repo: ghcr.io/syncthing/syncthing
-      tag: "1.29.6"
+      tag: "1.29.7"
 volumes:
   local:
     syncthing-config: {}
