@@ -204,5 +204,7 @@ services:
         volumes:
           starr-data: /starr
           starr-bazarr-config: /config
+        wud:
+          template: https://github.com/morpheus65535/bazarr/releases/tag/v${original}
         envs:
           S6_READ_ONLY_ROOT: 1
