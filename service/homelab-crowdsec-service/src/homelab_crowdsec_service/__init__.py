@@ -18,7 +18,7 @@ class DockerAcquisConfigResource(
     ConfigFileResource[JsonDefaultModel], module="crowdsec", name="AcquisConfig"
 ):
     validator = JsonDefaultModel
-    dumper = YamlDumper
+    dumper = YamlDumper[JsonDefaultModel]
 
     def __init__(
         self,

@@ -18,7 +18,7 @@ class ResticGlobalProfileResource(
     ConfigFileResource[schema.ResticProfileModel], module="restic", name="Profile"
 ):
     validator = schema.ResticProfileModel
-    dumper = YamlDumper
+    dumper = YamlDumper[schema.ResticProfileModel]
 
     def __init__(
         self,

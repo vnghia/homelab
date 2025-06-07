@@ -24,7 +24,7 @@ class KanidmServerConfigResource(
     ConfigFileResource[JsonDefaultModel], module="kanidm", name="ServerConfig"
 ):
     validator = JsonDefaultModel
-    dumper = TomlDumper
+    dumper = TomlDumper[JsonDefaultModel]
 
     def __init__(
         self,

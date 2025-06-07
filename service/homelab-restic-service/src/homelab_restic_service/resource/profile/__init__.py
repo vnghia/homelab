@@ -17,7 +17,7 @@ class ResticProfileResource(
     ConfigFileResource[schema.ResticProfileModel], module="restic", name="Profile"
 ):
     validator = schema.ResticProfileModel
-    dumper = YamlDumper
+    dumper = YamlDumper[schema.ResticProfileModel]
 
     DOCKER_TAG = "docker"
 

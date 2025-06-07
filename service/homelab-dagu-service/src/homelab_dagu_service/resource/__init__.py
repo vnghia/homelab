@@ -15,7 +15,7 @@ if typing.TYPE_CHECKING:
 
 class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag"):
     validator = schema.Model
-    dumper = YamlDumper
+    dumper = YamlDumper[schema.Model]
 
     def __init__(
         self,

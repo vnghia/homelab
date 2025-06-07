@@ -19,7 +19,7 @@ class PydioInstallConfigResource(
     ConfigFileResource[JsonDefaultModel], module="pydio", name="config"
 ):
     validator = JsonDefaultModel
-    dumper = YamlDumper
+    dumper = YamlDumper[JsonDefaultModel]
 
     def __init__(
         self,

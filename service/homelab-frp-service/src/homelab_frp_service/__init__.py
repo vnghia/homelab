@@ -23,7 +23,7 @@ class FrpClientConfigResource(
     ConfigFileResource[JsonDefaultModel], module="frp", name="ClientConfig"
 ):
     validator = JsonDefaultModel
-    dumper = TomlDumper
+    dumper = TomlDumper[JsonDefaultModel]
 
     def __init__(
         self,
