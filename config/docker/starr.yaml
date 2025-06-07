@@ -8,7 +8,7 @@ images:
       tag: "version-4.0.14.2939"
     prowlarr:
       repo: ghcr.io/linuxserver/prowlarr
-      tag: "1.35.1"
+      tag: "version-1.35.1.5034"
     bazarr:
       repo: ghcr.io/linuxserver/bazarr
       tag: "1.5.1"
@@ -187,6 +187,11 @@ services:
             exec: true
         volumes:
           starr-prowlarr-config: /config
+        wud:
+          template: https://github.com/Prowlarr/Prowlarr/releases/tag/v${transformed}
+          include-prefix: version-
+          transform: true
+          semver-count: 4
         envs:
           S6_READ_ONLY_ROOT: 1
       bazarr:
