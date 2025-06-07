@@ -2,7 +2,7 @@ images:
   remote:
     radarr:
       repo: ghcr.io/linuxserver/radarr
-      tag: "5.22.4"
+      tag: "version-5.22.4.9896"
     sonarr:
       repo: ghcr.io/linuxserver/sonarr
       tag: "4.0.14"
@@ -154,6 +154,11 @@ services:
         volumes:
           starr-data: /starr
           starr-radarr-config: /config
+        wud:
+          template: https://github.com/Radarr/Radarr/releases/tag/v${transformed}
+          include-prefix: version-
+          transform: true
+          semver-count: 4
         envs:
           S6_READ_ONLY_ROOT: 1
       sonarr:
