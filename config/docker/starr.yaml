@@ -2,7 +2,7 @@ images:
   remote:
     radarr:
       repo: ghcr.io/linuxserver/radarr
-      tag: "version-5.22.4.9896"
+      tag: "version-5.25.0.10024"
     sonarr:
       repo: ghcr.io/linuxserver/sonarr
       tag: "4.0.14"
