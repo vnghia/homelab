@@ -155,9 +155,9 @@ services:
           starr-data: /starr
           starr-radarr-config: /config
         wud:
-          template: https://github.com/Radarr/Radarr/releases/tag/v${transformed}
+          template: https://github.com/Radarr/Radarr/releases/tag/v${major}.${minor}.${path}.${prerelease}
           include-prefix: version-
-          transform: true
+          transform: ^version-(\d+\.\d+\.\d+).(\d+)$ => $1-$2
           semver-count: 4
         envs:
           S6_READ_ONLY_ROOT: 1
@@ -172,9 +172,9 @@ services:
           starr-data: /starr
           starr-sonarr-config: /config
         wud:
-          template: https://github.com/Sonarr/Sonarr/releases/tag/v${transformed}
+          template: https://github.com/Sonarr/Sonarr/releases/tag/v${major}.${minor}.${path}.${prerelease}
           include-prefix: version-
-          transform: true
+          transform: ^version-(\d+\.\d+\.\d+).(\d+)$ => $1-$2
           semver-count: 4
         envs:
           S6_READ_ONLY_ROOT: 1
@@ -188,9 +188,9 @@ services:
         volumes:
           starr-prowlarr-config: /config
         wud:
-          template: https://github.com/Prowlarr/Prowlarr/releases/tag/v${transformed}
+          template: https://github.com/Prowlarr/Prowlarr/releases/tag/v${major}.${minor}.${path}.${prerelease}
           include-prefix: version-
-          transform: true
+          transform: ^version-(\d+\.\d+\.\d+).(\d+)$ => $1-$2
           semver-count: 4
         envs:
           S6_READ_ONLY_ROOT: 1

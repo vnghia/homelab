@@ -12,7 +12,7 @@ class ContainerWudConfig(HomelabBaseModel):
     include_prefix: str = ""
     include_suffix: str = ""
     exclude: str | None = None
-    transform: bool = False
+    transform: bool | str = False
     semver_count: PositiveInt = 3
 
     def build_labels(
@@ -20,22 +20,18 @@ class ContainerWudConfig(HomelabBaseModel):
         resource_name: str | None,
     ) -> dict[str, str]:
         semver_pattern = r"\.".join(self.SEMVER_PATTERN * self.semver_count)
+        transform = None
+        if self.transform is True:
+            transform = "^{}({}){}$ => $1".format(
+                self.include_prefix, semver_pattern, self.include_suffix
+            )
+        elif isinstance(self.transform, str):
+            transform = self.transform
+
         return (
             ({"wud.display.name": resource_name} if resource_name else {})
             | ({"wud.link.template": self.template} if self.template else {})
-            | (
-                {
-                    "wud.tag.transform": "^"
-                    + self.include_prefix
-                    + "("
-                    + semver_pattern
-                    + ")"
-                    + self.include_suffix
-                    + "$ => $1"
-                }
-                if self.transform
-                else {}
-            )
+            | ({"wud.tag.transform": transform} if transform else {})
             | ({"wud.tag.exclude": self.exclude} if self.exclude else {})
             | {
                 "wud.tag.include": self.include
