@@ -5,7 +5,7 @@ images:
       tag: "version-5.25.0.10024"
     sonarr:
       repo: ghcr.io/linuxserver/sonarr
-      tag: "4.0.14"
+      tag: "version-4.0.14.2939"
     prowlarr:
       repo: ghcr.io/linuxserver/prowlarr
       tag: "1.35.1"
@@ -171,6 +171,11 @@ services:
         volumes:
           starr-data: /starr
           starr-sonarr-config: /config
+        wud:
+          template: https://github.com/Sonarr/Sonarr/releases/tag/v${transformed}
+          include-prefix: version-
+          transform: true
+          semver-count: 4
         envs:
           S6_READ_ONLY_ROOT: 1
       prowlarr:
