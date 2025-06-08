@@ -68,7 +68,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
 
         self.scripts = [
             FileResource(
-                script.path,
+                self.prefix + script.path,
                 opts=self.child_opts,
                 volume_path=ContainerVolumePath(
                     volume=self.full_name_initdb,
@@ -165,6 +165,10 @@ class ServiceDatabaseTypeResource(ComponentResource):
             self.containers[version] = container
 
         self.register_outputs({})
+
+    @property
+    def prefix(self) -> str:
+        return "{}-".format(self.name) if self.name else ""
 
     @property
     def short_name(self) -> str:
