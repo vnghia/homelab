@@ -1,7 +1,17 @@
 from typing import Any, ClassVar, Self
 
 import deepmerge
+from deepmerge.merger import Merger
 from pydantic import BaseModel, ConfigDict, RootModel, model_validator
+
+OVERWRITE_TYPE_SPECIFIC_MERGE_STRATEGIES: list[tuple[type, str]] = [
+    (list, "override"),
+    (dict, "merge"),
+    (set, "union"),
+]
+override_merger: Merger = Merger(
+    OVERWRITE_TYPE_SPECIFIC_MERGE_STRATEGIES, ["override"], ["override"]
+)
 
 
 class HomelabBaseModel(BaseModel):
@@ -24,11 +34,16 @@ class HomelabBaseModel(BaseModel):
             data.pop("__provider", None)
         return data
 
-    def model_merge(self, other: Self) -> Self:
+    def model_merge(self, other: Self, override: bool = False) -> Self:
         left_data = self.model_dump(mode="json", by_alias=True, exclude_unset=True)
         right_data = other.model_dump(mode="json", by_alias=True, exclude_unset=True)
 
-        return self.__class__(**deepmerge.always_merger.merge(left_data, right_data))
+        merged_data = (
+            override_merger.merge(left_data, right_data)
+            if override
+            else deepmerge.always_merger.merge(left_data, right_data)
+        )
+        return self.__class__(**merged_data)
 
 
 class HomelabRootModel[T](RootModel[T]):
