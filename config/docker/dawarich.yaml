@@ -38,8 +38,6 @@ services:
           image: postgis
         queue:
           image: postgis
-      redis:
-        redis: {}
     keepasses:
       keepass:
         hostname:
@@ -64,9 +62,6 @@ services:
             database: QUEUE_DATABASE_NAME
             host: QUEUE_DATABASE_HOST
             port: QUEUE_DATABASE_PORT
-        - redis:
-          envs:
-            env: REDIS_URL
       command:
         - bin/rails
         - server
@@ -117,5 +112,5 @@ services:
       worker:
         inherit:
         command: ["bin/jobs"]
-        entrypoint: []
+        entrypoint: ["bundle", "exec"]
         wud:
