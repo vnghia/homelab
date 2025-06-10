@@ -12,7 +12,7 @@ from pydantic import PositiveInt
 class ContainerDatabaseSourceModel:
     username: Input[str]
     password: Input[str]
-    database: Input[str]
+    database: Input[str] | None
     host: Input[str]
     port: Input[PositiveInt]
 
@@ -21,14 +21,25 @@ class ContainerDatabaseSourceModel:
     def to_url(self, scheme: str, query: dict[str, str] | None = None) -> Output[str]:
         if query is None:
             query = {}
-        return Output.format(
-            "{scheme}://{username}:{password}@{host}:{port}/{database}",
-            scheme=scheme,
-            username=self.username,
-            password=self.password,
-            host=self.host,
-            port=self.port,
-            database=self.database,
+        return (
+            Output.format(
+                "{scheme}://{username}:{password}@{host}:{port}/{database}",
+                scheme=scheme,
+                username=self.username,
+                password=self.password,
+                host=self.host,
+                port=self.port,
+                database=self.database,
+            )
+            if self.database
+            else Output.format(
+                "{scheme}://{username}:{password}@{host}:{port}",
+                scheme=scheme,
+                username=self.username,
+                password=self.password,
+                host=self.host,
+                port=self.port,
+            )
         ).apply(
             lambda x: urllib.parse.urlparse(x)
             ._replace(query=urllib.parse.urlencode(query=query))
