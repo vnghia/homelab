@@ -77,8 +77,8 @@ services:
     databases:
       postgres:
         postgres: {}
-      redis:
-        redis: {}
+      valkey:
+        valkey: {}
     secrets:
       django: {}
       collaboration: {}
@@ -93,11 +93,11 @@ services:
               database: DB_NAME
               host: DB_HOST
               port: DB_PORT
-          - redis:
+          - valkey:
             envs:
               env: REDIS_URL
               database: 1
-          - redis:
+          - valkey:
             envs:
               env: DJANGO_CELERY_BROKER_URL
               database: 0
