@@ -43,8 +43,8 @@ services:
     databases:
       postgres:
         postgres: {}
-      redis:
-        redis: {}
+      valkey:
+        valkey: {}
     keepasses:
       keepass:
         hostname:
@@ -62,7 +62,7 @@ services:
             database: PAPERLESS_DBNAME
             host: PAPERLESS_DBHOST
             port: PAPERLESS_DBPORT
-        - redis:
+        - valkey:
           envs:
             env: PAPERLESS_REDIS
       tmpfs:
