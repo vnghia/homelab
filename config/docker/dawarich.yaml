@@ -2,25 +2,13 @@ images:
   remote:
     dawarich:
       repo: freikin/dawarich
-      tag: "0.27.4"
+      tag: "0.28.0"
 volumes:
   local:
     dawarich-public:
       backup: false
     dawarich-storage:
       backup: false
-    dawarich-sqlite:
-      backup:
-        enabled: false
-        sqlites:
-          - extract:
-              volume: dawarich-sqlite
-            transform:
-              path: dawarich_cache.db
-          - extract:
-              volume: dawarich-sqlite
-            transform:
-              path: dawarich_cable.db
 services:
   dawarich:
     variables:
@@ -36,8 +24,8 @@ services:
       postgres:
         postgres:
           image: postgis
-        queue:
-          image: postgis
+      valkey:
+        valkey: {}
     keepasses:
       keepass:
         hostname:
@@ -55,13 +43,10 @@ services:
             database: DATABASE_NAME
             host: DATABASE_HOST
             port: DATABASE_PORT
-        - postgres: queue
+        - valkey:
           envs:
-            username: QUEUE_DATABASE_USERNAME
-            password: QUEUE_DATABASE_PASSWORD
-            database: QUEUE_DATABASE_NAME
-            host: QUEUE_DATABASE_HOST
-            port: QUEUE_DATABASE_PORT
+            env: REDIS_URL
+            database:
       command:
         - bin/rails
         - server
@@ -79,7 +64,6 @@ services:
       volumes:
         dawarich-public: /var/app/public
         dawarich-storage: /var/app/storage
-        dawarich-sqlite: /dawarich_sqlite_data
       wud:
         template: https://github.com/Freika/dawarich/releases/tag/${original}
       envs:
@@ -97,20 +81,10 @@ services:
         SECRET_KEY_BASE:
           secret: key
         RAILS_LOG_TO_STDOUT: true
-        CACHE_DATABASE_PATH:
-          extract:
-            volume: dawarich-sqlite
-          transform:
-            path: dawarich_cache.db
-        CABLE_DATABASE_PATH:
-          extract:
-            volume: dawarich-sqlite
-          transform:
-            path: dawarich_cable.db
         PIDFILE: /var/app/tmp/cache/server.pid
     containers:
       worker:
         inherit:
-        command: ["bin/jobs"]
-        entrypoint: ["bundle", "exec"]
+        command: ["bundle", "exec", "sidekiq"]
+        entrypoint: ["sidekiq-entrypoint.sh"]
         wud:
