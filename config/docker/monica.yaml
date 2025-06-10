@@ -67,8 +67,8 @@ services:
     databases:
       postgres:
         postgres: {}
-      redis:
-        redis: {}
+      valkey:
+        valkey: {}
     keepasses:
       keepass:
         hostname:
@@ -89,7 +89,7 @@ services:
             database: DB_DATABASE
             host: DB_HOST
             port: DB_PORT
-        - redis:
+        - valkey:
           envs:
             password: REDIS_PASSWORD
             host: REDIS_HOST
