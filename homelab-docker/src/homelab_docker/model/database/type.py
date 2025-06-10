@@ -8,6 +8,7 @@ class DatabaseType(StrEnum):
     REDIS = auto()
     SQLITE = auto()
     MYSQL = auto()
+    VALKEY = auto()
 
     def get_key(self, name: str | None) -> str | None:
         return None if name == self.value else name

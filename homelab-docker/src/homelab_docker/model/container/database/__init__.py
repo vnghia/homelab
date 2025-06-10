@@ -10,6 +10,7 @@ from pydantic import PositiveInt
 from .mysql import ContainerDatabaseMysqlConfig
 from .postgres import ContainerDatabasePostgresConfig
 from .redis import ContainerDatabaseRedisConfig
+from .valkey import ContainerDatabaseValkeyConfig
 
 if typing.TYPE_CHECKING:
     from ....resource.service.database import ServiceDatabaseResource
@@ -20,6 +21,7 @@ class ContainerDatabaseConfig(
         ContainerDatabaseMysqlConfig
         | ContainerDatabasePostgresConfig
         | ContainerDatabaseRedisConfig
+        | ContainerDatabaseValkeyConfig
     ]
 ):
     def to_database_version(
