@@ -201,6 +201,7 @@ services:
         tmpfs:
           - path: /run
             exec: true
+          - /tmp
         volumes:
           starr-data: /starr
           starr-bazarr-config: /config
