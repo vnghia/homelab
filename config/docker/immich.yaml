@@ -48,6 +48,14 @@ services:
           service:
             port:
               env: IMMICH_PORT
+          middlewares:
+            - name: limit
+              data:
+                buffering:
+                  maxRequestBodyBytes: 20000000000
+                  memRequestBodyBytes: 2000000000
+                  maxResponseBodyBytes: 20000000000
+                  memResponseBodyBytes: 2000000000
     databases:
       postgres:
         postgres:
