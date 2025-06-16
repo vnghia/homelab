@@ -2,7 +2,7 @@ images:
   remote:
     n8n:
       repo: ghcr.io/n8n-io/n8n
-      tag: "1.98.1"
+      tag: "1.99.0"
 volumes:
   local:
     n8n-data: {}
