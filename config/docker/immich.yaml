@@ -2,7 +2,7 @@ images:
   remote:
     immich-server:
       repo: ghcr.io/immich-app/immich-server
-      tag: &immich-version "v1.134.0"
+      tag: &immich-version "v1.135.0"
     immich-machine-learning:
       repo: ghcr.io/immich-app/immich-machine-learning
       tag: *immich-version
