@@ -2,7 +2,7 @@ images:
   remote:
     crowdsec:
       repo: ghcr.io/crowdsecurity/crowdsec
-      tag: "v1.6.8"
+      tag: "v1.6.9"
 volumes:
   local:
     crowdsec-data:
