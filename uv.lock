@@ -8,6 +8,7 @@ members = [
     "homelab-apprise-service",
     "homelab-backup",
     "homelab-backup-service",
+    "homelab-balite-service",
     "homelab-barman-service",
     "homelab-config",
     "homelab-crowdsec-service",
@@ -29,7 +30,6 @@ members = [
     "homelab-s3-config",
     "homelab-seafile-service",
     "homelab-secret",
-    "homelab-sqlite-backup-service",
     "homelab-tailscale-service",
     "homelab-traefik-config",
     "homelab-traefik-service",
@@ -419,6 +419,7 @@ dependencies = [
     { name = "homelab-apprise-service" },
     { name = "homelab-backup" },
     { name = "homelab-backup-service" },
+    { name = "homelab-balite-service" },
     { name = "homelab-barman-service" },
     { name = "homelab-config" },
     { name = "homelab-crowdsec-service" },
@@ -437,7 +438,6 @@ dependencies = [
     { name = "homelab-s3" },
     { name = "homelab-seafile-service" },
     { name = "homelab-secret" },
-    { name = "homelab-sqlite-backup-service" },
     { name = "homelab-tailscale-service" },
     { name = "homelab-traefik-config" },
     { name = "homelab-traefik-service" },
@@ -457,6 +457,7 @@ requires-dist = [
     { name = "homelab-apprise-service", editable = "service/homelab-apprise-service" },
     { name = "homelab-backup", editable = "homelab-backup" },
     { name = "homelab-backup-service", editable = "service/homelab-backup-service" },
+    { name = "homelab-balite-service", editable = "service/homelab-balite-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
     { name = "homelab-config", editable = "homelab-config" },
     { name = "homelab-crowdsec-service", editable = "service/homelab-crowdsec-service" },
@@ -475,7 +476,6 @@ requires-dist = [
     { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-seafile-service", editable = "service/homelab-seafile-service" },
     { name = "homelab-secret", editable = "homelab-secret" },
-    { name = "homelab-sqlite-backup-service", editable = "service/homelab-sqlite-backup-service" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
@@ -545,6 +545,29 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-balite-service"
+version = "0.1.0"
+source = { editable = "service/homelab-balite-service" }
+dependencies = [
+    { name = "homelab-backup" },
+    { name = "homelab-dagu-config" },
+    { name = "homelab-docker" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -931,12 +954,12 @@ version = "0.1.0"
 source = { editable = "service/homelab-restic-service" }
 dependencies = [
     { name = "homelab-backup" },
+    { name = "homelab-balite-service" },
     { name = "homelab-barman-service" },
     { name = "homelab-dagu-service" },
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
     { name = "homelab-s3" },
-    { name = "homelab-sqlite-backup-service" },
     { name = "pulumi" },
     { name = "pydantic" },
 ]
@@ -944,12 +967,12 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-balite-service", editable = "service/homelab-balite-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-s3", editable = "homelab-s3" },
-    { name = "homelab-sqlite-backup-service", editable = "service/homelab-sqlite-backup-service" },
     { name = "pulumi", specifier = ">=3.150.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1030,29 +1053,6 @@ requires-dist = [
     { name = "pulumi-random", specifier = ">=4.17.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pykeepass", specifier = ">=4.1.1.post1" },
-]
-
-[[package]]
-name = "homelab-sqlite-backup-service"
-version = "0.1.0"
-source = { editable = "service/homelab-sqlite-backup-service" }
-dependencies = [
-    { name = "homelab-backup" },
-    { name = "homelab-dagu-config" },
-    { name = "homelab-docker" },
-    { name = "homelab-pydantic" },
-    { name = "pulumi" },
-    { name = "pydantic" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "homelab-backup", editable = "homelab-backup" },
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "pulumi", specifier = ">=3.148.0" },
-    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]

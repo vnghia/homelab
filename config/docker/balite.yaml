@@ -1,17 +1,17 @@
 images:
   build:
-    sqlite-backup:
+    balite:
       context:
-        location: image/sqlite-backup
+        location: image/balite
         base: python-alpine
         python-builder:
           image: python-builder
       version: "0.1.7"
 volumes:
   local:
-    sqlite-backup-data: {}
+    balite-data: {}
 services:
-  sqlite-backup:
+  balite:
     config:
       source-dir:
         env: HOMELAB_SOURCE_DIR
@@ -28,25 +28,25 @@ services:
           dags:
             backup:
               command:
-                - homelab-sqlite-backup
+                - homelab-balite
                 - backup
                 - param:
                     type: backup
             restore:
               command:
-                - homelab-sqlite-backup
+                - homelab-balite
                 - restore
                 - param:
                     type: backup
     container:
       active: false
       image:
-        build: sqlite-backup
+        build: balite
       tmpfs:
         - /tmp
       volumes:
-        sqlite-backup-data: /data
+        balite-data: /data
       envs:
         HOMELAB_SOURCE_DIR: /mnt
         HOMELAB_DESTINATION_DIR:
-          volume: sqlite-backup-data
+          volume: balite-data

@@ -2,6 +2,7 @@ from collections import defaultdict
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupGlobalConfig
+from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume_path import ContainerVolumePath
@@ -10,7 +11,6 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_pydantic import RelativePath
-from homelab_sqlite_backup_service import SqliteBackupService
 from pulumi import ResourceOptions
 
 from .config import ResticConfig
@@ -32,7 +32,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         hostname: str,
         backup_config: BackupGlobalConfig,
         barman_service: BarmanService,
-        sqlite_backup_service: SqliteBackupService,
+        balite_service: BaliteService,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
@@ -88,7 +88,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 type_=DatabaseType.SQLITE,
                 name="{}-{}".format(name, DatabaseType.SQLITE.value),
             ).build_resource(opts=self.child_opts, restic_service=self)
-            for name in sqlite_backup_service.service_maps
+            for name in balite_service.service_maps
         ]
 
         self.service_database_groups: defaultdict[

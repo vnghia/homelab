@@ -13,5 +13,5 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 FROM base
 COPY --from=builder /app/dist /app/dist
-RUN pip install /app/dist/homelab_sqlite_backup-0.1.0-py3-none-any.whl
+RUN pip install /app/dist/homelab_balite-0.1.0-py3-none-any.whl
 ENTRYPOINT []

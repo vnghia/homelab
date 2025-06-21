@@ -10,13 +10,13 @@ from homelab_extract import GlobalExtract
 from homelab_pydantic import AbsolutePath
 from pulumi import ResourceOptions
 
-from .config import SqliteBackupConfig
+from .config import BaliteConfig
 
 
-class SqliteBackupService(ServiceWithConfigResourceBase[SqliteBackupConfig]):
+class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
     def __init__(
         self,
-        model: ServiceWithConfigModel[SqliteBackupConfig],
+        model: ServiceWithConfigModel[BaliteConfig],
         *,
         opts: ResourceOptions | None,
         backup_config: BackupGlobalConfig,

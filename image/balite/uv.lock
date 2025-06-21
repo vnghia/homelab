@@ -24,7 +24,7 @@ wheels = [
 ]
 
 [[package]]
-name = "homelab-sqlite-backup"
+name = "homelab-balite"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

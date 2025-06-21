@@ -1,6 +1,7 @@
 import operator
 from functools import reduce
 
+from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_dagu_config.model import DaguDagModel
 from homelab_dagu_config.model.params import DaguDagParamsModel, DaguDagParamType
@@ -31,7 +32,6 @@ from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
 from homelab_extract.transform.string import ExtractTransformString
 from homelab_restic_service import ResticService
-from homelab_sqlite_backup_service import SqliteBackupService
 from pulumi import ResourceOptions
 
 from .config import BackupConfig
@@ -50,7 +50,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
 
     BACKUP_DATABASE_SUBDAGS = {
         DatabaseType.POSTGRES: BarmanService.name(),
-        DatabaseType.SQLITE: SqliteBackupService.name(),
+        DatabaseType.SQLITE: BaliteService.name(),
     }
 
     def __init__(

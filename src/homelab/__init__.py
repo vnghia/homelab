@@ -1,5 +1,6 @@
 import json_fix as json_fix
 from homelab_backup_service import BackupService
+from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_config import Config
 from homelab_crowdsec_service import CrowdsecService
@@ -16,7 +17,6 @@ from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
 from homelab_secret.resource.keepass import KeepassResource
-from homelab_sqlite_backup_service import SqliteBackupService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 
@@ -103,8 +103,8 @@ class Homelab:
             backup_config=self.docker.services_config.backup.config,
             docker_resource_args=self.docker.resource_args,
         )
-        self.sqlite_backup = SqliteBackupService(
-            self.docker.services_config.sqlite_backup,
+        self.balite = BaliteService(
+            self.docker.services_config.balite,
             opts=None,
             backup_config=self.docker.services_config.backup.config,
             docker_resource_args=self.docker.resource_args,
@@ -116,7 +116,7 @@ class Homelab:
             hostname=self.project_prefix,
             backup_config=self.docker.services_config.backup.config,
             barman_service=self.barman,
-            sqlite_backup_service=self.sqlite_backup,
+            balite_service=self.balite,
             docker_resource_args=self.docker.resource_args,
         )
 
