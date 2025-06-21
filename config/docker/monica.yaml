@@ -52,18 +52,6 @@ services:
           public: true
           service:
             port: 80
-      dagu:
-        docker:
-          executor:
-            exec:
-              container:
-          dag:
-            tags: ["monica"]
-          dags:
-            schedule:
-              dag:
-                schedule: "* * * * *"
-              command: ["php", "artisan", "schedule:run"]
     databases:
       postgres:
         postgres: {}
@@ -168,3 +156,6 @@ services:
             "high,default,low",
             "--json",
           ]
+      schedule:
+        inherit:
+        command: ["php", "artisan", "schedule:work"]
