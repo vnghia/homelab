@@ -1,5 +1,6 @@
 from typing import Mapping
 
+import pulumi
 from pulumi import ComponentResource, Input, ResourceOptions
 from pydantic import IPvAnyAddress
 
@@ -39,6 +40,17 @@ class NetworkResource(ComponentResource):
             config, opts=self.child_opts, project_prefix=project_prefix
         )
 
+        pulumi.export(
+            "record.local.hosts",
+            "\n".join(
+                [
+                    "{} {}".format(ip, record)
+                    for record, ip in (
+                        self.public.local_records | self.private.local_records
+                    ).items()
+                ]
+            ),
+        )
         self.register_outputs({})
 
     @property
