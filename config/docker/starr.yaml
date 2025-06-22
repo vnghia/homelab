@@ -5,7 +5,7 @@ images:
       tag: "version-5.25.0.10024"
     sonarr:
       repo: ghcr.io/linuxserver/sonarr
-      tag: "version-4.0.14.2939"
+      tag: "version-4.0.15.2941"
     prowlarr:
       repo: ghcr.io/linuxserver/prowlarr
       tag: "version-1.35.1.5034"
