@@ -63,7 +63,7 @@ class DaguDagParamsModel(HomelabBaseModel):
     def to_key_command(self, key: DaguDagStepRunCommandParamTypeModel) -> str:
         return self.to_key_command_unchecked(self.check_key(key))
 
-    def to_params(self, dag: DaguDagModel) -> list[dict[str, str]] | None:
+    def to_params(self, dag: DaguDagModel) -> dict[str, str] | None:
         from ..model.step.precondition import DaguDagStepPreConditionFullModel
         from ..model.step.run.command import (
             DaguDagStepRunCommandFullModel,
@@ -109,19 +109,18 @@ class DaguDagParamsModel(HomelabBaseModel):
                         else root.param.root
                     )
 
-        params = []
-        for key_type, default_value in self.types.items():
-            if key_type in used_params:
-                param_value = self.PARAM_VALUE[key_type]
-                params.append(
-                    {
-                        param_value[0]: default_value
-                        if default_value is not None
-                        else param_value[1]
-                    }
-                )
-        for key_main, value in self.main.items():
-            if key_main in used_params:
-                params.append({key_main: value})
+        params = {
+            self.PARAM_VALUE[key_type][0]: (
+                default_value
+                if default_value is not None
+                else self.PARAM_VALUE[key_type][1]
+            )
+            for key_type, default_value in self.types.items()
+            if key_type in used_params
+        } | {
+            key_main: value
+            for key_main, value in self.main.items()
+            if key_main in used_params
+        }
 
         return params or None

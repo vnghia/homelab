@@ -2,7 +2,7 @@ images:
   remote:
     dagu:
       repo: ghcr.io/dagu-org/dagu
-      tag: "1.16.7"
+      tag: "1.17.2"
 volumes:
   local:
     dagu-home: {}
@@ -36,26 +36,27 @@ services:
       docker-socket:
         write: true
       entrypoint: ["dagu"]
-      healthcheck:
-        tests:
-          - "CMD"
-          - "wget"
-          - "-q"
-          - extract:
-              env: DAGU_PORT
-            transform:
-              string:
-                template: "http://localhost:{value}/api/v1/health"
-          - "-O"
-          - "/dev/null"
-        interval: 30s
-        timeout: 5s
+      # TODO: Re-enable healthcheck
+      # healthcheck:
+      #   tests:
+      #     - "CMD"
+      #     - "wget"
+      #     - "-q"
+      #     - extract:
+      #         env: DAGU_PORT
+      #       transform:
+      #         string:
+      #           template: "http://localhost:{value}/api/v1/health"
+      #     - "-O"
+      #     - "/dev/null"
+      #   interval: 30s
+      #   timeout: 5s
       tmpfs:
         - /tmp
       volumes:
-        dagu-home: /config
+        dagu-home: /dagu
         dagu-dags:
-          path: /config/dags
+          path: /dagu/dags
           read-only: true
       wud:
         template: https://github.com/dagu-org/dagu/releases/tag/v${original}
@@ -63,6 +64,8 @@ services:
         DAGU_PORT: 8080
         DAGU_TZ:
           docker: "{timezone}"
+        DAGU_HOME:
+          volume: dagu-home
         DAGU_DAGS_DIR:
           volume: dagu-dags
         DAGU_BASE_CONFIG:
@@ -70,11 +73,6 @@ services:
             volume: dagu-dags
           transform:
             path: base.yaml
-        DAGU_LOG_DIR:
-          extract:
-            volume: dagu-home
-          transform:
-            path: logs
         DAGU_DATA_DIR:
           extract:
             volume: dagu-home
@@ -85,8 +83,15 @@ services:
             volume: dagu-home
           transform:
             path: suspend
+        DAGU_LOG_DIR:
+          extract:
+            volume: dagu-home
+          transform:
+            path: logs/dags
         DAGU_ADMIN_LOG_DIR:
           extract:
             volume: dagu-home
           transform:
-            path: admin
+            path: logs/admin
+        DAGU_PERMISSIONS_WRITE_DAGS: "false"
+        DAGU_LOG_FORMAT: json

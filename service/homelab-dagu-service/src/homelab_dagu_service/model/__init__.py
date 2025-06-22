@@ -44,7 +44,7 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
             ]
             if dotenvs
             else None,
-            "name": root.name,
+            "name": main_service.add_service_name(root.name),
             "group": root.group or main_service.name(),
             "tags": root.tags,
             "logDir": log_dir.to_path(
