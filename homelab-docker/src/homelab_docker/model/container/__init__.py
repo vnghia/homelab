@@ -11,6 +11,8 @@ from homelab_pydantic.path import AbsolutePath
 from pulumi import Input, Output, Resource, ResourceOptions
 from pydantic import Field, PositiveInt
 
+from homelab_docker.model.container.inherit import ContainerInheritConfig
+
 from ...extract import GlobalExtractor
 from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
@@ -41,7 +43,7 @@ class ContainerModelBuildArgs:
 
 class ContainerModel(HomelabBaseModel):
     active: bool = True
-    inherit: str | None = None
+    inherit: ContainerInheritConfig = ContainerInheritConfig()
 
     raw_image: ContainerImageModelConfig | None = Field(None, alias="image")
 
@@ -80,7 +82,13 @@ class ContainerModel(HomelabBaseModel):
 
     def model(self, main_service: ServiceResourceBase) -> ContainerModel:
         if "inherit" in self.model_fields_set:
-            return main_service.model[self.inherit].model_merge(self, override=True)
+            inherit = self.inherit.to_full()
+            service = (
+                main_service
+                if inherit.service is None
+                else main_service.SERVICES[inherit.service]
+            )
+            return service.model[inherit.container].model_merge(self, override=True)
         return self
 
     def build_command(
