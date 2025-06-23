@@ -130,6 +130,8 @@ services:
           public: true
           scheme: https
         LOGIN_PROVIDERS: kanidm
+        MAPBOX_USERNAME: mapbox
+        MAPBOX_CUSTOM_STYLE_NAME: satellite-streets-v12
       network:
         default-bridge: true
       tmpfs:
