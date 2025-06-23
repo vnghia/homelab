@@ -21,6 +21,40 @@ services:
           service:
             port:
               variable: PORT
+        static:
+          name: static
+          hostname: wger
+          public: true
+          prefix: /static
+          service:
+            container: static
+            port:
+              service: nginx-static
+              extract:
+                variable: PORT
+          middlewares:
+            - name: strip-static
+              data:
+                stripPrefix:
+                  prefixes:
+                    - "/static"
+        media:
+          name: media
+          hostname: wger
+          public: true
+          prefix: /media
+          service:
+            container: media
+            port:
+              service: nginx-static
+              extract:
+                variable: PORT
+          middlewares:
+            - name: strip-media
+              data:
+                stripPrefix:
+                  prefixes:
+                    - "/media"
     databases:
       postgres:
         postgres: {}
@@ -85,6 +119,7 @@ services:
         DJANGO_CACHE_TIMEOUT: 1296000 # in seconds - 60*60*24*15, 15 Days
         DJANGO_CACHE_CLIENT_CLASS: django_redis.client.DefaultClient
         AXES_ENABLED: "False"
+        DJANGO_DEBUG: "False"
         WGER_USE_GUNICORN: "True"
         EXERCISE_CACHE_TTL: 18000 # in seconds - 5*60*60, 5 hours
         SITE_URL:
@@ -107,3 +142,15 @@ services:
         command: [/start-beat]
         volumes:
           wger-celery-beat: /home/wger/beat
+      static:
+        inherit:
+          service: nginx-static
+          container:
+        volumes:
+          wger-static: /static
+      media:
+        inherit:
+          service: nginx-static
+          container:
+        volumes:
+          wger-media: /static
