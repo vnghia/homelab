@@ -57,7 +57,7 @@ services:
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
-          version: "v1.4.1"
+          version: "v1.4.2"
       traefik:
         crowdsec:
           name: crowdsec
