@@ -28,6 +28,7 @@ if typing.TYPE_CHECKING:
 
 
 class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
+    GEOBLOCK_MIDDLEWARE: ClassVar[str] = "geoblock"
     CROWDSEC_MIDDLEWARE: ClassVar[str] = "crowdsec"
 
     def to_data(
@@ -85,9 +86,15 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                                         TraefikDynamicMiddlewareModel(
                                             TraefikDynamicMiddlewareUseModel(
                                                 service=traefik_service.name(),
+                                                name=self.GEOBLOCK_MIDDLEWARE,
+                                            )
+                                        ),
+                                        TraefikDynamicMiddlewareModel(
+                                            TraefikDynamicMiddlewareUseModel(
+                                                service=traefik_service.name(),
                                                 name=self.CROWDSEC_MIDDLEWARE,
                                             )
-                                        )
+                                        ),
                                     ]
                                     if root.public
                                     else []

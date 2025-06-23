@@ -10,6 +10,7 @@ volumes:
     traefik-cert: {}
     traefik-plugin:
       backup: false
+    traefik-data: {}
 services:
   traefik:
     variables:
@@ -65,6 +66,29 @@ services:
           name: github.com/sevensolutions/traefik-oidc-auth
           version: "v0.12.0"
       traefik:
+        geoblock:
+          name: geoblock
+          plugin: geoblock
+          data:
+            enabled: true
+            defaultAllow: false
+            databaseFilePath:
+              extract:
+                volume: traefik-plugin
+              transform:
+                path: sources
+            allowedCountries:
+            allowPrivate: false
+            banIfError: true
+            logLevel: "info"
+            logFormat: "json"
+            logBannedRequests: true
+            databaseAutoUpdate: true
+            databaseAutoUpdateDir:
+              extract:
+                volume: traefik-data
+              transform:
+                path: ip2database
         crowdsec:
           name: crowdsec
           plugin: crowdsec
@@ -108,6 +132,8 @@ services:
           service: tailscale
           extract:
             id:
+      tmpfs:
+        - /tmp
       wud:
         template: https://github.com/traefik/traefik/releases/tag/${original}
         include-prefix: v
@@ -117,3 +143,4 @@ services:
           read-only: true
         traefik-cert: /etc/traefik/cert
         traefik-plugin: /plugins-storage
+        traefik-data: /data
