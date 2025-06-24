@@ -11,6 +11,20 @@ volumes:
     wger-celery-beat:
       backup: false
 services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            kanidm:
+              origin-url:
+                - extract:
+                    hostname: wger
+                    public: true
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/oidc/callback"
   wger:
     variables:
       PORT: 8000
@@ -21,6 +35,15 @@ services:
           service:
             port:
               variable: PORT
+          middlewares:
+            - service: traefik
+              name: oidc
+        api:
+          name: api
+          hostname: wger
+          public: true
+          prefix: /api
+          service: "wger@file"
         static:
           name: static
           hostname: wger
@@ -33,6 +56,8 @@ services:
               extract:
                 variable: PORT
           middlewares:
+            - service: traefik
+              name: oidc
             - name: strip-static
               data:
                 stripPrefix:
@@ -50,6 +75,8 @@ services:
               extract:
                 variable: PORT
           middlewares:
+            - service: traefik
+              name: oidc
             - name: strip-media
               data:
                 stripPrefix:
@@ -60,6 +87,12 @@ services:
         postgres: {}
       valkey:
         valkey: {}
+    keepasses:
+      keepass:
+        username: admin
+        hostname:
+          hostname: wger
+          public: true
     secrets:
       key: {}
       jwt: {}
@@ -104,6 +137,7 @@ services:
             public: true
             scheme: https
         WGER_INSTANCE: https://wger.de
+        ALLOW_REGISTRATION: "False"
         ALLOW_GUEST_USERS: "False"
         SYNC_EXERCISES_CELERY: "True"
         SYNC_EXERCISE_IMAGES_CELERY: "True"
@@ -129,6 +163,10 @@ services:
             scheme: https
         ACCESS_TOKEN_LIFETIME: 10
         REFRESH_TOKEN_LIFETIME: 24
+        AUTH_PROXY_HEADER: HTTP_X_REMOTE_USER
+        AUTH_PROXY_USER_NAME_HEADER: HTTP_X_REMOTE_NAME
+        AUTH_PROXY_USER_EMAIL_HEADER: HTTP_X_REMOTE_EMAIL
+        AUTH_PROXY_CREATE_UNKNOWN_USER: "True"
         LOG_LEVEL_PYTHON: INFO
         GUNICORN_CMD_ARGS: "--workers 4 --threads 4 --worker-class gthread --proxy-protocol True --timeout 240"
     containers:
