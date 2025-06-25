@@ -7,6 +7,7 @@ from .docker import GlobalExtractDockerSource
 from .hostname import GlobalExtractHostnameSource
 from .id import GlobalExtractIdSource
 from .json import GlobalExtractJsonSource
+from .kv import GlobalExtractKvSource
 from .name import GlobalExtractNameSource
 from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
@@ -21,6 +22,7 @@ class GlobalExtractSource(
         | GlobalExtractHostnameSource
         | GlobalExtractIdSource
         | GlobalExtractJsonSource
+        | GlobalExtractKvSource
         | GlobalExtractNameSource
         | GlobalExtractSimpleSource
         | GlobalExtractVpnSource
@@ -47,3 +49,8 @@ class GlobalExtract(
     @classmethod
     def from_simple(cls, value: str) -> Self:
         return cls(GlobalExtractSource(GlobalExtractSimpleSource(value)))
+
+
+GlobalExtractSource.model_rebuild()
+GlobalExtractFull.model_rebuild()
+GlobalExtract.model_rebuild()

@@ -8,6 +8,7 @@ from homelab_extract.docker import GlobalExtractDockerSource
 from homelab_extract.hostname import GlobalExtractHostnameSource
 from homelab_extract.id import GlobalExtractIdSource
 from homelab_extract.json import GlobalExtractJsonSource
+from homelab_extract.kv import GlobalExtractKvSource
 from homelab_extract.name import GlobalExtractNameSource
 from homelab_extract.service import ServiceExtractSource
 from homelab_extract.simple import GlobalExtractSimpleSource
@@ -22,6 +23,7 @@ from .docker import GlobalDockerSourceExtractor
 from .hostname import GlobalHostnameSourceExtractor
 from .id import GlobalIdSourceExtractor
 from .json import GlobalJsonSourceExtractor
+from .kv import GlobalKvSourceExtractor
 from .name import GlobalNameSourceExtractor
 from .service import ServiceExtractor, ServiceSourceExtractor
 from .simple import GlobalSimpleSourceExtractor
@@ -44,6 +46,7 @@ class GlobalSourceExtractor(HomelabRootModel[GlobalExtractSource]):
         | GlobalHostnameSourceExtractor
         | GlobalIdSourceExtractor
         | GlobalJsonSourceExtractor
+        | GlobalKvSourceExtractor
         | GlobalNameSourceExtractor
         | GlobalSimpleSourceExtractor
         | GlobalVpnSourceExtractor
@@ -58,6 +61,8 @@ class GlobalSourceExtractor(HomelabRootModel[GlobalExtractSource]):
             return GlobalIdSourceExtractor(root)
         if isinstance(root, GlobalExtractJsonSource):
             return GlobalJsonSourceExtractor(root)
+        if isinstance(root, GlobalExtractKvSource):
+            return GlobalKvSourceExtractor(root)
         if isinstance(root, GlobalExtractNameSource):
             return GlobalNameSourceExtractor(root)
         if isinstance(root, GlobalExtractSimpleSource):
@@ -208,3 +213,9 @@ class GlobalExtractor(HomelabRootModel[GlobalExtract]):
             ]
         else:
             return data
+
+
+GlobalKvSourceExtractor.model_rebuild()
+GlobalSourceExtractor.model_rebuild()
+GlobalFullExtractor.model_rebuild()
+GlobalExtractor.model_rebuild()
