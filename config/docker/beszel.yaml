@@ -1,0 +1,47 @@
+images:
+  remote:
+    beszel:
+      repo: ghcr.io/henrygd/beszel/beszel
+      tag: "0.11.1"
+volumes:
+  local:
+    beszel-data: {}
+services:
+  beszel:
+    variables:
+      PORT: 8090
+      PREFIX: /xana
+    config:
+      traefik:
+        traefik:
+          public: false
+          hostname: system
+          prefix:
+            variable: PREFIX
+          service:
+            port:
+              variable: PORT
+          middlewares:
+            - name: strip-prefix
+              data:
+                stripPrefix:
+                  prefixes:
+                    - variable: PREFIX
+    keepasses:
+      keepass:
+        hostname:
+          hostname: system
+          public: false
+    container:
+      image: beszel
+      volumes:
+        beszel-data: /beszel_data
+      envs:
+        APP_URL:
+          extract:
+            hostname: system
+            public: false
+            scheme: https
+          transform:
+            string:
+              template: "{value}/xana"
