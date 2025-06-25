@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import typing
+from pathlib import PosixPath
 
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
-from pulumi import Input, Output
+from pulumi import Output
+from pydantic import ValidationError
 
 from homelab_docker.extract import GlobalExtractor
 from homelab_docker.model.container.docker_socket import ContainerDockerSocketConfig
@@ -26,12 +28,21 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
 
     def to_args(
         self,
-        volume_name: Input[str],
+        volume: AbsolutePath | str,
         main_service: ServiceResourceBase,
         model: ContainerModel | None,
     ) -> docker.ContainerVolumeArgs:
+        host_path = None
+        volume_name = None
+        if isinstance(volume, AbsolutePath):
+            host_path = volume.as_posix()
+        else:
+            volume_resource = main_service.docker_resource_args.volume
+            volume_name = volume_resource.volumes[volume].name
+
         return docker.ContainerVolumeArgs(
             container_path=self.to_path(main_service, model).as_posix(),
+            host_path=host_path,
             read_only=self.read_only,
             volume_name=volume_name,
         )
@@ -50,19 +61,14 @@ class ContainerVolumeConfig(
 
     def to_args(
         self,
-        volume_name: Input[str],
+        volume: AbsolutePath | str,
         main_service: ServiceResourceBase,
         model: ContainerModel | None,
     ) -> docker.ContainerVolumeArgs:
         root = self.root
         if isinstance(root, GlobalExtract):
-            return docker.ContainerVolumeArgs(
-                container_path=GlobalExtractor(root)
-                .extract_path(main_service, model)
-                .as_posix(),
-                volume_name=volume_name,
-            )
-        return root.to_args(volume_name, main_service, model)
+            root = ContainerVolumeFullConfig(path=root)
+        return root.to_args(volume, main_service, model)
 
 
 class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]]):
@@ -78,16 +84,19 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
         model: ContainerModel | None,
         build_args: ContainerModelBuildArgs,
     ) -> list[docker.ContainerVolumeArgs]:
-        volume_resource = main_service.docker_resource_args.volume
+        volumes = {}
+        for key, config in self.root.items():
+            try:
+                volume: AbsolutePath | str = AbsolutePath(PosixPath(key))
+            except ValidationError:
+                volume = key
+            volumes[volume] = config
+
         return (
             (
                 [
-                    volume.to_args(
-                        volume_name=volume_resource[name].name,
-                        main_service=main_service,
-                        model=model,
-                    )
-                    for name, volume in self.root.items()
+                    volume.to_args(volume=name, main_service=main_service, model=model)
+                    for name, volume in volumes.items()
                 ]
             )
             + (
@@ -103,11 +112,7 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
             )
             + (
                 [
-                    volume.to_args(
-                        volume_name=volume_resource[name].name,
-                        main_service=main_service,
-                        model=model,
-                    )
+                    volume.to_args(volume=name, main_service=main_service, model=model)
                     for name, volume in sorted(
                         build_args.volumes.items(), key=lambda x: x[0]
                     )
