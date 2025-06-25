@@ -39,9 +39,13 @@ services:
       envs:
         APP_URL:
           extract:
-            hostname: system
-            public: false
-            scheme: https
+            kv:
+              base:
+                hostname: system
+                public: false
+                scheme: https
+              prefix:
+                variable: PREFIX
           transform:
             string:
-              template: "{value}/xana"
+              template: "{base}{prefix}"
