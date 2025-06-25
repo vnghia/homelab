@@ -60,6 +60,7 @@ class ContainerModel(HomelabBaseModel):
     mails: list[ContainerMailConfig] | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
     ports: dict[str, ContainerPortConfig] = {}
+    privileged: bool | None = None
     read_only: bool = True
     remove: bool = False
     restart: Literal["unless-stopped"] = "unless-stopped"
@@ -242,6 +243,7 @@ class ContainerModel(HomelabBaseModel):
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
             ports=[port.to_args() for port in sorted(model.ports.values())],
+            privileged=model.privileged,
             read_only=model.read_only,
             rm=model.remove,
             restart=model.restart,
