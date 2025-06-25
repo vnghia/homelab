@@ -2,7 +2,7 @@ images:
   remote:
     dagu:
       repo: ghcr.io/dagu-org/dagu
-      tag: "1.17.2"
+      tag: "1.17.3"
 volumes:
   local:
     dagu-home: {}
