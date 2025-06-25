@@ -44,10 +44,14 @@ services:
           - "--spider"
           - "-q"
           - extract:
-              variable: PORT
+              kv:
+                port:
+                  variable: PORT
+                prefix:
+                  variable: PREFIX
             transform:
               string:
-                template: "http://localhost:{value}/system/healthz"
+                template: "http://localhost:{port}{prefix}/healthz"
         interval: 30s
         timeout: 5s
       privileged: true
