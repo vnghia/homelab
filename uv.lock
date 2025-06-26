@@ -1040,6 +1040,7 @@ dependencies = [
     { name = "homelab-pydantic" },
     { name = "pulumi" },
     { name = "pulumi-random" },
+    { name = "pulumi-tls" },
     { name = "pydantic" },
     { name = "pykeepass" },
 ]
@@ -1051,6 +1052,7 @@ requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.147.0" },
     { name = "pulumi-random", specifier = ">=4.17.0" },
+    { name = "pulumi-tls", specifier = ">=5.1.1" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pykeepass", specifier = ">=4.1.1.post1" },
 ]
