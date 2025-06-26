@@ -212,11 +212,7 @@ class ContainerModel(HomelabBaseModel):
             resource_name,
             opts=ResourceOptions.merge(
                 ResourceOptions.merge(opts, build_args.opts),
-                ResourceOptions(
-                    ignore_changes=["image"],
-                    replace_on_changes=["*"],
-                    depends_on=depends_on,
-                ),
+                ResourceOptions(replace_on_changes=["*"], depends_on=depends_on),
             ),
             image=model.image.to_image_name(docker_resource_args.image),
             capabilities=docker.ContainerCapabilitiesArgs(adds=model.capabilities)
