@@ -11,6 +11,8 @@ volumes:
     traefik-plugin:
       backup: false
     traefik-data: {}
+    traefik-tmp:
+      backup: false
 services:
   kanidm:
     config:
@@ -177,8 +179,6 @@ services:
           service: tailscale
           extract:
             id:
-      tmpfs:
-        - /tmp
       wud:
         template: https://github.com/traefik/traefik/releases/tag/${original}
         include-prefix: v
@@ -189,3 +189,4 @@ services:
         traefik-cert: /etc/traefik/cert
         traefik-plugin: /plugins-storage
         traefik-data: /data
+        traefik-tmp: /tmp
