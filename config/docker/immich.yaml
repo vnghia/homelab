@@ -52,9 +52,9 @@ services:
             - name: limit
               data:
                 buffering:
-                  maxRequestBodyBytes: 20000000000
+                  maxRequestBodyBytes: 50000000000
                   memRequestBodyBytes: 500000000
-                  maxResponseBodyBytes: 20000000000
+                  maxResponseBodyBytes: 50000000000
                   memResponseBodyBytes: 500000000
     databases:
       postgres:
