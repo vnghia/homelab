@@ -1,8 +1,8 @@
 images:
   remote:
     flaresolverr:
-      repo: 21hsmw/flaresolverr
-      tag: "nodriver"
+      repo: ghcr.io/flaresolverr/flaresolverr
+      tag: "v3.3.25"
 services:
   flaresolverr:
     config: {}
@@ -14,8 +14,8 @@ services:
           extract:
             id:
       read-only: false
-      # wud:
-      #   template: https://github.com/FlareSolverr/FlareSolverr/releases/tag/${original}
-      #   include-prefix: v
+      wud:
+        template: https://github.com/FlareSolverr/FlareSolverr/releases/tag/${original}
+        include-prefix: v
       envs:
         PORT: 8191
