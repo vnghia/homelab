@@ -5,7 +5,7 @@ images:
         location: image/barman
         base: alpine
       args:
-        BARMAN_VERSION: &barman-version "3.13.0-r0"
+        BARMAN_VERSION: &barman-version "3.14.1-r0"
       version: *barman-version
 volumes:
   local:
