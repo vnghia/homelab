@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import typing
 
-import pulumi_random as random
 from homelab_extract.container.env import ContainerExtractEnvSource
 from homelab_pydantic import AbsolutePath
-from homelab_pydantic.model import HomelabRootModel
 from pulumi import Output
+
+from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
@@ -15,24 +15,25 @@ if typing.TYPE_CHECKING:
     from ..global_ import GlobalExtractor
 
 
-class ContainerEnvSourceExtractor(HomelabRootModel[ContainerExtractEnvSource]):
-    def get_env(self, model: ContainerModel) -> GlobalExtractor:
+class ContainerEnvSourceExtractor(ExtractorBase[ContainerExtractEnvSource]):
+    def get_env(self, model: ContainerModel | None) -> GlobalExtractor:
         from ..global_ import GlobalExtractor
 
         root = self.root
+        model = self.ensure_valid_model(model)
         return GlobalExtractor(model.envs[root.env])
 
     def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel
-    ) -> str | Output[str] | random.RandomPassword:
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> str | Output[str]:
         return self.get_env(model).extract_str(main_service, model)
 
     def extract_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
         return self.get_env(model).extract_path(main_service, model)
 
     def extract_volume_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> ContainerVolumePath:
         return self.get_env(model).extract_volume_path(main_service, model)

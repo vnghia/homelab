@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-import pulumi_random as random
 from homelab_extract.service import (
     ServiceExtract,
     ServiceExtractFull,
@@ -12,9 +11,10 @@ from homelab_extract.service.export import ServiceExtractExportSource
 from homelab_extract.service.keepass import ServiceExtractKeepassSource
 from homelab_extract.service.secret import ServiceExtractSecretSource
 from homelab_extract.transform import ExtractTransform
-from homelab_pydantic import AbsolutePath, HomelabRootModel
+from homelab_pydantic import AbsolutePath
 from pulumi import Output
 
+from .. import ExtractorBase
 from ..container import ContainerExtractor
 from ..transform import ExtractTransformer
 from .export import ServiceExportSourceExtractor
@@ -28,7 +28,7 @@ if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
 
 
-class ServiceSourceExtractor(HomelabRootModel[ServiceExtractSource]):
+class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
     @property
     def extractor(
         self,
@@ -49,7 +49,7 @@ class ServiceSourceExtractor(HomelabRootModel[ServiceExtractSource]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str] | random.RandomPassword | random.RandomUuid:
+    ) -> str | Output[str]:
         return self.extractor.extract_str(main_service, model)
 
     def extract_path(
@@ -63,7 +63,7 @@ class ServiceSourceExtractor(HomelabRootModel[ServiceExtractSource]):
         return self.extractor.extract_volume_path(main_service, model)
 
 
-class ServiceFullExtractor(HomelabRootModel[ServiceExtractFull]):
+class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
     @property
     def extractor(self) -> ServiceSourceExtractor | ContainerExtractor:
         extract = self.root.extract
@@ -80,7 +80,7 @@ class ServiceFullExtractor(HomelabRootModel[ServiceExtractFull]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str] | random.RandomPassword:
+    ) -> str | Output[str]:
         extractor = self.extractor
         transformer = self.transfomer
 
@@ -112,7 +112,7 @@ class ServiceFullExtractor(HomelabRootModel[ServiceExtractFull]):
         )
 
 
-class ServiceExtractor(HomelabRootModel[ServiceExtract]):
+class ServiceExtractor(ExtractorBase[ServiceExtract]):
     @property
     def container(self) -> str | None:
         root = self.root.root
@@ -131,7 +131,7 @@ class ServiceExtractor(HomelabRootModel[ServiceExtract]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str] | random.RandomPassword | random.RandomUuid:
+    ) -> str | Output[str]:
         return self.extractor.extract_str(
             main_service, model or main_service.model[self.container]
         )

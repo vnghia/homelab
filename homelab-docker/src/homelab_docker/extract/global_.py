@@ -14,10 +14,11 @@ from homelab_extract.service import ServiceExtractSource
 from homelab_extract.simple import GlobalExtractSimpleSource
 from homelab_extract.transform import ExtractTransform
 from homelab_extract.vpn import GlobalExtractVpnSource
-from homelab_pydantic import AbsolutePath, HomelabRootModel
+from homelab_pydantic import AbsolutePath
 from pulumi import Output
 from pydantic import ValidationError
 
+from . import ExtractorBase
 from .container import ContainerExtractor
 from .docker import GlobalDockerSourceExtractor
 from .hostname import GlobalHostnameSourceExtractor
@@ -37,7 +38,7 @@ if typing.TYPE_CHECKING:
     from ..resource.service import ServiceResourceBase
 
 
-class GlobalSourceExtractor(HomelabRootModel[GlobalExtractSource]):
+class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
     @property
     def extractor(
         self,
@@ -87,7 +88,7 @@ class GlobalSourceExtractor(HomelabRootModel[GlobalExtractSource]):
         return self.extractor.extract_volume_path(main_service, model)
 
 
-class GlobalFullExtractor(HomelabRootModel[GlobalExtractFull]):
+class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
     @property
     def extractor(self) -> ServiceExtractor | GlobalSourceExtractor:
         extract = self.root.extract
@@ -154,7 +155,7 @@ class GlobalFullExtractor(HomelabRootModel[GlobalExtractFull]):
         )
 
 
-class GlobalExtractor(HomelabRootModel[GlobalExtract]):
+class GlobalExtractor(ExtractorBase[GlobalExtract]):
     @property
     def extractor(
         self,
@@ -213,9 +214,3 @@ class GlobalExtractor(HomelabRootModel[GlobalExtract]):
             ]
         else:
             return data
-
-
-GlobalKvSourceExtractor.model_rebuild()
-GlobalSourceExtractor.model_rebuild()
-GlobalFullExtractor.model_rebuild()
-GlobalExtractor.model_rebuild()

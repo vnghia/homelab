@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-import pulumi_random as random
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath, HomelabRootModel
 from pulumi import Input, Output
@@ -16,11 +15,9 @@ if typing.TYPE_CHECKING:
 
 
 class ExtractTransformer(HomelabRootModel[ExtractTransform]):
-    def transform_string(
-        self, value: Input[str] | random.RandomPassword | random.RandomUuid
-    ) -> Output[str]:
+    def transform_string(self, value: Input[str]) -> Output[str]:
         root = self.root
-        if isinstance(value, (random.RandomPassword, random.RandomUuid)):
+        if root.secret is not None:
             value_output = ExtractSecretTransformer(root.secret).transform(value)
         else:
             value_output = Output.from_input(value)

@@ -8,4 +8,4 @@ from .string import ExtractTransformString
 class ExtractTransform(HomelabBaseModel):
     path: ExtractTransformPath = ExtractTransformPath()
     string: ExtractTransformString = ExtractTransformString()
-    secret: ExtractTransformSecret = ExtractTransformSecret()
+    secret: ExtractTransformSecret | None = None

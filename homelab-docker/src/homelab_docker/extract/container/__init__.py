@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import typing
 
-import pulumi_random as random
 from homelab_extract.container import ContainerExtract
 from homelab_extract.container.env import ContainerExtractEnvSource
-from homelab_pydantic import AbsolutePath, HomelabRootModel
+from homelab_pydantic import AbsolutePath
 from pulumi import Output
 
+from .. import ExtractorBase
 from .env import ContainerEnvSourceExtractor
 from .volume import ContainerVolumeSourceExtractor
 
@@ -17,7 +17,7 @@ if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
 
 
-class ContainerExtractor(HomelabRootModel[ContainerExtract]):
+class ContainerExtractor(ExtractorBase[ContainerExtract]):
     @property
     def extractor(
         self,
@@ -31,7 +31,7 @@ class ContainerExtractor(HomelabRootModel[ContainerExtract]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str] | random.RandomPassword:
+    ) -> str | Output[str]:
         return self.extractor.extract_str(
             main_service, model or main_service.model[None]
         )
