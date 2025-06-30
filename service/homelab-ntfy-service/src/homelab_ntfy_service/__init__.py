@@ -40,8 +40,8 @@ class NtfyService(ExtraService[ExtraConfig]):
                 self.child_opts, ResourceOptions(depends_on=[self.container])
             ),
             container=self.container.name,
-            username=self.secret["{}-username".format(self.USER_ROLE)].result,
-            password=self.secret["{}-password".format(self.USER_ROLE)].result,
+            username=self.secret["{}-username".format(self.USER_ROLE)],
+            password=self.secret["{}-password".format(self.USER_ROLE)],
             role=self.USER_ROLE,
             acl=NtfyUserAclConfig({"*": NtfyUserAclPermission.WRITE_ONLY}),
         )

@@ -3,7 +3,8 @@ from __future__ import annotations
 import typing
 
 import pulumi_random as random
-from pulumi import ComponentResource, ResourceOptions
+import pulumi_tls as tls
+from pulumi import ComponentResource, Output, ResourceOptions
 
 from ...config.service.secret import ServiceSecretConfig
 
@@ -31,5 +32,13 @@ class ServiceSecretResouse(ComponentResource):
 
         self.register_outputs({})
 
-    def __getitem__(self, key: str) -> random.RandomPassword | random.RandomUuid:
+    def get(
+        self, key: str
+    ) -> random.RandomPassword | random.RandomUuid | tls.PrivateKey:
         return self.secrets[key]
+
+    def __getitem__(self, key: str) -> Output[str]:
+        secret = self.get(key)
+        if isinstance(secret, tls.PrivateKey):
+            return secret.private_key_pem
+        return secret.result

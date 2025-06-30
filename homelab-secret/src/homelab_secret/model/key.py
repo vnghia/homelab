@@ -4,7 +4,7 @@ from pulumi import ResourceOptions
 
 
 class SecretKeyModel(HomelabBaseModel):
-    algorithm: str = "ED25519"
+    algorithm: str
     protect: bool = False
 
     def build_resource(

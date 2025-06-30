@@ -4,6 +4,7 @@ from collections import defaultdict
 
 import pulumi
 import pulumi_docker as docker
+import pulumi_tls as tls
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ComponentResource, Output, ResourceOptions
 from pydantic.alias_generators import to_snake
@@ -119,10 +120,20 @@ class ServiceResourceBase(ComponentResource):
             )
 
             for name, secret in self._secret.secrets.items():
-                pulumi.export(
-                    "secret.{}".format(self.add_service_name(name)),
-                    secret.result,
-                )
+                if isinstance(secret, tls.PrivateKey):
+                    pulumi.export(
+                        "secret.{}.private-key".format(self.add_service_name(name)),
+                        secret.private_key_openssh,
+                    )
+                    pulumi.export(
+                        "secret.{}.public-key".format(self.add_service_name(name)),
+                        secret.public_key_openssh,
+                    )
+                else:
+                    pulumi.export(
+                        "secret.{}".format(self.add_service_name(name)),
+                        secret.result,
+                    )
 
     def build_keepasses(self) -> None:
         if self.model.keepasses:

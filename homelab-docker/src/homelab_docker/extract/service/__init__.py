@@ -49,7 +49,7 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str]:
+    ) -> str | Output[str] | dict[str, Output[str]]:
         return self.extractor.extract_str(main_service, model)
 
     def extract_path(
@@ -131,7 +131,7 @@ class ServiceExtractor(ExtractorBase[ServiceExtract]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str]:
+    ) -> str | Output[str] | dict[str, Output[str]]:
         return self.extractor.extract_str(
             main_service, model or main_service.model[self.container]
         )
