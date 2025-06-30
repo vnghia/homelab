@@ -1,6 +1,6 @@
 from typing import Any
 
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.container.network import (
     ContainerNetworkModeConfig,
     NetworkMode,

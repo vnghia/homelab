@@ -17,7 +17,7 @@ class GlobalYamlSourceExtractor(HomelabRootModel[GlobalExtractYamlSource]):
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> Output[str]:
         from ..resource.file.config import JsonDefaultModel, YamlDumper
-        from . import GlobalExtractor
+        from .global_ import GlobalExtractor
 
         root = self.root
         return (

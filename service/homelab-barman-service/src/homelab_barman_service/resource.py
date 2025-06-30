@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.container.database.source import ContainerDatabaseSourceModel
 from homelab_docker.resource.file.config import (
     ConfigFileResource,

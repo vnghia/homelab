@@ -16,7 +16,7 @@ class GlobalJsonSourceExtractor(HomelabRootModel[GlobalExtractJsonSource]):
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> Output[str]:
-        from . import GlobalExtractor
+        from .global_ import GlobalExtractor
 
         root = self.root
         return Output.json_dumps(

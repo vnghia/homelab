@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 from typing import Any
 
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.middleware import (

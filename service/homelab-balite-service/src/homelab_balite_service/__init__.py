@@ -1,6 +1,6 @@
 from homelab_backup.config import BackupGlobalConfig
 from homelab_backup.config.volume import BackupVolumeConfig
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.service import ServiceWithConfigModel

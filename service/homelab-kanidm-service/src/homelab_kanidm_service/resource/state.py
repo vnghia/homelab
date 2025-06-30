@@ -8,7 +8,7 @@ import tempfile
 import typing
 from typing import Any, ClassVar
 
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import JsonDefaultModel
 from homelab_pydantic import HomelabBaseModel
 from pulumi import Output, ResourceOptions

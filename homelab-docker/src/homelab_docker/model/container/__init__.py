@@ -13,7 +13,7 @@ from pydantic import Field, PositiveInt
 
 from homelab_docker.model.container.inherit import ContainerInheritConfig
 
-from ...extract import GlobalExtractor
+from ...extract.global_ import GlobalExtractor
 from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
 from .healthcheck import ContainerHealthCheckConfig

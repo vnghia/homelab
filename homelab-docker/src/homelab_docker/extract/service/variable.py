@@ -11,12 +11,12 @@ if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
     from ...model.container.volume_path import ContainerVolumePath
     from ...resource.service import ServiceResourceBase
-    from .. import GlobalExtractor
+    from ..global_ import GlobalExtractor
 
 
 class ServiceVariableSourceExtractor(HomelabRootModel[ServiceExtractVariableSource]):
     def get_variable(self, main_service: ServiceResourceBase) -> GlobalExtractor:
-        from .. import GlobalExtractor
+        from ..global_ import GlobalExtractor
 
         root = self.root
         return GlobalExtractor(main_service.model.variables[root.variable])

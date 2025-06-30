@@ -5,7 +5,7 @@ import typing
 from functools import reduce
 from typing import Any, ClassVar
 
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel

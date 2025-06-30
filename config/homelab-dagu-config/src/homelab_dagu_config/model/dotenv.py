@@ -1,4 +1,4 @@
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.container import ContainerModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_extract import GlobalExtract

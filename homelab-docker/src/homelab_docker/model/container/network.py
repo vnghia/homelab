@@ -10,7 +10,7 @@ from homelab_extract.id import GlobalExtractIdSource
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
 
-from ...extract import GlobalExtractor
+from ...extract.global_ import GlobalExtractor
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase

@@ -12,12 +12,12 @@ if typing.TYPE_CHECKING:
     from ...model.container import ContainerModel
     from ...model.container.volume_path import ContainerVolumePath
     from ...resource.service import ServiceResourceBase
-    from .. import GlobalExtractor
+    from ..global_ import GlobalExtractor
 
 
 class ContainerEnvSourceExtractor(HomelabRootModel[ContainerExtractEnvSource]):
     def get_env(self, model: ContainerModel) -> GlobalExtractor:
-        from .. import GlobalExtractor
+        from ..global_ import GlobalExtractor
 
         root = self.root
         return GlobalExtractor(model.envs[root.env])

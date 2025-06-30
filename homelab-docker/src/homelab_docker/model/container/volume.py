@@ -9,7 +9,7 @@ from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
 from pulumi import Output
 from pydantic import ValidationError
 
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.container.docker_socket import ContainerDockerSocketConfig
 
 if typing.TYPE_CHECKING:

@@ -9,7 +9,7 @@ from homelab_dagu_config.model.step.run.command import (
     DaguDagStepRunCommandModel,
     DaguDagStepRunCommandParamModel,
 )
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from pulumi import Output

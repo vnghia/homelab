@@ -7,7 +7,7 @@ from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from pydantic import PositiveInt
 
-from ...extract import GlobalExtractor
+from ...extract.global_ import GlobalExtractor
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase

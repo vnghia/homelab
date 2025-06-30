@@ -2,7 +2,7 @@ from collections import defaultdict
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupGlobalConfig
-from homelab_docker.extract import GlobalExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
