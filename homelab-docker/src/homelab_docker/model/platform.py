@@ -14,7 +14,7 @@ class PlatformFullString(HomelabBaseModel):
     platform: dict[Platform, str] = {platform: platform.value for platform in Platform}
 
     def to_str(self, platform: Platform) -> str:
-        return self.transform.transform(self.platform[platform])
+        return self.transform.transform(self.platform[platform], False)
 
 
 class PlatformString(HomelabRootModel[str | PlatformFullString]):

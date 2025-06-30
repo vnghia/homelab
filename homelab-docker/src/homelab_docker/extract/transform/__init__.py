@@ -4,7 +4,7 @@ import typing
 
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath, HomelabRootModel
-from pulumi import Input, Output
+from pulumi import Input, Output, output
 
 from .path import ExtractPathTransformer
 from .secret import ExtractSecretTransformer
@@ -15,13 +15,23 @@ if typing.TYPE_CHECKING:
 
 
 class ExtractTransformer(HomelabRootModel[ExtractTransform]):
-    def transform_string(self, value: Input[str]) -> Output[str]:
+    def transform_string(
+        self, value: Input[str] | dict[str, Output[str]]
+    ) -> Output[str]:
         root = self.root
-        if root.secret is not None:
-            value_output = ExtractSecretTransformer(root.secret).transform(value)
-        else:
-            value_output = Output.from_input(value)
-        return value_output.apply(ExtractStringTransformer(root.string).transform)
+        if not isinstance(value, dict):
+            if root.secret is not None:
+                value_output = ExtractSecretTransformer(root.secret).transform(value)
+            else:
+                value_output = Output.from_input(value)
+            return value_output.apply(
+                lambda value: ExtractStringTransformer(root.string).transform(
+                    value, False
+                )
+            )
+        return Output.json_dumps(value).apply(
+            lambda value: ExtractStringTransformer(root.string).transform(value, True)
+        )
 
     def transform_path(self, path: AbsolutePath) -> AbsolutePath:
         root = self.root

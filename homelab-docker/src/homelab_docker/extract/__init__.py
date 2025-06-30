@@ -31,7 +31,7 @@ class ExtractorBase(Protocol[T]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str]:
+    ) -> str | Output[str] | dict[str, Output[str]]:
         raise TypeError("Could not extract str from {}".format(self.name))
 
     def extract_path(
