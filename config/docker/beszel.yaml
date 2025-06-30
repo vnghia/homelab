@@ -27,6 +27,35 @@ services:
                 stripPrefix:
                   prefixes:
                     - variable: PREFIX
+      files:
+        file:
+          private-key:
+            path:
+              extract:
+                volume: beszel-data
+              transform:
+                path: id_ed25519
+            content:
+              extract:
+                secret: ssh
+              transform:
+                string:
+                  template: "{private_key_openssh}"
+          public-key:
+            path:
+              extract:
+                volume: beszel-data
+              transform:
+                path: id_ed25519.pub
+            content:
+              extract:
+                secret: ssh
+              transform:
+                string:
+                  template: "{public_key_openssh}"
+    secrets:
+      ssh:
+        algorithm: ED25519
     keepasses:
       keepass:
         hostname:
@@ -34,8 +63,11 @@ services:
           public: false
     container:
       image: beszel
+      network:
+        default-bridge: true
       volumes:
         beszel-data: /beszel_data
+        "/var/lib/beszel-agent": /var/lib/beszel-agent
       envs:
         APP_URL:
           extract:
