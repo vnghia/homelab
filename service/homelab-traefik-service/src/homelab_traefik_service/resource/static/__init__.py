@@ -40,8 +40,8 @@ class TraefikStaticConfigResource(
         timeouts = {
             "respondingTimeouts": {
                 "readTimeout": traefik_config.timeout.read,
-                "idleTimeout": traefik_config.timeout.write,
                 "writeTimeout": traefik_config.timeout.idle,
+                "idleTimeout": traefik_config.timeout.write,
             }
         }
 

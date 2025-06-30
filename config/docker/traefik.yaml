@@ -68,7 +68,7 @@ services:
       timeout:
         read: 12h
         write: 12h
-        idle: 3m
+        idle: 12h
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
