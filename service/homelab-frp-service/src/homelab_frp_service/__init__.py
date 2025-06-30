@@ -4,6 +4,7 @@ from typing import Any
 
 from homelab_docker.config.network import NetworkConfig
 from homelab_docker.extract.global_ import GlobalExtractor
+from homelab_docker.model.container.port import ContainerPortProtocol
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import (
@@ -42,14 +43,13 @@ class FrpClientConfigResource(
                         alias = port.forward.alias or frp_service.add_service_name(
                             name, prefix=prefix
                         )
-                        proxy = (
-                            self.build_tcp(
-                                proxy_name, alias, port.internal, port.external, False
-                            )
-                            if port.protocol == "tcp"
-                            else self.build_udp(
-                                proxy_name, alias, port.internal, port.external
-                            )
+                        proxy = self.build_proxy(
+                            proxy_name,
+                            alias,
+                            port.internal,
+                            port.external,
+                            port.protocol or ContainerPortProtocol.TCP,
+                            False,
                         )
                         proxies.append(proxy)
 
@@ -72,25 +72,29 @@ class FrpClientConfigResource(
                     "poolCount": config.pool,
                 },
                 "proxies": [
-                    self.build_tcp(
+                    self.build_proxy(
                         "http",
                         NetworkConfig.PROXY_ALIAS,
                         port_config.internal.http,
                         port_config.external.http,
+                        ContainerPortProtocol.TCP,
                         True,
                     ),
-                    self.build_tcp(
+                    self.build_proxy(
                         "https",
                         NetworkConfig.PROXY_ALIAS,
                         port_config.internal.https,
                         port_config.external.https,
+                        ContainerPortProtocol.TCP,
                         True,
                     ),
-                    self.build_udp(
+                    self.build_proxy(
                         "h3",
                         NetworkConfig.PROXY_ALIAS,
                         port_config.internal.https,
                         port_config.external.https,
+                        ContainerPortProtocol.UDP,
+                        True,
                     ),
                     *proxies,
                 ],
@@ -99,44 +103,27 @@ class FrpClientConfigResource(
         )
 
     @classmethod
-    def build_common(
+    def build_proxy(
         cls,
         name: str,
         local_ip: str,
         local_port: PositiveInt,
         remote_port: PositiveInt,
-    ) -> dict[str, Any]:
-        return {
-            "name": name,
-            "localIP": local_ip,
-            "localPort": local_port,
-            "remotePort": remote_port,
-        }
-
-    @classmethod
-    def build_tcp(
-        cls,
-        name: str,
-        local_ip: str,
-        local_port: PositiveInt,
-        remote_port: PositiveInt,
+        proxy_type: ContainerPortProtocol,
         proxy_protocol: bool,
     ) -> dict[str, Any]:
         return (
-            cls.build_common(name, local_ip, local_port, remote_port)
+            {
+                "name": name,
+                "localIP": local_ip,
+                "localPort": local_port,
+                "remotePort": remote_port,
+            }
             | {
-                "type": "tcp",
+                "type": str(proxy_type),
             }
             | ({"transport": {"proxyProtocolVersion": "v2"}} if proxy_protocol else {})
         )
-
-    @classmethod
-    def build_udp(
-        cls, name: str, local_ip: str, local_port: PositiveInt, remote_port: PositiveInt
-    ) -> dict[str, Any]:
-        return cls.build_common(name, local_ip, local_port, remote_port) | {
-            "type": "udp",
-        }
 
 
 class FrpService(ServiceWithConfigResourceBase[FrpConfig]):

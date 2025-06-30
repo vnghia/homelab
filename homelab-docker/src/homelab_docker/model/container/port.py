@@ -1,9 +1,15 @@
+from enum import StrEnum, auto
 from ipaddress import IPv4Address
 from typing import Self
 
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
 from pydantic import IPvAnyAddress, PositiveInt
+
+
+class ContainerPortProtocol(StrEnum):
+    TCP = auto()
+    UDP = auto()
 
 
 class ContainerPortForwardConfig(HomelabBaseModel):
@@ -14,7 +20,7 @@ class ContainerPortConfig(HomelabBaseModel):
     internal: PositiveInt
     external: PositiveInt
     ip: IPvAnyAddress
-    protocol: str | None = None
+    protocol: ContainerPortProtocol | None = None
     forward: ContainerPortForwardConfig | None = None
 
     def to_args(self) -> docker.ContainerPortArgs:
