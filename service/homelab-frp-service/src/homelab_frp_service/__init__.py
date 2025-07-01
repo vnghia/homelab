@@ -70,6 +70,7 @@ class FrpClientConfigResource(
                     "protocol": config.protocol,
                     "tls": {"enable": False},
                     "poolCount": config.pool,
+                    "tcpMux": True,
                 },
                 "proxies": [
                     self.build_proxy(
