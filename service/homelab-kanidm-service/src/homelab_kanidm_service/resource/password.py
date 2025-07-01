@@ -2,7 +2,7 @@ import re
 from typing import Any, ClassVar
 
 from homelab_docker.client import DockerClient
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider, UpdateResult
 
@@ -14,12 +14,15 @@ class KanidmPasswordProviderProps(HomelabBaseModel):
 
     container: str
     account: str
+    config_path: str
 
     def recover_account(self) -> str:
         result: str = (
             DockerClient()
             .containers.get(self.container)
-            .exec_run(["kanidmd", "recover-account", self.account])
+            .exec_run(
+                ["kanidmd", "recover-account", "-c", self.config_path, self.account]
+            )
             .output.decode()
         )
         result = result.replace("\n", " ")
@@ -59,11 +62,17 @@ class KanidmPasswordResource(Resource, module="kanidm", name="Password"):
         opts: ResourceOptions | None,
         container: Input[str],
         account: str,
+        config_path: AbsolutePath,
     ) -> None:
         super().__init__(
             KanidmPasswordProvider(),
             account,
-            {"container": container, "account": account, "password": None},
+            {
+                "container": container,
+                "account": account,
+                "config_path": config_path.as_posix(),
+                "password": None,
+            },
             ResourceOptions.merge(
                 opts, ResourceOptions(additional_secret_outputs=["password"])
             ),

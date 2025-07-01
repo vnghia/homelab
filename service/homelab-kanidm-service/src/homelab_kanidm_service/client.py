@@ -47,7 +47,10 @@ class KanidmClient(HomelabBaseModel):
         try:
             response = container.wait()
             if response["StatusCode"] != 0:
-                raise RuntimeError(response)
+                raise RuntimeError(
+                    response,
+                    container.logs(stdout=True, stderr=True, stream=False).decode(),
+                )
             yield container.logs(stdout=True, stderr=False, stream=False).decode()
         finally:
             container.remove(force=True)

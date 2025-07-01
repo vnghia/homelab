@@ -34,13 +34,13 @@ class KanidmServerConfigResource(
         kanidm_service: KanidmService,
     ) -> None:
         config = kanidm_service.config
+        path = GlobalExtractor(kanidm_service.config.path.config)
+        self.path = path.extract_path(kanidm_service, None)
 
         super().__init__(
             resource_name,
             opts=opts,
-            volume_path=GlobalExtractor(
-                kanidm_service.config.path.config
-            ).extract_volume_path(kanidm_service, None),
+            volume_path=path.extract_volume_path(kanidm_service, None),
             data={
                 "bindaddress": Output.format("[::]:{}", kanidm_service.port),
                 "db_path": GlobalExtractor(config.path.db).extract_path(
@@ -122,10 +122,16 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         self.build_containers()
 
         self.admin = KanidmPasswordResource(
-            opts=self.child_opts, container=self.container.id, account="admin"
+            opts=self.child_opts,
+            container=self.container.id,
+            account="admin",
+            config_path=self.config_file.path,
         )
         self.idm_admin = KanidmPasswordResource(
-            opts=self.child_opts, container=self.container.id, account="idm_admin"
+            opts=self.child_opts,
+            container=self.container.id,
+            account="idm_admin",
+            config_path=self.config_file.path,
         )
         pulumi.export("kanidm.admin", self.admin.password)
         pulumi.export("kanidm.idm_admin", self.idm_admin.password)
