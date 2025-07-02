@@ -27,7 +27,9 @@ class TraefikDynamicServiceFullModelBuilder(
         root = self.root
 
         network_config = main_service.model.containers[root.container].network.root
-        if (
+        if root.external is not None:
+            service_name = str(root.external)
+        elif (
             isinstance(network_config, ContainerNetworkModeConfig)
             and network_config.mode == NetworkMode.VPN
         ):
@@ -54,11 +56,18 @@ class TraefikDynamicServiceFullModelBuilder(
         router_name: str,
         main_service: ServiceResourceBase,
     ) -> dict[str, Any]:
+        root = self.root
+
         return {
             router_name: {
                 "loadBalancer": {
                     "servers": [{"url": self.to_url(type_, main_service).apply(str)}]
                 }
+                | (
+                    {"passHostHeader": root.pass_host_header}
+                    if root.pass_host_header is not None
+                    else {}
+                )
             }
         }
 
