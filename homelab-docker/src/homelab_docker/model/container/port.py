@@ -1,5 +1,5 @@
 from enum import StrEnum, auto
-from ipaddress import IPv4Address
+from ipaddress import IPv6Address
 from typing import Self
 
 import pulumi_docker as docker
@@ -35,7 +35,7 @@ class ContainerPortConfig(HomelabBaseModel):
         return (
             self.internal,
             self.external,
-            isinstance(self.ip, IPv4Address),
+            isinstance(self.ip, IPv6Address),
             str(self.ip),
             self.protocol,
         )
