@@ -8,6 +8,8 @@ volumes:
     tailscale-data: {}
 services:
   tailscale:
+    variables:
+      PORT: 48470
     container:
       image: tailscale
       capabilities:
@@ -39,6 +41,11 @@ services:
           external: 443
           ip: "0.0.0.0"
           protocol: udp
+        udp:
+          internal: 48470
+          external: 48470
+          ip: "0.0.0.0"
+          protocol: udp
       tmpfs:
         - /tmp
         - /run
@@ -53,3 +60,9 @@ services:
         TS_USERSPACE: false
         TS_AUTH_ONCE: true
         TS_ENABLE_HEALTH_CHECK: true
+        TS_TAILSCALED_EXTRA_ARGS:
+          extract:
+            variable: PORT
+          transform:
+            string:
+              template: "--port={value} --no-logs-no-support"
