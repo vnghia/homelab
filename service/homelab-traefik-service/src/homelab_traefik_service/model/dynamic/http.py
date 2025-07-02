@@ -42,69 +42,92 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             root.hostname or router_name
         ]
 
+        service = TraefikDynamicServiceModelBuilder(root.service).to_service_name(
+            router_name
+        )
+        rule = Output.all(
+            *(
+                [Output.format("Host(`{}`)", hostname)]
+                + (
+                    [
+                        Output.format(
+                            "PathPrefix(`{}`)",
+                            GlobalExtractor(root.prefix).extract_str(
+                                main_service, None
+                            ),
+                        ),
+                    ]
+                    if root.prefix
+                    else []
+                )
+                + [
+                    GlobalExtractor(rule).extract_str(main_service, None)
+                    for rule in root.rules
+                ]
+            )
+        ).apply(lambda args: " && ".join(args))
+
+        public_middlewares = [
+            TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
+                main_service, traefik_service
+            )
+            for middleware in [
+                TraefikDynamicMiddlewareModel(
+                    TraefikDynamicMiddlewareUseModel(
+                        service=traefik_service.name(),
+                        name=self.GEOBLOCK_MIDDLEWARE,
+                    )
+                ),
+                TraefikDynamicMiddlewareModel(
+                    TraefikDynamicMiddlewareUseModel(
+                        service=traefik_service.name(),
+                        name=self.CROWDSEC_MIDDLEWARE,
+                    )
+                ),
+            ]
+        ]
+        service_middlewares = [
+            TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
+                main_service, traefik_service
+            )
+            for middleware in root.middlewares
+        ]
+        all_middlewares = (
+            public_middlewares if root.public else []
+        ) + service_middlewares
+
         data: dict[str, Any] = {
             "http": {
                 "routers": {
                     router_name: {
-                        "service": TraefikDynamicServiceModelBuilder(
-                            root.service
-                        ).to_service_name(router_name),
-                        "entryPoints": (
-                            [entrypoint.public_https] if root.public else []
-                        )
-                        + [entrypoint.private_https],
-                        "rule": Output.all(
-                            *(
-                                [Output.format("Host(`{}`)", hostname)]
-                                + (
-                                    [
-                                        Output.format(
-                                            "PathPrefix(`{}`)",
-                                            GlobalExtractor(root.prefix).extract_str(
-                                                main_service, None
-                                            ),
-                                        ),
-                                    ]
-                                    if root.prefix
-                                    else []
-                                )
-                                + [
-                                    GlobalExtractor(rule).extract_str(
-                                        main_service, None
-                                    )
-                                    for rule in root.rules
-                                ]
-                            )
-                        ).apply(lambda args: " && ".join(args)),
-                        "middlewares": [
-                            TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
-                                main_service, traefik_service
-                            )
-                            for middleware in (
-                                (
-                                    [
-                                        TraefikDynamicMiddlewareModel(
-                                            TraefikDynamicMiddlewareUseModel(
-                                                service=traefik_service.name(),
-                                                name=self.GEOBLOCK_MIDDLEWARE,
-                                            )
-                                        ),
-                                        TraefikDynamicMiddlewareModel(
-                                            TraefikDynamicMiddlewareUseModel(
-                                                service=traefik_service.name(),
-                                                name=self.CROWDSEC_MIDDLEWARE,
-                                            )
-                                        ),
-                                    ]
-                                    if root.public
-                                    else []
-                                )
-                                + root.middlewares
-                            )
-                        ],
+                        "service": service,
+                        "entryPoints": [entrypoint.public_https]
+                        if root.public
+                        else [entrypoint.private_https],
+                        "rule": rule,
                         "tls": {"certResolver": traefik_service.static.CERT_RESOLVER},
                     }
-                },
+                    | ({"middlewares": all_middlewares} if all_middlewares else {})
+                }
+                | (
+                    {
+                        "{}-private".format(router_name): {
+                            "service": service,
+                            "entryPoints": [entrypoint.private_https],
+                            "rule": rule,
+                            "tls": {
+                                "certResolver": traefik_service.static.CERT_RESOLVER
+                            },
+                        }
+                        | (
+                            {"middlewares": service_middlewares}
+                            if service_middlewares
+                            else {}
+                        )
+                    }
+                    if root.public
+                    else {}
+                ),
             }
         }
 
