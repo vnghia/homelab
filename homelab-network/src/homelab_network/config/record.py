@@ -7,7 +7,7 @@ from ..model.record import RecordFullModel, RecordModel
 
 class RecordConfig(HomelabBaseModel):
     zone_id: str
-    local_ip: IPvAnyAddress
+    local_ips: list[IPvAnyAddress]
     records: dict[str, RecordModel]
 
     def get_domain(self) -> str:

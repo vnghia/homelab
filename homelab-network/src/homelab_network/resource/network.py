@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Mapping
 
 import pulumi
@@ -40,14 +41,18 @@ class NetworkResource(ComponentResource):
             config, opts=self.child_opts, project_prefix=project_prefix
         )
 
+        local_records: defaultdict[IPvAnyAddress, set[str]] = defaultdict(set)
+        for ip, hostnames in self.public.local_records.items():
+            local_records[ip].update(hostnames)
+        for ip, hostnames in self.private.local_records.items():
+            local_records[ip].update(hostnames)
+
         pulumi.export(
             "record.local.hosts",
             "\n".join(
                 [
-                    "{} {}".format(ip, record)
-                    for record, ip in (
-                        self.public.local_records | self.private.local_records
-                    ).items()
+                    "{} {}".format(ip, " ".join(hostnames))
+                    for ip, hostnames in local_records.items()
                 ]
             ),
         )

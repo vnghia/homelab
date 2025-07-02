@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Mapping
 
 import pulumi
@@ -35,8 +36,9 @@ class RecordResource(ComponentResource):
         }
         self.hostnames = config.hostnames
 
-        self.local_records = {}
+        self.local_records: defaultdict[IPvAnyAddress, set[str]] = defaultdict(set)
         for key, hostname in self.hostnames.items():
             pulumi.export("record.{}.{}".format(name, key), hostname)
-            self.local_records[hostname] = config.local_ip
+            for ip in config.local_ips:
+                self.local_records[ip].add(hostname)
         self.register_outputs({})
