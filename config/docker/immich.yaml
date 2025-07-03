@@ -2,10 +2,10 @@ images:
   remote:
     immich-server:
       repo: ghcr.io/immich-app/immich-server
-      tag: &immich-version "v1.135.3"
+      tag: "v1.135.3"
     immich-machine-learning:
       repo: ghcr.io/immich-app/immich-machine-learning
-      tag: *immich-version
+      tag: "v1.135.3-rocm"
 volumes:
   local:
     immich-data: {}
@@ -82,7 +82,7 @@ services:
             host: REDIS_HOSTNAME
             port: REDIS_PORT
       devices:
-        - /dev/dri
+        - /dev/dri/renderD128
       healthcheck:
         tests:
           - "CMD"
@@ -102,6 +102,9 @@ services:
     containers:
       machine-learning:
         image: immich-machine-learning
+        devices:
+          - /dev/dri
+          - /dev/kfd
         healthcheck:
           tests:
             - "CMD"
