@@ -2,7 +2,7 @@ images:
   remote:
     wud:
       repo: ghcr.io/getwud/wud
-      tag: "8.0.1"
+      tag: "8.1.0"
 volumes:
   local:
     wud-storage: {}
