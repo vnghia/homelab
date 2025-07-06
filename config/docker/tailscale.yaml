@@ -2,7 +2,7 @@ images:
   remote:
     tailscale:
       repo: ghcr.io/tailscale/tailscale
-      tag: "v1.84.2"
+      tag: "v1.84.3"
 volumes:
   local:
     tailscale-data: {}
