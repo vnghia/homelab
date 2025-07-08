@@ -31,13 +31,15 @@ class ContainerPortConfig(HomelabBaseModel):
             protocol=self.protocol,
         )
 
-    def to_comparable(self) -> tuple[PositiveInt, PositiveInt, bool, str, str | None]:
+    def to_comparable(self) -> tuple[PositiveInt, PositiveInt, int, bool, str]:
         return (
             self.internal,
             self.external,
+            (2 if self.protocol == ContainerPortProtocol.UDP else 1)
+            if self.protocol
+            else 0,
             isinstance(self.ip, IPv6Address),
             str(self.ip),
-            self.protocol,
         )
 
     def __lt__(self, other: Self) -> bool:
