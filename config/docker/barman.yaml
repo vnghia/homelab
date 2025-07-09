@@ -22,9 +22,9 @@ services:
           volume: barman-home
         transform:
           path: staging
-      minimum-redundancy: 5
-      last-backup-maximum-age: 1 WEEKS
-      retention-policy: RECOVERY WINDOW OF 1 WEEKS
+      minimum-redundancy: 3
+      last-backup-maximum-age: 3 DAYS
+      retention-policy: RECOVERY WINDOW OF 3 DAYS
       dagu:
         docker:
           executor:
