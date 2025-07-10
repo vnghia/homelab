@@ -36,6 +36,7 @@ services:
         template: https://github.com/qdm12/gluetun/releases/tag/${original}
         include-prefix: v
       envs:
+        DNS_KEEP_NAMESERVER: "on"
         VPN_SERVICE_PROVIDER: custom
         OPENVPN_VERSION: "2.5"
         OPENVPN_CUSTOM_CONFIG:
