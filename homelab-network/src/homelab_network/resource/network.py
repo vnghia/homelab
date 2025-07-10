@@ -51,7 +51,7 @@ class NetworkResource(ComponentResource):
             "record.local.hosts",
             "\n".join(
                 [
-                    "{} {}".format(ip, " ".join(hostnames))
+                    "{} {}".format(ip, " ".join(sorted(hostnames)))
                     for ip, hostnames in local_records.items()
                 ]
             ),
