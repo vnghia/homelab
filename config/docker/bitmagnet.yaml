@@ -1,0 +1,42 @@
+images:
+  remote:
+    bitmagnet:
+      repo: ghcr.io/bitmagnet-io/bitmagnet
+      tag: "v0.10.0"
+services:
+  bitmagnet:
+    variables:
+      PORT: 3333
+    config:
+      traefik:
+        traefik:
+          public: false
+          service:
+            port:
+              variable: PORT
+    databases:
+      postgres:
+        postgres: {}
+    container:
+      image: bitmagnet
+      network:
+        mode: vpn
+      command:
+        - worker
+        - run
+        - --all
+      databases:
+        - postgres:
+          envs:
+            env: POSTGRES_DSN
+      envs:
+        DHT_SERVER_PORT:
+          port: bitmagnet
+        HTTP_SERVER_LOCAL_ADDRESS:
+          extract:
+            variable: PORT
+          transform:
+            string:
+              template: ":{value}"
+        LOG_LEVEL: info
+        LOG_JSON: true
