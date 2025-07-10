@@ -5,7 +5,13 @@ images:
       tag: "0.11.1"
 volumes:
   local:
-    beszel-data: {}
+    beszel-data:
+      backup:
+        source:
+          extract:
+            volume: beszel-data
+          transform:
+            path: backups
 services:
   beszel:
     variables:
@@ -53,6 +59,65 @@ services:
               transform:
                 string:
                   template: "{public_key_openssh}"
+      dagu:
+        dotenvs:
+          dotenv:
+            envs:
+              BESZEL_USERNAME:
+                keepass:
+                info: username
+              BESZEL_PASSWORD:
+                keepass:
+                info: password
+        dag:
+          pre-backup-volume:
+            name: pre-backup-volume
+            dotenvs:
+              - null
+            tags: ["backup"]
+            steps:
+              - name: auth-with-password
+                executor:
+                  headers:
+                    Content-Type: application/json
+                  body:
+                    json_:
+                      identity: ${BESZEL_USERNAME}
+                      password: ${BESZEL_PASSWORD}
+                  silent: true
+                run:
+                  - "POST"
+                  - extract:
+                      kv:
+                        container:
+                          name:
+                        port:
+                          variable: PORT
+                        prefix:
+                          variable: PREFIX
+                    transform:
+                      string:
+                        template: "http://{container}:{port}/api/collections/_superusers/auth-with-password"
+                output: AUTH
+              - name: create-backup
+                executor:
+                  headers:
+                    Content-Type: application/json
+                    Authorization: ${AUTH.token}
+                  body: '{"name": "output.zip"}'
+                run:
+                  - "POST"
+                  - extract:
+                      kv:
+                        container:
+                          name:
+                        port:
+                          variable: PORT
+                        prefix:
+                          variable: PREFIX
+                    transform:
+                      string:
+                        template: "http://{container}:{port}/api/backups"
     secrets:
       ssh:
         algorithm: ED25519
