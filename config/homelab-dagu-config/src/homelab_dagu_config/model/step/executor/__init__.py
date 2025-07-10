@@ -6,11 +6,16 @@ from homelab_pydantic import HomelabRootModel
 from pulumi import Input
 
 from .docker import DaguDagStepDockerExecutorModel
+from .http import DaguDagStepHttpExecutorModel
 from .jq import DaguDagStepJqExecutorModel
 
 
 class DaguDagStepExecutorModel(
-    HomelabRootModel[DaguDagStepDockerExecutorModel | DaguDagStepJqExecutorModel]
+    HomelabRootModel[
+        DaguDagStepDockerExecutorModel
+        | DaguDagStepHttpExecutorModel
+        | DaguDagStepJqExecutorModel
+    ]
 ):
     def to_executor(
         self,
