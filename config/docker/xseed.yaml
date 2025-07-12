@@ -1,0 +1,27 @@
+images:
+  remote:
+    xseed:
+      repo: ghcr.io/cross-seed/cross-seed
+      tag: "6.13.0"
+volumes:
+  local:
+    xseed-config:
+      backup:
+        sqlites:
+          - extract:
+              volume: xseed-config
+            transform:
+              path: cross-seed.db
+services:
+  xseed:
+    config: {}
+    container:
+      image: xseed
+      command: [daemon]
+      user: "911:1001"
+      wud:
+        template: https://github.com/cross-seed/cross-seed/releases/tag/v${original}
+      volumes:
+        xseed-config: /config
+        qbittorrent-downloads: /downloads
+        qbittorrent-starr: /starr/sources/torrents
