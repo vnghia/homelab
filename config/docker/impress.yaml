@@ -2,7 +2,7 @@ images:
   remote:
     impress-backend:
       repo: lasuite/impress-backend
-      tag: &impress-version "v3.3.0"
+      tag: &impress-version "v3.4.0"
     impress-frontend:
       repo: lasuite/impress-frontend
       tag: *impress-version
