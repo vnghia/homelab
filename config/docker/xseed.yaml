@@ -14,7 +14,8 @@ volumes:
               path: cross-seed.db
 services:
   xseed:
-    config: {}
+    config:
+      depends-on: [qbittorrent]
     container:
       image: xseed
       command: [daemon]
@@ -23,5 +24,15 @@ services:
         template: https://github.com/cross-seed/cross-seed/releases/tag/v${original}
       volumes:
         xseed-config: /config
-        qbittorrent-downloads: /downloads
-        qbittorrent-starr: /starr/sources/torrents
+        qbittorrent-downloads:
+          service: qbittorrent
+          extract:
+            container:
+            extract:
+              volume: qbittorrent-downloads
+        qbittorrent-starr:
+          service: qbittorrent
+          extract:
+            container:
+            extract:
+              volume: qbittorrent-starr
