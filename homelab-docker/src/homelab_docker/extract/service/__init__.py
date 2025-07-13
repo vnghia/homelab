@@ -78,11 +78,19 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
         transform = self.root.transform
         return ExtractTransformer(transform)
 
+    def model(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> ContainerModel | None:
+        if self.root.has_container:
+            return main_service.model[self.root.container]
+        return model
+
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> str | Output[str]:
         extractor = self.extractor
         transformer = self.transfomer
+        model = self.model(main_service, model)
 
         try:
             value_path = transformer.transform_path(
@@ -98,6 +106,7 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
     ) -> AbsolutePath:
         extractor = self.extractor
         transformer = self.transfomer
+        model = self.model(main_service, model)
 
         return transformer.transform_path(extractor.extract_path(main_service, model))
 
@@ -106,6 +115,7 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
     ) -> ContainerVolumePath:
         extractor = self.extractor
         transformer = self.transfomer
+        model = self.model(main_service, model)
 
         return transformer.transform_volume_path(
             extractor.extract_volume_path(main_service, model)

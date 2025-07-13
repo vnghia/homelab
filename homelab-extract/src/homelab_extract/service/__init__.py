@@ -24,6 +24,10 @@ class ServiceExtractFull(HomelabBaseModel):
     extract: ContainerExtract | ServiceExtractSource
     transform: ExtractTransform = ExtractTransform()
 
+    @property
+    def has_container(self) -> bool:
+        return "container" in self.model_fields_set
+
 
 class ServiceExtract(
     HomelabRootModel[ContainerExtract | ServiceExtractSource | ServiceExtractFull]
