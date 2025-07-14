@@ -155,11 +155,12 @@ class ServiceResourceBase(ComponentResource):
         )
 
     def build_containers(self) -> None:
-        self.containers = {
-            name: self.build_container(name, model, self.options.get(name))
-            for name, model in self.model.containers.items()
-            if model.active
-        }
+        self.containers: dict[str | None, docker.Container] = {}
+        for name, model in self.model.containers.items():
+            if model.active:
+                self.containers[name] = self.build_container(
+                    name, model, self.options.get(name)
+                )
 
         self.CONTAINER_RESOURCE[self.name()] = {}
         for name, container in self.containers.items():

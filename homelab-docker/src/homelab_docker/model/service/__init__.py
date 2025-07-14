@@ -20,7 +20,7 @@ class ServiceModel(HomelabBaseModel):
 
     @cached_property
     def containers(self) -> dict[str | None, ContainerModel]:
-        return self.containers_ | ({None: self.container_} if self.container_ else {})
+        return ({None: self.container_} if self.container_ else {}) | self.containers_
 
     def __getitem__(self, key: str | None) -> ContainerModel:
         return self.containers[key]
