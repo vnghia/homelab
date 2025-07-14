@@ -1,0 +1,72 @@
+images:
+  remote:
+    windows:
+      repo: ghcr.io/dockur/windows
+      tag: "4.35"
+volumes:
+  local:
+    windows-storage:
+      backup: false
+services:
+  windows:
+    variables:
+      PORT: 8006
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              variable: PORT
+    keepasses:
+      keepass:
+        hostname:
+          hostname: windows
+          public: true
+    container:
+      image: windows
+      capabilities:
+        - NET_ADMIN
+      devices:
+        - /dev/kvm
+        - /dev/net/tun
+      network:
+        default-bridge: true
+      ports:
+        rdp-tcp-v4:
+          internal: 3389
+          external: 3389
+          ip: "0.0.0.0"
+          protocol: tcp
+          forward: {}
+        rdp-tcp-v6:
+          internal: 3389
+          external: 3389
+          ip: "::"
+          protocol: tcp
+        rdp-udp-v4:
+          internal: 3389
+          external: 3389
+          ip: "0.0.0.0"
+          protocol: udp
+          forward: {}
+        rdp-udp-v6:
+          internal: 3389
+          external: 3389
+          ip: "::"
+          protocol: udp
+      read-only: false
+      volumes:
+        windows-storage: /storage
+      envs:
+        VERSION: tiny11
+        RAM_SIZE: "6G"
+        CPU_CORES: 4
+        RAM_CHECK: "N"
+        DISPLAY: disabled
+        USERNAME:
+          keepass:
+          info: username
+        PASSWORD:
+          keepass:
+          info: password
