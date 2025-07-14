@@ -3,6 +3,14 @@ images:
     windows:
       repo: ghcr.io/dockur/windows
       tag: "4.35"
+  build:
+    wintele:
+      context:
+        location: image/telegram/wintele
+        base: python-alpine
+        python-builder:
+          image: python-builder
+      version: "0.0.1"
 volumes:
   local:
     windows-storage:
@@ -23,6 +31,9 @@ services:
         hostname:
           hostname: windows
           public: true
+    secrets:
+      totp:
+        special: false
     container:
       image: windows
       capabilities:
@@ -70,3 +81,21 @@ services:
         PASSWORD:
           keepass:
           info: password
+    containers:
+      wintele:
+        image:
+          build: wintele
+        docker-socket:
+          write: false
+        network:
+          default-bridge: true
+        envs:
+          WINTELE_TOKEN:
+          WINTELE_TOTP:
+            extract:
+              secret: totp
+            transform:
+              secret:
+                encode: base32
+          WINTELE_CONTAINER:
+            name:

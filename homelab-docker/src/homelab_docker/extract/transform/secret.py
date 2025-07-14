@@ -1,3 +1,4 @@
+import base64
 import binascii
 
 from homelab_extract.transform.secret import (
@@ -15,4 +16,8 @@ class ExtractSecretTransformer(HomelabRootModel[ExtractTransformSecret]):
             case ExtractTransformSecretEncode.HEX:
                 return Output.from_input(value).apply(
                     lambda x: binascii.hexlify(x.encode()).decode("ascii")
+                )
+            case ExtractTransformSecretEncode.BASE32:
+                return Output.from_input(value).apply(
+                    lambda x: base64.b32encode(x.encode()).decode()
                 )
