@@ -1,0 +1,55 @@
+images:
+  remote:
+    convos:
+      repo: ghcr.io/convos-chat/convos
+      tag: "v8.07"
+volumes:
+  local:
+    convos-data: {}
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            kanidm:
+              origin-url:
+                - extract:
+                    hostname: convos
+                    public: true
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/oidc/callback"
+  convos:
+    variables:
+      PORT: 3000
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              variable: PORT
+          middlewares:
+            - service: traefik
+              name: oidc
+    keepasses:
+      keepass:
+        hostname:
+          hostname: convos
+          public: true
+    secrets:
+      local: {}
+    container:
+      image: convos
+      network:
+        default-bridge: true
+      volumes:
+        convos-data: /data
+      envs:
+        CONVOS_LOCAL_SECRET:
+          secret: local
+        CONVOS_REVERSE_PROXY: 1
+        CONVOS_PLUGINS: "Convos::Plugin::Auth::Header"
+        CONVOS_AUTH_HEADER: X-Remote-Email
