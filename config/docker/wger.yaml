@@ -84,7 +84,11 @@ services:
                     - "/media"
     databases:
       postgres:
-        postgres: {}
+        postgres:
+          config:
+            minimum-redundancy: 1
+            last-backup-maximum-age: 1 DAYS
+            retention-policy: RECOVERY WINDOW OF 1 DAYS
       valkey:
         valkey: {}
     keepasses:
