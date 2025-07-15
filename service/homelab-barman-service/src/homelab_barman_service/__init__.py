@@ -41,10 +41,12 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
 
         for (
             service_name,
-            source_config,
-        ) in self.DATABASE_SOURCE_CONFIGS.items():
-            for name, sources in source_config.get(DatabaseType.POSTGRES, {}).items():
-                for version, source in sources.items():
+            database_resource,
+        ) in self.DATABASE_RESOURCES.items():
+            for name, sources in database_resource.source_config.get(
+                DatabaseType.POSTGRES, {}
+            ).items():
+                for version, (source, config) in sources.items():
                     full_name = DatabaseType.POSTGRES.get_full_name_version(
                         service_name, name, version
                     )
@@ -53,6 +55,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
                             resource_name=full_name,
                             opts=self.child_opts,
                             database_source_model=source,
+                            database_config_model=config,
                             barman_service=self,
                         )
                     )

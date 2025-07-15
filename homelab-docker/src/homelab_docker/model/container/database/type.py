@@ -51,7 +51,7 @@ class ContainerDatabaseTypeConfig[T: ContainerDatabaseSourceEnvsBase](HomelabBas
     ) -> ContainerDatabaseSourceModel:
         return database_resource.source_config[self.TYPE][self.name][
             self.to_database_version(database_resource)
-        ]
+        ][0]
 
     def build_envs(
         self, database_resource: ServiceDatabaseResource

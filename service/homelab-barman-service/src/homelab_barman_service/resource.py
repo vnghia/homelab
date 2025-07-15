@@ -4,6 +4,10 @@ import typing
 
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.container.database.source import ContainerDatabaseSourceModel
+from homelab_docker.model.service.database import ServiceDatabaseConfigModel
+from homelab_docker.model.service.database.postgres import (
+    ServiceDatabasePostgresConfigModel,
+)
 from homelab_docker.resource.file.config import (
     ConfigFileResource,
     IniDumper,
@@ -27,10 +31,23 @@ class BarmanConfigFileResource(
         *,
         opts: ResourceOptions | None,
         database_source_model: ContainerDatabaseSourceModel,
+        database_config_model: ServiceDatabaseConfigModel | None,
         barman_service: BarmanService,
     ) -> None:
         barman_config = barman_service.config
         self.name = resource_name
+
+        minimum_redundancy = None
+        last_backup_maximum_age = None
+        retention_policy = None
+        if database_config_model:
+            if not isinstance(
+                database_config_model.root, ServiceDatabasePostgresConfigModel
+            ):
+                raise TypeError("Service database config model is not Postgres config")
+            minimum_redundancy = database_config_model.root.minimum_redundancy
+            last_backup_maximum_age = database_config_model.root.last_backup_maximum_age
+            retention_policy = database_config_model.root.retention_policy
 
         super().__init__(
             self.name,
@@ -45,9 +62,13 @@ class BarmanConfigFileResource(
                     "streaming_archiver": "on",
                     "slot_name": barman_service.name(),
                     "create_slot": "auto",
-                    "minimum_redundancy": str(barman_config.minimum_redundancy),
-                    "last_backup_maximum_age": barman_config.last_backup_maximum_age,
-                    "retention_policy": barman_config.retention_policy,
+                    "minimum_redundancy": str(
+                        minimum_redundancy or barman_config.minimum_redundancy
+                    ),
+                    "last_backup_maximum_age": last_backup_maximum_age
+                    or barman_config.last_backup_maximum_age,
+                    "retention_policy": retention_policy
+                    or barman_config.retention_policy,
                     "local_staging_path": GlobalExtractor(
                         barman_config.staging_dir
                     ).extract_path(barman_service, None),

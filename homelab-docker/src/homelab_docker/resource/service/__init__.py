@@ -9,7 +9,6 @@ from homelab_pydantic import HomelabBaseModel
 from pulumi import ComponentResource, Output, ResourceOptions
 from pydantic.alias_generators import to_snake
 
-from ...config.service.database.source import ServiceDatabaseSourceConfig
 from ...model.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from .. import DockerResourceArgs
@@ -19,8 +18,8 @@ from .secret import ServiceSecretResouse
 
 
 class ServiceResourceBase(ComponentResource):
-    CONTAINER_RESOURCE: dict[str, dict[str | None, docker.Container]] = {}
-    DATABASE_SOURCE_CONFIGS: dict[str, ServiceDatabaseSourceConfig] = {}
+    CONTAINER_RESOURCES: dict[str, dict[str | None, docker.Container]] = {}
+    DATABASE_RESOURCES: dict[str, ServiceDatabaseResource] = {}
     SERVICES: dict[str, ServiceResourceBase] = {}
 
     def __init__(
@@ -101,7 +100,7 @@ class ServiceResourceBase(ComponentResource):
                 database_config=self.docker_resource_args.config.database,
                 main_service=self,
             )
-            self.DATABASE_SOURCE_CONFIGS[self.name()] = self._database.source_config
+            self.DATABASE_RESOURCES[self.name()] = self._database
 
             for type_, containers in self._database.containers.items():
                 for name, versions in containers.items():
@@ -162,9 +161,9 @@ class ServiceResourceBase(ComponentResource):
                     name, model, self.options.get(name)
                 )
 
-        self.CONTAINER_RESOURCE[self.name()] = {}
+        self.CONTAINER_RESOURCES[self.name()] = {}
         for name, container in self.containers.items():
-            self.CONTAINER_RESOURCE[self.name()][name] = container
+            self.CONTAINER_RESOURCES[self.name()][name] = container
             pulumi.export(
                 "container.{}".format(self.add_service_name(name)), container.name
             )

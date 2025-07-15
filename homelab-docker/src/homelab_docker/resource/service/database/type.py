@@ -23,7 +23,7 @@ from ....model.container.volume import (
 )
 from ....model.container.volume_path import ContainerVolumePath
 from ....model.database.type import DatabaseType
-from ....model.service.database import ServiceDatabaseModel
+from ....model.service.database import ServiceDatabaseConfigModel, ServiceDatabaseModel
 from ...file import FileResource
 
 if typing.TYPE_CHECKING:
@@ -202,3 +202,8 @@ class ServiceDatabaseTypeResource(ComponentResource):
             if self.superuser_password
             else None,
         )
+
+    def to_source_model_and_config(
+        self, version: PositiveInt
+    ) -> tuple[ContainerDatabaseSourceModel, ServiceDatabaseConfigModel | None]:
+        return (self.to_source_model(version), self.model.config)

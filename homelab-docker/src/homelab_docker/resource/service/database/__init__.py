@@ -71,7 +71,7 @@ class ServiceDatabaseResource(ComponentResource):
             {
                 type_: {
                     name: {
-                        version: resource.to_source_model(version)
+                        version: resource.to_source_model_and_config(version)
                         for version in resource.versions
                     }
                     for name, resource in resources.items()
