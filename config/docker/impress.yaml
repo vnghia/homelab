@@ -109,6 +109,7 @@ services:
           template: https://github.com/suitenumerique/docs/releases/tag/${original}
           include-prefix: v
         envs:
+          # TODO: Configure OIDC properly after https://github.com/suitenumerique/docs/issues/1186
           DJANGO_ALLOWED_HOSTS:
             hostname: impress
             public: true
@@ -120,6 +121,7 @@ services:
             secret: django
           DJANGO_SETTINGS_MODULE: impress.settings
           DJANGO_CONFIGURATION: Production
+          OIDC_CREATE_USER: true
           OIDC_RP_SIGN_ALGO: ES256
           OIDC_RP_CLIENT_ID: impress
           OIDC_RP_CLIENT_SECRET:
@@ -156,10 +158,12 @@ services:
                 template: "{value}/userinfo"
           OIDC_OP_LOGOUT_ENDPOINT:
             extract:
-              variable: OAUTH_URL
+              hostname: kanidm
+              public: true
+              scheme: https
             transform:
               string:
-                template: "{value}/v1/logout"
+                template: "{value}/oauth2/token/revoke"
           OIDC_RP_SCOPES: openid profile email
           LOGIN_REDIRECT_URL:
             hostname: impress
@@ -173,6 +177,7 @@ services:
             hostname: impress
             public: true
             scheme: https
+          OIDC_USE_NONCE: false
           OIDC_USE_PKCE: true
           OIDC_REDIRECT_REQUIRE_HTTPS: true
           OIDC_REDIRECT_ALLOWED_HOSTS:
@@ -180,6 +185,7 @@ services:
             public: true
             scheme: "https"
           OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION: false
+          OIDC_STORE_ACCESS_TOKEN: true
           USER_OIDC_FIELDS_TO_FULLNAME: name
           USER_OIDC_FIELD_TO_SHORTNAME: preferred_username
           FRONTEND_HOMEPAGE_FEATURE_ENABLED: false
