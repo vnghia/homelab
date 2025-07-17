@@ -9,3 +9,5 @@ public:
       alias: true
     chromium:
       alias: true
+    livekit:
+      alias: true

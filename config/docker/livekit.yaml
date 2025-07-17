@@ -1,0 +1,44 @@
+images:
+  remote:
+    livekit:
+      repo: livekit/livekit-server
+      tag: "v1.9.0"
+services:
+  livekit:
+    variables:
+      PORT: &port 7880
+      TCP_PORT: &tcp-port 7881
+      UDP_PORT_START: &udp-port-start 50000
+      UDP_PORT_END: &udp-port-end 60000
+    config:
+      traefik:
+        traefik:
+          public: true
+          service:
+            port:
+              variable: PORT
+    databases:
+      valkey:
+        valkey: {}
+    container:
+      image: livekit
+      envs:
+        LIVEKIT_CONFIG:
+          yaml:
+            port: *port
+            rtc:
+              tcp_port: *tcp-port
+              port_range_start: *udp-port-start
+              port_range_end: *udp-port-end
+              use_external_ip: true
+            redis:
+              address:
+                extract:
+                  type: valkey
+                  info: [host, port]
+                transform:
+                  string:
+                    template: "{host}:{port}"
+              password:
+                type: valkey
+                info: password
