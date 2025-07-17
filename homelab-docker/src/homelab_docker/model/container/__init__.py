@@ -21,6 +21,7 @@ from .inherit import ContainerInheritConfig
 from .mail import ContainerMailConfig
 from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
+from .ports import ContainerPortsConfig
 from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
 from .wud import ContainerWudConfig
@@ -60,7 +61,7 @@ class ContainerModel(HomelabBaseModel):
     init: bool | None = None
     mails: list[ContainerMailConfig] | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
-    ports: dict[str, ContainerPortConfig] = {}
+    ports: dict[str, ContainerPortConfig | ContainerPortsConfig] = {}
     privileged: bool | None = None
     read_only: bool = True
     remove: bool = False
@@ -116,6 +117,16 @@ class ContainerModel(HomelabBaseModel):
             if self.entrypoint is not None
             else None
         )
+
+    def build_ports(self) -> dict[str, ContainerPortConfig]:
+        results: dict[str, ContainerPortConfig] = {}
+        for key, config in self.ports.items():
+            if isinstance(config, ContainerPortConfig):
+                results[key] = config
+            else:
+                for port in config.to_ports():
+                    results["{}-{}".format(key, port.internal)] = port
+        return results
 
     def build_tmpfs(self) -> dict[str, str] | None:
         return (
@@ -240,7 +251,7 @@ class ContainerModel(HomelabBaseModel):
             init=model.init,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
-            ports=[port.to_args() for port in sorted(model.ports.values())],
+            ports=[port.to_args() for port in sorted(model.build_ports().values())],
             privileged=model.privileged,
             read_only=model.read_only,
             rm=model.remove,

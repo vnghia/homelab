@@ -37,7 +37,7 @@ class FrpClientConfigResource(
         proxies = []
         for prefix, service in frp_service.docker_resource_args.models.items():
             for name, container in service.containers.items():
-                for key, port in container.ports.items():
+                for key, port in container.build_ports().items():
                     if port.forward:
                         proxy_name = frp_service.add_service_name(key, prefix=prefix)
                         alias = port.forward.alias or frp_service.add_service_name(
