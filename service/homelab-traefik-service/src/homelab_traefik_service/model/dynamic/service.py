@@ -29,14 +29,15 @@ class TraefikDynamicServiceFullModelBuilder(
         network_config = main_service.model.containers[root.container].network.root
         if root.external is not None:
             service_name = str(root.external)
-        elif (
-            isinstance(network_config, ContainerNetworkModeConfig)
-            and network_config.mode == NetworkMode.VPN
-        ):
-            vpn_config = main_service.docker_resource_args.config.vpn
-            vpn_service = main_service.SERVICES[vpn_config.service]
-            vpn_service.containers[vpn_config.container]
-            service_name = vpn_service.add_service_name(vpn_config.container)
+        elif isinstance(network_config, ContainerNetworkModeConfig):
+            match network_config.mode:
+                case NetworkMode.VPN:
+                    vpn_config = main_service.docker_resource_args.config.vpn
+                    vpn_service = main_service.SERVICES[vpn_config.service]
+                    vpn_service.containers[vpn_config.container]
+                    service_name = vpn_service.add_service_name(vpn_config.container)
+                case NetworkMode.HOST:
+                    service_name = "host.docker.internal"
         else:
             main_service.containers[root.container]
             service_name = main_service.add_service_name(root.container)

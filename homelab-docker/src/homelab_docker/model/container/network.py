@@ -24,6 +24,7 @@ class ContainerNetworkArgs:
 
 
 class NetworkMode(StrEnum):
+    HOST = auto()
     VPN = auto()
 
 
@@ -67,6 +68,8 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
                         )
                     )
                 ).to_args(resource_name, main_service, build_args)
+            case NetworkMode.HOST:
+                return ContainerNetworkArgs(mode="host", advanced=[])
 
 
 class ContainerCommonNetworkConfig(HomelabBaseModel):
