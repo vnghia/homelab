@@ -41,6 +41,7 @@ services:
           string:
             template: "{value}/oauth2/openid/meet"
     config:
+      depends-on: [livekit]
       traefik:
         backend:
           name: backend
@@ -178,6 +179,10 @@ services:
           USER_OIDC_FIELDS_TO_FULLNAME: name
           USER_OIDC_FIELD_TO_SHORTNAME: preferred_username
           ALLOW_UNREGISTERED_ROOMS: false
+          LIVEKIT_API_URL:
+            hostname: livekit
+            public: true
+            scheme: "https"
           RESOURCE_DEFAULT_ACCESS_LEVEL: restricted
           SIGNUP_NEW_USER_TO_MARKETING_EMAIL: false
           ROOM_TELEPHONY_ENABLED: false
