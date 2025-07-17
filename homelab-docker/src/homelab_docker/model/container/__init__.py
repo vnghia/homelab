@@ -11,13 +11,13 @@ from homelab_pydantic.path import AbsolutePath
 from pulumi import Input, Output, Resource, ResourceOptions
 from pydantic import Field, PositiveInt
 
-from homelab_docker.model.container.inherit import ContainerInheritConfig
-
 from ...extract.global_ import GlobalExtractor
 from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
 from .healthcheck import ContainerHealthCheckConfig
+from .host import ContainerHostConfig
 from .image import ContainerImageModelConfig
+from .inherit import ContainerInheritConfig
 from .mail import ContainerMailConfig
 from .network import ContainerNetworkConfig
 from .port import ContainerPortConfig
@@ -56,6 +56,7 @@ class ContainerModel(HomelabBaseModel):
     group_adds: list[str] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
     hostname: GlobalExtract | None = None
+    hosts: list[ContainerHostConfig] = []
     init: bool | None = None
     mails: list[ContainerMailConfig] | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
@@ -235,6 +236,7 @@ class ContainerModel(HomelabBaseModel):
             hostname=GlobalExtractor(model.hostname).extract_str(main_service, model)
             if model.hostname
             else None,
+            hosts=[host.to_args() for host in model.hosts] if model.hosts else None,
             init=model.init,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
