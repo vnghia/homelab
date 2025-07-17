@@ -7,6 +7,7 @@ from homelab_extract.service import (
     ServiceExtractFull,
     ServiceExtractSource,
 )
+from homelab_extract.service.database import ServiceExtractDatabaseSource
 from homelab_extract.service.export import ServiceExtractExportSource
 from homelab_extract.service.keepass import ServiceExtractKeepassSource
 from homelab_extract.service.secret import ServiceExtractSecretSource
@@ -17,6 +18,7 @@ from pulumi import Output
 from .. import ExtractorBase
 from ..container import ContainerExtractor
 from ..transform import ExtractTransformer
+from .database import ServiceDatabaseSourceExtractor
 from .export import ServiceExportSourceExtractor
 from .keepass import ServiceKeepassSourceExtractor
 from .secret import ServiceSecretSourceExtractor
@@ -33,12 +35,15 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
     def extractor(
         self,
     ) -> (
-        ServiceExportSourceExtractor
+        ServiceDatabaseSourceExtractor
+        | ServiceExportSourceExtractor
         | ServiceKeepassSourceExtractor
         | ServiceSecretSourceExtractor
         | ServiceVariableSourceExtractor
     ):
         root = self.root.root
+        if isinstance(root, ServiceExtractDatabaseSource):
+            return ServiceDatabaseSourceExtractor(root)
         if isinstance(root, ServiceExtractExportSource):
             return ServiceExportSourceExtractor(root)
         if isinstance(root, ServiceExtractKeepassSource):
