@@ -23,6 +23,9 @@ services:
           - "http://localhost:9002/healthz"
         interval: 30s
         timeout: 5s
+      hosts:
+        - host: host.docker.internal
+          ip: host-gateway
       network:
         default-bridge: true
         proxy-bridge: true
