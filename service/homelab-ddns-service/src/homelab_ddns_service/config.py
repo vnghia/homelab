@@ -1,5 +1,5 @@
-from homelab_pydantic import HomelabBaseModel
+from homelab_extra_service.config import ExtraConfig
 
 
-class DdnsConfig(HomelabBaseModel):
+class DdnsConfig(ExtraConfig):
     pass
