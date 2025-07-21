@@ -1,0 +1,10 @@
+images:
+  remote:
+    ddns:
+      repo: ghcr.io/qdm12/ddns-updater
+      tag: "v2.9.0"
+services:
+  ddns:
+    config: {}
+    container:
+      image: ddns

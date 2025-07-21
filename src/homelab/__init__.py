@@ -5,6 +5,7 @@ from homelab_barman_service import BarmanService
 from homelab_config import Config
 from homelab_crowdsec_service import CrowdsecService
 from homelab_dagu_service import DaguService
+from homelab_ddns_service import DdnsService
 from homelab_docker.config import DockerConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceResourceBase
@@ -60,6 +61,12 @@ class Homelab:
         )
         self.traefik = TraefikService(
             self.docker.services_config.traefik,
+            opts=None,
+            network_resource=self.network,
+            docker_resource_args=self.docker.resource_args,
+        )
+        self.ddns = DdnsService(
+            self.docker.services_config.ddns,
             opts=None,
             network_resource=self.network,
             docker_resource_args=self.docker.resource_args,
