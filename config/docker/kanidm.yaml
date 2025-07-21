@@ -24,7 +24,7 @@ volumes:
 services:
   kanidm:
     variables:
-      PORT: 8443
+      PORT: &port 8443
       CONFIG:
         extract:
           volume: kanidm-config
@@ -116,6 +116,19 @@ services:
         retries: 5
         start-interval: 5s
         start-period: 10s
+      network:
+        default-bridge: true
+      ports:
+        https-v4:
+          internal: *port
+          external: *port
+          ip: "0.0.0.0"
+          protocol: tcp
+        https-v6:
+          internal: *port
+          external: *port
+          ip: "::"
+          protocol: tcp
       volumes:
         kanidm-config: /config
         kanidm-data: /data

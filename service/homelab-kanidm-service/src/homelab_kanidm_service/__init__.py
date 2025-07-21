@@ -136,7 +136,10 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         pulumi.export("kanidm.admin", self.admin.password)
         pulumi.export("kanidm.idm_admin", self.idm_admin.password)
 
-        self.state = KanidmStateResource(opts=self.child_opts, kanidm_service=self)
+        self.state = KanidmStateResource(
+            opts=self.child_opts.merge(ResourceOptions(depends_on=[self.container])),
+            kanidm_service=self,
+        )
 
         self.client_data = Output.json_dumps(
             {

@@ -64,7 +64,14 @@ class KanidmStateProviderProps(HomelabBaseModel):
             file.flush()
 
             subprocess.check_call(
-                [binary, "--url", self.url, "--state", file.name],
+                [
+                    binary,
+                    "--accept-invalid-certs",
+                    "--url",
+                    self.url,
+                    "--state",
+                    file.name,
+                ],
                 env={"KANIDM_PROVISION_IDM_ADMIN_TOKEN": self.password},
             )
 
@@ -127,15 +134,18 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
             kanidm_service.USER_GROUP,
         )
 
-        # TODO: Make this not depends on external hostname
         super().__init__(
             KanidmStateProvider(),
             KanidmStateProvider.RESOURCE_ID,
             {
-                "url": "https://{}".format(
-                    kanidm_service.docker_resource_args.hostnames["public"][
-                        kanidm_service.name()
-                    ]
+                "url": Output.format(
+                    "https://{}:{}",
+                    GlobalExtractor(kanidm_service.config.address).extract_str(
+                        kanidm_service, None
+                    ),
+                    GlobalExtractor(kanidm_service.config.port).extract_str(
+                        kanidm_service, None
+                    ),
                 ),
                 "password": kanidm_service.idm_admin.password,
                 "state": GlobalExtractor.extract_recursively(

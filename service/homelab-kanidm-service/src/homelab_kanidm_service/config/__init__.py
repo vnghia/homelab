@@ -19,3 +19,4 @@ class KandimConfig(TraefikServiceConfigBase, DaguServiceConfigBase):
     domain: GlobalExtract
     origin: GlobalExtract
     state: KanidmStateConfig
+    address: GlobalExtract
