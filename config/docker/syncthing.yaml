@@ -41,18 +41,28 @@ services:
       network:
         default-bridge: true
       ports:
-        tcp:
+        tcp-v4:
           internal: 22000
           external: 22000
           ip: "0.0.0.0"
           protocol: tcp
           forward: {}
-        quic:
+        tcp-v6:
+          internal: 22000
+          external: 22000
+          ip: "::"
+          protocol: tcp
+        quic-v4:
           internal: 22000
           external: 22000
           ip: "0.0.0.0"
           protocol: udp
           forward: {}
+        quic-v6:
+          internal: 22000
+          external: 22000
+          ip: "::"
+          protocol: udp
       volumes:
         syncthing-config: /var/syncthing/config
         syncthing-data: /var/syncthing/data
