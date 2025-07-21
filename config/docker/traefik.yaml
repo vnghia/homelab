@@ -23,7 +23,7 @@ services:
               display-name: Kanidm
               origin-landing:
                 hostname: kanidm
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
   traefik:
@@ -130,7 +130,7 @@ services:
               Url:
                 extract:
                   hostname: kanidm
-                  public: true
+                  record: public
                   scheme: https
                 transform:
                   string:
@@ -152,7 +152,7 @@ services:
                 Value: "{{`{{ .claims.email }}`}}"
         dashboard:
           name: dashboard
-          public: false
+          record: private
           hostname: system
           prefix:
             variable: API_PATH

@@ -7,7 +7,7 @@ from .service import TraefikDynamicServiceModel
 
 class TraefikDynamicHttpModel(HomelabBaseModel):
     name: str | None = None
-    public: bool
+    record: str
     hostname: str | None = None
     prefix: GlobalExtract | None = None
 

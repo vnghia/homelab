@@ -14,14 +14,14 @@ services:
               origin-url:
                 - extract:
                     hostname: airtrail
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
                       template: "{value}/login"
               origin-landing:
                 hostname: airtrail
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
@@ -31,7 +31,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               variable: PORT
@@ -42,7 +42,7 @@ services:
       keepass:
         hostname:
           hostname: airtrail
-          public: true
+          record: public
     container:
       image: airtrail
       databases:
@@ -61,13 +61,13 @@ services:
         NODE_ENV: production
         ORIGIN:
           hostname: airtrail
-          public: true
+          record: public
           scheme: https
         OAUTH_ENABLED: true
         OAUTH_ISSUER_URL:
           extract:
             hostname: kanidm
-            public: true
+            record: public
             scheme: https
           transform:
             string:

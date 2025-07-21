@@ -43,7 +43,7 @@ class Homelab:
         self.network = NetworkResource(
             self.config.network,
             opts=None,
-            private_ips=self.tailscale.ips,
+            tailscale_ip=self.tailscale.ip,
             project_prefix=self.project_prefix,
         )
         self.docker.resource_args.hostnames |= self.network.hostnames

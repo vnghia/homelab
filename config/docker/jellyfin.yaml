@@ -34,7 +34,7 @@ services:
               origin-url:
                 - extract:
                     hostname: jellyfin
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
@@ -42,7 +42,7 @@ services:
                 - org.jellyfin.mobile://login-callback
               origin-landing:
                 hostname: jellyfin
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
               claim-maps:
@@ -54,7 +54,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               extract:
@@ -65,7 +65,7 @@ services:
       keepass:
         hostname:
           hostname: jellyfin
-          public: true
+          record: public
     container:
       image: jellyfin
       devices:
@@ -98,4 +98,4 @@ services:
           volume: jellyfin-log
         JELLYFIN_PublishedServerUrl:
           hostname: jellyfin
-          public: true
+          record: public

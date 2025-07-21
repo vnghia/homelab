@@ -17,14 +17,14 @@ services:
               origin-url:
                 - extract:
                     hostname: memos
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
                       template: "{value}/auth/callback"
               origin-landing:
                 hostname: memos
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
@@ -32,7 +32,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               env: MEMOS_PORT
@@ -43,7 +43,7 @@ services:
       keepass:
         hostname:
           hostname: memos
-          public: true
+          record: public
         apps:
           - me.mudkip.moememos
     container:

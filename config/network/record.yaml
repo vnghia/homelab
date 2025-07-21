@@ -1,13 +1,14 @@
-public:
-  records:
-    kanidm:
-      alias: true
-    opencloud:
-      # TODO: Disable this after https://github.com/opencloud-eu/opencloud/issues/705
-      alias: true
-    impress:
-      alias: true
-    chromium:
-      alias: true
-    livekit:
-      alias: true
+records:
+  public:
+    records:
+      kanidm:
+        alias: true
+      opencloud:
+        # TODO: Disable this after https://github.com/opencloud-eu/opencloud/issues/705
+        alias: true
+      impress:
+        alias: true
+      chromium:
+        alias: true
+      livekit:
+        alias: true

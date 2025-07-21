@@ -16,7 +16,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               variable: PORT
@@ -30,7 +30,7 @@ services:
       keepass:
         hostname:
           hostname: dawarich
-          public: true
+          record: public
     secrets:
       key: {}
     container:
@@ -73,7 +73,7 @@ services:
         MIN_MINUTES_SPENT_IN_CITY: 60
         APPLICATION_HOSTS:
           hostname: dawarich
-          public: true
+          record: public
         APPLICATION_PROTOCOL: http
         TIME_ZONE:
           docker: "{timezone}"

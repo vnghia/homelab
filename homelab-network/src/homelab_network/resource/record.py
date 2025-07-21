@@ -1,11 +1,11 @@
 from collections import defaultdict
-from typing import Mapping
 
 import pulumi
-from pulumi import ComponentResource, Input, ResourceOptions
+from pulumi import ComponentResource, ResourceOptions
 from pydantic import IPvAnyAddress
 
-from homelab_network.config.record import RecordConfig
+from ..config.record import RecordConfig
+from ..model.ip import NetworkIpModel, NetworkIpOutputModel, NetworkIpSource
 
 
 class RecordResource(ComponentResource):
@@ -17,10 +17,17 @@ class RecordResource(ComponentResource):
         config: RecordConfig,
         *,
         opts: ResourceOptions | None,
-        ips: Mapping[str, Input[IPvAnyAddress]],
+        source_ips: dict[NetworkIpSource, NetworkIpOutputModel],
     ) -> None:
         super().__init__(self.RESOURCE_NAME, name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
+
+        public_ip_model = config.public_ip.root
+        public_ip = None
+        if isinstance(public_ip_model, NetworkIpModel):
+            public_ip = NetworkIpOutputModel.from_model(public_ip_model)
+        else:
+            public_ip = source_ips[public_ip_model]
 
         self.records = {
             key: [
@@ -30,7 +37,7 @@ class RecordResource(ComponentResource):
                     zone_id=config.zone_id,
                     ip=ip,
                 )
-                for key_ip, ip in ips.items()
+                for key_ip, ip in public_ip.to_dict().items()
             ]
             for key, record in config.records.items()
         }
@@ -39,6 +46,7 @@ class RecordResource(ComponentResource):
         self.local_records: defaultdict[IPvAnyAddress, set[str]] = defaultdict(set)
         for key, hostname in self.hostnames.items():
             pulumi.export("record.{}.{}".format(name, key), hostname)
-            for ip in config.local_ips:
-                self.local_records[ip].add(hostname)
+            if config.local_ip:
+                self.local_records[config.local_ip.v4].add(hostname)
+                self.local_records[config.local_ip.v6].add(hostname)
         self.register_outputs({})

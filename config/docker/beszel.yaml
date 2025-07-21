@@ -20,7 +20,7 @@ services:
     config:
       traefik:
         traefik:
-          public: false
+          record: private
           hostname: system
           prefix:
             variable: PREFIX
@@ -125,7 +125,7 @@ services:
       keepass:
         hostname:
           hostname: system
-          public: false
+          record: private
     container:
       image: beszel
       network:
@@ -139,7 +139,7 @@ services:
             kv:
               base:
                 hostname: system
-                public: false
+                record: private
                 scheme: https
               prefix:
                 variable: PREFIX

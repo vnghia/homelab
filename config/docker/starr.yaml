@@ -95,28 +95,28 @@ services:
       traefik:
         radarr:
           name: radarr
-          public: false
+          record: private
           service:
             container: radarr
             port:
               variable: RADARR_PORT
         sonarr:
           name: sonarr
-          public: false
+          record: private
           service:
             container: sonarr
             port:
               variable: SONARR_PORT
         prowlarr:
           name: prowlarr
-          public: false
+          record: private
           service:
             container: prowlarr
             port:
               variable: PROWLARR_PORT
         bazarr:
           name: bazarr
-          public: false
+          record: private
           service:
             container: bazarr
             port:
@@ -125,19 +125,19 @@ services:
       radarr:
         hostname:
           hostname: starr-radarr
-          public: false
+          record: private
       sonarr:
         hostname:
           hostname: starr-sonarr
-          public: false
+          record: private
       prowlarr:
         hostname:
           hostname: starr-prowlarr
-          public: false
+          record: private
       bazarr:
         hostname:
           hostname: starr-bazarr
-          public: false
+          record: private
     variables:
       RADARR_PORT: 7878
       SONARR_PORT: 8989

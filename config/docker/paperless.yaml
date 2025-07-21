@@ -22,21 +22,21 @@ services:
               origin-url:
                 - extract:
                     hostname: paperless
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
                       template: "{value}/accounts/oidc/kanidm/login/callback/"
               origin-landing:
                 hostname: paperless
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
   paperless:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               env: PAPERLESS_PORT
@@ -49,7 +49,7 @@ services:
       keepass:
         hostname:
           hostname: paperless
-          public: true
+          record: public
     secrets:
       key: {}
     container:
@@ -103,7 +103,7 @@ services:
           info: password
         PAPERLESS_URL:
           hostname: paperless
-          public: true
+          record: public
           scheme: https
         PAPERLESS_TIME_ZONE:
           docker: "{timezone}"
@@ -132,7 +132,7 @@ services:
                     server_url:
                       extract:
                         hostname: kanidm
-                        public: true
+                        record: public
                         scheme: https
                       transform:
                         string:

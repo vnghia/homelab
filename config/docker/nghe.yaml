@@ -12,7 +12,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               env: NGHE_SERVER__PORT

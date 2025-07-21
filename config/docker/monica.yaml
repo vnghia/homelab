@@ -15,7 +15,7 @@ services:
       MONICA_REDIRECT_URI:
         extract:
           hostname: monica
-          public: true
+          record: public
           scheme: https
         transform:
           string:
@@ -30,7 +30,7 @@ services:
                 - variable: MONICA_REDIRECT_URI
               origin-landing:
                 hostname: monica
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
@@ -49,7 +49,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port: 80
     databases:
@@ -61,7 +61,7 @@ services:
       keepass:
         hostname:
           hostname: monica
-          public: true
+          record: public
         apps:
           - at.bitfire.davdroid
     secrets:
@@ -97,7 +97,7 @@ services:
         APP_DEBUG: false
         APP_URL:
           hostname: monica
-          public: true
+          record: public
           scheme: https
         APP_TIMEZONE:
           docker: "{timezone}"
@@ -127,7 +127,7 @@ services:
             variable: MONICA_REDIRECT_URI
         KANIDM_BASE_URL:
           hostname: kanidm
-          public: true
+          record: public
           scheme: https
         LOGIN_PROVIDERS: kanidm
         MAPBOX_USERNAME: mapbox

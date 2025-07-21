@@ -11,7 +11,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               env: READECK_SERVER_PORT
@@ -22,7 +22,7 @@ services:
       keepass:
         hostname:
           hostname: readeck
-          public: true
+          record: public
     secrets:
       key: {}
     container:
@@ -57,4 +57,4 @@ services:
         READECK_SERVER_PORT: 8000
         READECK_ALLOWED_HOSTS:
           hostname: readeck
-          public: true
+          record: public

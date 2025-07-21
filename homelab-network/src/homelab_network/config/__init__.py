@@ -1,16 +1,18 @@
+import functools
+import operator
+
 from homelab_pydantic import HomelabBaseModel
-from pydantic import IPvAnyAddress
 
 from .port import NetworkPortConfig
 from .record import RecordConfig
 
 
 class NetworkConfig(HomelabBaseModel):
-    public_ips: dict[str, IPvAnyAddress]
-    public: RecordConfig
-    private: RecordConfig
+    records: dict[str, RecordConfig]
     port: NetworkPortConfig
 
     @property
     def aliases(self) -> list[str]:
-        return self.public.aliases + self.private.aliases
+        return functools.reduce(
+            operator.iadd, [record.aliases for record in self.records.values()], []
+        )

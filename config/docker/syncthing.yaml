@@ -17,7 +17,7 @@ services:
     config:
       traefik:
         traefik:
-          public: false
+          record: private
           service:
             port:
               variable: PORT

@@ -11,7 +11,7 @@ services:
     config:
       traefik:
         traefik:
-          public: false
+          record: private
           service:
             port:
               env: WUD_SERVER_PORT

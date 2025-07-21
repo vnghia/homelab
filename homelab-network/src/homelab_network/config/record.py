@@ -1,13 +1,15 @@
 import pulumi_cloudflare as cloudflare
 from homelab_pydantic import HomelabBaseModel
-from pydantic import IPvAnyAddress
 
+from ..model.ip import NetworkIpModel
 from ..model.record import RecordFullModel, RecordModel
+from .ip import NetworkIpConfig
 
 
 class RecordConfig(HomelabBaseModel):
     zone_id: str
-    local_ips: list[IPvAnyAddress]
+    public_ip: NetworkIpConfig
+    local_ip: NetworkIpModel | None
     records: dict[str, RecordModel]
 
     def get_domain(self) -> str:

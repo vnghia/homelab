@@ -11,7 +11,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               env: PORT
@@ -24,7 +24,7 @@ services:
       keepass:
         hostname:
           hostname: maybe
-          public: true
+          record: public
     secrets:
       key: {}
     container:
@@ -58,7 +58,7 @@ services:
         PORT: 3000
         APP_DOMAIN:
           hostname: maybe
-          public: true
+          record: public
     containers:
       worker:
         inherit:

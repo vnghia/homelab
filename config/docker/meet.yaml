@@ -17,14 +17,14 @@ services:
               origin-url:
                 - extract:
                     hostname: meet
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
                       template: "{value}/api/v1.0/callback/"
               origin-landing:
                 hostname: meet
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
@@ -35,7 +35,7 @@ services:
       OAUTH_URL:
         extract:
           hostname: kanidm
-          public: true
+          record: public
           scheme: https
         transform:
           string:
@@ -46,7 +46,7 @@ services:
         backend:
           name: backend
           hostname: meet
-          public: true
+          record: public
           rules:
             - (PathPrefix(`/api`) || PathPrefix(`/admin`))
           service:
@@ -56,7 +56,7 @@ services:
         frontend:
           name: frontend
           hostname: meet
-          public: true
+          record: public
           service:
             container: frontend
             port:
@@ -97,10 +97,10 @@ services:
         envs:
           DJANGO_ALLOWED_HOSTS:
             hostname: meet
-            public: true
+            record: public
           DJANGO_CSRF_TRUSTED_ORIGINS:
             hostname: meet
-            public: true
+            record: public
             scheme: https
           CSRF_TRUSTED_ORIGINS:
             env: DJANGO_CSRF_TRUSTED_ORIGINS
@@ -127,7 +127,7 @@ services:
           OIDC_OP_AUTHORIZATION_ENDPOINT:
             extract:
               hostname: kanidm
-              public: true
+              record: public
               scheme: https
             transform:
               string:
@@ -135,7 +135,7 @@ services:
           OIDC_OP_TOKEN_ENDPOINT:
             extract:
               hostname: kanidm
-              public: true
+              record: public
               scheme: https
             transform:
               string:
@@ -149,7 +149,7 @@ services:
           OIDC_OP_LOGOUT_ENDPOINT:
             extract:
               hostname: kanidm
-              public: true
+              record: public
               scheme: https
             transform:
               string:
@@ -157,22 +157,22 @@ services:
           OIDC_RP_SCOPES: openid profile email
           LOGIN_REDIRECT_URL:
             hostname: meet
-            public: true
+            record: public
             scheme: https
           LOGIN_REDIRECT_URL_FAILURE:
             hostname: meet
-            public: true
+            record: public
             scheme: https
           LOGOUT_REDIRECT_URL:
             hostname: meet
-            public: true
+            record: public
             scheme: https
           OIDC_USE_NONCE: false
           OIDC_USE_PKCE: true
           OIDC_REDIRECT_REQUIRE_HTTPS: true
           OIDC_REDIRECT_ALLOWED_HOSTS:
             hostname: meet
-            public: true
+            record: public
             scheme: "https"
           OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION: false
           OIDC_STORE_ACCESS_TOKEN: true
@@ -181,7 +181,7 @@ services:
           ALLOW_UNREGISTERED_ROOMS: false
           LIVEKIT_API_URL:
             hostname: livekit
-            public: true
+            record: public
             scheme: "https"
           RESOURCE_DEFAULT_ACCESS_LEVEL: restricted
           SIGNUP_NEW_USER_TO_MARKETING_EMAIL: false

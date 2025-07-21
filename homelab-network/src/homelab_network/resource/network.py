@@ -1,17 +1,16 @@
 from collections import defaultdict
-from typing import Mapping
 
 import pulumi
-from pulumi import ComponentResource, Input, ResourceOptions
+from pulumi import ComponentResource, ResourceOptions
 from pydantic import IPvAnyAddress
 
-from homelab_network.config import NetworkConfig
-
+from ..config import NetworkConfig
+from ..model.ip import NetworkIpOutputModel, NetworkIpSource
 from .record import RecordResource
 from .token import TokenResource
 
 
-class Hostnames(dict[bool, dict[str, str]]):
+class Hostnames(dict[str, dict[str, str]]):
     pass
 
 
@@ -23,7 +22,7 @@ class NetworkResource(ComponentResource):
         config: NetworkConfig,
         *,
         opts: ResourceOptions | None,
-        private_ips: Mapping[str, Input[IPvAnyAddress]],
+        tailscale_ip: NetworkIpOutputModel,
         project_prefix: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
@@ -31,21 +30,23 @@ class NetworkResource(ComponentResource):
 
         self.config = config
 
-        self.public = RecordResource(
-            "public", config.public, opts=self.child_opts, ips=config.public_ips
-        )
-        self.private = RecordResource(
-            "private", config.private, opts=self.child_opts, ips=private_ips
-        )
+        source_ips = {NetworkIpSource.TAILSCALE: tailscale_ip}
+
+        self.records = {
+            key: RecordResource(
+                key, record, opts=self.child_opts, source_ips=source_ips
+            )
+            for key, record in config.records.items()
+        }
+
         self.token = TokenResource(
             config, opts=self.child_opts, project_prefix=project_prefix
         )
 
         local_records: defaultdict[IPvAnyAddress, set[str]] = defaultdict(set)
-        for ip, hostnames in self.public.local_records.items():
-            local_records[ip].update(hostnames)
-        for ip, hostnames in self.private.local_records.items():
-            local_records[ip].update(hostnames)
+        for record in self.records.values():
+            for ip, hostnames in record.local_records.items():
+                local_records[ip].update(hostnames)
 
         pulumi.export(
             "record.local.hosts",
@@ -60,4 +61,6 @@ class NetworkResource(ComponentResource):
 
     @property
     def hostnames(self) -> Hostnames:
-        return Hostnames({True: self.public.hostnames, False: self.private.hostnames})
+        return Hostnames(
+            {key: record.hostnames for key, record in self.records.items()}
+        )

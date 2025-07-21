@@ -20,7 +20,7 @@ services:
               origin-url:
                 - extract:
                     hostname: wger
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
@@ -31,7 +31,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               variable: PORT
@@ -41,13 +41,13 @@ services:
         api:
           name: api
           hostname: wger
-          public: true
+          record: public
           prefix: /api
           service: "wger@file"
         static:
           name: static
           hostname: wger
-          public: true
+          record: public
           prefix: /static
           service:
             container: static
@@ -66,7 +66,7 @@ services:
         media:
           name: media
           hostname: wger
-          public: true
+          record: public
           prefix: /media
           service:
             container: media
@@ -96,7 +96,7 @@ services:
         username: admin
         hostname:
           hostname: wger
-          public: true
+          record: public
     secrets:
       key: {}
       jwt: {}
@@ -138,7 +138,7 @@ services:
         CSRF_TRUSTED_ORIGINS:
           extract:
             hostname: wger
-            public: true
+            record: public
             scheme: https
         WGER_INSTANCE: https://wger.de
         ALLOW_REGISTRATION: "False"
@@ -163,7 +163,7 @@ services:
         SITE_URL:
           extract:
             hostname: wger
-            public: true
+            record: public
             scheme: https
         ACCESS_TOKEN_LIFETIME: 10
         REFRESH_TOKEN_LIFETIME: 24

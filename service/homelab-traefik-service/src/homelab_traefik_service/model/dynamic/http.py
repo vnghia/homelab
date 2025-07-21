@@ -38,7 +38,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
 
         entrypoint = traefik_service.config.entrypoint
         router_name = main_service.add_service_name(root.name)
-        hostname = traefik_service.docker_resource_args.hostnames[root.public][
+        hostname = traefik_service.docker_resource_args.hostnames[root.record][
             root.hostname or router_name
         ]
 
@@ -93,7 +93,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             for middleware in root.middlewares
         ]
         all_middlewares = (
-            public_middlewares if root.public else []
+            public_middlewares if root.record == "public" else []
         ) + service_middlewares
 
         data: dict[str, Any] = {
@@ -102,7 +102,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                     router_name: {
                         "service": service,
                         "entryPoints": [entrypoint.public_https]
-                        if root.public
+                        if root.record == "public"
                         else [entrypoint.private_https],
                         "rule": rule,
                         "tls": {"certResolver": traefik_service.static.CERT_RESOLVER},
@@ -125,7 +125,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                             else {}
                         )
                     }
-                    if root.public
+                    if root.record == "public"
                     else {}
                 ),
             }

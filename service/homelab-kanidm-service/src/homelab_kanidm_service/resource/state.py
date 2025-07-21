@@ -127,12 +127,13 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
             kanidm_service.USER_GROUP,
         )
 
+        # TODO: Make this not depends on external hostname
         super().__init__(
             KanidmStateProvider(),
             KanidmStateProvider.RESOURCE_ID,
             {
                 "url": "https://{}".format(
-                    kanidm_service.docker_resource_args.hostnames[True][
+                    kanidm_service.docker_resource_args.hostnames["public"][
                         kanidm_service.name()
                     ]
                 ),

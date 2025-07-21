@@ -22,14 +22,14 @@ services:
               origin-url:
                 - extract:
                     hostname: immich
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
                       template: "{value}/auth/login"
                 - extract:
                     hostname: immich
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
@@ -37,14 +37,14 @@ services:
                 - app.immich:///oauth-callback
               origin-landing:
                 hostname: immich
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
   immich:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               env: IMMICH_PORT
@@ -66,7 +66,7 @@ services:
       keepass:
         hostname:
           hostname: immich
-          public: true
+          record: public
         apps:
           - app.alextran.immich
     container:

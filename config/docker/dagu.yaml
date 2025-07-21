@@ -19,7 +19,7 @@ services:
           env: DAGU_LOG_DIR
       traefik:
         traefik:
-          public: false
+          record: private
           service:
             port:
               env: DAGU_PORT

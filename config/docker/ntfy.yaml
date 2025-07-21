@@ -19,7 +19,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           hostname: ntfy
           service:
             port:
@@ -32,7 +32,7 @@ services:
       keepass:
         hostname:
           hostname: ntfy
-          public: true
+          record: public
         apps:
           - io.heckel.ntfy
     secrets:
@@ -61,7 +61,7 @@ services:
         NTFY_BASE_URL:
           extract:
             hostname: ntfy
-            public: true
+            record: public
             scheme: https
         NTFY_LISTEN_HTTP: ":8080"
         NTFY_CACHE_FILE:

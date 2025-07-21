@@ -11,7 +11,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               env: N8N_PORT
@@ -22,7 +22,7 @@ services:
       keepass:
         hostname:
           hostname: n8n
-          public: true
+          record: public
     secrets:
       key: {}
       jwt: {}
@@ -65,9 +65,9 @@ services:
         N8N_LICENSE_ACTIVATION_KEY:
         N8N_EDITOR_BASE_URL:
           hostname: n8n
-          public: true
+          record: public
           scheme: https
         WEBHOOK_URL:
           hostname: n8n
-          public: true
+          record: public
           scheme: https

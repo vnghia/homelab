@@ -19,18 +19,18 @@ services:
               display-name: OpenCloud
               origin-url:
                 - hostname: opencloud
-                  public: true
+                  record: public
                   scheme: https
                 - extract:
                     hostname: opencloud
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
                       template: "{value}/oidc-callback.html"
                 - extract:
                     hostname: opencloud
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
@@ -39,7 +39,7 @@ services:
                 - oc://ios.opencloud.eu
               origin-landing:
                 hostname: opencloud
-                public: true
+                record: public
                 scheme: https
               prefer-short-username: true
               claim-maps:
@@ -53,7 +53,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               variable: PORT
@@ -79,7 +79,7 @@ services:
                     - "'self'"
                     - "blob:"
                     - hostname: kanidm
-                      public: true
+                      record: public
                       scheme: https
                   default-src:
                     - "'none'"
@@ -149,7 +149,7 @@ services:
         OC_LOG_LEVEL: info
         OC_URL:
           hostname: opencloud
-          public: true
+          record: public
           scheme: https
         GATEWAY_GRPC_ADDR: 0.0.0.0:9142
         OC_GATEWAY_GRPC_ADDR:
@@ -197,7 +197,7 @@ services:
         OC_OIDC_ISSUER:
           extract:
             hostname: kanidm
-            public: true
+            record: public
             scheme: https
           transform:
             string:

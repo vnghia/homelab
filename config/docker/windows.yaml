@@ -22,7 +22,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               variable: PORT
@@ -30,7 +30,7 @@ services:
       keepass:
         hostname:
           hostname: windows
-          public: true
+          record: public
     secrets:
       totp:
         special: false

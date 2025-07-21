@@ -16,7 +16,7 @@ services:
               origin-url:
                 - extract:
                     hostname: convos
-                    public: true
+                    record: public
                     scheme: https
                   transform:
                     string:
@@ -27,7 +27,7 @@ services:
     config:
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             port:
               variable: PORT
@@ -38,7 +38,7 @@ services:
       keepass:
         hostname:
           hostname: convos
-          public: true
+          record: public
     secrets:
       local: {}
     container:

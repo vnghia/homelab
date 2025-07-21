@@ -5,6 +5,7 @@ authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
 dependencies = [
     "homelab-pydantic",
+    "homelab-network",
     "homelab-docker",
     "pulumi>=3.148.0",
     "pulumi-tailscale>=0.17.5",

@@ -1087,6 +1087,7 @@ version = "0.1.0"
 source = { editable = "service/homelab-tailscale-service" }
 dependencies = [
     { name = "homelab-docker" },
+    { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
     { name = "pulumi-tailscale" },
@@ -1096,6 +1097,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-tailscale", specifier = ">=0.17.5" },

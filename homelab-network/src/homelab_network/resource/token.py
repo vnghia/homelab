@@ -19,8 +19,8 @@ class TokenResource(ComponentResource):
 
         permission_groups = cloudflare.get_api_token_permission_groups_list_output()
         self.resources = {
-            "com.cloudflare.api.account.zone.{}".format(v): "*"
-            for v in [config.public.zone_id, config.private.zone_id]
+            "com.cloudflare.api.account.zone.{}".format(v.zone_id): "*"
+            for v in config.records.values()
         }
 
         self.read = cloudflare.ApiToken(

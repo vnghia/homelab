@@ -58,10 +58,10 @@ services:
         variable: PORT
       domain:
         hostname: kanidm
-        public: true
+        record: public
       origin:
         hostname: kanidm
-        public: true
+        record: public
         scheme: https
       state:
         persons:
@@ -71,7 +71,7 @@ services:
             display-name: "Me"
       traefik:
         traefik:
-          public: true
+          record: public
           service:
             scheme: https
             port:
@@ -96,7 +96,7 @@ services:
       keepass:
         hostname:
           hostname: kanidm
-          public: true
+          record: public
     container:
       image: kanidm
       command:
