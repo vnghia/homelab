@@ -1,6 +1,6 @@
 import dataclasses
 
-from homelab_network.resource.network import Hostnames
+from homelab_network.model.hostname import Hostnames
 from pulumi import ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 

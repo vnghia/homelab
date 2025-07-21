@@ -1,4 +1,4 @@
-from homelab_network.resource.network import Hostnames
+from homelab_network.model.hostname import Hostnames
 from homelab_pydantic import HomelabBaseModel
 
 
@@ -9,7 +9,7 @@ class GlobalExtractHostnameSource(HomelabBaseModel):
     append_slash: bool = False
 
     def to_hostname(self, hostnames: Hostnames) -> str:
-        hostname = hostnames[self.record][self.hostname]
+        hostname = hostnames[self.record][self.hostname].value
         if self.scheme:
             hostname = "{}://{}{}".format(
                 self.scheme, hostname, "/" if self.append_slash else ""

@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 
 from homelab_extract.hostname import GlobalExtractHostnameSource
-from homelab_network.resource.network import Hostnames
+from homelab_network.model.hostname import Hostnames
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
 from pydantic import HttpUrl

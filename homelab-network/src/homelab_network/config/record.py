@@ -1,6 +1,7 @@
 import pulumi_cloudflare as cloudflare
 from homelab_pydantic import HomelabBaseModel
 
+from ..model.hostname import Hostname
 from ..model.ip import NetworkIpModel
 from ..model.record import RecordFullModel, RecordModel
 from .ip import NetworkIpConfig
@@ -8,7 +9,8 @@ from .ip import NetworkIpConfig
 
 class RecordConfig(HomelabBaseModel):
     zone_id: str
-    public_ip: NetworkIpConfig
+    public: bool
+    source_ip: NetworkIpConfig
     local_ip: NetworkIpModel | None
     records: dict[str, RecordModel]
 
@@ -19,8 +21,11 @@ class RecordConfig(HomelabBaseModel):
         return self.records[hostname].hostname(self.get_domain())
 
     @property
-    def hostnames(self) -> dict[str, str]:
-        return {hostname: self[hostname] for hostname in self.records}
+    def hostnames(self) -> dict[str, Hostname]:
+        return {
+            hostname: Hostname(value=self[hostname], public=self.public)
+            for hostname in self.records
+        }
 
     @property
     def aliases(self) -> list[str]:

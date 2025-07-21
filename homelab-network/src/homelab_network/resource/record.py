@@ -22,12 +22,12 @@ class RecordResource(ComponentResource):
         super().__init__(self.RESOURCE_NAME, name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        public_ip_model = config.public_ip.root
-        public_ip = None
-        if isinstance(public_ip_model, NetworkIpModel):
-            public_ip = NetworkIpOutputModel.from_model(public_ip_model)
+        source_ip_model = config.source_ip.root
+        source_ip = None
+        if isinstance(source_ip_model, NetworkIpModel):
+            source_ip = NetworkIpOutputModel.from_model(source_ip_model)
         else:
-            public_ip = source_ips[public_ip_model]
+            source_ip = source_ips[source_ip_model]
 
         self.records = {
             key: [
@@ -37,16 +37,18 @@ class RecordResource(ComponentResource):
                     zone_id=config.zone_id,
                     ip=ip,
                 )
-                for key_ip, ip in public_ip.to_dict().items()
+                for key_ip, ip in source_ip.to_dict().items()
             ]
             for key, record in config.records.items()
         }
         self.hostnames = config.hostnames
+        self.public = config.public
 
         self.local_records: defaultdict[IPvAnyAddress, set[str]] = defaultdict(set)
         for key, hostname in self.hostnames.items():
-            pulumi.export("record.{}.{}".format(name, key), hostname)
+            value = hostname.value
+            pulumi.export("record.{}.{}".format(name, key), value)
             if config.local_ip:
-                self.local_records[config.local_ip.v4].add(hostname)
-                self.local_records[config.local_ip.v6].add(hostname)
+                self.local_records[config.local_ip.v4].add(value)
+                self.local_records[config.local_ip.v6].add(value)
         self.register_outputs({})

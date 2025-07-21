@@ -5,13 +5,10 @@ from pulumi import ComponentResource, ResourceOptions
 from pydantic import IPvAnyAddress
 
 from ..config import NetworkConfig
+from ..model.hostname import Hostnames
 from ..model.ip import NetworkIpOutputModel, NetworkIpSource
 from .record import RecordResource
 from .token import TokenResource
-
-
-class Hostnames(dict[str, dict[str, str]]):
-    pass
 
 
 class NetworkResource(ComponentResource):
