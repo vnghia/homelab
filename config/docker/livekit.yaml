@@ -9,7 +9,7 @@ services:
       PORT: &port 7880
       TCP_PORT: &tcp-port 7881
       UDP_PORT_START: &udp-port-start 50000
-      UDP_PORT_END: &udp-port-end 50100
+      UDP_PORT_END: &udp-port-end 50200
     config:
       traefik:
         traefik:
@@ -24,6 +24,15 @@ services:
       image: livekit
       network:
         default-bridge: true
+      ports:
+        livekit-tcp:
+          internal: *tcp-port
+          protocol: tcp
+        livekit-udp:
+          range:
+            - *udp-port-start
+            - *udp-port-end
+          protocol: udp
       envs:
         LIVEKIT_CONFIG:
           yaml:
