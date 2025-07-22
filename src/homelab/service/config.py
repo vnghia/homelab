@@ -7,7 +7,6 @@ from homelab_ddns_service.config import DdnsConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceModel, ServiceWithConfigModel
 from homelab_extra_service.config import ExtraConfig
-from homelab_frp_service.config import FrpConfig
 from homelab_gluetun_service.config import GluetunConfig
 from homelab_kanidm_service.config import KandimConfig
 from homelab_restic_service.config import ResticConfig
@@ -18,7 +17,6 @@ class ServiceConfig(ServiceConfigBase):
     tailscale: ServiceModel
     ddns: ServiceWithConfigModel[DdnsConfig]
     traefik: ServiceWithConfigModel[TraefikConfig]
-    frp: ServiceWithConfigModel[FrpConfig]
     gluetun: ServiceWithConfigModel[GluetunConfig]
     crowdsec: ServiceWithConfigModel[CrowdsecConfig]
     kanidm: ServiceWithConfigModel[KandimConfig]
