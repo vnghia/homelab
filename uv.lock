@@ -444,6 +444,7 @@ dependencies = [
     { name = "homelab-traefik-config" },
     { name = "homelab-traefik-service" },
     { name = "json-fix" },
+    { name = "pexpect" },
     { name = "pulumi" },
 ]
 
@@ -452,6 +453,7 @@ dev = [
     { name = "datamodel-code-generator", extra = ["http"] },
     { name = "mypy" },
     { name = "ruff" },
+    { name = "types-pexpect" },
 ]
 
 [package.metadata]
@@ -483,6 +485,7 @@ requires-dist = [
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
     { name = "json-fix", specifier = ">=1.0.0" },
+    { name = "pexpect", specifier = ">=4.9.0" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
 
@@ -491,6 +494,7 @@ dev = [
     { name = "datamodel-code-generator", extras = ["http"], specifier = ">=0.28.1" },
     { name = "mypy", specifier = ">=1.14.1" },
     { name = "ruff", specifier = ">=0.9.6" },
+    { name = "types-pexpect", specifier = ">=4.9.0.20250516" },
 ]
 
 [[package]]
@@ -1407,6 +1411,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pexpect"
+version = "4.9.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "ptyprocess" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9e/c3/059298687310d527a58bb01f3b1965787ee3b40dce76752eda8b44e9a2c5/pexpect-4.9.0-py2.py3-none-any.whl", hash = "sha256:7236d1e080e4936be2dc3e326cec0af72acf9212a7e1d060210e70a47e253523", size = 63772, upload-time = "2023-11-25T06:56:14.81Z" },
+]
+
+[[package]]
 name = "pip"
 version = "25.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1436,6 +1452,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/6d/a4a198b61808dd3d1ee187082ccc21499bc949d639feb948961b48be9a7e/protobuf-4.25.8-cp37-abi3-manylinux2014_aarch64.whl", hash = "sha256:9ad7ef62d92baf5a8654fbb88dac7fa5594cfa70fd3440488a5ca3bfc6d795a7", size = 294005, upload-time = "2025-05-28T14:22:16.052Z" },
     { url = "https://files.pythonhosted.org/packages/d6/c6/c9deaa6e789b6fc41b88ccbdfe7a42d2b82663248b715f55aa77fbc00724/protobuf-4.25.8-cp37-abi3-manylinux2014_x86_64.whl", hash = "sha256:83e6e54e93d2b696a92cad6e6efc924f3850f82b52e1563778dfab8b355101b0", size = 294924, upload-time = "2025-05-28T14:22:17.105Z" },
     { url = "https://files.pythonhosted.org/packages/0c/c1/6aece0ab5209981a70cd186f164c133fdba2f51e124ff92b73de7fd24d78/protobuf-4.25.8-py3-none-any.whl", hash = "sha256:15a0af558aa3b13efef102ae6e4f3efac06f1eea11afb3a57db2901447d9fb59", size = 156757, upload-time = "2025-05-28T14:22:24.135Z" },
+]
+
+[[package]]
+name = "ptyprocess"
+version = "0.7.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/20/e5/16ff212c1e452235a90aeb09066144d0c5a6a8c0834397e03f5224495c4e/ptyprocess-0.7.0.tar.gz", hash = "sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220", size = 70762, upload-time = "2020-12-28T15:15:30.155Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/22/a6/858897256d0deac81a172289110f31629fc4cee19b6f01283303e18c8db3/ptyprocess-0.7.0-py2.py3-none-any.whl", hash = "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35", size = 13993, upload-time = "2020-12-28T15:15:28.35Z" },
 ]
 
 [[package]]
@@ -1856,6 +1881,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ff/a0/a78769197ca769500565cd2708e12ed5fbc9452da1853effd7d8ad292f0a/types_jsonschema-4.24.0.20250528.tar.gz", hash = "sha256:7e28c64e0ae7980eeb158105b20663fc6a6b8f81d5f86ea6614aa0014417bd1e", size = 15128, upload-time = "2025-05-28T03:07:17.25Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/67/47/945ecdc1b6741159fca8169565444c1aba0ed7487efe7d408c86151ad50c/types_jsonschema-4.24.0.20250528-py3-none-any.whl", hash = "sha256:6a906b5ff73ac11c8d1e0b6c30a9693e1e4e1ab56c56c932b3a7e081b86d187b", size = 15280, upload-time = "2025-05-28T03:07:15.987Z" },
+]
+
+[[package]]
+name = "types-pexpect"
+version = "4.9.0.20250516"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/92/a3/3943fcb94c12af29a88c346b588f1eda180b8b99aeb388a046b25072732c/types_pexpect-4.9.0.20250516.tar.gz", hash = "sha256:7baed9ee566fa24034a567cbec56a5cff189a021344e84383b14937b35d83881", size = 13285, upload-time = "2025-05-16T03:08:33.327Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e1/d4/3128ae3365b46b9c4a33202af79b0e0d9d4308a6348a3317ce2331fea6cb/types_pexpect-4.9.0.20250516-py3-none-any.whl", hash = "sha256:84cbd7ae9da577c0d2629d4e4fd53cf074cd012296e01fd4fa1031e01973c28a", size = 17081, upload-time = "2025-05-16T03:08:32.127Z" },
 ]
 
 [[package]]

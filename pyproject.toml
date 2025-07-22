@@ -32,6 +32,7 @@ dependencies = [
     "homelab-seafile-service",
     "pulumi>=3.148.0",
     "json-fix>=1.0.0",
+    "pexpect>=4.9.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.13.1"
@@ -47,6 +48,7 @@ dev-dependencies = [
     "mypy>=1.14.1",
     "datamodel-code-generator[http]>=0.28.1",
     "ruff>=0.9.6",
+    "types-pexpect>=4.9.0.20250516",
 ]
 
 [tool.uv.sources]

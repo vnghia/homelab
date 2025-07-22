@@ -138,15 +138,7 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
             KanidmStateProvider(),
             KanidmStateProvider.RESOURCE_ID,
             {
-                "url": Output.format(
-                    "https://{}:{}",
-                    GlobalExtractor(kanidm_service.config.address).extract_str(
-                        kanidm_service, None
-                    ),
-                    GlobalExtractor(kanidm_service.config.port).extract_str(
-                        kanidm_service, None
-                    ),
-                ),
+                "url": kanidm_service.url,
                 "password": kanidm_service.idm_admin.password,
                 "state": GlobalExtractor.extract_recursively(
                     state.model_dump(mode="json"), kanidm_service, None

@@ -65,9 +65,6 @@ class KanidmServerConfigResource(
 
 
 class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
-    CLIENT_IMAGE = "kanidm-client"
-    CLIENT_CACHE_VOLUME = "kanidm-client-cache"
-
     OPENID_GROUP = "openid"
     ADMIN_GROUP = "role_admin"
     USER_GROUP = "role_user"
@@ -137,24 +134,18 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         pulumi.export("kanidm.admin", self.admin.password)
         pulumi.export("kanidm.idm_admin", self.idm_admin.password)
 
+        self.url = Output.format(
+            "https://{}:{}",
+            GlobalExtractor(self.config.address).extract_str(self, None),
+            GlobalExtractor(self.config.port).extract_str(self, None),
+        )
+
         self.state = KanidmStateResource(
             opts=self.child_opts.merge(ResourceOptions(depends_on=[self.container])),
             kanidm_service=self,
         )
 
-        self.client_data = Output.json_dumps(
-            {
-                "host": self.name(),
-                "port": self.port,
-                "network": self.docker_resource_args.network.internal_bridge.name,
-                "image": self.docker_resource_args.image.remotes[
-                    self.CLIENT_IMAGE
-                ].image_id,
-                "cache": self.docker_resource_args.volume[
-                    self.CLIENT_CACHE_VOLUME
-                ].name,
-            }
-        )
+        self.client_data = Output.json_dumps({"url": self.url})
 
         self.login_account = Output.all(
             self.client_data, self.idm_admin.password
