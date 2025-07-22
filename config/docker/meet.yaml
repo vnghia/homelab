@@ -2,7 +2,7 @@ images:
   remote:
     meet-backend:
       repo: lasuite/meet-backend
-      tag: &meet-version "v0.1.28"
+      tag: &meet-version "v0.1.31"
     meet-frontend:
       repo: lasuite/meet-frontend
       tag: *meet-version
@@ -27,7 +27,6 @@ services:
                 record: public
                 scheme: https
               prefer-short-username: true
-              allow-insecure-client-disable-pkce: true
   meet:
     variables:
       BACKEND_PORT: 8000
@@ -193,3 +192,4 @@ services:
       worker:
         inherit: backend
         command: ["celery", "-A", "meet.celery_app", "worker", "-l", "INFO"]
+        wud:
