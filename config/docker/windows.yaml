@@ -44,25 +44,11 @@ services:
       network:
         default-bridge: true
       ports:
-        rdp-tcp-v4:
+        rdp-tcp:
           internal: 3389
-          external: 3389
-          ip: "0.0.0.0"
           protocol: tcp
-        rdp-tcp-v6:
+        rdp-udp:
           internal: 3389
-          external: 3389
-          ip: "::"
-          protocol: tcp
-        rdp-udp-v4:
-          internal: 3389
-          external: 3389
-          ip: "0.0.0.0"
-          protocol: udp
-        rdp-udp-v6:
-          internal: 3389
-          external: 3389
-          ip: "::"
           protocol: udp
       read-only: false
       volumes:

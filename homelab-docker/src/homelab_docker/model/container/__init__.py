@@ -61,7 +61,7 @@ class ContainerModel(HomelabBaseModel):
     init: bool | None = None
     mails: list[ContainerMailConfig] | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
-    ports: dict[str, ContainerPortConfig | ContainerPortsConfig] = {}
+    ports: dict[str, ContainerPortsConfig | ContainerPortConfig] = {}
     privileged: bool | None = None
     read_only: bool = True
     remove: bool = False
@@ -125,7 +125,7 @@ class ContainerModel(HomelabBaseModel):
                 results[key] = config
             else:
                 for port in config.to_ports():
-                    results["{}-{}".format(key, port.internal)] = port
+                    results["{}-{}-{}".format(key, port.internal, port.ip)] = port
         return results
 
     def build_tmpfs(self) -> dict[str, str] | None:

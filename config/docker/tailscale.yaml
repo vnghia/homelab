@@ -30,45 +30,20 @@ services:
         default-bridge: true
         proxy-bridge: true
       ports:
-        http-v4:
-          internal: &http-port 81
+        http:
+          internal: 81
           external: 80
-          ip: "0.0.0.0"
           protocol: tcp
-        http-v6:
-          internal: *http-port
-          external: 80
-          ip: "::"
-          protocol: tcp
-        https-v4:
+        https:
           internal: &https-port 444
           external: 443
-          ip: "0.0.0.0"
           protocol: tcp
-        https-v6:
+        h3:
           internal: *https-port
           external: 443
-          ip: "::"
-          protocol: tcp
-        h3-v4:
-          internal: *https-port
-          external: 443
-          ip: "0.0.0.0"
           protocol: udp
-        h3-v6:
-          internal: *https-port
-          external: 443
-          ip: "::"
-          protocol: udp
-        udp-v4:
+        udp:
           internal: 48470
-          external: 48470
-          ip: "0.0.0.0"
-          protocol: udp
-        udp-v6:
-          internal: 48470
-          external: 48470
-          ip: "::"
           protocol: udp
       tmpfs:
         - /tmp

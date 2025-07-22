@@ -119,15 +119,8 @@ services:
       network:
         default-bridge: true
       ports:
-        https-v4:
+        https:
           internal: *port
-          external: *port
-          ip: "0.0.0.0"
-          protocol: tcp
-        https-v6:
-          internal: *port
-          external: *port
-          ip: "::"
           protocol: tcp
       volumes:
         kanidm-config: /config
