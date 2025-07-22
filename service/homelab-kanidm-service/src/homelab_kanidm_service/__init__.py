@@ -42,6 +42,7 @@ class KanidmServerConfigResource(
             opts=opts,
             volume_path=path.extract_volume_path(kanidm_service, None),
             data={
+                "version": "2",
                 "bindaddress": Output.format("[::]:{}", kanidm_service.port),
                 "db_path": GlobalExtractor(config.path.db).extract_path(
                     kanidm_service, None

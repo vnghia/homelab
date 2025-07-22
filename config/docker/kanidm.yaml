@@ -1,13 +1,11 @@
 images:
   remote:
-    kanidm:
-      repo: ghcr.io/kanidm/kanidmd
-      tag: &kanidm-version "devel"
-      delete-before-replace: true
+    kanidm-server:
+      repo: kanidm/server
+      tag: &kanidm-version "1.6.4"
     kanidm-client:
-      repo: ghcr.io/kanidm/kanidm
+      repo: kanidm/tools
       tag: *kanidm-version
-      delete-before-replace: true
 volumes:
   local:
     kanidm-config:
@@ -98,7 +96,7 @@ services:
           hostname: kanidm
           record: public
     container:
-      image: kanidm
+      image: kanidm-server
       command:
         - "/sbin/kanidmd"
         - "server"
@@ -126,5 +124,7 @@ services:
         kanidm-config: /config
         kanidm-data: /data
         kanidm-backup: /backup
+      wud:
+        template: https://github.com/kanidm/kanidm/releases/tag/v${original}
       envs:
         KANIDM_TRUST_X_FORWARD_FOR: true
