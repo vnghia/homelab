@@ -1,0 +1,44 @@
+images:
+  remote:
+    meilisearch:
+      repo: getmeili/meilisearch
+      tag: "v1.15.2"
+volumes:
+  local:
+    meilisearch-data:
+      backup: false
+    meilisearch-export: {}
+services:
+  meilisearch:
+    variables:
+      PORT: 7700
+    config: {}
+    secrets:
+      key: {}
+    container:
+      image: meilisearch
+      volumes:
+        meilisearch-data: /meili_data
+        meilisearch-export: /meili_export
+      envs:
+        MEILI_ENV: production
+        MEILI_HTTP_ADDR:
+          extract:
+            variable: PORT
+          transform:
+            string:
+              template: "0.0.0.0:{value}"
+        MEILI_MASTER_KEY:
+          secret: key
+        MEILI_NO_ANALYTICS: true
+        MEILI_DUMP_DIR:
+          extract:
+            volume: meilisearch-export
+          transform:
+            path: dumps
+        MEILI_SCHEDULE_SNAPSHOT: 86400
+        MEILI_SNAPSHOT_DIR:
+          extract:
+            volume: meilisearch-export
+          transform:
+            path: snapshots
