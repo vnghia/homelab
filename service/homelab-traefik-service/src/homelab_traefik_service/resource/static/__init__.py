@@ -111,8 +111,7 @@ class TraefikStaticConfigResource(
                     },
                     traefik_config.entrypoint.public_https: {
                         "address": "[::]:{}".format(port.internal.https),
-                        # TODO: Enable http3 after traefik support protocol proxy for UDP
-                        # "http3": {"advertisedPort": port.external.https},
+                        "http3": {"advertisedPort": port.external.https},
                         "transport": timeouts,
                     }
                     | proxy_protocol,
