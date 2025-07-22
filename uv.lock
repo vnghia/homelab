@@ -700,6 +700,7 @@ version = "0.1.0"
 source = { editable = "service/homelab-ddns-service" }
 dependencies = [
     { name = "homelab-docker" },
+    { name = "homelab-extra-service" },
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
@@ -709,6 +710,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },

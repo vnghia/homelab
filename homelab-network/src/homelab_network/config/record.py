@@ -2,7 +2,7 @@ import pulumi_cloudflare as cloudflare
 from homelab_pydantic import HomelabBaseModel
 
 from ..model.hostname import Hostname
-from ..model.ip import NetworkIpModel
+from ..model.ip import NetworkIpModel, NetworkIpSource
 from ..model.record import RecordFullModel, RecordModel
 from .ip import NetworkIpConfig
 
@@ -34,3 +34,7 @@ class RecordConfig(HomelabBaseModel):
             for hostname, model in self.records.items()
             if isinstance(model.root, RecordFullModel) and model.root.alias
         ]
+
+    @property
+    def is_ddns(self) -> bool:
+        return self.source_ip.root == NetworkIpSource.DDNS

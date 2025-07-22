@@ -10,6 +10,7 @@ from pydantic import IPvAnyAddress
 
 class NetworkIpSource(StrEnum):
     TAILSCALE = auto()
+    DDNS = auto()
 
 
 class NetworkIpModel(HomelabBaseModel):

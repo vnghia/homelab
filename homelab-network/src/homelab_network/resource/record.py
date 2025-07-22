@@ -22,25 +22,26 @@ class RecordResource(ComponentResource):
         super().__init__(self.RESOURCE_NAME, name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        source_ip_model = config.source_ip.root
-        source_ip = None
-        if isinstance(source_ip_model, NetworkIpModel):
-            source_ip = NetworkIpOutputModel.from_model(source_ip_model)
-        else:
-            source_ip = source_ips[source_ip_model]
+        if not config.is_ddns:
+            source_ip_model = config.source_ip.root
+            source_ip = None
+            if isinstance(source_ip_model, NetworkIpModel):
+                source_ip = NetworkIpOutputModel.from_model(source_ip_model)
+            else:
+                source_ip = source_ips[source_ip_model]
 
-        self.records = {
-            key: [
-                record.build_resource(
-                    "{}-{}-{}".format(name, key, key_ip),
-                    opts=self.child_opts,
-                    zone_id=config.zone_id,
-                    ip=ip,
-                )
-                for key_ip, ip in source_ip.to_dict().items()
-            ]
-            for key, record in config.records.items()
-        }
+            self.records = {
+                key: [
+                    record.build_resource(
+                        "{}-{}-{}".format(name, key, key_ip),
+                        opts=self.child_opts,
+                        zone_id=config.zone_id,
+                        ip=ip,
+                    )
+                    for key_ip, ip in source_ip.to_dict().items()
+                ]
+                for key, record in config.records.items()
+            }
         self.hostnames = config.hostnames
         self.public = config.public
 

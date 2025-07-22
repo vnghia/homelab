@@ -32,6 +32,7 @@ services:
         default-bridge: true
       volumes:
         ddns-data: /updater/data
+      wait_timeout: 300
       wud:
         template: https://github.com/qdm12/ddns-updater/releases/tag/${original}
         include-prefix: v
@@ -45,3 +46,4 @@ services:
         ROOT_URL: /ip
         DATADIR:
           volume: ddns-data
+        RESOLVER_ADDRESS: "1.1.1.1:53"
