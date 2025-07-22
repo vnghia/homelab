@@ -5,10 +5,10 @@ from enum import StrEnum, auto
 from typing import ClassVar
 
 from homelab_backup.config import BackupGlobalConfig
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
 if typing.TYPE_CHECKING:
-    from ..model import DaguDagModel
     from .step.run.command import DaguDagStepRunCommandParamTypeModel
 
 
@@ -31,7 +31,7 @@ class DaguDagParamsModel(HomelabBaseModel):
         DaguDagParamType.DEBUG: ("SLEEP_DURATION", "30m"),
     }
 
-    main: dict[str, str] = {}
+    main: dict[str, GlobalExtract] = {}
     types: dict[DaguDagParamType, str | None] = {}
 
     def __bool__(self) -> bool:
@@ -62,65 +62,3 @@ class DaguDagParamsModel(HomelabBaseModel):
 
     def to_key_command(self, key: DaguDagStepRunCommandParamTypeModel) -> str:
         return self.to_key_command_unchecked(self.check_key(key))
-
-    def to_params(self, dag: DaguDagModel) -> dict[str, str] | None:
-        from ..model.step.precondition import DaguDagStepPreConditionFullModel
-        from ..model.step.run.command import (
-            DaguDagStepRunCommandFullModel,
-            DaguDagStepRunCommandModel,
-            DaguDagStepRunCommandParamModel,
-            DaguDagStepRunCommandParamTypeFullModel,
-        )
-
-        used_params = set()
-        for step in dag.steps:
-            run = step.run.root
-            script = step.script
-            preconditions = step.preconditions
-
-            commands: list[DaguDagStepRunCommandFullModel] = []
-            if isinstance(run, DaguDagStepRunCommandModel):
-                commands += run.root
-            if script and isinstance(script.root, DaguDagStepRunCommandModel):
-                commands += script.root.root
-            for precondition in preconditions:
-                if isinstance(
-                    precondition.root, DaguDagStepPreConditionFullModel
-                ) and isinstance(
-                    precondition.root.condition.root,
-                    DaguDagStepRunCommandParamTypeFullModel,
-                ):
-                    commands.append(
-                        DaguDagStepRunCommandFullModel(
-                            DaguDagStepRunCommandParamModel(
-                                param=precondition.root.condition
-                            )
-                        )
-                    )
-
-            for command in commands:
-                root = command.root
-                if isinstance(root, DaguDagStepRunCommandParamModel):
-                    used_params.add(
-                        root.param.root.type
-                        if isinstance(
-                            root.param.root, DaguDagStepRunCommandParamTypeFullModel
-                        )
-                        else root.param.root
-                    )
-
-        params = {
-            self.PARAM_VALUE[key_type][0]: (
-                default_value
-                if default_value is not None
-                else self.PARAM_VALUE[key_type][1]
-            )
-            for key_type, default_value in self.types.items()
-            if key_type in used_params
-        } | {
-            key_main: value
-            for key_main, value in self.main.items()
-            if key_main in used_params
-        }
-
-        return params or None

@@ -9,6 +9,7 @@ from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
 
+from ..model.params import DaguDagParamsModelBuilder
 from .step import DaguDagStepModelBuilder
 
 if typing.TYPE_CHECKING:
@@ -54,7 +55,11 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
             else None,
             "schedule": root.schedule,
             "maxActiveRuns": root.max_active_runs,
-            "params": root.params.to_params(root) if root.params else None,
+            "params": DaguDagParamsModelBuilder(root.params).to_params(
+                root, main_service
+            )
+            if root.params
+            else None,
             "steps": [
                 DaguDagStepModelBuilder(step).to_step(
                     root.params, main_service, dagu_service, dotenvs
