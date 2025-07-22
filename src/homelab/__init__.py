@@ -71,6 +71,11 @@ class Homelab:
             docker_resource_args=self.docker.resource_args,
         )
 
+        self.dagu = DaguService(
+            self.docker.services_config.dagu,
+            opts=None,
+            docker_resource_args=self.docker.resource_args,
+        )
         self.kanidm = KanidmService(
             self.docker.services_config.kanidm,
             opts=None,
@@ -78,11 +83,6 @@ class Homelab:
         )
         self.ntfy = NtfyService(
             self.docker.services_config.ntfy,
-            opts=None,
-            docker_resource_args=self.docker.resource_args,
-        )
-        self.dagu = DaguService(
-            self.docker.services_config.dagu,
             opts=None,
             docker_resource_args=self.docker.resource_args,
         )

@@ -24,6 +24,29 @@ services:
             port:
               env: DAGU_PORT
       dagu:
+        docker:
+          executor:
+            run:
+              model: docker
+          dags:
+            start:
+              dag:
+                params:
+                  main:
+                    CONTAINERS: ""
+              command:
+                - "docker"
+                - "start"
+                - param: CONTAINERS
+            stop:
+              dag:
+                params:
+                  main:
+                    CONTAINERS: ""
+              command:
+                - "docker"
+                - "stop"
+                - param: CONTAINERS
         dag:
           dag:
             name: dummy
@@ -95,3 +118,9 @@ services:
             path: logs/admin
         DAGU_PERMISSIONS_WRITE_DAGS: "false"
         DAGU_LOG_FORMAT: json
+    containers:
+      docker:
+        active: false
+        image: docker
+        docker-socket:
+          write: false
