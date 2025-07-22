@@ -99,7 +99,7 @@ services:
               transform:
                 path: sources
             allowedCountries:
-            allowPrivate: false
+            allowPrivate: true
             banIfError: true
             logLevel: "info"
             logFormat: "json"
