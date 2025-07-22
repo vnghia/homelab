@@ -33,6 +33,9 @@ services:
         - postgres:
           envs:
             env: POSTGRES_DSN
+      wud:
+        template: https://github.com/bitmagnet-io/bitmagnet/releases/tag/${original}
+        include-prefix: v
       envs:
         DHT_SERVER_PORT:
           port: bitmagnet
