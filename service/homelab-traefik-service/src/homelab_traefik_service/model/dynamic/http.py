@@ -126,6 +126,22 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                 }
                 | (
                     {
+                        "{}-private".format(router_name): {
+                            "service": service,
+                            "entryPoints": [entrypoint.private_https],
+                            "rule": rule,
+                            "tls": {
+                                "certResolver": traefik_service.static.CERT_RESOLVER
+                            },
+                        }
+                        | (
+                            {"middlewares": service_middlewares}
+                            if service_middlewares
+                            else {}
+                        )
+                    }
+                    if hostname.public
+                    else {
                         "{}-local".format(router_name): {
                             "service": service,
                             "entryPoints": [entrypoint.public_https],
@@ -136,8 +152,6 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                             "middlewares": private_middlewares + service_middlewares,
                         }
                     }
-                    if not hostname.public
-                    else {}
                 ),
             }
         }
