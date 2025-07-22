@@ -9,10 +9,7 @@ services:
     container:
       image: flaresolverr
       network:
-        container:
-          service: gluetun
-          extract:
-            id:
+        mode: vpn
       read-only: false
       wud:
         template: https://github.com/FlareSolverr/FlareSolverr/releases/tag/${original}
