@@ -34,6 +34,7 @@ class TraefikTimeoutConfig(HomelabBaseModel):
 
 
 class TraefikProxyProtocolConfig(HomelabBaseModel):
+    enabled: bool = False
     ips: list[IPvAnyAddress] = []
 
 

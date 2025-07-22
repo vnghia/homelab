@@ -28,6 +28,7 @@ if typing.TYPE_CHECKING:
 
 
 class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
+    LOCAL_MIDDLEWARE: ClassVar[str] = "local"
     GEOBLOCK_MIDDLEWARE: ClassVar[str] = "geoblock"
     CROWDSEC_MIDDLEWARE: ClassVar[str] = "crowdsec"
 
@@ -86,6 +87,20 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                 ),
             ]
         ]
+        private_middlewares = [
+            TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
+                main_service, traefik_service
+            )
+            for middleware in [
+                TraefikDynamicMiddlewareModel(
+                    TraefikDynamicMiddlewareUseModel(
+                        service=traefik_service.name(),
+                        name=self.LOCAL_MIDDLEWARE,
+                    )
+                ),
+            ]
+        ]
+
         service_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
                 main_service, traefik_service
@@ -111,21 +126,17 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                 }
                 | (
                     {
-                        "{}-private".format(router_name): {
+                        "{}-local".format(router_name): {
                             "service": service,
-                            "entryPoints": [entrypoint.private_https],
+                            "entryPoints": [entrypoint.public_https],
                             "rule": rule,
                             "tls": {
                                 "certResolver": traefik_service.static.CERT_RESOLVER
                             },
+                            "middlewares": private_middlewares + service_middlewares,
                         }
-                        | (
-                            {"middlewares": service_middlewares}
-                            if service_middlewares
-                            else {}
-                        )
                     }
-                    if hostname.public
+                    if not hostname.public
                     else {}
                 ),
             }

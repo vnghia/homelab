@@ -80,6 +80,13 @@ services:
           name: github.com/sevensolutions/traefik-oidc-auth
           version: "v0.12.0"
       traefik:
+        local:
+          name: local
+          data:
+            ipAllowList:
+              sourceRange:
+                - "192.168.0.0/16"
+                - "fc00::/10"
         geoblock:
           name: geoblock
           plugin: geoblock

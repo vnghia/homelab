@@ -31,32 +31,32 @@ services:
         proxy-bridge: true
       ports:
         http-v4:
-          internal: 80
+          internal: &http-port 81
           external: 80
           ip: "0.0.0.0"
           protocol: tcp
         http-v6:
-          internal: 80
+          internal: *http-port
           external: 80
           ip: "::"
           protocol: tcp
         https-v4:
-          internal: 443
+          internal: &https-port 444
           external: 443
           ip: "0.0.0.0"
           protocol: tcp
         https-v6:
-          internal: 443
+          internal: *https-port
           external: 443
           ip: "::"
           protocol: tcp
         h3-v4:
-          internal: 444
+          internal: *https-port
           external: 443
           ip: "0.0.0.0"
           protocol: udp
         h3-v6:
-          internal: 444
+          internal: *https-port
           external: 443
           ip: "::"
           protocol: udp
