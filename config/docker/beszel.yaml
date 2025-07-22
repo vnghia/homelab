@@ -133,6 +133,8 @@ services:
       volumes:
         beszel-data: /beszel_data
         "/var/lib/beszel-agent": /var/lib/beszel-agent
+      wud:
+        template: https://github.com/henrygd/beszel/releases/tag/v${original}
       envs:
         APP_URL:
           extract:
