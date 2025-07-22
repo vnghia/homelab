@@ -33,6 +33,9 @@ services:
             - *udp-port-start
             - *udp-port-end
           protocol: udp
+      wud:
+        template: https://github.com/livekit/livekit/releases/tag/${original}
+        include-prefix: v
       envs:
         LIVEKIT_CONFIG:
           yaml:
