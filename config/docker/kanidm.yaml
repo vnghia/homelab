@@ -75,21 +75,37 @@ services:
             port:
               variable: PORT
       dagu:
-        docker:
-          executor:
-            exec:
-              container:
-          dag:
+        dag:
+          pre-backup-volume:
+            name: pre-backup-volume
             tags: ["backup"]
-          dags:
-            pre-backup-volume:
-              command:
-                - "/sbin/kanidmd"
-                - "database"
-                - "backup"
-                - "-c"
-                - variable: CONFIG
-                - variable: BACKUP
+            steps:
+              - name: stop-container
+                run:
+                  service: dagu
+                  dag: stop
+                  params:
+                    main:
+                      CONTAINERS:
+                        name:
+              - name: create-backup
+                executor:
+                  model:
+                run:
+                  - "/sbin/kanidmd"
+                  - "database"
+                  - "backup"
+                  - "-c"
+                  - variable: CONFIG
+                  - variable: BACKUP
+              - name: start-container
+                run:
+                  service: dagu
+                  dag: start
+                  params:
+                    main:
+                      CONTAINERS:
+                        name:
     keepasses:
       keepass:
         hostname:
