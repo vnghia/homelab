@@ -5,6 +5,7 @@ from typing import Any
 
 from homelab_dagu_config.model.params import DaguDagParamsModel
 from homelab_dagu_config.model.step.run.subdag import DaguDagStepRunSubdagModel
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic.model import HomelabRootModel
 from pulumi import Output
@@ -32,6 +33,19 @@ class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagMode
         )
 
         data: dict[str, Any] = {"run": dag.to_path(dagu_service, dagu_model)}
+
+        if root.parallel:
+            data["parallel"] = {
+                "items": [
+                    GlobalExtractor(item).extract_str(main_service, None)
+                    for item in root.parallel.items
+                ]
+            } | (
+                {"maxConcurrent": root.parallel.max_concurrent}
+                if root.parallel.max_concurrent
+                else {}
+            )
+
         if params:
             data["params"] = Output.all(**params).apply(
                 lambda args: " ".join(
