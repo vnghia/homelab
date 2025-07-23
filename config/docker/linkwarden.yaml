@@ -56,7 +56,7 @@ services:
           envs:
             env: DATABASE_URL
       network:
-        default-bridge: true
+        mode: vpn
       tmpfs:
         - /tmp
         - /usr/local/share/.cache/yarn
@@ -108,6 +108,8 @@ services:
         MONOLITH_MAX_BUFFER: 500
         READABILITY_MAX_BUFFER: 500
         PREVIEW_MAX_BUFFER: 50
+        IGNORE_UNAUTHORIZED_CA: true
+        IGNORE_HTTPS_ERRORS: true
     containers:
       meilisearch:
         inherit:
