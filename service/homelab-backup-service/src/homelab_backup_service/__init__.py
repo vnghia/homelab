@@ -21,7 +21,10 @@ from homelab_dagu_config.model.step.run.command import (
     DaguDagStepRunCommandParamTypeFullModel,
     DaguDagStepRunCommandParamTypeModel,
 )
-from homelab_dagu_config.model.step.run.subdag import DaguDagStepRunSubdagModel
+from homelab_dagu_config.model.step.run.subdag import (
+    DaguDagStepRunSubdagModel,
+    DaguDagStepRunSubdagParallelModel,
+)
 from homelab_dagu_config.model.step.script import DaguDagStepScriptModel
 from homelab_dagu_service import DaguService
 from homelab_dagu_service.model import DaguDagModelBuilder
@@ -356,18 +359,26 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             schedule=self.config.schedule,
             steps=[
                 DaguDagStepModel(
-                    name=service,
+                    name="all",
                     run=DaguDagStepRunModel(
                         DaguDagStepRunSubdagModel(
                             service=self.name(),
                             dag="service",
                             params=DaguDagParamsModel(
-                                types={DaguDagParamType.BACKUP: service}
+                                types={
+                                    DaguDagParamType.BACKUP: DaguDagStepRunSubdagParallelModel.PARAM_KEY
+                                }
+                            ),
+                            parallel=DaguDagStepRunSubdagParallelModel(
+                                items=[
+                                    GlobalExtract.from_simple(service)
+                                    for service in self.backup_configs.root
+                                ],
+                                max_concurrent=self.config.max_concurent,
                             ),
                         )
                     ),
                 )
-                for service in self.backup_configs.root
             ],
             tags=[self.name()],
         )

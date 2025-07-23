@@ -2,3 +2,4 @@ services:
   backup:
     config:
       schedule: "0 0 * * *"
+      max-concurent: 4
