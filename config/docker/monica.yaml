@@ -9,6 +9,7 @@ volumes:
     monica-storage: {}
     monica-database:
       backup: false
+    monica-meilisearch-data: {}
 services:
   kanidm:
     variables:
@@ -46,7 +47,12 @@ services:
                   values-by-group:
                     openid: ["Name"]
   monica:
+    variables:
+      MELISEARCH_PORT: 7700
+      MELISEARCH_VOLUME:
+        volume: monica-meilisearch-data
     config:
+      depends-on: [meilisearch]
       traefik:
         traefik:
           record: public
@@ -67,6 +73,7 @@ services:
     secrets:
       key:
         length: 32
+      meilisearch-key: {}
     container:
       image: monica
       databases:
@@ -132,16 +139,33 @@ services:
         LOGIN_PROVIDERS: kanidm
         MAPBOX_USERNAME: mapbox
         MAPBOX_CUSTOM_STYLE_NAME: satellite-streets-v12
+        SCOUT_DRIVER: meilisearch
+        SCOUT_QUEUE: true
+        MEILISEARCH_URL:
+          extract:
+            variable: MELISEARCH_PORT
+          transform:
+            string:
+              template: "http://monica-meilisearch:{value}"
+        MEILISEARCH_KEY:
+          secret: meilisearch-key
       network:
         default-bridge: true
-      tmpfs:
-        - /var/run
-        - /var/www/html/bootstrap/cache
-        # This prevents the application creating a symlink in a read-only filesystem.
-        # But it will break if we ever need to serve anything from `/var/www/html/storage/app/public`.
-        # If we get to that point, either making this container not read only
-        # or rewriting the nginx config to make it serves that folder directly.
-        - /var/www/html/public/storage
+      read-only: false
+      # TODO: Make this container work with read-only filesystem
+      # tmpfs:
+      #   - /var/run
+      #   - /var/www/html/bootstrap/cache
+      #   # This prevents the application creating a symlink in a read-only filesystem.
+      #   # But it will break if we ever need to serve anything from `/var/www/html/storage/app/public`.
+      #   # If we get to that point, either making this container not read only
+      #   # or rewriting the nginx config to make it serves that folder directly.
+      #   - /var/www/html/public/storage
+      #   # Need for scribe docs generation
+      #   - /var/www/html/.scribe
+      #   - /var/www/html/public/docs
+      #   - /var/www/html/resources/views
+      #   - /var/www/html/public/vendor/scribe
       volumes:
         monica-storage: /var/www/html/storage
         monica-database: /var/www/html/database/storage
@@ -161,3 +185,9 @@ services:
       schedule:
         inherit:
         command: ["php", "artisan", "schedule:work"]
+      meilisearch:
+        inherit:
+          service: meilisearch
+          container:
+        volumes:
+          monica-meilisearch-data: /meili_data
