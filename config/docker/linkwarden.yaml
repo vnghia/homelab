@@ -103,6 +103,11 @@ services:
           service: kanidm
           extract:
             export: linkwarden
+        PDF_MAX_BUFFER: 500
+        SCREENSHOT_MAX_BUFFER: 500
+        MONOLITH_MAX_BUFFER: 500
+        READABILITY_MAX_BUFFER: 500
+        PREVIEW_MAX_BUFFER: 50
     containers:
       meilisearch:
         inherit:
