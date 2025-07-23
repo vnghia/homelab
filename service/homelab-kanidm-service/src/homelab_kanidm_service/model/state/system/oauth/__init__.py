@@ -18,6 +18,7 @@ class KanidmStateSystemOauthModel(HomelabBaseModel):
     origin_url: list[GlobalExtract]
     origin_landing: GlobalExtract
     prefer_short_username: bool = False
+    enable_legacy_crypto: bool = False
     allow_insecure_client_disable_pkce: bool = False
     remove_orphaned_claim_maps: bool = True
     scope_maps: dict[str, list[str]] = {}
