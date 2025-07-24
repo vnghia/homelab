@@ -75,7 +75,7 @@ services:
           version: "v1.4.4"
         geoblock:
           name: github.com/david-garcia-garcia/traefik-geoblock
-          version: "v1.0.1"
+          version: "v1.1.0"
         oidc:
           name: github.com/sevensolutions/traefik-oidc-auth
           version: "v0.12.0"
