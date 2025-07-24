@@ -78,7 +78,7 @@ services:
           version: "v1.1.0"
         oidc:
           name: github.com/sevensolutions/traefik-oidc-auth
-          version: "v0.12.0"
+          version: "v0.13.0"
       traefik:
         local:
           name: local
