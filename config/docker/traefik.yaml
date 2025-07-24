@@ -72,7 +72,7 @@ services:
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
-          version: "v1.4.2"
+          version: "v1.4.4"
         geoblock:
           name: github.com/david-garcia-garcia/traefik-geoblock
           version: "v1.0.1"
