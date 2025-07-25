@@ -2,7 +2,7 @@ images:
   remote:
     beszel:
       repo: ghcr.io/henrygd/beszel/beszel
-      tag: "0.11.1"
+      tag: "0.12.0"
 volumes:
   local:
     beszel-data:
