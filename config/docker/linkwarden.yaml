@@ -2,7 +2,7 @@ images:
   remote:
     linkwarden:
       repo: ghcr.io/linkwarden/linkwarden
-      tag: "v2.11.3"
+      tag: "v2.11.5"
 volumes:
   local:
     linkwarden-data: {}
