@@ -27,6 +27,20 @@ services:
                 record: public
                 scheme: https
               prefer-short-username: true
+  livekit:
+    secrets:
+      meet-api-key:
+        length: 16
+        special: false
+      meet-api-secret: {}
+    container:
+      envs:
+        LIVEKIT_CONFIG:
+          yaml:
+            keys:
+              dict_:
+                - - secret: meet-api-key
+                  - secret: meet-api-secret
   meet:
     variables:
       BACKEND_PORT: 8000
@@ -182,6 +196,14 @@ services:
             hostname: livekit
             record: public
             scheme: "https"
+          LIVEKIT_API_KEY:
+            service: livekit
+            extract:
+              secret: meet-api-key
+          LIVEKIT_API_SECRET:
+            service: livekit
+            extract:
+              secret: meet-api-secret
           RESOURCE_DEFAULT_ACCESS_LEVEL: restricted
           SIGNUP_NEW_USER_TO_MARKETING_EMAIL: false
           ROOM_TELEPHONY_ENABLED: false
