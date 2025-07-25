@@ -2,7 +2,7 @@ images:
   remote:
     meet-backend:
       repo: lasuite/meet-backend
-      tag: &meet-version "v0.1.31"
+      tag: &meet-version "v0.1.33"
     meet-frontend:
       repo: lasuite/meet-frontend
       tag: *meet-version
