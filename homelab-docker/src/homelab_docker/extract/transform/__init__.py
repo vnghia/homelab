@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import typing
+from typing import Any
 
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath, HomelabRootModel
-from pulumi import Input, Output, output
+from pulumi import Input, Output
 
 from .path import ExtractPathTransformer
 from .secret import ExtractSecretTransformer
@@ -16,7 +17,7 @@ if typing.TYPE_CHECKING:
 
 class ExtractTransformer(HomelabRootModel[ExtractTransform]):
     def transform_string(
-        self, value: Input[str] | dict[str, Output[str]]
+        self, value: Input[str] | dict[str, Output[str]] | dict[Output[str], Any]
     ) -> Output[str]:
         root = self.root
         if not isinstance(value, dict):

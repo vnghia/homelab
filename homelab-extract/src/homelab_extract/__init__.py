@@ -3,6 +3,7 @@ from typing import Self
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 from .container import ContainerExtract
+from .dict_ import GlobalExtractDictSource
 from .docker import GlobalExtractDockerSource
 from .hostname import GlobalExtractHostnameSource
 from .id import GlobalExtractIdSource
@@ -18,7 +19,8 @@ from .yaml import GlobalExtractYamlSource
 
 class GlobalExtractSource(
     HomelabRootModel[
-        GlobalExtractDockerSource
+        GlobalExtractDictSource
+        | GlobalExtractDockerSource
         | GlobalExtractHostnameSource
         | GlobalExtractIdSource
         | GlobalExtractJsonSource

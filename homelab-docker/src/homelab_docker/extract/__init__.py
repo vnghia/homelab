@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Protocol, TypeVar
+from typing import Any, Protocol, TypeVar
 
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
@@ -31,7 +31,7 @@ class ExtractorBase(Protocol[T]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str] | dict[str, Output[str]]:
+    ) -> str | Output[str] | dict[str, Output[str]] | dict[Output[str], Any]:
         raise TypeError("Could not extract str from {}".format(self.name))
 
     def extract_path(

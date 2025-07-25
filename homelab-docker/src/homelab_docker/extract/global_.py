@@ -4,6 +4,7 @@ import typing
 from typing import Any
 
 from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
+from homelab_extract.dict_ import GlobalExtractDictSource
 from homelab_extract.docker import GlobalExtractDockerSource
 from homelab_extract.hostname import GlobalExtractHostnameSource
 from homelab_extract.id import GlobalExtractIdSource
@@ -20,6 +21,7 @@ from pydantic import ValidationError
 
 from . import ExtractorBase
 from .container import ContainerExtractor
+from .dict_ import GlobalDictSourceExtractor
 from .docker import GlobalDockerSourceExtractor
 from .hostname import GlobalHostnameSourceExtractor
 from .id import GlobalIdSourceExtractor
@@ -43,7 +45,8 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
     def extractor(
         self,
     ) -> (
-        GlobalDockerSourceExtractor
+        GlobalDictSourceExtractor
+        | GlobalDockerSourceExtractor
         | GlobalHostnameSourceExtractor
         | GlobalIdSourceExtractor
         | GlobalJsonSourceExtractor
@@ -54,6 +57,8 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         | GlobalYamlSourceExtractor
     ):
         root = self.root.root
+        if isinstance(root, GlobalExtractDictSource):
+            return GlobalDictSourceExtractor(root)
         if isinstance(root, GlobalExtractDockerSource):
             return GlobalDockerSourceExtractor(root)
         if isinstance(root, GlobalExtractHostnameSource):
@@ -74,7 +79,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
 
     def extract_str(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str] | dict[str, Output[str]]:
+    ) -> str | Output[str] | dict[str, Output[str]] | dict[Output[str], Any]:
         return self.extractor.extract_str(main_service, model)
 
     def extract_path(
@@ -185,6 +190,15 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
             self.extractor.extract_str(main_service, model)
         )
 
+    def extract_str_explicit_transform(
+        self, main_service: ServiceResourceBase, model: ContainerModel | None
+    ) -> str | Output[str] | dict[str, Output[str]] | dict[Output[str], Any]:
+        root = self.root.root
+
+        if isinstance(root, GlobalExtractFull):
+            return GlobalFullExtractor(root).extract_str(main_service, model)
+        return self.extractor.extract_str(main_service, model)
+
     def extract_path(
         self, main_service: ServiceResourceBase, model: ContainerModel | None
     ) -> AbsolutePath:
@@ -202,7 +216,7 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
         if isinstance(data, dict):
             try:
                 extract = GlobalExtract(**data)
-                return cls(extract).extract_str(main_service, model)
+                return cls(extract).extract_str_explicit_transform(main_service, model)
             except ValidationError:
                 return {
                     key: cls.extract_recursively(value, main_service, model)
