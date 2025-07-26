@@ -13,6 +13,7 @@ from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_gluetun_service import GluetunService
 from homelab_kanidm_service import KanidmService
+from homelab_network.resource.hostname import NetworkHostnameResource
 from homelab_network.resource.network import NetworkResource
 from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
@@ -31,6 +32,10 @@ class Homelab:
         self.project_prefix = Config.get_name(None, project=True, stack=True)
         self.docker = Docker(self.config, self.project_prefix)
 
+        self.network = NetworkResource(
+            self.config.network, opts=None, project_prefix=self.project_prefix
+        )
+
         self.tailscale = TailscaleService(
             self.docker.services_config.tailscale,
             opts=None,
@@ -39,12 +44,6 @@ class Homelab:
             docker_resource_args=self.docker.resource_args,
         )
 
-        self.network = NetworkResource(
-            self.config.network,
-            opts=None,
-            tailscale_ip=self.tailscale.ip,
-            project_prefix=self.project_prefix,
-        )
         self.docker.resource_args.hostnames |= self.network.hostnames
 
         self.gluetun = GluetunService(
@@ -137,4 +136,8 @@ class Homelab:
             dagu_service=self.dagu,
             restic_service=self.restic,
             docker_resource_args=self.docker.resource_args,
+        )
+
+        self.hostname = NetworkHostnameResource(
+            self.config.network, opts=None, tailscale_ip=self.tailscale.ip
         )
