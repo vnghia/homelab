@@ -30,7 +30,7 @@ class FrpClientConfigResource(
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         network_resource: NetworkResource,
         frp_service: FrpService,
     ) -> None:
@@ -132,7 +132,7 @@ class FrpService(ServiceWithConfigResourceBase[FrpConfig]):
         self,
         model: ServiceWithConfigModel[FrpConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         network_resource: NetworkResource,
         docker_resource_args: DockerResourceArgs,
     ) -> None:

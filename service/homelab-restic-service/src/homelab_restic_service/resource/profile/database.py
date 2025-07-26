@@ -23,7 +23,7 @@ class ResticProfileDatabaseResource(
         self,
         model: ResticProfileDatabaseModel,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         restic_service: ResticService,
     ) -> None:
         self.type_ = model.type_

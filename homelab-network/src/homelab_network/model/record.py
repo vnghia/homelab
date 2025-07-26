@@ -18,7 +18,7 @@ class RecordModel(HomelabRootModel[str | RecordFullModel]):
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         zone_id: str,
         ip: Input[IPvAnyAddress],
     ) -> cloudflare.DnsRecord:

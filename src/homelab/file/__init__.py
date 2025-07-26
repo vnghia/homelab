@@ -10,9 +10,13 @@ class File(ComponentResource):
     RESOURCE_NAME = "file"
 
     def __init__(
-        self, traefik_service: TraefikService, dagu_service: DaguService
+        self,
+        *,
+        opts: ResourceOptions,
+        traefik_service: TraefikService,
+        dagu_service: DaguService,
     ) -> None:
-        super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, None)
+        super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.traefik = TraefikFile(

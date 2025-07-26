@@ -101,7 +101,7 @@ class ConfigFileResource(Generic[T], FileResource):
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         data: Mapping[str, Any],
         volume_resource: VolumeResource,

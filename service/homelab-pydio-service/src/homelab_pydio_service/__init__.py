@@ -25,7 +25,7 @@ class PydioInstallConfigResource(
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         config: PydioConfig,
         pydio_service: PydioService,
     ) -> None:
@@ -47,7 +47,7 @@ class PydioService(ExtraService[PydioConfig]):
         self,
         model: ServiceWithConfigModel[PydioConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)

@@ -29,7 +29,7 @@ class BarmanConfigFileResource(
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         database_source_model: ContainerDatabaseSourceModel,
         database_config_model: ServiceDatabaseConfigModel | None,
         barman_service: BarmanService,

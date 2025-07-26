@@ -33,7 +33,7 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
     def build_resources(
         self,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
     ) -> dict[str | None, DaguDagResource]:
@@ -63,7 +63,7 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
     def build_docker_group_dags(
         self,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
     ) -> dict[str, DaguDagResource]:

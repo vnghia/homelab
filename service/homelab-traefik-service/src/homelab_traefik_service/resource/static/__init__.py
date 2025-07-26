@@ -26,7 +26,7 @@ class TraefikStaticConfigResource(
     def __init__(
         self,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         traefik_service: TraefikService,
         port: NetworkPortConfig,
     ) -> None:

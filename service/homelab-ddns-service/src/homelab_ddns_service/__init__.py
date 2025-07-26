@@ -12,7 +12,7 @@ class DdnsService(ExtraService[DdnsConfig]):
         self,
         model: ServiceWithConfigModel[DdnsConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         network_resource: NetworkResource,
         docker_resource_args: DockerResourceArgs,
     ) -> None:

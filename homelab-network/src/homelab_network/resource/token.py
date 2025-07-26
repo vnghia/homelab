@@ -11,7 +11,7 @@ class TokenResource(ComponentResource):
         self,
         config: NetworkConfig,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         project_prefix: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)

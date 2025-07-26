@@ -22,7 +22,7 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         self,
         model: ServiceWithConfigModel[TraefikConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         network_resource: NetworkResource,
         docker_resource_args: DockerResourceArgs,
     ) -> None:

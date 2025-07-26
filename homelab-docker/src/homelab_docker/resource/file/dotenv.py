@@ -34,7 +34,7 @@ class DotenvFileResource(
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         envs: Mapping[str, Input[str]],
         volume_resource: VolumeResource,

@@ -19,7 +19,7 @@ class ResticProfileModel(HomelabBaseModel):
     def build_resource(
         self,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         restic_service: ResticService,
     ) -> ResticProfileResource:
         from ...resource.profile import ResticProfileResource

@@ -28,7 +28,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self,
         model: ServiceWithConfigModel[ResticConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         hostname: str,
         backup_config: BackupGlobalConfig,
         barman_service: BarmanService,

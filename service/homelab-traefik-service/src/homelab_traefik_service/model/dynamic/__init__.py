@@ -21,7 +21,7 @@ class TraefikDynamicModelBuilder(HomelabRootModel[TraefikDynamicModel]):
         self,
         resource_name: str | None,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> TraefikDynamicConfigResource:

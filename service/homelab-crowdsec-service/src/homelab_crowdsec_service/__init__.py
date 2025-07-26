@@ -24,7 +24,7 @@ class DockerAcquisConfigResource(
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         crowdsec_service: CrowdsecService,
     ) -> None:
         super().__init__(
@@ -48,7 +48,7 @@ class CrowdsecService(ServiceWithConfigResourceBase[CrowdsecConfig]):
         self,
         model: ServiceWithConfigModel[CrowdsecConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)

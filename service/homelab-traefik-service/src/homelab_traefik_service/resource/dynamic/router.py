@@ -20,7 +20,7 @@ class TraefikDynamicRouterConfigResource(
         resource_name: str | None,
         model: TraefikDynamicHttpModelBuilder,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> None:

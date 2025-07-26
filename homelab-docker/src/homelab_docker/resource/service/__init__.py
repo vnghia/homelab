@@ -26,7 +26,7 @@ class ServiceResourceBase(ComponentResource):
         self,
         model: ServiceModel,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__("{}-service".format(self.name()), self.name(), None, opts)
@@ -174,7 +174,7 @@ class ServiceWithConfigResourceBase[T: HomelabBaseModel](ServiceResourceBase):
         self,
         model: ServiceWithConfigModel[T],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)

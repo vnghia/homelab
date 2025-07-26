@@ -60,7 +60,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         self,
         model: ServiceWithConfigModel[BackupConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         dagu_service: DaguService,
         restic_service: ResticService,
         docker_resource_args: DockerResourceArgs,

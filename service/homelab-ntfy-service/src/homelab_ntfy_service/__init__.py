@@ -17,7 +17,7 @@ class NtfyService(ExtraService[ExtraConfig]):
         self,
         model: ServiceWithConfigModel[ExtraConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)

@@ -11,7 +11,7 @@ class SecretModel(HomelabBaseModel):
     protect: bool = False
 
     def build_resource(
-        self, resource_name: str, opts: ResourceOptions | None
+        self, resource_name: str, opts: ResourceOptions
     ) -> random.RandomPassword | random.RandomUuid:
         opts = ResourceOptions.merge(
             opts,

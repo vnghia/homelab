@@ -7,7 +7,7 @@ from ... import SecretModel
 class KeepassEntryPasswordModel(HomelabRootModel[SecretModel | str]):
     root: SecretModel | str = SecretModel()
 
-    def to_password(self, opts: ResourceOptions | None) -> Output[str]:
+    def to_password(self, opts: ResourceOptions) -> Output[str]:
         root = self.root
         if isinstance(root, SecretModel):
             return root.build_resource("password", opts).result

@@ -18,7 +18,7 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
         self,
         model: ServiceWithConfigModel[BaliteConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         backup_config: BackupGlobalConfig,
         docker_resource_args: DockerResourceArgs,
     ) -> None:

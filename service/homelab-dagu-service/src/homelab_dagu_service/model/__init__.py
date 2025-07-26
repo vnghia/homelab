@@ -72,7 +72,7 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
         self,
         resource_name: str | None,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
     ) -> DaguDagResource:

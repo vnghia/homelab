@@ -24,7 +24,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         self,
         model: ServiceWithConfigModel[BarmanConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         backup_config: BackupGlobalConfig,
         docker_resource_args: DockerResourceArgs,
     ) -> None:

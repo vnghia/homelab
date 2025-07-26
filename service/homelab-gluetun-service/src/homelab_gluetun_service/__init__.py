@@ -13,7 +13,7 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
         self,
         model: ServiceWithConfigModel[GluetunConfig],
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)

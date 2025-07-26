@@ -59,7 +59,7 @@ class KanidmPasswordResource(Resource, module="kanidm", name="Password"):
     def __init__(
         self,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         container: Input[str],
         account: str,
         config_path: AbsolutePath,

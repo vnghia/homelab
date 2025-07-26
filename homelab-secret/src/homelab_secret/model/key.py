@@ -8,7 +8,7 @@ class SecretKeyModel(HomelabBaseModel):
     protect: bool = False
 
     def build_resource(
-        self, resource_name: str, opts: ResourceOptions | None
+        self, resource_name: str, opts: ResourceOptions
     ) -> tls.PrivateKey:
         opts = ResourceOptions.merge(opts, ResourceOptions(protect=self.protect))
         return tls.PrivateKey(resource_name, opts=opts, algorithm=self.algorithm)

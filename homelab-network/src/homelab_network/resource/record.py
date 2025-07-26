@@ -16,7 +16,7 @@ class RecordResource(ComponentResource):
         name: str,
         config: RecordConfig,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         source_ips: dict[NetworkIpSource, NetworkIpOutputModel],
     ) -> None:
         super().__init__(self.RESOURCE_NAME, name, None, opts)

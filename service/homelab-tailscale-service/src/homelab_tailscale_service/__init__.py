@@ -16,7 +16,7 @@ class TailscaleService(ServiceResourceBase):
         self,
         model: ServiceModel,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         hostname: str,
         internal_aliases: list[str],
         docker_resource_args: DockerResourceArgs,

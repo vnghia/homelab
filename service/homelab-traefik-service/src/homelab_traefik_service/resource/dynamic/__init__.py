@@ -26,7 +26,7 @@ class TraefikDynamicConfigResource(
         model: TraefikDynamicHttpModelBuilder
         | TraefikDynamicMiddlewareBuildModelBuilder,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> None:

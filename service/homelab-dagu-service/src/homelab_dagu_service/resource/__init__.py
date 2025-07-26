@@ -22,7 +22,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
         resource_name: str | None,
         model: DaguDagModelBuilder,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         dagu_service: DaguService,
     ) -> None:

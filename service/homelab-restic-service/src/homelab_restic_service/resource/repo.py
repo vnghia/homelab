@@ -68,7 +68,7 @@ class ResticRepoResource(Resource, module="restic", name="Repo"):
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         image: Output[str],
         envs: dict[str, Output[str]],
     ) -> None:

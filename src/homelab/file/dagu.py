@@ -8,7 +8,7 @@ from pulumi import ComponentResource, ResourceOptions
 class DaguFile(ComponentResource):
     RESOURCE_NAME = DaguService.name()
 
-    def __init__(self, opts: ResourceOptions | None, dagu_service: DaguService) -> None:
+    def __init__(self, opts: ResourceOptions, dagu_service: DaguService) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts=opts)
         self.child_opts = ResourceOptions(parent=self)
 

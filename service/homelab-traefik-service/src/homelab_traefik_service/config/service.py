@@ -12,7 +12,7 @@ class TraefikServiceConfigBuilder(HomelabRootModel[TraefikServiceConfig]):
     def build_resources(
         self,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> dict[str | None, TraefikDynamicConfigResource]:

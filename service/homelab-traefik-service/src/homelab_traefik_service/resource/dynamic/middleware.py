@@ -20,7 +20,7 @@ class TraefikDynamicMiddlwareConfigResource(
         resource_name: str | None,
         model: TraefikDynamicMiddlewareBuildModelBuilder,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         traefik_service: TraefikService,
     ) -> None:

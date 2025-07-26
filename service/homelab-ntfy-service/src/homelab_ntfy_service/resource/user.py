@@ -186,7 +186,7 @@ class NtfyUserResource(Resource, module="ntfy", name="User"):
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         container: Input[str],
         username: Input[str],
         password: Input[str],

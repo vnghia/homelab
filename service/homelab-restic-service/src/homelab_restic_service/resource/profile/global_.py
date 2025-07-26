@@ -23,7 +23,7 @@ class ResticGlobalProfileResource(
     def __init__(
         self,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         hostname: str,
         restic_service: ResticService,
     ) -> None:

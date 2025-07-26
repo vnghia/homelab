@@ -208,7 +208,7 @@ class FileResource(Resource, module="docker", name="File"):
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         content: Input[str],
         mode: int,

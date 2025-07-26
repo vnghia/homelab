@@ -125,9 +125,7 @@ class KanidmStateProvider(ResourceProvider):
 class KanidmStateResource(Resource, module="kanidm", name="State"):
     hash: Output[str]
 
-    def __init__(
-        self, opts: ResourceOptions | None, kanidm_service: KanidmService
-    ) -> None:
+    def __init__(self, opts: ResourceOptions, kanidm_service: KanidmService) -> None:
         state = kanidm_service.config.state.build(
             kanidm_service.OPENID_GROUP,
             kanidm_service.ADMIN_GROUP,

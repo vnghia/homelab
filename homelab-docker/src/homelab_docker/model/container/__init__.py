@@ -202,7 +202,7 @@ class ContainerModel(HomelabBaseModel):
         self,
         resource_name: str,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         main_service: ServiceResourceBase,
         build_args: ContainerModelBuildArgs | None,
     ) -> docker.Container:

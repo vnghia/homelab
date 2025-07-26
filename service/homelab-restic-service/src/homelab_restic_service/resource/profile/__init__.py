@@ -25,7 +25,7 @@ class ResticProfileResource(
         self,
         model: ResticProfileModel,
         *,
-        opts: ResourceOptions | None,
+        opts: ResourceOptions,
         restic_service: ResticService,
     ) -> None:
         self.volume = model.volume
