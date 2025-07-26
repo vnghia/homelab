@@ -14,6 +14,7 @@ from .volume import VolumeConfig
 
 
 class DockerNoServiceConfig(HomelabBaseModel):
+    host: str
     platform: Platform
     timezone: TimeZoneName
     network: NetworkConfig
