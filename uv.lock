@@ -447,6 +447,7 @@ dependencies = [
     { name = "json-fix" },
     { name = "pexpect" },
     { name = "pulumi" },
+    { name = "types-pexpect" },
 ]
 
 [package.dev-dependencies]
@@ -454,7 +455,6 @@ dev = [
     { name = "datamodel-code-generator", extra = ["http"] },
     { name = "mypy" },
     { name = "ruff" },
-    { name = "types-pexpect" },
 ]
 
 [package.metadata]
@@ -489,6 +489,7 @@ requires-dist = [
     { name = "json-fix", specifier = ">=1.0.0" },
     { name = "pexpect", specifier = ">=4.9.0" },
     { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "types-pexpect", specifier = ">=4.9.0.20250516" },
 ]
 
 [package.metadata.requires-dev]
@@ -496,7 +497,6 @@ dev = [
     { name = "datamodel-code-generator", extras = ["http"], specifier = ">=0.28.1" },
     { name = "mypy", specifier = ">=1.14.1" },
     { name = "ruff", specifier = ">=0.9.6" },
-    { name = "types-pexpect", specifier = ">=4.9.0.20250516" },
 ]
 
 [[package]]
@@ -744,14 +744,10 @@ dependencies = [
     { name = "pydantic-extra-types" },
     { name = "pyyaml" },
     { name = "tomlkit" },
-    { name = "tzdata" },
-]
-
-[package.dev-dependencies]
-dev = [
     { name = "types-docker" },
     { name = "types-jsonschema" },
     { name = "types-pyyaml" },
+    { name = "tzdata" },
 ]
 
 [package.metadata]
@@ -772,14 +768,10 @@ requires-dist = [
     { name = "pydantic-extra-types", specifier = ">=2.10.2" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "tomlkit", specifier = ">=0.13.2" },
-    { name = "tzdata", specifier = ">=2025.1" },
-]
-
-[package.metadata.requires-dev]
-dev = [
     { name = "types-docker", specifier = ">=7.1.0.20241229" },
     { name = "types-jsonschema", specifier = ">=4.23.0.20241208" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20241230" },
+    { name = "tzdata", specifier = ">=2025.1" },
 ]
 
 [[package]]
