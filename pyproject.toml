@@ -12,6 +12,7 @@ dependencies = [
     "homelab-secret",
     "homelab-s3",
     "homelab-extract",
+    "homelab-s3-config",
     "homelab-traefik-config",
     "homelab-dagu-config",
     "homelab-tailscale-service",
