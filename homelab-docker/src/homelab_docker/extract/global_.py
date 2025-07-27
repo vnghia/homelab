@@ -6,6 +6,7 @@ from typing import Any
 from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
 from homelab_extract.dict_ import GlobalExtractDictSource
 from homelab_extract.docker import GlobalExtractDockerSource
+from homelab_extract.host import GlobalExtractHostSource
 from homelab_extract.hostname import GlobalExtractHostnameSource
 from homelab_extract.id import GlobalExtractIdSource
 from homelab_extract.json import GlobalExtractJsonSource
@@ -23,6 +24,7 @@ from . import ExtractorBase
 from .container import ContainerExtractor
 from .dict_ import GlobalDictSourceExtractor
 from .docker import GlobalDockerSourceExtractor
+from .host import GlobalHostSourceExtractor
 from .hostname import GlobalHostnameSourceExtractor
 from .id import GlobalIdSourceExtractor
 from .json import GlobalJsonSourceExtractor
@@ -47,6 +49,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
     ) -> (
         GlobalDictSourceExtractor
         | GlobalDockerSourceExtractor
+        | GlobalHostSourceExtractor
         | GlobalHostnameSourceExtractor
         | GlobalIdSourceExtractor
         | GlobalJsonSourceExtractor
@@ -61,6 +64,8 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalDictSourceExtractor(root)
         if isinstance(root, GlobalExtractDockerSource):
             return GlobalDockerSourceExtractor(root)
+        if isinstance(root, GlobalExtractHostSource):
+            return GlobalHostSourceExtractor(root)
         if isinstance(root, GlobalExtractHostnameSource):
             return GlobalHostnameSourceExtractor(root)
         if isinstance(root, GlobalExtractIdSource):

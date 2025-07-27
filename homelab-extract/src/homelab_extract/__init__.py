@@ -5,6 +5,7 @@ from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from .container import ContainerExtract
 from .dict_ import GlobalExtractDictSource
 from .docker import GlobalExtractDockerSource
+from .host import GlobalExtractHostSource
 from .hostname import GlobalExtractHostnameSource
 from .id import GlobalExtractIdSource
 from .json import GlobalExtractJsonSource
@@ -21,6 +22,7 @@ class GlobalExtractSource(
     HomelabRootModel[
         GlobalExtractDictSource
         | GlobalExtractDockerSource
+        | GlobalExtractHostSource
         | GlobalExtractHostnameSource
         | GlobalExtractIdSource
         | GlobalExtractJsonSource
