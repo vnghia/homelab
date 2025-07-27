@@ -19,13 +19,19 @@ class DockerNoServiceConfig(HomelabBaseModel):
     platform: Platform
     timezone: TimeZoneName
     network: NetworkConfig
-    vpn: VpnConfig
-    images: ImageConfig
-    database: DatabaseConfig
-    plugins: PluginConfig
-    volumes: VolumeConfig
+    vpn: VpnConfig | None = None
+    images: ImageConfig = ImageConfig()
+    database: DatabaseConfig = DatabaseConfig()
+    plugins: PluginConfig = PluginConfig()
+    volumes: VolumeConfig = VolumeConfig()
     s3: S3Config = S3Config({})
     mail: MailConfig = MailConfig({})
+
+    @property
+    def vpn_(self) -> VpnConfig:
+        if not self.vpn:
+            raise ValueError("VPN config is not provided")
+        return self.vpn
 
 
 class DockerConfig[T: ServiceConfigBase](DockerNoServiceConfig):

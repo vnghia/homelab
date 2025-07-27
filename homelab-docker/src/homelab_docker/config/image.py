@@ -5,5 +5,5 @@ from ..model.image.build import BuildImageModel
 
 
 class ImageConfig(HomelabBaseModel):
-    remote: dict[str, RemoteImageModel]
-    build: dict[str, BuildImageModel]
+    remote: dict[str, RemoteImageModel] = {}
+    build: dict[str, BuildImageModel] = {}

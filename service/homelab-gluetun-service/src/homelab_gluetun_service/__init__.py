@@ -35,7 +35,7 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
             "FIREWALL_VPN_INPUT_PORTS": ",".join(
                 map(
                     str,
-                    sorted(self.docker_resource_args.config.vpn.ports.values()),
+                    sorted(self.docker_resource_args.config.vpn_.ports.values()),
                 )
             )
         }

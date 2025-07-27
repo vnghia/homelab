@@ -57,7 +57,7 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     ) -> ContainerNetworkArgs:
         match self.mode:
             case NetworkMode.VPN:
-                vpn_config = main_service.docker_resource_args.config.vpn
+                vpn_config = main_service.docker_resource_args.config.vpn_
                 return ContainerNetworkContainerConfig(
                     container=GlobalExtract(
                         GlobalExtractFull(

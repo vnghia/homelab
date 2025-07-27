@@ -32,7 +32,7 @@ class TraefikDynamicServiceFullModelBuilder(
         elif isinstance(network_config, ContainerNetworkModeConfig):
             match network_config.mode:
                 case NetworkMode.VPN:
-                    vpn_config = main_service.docker_resource_args.config.vpn
+                    vpn_config = main_service.docker_resource_args.config.vpn_
                     vpn_service = main_service.SERVICES[vpn_config.service]
                     vpn_service.containers[vpn_config.container]
                     service_name = vpn_service.add_service_name(vpn_config.container)

@@ -18,5 +18,5 @@ class GlobalVpnSourceExtractor(ExtractorBase[GlobalExtractVpnSource]):
     ) -> Output[str]:
         root = self.root
         return Output.from_input(
-            str(main_service.docker_resource_args.config.vpn.ports[root.port])
+            str(main_service.docker_resource_args.config.vpn_.ports[root.port])
         )

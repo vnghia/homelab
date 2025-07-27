@@ -4,4 +4,4 @@ from ..model.volume import LocalVolumeModel
 
 
 class VolumeConfig(HomelabBaseModel):
-    local: dict[str, LocalVolumeModel]
+    local: dict[str, LocalVolumeModel] = {}
