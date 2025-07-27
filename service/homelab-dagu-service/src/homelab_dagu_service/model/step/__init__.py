@@ -40,7 +40,7 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
                 if root.script
                 else None,
                 "output": root.output if root.output else None,
-                "depends": root.depends if root.depends else None,
+                "depends": root.depends if root.depends is not None else None,
                 "preconditions": [
                     precondition.to_step(params) for precondition in root.preconditions
                 ]

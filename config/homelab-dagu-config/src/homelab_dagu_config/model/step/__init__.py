@@ -15,5 +15,5 @@ class DaguDagStepModel(HomelabBaseModel):
     continue_on: DaguDagStepContinueOnModel | None = None
     executor: DaguDagStepExecutorModel | None = None
     output: str | None = None
-    depends: list[str] = []
+    depends: list[str] | None = None
     preconditions: list[DaguDagStepPreConditionModel] = []

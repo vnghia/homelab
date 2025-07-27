@@ -99,6 +99,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                                     )
                                 )
                             ],
+                            depends=[],
                         )
                     )
                 service_model = service_model.__replace__(volume=volume_model)
