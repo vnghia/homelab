@@ -17,14 +17,12 @@ class NetworkHostnameResource(ComponentResource):
         config: NetworkConfig,
         *,
         opts: ResourceOptions | None,
-        tailscale_ip: NetworkIpOutputModel,
+        source_ips: dict[str, dict[NetworkIpSource, NetworkIpOutputModel]],
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.config = config
-
-        source_ips = {NetworkIpSource.TAILSCALE: tailscale_ip}
 
         self.records = {
             key: RecordResource(

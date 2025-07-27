@@ -1,6 +1,7 @@
 import json_fix as json_fix
 from homelab_config import Config, DockerConfigs
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_network.model.ip import NetworkIpSource
 from homelab_network.resource.hostname import NetworkHostnameResource
 from homelab_network.resource.network import NetworkResource
 from homelab_secret.resource.keepass import KeepassResource
@@ -35,5 +36,9 @@ class Homelab:
         )
 
         self.hostname = NetworkHostnameResource(
-            self.config.network, opts=None, tailscale_ip=self.sun.tailscale.ip
+            self.config.network,
+            opts=None,
+            source_ips={
+                SunHost.name(): {NetworkIpSource.TAILSCALE: self.sun.tailscale.ip}
+            },
         )

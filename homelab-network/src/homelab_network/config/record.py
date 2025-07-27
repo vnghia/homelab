@@ -9,6 +9,7 @@ from .ip import NetworkIpConfig
 
 class RecordConfig(HomelabBaseModel):
     zone_id: str
+    host: str
     public: bool
     source_ip: NetworkIpConfig
     local_ip: NetworkIpModel | None

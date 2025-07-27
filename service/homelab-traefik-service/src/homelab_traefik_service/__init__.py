@@ -40,8 +40,12 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         self.options[None] = ContainerModelBuildArgs(
             opts=ResourceOptions(delete_before_replace=True),
             envs={
-                "CF_ZONE_API_TOKEN": network_resource.token.amce_read.value,
-                "CF_DNS_API_TOKEN": network_resource.token.amce_write.value,
+                "CF_ZONE_API_TOKEN": network_resource.token.amce_tokens[
+                    docker_resource_args.host
+                ][0].value,
+                "CF_DNS_API_TOKEN": network_resource.token.amce_tokens[
+                    docker_resource_args.host
+                ][1].value,
             },
             files=[self.static],
         )

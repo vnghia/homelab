@@ -17,7 +17,7 @@ class RecordResource(ComponentResource):
         config: RecordConfig,
         *,
         opts: ResourceOptions,
-        source_ips: dict[NetworkIpSource, NetworkIpOutputModel],
+        source_ips: dict[str, dict[NetworkIpSource, NetworkIpOutputModel]],
     ) -> None:
         super().__init__(self.RESOURCE_NAME, name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -28,7 +28,7 @@ class RecordResource(ComponentResource):
             if isinstance(source_ip_model, NetworkIpModel):
                 source_ip = NetworkIpOutputModel.from_model(source_ip_model)
             else:
-                source_ip = source_ips[source_ip_model]
+                source_ip = source_ips[config.host][source_ip_model]
 
             self.records = {
                 key: [
