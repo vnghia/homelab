@@ -73,6 +73,7 @@ services:
         dag:
           pre-backup-volume:
             name: pre-backup-volume
+            path: kanidm-pre-backup-volume
             tags: ["backup"]
             steps:
               - name: stop-container

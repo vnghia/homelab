@@ -72,6 +72,7 @@ services:
         dag:
           pre-backup-volume:
             name: pre-backup-volume
+            path: beszel-pre-backup-volume
             dotenvs:
               - null
             tags: ["backup"]
