@@ -6,12 +6,12 @@ from homelab_network.resource.network import NetworkResource
 from homelab_secret.resource.keepass import KeepassResource
 
 from .host.sun import SunHost
-from .service.config import ServiceConfig
+from .host.sun.config import SunServiceConfig
 
 
 class Homelab:
     def __init__(self) -> None:
-        self.config = Config[ServiceConfig].build(DockerConfigs[ServiceConfig])
+        self.config = Config[SunServiceConfig].build(DockerConfigs[SunServiceConfig])
         self.project_prefix = Config.get_name(None, project=True, stack=True)
 
         self.network = NetworkResource(

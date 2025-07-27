@@ -13,7 +13,7 @@ from homelab_restic_service.config import ResticConfig
 from homelab_traefik_service.config import TraefikConfig
 
 
-class ServiceConfig(ServiceConfigBase):
+class SunServiceConfig(ServiceConfigBase):
     tailscale: ServiceModel
     ddns: ServiceWithConfigModel[DdnsConfig]
     traefik: ServiceWithConfigModel[TraefikConfig]

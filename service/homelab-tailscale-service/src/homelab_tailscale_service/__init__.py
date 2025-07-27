@@ -45,8 +45,14 @@ class TailscaleService(ServiceResourceBase):
         self.ipv6 = self.device.apply(lambda x: IPv6Address(x.addresses[1]))
         self.ip = NetworkIpOutputModel(v4=self.ipv4, v6=self.ipv6)
 
-        pulumi.export("tailscale.ipv4", self.ipv4.apply(str))
-        pulumi.export("tailscale.ipv6", self.ipv6.apply(str))
+        pulumi.export(
+            "{}.tailscale.ipv4".format(self.docker_resource_args.host),
+            self.ipv4.apply(str),
+        )
+        pulumi.export(
+            "{}.tailscale.ipv6".format(self.docker_resource_args.host),
+            self.ipv6.apply(str),
+        )
         self.register_outputs({})
 
     def build_authkey(self) -> tailscale.TailnetKey:

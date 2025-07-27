@@ -14,15 +14,15 @@ from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 
-from ..file import File
-from ..service.config import ServiceConfig
-from . import HostBase
+from ...file import File
+from .. import HostBase
+from .config import SunServiceConfig
 
 
-class SunHost(HostBase[ServiceConfig]):
+class SunHost(HostBase[SunServiceConfig]):
     def __init__(
         self,
-        config: DockerConfig[ServiceConfig],
+        config: DockerConfig[SunServiceConfig],
         *,
         opts: ResourceOptions | None,
         project_prefix: str,
