@@ -12,16 +12,19 @@ from homelab_pydantic import HomelabBaseModel
 from .constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
 
 
-class DockerConfigs[TSun: ServiceConfigBase](HomelabBaseModel):
+class DockerConfigs[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](
+    HomelabBaseModel
+):
     sun: DockerConfig[TSun]
+    earth: DockerConfig[TEarth]
 
 
-class Config[TSun: ServiceConfigBase](HomelabBaseModel):
+class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):
     PROJECT_NAME: ClassVar[str] = PROJECT_NAME
     PROJECT_STACK: ClassVar[str] = PROJECT_STACK
     PROJECT_LABELS: ClassVar[dict[str, str]] = PROJECT_LABELS
 
-    dockers: DockerConfigs[TSun]
+    dockers: DockerConfigs[TSun, TEarth]
     network: NetworkConfig
 
     @classmethod
@@ -42,8 +45,8 @@ class Config[TSun: ServiceConfigBase](HomelabBaseModel):
 
     @classmethod
     def get_docker_configs(
-        cls, docker_type: Type[DockerConfigs[TSun]]
-    ) -> DockerConfigs[TSun]:
+        cls, docker_type: Type[DockerConfigs[TSun, TEarth]]
+    ) -> DockerConfigs[TSun, TEarth]:
         key = "docker"
 
         config_data = {}
@@ -90,7 +93,7 @@ class Config[TSun: ServiceConfigBase](HomelabBaseModel):
         )
 
     @classmethod
-    def build(cls, docker_type: Type[DockerConfigs[TSun]]) -> Self:
+    def build(cls, docker_type: Type[DockerConfigs[TSun, TEarth]]) -> Self:
         return cls(
             dockers=cls.get_docker_configs(docker_type),
             network=NetworkConfig.model_validate(cls.get_key("network")),

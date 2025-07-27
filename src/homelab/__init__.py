@@ -6,13 +6,17 @@ from homelab_network.resource.hostname import NetworkHostnameResource
 from homelab_network.resource.network import NetworkResource
 from homelab_secret.resource.keepass import KeepassResource
 
+from .host.earth import EarthHost
+from .host.earth.config import EarthServiceConfig
 from .host.sun import SunHost
 from .host.sun.config import SunServiceConfig
 
 
 class Homelab:
     def __init__(self) -> None:
-        self.config = Config[SunServiceConfig].build(DockerConfigs[SunServiceConfig])
+        self.config = Config[SunServiceConfig, EarthServiceConfig].build(
+            DockerConfigs[SunServiceConfig, EarthServiceConfig]
+        )
         self.project_prefix = Config.get_name(None, project=True, stack=True)
 
         self.network = NetworkResource(
@@ -21,6 +25,12 @@ class Homelab:
 
         self.sun = SunHost(
             self.config.dockers.sun,
+            opts=None,
+            project_prefix=self.project_prefix,
+            network_resource=self.network,
+        )
+        self.earth = EarthHost(
+            self.config.dockers.earth,
             opts=None,
             project_prefix=self.project_prefix,
             network_resource=self.network,
