@@ -1,6 +1,5 @@
 import json_fix as json_fix
-from homelab_config import Config
-from homelab_docker.config import DockerConfig
+from homelab_config import Config, DockerConfigs
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_network.resource.hostname import NetworkHostnameResource
 from homelab_network.resource.network import NetworkResource
@@ -12,7 +11,7 @@ from .service.config import ServiceConfig
 
 class Homelab:
     def __init__(self) -> None:
-        self.config = Config[ServiceConfig].build(DockerConfig[ServiceConfig])
+        self.config = Config[ServiceConfig].build(DockerConfigs[ServiceConfig])
         self.project_prefix = Config.get_name(None, project=True, stack=True)
 
         self.network = NetworkResource(
@@ -20,7 +19,7 @@ class Homelab:
         )
 
         self.sun = SunHost(
-            self.config.docker,
+            self.config.dockers.sun,
             opts=None,
             project_prefix=self.project_prefix,
             network_resource=self.network,
