@@ -121,3 +121,5 @@ class SunHost(HostBase[SunServiceConfig]):
             restic_service=self.restic,
             docker_resource_args=self.docker.resource_args,
         )
+
+        self.register_outputs({})
