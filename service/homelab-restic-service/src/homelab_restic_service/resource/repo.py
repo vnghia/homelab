@@ -8,6 +8,7 @@ from pulumi.dynamic import CreateResult, Resource, ResourceProvider
 
 
 class ResticRepoProviderProps(HomelabBaseModel):
+    docker_host: str
     image: str
     envs: dict[str, str]
 
@@ -22,7 +23,7 @@ class ResticRepo:
     @classmethod
     def exist(cls, props: ResticRepoProviderProps) -> bool:
         # https://restic.readthedocs.io/en/stable/075_scripting.html#check-if-a-repository-is-already-initialized
-        client = DockerClient()
+        client = DockerClient(props.docker_host)
         try:
             client.containers.run(
                 props.image,
@@ -40,7 +41,7 @@ class ResticRepo:
 
     @classmethod
     def init(cls, props: ResticRepoProviderProps) -> None:
-        client = DockerClient()
+        client = DockerClient(props.docker_host)
         client.containers.run(
             props.image,
             entrypoint=["/usr/bin/restic"],
@@ -69,9 +70,13 @@ class ResticRepoResource(Resource, module="restic", name="Repo"):
         resource_name: str,
         *,
         opts: ResourceOptions,
+        docker_host: str,
         image: Output[str],
         envs: dict[str, Output[str]],
     ) -> None:
         super().__init__(
-            ResticRepoProvider(), resource_name, {"image": image, "envs": envs}, opts
+            ResticRepoProvider(),
+            resource_name,
+            {"docker-host": docker_host, "image": image, "envs": envs},
+            opts,
         )

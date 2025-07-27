@@ -40,7 +40,7 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
                         self, container_model
                     ),
                     mode=model.mode,
-                    volume_resource=self.docker_resource_args.volume,
+                    docker_resources_args=self.docker_resource_args,
                 )
                 for resource_name, model in config.items()
             ]

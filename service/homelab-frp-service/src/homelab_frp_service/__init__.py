@@ -100,7 +100,7 @@ class FrpClientConfigResource(
                     *proxies,
                 ],
             },
-            volume_resource=frp_service.docker_resource_args.volume,
+            docker_resource_args=frp_service.docker_resource_args,
         )
 
     @classmethod

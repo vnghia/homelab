@@ -46,6 +46,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self.repo = ResticRepoResource(
             "repo",
             opts=self.child_opts,
+            docker_host=docker_resource_args.config.host.ssh,
             image=self.docker_resource_args.image.remotes[self.config.image].image_id,
             envs=self.config.dagu.dotenvs[None].to_envs(self, None),
         )

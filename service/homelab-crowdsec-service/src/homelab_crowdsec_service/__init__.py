@@ -39,7 +39,7 @@ class DockerAcquisConfigResource(
                 "use_container_labels": True,
                 "check_interval": crowdsec_service.config.docker.check_interval,
             },
-            volume_resource=crowdsec_service.docker_resource_args.volume,
+            docker_resource_args=crowdsec_service.docker_resource_args,
         )
 
 

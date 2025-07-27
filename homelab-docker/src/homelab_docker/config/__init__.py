@@ -6,6 +6,7 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 
 from ..model.platform import Platform
 from .database import DatabaseConfig
+from .host import HostConfig
 from .image import ImageConfig
 from .network import NetworkConfig
 from .plugin import PluginConfig
@@ -14,7 +15,7 @@ from .volume import VolumeConfig
 
 
 class DockerNoServiceConfig(HomelabBaseModel):
-    host: str
+    host: HostConfig
     platform: Platform
     timezone: TimeZoneName
     network: NetworkConfig

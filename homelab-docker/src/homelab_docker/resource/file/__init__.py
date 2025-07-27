@@ -14,7 +14,6 @@ from docker.models.containers import Container
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
-    ConfigureRequest,
     CreateResult,
     DiffResult,
     ReadResult,
@@ -34,13 +33,14 @@ from ...client import DockerClient
 from ...model.container import ContainerModel
 from ...model.container.volume_path import ContainerVolumePath
 from ...model.file import FileDataModel, FileLocationModel
-from ..volume import VolumeResource
 
 if typing.TYPE_CHECKING:
+    from .. import DockerResourceArgs
     from ..service import ServiceResourceBase
 
 
 class FileProviderProps(HomelabBaseModel):
+    docker_host: str
     location: FileLocationModel
     data: FileDataModel
 
@@ -81,8 +81,8 @@ class FileVolumeProxy:
 
     @classmethod
     @contextmanager
-    def container(cls, volume: str) -> Iterator[Container]:
-        container = DockerClient().containers.create(
+    def container(cls, docker_host: str, volume: str) -> Iterator[Container]:
+        container = DockerClient(docker_host).containers.create(
             image=cls.IMAGE,
             detach=True,
             network_mode="none",
@@ -95,8 +95,8 @@ class FileVolumeProxy:
             container.remove(force=True)
 
     @classmethod
-    def pull_image(cls) -> None:
-        DockerClient().images.pull(repository=cls.IMAGE)
+    def pull_image(cls, docker_host: str) -> None:
+        DockerClient(docker_host).images.pull(repository=cls.IMAGE)
 
     @classmethod
     def create_file(cls, props: FileProviderProps) -> None:
@@ -116,12 +116,12 @@ class FileVolumeProxy:
             tar_file.seek(0)
             return tar_file
 
-        with cls.container(props.location.volume) as container:
+        with cls.container(props.docker_host, props.location.volume) as container:
             container.put_archive(cls.WORKING_DIR.as_posix(), compress_tar())
 
     @classmethod
     def read_file(cls, props: FileProviderProps) -> FileProviderProps | None:
-        with cls.container(props.location.volume) as container:
+        with cls.container(props.docker_host, props.location.volume) as container:
             try:
                 tar_file = io.BytesIO()
                 (stream, stat) = container.get_archive(
@@ -147,7 +147,7 @@ class FileVolumeProxy:
 
     @classmethod
     def delete_file(cls, props: FileProviderProps) -> None:
-        DockerClient().containers.run(
+        DockerClient(props.docker_host).containers.run(
             image=cls.IMAGE,
             command=["rm", "-rf", props.location.path.as_posix()],
             detach=False,
@@ -165,9 +165,6 @@ class FileVolumeProxy:
 
 class FileProvider(ResourceProvider):
     serialize_as_secret_always = False
-
-    def configure(self, req: ConfigureRequest) -> None:
-        FileVolumeProxy.pull_image()
 
     def create(self, props: dict[str, Any]) -> CreateResult:
         file_props = FileProviderProps(**props)
@@ -212,14 +209,15 @@ class FileResource(Resource, module="docker", name="File"):
         volume_path: ContainerVolumePath,
         content: Input[str],
         mode: int,
-        volume_resource: VolumeResource,
+        docker_resources_args: DockerResourceArgs,
     ) -> None:
         self.volume_path = volume_path
-        volume = volume_resource[volume_path.volume]
+        volume = docker_resources_args.volume[volume_path.volume]
         super().__init__(
             FileProvider(),
             resource_name,
             {
+                "docker-host": docker_resources_args.config.host.ssh,
                 "location": {
                     "volume": volume.name,
                     "path": volume_path.path.as_posix(),

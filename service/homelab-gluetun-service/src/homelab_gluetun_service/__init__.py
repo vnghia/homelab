@@ -27,7 +27,7 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
                 ),
                 content=self.config.opvn,
                 mode=0o444,
-                volume_resource=self.docker_resource_args.volume,
+                docker_resources_args=self.docker_resource_args,
             )
             self.options[None].files = [self.opvn]
 

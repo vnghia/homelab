@@ -11,7 +11,7 @@ from pulumi import Output, ResourceOptions
 from pydantic import TypeAdapter, model_validator
 
 from ...model.container.volume_path import ContainerVolumePath
-from ..volume import VolumeResource
+from .. import DockerResourceArgs
 from . import FileResource
 
 T = TypeVar("T", bound=BaseModel)
@@ -104,7 +104,7 @@ class ConfigFileResource(Generic[T], FileResource):
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         data: Mapping[str, Any],
-        volume_resource: VolumeResource,
+        docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(
             resource_name,
@@ -112,7 +112,7 @@ class ConfigFileResource(Generic[T], FileResource):
             volume_path=volume_path.with_suffix(self.suffix or self.dumper.suffix()),
             content=Output.json_dumps(data).apply(self.dumps),
             mode=0o444,
-            volume_resource=volume_resource,
+            docker_resources_args=docker_resource_args,
         )
 
     def validate(self, raw_data: str) -> T:

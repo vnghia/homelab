@@ -60,7 +60,7 @@ class KanidmServerConfigResource(
                     kanidm_service, None
                 ),
             },
-            volume_resource=kanidm_service.docker_resource_args.volume,
+            docker_resource_args=kanidm_service.docker_resource_args,
         )
 
 
@@ -99,7 +99,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             ),
             content=self.key.private_key_pem,
             mode=0o440,
-            volume_resource=self.docker_resource_args.volume,
+            docker_resources_args=self.docker_resource_args,
         )
         self.chain_file = FileResource(
             "chain",
@@ -109,7 +109,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             ),
             content=self.chain.cert_pem,
             mode=0o440,
-            volume_resource=self.docker_resource_args.volume,
+            docker_resources_args=self.docker_resource_args,
         )
 
         self.config_file = KanidmServerConfigResource(

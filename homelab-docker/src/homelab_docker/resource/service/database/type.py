@@ -76,7 +76,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 ),
                 content=script.content,
                 mode=0o777,
-                volume_resource=main_service.docker_resource_args.volume,
+                docker_resources_args=main_service.docker_resource_args,
             )
             for i, script in enumerate(self.config.scripts + model.scripts)
         ]

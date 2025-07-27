@@ -93,5 +93,5 @@ class ResticGlobalProfileResource(
                     for service, profiles in restic_service.service_database_groups.items()
                 },
             },
-            volume_resource=restic_service.docker_resource_args.volume,
+            docker_resource_args=restic_service.docker_resource_args,
         )

@@ -36,5 +36,5 @@ class TraefikDynamicConfigResource(
             opts=opts,
             volume_path=traefik_service.get_dynamic_config_volume_path(self.name),
             data=model.to_data(main_service, traefik_service),
-            volume_resource=traefik_service.docker_resource_args.volume,
+            docker_resource_args=traefik_service.docker_resource_args,
         )

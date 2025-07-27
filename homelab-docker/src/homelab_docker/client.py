@@ -3,12 +3,8 @@ from docker.models import containers, images
 
 
 class DockerClient:
-    @classmethod
-    def init_client(cls) -> docker.DockerClient:
-        return docker.from_env()
-
-    def __init__(self) -> None:
-        self.client = self.init_client()
+    def __init__(self, base_url: str) -> None:
+        self.client = docker.DockerClient(base_url)
 
     @property
     def images(self) -> images.ImageCollection:

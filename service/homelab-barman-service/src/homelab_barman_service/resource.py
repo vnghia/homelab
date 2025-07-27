@@ -74,5 +74,5 @@ class BarmanConfigFileResource(
                     ).extract_path(barman_service, None),
                 }
             },
-            volume_resource=barman_service.docker_resource_args.volume,
+            docker_resource_args=barman_service.docker_resource_args,
         )

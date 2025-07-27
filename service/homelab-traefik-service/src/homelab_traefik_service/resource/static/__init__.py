@@ -156,5 +156,5 @@ class TraefikStaticConfigResource(
                     },
                 },
             },
-            volume_resource=traefik_service.docker_resource_args.volume,
+            docker_resource_args=traefik_service.docker_resource_args,
         )

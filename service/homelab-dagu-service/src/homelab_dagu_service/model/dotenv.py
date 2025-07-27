@@ -28,7 +28,7 @@ class DaguDagDotenvModelBuilder(HomelabRootModel[DaguDagDotenvModel]):
                 main_service.add_service_name(resource_name)
             ),
             envs=self.root.to_envs(main_service, None),
-            volume_resource=main_service.docker_resource_args.volume,
+            docker_resource_args=main_service.docker_resource_args,
         )
         dagu_service.dotenvs[main_service.name()][resource_name] = resource
         return resource

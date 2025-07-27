@@ -38,5 +38,5 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
                 dagu_service,
                 dagu_service.get_log_dir_volume_path(self.path),
             ),
-            volume_resource=dagu_service.docker_resource_args.volume,
+            docker_resource_args=dagu_service.docker_resource_args,
         )

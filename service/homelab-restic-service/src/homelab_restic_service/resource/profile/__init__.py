@@ -99,5 +99,5 @@ class ResticProfileResource(
                     }
                 },
             },
-            volume_resource=restic_service.docker_resource_args.volume,
+            docker_resource_args=restic_service.docker_resource_args,
         )

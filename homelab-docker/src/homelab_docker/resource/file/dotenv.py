@@ -4,7 +4,7 @@ from homelab_pydantic import HomelabRootModel
 from pulumi import Input, ResourceOptions
 
 from ...model.container.volume_path import ContainerVolumePath
-from ..volume import VolumeResource
+from .. import DockerResourceArgs
 from .config import ConfigDumper, ConfigFileResource
 
 
@@ -37,7 +37,7 @@ class DotenvFileResource(
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         envs: Mapping[str, Input[str]],
-        volume_resource: VolumeResource,
+        docker_resource_args: DockerResourceArgs,
     ) -> None:
         self.envs = envs
         super().__init__(
@@ -45,5 +45,5 @@ class DotenvFileResource(
             opts=opts,
             volume_path=volume_path,
             data=envs,
-            volume_resource=volume_resource,
+            docker_resource_args=docker_resource_args,
         )

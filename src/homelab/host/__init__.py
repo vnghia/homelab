@@ -3,6 +3,7 @@ import pulumi_docker_build as docker_build
 from homelab_docker.config import DockerConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceWithConfigModel
+from homelab_docker.resource.file import FileVolumeProxy
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_network.resource.network import NetworkResource
@@ -29,9 +30,9 @@ class HostBase[T: ServiceConfigBase](ComponentResource):
                 opts,
                 ResourceOptions(
                     providers={
-                        "docker": docker.Provider(self.name(), host=config.host),
+                        "docker": docker.Provider(self.name(), host=config.host.ssh),
                         "docker-build": docker_build.Provider(
-                            self.name(), host=config.host
+                            self.name(), host=config.host.ssh
                         ),
                     }
                 ),
@@ -49,6 +50,7 @@ class HostBase[T: ServiceConfigBase](ComponentResource):
             project_prefix=self.project_prefix,
             hostnames=self.network.hostnames,
         )
+        FileVolumeProxy.pull_image(config.host.ssh)
 
     def build_extra_services(self) -> None:
         self.extra_services = {

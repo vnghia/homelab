@@ -12,13 +12,14 @@ class KanidmPasswordProviderProps(HomelabBaseModel):
         r'.*new_password: "([\d\w]+)".*'
     )
 
+    docker_host: str
     container: str
     account: str
     config_path: str
 
     def recover_account(self) -> str:
         result: str = (
-            DockerClient()
+            DockerClient(self.docker_host)
             .containers.get(self.container)
             .exec_run(
                 ["kanidmd", "recover-account", "-c", self.config_path, self.account]

@@ -8,6 +8,7 @@ from typing import Any, ClassVar
 import pulumi
 from docker.models.containers import Container
 from homelab_docker.client import DockerClient
+from homelab_docker.resource import DockerResourceArgs
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
@@ -40,6 +41,7 @@ class NtfyUserProviderProps(HomelabBaseModel):
         r"^user ([\w]+|\*) \(role: (\w+), .*$"
     )
 
+    docker_host: str
     username: str
     password: str
     container: str
@@ -75,7 +77,7 @@ class NtfyUserProviderProps(HomelabBaseModel):
         )
 
     def get_container(self) -> Container:
-        return DockerClient.init_client().containers.get(self.container)
+        return DockerClient(self.docker_host).containers.get(self.container)
 
     def get_user(self) -> NtfyUserProviderProps | None:
         result: str = (
@@ -192,11 +194,13 @@ class NtfyUserResource(Resource, module="ntfy", name="User"):
         password: Input[str],
         role: Input[str],
         acl: NtfyUserAclConfig,
+        docker_resource_args: DockerResourceArgs,
     ) -> None:
         super().__init__(
             NtfyUserProvider(),
             resource_name,
             {
+                "docker-host": docker_resource_args.config.host.ssh,
                 "container": container,
                 "username": username,
                 "password": password,
