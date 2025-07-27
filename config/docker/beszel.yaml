@@ -100,6 +100,23 @@ services:
                       string:
                         template: "http://{container}:{port}/api/collections/_superusers/auth-with-password"
                 output: AUTH
+              - name: delete-backup
+                executor:
+                  headers:
+                    Authorization: ${AUTH.token}
+                run:
+                  - "DELETE"
+                  - extract:
+                      kv:
+                        container:
+                          name:
+                        port:
+                          variable: PORT
+                        prefix:
+                          variable: PREFIX
+                    transform:
+                      string:
+                        template: "http://{container}:{port}/api/backups/output.zip"
               - name: create-backup
                 executor:
                   headers:
