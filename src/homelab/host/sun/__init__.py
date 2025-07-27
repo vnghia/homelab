@@ -38,7 +38,7 @@ class SunHost(HostBase[SunServiceConfig]):
         self.tailscale = TailscaleService(
             self.docker.services_config.tailscale,
             opts=self.child_opts,
-            hostname=self.project_prefix,
+            hostname=self.hostname,
             internal_aliases=self.network.config.aliases,
             docker_resource_args=self.docker.resource_args,
         )
@@ -103,7 +103,7 @@ class SunHost(HostBase[SunServiceConfig]):
         self.restic = ResticService(
             self.docker.services_config.restic,
             opts=self.child_opts,
-            hostname=self.project_prefix,
+            hostname=self.hostname,
             backup_config=self.docker.services_config.backup.config,
             barman_service=self.barman,
             balite_service=self.balite,

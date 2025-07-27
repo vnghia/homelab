@@ -43,6 +43,7 @@ class HostBase[T: ServiceConfigBase](ComponentResource):
         self.config = config
         self.project_prefix = project_prefix
         self.network = network_resource
+        self.hostname = "{}-{}".format(self.project_prefix, self.name())
 
         self.docker = Docker(
             self.config,
