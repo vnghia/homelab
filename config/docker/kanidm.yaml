@@ -29,6 +29,8 @@ services:
         transform:
           path: kanidm.backup.json
     config:
+      address:
+        host: address
       path:
         config:
           variable: CONFIG
