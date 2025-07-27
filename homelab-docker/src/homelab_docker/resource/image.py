@@ -16,6 +16,7 @@ class ImageResource(ComponentResource):
         platform: Platform,
         project_prefix: str,
         project_labels: dict[str, str],
+        host: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -50,5 +51,5 @@ class ImageResource(ComponentResource):
             name: image.ref for name, image in self.builds.items()
         }
         for name, value in export.items():
-            pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
+            pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
         self.register_outputs(export)

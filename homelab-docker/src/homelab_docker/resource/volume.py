@@ -17,6 +17,7 @@ class VolumeResource(ComponentResource):
         *,
         opts: ResourceOptions,
         project_labels: dict[str, str],
+        host: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -69,7 +70,7 @@ class VolumeResource(ComponentResource):
 
         export = {name: volume.name for name, volume in self.volumes.items()}
         for name, value in export.items():
-            pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
+            pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
         self.register_outputs(export)
 
     def __getitem__(self, key: str) -> docker.Volume:

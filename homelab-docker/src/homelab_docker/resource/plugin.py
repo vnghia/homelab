@@ -9,7 +9,12 @@ class PluginResource(ComponentResource):
     RESOURCE_NAME = "plugin"
 
     def __init__(
-        self, config: PluginConfig, *, opts: ResourceOptions, platform: Platform
+        self,
+        config: PluginConfig,
+        *,
+        opts: ResourceOptions,
+        host: str,
+        platform: Platform,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -21,5 +26,5 @@ class PluginResource(ComponentResource):
 
         export = {name: plugin.id for name, plugin in self.plugins.items()}
         for name, value in export.items():
-            pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
+            pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
         self.register_outputs(export)

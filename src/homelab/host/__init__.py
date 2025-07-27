@@ -48,6 +48,7 @@ class HostBase[T: ServiceConfigBase](ComponentResource):
             self.config,
             opts=self.child_opts,
             project_prefix=self.project_prefix,
+            host=self.name(),
             hostnames=self.network.hostnames,
         )
         FileVolumeProxy.pull_image(config.host.ssh)

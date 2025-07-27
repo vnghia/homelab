@@ -106,8 +106,9 @@ class ServiceResourceBase(ComponentResource):
                 for name, versions in containers.items():
                     for version, container in versions.items():
                         pulumi.export(
-                            "container.{}".format(
-                                type_.get_full_name_version(self.name(), name, version)
+                            "{}.container.{}".format(
+                                self.docker_resource_args.host,
+                                type_.get_full_name_version(self.name(), name, version),
                             ),
                             container.name,
                         )
@@ -121,16 +122,22 @@ class ServiceResourceBase(ComponentResource):
             for name, secret in self._secret.secrets.items():
                 if isinstance(secret, tls.PrivateKey):
                     pulumi.export(
-                        "secret.{}.private-key".format(self.add_service_name(name)),
+                        "{}.secret.{}.private-key".format(
+                            self.docker_resource_args.host, self.add_service_name(name)
+                        ),
                         secret.private_key_openssh,
                     )
                     pulumi.export(
-                        "secret.{}.public-key".format(self.add_service_name(name)),
+                        "{}.secret.{}.public-key".format(
+                            self.docker_resource_args.host, self.add_service_name(name)
+                        ),
                         secret.public_key_openssh,
                     )
                 else:
                     pulumi.export(
-                        "secret.{}".format(self.add_service_name(name)),
+                        "{}.secret.{}".format(
+                            self.docker_resource_args.host, self.add_service_name(name)
+                        ),
                         secret.result,
                     )
 
@@ -165,7 +172,10 @@ class ServiceResourceBase(ComponentResource):
         for name, container in self.containers.items():
             self.CONTAINER_RESOURCES[self.name()][name] = container
             pulumi.export(
-                "container.{}".format(self.add_service_name(name)), container.name
+                "{}.container.{}".format(
+                    self.docker_resource_args.host, self.add_service_name(name)
+                ),
+                container.name,
             )
 
 

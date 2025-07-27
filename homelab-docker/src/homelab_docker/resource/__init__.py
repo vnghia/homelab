@@ -21,9 +21,10 @@ class DockerResource:
         opts: ResourceOptions,
         project_prefix: str,
         project_labels: dict[str, str],
+        host: str,
     ) -> None:
         self.network = NetworkResource(
-            config=config.network, opts=opts, project_labels=project_labels
+            config=config.network, opts=opts, project_labels=project_labels, host=host
         )
         self.image = ImageResource(
             config=config,
@@ -31,17 +32,19 @@ class DockerResource:
             platform=config.platform,
             project_prefix=project_prefix,
             project_labels=project_labels,
+            host=host,
         )
         self.plugin = PluginResource(
-            config=config.plugins, opts=opts, platform=config.platform
+            config=config.plugins, opts=opts, host=host, platform=config.platform
         )
         self.volume = VolumeResource(
-            config=config, opts=opts, project_labels=project_labels
+            config=config, opts=opts, project_labels=project_labels, host=host
         )
 
 
 @dataclasses.dataclass
 class DockerResourceArgs:
+    host: str
     timezone: TimeZoneName
     config: DockerNoServiceConfig
     resource: DockerResource

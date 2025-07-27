@@ -14,6 +14,7 @@ class NetworkResource(ComponentResource):
         *,
         opts: ResourceOptions,
         project_labels: dict[str, str],
+        host: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -34,7 +35,7 @@ class NetworkResource(ComponentResource):
             config.PROXY_BRIDGE: self.proxy_bridge.name,
         }
         for name, value in export.items():
-            pulumi.export("{}.{}".format(self.RESOURCE_NAME, name), value)
+            pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
         self.register_outputs(export)
 
     def default_bridge_args(

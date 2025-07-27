@@ -15,6 +15,7 @@ class Docker[T: ServiceConfigBase](ComponentResource):
         *,
         opts: ResourceOptions,
         project_prefix: str,
+        host: str,
         hostnames: Hostnames,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
@@ -26,10 +27,12 @@ class Docker[T: ServiceConfigBase](ComponentResource):
             opts=self.child_opts,
             project_prefix=project_prefix,
             project_labels=Config.PROJECT_LABELS,
+            host=host,
         )
 
         self.services_config = self.config.services
         self.resource_args = DockerResourceArgs(
+            host=host,
             timezone=self.config.timezone,
             config=self.config,
             resource=self.resource,
