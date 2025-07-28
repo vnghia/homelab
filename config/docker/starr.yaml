@@ -181,7 +181,7 @@ services:
       prowlarr:
         image: prowlarr
         network:
-          default-bridge: true
+          mode: vpn
         tmpfs:
           - path: /run
             exec: true
