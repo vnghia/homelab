@@ -32,9 +32,7 @@ class Docker[T: ServiceConfigBase](ComponentResource):
 
         self.services_config = self.config.services
         self.resource_args = DockerResourceArgs(
-            host=host,
             timezone=self.config.timezone,
-            config=self.config,
             resource=self.resource,
             models=self.config.services.services,
             project_labels=Config.PROJECT_LABELS,

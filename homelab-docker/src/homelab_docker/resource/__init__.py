@@ -23,6 +23,9 @@ class DockerResource:
         project_labels: dict[str, str],
         host: str,
     ) -> None:
+        self.config = config
+        self.host = host
+
         self.network = NetworkResource(
             config=config.network, opts=opts, project_labels=project_labels, host=host
         )
@@ -32,25 +35,31 @@ class DockerResource:
             platform=config.platform,
             project_prefix=project_prefix,
             project_labels=project_labels,
-            host=host,
+            host=self.host,
         )
         self.plugin = PluginResource(
-            config=config.plugins, opts=opts, host=host, platform=config.platform
+            config=config.plugins, opts=opts, host=self.host, platform=config.platform
         )
         self.volume = VolumeResource(
-            config=config, opts=opts, project_labels=project_labels, host=host
+            config=config, opts=opts, project_labels=project_labels, host=self.host
         )
 
 
 @dataclasses.dataclass
 class DockerResourceArgs:
-    host: str
     timezone: TimeZoneName
-    config: DockerNoServiceConfig
     resource: DockerResource
     models: dict[str, ServiceModel]
     project_labels: dict[str, str]
     hostnames: Hostnames = dataclasses.field(default_factory=Hostnames)
+
+    @property
+    def config(self) -> DockerNoServiceConfig:
+        return self.resource.config
+
+    @property
+    def host(self) -> str:
+        return self.resource.host
 
     @property
     def network(self) -> NetworkResource:
