@@ -83,7 +83,7 @@ class ContainerModel(HomelabBaseModel):
             raise ValueError("Image config model is None")
         return self.raw_image
 
-    def model(self, main_service: ServiceResourceBase) -> ContainerModel:
+    def to_full(self, main_service: ServiceResourceBase) -> ContainerModel:
         if "inherit" in self.model_fields_set:
             inherit = self.inherit.to_full()
             service = (
@@ -207,17 +207,16 @@ class ContainerModel(HomelabBaseModel):
         build_args: ContainerModelBuildArgs | None,
     ) -> docker.Container:
         docker_resource_args = main_service.docker_resource_args
-        model = self.model(main_service)
 
         build_args = build_args or ContainerModelBuildArgs()
-        network_args = model.network.to_args(resource_name, main_service, build_args)
+        network_args = self.network.to_args(resource_name, main_service, build_args)
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
-        if model.databases:
+        if self.databases:
             depends_on.extend(
                 database.to_container(main_service.database)
-                for database in model.databases
+                for database in self.databases
             )
 
         return docker.Container(
@@ -226,51 +225,51 @@ class ContainerModel(HomelabBaseModel):
                 ResourceOptions.merge(opts, build_args.opts),
                 ResourceOptions(replace_on_changes=["*"], depends_on=depends_on),
             ),
-            image=model.image.to_image_name(docker_resource_args.image),
-            capabilities=docker.ContainerCapabilitiesArgs(adds=model.capabilities)
-            if model.capabilities
+            image=self.image.to_image_name(docker_resource_args.image),
+            capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
+            if self.capabilities
             else None,
-            command=model.build_command(main_service),
+            command=self.build_command(main_service),
             devices=[
                 docker.ContainerDeviceArgs(
                     host_path=device.as_posix(), container_path=device.as_posix()
                 )
-                for device in model.devices
+                for device in self.devices
             ]
-            if model.devices
+            if self.devices
             else None,
-            group_adds=model.group_adds,
-            entrypoints=model.build_entrypoint(main_service),
-            healthcheck=model.healthcheck.to_args(main_service, model)
-            if model.healthcheck
+            group_adds=self.group_adds,
+            entrypoints=self.build_entrypoint(main_service),
+            healthcheck=self.healthcheck.to_args(main_service, self)
+            if self.healthcheck
             else None,
-            hostname=GlobalExtractor(model.hostname).extract_str(main_service, model)
-            if model.hostname
+            hostname=GlobalExtractor(self.hostname).extract_str(main_service, self)
+            if self.hostname
             else None,
-            hosts=[host.to_args() for host in model.hosts] if model.hosts else None,
-            init=model.init,
+            hosts=[host.to_args() for host in self.hosts] if self.hosts else None,
+            init=self.init,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
-            ports=[port.to_args() for port in sorted(model.build_ports().values())],
-            privileged=model.privileged,
-            read_only=model.read_only,
-            rm=model.remove,
-            restart=model.restart,
-            sysctls=model.sysctls,
-            tmpfs=model.build_tmpfs(),
-            user=model.user,
-            volumes=model.volumes.to_args(
-                model.docker_socket, main_service, model, build_args
+            ports=[port.to_args() for port in sorted(self.build_ports().values())],
+            privileged=self.privileged,
+            read_only=self.read_only,
+            rm=self.remove,
+            restart=self.restart,
+            sysctls=self.sysctls,
+            tmpfs=self.build_tmpfs(),
+            user=self.user,
+            volumes=self.volumes.to_args(
+                self.docker_socket, main_service, self, build_args
             ),
-            wait=model.wait if model.healthcheck else False,
-            wait_timeout=model.wait_timeout,
-            envs=model.build_envs(main_service, build_args),
+            wait=self.wait if self.healthcheck else False,
+            wait_timeout=self.wait_timeout,
+            envs=self.build_envs(main_service, build_args),
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
-                    model.build_labels(resource_name, main_service, build_args)
+                    self.build_labels(resource_name, main_service, build_args)
                     | {
-                        "pulumi.image.id": model.image.to_image_id(
+                        "pulumi.image.id": self.image.to_image_id(
                             docker_resource_args.image
                         )
                     }

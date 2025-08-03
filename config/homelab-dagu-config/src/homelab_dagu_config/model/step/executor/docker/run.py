@@ -20,7 +20,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         main_service: ServiceResourceBase,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
-        model = main_service.model[self.model].model(main_service)
+        model = main_service.model[self.model].to_full(main_service)
 
         build_args = main_service.options[self.model]
         config: dict[str, Any] = {}

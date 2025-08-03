@@ -165,7 +165,7 @@ class ServiceResourceBase(ComponentResource):
         for name, model in self.model.containers.items():
             if model.active:
                 self.containers[name] = self.build_container(
-                    name, model, self.options.get(name)
+                    name, model.to_full(self), self.options.get(name)
                 )
 
         self.CONTAINER_RESOURCES[self.name()] = {}
