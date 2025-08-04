@@ -2,8 +2,8 @@ import functools
 import operator
 from typing import Any
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabBaseModel
 from pulumi import Input
 
@@ -17,12 +17,13 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
 
     def to_executor_config(
         self,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
-        model = main_service.model[self.model].to_full(main_service)
+        service = extractor_args.service
+        model = service.model[self.model].to_full(extractor_args)
 
-        build_args = main_service.options[self.model]
+        build_args = service.options[self.model]
         config: dict[str, Any] = {}
         container_config: dict[str, Any] = {}
         host_config: dict[str, Any] = {}
@@ -30,7 +31,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
 
         config["autoRemove"] = self.auto_remove
         config["image"] = model.image.to_image_name(
-            main_service.docker_resource_args.image
+            extractor_args.docker_resource_args.image
         )
         config["pull"] = self.pull
 
@@ -39,12 +40,14 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         entrypoint = (
             self.entrypoint
             if self.entrypoint is not None
-            else model.build_entrypoint(main_service)
+            else model.build_entrypoint(extractor_args)
         )
         if entrypoint is not None:
             container_config["entrypoint"] = entrypoint
-        container_config["labels"] = model.build_labels(None, main_service, build_args)
-        container_config["env"] = model.build_envs(main_service, build_args) + (
+        container_config["labels"] = model.build_labels(
+            None, extractor_args, build_args
+        )
+        container_config["env"] = model.build_envs(extractor_args, build_args) + (
             sorted(
                 functools.reduce(
                     operator.iadd,
@@ -60,10 +63,10 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         )
 
         host_config["binds"] = model.volumes.to_binds(
-            model.docker_socket, main_service, model, build_args
+            model.docker_socket, extractor_args, build_args
         )
 
-        network_args = model.network.to_args(None, main_service, build_args)
+        network_args = model.network.to_args(None, extractor_args, build_args)
         if network_args.advanced:
             network_config["endpointsConfig"] = {
                 network.name: {"aliases": network.aliases}

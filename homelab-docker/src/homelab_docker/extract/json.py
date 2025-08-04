@@ -8,17 +8,13 @@ from pulumi import Output
 from . import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ..model.container import ContainerModel
-    from ..resource.service import ServiceResourceBase
+    from . import ExtractorArgs
 
 
 class GlobalJsonSourceExtractor(ExtractorBase[GlobalExtractJsonSource]):
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> Output[str]:
+    def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         from .global_ import GlobalExtractor
 
-        root = self.root
         return Output.json_dumps(
-            GlobalExtractor.extract_recursively(root.json_, main_service, model)
+            GlobalExtractor.extract_recursively(self.root.json_, extractor_args)
         )

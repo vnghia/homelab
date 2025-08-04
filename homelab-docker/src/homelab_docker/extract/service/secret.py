@@ -9,16 +9,15 @@ from pulumi import Output
 from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ...model.container import ContainerModel
-    from ...resource.service import ServiceResourceBase
+    from .. import ExtractorArgs
 
 
 class ServiceSecretSourceExtractor(ExtractorBase[ServiceExtractSecretSource]):
     def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
+        self, extractor_args: ExtractorArgs
     ) -> Output[str] | dict[str, Output[str]]:
         root = self.root
-        secret = main_service.secret.get(root.secret)
+        secret = extractor_args.service.secret.get(root.secret)
         if isinstance(secret, tls.PrivateKey):
             return {
                 "private_key_pem": secret.private_key_pem,

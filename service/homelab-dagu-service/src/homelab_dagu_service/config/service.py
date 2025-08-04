@@ -16,7 +16,7 @@ from homelab_dagu_config.model.step.run.command import (
     DaguDagStepRunCommandParamTypeFullModel,
     DaguDagStepRunCommandParamTypeModel,
 )
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.extract import ExtractorArgs
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
@@ -34,37 +34,40 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
         self,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
         dagu_service: DaguService,
+        extractor_args: ExtractorArgs,
     ) -> dict[str | None, DaguDagResource]:
         root = self.root
 
         for name, dotenv in root.dotenvs.root.items():
             DaguDagDotenvModelBuilder(dotenv).build_resource(
-                name, opts=opts, main_service=main_service, dagu_service=dagu_service
+                name,
+                opts=opts,
+                extractor_args=extractor_args,
+                dagu_service=dagu_service,
             )
 
         self.build_docker_group_dags(
-            opts=opts, main_service=main_service, dagu_service=dagu_service
+            opts=opts, extractor_args=extractor_args, dagu_service=dagu_service
         )
 
         {
             name: DaguDagModelBuilder(model).build_resource(
                 name,
                 opts=opts,
-                main_service=main_service,
+                extractor_args=extractor_args,
                 dagu_service=dagu_service,
             )
             for name, model in root.dag.root.items()
         }
 
-        return dagu_service.dags[main_service.name()]
+        return dagu_service.dags[extractor_args.service.name()]
 
     def build_docker_group_dags(
         self,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         dagu_service: DaguService,
     ) -> dict[str, DaguDagResource]:
         root = self.root
@@ -76,7 +79,9 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                     DaguDagModel(
                         dotenvs=root.docker.dag.dotenvs,
                         name=self.DEBUG_DAG_NAME,
-                        path="{}-{}".format(main_service.name(), self.DEBUG_DAG_NAME),
+                        path="{}-{}".format(
+                            extractor_args.service.name(), self.DEBUG_DAG_NAME
+                        ),
                         tags=[self.DEBUG_DAG_NAME],
                         params=DaguDagParamsModel(types={DaguDagParamType.DEBUG: None}),
                         steps=[
@@ -113,7 +118,7 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                 ).build_resource(
                     self.DEBUG_DAG_NAME,
                     opts=opts,
-                    main_service=main_service,
+                    extractor_args=extractor_args,
                     dagu_service=dagu_service,
                 )
 
@@ -121,11 +126,11 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                 name: DaguDagModelBuilder(model).build_resource(
                     name,
                     opts=opts,
-                    main_service=main_service,
+                    extractor_args=extractor_args,
                     dagu_service=dagu_service,
                 )
                 for name, model in root.docker.build_models(
-                    main_service=main_service
+                    extractor_args=extractor_args
                 ).items()
             }
         return {}

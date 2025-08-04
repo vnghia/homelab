@@ -5,8 +5,8 @@ from typing import Any
 
 from homelab_dagu_config.model.params import DaguDagParamsModel
 from homelab_dagu_config.model.step import DaguDagStepModel
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from pulumi import Input
 
@@ -21,8 +21,8 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
     def to_step(
         self,
         params: DaguDagParamsModel,
-        main_service: ServiceResourceBase,
         dagu_service: DaguService,
+        extractor_args: ExtractorArgs,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
         root = self.root
@@ -31,11 +31,11 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
             {
                 "name": root.name,
                 "dir": root.dir,
-                "executor": root.executor.to_executor(main_service, dotenvs)
+                "executor": root.executor.to_executor(extractor_args, dotenvs)
                 if root.executor
                 else None,
                 "script": DaguDagStepScriptModelBuilder(root.script).to_script(
-                    params, dagu_service, main_service
+                    params, extractor_args, dagu_service
                 )
                 if root.script
                 else None,
@@ -49,6 +49,6 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
             }
             | (root.continue_on.to_step() if root.continue_on else {})
             | DaguDagStepRunModelBuilder(root.run).to_run(
-                dagu_service, main_service, params
+                params, dagu_service, extractor_args
             )
         )

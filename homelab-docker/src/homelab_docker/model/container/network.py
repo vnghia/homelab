@@ -13,7 +13,7 @@ from pulumi import Input, Output
 from ...extract.global_ import GlobalExtractor
 
 if typing.TYPE_CHECKING:
-    from ...resource.service import ServiceResourceBase
+    from ...extract import ExtractorArgs
     from . import ContainerModelBuildArgs
 
 
@@ -34,13 +34,13 @@ class ContainerNetworkContainerConfig(HomelabBaseModel):
     def to_args(
         self,
         _resource_name: str | None,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         _build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
             mode=Output.format(
                 "container:{0}",
-                GlobalExtractor(self.container).extract_str(main_service, None),
+                GlobalExtractor(self.container).extract_str(extractor_args),
             ),
             advanced=[],
         )
@@ -52,12 +52,12 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     def to_args(
         self,
         resource_name: str | None,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         match self.mode:
             case NetworkMode.VPN:
-                vpn_config = main_service.docker_resource_args.config.vpn_
+                vpn_config = extractor_args.docker_resource_args.config.vpn_
                 return ContainerNetworkContainerConfig(
                     container=GlobalExtract(
                         GlobalExtractFull(
@@ -67,7 +67,7 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
                             ),
                         )
                     )
-                ).to_args(resource_name, main_service, build_args)
+                ).to_args(resource_name, extractor_args, build_args)
             case NetworkMode.HOST:
                 return ContainerNetworkArgs(mode="host", advanced=[])
 
@@ -80,7 +80,7 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
     def to_args(
         self,
         resource_name: str | None,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         from ...config.network import NetworkConfig
@@ -91,7 +91,7 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
             mode="bridge",
             advanced=(
                 [
-                    main_service.docker_resource_args.network.default_bridge_args(
+                    extractor_args.docker_resource_args.network.default_bridge_args(
                         [
                             *resource_aliases,
                             *build_args.aliases.get(NetworkConfig.DEFAULT_BRIDGE, []),
@@ -103,7 +103,7 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
             )
             + (
                 [
-                    main_service.docker_resource_args.network.internal_bridge_args(
+                    extractor_args.docker_resource_args.network.internal_bridge_args(
                         [
                             *resource_aliases,
                             *build_args.aliases.get(NetworkConfig.INTERNAL_BRIDGE, []),
@@ -115,7 +115,7 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
             )
             + (
                 [
-                    main_service.docker_resource_args.network.proxy_bridge_args(
+                    extractor_args.docker_resource_args.network.proxy_bridge_args(
                         [
                             *resource_aliases,
                             *build_args.aliases.get(NetworkConfig.PROXY_BRIDGE, []),
@@ -144,7 +144,7 @@ class ContainerNetworkConfig(
     def to_args(
         self,
         resource_name: str | None,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
-        return self.root.to_args(resource_name, main_service, build_args)
+        return self.root.to_args(resource_name, extractor_args, build_args)

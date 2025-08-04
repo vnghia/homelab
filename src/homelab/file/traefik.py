@@ -26,8 +26,8 @@ class TraefikFile(ComponentResource):
 
                 TraefikServiceConfigBuilder(service.config.traefik).build_resources(
                     opts=service_opts,
-                    main_service=service,
                     traefik_service=traefik_service,
+                    extractor_args=service.extractor_args,
                 )
 
         self.register_outputs({})

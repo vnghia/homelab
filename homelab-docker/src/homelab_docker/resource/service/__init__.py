@@ -9,6 +9,7 @@ from homelab_pydantic import HomelabBaseModel
 from pulumi import ComponentResource, Output, ResourceOptions
 from pydantic.alias_generators import to_snake
 
+from ...extract import ExtractorArgs
 from ...model.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from .. import DockerResourceArgs
@@ -33,6 +34,7 @@ class ServiceResourceBase(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.model = model
+        self.extractor_args = ExtractorArgs.from_service(self)
         self.docker_resource_args = docker_resource_args
 
         self._database: ServiceDatabaseResource | None = None
@@ -156,7 +158,7 @@ class ServiceResourceBase(ComponentResource):
         return model.build_resource(
             self.add_service_name(name),
             opts=self.child_opts,
-            main_service=self,
+            extractor_args=self.extractor_args,
             build_args=container_model_build_args,
         )
 
@@ -165,7 +167,7 @@ class ServiceResourceBase(ComponentResource):
         for name, model in self.model.containers.items():
             if model.active:
                 self.containers[name] = self.build_container(
-                    name, model.to_full(self), self.options.get(name)
+                    name, model.to_full(self.extractor_args), self.options.get(name)
                 )
 
         self.CONTAINER_RESOURCES[self.name()] = {}

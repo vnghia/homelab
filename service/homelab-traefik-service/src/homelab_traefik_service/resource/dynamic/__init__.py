@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import typing
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
-from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ResourceOptions
 
 from ...model.dynamic.http import TraefikDynamicHttpModelBuilder
@@ -27,14 +27,14 @@ class TraefikDynamicConfigResource(
         | TraefikDynamicMiddlewareBuildModelBuilder,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
         traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        self.name = main_service.add_service_name(model.root.name)
+        self.name = extractor_args.service.add_service_name(model.root.name)
         super().__init__(
             resource_name or self.name,
             opts=opts,
             volume_path=traefik_service.get_dynamic_config_volume_path(self.name),
-            data=model.to_data(main_service, traefik_service),
+            data=model.to_data(traefik_service, extractor_args),
             docker_resource_args=traefik_service.docker_resource_args,
         )

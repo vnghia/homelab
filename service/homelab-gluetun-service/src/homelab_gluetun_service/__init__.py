@@ -23,7 +23,7 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
                 "opvn",
                 opts=self.child_opts,
                 volume_path=ServiceExtractor(self.config.opvn_path).extract_volume_path(
-                    self, self.model.containers[None]
+                    self.extractor_args
                 ),
                 content=self.config.opvn,
                 mode=0o444,

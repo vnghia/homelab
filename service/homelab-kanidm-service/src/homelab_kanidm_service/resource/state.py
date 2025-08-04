@@ -139,7 +139,7 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
                 "url": kanidm_service.url,
                 "password": kanidm_service.idm_admin.password,
                 "state": GlobalExtractor.extract_recursively(
-                    state.model_dump(mode="json"), kanidm_service, None
+                    state.model_dump(mode="json"), kanidm_service.extractor_args
                 ),
                 "hash": None,
             },

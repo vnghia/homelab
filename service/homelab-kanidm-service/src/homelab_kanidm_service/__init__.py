@@ -35,30 +35,25 @@ class KanidmServerConfigResource(
     ) -> None:
         config = kanidm_service.config
         path = GlobalExtractor(kanidm_service.config.path.config)
-        self.path = path.extract_path(kanidm_service, None)
+        extractor_args = kanidm_service.extractor_args
+        self.path = path.extract_path(extractor_args)
 
         super().__init__(
             resource_name,
             opts=opts,
-            volume_path=path.extract_volume_path(kanidm_service, None),
+            volume_path=path.extract_volume_path(extractor_args),
             data={
                 "version": "2",
                 "bindaddress": Output.format("[::]:{}", kanidm_service.port),
-                "db_path": GlobalExtractor(config.path.db).extract_path(
-                    kanidm_service, None
-                ),
+                "db_path": GlobalExtractor(config.path.db).extract_path(extractor_args),
                 "tls_key": GlobalExtractor(config.path.tls_key).extract_path(
-                    kanidm_service, None
+                    extractor_args
                 ),
                 "tls_chain": GlobalExtractor(config.path.tls_chain).extract_path(
-                    kanidm_service, None
+                    extractor_args
                 ),
-                "domain": GlobalExtractor(config.domain).extract_str(
-                    kanidm_service, None
-                ),
-                "origin": GlobalExtractor(config.origin).extract_str(
-                    kanidm_service, None
-                ),
+                "domain": GlobalExtractor(config.domain).extract_str(extractor_args),
+                "origin": GlobalExtractor(config.origin).extract_str(extractor_args),
             },
             docker_resource_args=kanidm_service.docker_resource_args,
         )
@@ -78,7 +73,11 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
     ) -> None:
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
-        self.port = GlobalExtractor(self.config.port).extract_str(self, None).apply(int)
+        self.port = (
+            GlobalExtractor(self.config.port)
+            .extract_str(self.extractor_args)
+            .apply(int)
+        )
 
         self.key = tls.PrivateKey(
             "key", opts=self.child_opts, algorithm="ECDSA", ecdsa_curve="P256"
@@ -95,7 +94,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             "key",
             opts=self.child_opts,
             volume_path=GlobalExtractor(self.config.path.tls_key).extract_volume_path(
-                self, None
+                self.extractor_args
             ),
             content=self.key.private_key_pem,
             mode=0o440,
@@ -105,7 +104,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             "chain",
             opts=self.child_opts,
             volume_path=GlobalExtractor(self.config.path.tls_chain).extract_volume_path(
-                self, None
+                self.extractor_args
             ),
             content=self.chain.cert_pem,
             mode=0o440,
@@ -136,8 +135,8 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
 
         self.url = Output.format(
             "https://{}:{}",
-            GlobalExtractor(self.config.address).extract_str(self, None),
-            GlobalExtractor(self.config.port).extract_str(self, None),
+            GlobalExtractor(self.config.address).extract_str(self.extractor_args),
+            GlobalExtractor(self.config.port).extract_str(self.extractor_args),
         )
 
         self.state = KanidmStateResource(

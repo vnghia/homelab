@@ -128,8 +128,8 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         DaguDagModelBuilder(self.pre_volume_backup).build_resource(
             self.pre_volume_backup.name,
             opts=self.child_opts,
-            main_service=self,
             dagu_service=dagu_service,
+            extractor_args=self.extractor_args,
         )
 
         self.backup_service = DaguDagModel(
@@ -349,8 +349,8 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         DaguDagModelBuilder(self.backup_service).build_resource(
             self.backup_service.name,
             opts=self.child_opts,
-            main_service=self,
             dagu_service=dagu_service,
+            extractor_args=self.extractor_args,
         )
 
         self.backup_all = DaguDagModel(
@@ -387,8 +387,8 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         DaguDagModelBuilder(self.backup_all).build_resource(
             self.backup_all.name,
             opts=self.child_opts,
-            main_service=self,
             dagu_service=dagu_service,
+            extractor_args=self.extractor_args,
         )
 
         self.register_outputs({})

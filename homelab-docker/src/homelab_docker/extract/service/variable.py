@@ -9,30 +9,24 @@ from pulumi import Output
 from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ...model.container import ContainerModel
     from ...model.container.volume_path import ContainerVolumePath
-    from ...resource.service import ServiceResourceBase
+    from .. import ExtractorArgs
     from ..global_ import GlobalExtractor
 
 
 class ServiceVariableSourceExtractor(ExtractorBase[ServiceExtractVariableSource]):
-    def get_variable(self, main_service: ServiceResourceBase) -> GlobalExtractor:
+    def get_variable(self, extractor_args: ExtractorArgs) -> GlobalExtractor:
         from ..global_ import GlobalExtractor
 
-        root = self.root
-        return GlobalExtractor(main_service.model.variables[root.variable])
+        return GlobalExtractor(
+            extractor_args.service.model.variables[self.root.variable]
+        )
 
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str]:
-        return self.get_variable(main_service).extract_str(main_service, model)
+    def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
+        return self.get_variable(extractor_args).extract_str(extractor_args)
 
-    def extract_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> AbsolutePath:
-        return self.get_variable(main_service).extract_path(main_service, model)
+    def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
+        return self.get_variable(extractor_args).extract_path(extractor_args)
 
-    def extract_volume_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> ContainerVolumePath:
-        return self.get_variable(main_service).extract_volume_path(main_service, model)
+    def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
+        return self.get_variable(extractor_args).extract_volume_path(extractor_args)

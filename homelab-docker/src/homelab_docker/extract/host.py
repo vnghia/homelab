@@ -7,16 +7,13 @@ from homelab_extract.host import GlobalExtractHostSource, HostInfoSource
 from . import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ..model.container import ContainerModel
-    from ..resource.service import ServiceResourceBase
+    from . import ExtractorArgs
 
 
 class GlobalHostSourceExtractor(ExtractorBase[GlobalExtractHostSource]):
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str:
+    def extract_str(self, extractor_args: ExtractorArgs) -> str:
         root = self.root
-        host = main_service.docker_resource_args.config.host
+        host = extractor_args.docker_resource_args.config.host
         match root.host:
             case HostInfoSource.USER:
                 return host.user

@@ -9,8 +9,8 @@ from homelab_dagu_config.model.step.run.command import (
     DaguDagStepRunCommandModel,
     DaguDagStepRunCommandParamModel,
 )
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from pulumi import Output
 
@@ -22,23 +22,23 @@ class DaguDagStepRunCommandFullModelBuilder(
     HomelabRootModel[DaguDagStepRunCommandFullModel]
 ):
     def to_command(
-        self, params: DaguDagParamsModel, main_service: ServiceResourceBase
+        self, params: DaguDagParamsModel, extractor_args: ExtractorArgs
     ) -> Output[str]:
         root = self.root.root
         if isinstance(root, DaguDagStepRunCommandParamModel):
             value = params.to_key_command(root.param)
             return Output.from_input(root.transform.transform(value, False))
-        return GlobalExtractor(root).extract_str(main_service, None)
+        return GlobalExtractor(root).extract_str(extractor_args)
 
 
 class DaguDagStepRunCommandModelBuilder(HomelabRootModel[DaguDagStepRunCommandModel]):
     def to_command(
-        self, params: DaguDagParamsModel, main_service: ServiceResourceBase
+        self, params: DaguDagParamsModel, extractor_args: ExtractorArgs
     ) -> Output[str]:
         return Output.all(
             *(
                 DaguDagStepRunCommandFullModelBuilder(command).to_command(
-                    params, main_service
+                    params, extractor_args
                 )
                 for command in self.root.root
             )
@@ -48,6 +48,6 @@ class DaguDagStepRunCommandModelBuilder(HomelabRootModel[DaguDagStepRunCommandMo
         self,
         params: DaguDagParamsModel,
         dagu_service_: DaguService,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
     ) -> dict[str, Any]:
-        return {"command": self.to_command(params, main_service)}
+        return {"command": self.to_command(params, extractor_args)}

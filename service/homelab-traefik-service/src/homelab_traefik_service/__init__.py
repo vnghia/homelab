@@ -30,7 +30,7 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
 
         self.dynamic_directory_volume_path = ServiceExtractor(
             self.config.path.dynamic
-        ).extract_volume_path(self, None)
+        ).extract_volume_path(self.extractor_args)
         self.static = TraefikStaticConfigResource(
             opts=self.child_opts,
             traefik_service=self,

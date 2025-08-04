@@ -8,13 +8,12 @@ from pulumi import Output
 from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ...model.container import ContainerModel
-    from ...resource.service import ServiceResourceBase
+    from .. import ExtractorArgs
 
 
 class ServiceDatabaseSourceExtractor(ExtractorBase[ServiceExtractDatabaseSource]):
     def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
+        self, extractor_args: ExtractorArgs
     ) -> Output[str] | dict[str, Output[str]]:
         from ...model.database.type import DatabaseType
 
@@ -22,9 +21,11 @@ class ServiceDatabaseSourceExtractor(ExtractorBase[ServiceExtractDatabaseSource]
         type = DatabaseType(root.type)
         version = (
             root.version
-            or main_service.docker_resource_args.config.database.root[type].version
+            or extractor_args.docker_resource_args.config.database.root[type].version
         )
-        source = main_service.database.source_config[type][root.database][version][0]
+        source = extractor_args.service.database.source_config[type][root.database][
+            version
+        ][0]
         database = root.database or source.database
 
         result: dict[str, Output[str]] = (

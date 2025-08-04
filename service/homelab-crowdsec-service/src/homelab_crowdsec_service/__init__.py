@@ -32,7 +32,7 @@ class DockerAcquisConfigResource(
             opts=opts,
             volume_path=GlobalExtractor(
                 crowdsec_service.config.docker.acquis_dir
-            ).extract_volume_path(crowdsec_service, None)
+            ).extract_volume_path(crowdsec_service.extractor_args)
             / "docker",
             data={
                 "source": "docker",

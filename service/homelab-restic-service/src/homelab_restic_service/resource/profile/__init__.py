@@ -39,7 +39,7 @@ class ResticProfileResource(
         if self.backup_config.source:
             volume_source = GlobalExtractor(
                 self.backup_config.source
-            ).extract_volume_path(self.main_service, None)
+            ).extract_volume_path(self.main_service.extractor_args)
             if volume_source.volume != self.volume.name:
                 raise ValueError(
                     "Got different name for volume ({} vs {})".format(
@@ -60,7 +60,7 @@ class ResticProfileResource(
         if len(self.backup_config.sqlites) > 0:
             for path in self.backup_config.sqlites:
                 volume_path = GlobalExtractor(path).extract_volume_path(
-                    self.main_service, None
+                    self.main_service.extractor_args
                 )
                 if volume_path.volume != self.volume.name:
                     raise ValueError(

@@ -30,13 +30,12 @@ from pydantic import (
 )
 
 from ...client import DockerClient
-from ...model.container import ContainerModel
 from ...model.container.volume_path import ContainerVolumePath
 from ...model.file import FileDataModel, FileLocationModel
 
 if typing.TYPE_CHECKING:
+    from ...extract import ExtractorArgs
     from .. import DockerResourceArgs
-    from ..service import ServiceResourceBase
 
 
 class FileProviderProps(HomelabBaseModel):
@@ -228,7 +227,5 @@ class FileResource(Resource, module="docker", name="File"):
             ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),
         )
 
-    def to_path(
-        self, main_service: ServiceResourceBase, container_model: ContainerModel
-    ) -> AbsolutePath:
-        return self.volume_path.to_path(main_service, container_model)
+    def to_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
+        return self.volume_path.to_path(extractor_args)

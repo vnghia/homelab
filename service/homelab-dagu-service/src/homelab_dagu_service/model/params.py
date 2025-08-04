@@ -11,15 +11,15 @@ from homelab_dagu_config.model.step.run.command import (
     DaguDagStepRunCommandParamModel,
     DaguDagStepRunCommandParamTypeFullModel,
 )
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic.model import HomelabRootModel
 from pulumi import Output
 
 
 class DaguDagParamsModelBuilder(HomelabRootModel[DaguDagParamsModel]):
     def to_params(
-        self, dag: DaguDagModel, main_service: ServiceResourceBase
+        self, dag: DaguDagModel, extractor_args: ExtractorArgs
     ) -> dict[str, Output[str]] | None:
         model = self.root
 
@@ -69,7 +69,7 @@ class DaguDagParamsModelBuilder(HomelabRootModel[DaguDagParamsModel]):
             for key_type, default_value in model.types.items()
             if key_type in used_params
         } | {
-            key_main: GlobalExtractor(value).extract_str(main_service, None)
+            key_main: GlobalExtractor(value).extract_str(extractor_args)
             for key_main, value in model.main.items()
             if key_main in used_params
         }

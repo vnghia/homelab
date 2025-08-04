@@ -12,9 +12,8 @@ from .env import ContainerEnvSourceExtractor
 from .volume import ContainerVolumeSourceExtractor
 
 if typing.TYPE_CHECKING:
-    from ...model.container import ContainerModel
     from ...model.container.volume_path import ContainerVolumePath
-    from ...resource.service import ServiceResourceBase
+    from .. import ExtractorArgs
 
 
 class ContainerExtractor(ExtractorBase[ContainerExtract]):
@@ -29,23 +28,11 @@ class ContainerExtractor(ExtractorBase[ContainerExtract]):
             else ContainerVolumeSourceExtractor(root)
         )
 
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str]:
-        return self.extractor.extract_str(
-            main_service, model or main_service.model[None]
-        )
+    def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
+        return self.extractor.extract_str(extractor_args)
 
-    def extract_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> AbsolutePath:
-        return self.extractor.extract_path(
-            main_service, model or main_service.model[None]
-        )
+    def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
+        return self.extractor.extract_path(extractor_args)
 
-    def extract_volume_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> ContainerVolumePath:
-        return self.extractor.extract_volume_path(
-            main_service, model or main_service.model[None]
-        )
+    def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
+        return self.extractor.extract_volume_path(extractor_args)

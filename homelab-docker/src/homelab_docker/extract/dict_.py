@@ -9,20 +9,17 @@ from pulumi import Output
 from . import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ..model.container import ContainerModel
-    from ..resource.service import ServiceResourceBase
+    from . import ExtractorArgs
 
 
 class GlobalDictSourceExtractor(ExtractorBase[GlobalExtractDictSource]):
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> dict[Output[str], Any]:
+    def extract_str(self, extractor_args: ExtractorArgs) -> dict[Output[str], Any]:
         from .global_ import GlobalExtractor
 
         root = self.root
         return {
             GlobalExtractor(key).extract_str(
-                main_service, model
-            ): GlobalExtractor.extract_recursively(value, main_service, model)
+                extractor_args
+            ): GlobalExtractor.extract_recursively(value, extractor_args)
             for [key, value] in root.dict_
         }

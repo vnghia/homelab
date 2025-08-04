@@ -6,7 +6,7 @@ from typing import Any
 from homelab_dagu_config.model.params import DaguDagParamsModel
 from homelab_dagu_config.model.step.run import DaguDagStepRunModel
 from homelab_dagu_config.model.step.run.command import DaguDagStepRunCommandModel
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import HomelabRootModel
 
 from .command import DaguDagStepRunCommandModelBuilder
@@ -19,9 +19,9 @@ if typing.TYPE_CHECKING:
 class DaguDagStepRunModelBuilder(HomelabRootModel[DaguDagStepRunModel]):
     def to_run(
         self,
-        dagu_service: DaguService,
-        main_service: ServiceResourceBase,
         params: DaguDagParamsModel,
+        dagu_service: DaguService,
+        extractor_args: ExtractorArgs,
     ) -> dict[str, Any]:
         root = self.root.root
 
@@ -29,4 +29,4 @@ class DaguDagStepRunModelBuilder(HomelabRootModel[DaguDagStepRunModel]):
             DaguDagStepRunCommandModelBuilder(root)
             if isinstance(root, DaguDagStepRunCommandModel)
             else DaguDagStepRunSubdagModelBuilder(root)
-        ).to_run(params, dagu_service, main_service)
+        ).to_run(params, dagu_service, extractor_args)

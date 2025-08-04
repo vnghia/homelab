@@ -1,4 +1,4 @@
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import HomelabBaseModel
 
 from ..model import DaguDagModel
@@ -43,14 +43,12 @@ class DaguDagDockerGroupConfig(HomelabBaseModel):
 
     dags: dict[str, DaguDagDockerGroupModel]
 
-    def build_models(
-        self, *, main_service: ServiceResourceBase
-    ) -> dict[str, DaguDagModel]:
+    def build_models(self, *, extractor_args: ExtractorArgs) -> dict[str, DaguDagModel]:
         global_dag = self.dag
         return {
             name: model.__replace__(dag=global_dag.model_merge(model.dag)).build_model(
                 name,
-                main_service=main_service,
+                extractor_args=extractor_args,
                 docker_executor=DaguDagStepDockerExecutorModel(self.executor.model),
                 command_config=self.command,
             )

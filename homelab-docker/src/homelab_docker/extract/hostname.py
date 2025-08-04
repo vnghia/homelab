@@ -7,12 +7,9 @@ from homelab_extract.hostname import GlobalExtractHostnameSource
 from . import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ..model.container import ContainerModel
-    from ..resource.service import ServiceResourceBase
+    from . import ExtractorArgs
 
 
 class GlobalHostnameSourceExtractor(ExtractorBase[GlobalExtractHostnameSource]):
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str:
-        return self.root.to_hostname(main_service.docker_resource_args.hostnames)
+    def extract_str(self, extractor_args: ExtractorArgs) -> str:
+        return self.root.to_hostname(extractor_args.docker_resource_args.hostnames)

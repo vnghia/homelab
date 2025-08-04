@@ -1,7 +1,7 @@
 from typing import Any
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from pulumi import Input
 
@@ -19,7 +19,7 @@ class DaguDagStepExecutorModel(
 ):
     def to_executor(
         self,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         dotenvs: list[DotenvFileResource] | None,
     ) -> dict[str, Input[Any]]:
-        return self.root.to_executor(main_service, dotenvs)
+        return self.root.to_executor(extractor_args, dotenvs)

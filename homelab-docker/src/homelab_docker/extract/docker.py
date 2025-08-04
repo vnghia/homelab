@@ -7,19 +7,16 @@ from homelab_extract.docker import GlobalExtractDockerSource
 from . import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ..model.container import ContainerModel
-    from ..resource.service import ServiceResourceBase
+    from . import ExtractorArgs
 
 
 class GlobalDockerSourceExtractor(ExtractorBase[GlobalExtractDockerSource]):
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str:
+    def extract_str(self, extractor_args: ExtractorArgs) -> str:
         root = self.root
         return root.docker.format(
-            timezone=main_service.docker_resource_args.timezone,
+            timezone=extractor_args.docker_resource_args.timezone,
             **{
                 k.removeprefix("pulumi."): v
-                for k, v in main_service.docker_resource_args.project_labels.items()
+                for k, v in extractor_args.docker_resource_args.project_labels.items()
             },
         )

@@ -27,8 +27,8 @@ from .volume import ContainerVolumeConfig, ContainerVolumesConfig
 from .wud import ContainerWudConfig
 
 if typing.TYPE_CHECKING:
+    from ...extract import ExtractorArgs
     from ...resource.file import FileResource
-    from ...resource.service import ServiceResourceBase
 
 
 @dataclasses.dataclass
@@ -83,23 +83,22 @@ class ContainerModel(HomelabBaseModel):
             raise ValueError("Image config model is None")
         return self.raw_image
 
-    def to_full(self, main_service: ServiceResourceBase) -> ContainerModel:
+    def to_full(self, extractor_args: ExtractorArgs) -> ContainerModel:
+        service = extractor_args.service
         if "inherit" in self.model_fields_set:
             inherit = self.inherit.to_full()
             service = (
-                main_service
+                service
                 if inherit.service is None
-                else main_service.SERVICES[inherit.service]
+                else service.SERVICES[inherit.service]
             )
             return service.model[inherit.container].model_merge(self, override=True)
         return self
 
-    def build_command(
-        self, main_service: ServiceResourceBase
-    ) -> list[Output[str]] | None:
+    def build_command(self, extractor_args: ExtractorArgs) -> list[Output[str]] | None:
         return (
             [
-                GlobalExtractor(command).extract_str(main_service, self)
+                GlobalExtractor(command).extract_str(extractor_args)
                 for command in self.command
             ]
             if self.command is not None
@@ -107,11 +106,11 @@ class ContainerModel(HomelabBaseModel):
         )
 
     def build_entrypoint(
-        self, main_service: ServiceResourceBase
+        self, extractor_args: ExtractorArgs
     ) -> list[Output[str]] | None:
         return (
             [
-                GlobalExtractor(entrypoint).extract_str(main_service, self)
+                GlobalExtractor(entrypoint).extract_str(extractor_args)
                 for entrypoint in self.entrypoint
             ]
             if self.entrypoint is not None
@@ -140,16 +139,18 @@ class ContainerModel(HomelabBaseModel):
 
     def build_envs(
         self,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs,
     ) -> list[Output[str]]:
+        service = extractor_args.service
+
         additional_envs: dict[str, Output[str]] = {}
         if self.databases:
             for database in self.databases:
-                additional_envs |= database.build_envs(main_service.database)
+                additional_envs |= database.build_envs(service.database)
         if self.mails:
             for mail in self.mails:
-                additional_envs |= mail.to_envs(main_service)
+                additional_envs |= mail.to_envs(service)
 
         return [
             Output.concat(k, "=", v)
@@ -157,12 +158,12 @@ class ContainerModel(HomelabBaseModel):
                 (
                     {
                         "TZ": Output.from_input(
-                            main_service.docker_resource_args.timezone
+                            extractor_args.docker_resource_args.timezone
                         )
                     }
                     | {
                         k: Output.from_input(
-                            GlobalExtractor(v).extract_str(main_service, self)
+                            GlobalExtractor(v).extract_str(extractor_args)
                         )
                         for k, v in self.envs.items()
                     }
@@ -178,21 +179,23 @@ class ContainerModel(HomelabBaseModel):
     def build_labels(
         self,
         resource_name: str | None,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs,
     ) -> dict[Output[str], Output[str]]:
+        service = extractor_args.service
+
         return (
             {
                 Output.from_input(k): Output.from_input(v)
                 for k, v in (
-                    main_service.docker_resource_args.project_labels
-                    | {"dev.dozzle.group": main_service.name()}
+                    extractor_args.docker_resource_args.project_labels
+                    | {"dev.dozzle.group": service.name()}
                     | ({"dev.dozzle.name": resource_name} if resource_name else {})
                     | (self.wud.build_labels(resource_name) if self.wud else {})
                 ).items()
             }
             | {
-                Output.from_input(k): GlobalExtractor(v).extract_str(main_service, self)
+                Output.from_input(k): GlobalExtractor(v).extract_str(extractor_args)
                 for k, v in self.labels.items()
             }
             | {file.id: file.hash for file in build_args.files}
@@ -203,20 +206,21 @@ class ContainerModel(HomelabBaseModel):
         resource_name: str,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs | None,
     ) -> docker.Container:
-        docker_resource_args = main_service.docker_resource_args
+        extractor_args = extractor_args.with_container(self)
+        service = extractor_args.service
+        docker_resource_args = extractor_args.docker_resource_args
 
         build_args = build_args or ContainerModelBuildArgs()
-        network_args = self.network.to_args(resource_name, main_service, build_args)
+        network_args = self.network.to_args(resource_name, extractor_args, build_args)
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
         if self.databases:
             depends_on.extend(
-                database.to_container(main_service.database)
-                for database in self.databases
+                database.to_container(service.database) for database in self.databases
             )
 
         return docker.Container(
@@ -229,7 +233,7 @@ class ContainerModel(HomelabBaseModel):
             capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
             if self.capabilities
             else None,
-            command=self.build_command(main_service),
+            command=self.build_command(extractor_args),
             devices=[
                 docker.ContainerDeviceArgs(
                     host_path=device.as_posix(), container_path=device.as_posix()
@@ -239,11 +243,11 @@ class ContainerModel(HomelabBaseModel):
             if self.devices
             else None,
             group_adds=self.group_adds,
-            entrypoints=self.build_entrypoint(main_service),
-            healthcheck=self.healthcheck.to_args(main_service, self)
+            entrypoints=self.build_entrypoint(extractor_args),
+            healthcheck=self.healthcheck.to_args(extractor_args)
             if self.healthcheck
             else None,
-            hostname=GlobalExtractor(self.hostname).extract_str(main_service, self)
+            hostname=GlobalExtractor(self.hostname).extract_str(extractor_args)
             if self.hostname
             else None,
             hosts=[host.to_args() for host in self.hosts] if self.hosts else None,
@@ -259,15 +263,15 @@ class ContainerModel(HomelabBaseModel):
             tmpfs=self.build_tmpfs(),
             user=self.user,
             volumes=self.volumes.to_args(
-                self.docker_socket, main_service, self, build_args
+                self.docker_socket, extractor_args, build_args
             ),
             wait=self.wait if self.healthcheck else False,
             wait_timeout=self.wait_timeout,
-            envs=self.build_envs(main_service, build_args),
+            envs=self.build_envs(extractor_args, build_args),
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
-                    self.build_labels(resource_name, main_service, build_args)
+                    self.build_labels(resource_name, extractor_args, build_args)
                     | {
                         "pulumi.image.id": self.image.to_image_id(
                             docker_resource_args.image

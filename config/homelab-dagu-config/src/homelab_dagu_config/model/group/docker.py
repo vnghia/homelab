@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import HomelabBaseModel
 
 from .. import DaguDagModel
@@ -23,7 +23,7 @@ class DaguDagDockerGroupModel(HomelabBaseModel):
         self,
         name: str,
         *,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         docker_executor: DaguDagStepDockerExecutorModel,
         command_config: DaguDagStepRunCommandsConfig,
     ) -> DaguDagModel:
@@ -31,7 +31,7 @@ class DaguDagDockerGroupModel(HomelabBaseModel):
 
         return self.dag.__replace__(
             name=name,
-            path="{}-{}".format(main_service.name(), name),
+            path="{}-{}".format(extractor_args.service.name(), name),
             steps=[
                 DaguDagStepModel(
                     name=name,

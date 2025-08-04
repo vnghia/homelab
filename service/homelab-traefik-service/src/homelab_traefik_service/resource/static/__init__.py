@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_network.config.port import NetworkPortConfig
@@ -31,11 +32,10 @@ class TraefikStaticConfigResource(
         port: NetworkPortConfig,
     ) -> None:
         traefik_config = traefik_service.config
-        traefik_model = traefik_service.model[None]
 
         static_volume_path = ServiceExtractor(
             traefik_service.config.path.static
-        ).extract_volume_path(traefik_service, None)
+        ).extract_volume_path(traefik_service.extractor_args)
 
         timeouts = {
             "respondingTimeouts": {
@@ -73,7 +73,7 @@ class TraefikStaticConfigResource(
                 "accessLog": {"format": "json"},
                 "api": {
                     "basePath": ServiceExtractor(traefik_config.path.api).extract_str(
-                        traefik_service, None
+                        traefik_service.extractor_args
                     ),
                     "dashboard": True,
                     "disableDashboardAd": True,
@@ -119,7 +119,7 @@ class TraefikStaticConfigResource(
                 "providers": {
                     "file": {
                         "directory": traefik_service.dynamic_directory_volume_path.to_path(
-                            traefik_service, traefik_model
+                            ExtractorArgs.from_service(traefik_service, None)
                         ),
                         "watch": True,
                     },
@@ -132,7 +132,7 @@ class TraefikStaticConfigResource(
                             "email": traefik_config.acme.email,
                             "storage": ServiceExtractor(
                                 traefik_config.acme.storage
-                            ).extract_path(traefik_service, None),
+                            ).extract_path(traefik_service.extractor_args),
                             "dnsChallenge": {
                                 "provider": "cloudflare",
                                 "resolvers": ["1.1.1.1:53", "8.8.8.8:53"],

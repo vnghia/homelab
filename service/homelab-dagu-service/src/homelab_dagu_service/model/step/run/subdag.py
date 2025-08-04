@@ -5,8 +5,8 @@ from typing import Any
 
 from homelab_dagu_config.model.params import DaguDagParamsModel
 from homelab_dagu_config.model.step.run.subdag import DaguDagStepRunSubdagModel
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic.model import HomelabRootModel
 from pulumi import Output
 
@@ -17,27 +17,30 @@ if typing.TYPE_CHECKING:
 class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagModel]):
     def to_run(
         self,
-        params_: DaguDagParamsModel,
+        _params: DaguDagParamsModel,
         dagu_service: DaguService,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
     ) -> dict[str, Any]:
         from homelab_dagu_service.model.params import DaguDagParamsModelBuilder
 
         root = self.root
 
         dagu_config = dagu_service.config
-        dagu_model = dagu_service.model[dagu_config.dags_dir.container]
         dag = dagu_service.dags[root.service][root.dag]
         params = DaguDagParamsModelBuilder(root.params).to_params(
-            dag.model, main_service
+            dag.model, extractor_args
         )
 
-        data: dict[str, Any] = {"run": dag.to_path(dagu_service, dagu_model)}
+        data: dict[str, Any] = {
+            "run": dag.to_path(
+                ExtractorArgs.from_service(dagu_service, dagu_config.dags_dir.container)
+            )
+        }
 
         if root.parallel:
             data["parallel"] = {
                 "items": [
-                    GlobalExtractor(item).extract_str(main_service, None)
+                    GlobalExtractor(item).extract_str(extractor_args)
                     for item in root.parallel.items
                 ]
             } | (
@@ -48,9 +51,9 @@ class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagMode
 
         if params:
             data["params"] = Output.all(**params).apply(
-                lambda args: " ".join(
+                lambda extractor_args: " ".join(
                     '{}="{}"'.format(key, value.replace('"', '\\"'))
-                    for key, value in args.items()
+                    for key, value in extractor_args.items()
                 )
             )
         return data

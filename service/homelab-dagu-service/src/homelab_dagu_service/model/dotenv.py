@@ -3,8 +3,8 @@ from __future__ import annotations
 import typing
 
 from homelab_dagu_config.model.dotenv import DaguDagDotenvModel
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
 
@@ -18,17 +18,18 @@ class DaguDagDotenvModelBuilder(HomelabRootModel[DaguDagDotenvModel]):
         resource_name: str | None,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         dagu_service: DaguService,
     ) -> DotenvFileResource:
+        service = extractor_args.service
         resource = DotenvFileResource(
-            resource_name or main_service.name(),
+            resource_name or extractor_args.service.name(),
             opts=opts,
             volume_path=dagu_service.get_dotenv_volume_path(
-                main_service.add_service_name(resource_name)
+                extractor_args.service.add_service_name(resource_name)
             ),
-            envs=self.root.to_envs(main_service, None),
-            docker_resource_args=main_service.docker_resource_args,
+            envs=self.root.to_envs(extractor_args),
+            docker_resource_args=extractor_args.docker_resource_args,
         )
-        dagu_service.dotenvs[main_service.name()][resource_name] = resource
+        dagu_service.dotenvs[service.name()][resource_name] = resource
         return resource

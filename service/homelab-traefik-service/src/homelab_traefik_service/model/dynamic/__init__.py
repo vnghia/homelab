@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic import TraefikDynamicModel
 from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel
@@ -22,8 +22,8 @@ class TraefikDynamicModelBuilder(HomelabRootModel[TraefikDynamicModel]):
         resource_name: str | None,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
         traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
     ) -> TraefikDynamicConfigResource:
         root = self.root.root
 
@@ -34,6 +34,6 @@ class TraefikDynamicModelBuilder(HomelabRootModel[TraefikDynamicModel]):
         ).build_resource(
             resource_name,
             opts=opts,
-            main_service=main_service,
             traefik_service=traefik_service,
+            extractor_args=extractor_args,
         )

@@ -3,8 +3,8 @@ from __future__ import annotations
 import typing
 from typing import Any
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.middleware import (
     TraefikDynamicMiddlewareBuildModel,
@@ -21,12 +21,12 @@ class TraefikDynamicMiddlewareBuildModelBuilder(
     HomelabRootModel[TraefikDynamicMiddlewareBuildModel]
 ):
     def to_section(
-        self, main_service: ServiceResourceBase, traefik_service: TraefikService
+        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
         root = self.root
 
-        name = main_service.add_service_name(root.name)
-        section = GlobalExtractor.extract_recursively(root.data, main_service, None)
+        name = extractor_args.service.add_service_name(root.name)
+        section = GlobalExtractor.extract_recursively(root.data, extractor_args)
 
         if root.plugin:
             traefik_service.config.plugins[root.plugin]
@@ -34,17 +34,19 @@ class TraefikDynamicMiddlewareBuildModelBuilder(
         return {name: section}
 
     def to_data(
-        self, main_service: ServiceResourceBase, traefik_service: TraefikService
+        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
-        return {"http": {"middlewares": self.to_section(main_service, traefik_service)}}
+        return {
+            "http": {"middlewares": self.to_section(traefik_service, extractor_args)}
+        }
 
     def build_resource(
         self,
         resource_name: str | None,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
         traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
     ) -> TraefikDynamicMiddlwareConfigResource:
         from ...resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
 
@@ -52,10 +54,12 @@ class TraefikDynamicMiddlewareBuildModelBuilder(
             resource_name,
             self,
             opts=opts,
-            main_service=main_service,
             traefik_service=traefik_service,
+            extractor_args=extractor_args,
         )
-        traefik_service.middlewares[main_service.name()][resource_name] = resource
+        traefik_service.middlewares[extractor_args.service.name()][resource_name] = (
+            resource
+        )
         return resource
 
 
@@ -63,26 +67,27 @@ class TraefikDynamicMiddlewareModelBuilder(
     HomelabRootModel[TraefikDynamicMiddlewareModel]
 ):
     def get_name(
-        self, main_service: ServiceResourceBase, traefik_service: TraefikService
+        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> str:
         root = self.root.root
+        service = extractor_args.service
 
         return (
-            main_service.add_service_name(root.name)
+            service.add_service_name(root.name)
             if isinstance(root, TraefikDynamicMiddlewareBuildModel)
-            else traefik_service.middlewares[root.service or main_service.name()][
+            else traefik_service.middlewares[root.service or service.name()][
                 root.name
             ].name
         )
 
     def to_section(
-        self, main_service: ServiceResourceBase, traefik_service: TraefikService
+        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
         root = self.root.root
 
         return (
             TraefikDynamicMiddlewareBuildModelBuilder(root).to_section(
-                main_service, traefik_service
+                traefik_service, extractor_args
             )
             if isinstance(root, TraefikDynamicMiddlewareBuildModel)
             else {}

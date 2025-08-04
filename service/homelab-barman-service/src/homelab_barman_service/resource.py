@@ -71,7 +71,7 @@ class BarmanConfigFileResource(
                     or barman_config.retention_policy,
                     "local_staging_path": GlobalExtractor(
                         barman_config.staging_dir
-                    ).extract_path(barman_service, None),
+                    ).extract_path(barman_service.extractor_args),
                 }
             },
             docker_resource_args=barman_service.docker_resource_args,

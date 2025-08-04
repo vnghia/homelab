@@ -5,8 +5,8 @@ import typing
 from functools import reduce
 from typing import Any, ClassVar
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel
 from homelab_traefik_config.model.dynamic.middleware import (
@@ -33,9 +33,10 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
     CROWDSEC_MIDDLEWARE: ClassVar[str] = "crowdsec"
 
     def to_data(
-        self, main_service: ServiceResourceBase, traefik_service: TraefikService
+        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
         root = self.root
+        main_service = extractor_args.service
 
         entrypoint = traefik_service.config.entrypoint
         router_name = main_service.add_service_name(root.name)
@@ -53,24 +54,22 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                     [
                         Output.format(
                             "PathPrefix(`{}`)",
-                            GlobalExtractor(root.prefix).extract_str(
-                                main_service, None
-                            ),
+                            GlobalExtractor(root.prefix).extract_str(extractor_args),
                         ),
                     ]
                     if root.prefix
                     else []
                 )
                 + [
-                    GlobalExtractor(rule).extract_str(main_service, None)
+                    GlobalExtractor(rule).extract_str(extractor_args)
                     for rule in root.rules
                 ]
             )
-        ).apply(lambda args: " && ".join(args))
+        ).apply(lambda extractor_args: " && ".join(extractor_args))
 
         public_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
-                main_service, traefik_service
+                traefik_service, extractor_args
             )
             for middleware in [
                 TraefikDynamicMiddlewareModel(
@@ -89,7 +88,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         ]
         private_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
-                main_service, traefik_service
+                traefik_service, extractor_args
             )
             for middleware in [
                 TraefikDynamicMiddlewareModel(
@@ -103,7 +102,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
 
         service_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
-                main_service, traefik_service
+                traefik_service, extractor_args
             )
             for middleware in root.middlewares
         ]
@@ -160,13 +159,13 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         if service_full:
             data["http"]["services"] = TraefikDynamicServiceFullModelBuilder(
                 service_full
-            ).to_service(TraefikDynamicServiceType.HTTP, router_name, main_service)
+            ).to_service(TraefikDynamicServiceType.HTTP, router_name, extractor_args)
 
         middlewares: dict[str, Any] = reduce(
             operator.or_,
             [
                 TraefikDynamicMiddlewareModelBuilder(middleware).to_section(
-                    main_service, traefik_service
+                    traefik_service, extractor_args
                 )
                 for middleware in root.middlewares
             ],
@@ -182,8 +181,8 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         resource_name: str | None,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
         traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
     ) -> TraefikDynamicRouterConfigResource:
         from ...resource.dynamic.router import TraefikDynamicRouterConfigResource
 
@@ -191,8 +190,8 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             resource_name,
             self,
             opts=opts,
-            main_service=main_service,
             traefik_service=traefik_service,
+            extractor_args=extractor_args,
         )
-        traefik_service.routers[main_service.name()][resource_name] = resource
+        traefik_service.routers[extractor_args.service.name()][resource_name] = resource
         return resource

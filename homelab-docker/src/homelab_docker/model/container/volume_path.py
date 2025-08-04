@@ -6,18 +6,15 @@ from pathlib import PosixPath
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, RelativePath
 
 if typing.TYPE_CHECKING:
-    from ...resource.service import ServiceResourceBase
-    from . import ContainerModel
+    from ...extract import ExtractorArgs
 
 
 class ContainerVolumePath(HomelabBaseModel):
     volume: str
     path: RelativePath = RelativePath(PosixPath(""))
 
-    def to_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel
-    ) -> AbsolutePath:
-        path = model.volumes[self.volume].to_path(main_service, model)
+    def to_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
+        path = extractor_args.container.volumes[self.volume].to_path(extractor_args)
         return path / self.path if self.path else path
 
     def __truediv__(self, path: str | RelativePath) -> ContainerVolumePath:

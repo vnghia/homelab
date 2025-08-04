@@ -9,20 +9,15 @@ from homelab_pydantic import AbsolutePath
 from . import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ..model.container import ContainerModel
-    from ..resource.service import ServiceResourceBase
+    from . import ExtractorArgs
 
 
 class GlobalSimpleSourceExtractor(ExtractorBase[GlobalExtractSimpleSource]):
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str:
+    def extract_str(self, extractor_args: ExtractorArgs) -> str:
         root = self.root.root
         if isinstance(root, bool):
             return str(root).lower()
         return str(root)
 
-    def extract_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> AbsolutePath:
-        return AbsolutePath(PosixPath(self.extract_str(main_service, model)))
+    def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
+        return AbsolutePath(PosixPath(self.extract_str(extractor_args)))

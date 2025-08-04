@@ -25,7 +25,7 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
         super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
 
         self.source_dir = ServiceExtractor(self.config.source_dir).extract_path(
-            self, None
+            self.extractor_args
         )
         self.service_maps: dict[str, list[str]] = {}
         self.volume_configs = {}
@@ -47,7 +47,7 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
 
                 for sqlite in volume_model.backup.sqlites:
                     volume_path = GlobalExtractor(sqlite).extract_volume_path(
-                        self.SERVICES[service], None
+                        self.SERVICES[service].extractor_args
                     )
                     if volume_path.volume != name:
                         raise ValueError(

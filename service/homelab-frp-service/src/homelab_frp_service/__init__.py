@@ -59,7 +59,7 @@ class FrpClientConfigResource(
             resource_name,
             opts=opts,
             volume_path=GlobalExtractor(config.path).extract_volume_path(
-                frp_service, None
+                frp_service.extractor_args
             ),
             data={
                 "serverAddr": str(config.server.addr),

@@ -10,8 +10,7 @@ from pydantic import PositiveInt
 from ...extract.global_ import GlobalExtractor
 
 if typing.TYPE_CHECKING:
-    from ...resource.service import ServiceResourceBase
-    from . import ContainerModel
+    from ...extract import ExtractorArgs
 
 
 class ContainerHealthCheckConfig(HomelabBaseModel):
@@ -22,13 +21,10 @@ class ContainerHealthCheckConfig(HomelabBaseModel):
     start_period: str | None = None
     timeout: str | None = None
 
-    def to_args(
-        self, main_service: ServiceResourceBase, model: ContainerModel
-    ) -> docker.ContainerHealthcheckArgs:
+    def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHealthcheckArgs:
         return docker.ContainerHealthcheckArgs(
             tests=[
-                GlobalExtractor(test).extract_str(main_service, model)
-                for test in self.tests
+                GlobalExtractor(test).extract_str(extractor_args) for test in self.tests
             ],
             interval=self.interval,
             retries=self.retries,

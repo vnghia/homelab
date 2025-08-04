@@ -1,5 +1,6 @@
 from typing import Self
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource import DockerResourceArgs
@@ -28,17 +29,15 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
             self.options[name].envs = {**self.options[name].envs, **s3.to_envs()}
 
         for name, config in self.config.files.root.items():
-            container_model = self.model[name]
+            extractor_args = ExtractorArgs.from_service(self, name)
             self.options[name].files = [
                 FileResource(
                     resource_name,
                     opts=self.child_opts,
                     volume_path=GlobalExtractor(model.path).extract_volume_path(
-                        self, container_model
+                        extractor_args
                     ),
-                    content=GlobalExtractor(model.content).extract_str(
-                        self, container_model
-                    ),
+                    content=GlobalExtractor(model.content).extract_str(extractor_args),
                     mode=model.mode,
                     docker_resources_args=self.docker_resource_args,
                 )

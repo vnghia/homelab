@@ -8,13 +8,10 @@ from pulumi import Output
 from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ...model.container import ContainerModel
-    from ...resource.service import ServiceResourceBase
+    from .. import ExtractorArgs
 
 
 class ServiceExportSourceExtractor(ExtractorBase[ServiceExtractExportSource]):
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> Output[str]:
+    def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         root = self.root
-        return main_service.exports[root.export]
+        return extractor_args.service.exports[root.export]

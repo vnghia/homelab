@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.resource.service import ServiceResourceBase
+from homelab_docker.extract import ExtractorArgs
 from pulumi import ResourceOptions
 
 from ...model.dynamic.middleware import TraefikDynamicMiddlewareBuildModelBuilder
@@ -21,13 +21,13 @@ class TraefikDynamicMiddlwareConfigResource(
         model: TraefikDynamicMiddlewareBuildModelBuilder,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
         traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(
             resource_name,
             model,
             opts=opts,
-            main_service=main_service,
             traefik_service=traefik_service,
+            extractor_args=extractor_args,
         )

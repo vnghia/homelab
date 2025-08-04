@@ -13,6 +13,7 @@ from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
 from ....config.database import DatabaseConfig, DatabaseTypeEnvConfig
+from ....extract import ExtractorArgs
 from ....model.container import ContainerModel, ContainerModelBuildArgs
 from ....model.container.database.source import ContainerDatabaseSourceModel
 from ....model.container.image import ContainerImageModelConfig
@@ -155,7 +156,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
             ).build_resource(
                 full_name,
                 opts=self.child_opts,
-                main_service=main_service,
+                extractor_args=ExtractorArgs.from_service(main_service),
                 build_args=ContainerModelBuildArgs(
                     envs={self.config.env.password: self.password.result}
                     | superuser_password_env,

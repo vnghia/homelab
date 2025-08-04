@@ -11,9 +11,9 @@ from homelab_extract.service.database import ServiceExtractDatabaseSource
 from homelab_extract.service.export import ServiceExtractExportSource
 from homelab_extract.service.keepass import ServiceExtractKeepassSource
 from homelab_extract.service.secret import ServiceExtractSecretSource
-from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
+from pydantic import ValidationError
 
 from .. import ExtractorBase
 from ..container import ContainerExtractor
@@ -25,9 +25,8 @@ from .secret import ServiceSecretSourceExtractor
 from .variable import ServiceVariableSourceExtractor
 
 if typing.TYPE_CHECKING:
-    from ...model.container import ContainerModel
     from ...model.container.volume_path import ContainerVolumePath
-    from ...resource.service import ServiceResourceBase
+    from .. import ExtractorArgs
 
 
 class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
@@ -53,19 +52,15 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
         return ServiceVariableSourceExtractor(root)
 
     def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
+        self, extractor_args: ExtractorArgs
     ) -> str | Output[str] | dict[str, Output[str]]:
-        return self.extractor.extract_str(main_service, model)
+        return self.extractor.extract_str(extractor_args)
 
-    def extract_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> AbsolutePath:
-        return self.extractor.extract_path(main_service, model)
+    def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
+        return self.extractor.extract_path(extractor_args)
 
-    def extract_volume_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> ContainerVolumePath:
-        return self.extractor.extract_volume_path(main_service, model)
+    def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
+        return self.extractor.extract_volume_path(extractor_args)
 
 
 class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
@@ -83,47 +78,45 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
         transform = self.root.transform
         return ExtractTransformer(transform)
 
-    def model(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> ContainerModel | None:
-        if self.root.has_container:
-            return main_service.model[self.root.container]
-        return model
+    def extractor_args(self, extractor_args: ExtractorArgs) -> ExtractorArgs:
+        root = self.root
+        return extractor_args.with_container(
+            extractor_args.service.model[root.container]
+            if root.has_container
+            else (
+                extractor_args._container
+                or extractor_args.service.model[root.container]
+            )
+        )
 
-    def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> str | Output[str]:
+    def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
         extractor = self.extractor
         transformer = self.transfomer
-        model = self.model(main_service, model)
+        extractor_args = self.extractor_args(extractor_args)
 
         try:
             value_path = transformer.transform_path(
-                extractor.extract_path(main_service, model)
+                extractor.extract_path(extractor_args)
             ).as_posix()
             return transformer.transform_string(value_path)
-        except TypeError:
-            value_str = extractor.extract_str(main_service, model)
+        except (TypeError, ValidationError):
+            value_str = extractor.extract_str(extractor_args)
             return transformer.transform_string(value_str)
 
-    def extract_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> AbsolutePath:
+    def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         extractor = self.extractor
         transformer = self.transfomer
-        model = self.model(main_service, model)
+        extractor_args = self.extractor_args(extractor_args)
 
-        return transformer.transform_path(extractor.extract_path(main_service, model))
+        return transformer.transform_path(extractor.extract_path(extractor_args))
 
-    def extract_volume_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> ContainerVolumePath:
+    def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         extractor = self.extractor
         transformer = self.transfomer
-        model = self.model(main_service, model)
+        extractor_args = self.extractor_args(extractor_args)
 
         return transformer.transform_volume_path(
-            extractor.extract_volume_path(main_service, model)
+            extractor.extract_volume_path(extractor_args)
         )
 
 
@@ -133,43 +126,30 @@ class ServiceExtractor(ExtractorBase[ServiceExtract]):
         root = self.root.root
         return root.container if isinstance(root, ServiceExtractFull) else None
 
-    @property
-    def extractor(
-        self,
-    ) -> ContainerExtractor | ServiceSourceExtractor | ServiceFullExtractor:
-        root = self.root.root
+    @classmethod
+    def get_extractor(
+        cls, source: ServiceExtract
+    ) -> ServiceSourceExtractor | ServiceFullExtractor:
+        root = source.root
         if isinstance(root, ServiceExtractSource):
             return ServiceSourceExtractor(root)
         if isinstance(root, ServiceExtractFull):
             return ServiceFullExtractor(root)
-        return ContainerExtractor(root)
+        return cls.get_extractor(ServiceExtract(ServiceExtractFull(extract=root)))
+
+    @property
+    def extractor(
+        self,
+    ) -> ServiceSourceExtractor | ServiceFullExtractor:
+        return self.get_extractor(self.root)
 
     def extract_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
+        self, extractor_args: ExtractorArgs
     ) -> str | Output[str] | dict[str, Output[str]]:
-        return self.extractor.extract_str(
-            main_service, model or main_service.model[self.container]
-        )
+        return self.extractor.extract_str(extractor_args)
 
-    def extract_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> AbsolutePath:
-        return self.extractor.extract_path(
-            main_service, model or main_service.model[self.container]
-        )
+    def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
+        return self.extractor.extract_path(extractor_args)
 
-    def extract_volume_path(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> ContainerVolumePath:
-        return self.extractor.extract_volume_path(
-            main_service, model or main_service.model[self.container]
-        )
-
-    def extract_output_str(
-        self, main_service: ServiceResourceBase, model: ContainerModel | None
-    ) -> Output[str]:
-        return ExtractTransformer(ExtractTransform()).transform_string(
-            self.extractor.extract_str(
-                main_service, model or main_service.model[self.container]
-            )
-        )
+    def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
+        return self.extractor.extract_volume_path(extractor_args)

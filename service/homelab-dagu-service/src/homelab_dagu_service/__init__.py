@@ -28,10 +28,10 @@ class DaguService(ExtraService[DaguConfig]):
 
         self.dags_dir_volume_path = ServiceExtractor(
             self.config.dags_dir
-        ).extract_volume_path(self, None)
+        ).extract_volume_path(self.extractor_args)
         self.log_dir_volume_path = ServiceExtractor(
             self.config.log_dir
-        ).extract_volume_path(self, None)
+        ).extract_volume_path(self.extractor_args)
 
         self.dotenvs: defaultdict[str, dict[str | None, DotenvFileResource]] = (
             defaultdict(dict)

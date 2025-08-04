@@ -26,8 +26,8 @@ class DaguFile(ComponentResource):
 
                 DaguServiceConfigBuilder(service.config.dagu).build_resources(
                     opts=service_opts,
-                    main_service=service,
                     dagu_service=dagu_service,
+                    extractor_args=service.extractor_args,
                 )
 
         self.register_outputs({})

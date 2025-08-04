@@ -33,10 +33,10 @@ class PydioInstallConfigResource(
             resource_name,
             opts=opts,
             volume_path=ServiceExtractor(config.install_path).extract_volume_path(
-                pydio_service, None
+                pydio_service.extractor_args
             ),
             data=GlobalExtractor.extract_recursively(
-                config.install, pydio_service, None
+                config.install, pydio_service.extractor_args
             ),
             docker_resource_args=pydio_service.docker_resource_args,
         )

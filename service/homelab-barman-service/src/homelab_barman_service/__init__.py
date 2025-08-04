@@ -34,7 +34,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
 
         self.config_dir_volume_path = GlobalExtractor(
             self.config.config_dir
-        ).extract_volume_path(self, None)
+        ).extract_volume_path(self.extractor_args)
 
         self.configs: list[BarmanConfigFileResource] = []
         self.service_maps: defaultdict[str, list[str]] = defaultdict(list)
