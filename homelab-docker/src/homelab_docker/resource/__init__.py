@@ -32,13 +32,16 @@ class DockerResource:
         self.image = ImageResource(
             config=config,
             opts=opts,
-            platform=config.platform,
+            platform=config.host.platform,
             project_prefix=project_prefix,
             project_labels=project_labels,
             host=self.host,
         )
         self.plugin = PluginResource(
-            config=config.plugins, opts=opts, host=self.host, platform=config.platform
+            config=config.plugins,
+            opts=opts,
+            host=self.host,
+            platform=config.host.platform,
         )
         self.volume = VolumeResource(
             config=config, opts=opts, project_labels=project_labels, host=self.host

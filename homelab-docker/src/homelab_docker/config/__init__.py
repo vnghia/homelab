@@ -2,9 +2,7 @@ from homelab_mail import MailConfig
 from homelab_pydantic import HomelabBaseModel
 from homelab_s3 import S3Config
 from homelab_vpn import VpnConfig
-from pydantic_extra_types.timezone_name import TimeZoneName
 
-from ..model.platform import Platform
 from .database import DatabaseConfig
 from .host import HostConfig
 from .image import ImageConfig
@@ -16,8 +14,6 @@ from .volume import VolumeConfig
 
 class DockerNoServiceConfig(HomelabBaseModel):
     host: HostConfig
-    platform: Platform
-    timezone: TimeZoneName
     network: NetworkConfig
     vpn: VpnConfig | None = None
     images: ImageConfig = ImageConfig()
