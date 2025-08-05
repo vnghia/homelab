@@ -84,15 +84,16 @@ class ContainerModel(HomelabBaseModel):
         return self.raw_image
 
     def to_full(self, extractor_args: ExtractorArgs) -> ContainerModel:
-        service = extractor_args.service
         if "inherit" in self.model_fields_set:
             inherit = self.inherit.to_full()
-            service = (
-                service
+            models = (
+                extractor_args.service.model
                 if inherit.service is None
-                else service.SERVICES[inherit.service]
+                else extractor_args.docker_resource_args.config.services[
+                    inherit.service
+                ]
             )
-            return service.model[inherit.container].model_merge(self, override=True)
+            return models[inherit.container].model_merge(self, override=True)
         return self
 
     def build_command(self, extractor_args: ExtractorArgs) -> list[Output[str]] | None:

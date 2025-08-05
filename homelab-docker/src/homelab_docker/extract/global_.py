@@ -111,7 +111,14 @@ class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
     def extractor_args(self, extractor_args: ExtractorArgs) -> ExtractorArgs:
         service = self.root.service
         return extractor_args.with_service(
-            extractor_args.service.SERVICES[service] if service is not None else None
+            (
+                extractor_args.service.SERVICES.get(
+                    service,
+                    extractor_args.docker_resource_args.config.services[service],
+                )
+            )
+            if service is not None
+            else None
         )
 
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:

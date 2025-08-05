@@ -10,13 +10,14 @@ from pulumi import Output
 if typing.TYPE_CHECKING:
     from ..model.container import ContainerModel
     from ..model.container.volume_path import ContainerVolumePath
+    from ..model.service import ServiceModel
     from ..resource import DockerResourceArgs
     from ..resource.service import ServiceResourceBase
 
 
 @dataclasses.dataclass(frozen=True)
 class ExtractorArgs:
-    _service: ServiceResourceBase | None = None
+    _service: ServiceResourceBase | ServiceModel | None = None
     _container: ContainerModel | None = None
 
     @classmethod
@@ -27,9 +28,21 @@ class ExtractorArgs:
 
     @property
     def service(self) -> ServiceResourceBase:
-        if not self._service:
+        from ..resource.service import ServiceResourceBase
+
+        if not self._service or not isinstance(self._service, ServiceResourceBase):
             raise ValueError("Service is required for this extractor")
         return self._service
+
+    @property
+    def service_model(self) -> ServiceModel:
+        from ..model.service import ServiceModel
+
+        if not self._service:
+            raise ValueError("Service or service model is required for this extractor")
+        if isinstance(self._service, ServiceModel):
+            return self._service
+        return self._service.model
 
     @property
     def container(self) -> ContainerModel:
@@ -41,13 +54,19 @@ class ExtractorArgs:
     def docker_resource_args(self) -> DockerResourceArgs:
         return self.service.docker_resource_args
 
-    def with_service(self, service: ServiceResourceBase | None) -> Self:
+    def with_service(self, service: ServiceResourceBase | ServiceModel | None) -> Self:
+        from ..resource.service import ServiceResourceBase
+
         return self.__class__(
             _service=service or self._service,
             # Clear the container if the service has changed
             _container=self._container
             if (
-                (service and self._service and service.name() == self._service.name())
+                (
+                    isinstance(service, ServiceResourceBase)
+                    and isinstance(self._service, ServiceResourceBase)
+                    and service.name() == self._service.name()
+                )
                 or (service is None)
             )
             else None,

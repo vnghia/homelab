@@ -19,7 +19,7 @@ class ServiceVariableSourceExtractor(ExtractorBase[ServiceExtractVariableSource]
         from ..global_ import GlobalExtractor
 
         return GlobalExtractor(
-            extractor_args.service.model.variables[self.root.variable]
+            extractor_args.service_model.variables[self.root.variable]
         )
 
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
