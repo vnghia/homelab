@@ -4,7 +4,7 @@ from homelab_network.model.hostname import Hostnames
 from pulumi import ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 
-from ..config import DockerConfig, DockerNoServiceConfig
+from ..config import DockerConfig, DockerServiceModelConfig, DockerServiceModelConfigs
 from ..config.service import ServiceConfigBase
 from ..model.service import ServiceModel
 from .image import ImageResource
@@ -23,7 +23,6 @@ class DockerResource:
         project_labels: dict[str, str],
         host: str,
     ) -> None:
-        self.config = config
         self.host = host
 
         self.network = NetworkResource(
@@ -50,19 +49,23 @@ class DockerResource:
 
 @dataclasses.dataclass
 class DockerResourceArgs:
-    timezone: TimeZoneName
     resource: DockerResource
     models: dict[str, ServiceModel]
     project_labels: dict[str, str]
-    hostnames: Hostnames = dataclasses.field(default_factory=Hostnames)
-
-    @property
-    def config(self) -> DockerNoServiceConfig:
-        return self.resource.config
+    hostnames: Hostnames
+    configs: DockerServiceModelConfigs
 
     @property
     def host(self) -> str:
         return self.resource.host
+
+    @property
+    def config(self) -> DockerServiceModelConfig:
+        return self.configs[self.host]
+
+    @property
+    def timezone(self) -> TimeZoneName:
+        return self.configs[self.host].host.timezone
 
     @property
     def network(self) -> NetworkResource:

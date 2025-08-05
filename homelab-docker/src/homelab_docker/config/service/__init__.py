@@ -24,11 +24,15 @@ class ServiceConfigBase(HomelabBaseModel):
         from ...model.service import ServiceModel
 
         class AllowExtraServiceModel(ServiceModel):
-            model_config = ConfigDict(extra="allow")
+            model_config = ConfigDict(extra="ignore")
 
-        return {
-            name: service for name, service in self if isinstance(service, ServiceModel)
+        results: typing.Mapping[str, ServiceModel] = {
+            name: AllowExtraServiceModel.model_validate(service.model_dump())
+            for name, service in self
+            if isinstance(service, ServiceModel)
         } | self.extra(AllowExtraServiceModel)
+
+        return dict(results)
 
     @property
     def databases(self) -> dict[str, ServiceDatabaseConfig]:

@@ -4,7 +4,7 @@ from typing import Any, ClassVar, Self, Type
 import deepmerge
 import pulumi
 import yaml
-from homelab_docker.config import DockerConfig
+from homelab_docker.config import DockerConfig, DockerServiceModelConfigs
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_network.config import NetworkConfig
 from homelab_pydantic import HomelabBaseModel
@@ -17,6 +17,12 @@ class DockerConfigs[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](
 ):
     sun: DockerConfig[TSun]
     earth: DockerConfig[TEarth]
+
+    @property
+    def service_model(self) -> DockerServiceModelConfigs:
+        return DockerServiceModelConfigs(
+            {"sun": self.sun.service_model(), "earth": self.earth.service_model()}
+        )
 
 
 class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):

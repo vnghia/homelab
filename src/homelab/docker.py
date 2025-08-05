@@ -1,5 +1,5 @@
 from homelab_config import Config
-from homelab_docker.config import DockerConfig
+from homelab_docker.config import DockerConfig, DockerServiceModelConfigs
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.resource import DockerResource, DockerResourceArgs
 from homelab_network.model.hostname import Hostnames
@@ -17,6 +17,7 @@ class Docker[T: ServiceConfigBase](ComponentResource):
         project_prefix: str,
         host: str,
         hostnames: Hostnames,
+        docker_service_model_configs: DockerServiceModelConfigs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -32,11 +33,11 @@ class Docker[T: ServiceConfigBase](ComponentResource):
 
         self.services_config = self.config.services
         self.resource_args = DockerResourceArgs(
-            timezone=self.config.host.timezone,
             resource=self.resource,
             models=self.config.services.services,
             project_labels=Config.PROJECT_LABELS,
             hostnames=hostnames,
+            configs=docker_service_model_configs,
         )
 
         self.register_outputs({})

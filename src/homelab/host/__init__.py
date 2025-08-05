@@ -1,4 +1,4 @@
-from homelab_docker.config import DockerConfig
+from homelab_docker.config import DockerConfig, DockerServiceModelConfigs
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.host import HostResourceBase
@@ -19,6 +19,7 @@ class HostBase[T: ServiceConfigBase](HostResourceBase):
         opts: ResourceOptions | None,
         project_prefix: str,
         network_resource: NetworkResource,
+        docker_service_model_configs: DockerServiceModelConfigs,
     ) -> None:
         super().__init__(
             config,
@@ -33,6 +34,7 @@ class HostBase[T: ServiceConfigBase](HostResourceBase):
             project_prefix=self.project_prefix,
             host=self.name(),
             hostnames=self.network.hostnames,
+            docker_service_model_configs=docker_service_model_configs,
         )
 
     def build_extra_services(self) -> None:

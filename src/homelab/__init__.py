@@ -23,17 +23,21 @@ class Homelab:
             self.config.network, opts=None, project_prefix=self.project_prefix
         )
 
+        self.docker_service_model_configs = self.config.dockers.service_model
+
         self.sun = SunHost(
             self.config.dockers.sun,
             opts=None,
             project_prefix=self.project_prefix,
             network_resource=self.network,
+            docker_service_model_configs=self.docker_service_model_configs,
         )
         self.earth = EarthHost(
             self.config.dockers.earth,
             opts=None,
             project_prefix=self.project_prefix,
             network_resource=self.network,
+            docker_service_model_configs=self.docker_service_model_configs,
         )
 
         self.keepass = KeepassResource(

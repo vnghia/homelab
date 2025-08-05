@@ -1,8 +1,10 @@
 from homelab_mail import MailConfig
 from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic.model import HomelabRootModel
 from homelab_s3 import S3Config
 from homelab_vpn import VpnConfig
 
+from ..model.service import ServiceModel
 from .database import DatabaseConfig
 from .host import HostConfig
 from .image import ImageConfig
@@ -30,5 +32,19 @@ class DockerNoServiceConfig(HomelabBaseModel):
         return self.vpn
 
 
+class DockerServiceModelConfig(DockerNoServiceConfig):
+    services: dict[str, ServiceModel]
+
+
+class DockerServiceModelConfigs(HomelabRootModel[dict[str, DockerServiceModelConfig]]):
+    def __getitem__(self, key: str) -> DockerServiceModelConfig:
+        return self.root[key]
+
+
 class DockerConfig[T: ServiceConfigBase](DockerNoServiceConfig):
     services: T
+
+    def service_model(self) -> DockerServiceModelConfig:
+        return DockerServiceModelConfig(
+            services=self.services.services, **self.model_dump(exclude={"services"})
+        )
