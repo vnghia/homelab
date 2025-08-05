@@ -34,8 +34,8 @@ class ServiceResourceBase(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.model = model
-        self.extractor_args = ExtractorArgs.from_service(self)
         self.docker_resource_args = docker_resource_args
+        self.extractor_args = ExtractorArgs.from_service(self)
 
         self._database: ServiceDatabaseResource | None = None
         self._secret: ServiceSecretResouse | None = None

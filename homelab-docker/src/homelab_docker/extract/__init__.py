@@ -17,6 +17,7 @@ if typing.TYPE_CHECKING:
 
 @dataclasses.dataclass(frozen=True)
 class ExtractorArgs:
+    docker_resource_args: DockerResourceArgs
     _service: ServiceResourceBase | ServiceModel | None = None
     _container: ContainerModel | None = None
 
@@ -24,7 +25,11 @@ class ExtractorArgs:
     def from_service(
         cls, service: ServiceResourceBase, container: str | None = None
     ) -> Self:
-        return cls(_service=service, _container=service.model.containers.get(container))
+        return cls(
+            docker_resource_args=service.docker_resource_args,
+            _service=service,
+            _container=service.model.containers.get(container),
+        )
 
     @property
     def service(self) -> ServiceResourceBase:
@@ -50,14 +55,11 @@ class ExtractorArgs:
             raise ValueError("Container is required for this extractor")
         return self._container
 
-    @property
-    def docker_resource_args(self) -> DockerResourceArgs:
-        return self.service.docker_resource_args
-
     def with_service(self, service: ServiceResourceBase | ServiceModel | None) -> Self:
         from ..resource.service import ServiceResourceBase
 
         return self.__class__(
+            docker_resource_args=self.docker_resource_args,
             _service=service or self._service,
             # Clear the container if the service has changed
             _container=self._container
@@ -74,7 +76,9 @@ class ExtractorArgs:
 
     def with_container(self, container: ContainerModel | None) -> Self:
         return self.__class__(
-            _service=self._service, _container=container or self._container
+            docker_resource_args=self.docker_resource_args,
+            _service=self._service,
+            _container=container or self._container,
         )
 
 
