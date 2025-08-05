@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
     from ..model.container.volume_path import ContainerVolumePath
     from ..model.service import ServiceModel
     from ..resource import DockerResourceArgs
+    from ..resource.container import ContainerResource
     from ..resource.service import ServiceResourceBase
 
 
@@ -19,7 +20,7 @@ if typing.TYPE_CHECKING:
 class ExtractorArgs:
     docker_resource_args: DockerResourceArgs
     _service: ServiceResourceBase | ServiceModel | None = None
-    _container: ContainerModel | None = None
+    _container: ContainerResource | ContainerModel | None = None
 
     @classmethod
     def from_service(
@@ -50,10 +51,33 @@ class ExtractorArgs:
         return self._service.model
 
     @property
-    def container(self) -> ContainerModel:
-        if not self._container:
+    def container(self) -> ContainerResource:
+        from ..resource.container import ContainerResource
+
+        if not self._container or not isinstance(self._container, ContainerResource):
             raise ValueError("Container is required for this extractor")
         return self._container
+
+    @property
+    def container_model(self) -> ContainerModel:
+        from ..model.container import ContainerModel
+
+        if not self._container:
+            raise ValueError(
+                "Container or container model is required for this extractor"
+            )
+        if isinstance(self._container, ContainerModel):
+            return self._container
+        return self._container.model
+
+    def get_container(self, key: str | None) -> ContainerResource | ContainerModel:
+        from ..resource.service import ServiceResourceBase
+
+        if not self._service:
+            raise ValueError("Service or service model is required for this extractor")
+        if isinstance(self._service, ServiceResourceBase):
+            return self._service.containers.get(key, self._service.model[key])
+        return self._service[key]
 
     def with_service(self, service: ServiceResourceBase | ServiceModel | None) -> Self:
         from ..resource.service import ServiceResourceBase
@@ -74,7 +98,9 @@ class ExtractorArgs:
             else None,
         )
 
-    def with_container(self, container: ContainerModel | None) -> Self:
+    def with_container(
+        self, container: ContainerResource | ContainerModel | None
+    ) -> Self:
         return self.__class__(
             docker_resource_args=self.docker_resource_args,
             _service=self._service,

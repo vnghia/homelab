@@ -14,7 +14,9 @@ class ContainerVolumePath(HomelabBaseModel):
     path: RelativePath = RelativePath(PosixPath(""))
 
     def to_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
-        path = extractor_args.container.volumes[self.volume].to_path(extractor_args)
+        path = extractor_args.container_model.volumes[self.volume].to_path(
+            extractor_args
+        )
         return path / self.path if self.path else path
 
     def __truediv__(self, path: str | RelativePath) -> ContainerVolumePath:

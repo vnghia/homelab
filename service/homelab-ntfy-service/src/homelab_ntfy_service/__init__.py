@@ -26,7 +26,7 @@ class NtfyService(ExtraService[ExtraConfig]):
         self.admin = NtfyUserResource(
             self.ADMIN_ROLE,
             opts=ResourceOptions.merge(
-                self.child_opts, ResourceOptions(depends_on=[self.container])
+                self.child_opts, ResourceOptions(depends_on=[self.container.resource])
             ),
             container=self.container.name,
             username=self.keepass[None].username,
@@ -38,7 +38,7 @@ class NtfyService(ExtraService[ExtraConfig]):
         self.user = NtfyUserResource(
             self.USER_ROLE,
             opts=ResourceOptions.merge(
-                self.child_opts, ResourceOptions(depends_on=[self.container])
+                self.child_opts, ResourceOptions(depends_on=[self.container.resource])
             ),
             container=self.container.name,
             username=self.secret["{}-username".format(self.USER_ROLE)],

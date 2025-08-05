@@ -39,7 +39,7 @@ class TailscaleService(ServiceResourceBase):
 
         self.device = tailscale.get_device_output(
             hostname=self.hostname,
-            opts=InvokeOutputOptions(depends_on=[self.container]),
+            opts=InvokeOutputOptions(depends_on=[self.container.resource]),
         )
         self.ipv4 = self.device.apply(lambda x: IPv4Address(x.addresses[0]))
         self.ipv6 = self.device.apply(lambda x: IPv6Address(x.addresses[1]))

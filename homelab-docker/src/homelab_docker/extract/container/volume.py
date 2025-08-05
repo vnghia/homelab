@@ -17,7 +17,7 @@ class ContainerVolumeSourceExtractor(ExtractorBase[ContainerExtractVolumeSource]
         return self.extract_path(extractor_args).as_posix()
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
-        return extractor_args.container.volumes[self.root.volume].to_path(
+        return extractor_args.container_model.volumes[self.root.volume].to_path(
             extractor_args
         )
 

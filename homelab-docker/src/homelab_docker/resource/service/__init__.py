@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections import defaultdict
 
 import pulumi
-import pulumi_docker as docker
 import pulumi_tls as tls
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ComponentResource, Output, ResourceOptions
@@ -13,13 +12,14 @@ from ...extract import ExtractorArgs
 from ...model.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from .. import DockerResourceArgs
+from ..container import ContainerResource
 from .database import ServiceDatabaseResource
 from .keepass import ServiceKeepassResouse
 from .secret import ServiceSecretResouse
 
 
 class ServiceResourceBase(ComponentResource):
-    CONTAINER_RESOURCES: dict[str, dict[str | None, docker.Container]] = {}
+    CONTAINER_RESOURCES: dict[str, dict[str | None, ContainerResource]] = {}
     DATABASE_RESOURCES: dict[str, ServiceDatabaseResource] = {}
     SERVICES: dict[str, ServiceResourceBase] = {}
 
@@ -67,7 +67,7 @@ class ServiceResourceBase(ComponentResource):
         return None if name == cls.name() else name
 
     @property
-    def container(self) -> docker.Container:
+    def container(self) -> ContainerResource:
         return self.containers[None]
 
     @property
@@ -154,16 +154,17 @@ class ServiceResourceBase(ComponentResource):
         name: str | None,
         model: ContainerModel,
         container_model_build_args: ContainerModelBuildArgs | None,
-    ) -> docker.Container:
-        return model.build_resource(
+    ) -> ContainerResource:
+        resource = model.build_resource(
             self.add_service_name(name),
             opts=self.child_opts,
             extractor_args=self.extractor_args,
             build_args=container_model_build_args,
         )
+        return ContainerResource(model=model, resource=resource)
 
     def build_containers(self) -> None:
-        self.containers: dict[str | None, docker.Container] = {}
+        self.containers: dict[str | None, ContainerResource] = {}
         for name, model in self.model.containers.items():
             if model.active:
                 self.containers[name] = self.build_container(

@@ -80,13 +80,12 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
 
     def extractor_args(self, extractor_args: ExtractorArgs) -> ExtractorArgs:
         root = self.root
+
         return extractor_args.with_container(
-            extractor_args.service_model[root.container]
+            extractor_args.get_container(root.container)
             if root.has_container
-            else (
-                extractor_args._container
-                or extractor_args.service_model[root.container]
-            )
+            else extractor_args._container
+            or extractor_args.get_container(root.container)
         )
 
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:

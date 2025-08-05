@@ -140,7 +140,9 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         )
 
         self.state = KanidmStateResource(
-            opts=self.child_opts.merge(ResourceOptions(depends_on=[self.container])),
+            opts=self.child_opts.merge(
+                ResourceOptions(depends_on=[self.container.resource])
+            ),
             kanidm_service=self,
         )
 
