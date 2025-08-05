@@ -54,7 +54,6 @@ services:
           string:
             template: "{value}/oauth2/openid/meet"
     config:
-      depends-on: [livekit]
       traefik:
         backend:
           name: backend

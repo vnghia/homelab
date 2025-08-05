@@ -12,15 +12,6 @@ volumes:
     monica-meilisearch-data: {}
 services:
   kanidm:
-    variables:
-      MONICA_REDIRECT_URI:
-        extract:
-          hostname: monica
-          record: public
-          scheme: https
-        transform:
-          string:
-            template: "{value}/auth/kanidm/callback"
     config:
       state:
         systems:
@@ -28,7 +19,9 @@ services:
             monica:
               display-name: Monica
               origin-url:
-                - variable: MONICA_REDIRECT_URI
+                - service: monica
+                  extract:
+                    variable: MONICA_REDIRECT_URI
               origin-landing:
                 hostname: monica
                 record: public
@@ -48,6 +41,14 @@ services:
                     openid: ["Name"]
   monica:
     variables:
+      MONICA_REDIRECT_URI:
+        extract:
+          hostname: monica
+          record: public
+          scheme: https
+        transform:
+          string:
+            template: "{value}/auth/kanidm/callback"
       MELISEARCH_PORT: 7700
       MELISEARCH_VOLUME:
         volume: monica-meilisearch-data
@@ -129,9 +130,7 @@ services:
           extract:
             export: monica
         KANIDM_REDIRECT_URI:
-          service: kanidm
-          extract:
-            variable: MONICA_REDIRECT_URI
+          variable: MONICA_REDIRECT_URI
         KANIDM_BASE_URL:
           hostname: kanidm
           record: public

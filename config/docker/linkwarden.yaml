@@ -36,7 +36,6 @@ services:
       MELISEARCH_VOLUME:
         volume: linkwarden-meilisearch-data
     config:
-      depends-on: [meilisearch]
       traefik:
         traefik:
           record: public

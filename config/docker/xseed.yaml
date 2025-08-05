@@ -14,8 +14,7 @@ volumes:
               path: cross-seed.db
 services:
   xseed:
-    config:
-      depends-on: [qbittorrent]
+    config: {}
     container:
       image: xseed
       command: [daemon]
