@@ -8,10 +8,8 @@ from homelab_extract.dict_ import GlobalExtractDictSource
 from homelab_extract.docker import GlobalExtractDockerSource
 from homelab_extract.host import GlobalExtractHostSource
 from homelab_extract.hostname import GlobalExtractHostnameSource
-from homelab_extract.id import GlobalExtractIdSource
 from homelab_extract.json import GlobalExtractJsonSource
 from homelab_extract.kv import GlobalExtractKvSource
-from homelab_extract.name import GlobalExtractNameSource
 from homelab_extract.service import ServiceExtract
 from homelab_extract.simple import GlobalExtractSimpleSource
 from homelab_extract.transform import ExtractTransform
@@ -26,10 +24,8 @@ from .dict_ import GlobalDictSourceExtractor
 from .docker import GlobalDockerSourceExtractor
 from .host import GlobalHostSourceExtractor
 from .hostname import GlobalHostnameSourceExtractor
-from .id import GlobalIdSourceExtractor
 from .json import GlobalJsonSourceExtractor
 from .kv import GlobalKvSourceExtractor
-from .name import GlobalNameSourceExtractor
 from .service import ServiceExtractor, ServiceSourceExtractor
 from .simple import GlobalSimpleSourceExtractor
 from .transform import ExtractTransformer
@@ -50,10 +46,8 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         | GlobalDockerSourceExtractor
         | GlobalHostSourceExtractor
         | GlobalHostnameSourceExtractor
-        | GlobalIdSourceExtractor
         | GlobalJsonSourceExtractor
         | GlobalKvSourceExtractor
-        | GlobalNameSourceExtractor
         | GlobalSimpleSourceExtractor
         | GlobalVpnSourceExtractor
         | GlobalYamlSourceExtractor
@@ -67,14 +61,10 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalHostSourceExtractor(root)
         if isinstance(root, GlobalExtractHostnameSource):
             return GlobalHostnameSourceExtractor(root)
-        if isinstance(root, GlobalExtractIdSource):
-            return GlobalIdSourceExtractor(root)
         if isinstance(root, GlobalExtractJsonSource):
             return GlobalJsonSourceExtractor(root)
         if isinstance(root, GlobalExtractKvSource):
             return GlobalKvSourceExtractor(root)
-        if isinstance(root, GlobalExtractNameSource):
-            return GlobalNameSourceExtractor(root)
         if isinstance(root, GlobalExtractSimpleSource):
             return GlobalSimpleSourceExtractor(root)
         if isinstance(root, GlobalExtractVpnSource):

@@ -4,11 +4,15 @@ import typing
 
 from homelab_extract.container import ContainerExtract
 from homelab_extract.container.env import ContainerExtractEnvSource
+from homelab_extract.container.id import ContainerExtractIdSource
+from homelab_extract.container.name import ContainerExtractNameSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 
 from .. import ExtractorBase
 from .env import ContainerEnvSourceExtractor
+from .id import ContainerIdSourceExtractor
+from .name import ContainerNameSourceExtractor
 from .volume import ContainerVolumeSourceExtractor
 
 if typing.TYPE_CHECKING:
@@ -20,13 +24,20 @@ class ContainerExtractor(ExtractorBase[ContainerExtract]):
     @property
     def extractor(
         self,
-    ) -> ContainerEnvSourceExtractor | ContainerVolumeSourceExtractor:
+    ) -> (
+        ContainerEnvSourceExtractor
+        | ContainerIdSourceExtractor
+        | ContainerNameSourceExtractor
+        | ContainerVolumeSourceExtractor
+    ):
         root = self.root.root
-        return (
-            ContainerEnvSourceExtractor(root)
-            if isinstance(root, ContainerExtractEnvSource)
-            else ContainerVolumeSourceExtractor(root)
-        )
+        if isinstance(root, ContainerExtractEnvSource):
+            return ContainerEnvSourceExtractor(root)
+        if isinstance(root, ContainerExtractIdSource):
+            return ContainerIdSourceExtractor(root)
+        if isinstance(root, ContainerExtractNameSource):
+            return ContainerNameSourceExtractor(root)
+        return ContainerVolumeSourceExtractor(root)
 
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
         return self.extractor.extract_str(extractor_args)

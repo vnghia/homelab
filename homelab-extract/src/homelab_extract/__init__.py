@@ -7,10 +7,8 @@ from .dict_ import GlobalExtractDictSource
 from .docker import GlobalExtractDockerSource
 from .host import GlobalExtractHostSource
 from .hostname import GlobalExtractHostnameSource
-from .id import GlobalExtractIdSource
 from .json import GlobalExtractJsonSource
 from .kv import GlobalExtractKvSource
-from .name import GlobalExtractNameSource
 from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
 from .transform import ExtractTransform
@@ -24,10 +22,8 @@ class GlobalExtractSource(
         | GlobalExtractDockerSource
         | GlobalExtractHostSource
         | GlobalExtractHostnameSource
-        | GlobalExtractIdSource
         | GlobalExtractJsonSource
         | GlobalExtractKvSource
-        | GlobalExtractNameSource
         | GlobalExtractSimpleSource
         | GlobalExtractVpnSource
         | GlobalExtractYamlSource

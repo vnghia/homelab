@@ -35,13 +35,14 @@ class ServiceResourceBase(ComponentResource):
 
         self.model = model
         self.docker_resource_args = docker_resource_args
-        self.extractor_args = ExtractorArgs.from_service(self)
 
         self._database: ServiceDatabaseResource | None = None
         self._secret: ServiceSecretResouse | None = None
         self._keepass: ServiceKeepassResouse | None = None
 
         self.exports: dict[str, Output[str]] = {}
+        self.containers: dict[str | None, ContainerResource] = {}
+        self.extractor_args = ExtractorArgs.from_service(self)
 
         self.build_databases()
         self.build_secrets()
@@ -164,12 +165,13 @@ class ServiceResourceBase(ComponentResource):
         return ContainerResource(model=model, resource=resource)
 
     def build_containers(self) -> None:
-        self.containers: dict[str | None, ContainerResource] = {}
         for name, model in self.model.containers.items():
             if model.active:
                 self.containers[name] = self.build_container(
                     name, model.to_full(self.extractor_args), self.options.get(name)
                 )
+                if name is None:
+                    self.extractor_args = ExtractorArgs.from_service(self)
 
         self.CONTAINER_RESOURCES[self.name()] = {}
         for name, container in self.containers.items():

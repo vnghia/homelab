@@ -29,7 +29,9 @@ class ExtractorArgs:
         return cls(
             docker_resource_args=service.docker_resource_args,
             _service=service,
-            _container=service.model.containers.get(container),
+            _container=service.containers.get(
+                container, service.model.containers.get(container)
+            ),
         )
 
     @property

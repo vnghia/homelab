@@ -5,8 +5,10 @@ import typing
 from enum import StrEnum, auto
 
 import pulumi_docker as docker
-from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
-from homelab_extract.id import GlobalExtractIdSource
+from homelab_extract import GlobalExtract, GlobalExtractFull
+from homelab_extract.container import ContainerExtract
+from homelab_extract.container.id import ContainerExtractIdSource
+from homelab_extract.service import ServiceExtract, ServiceExtractFull
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
 
@@ -62,8 +64,13 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
                     container=GlobalExtract(
                         GlobalExtractFull(
                             service=vpn_config.service,
-                            extract=GlobalExtractSource(
-                                GlobalExtractIdSource(id=vpn_config.container)
+                            extract=ServiceExtract(
+                                ServiceExtractFull(
+                                    container=vpn_config.container,
+                                    extract=ContainerExtract(
+                                        ContainerExtractIdSource(id=None)
+                                    ),
+                                ),
                             ),
                         )
                     )
