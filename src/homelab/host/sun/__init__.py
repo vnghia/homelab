@@ -4,7 +4,7 @@ from homelab_barman_service import BarmanService
 from homelab_crowdsec_service import CrowdsecService
 from homelab_dagu_service import DaguService
 from homelab_ddns_service import DdnsService
-from homelab_docker.config import DockerConfig, DockerServiceModelConfigs
+from homelab_docker.config import DockerServiceModelConfigs
 from homelab_gluetun_service import GluetunService
 from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
@@ -22,10 +22,11 @@ from .config import SunServiceConfig
 class SunHost(HostBase[SunServiceConfig]):
     def __init__(
         self,
-        config: DockerConfig[SunServiceConfig],
+        config: SunServiceConfig,
         *,
         opts: ResourceOptions | None,
         project_prefix: str,
+        project_labels: dict[str, str],
         network_resource: NetworkResource,
         docker_service_model_configs: DockerServiceModelConfigs,
     ) -> None:
@@ -33,83 +34,84 @@ class SunHost(HostBase[SunServiceConfig]):
             config,
             opts=opts,
             project_prefix=project_prefix,
+            project_labels=project_labels,
             network_resource=network_resource,
             docker_service_model_configs=docker_service_model_configs,
         )
 
         self.tailscale = TailscaleService(
-            self.docker.services_config.tailscale,
+            self.services_config.tailscale,
             opts=self.child_opts,
             hostname=self.hostname,
             internal_aliases=self.network.config.aliases,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
 
         self.gluetun = GluetunService(
-            self.docker.services_config.gluetun,
+            self.services_config.gluetun,
             opts=self.child_opts,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
 
         self.crowdsec = CrowdsecService(
-            self.docker.services_config.crowdsec,
+            self.services_config.crowdsec,
             opts=self.child_opts,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
         self.traefik = TraefikService(
-            self.docker.services_config.traefik,
+            self.services_config.traefik,
             opts=self.child_opts,
             network_resource=self.network,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
         self.ddns = DdnsService(
-            self.docker.services_config.ddns,
+            self.services_config.ddns,
             opts=self.child_opts,
             network_resource=self.network,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
 
         self.dagu = DaguService(
-            self.docker.services_config.dagu,
+            self.services_config.dagu,
             opts=self.child_opts,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
         self.kanidm = KanidmService(
-            self.docker.services_config.kanidm,
+            self.services_config.kanidm,
             opts=self.child_opts,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
         self.ntfy = NtfyService(
-            self.docker.services_config.ntfy,
+            self.services_config.ntfy,
             opts=self.child_opts,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
 
         self.build_extra_services()
 
         # It should always be the last service
         self.barman = BarmanService(
-            self.docker.services_config.barman,
+            self.services_config.barman,
             opts=self.child_opts,
-            backup_config=self.docker.services_config.backup.config,
-            docker_resource_args=self.docker.resource_args,
+            backup_config=self.services_config.backup.config,
+            docker_resource_args=self.docker_resource_args,
         )
 
         self.balite = BaliteService(
-            self.docker.services_config.balite,
+            self.services_config.balite,
             opts=self.child_opts,
-            backup_config=self.docker.services_config.backup.config,
-            docker_resource_args=self.docker.resource_args,
+            backup_config=self.services_config.backup.config,
+            docker_resource_args=self.docker_resource_args,
         )
 
         self.restic = ResticService(
-            self.docker.services_config.restic,
+            self.services_config.restic,
             opts=self.child_opts,
             hostname=self.hostname,
-            backup_config=self.docker.services_config.backup.config,
+            backup_config=self.services_config.backup.config,
             barman_service=self.barman,
             balite_service=self.balite,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
 
         self.file = File(
@@ -117,11 +119,11 @@ class SunHost(HostBase[SunServiceConfig]):
         )
 
         self.backup = BackupService(
-            self.docker.services_config.backup,
+            self.services_config.backup,
             opts=self.child_opts,
             dagu_service=self.dagu,
             restic_service=self.restic,
-            docker_resource_args=self.docker.resource_args,
+            docker_resource_args=self.docker_resource_args,
         )
 
         self.register_outputs({})

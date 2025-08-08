@@ -2,18 +2,17 @@ import pulumi
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.volume import LocalVolumeModel
 
-from ..config import DockerConfig
+from ..config import DockerServiceModelConfig
 
 
 class VolumeResource(ComponentResource):
     RESOURCE_NAME = "volume"
 
-    def __init__[T: ServiceConfigBase](
+    def __init__(
         self,
-        config: DockerConfig[T],
+        config: DockerServiceModelConfig,
         *,
         opts: ResourceOptions,
         project_labels: dict[str, str],
@@ -29,7 +28,7 @@ class VolumeResource(ComponentResource):
             for name, model in config.volumes.local.items()
         }
 
-        for service_name, database in config.services.databases.items():
+        for service_name, database in config.databases.items():
             for type_, database_config in database.root.items():
                 for name, model in database_config.items():
                     type_config = config.database.root[type_]

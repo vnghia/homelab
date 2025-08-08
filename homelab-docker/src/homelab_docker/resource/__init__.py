@@ -1,11 +1,10 @@
 import dataclasses
 
 from homelab_network.model.hostname import Hostnames
-from pulumi import ResourceOptions
+from pulumi import ComponentResource, ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 
-from ..config import DockerConfig, DockerServiceModelConfig, DockerServiceModelConfigs
-from ..config.service import ServiceConfigBase
+from ..config import DockerServiceModelConfig, DockerServiceModelConfigs
 from ..model.service import ServiceModel
 from .image import ImageResource
 from .network import NetworkResource
@@ -13,24 +12,34 @@ from .plugin import PluginResource
 from .volume import VolumeResource
 
 
-class DockerResource:
-    def __init__[T: ServiceConfigBase](
+class DockerResource(ComponentResource):
+    RESOURCE_NAME = "docker"
+
+    def __init__(
         self,
-        config: DockerConfig[T],
+        config: DockerServiceModelConfig,
         *,
         opts: ResourceOptions,
         project_prefix: str,
         project_labels: dict[str, str],
         host: str,
     ) -> None:
+        super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
+        self.child_opts = ResourceOptions(parent=self)
+
+        self.project_prefix = project_prefix
+        self.project_labels = project_labels
         self.host = host
 
         self.network = NetworkResource(
-            config=config.network, opts=opts, project_labels=project_labels, host=host
+            config=config.network,
+            opts=self.child_opts,
+            project_labels=project_labels,
+            host=host,
         )
         self.image = ImageResource(
             config=config,
-            opts=opts,
+            opts=self.child_opts,
             platform=config.host.platform,
             project_prefix=project_prefix,
             project_labels=project_labels,
@@ -38,20 +47,24 @@ class DockerResource:
         )
         self.plugin = PluginResource(
             config=config.plugins,
-            opts=opts,
+            opts=self.child_opts,
             host=self.host,
             platform=config.host.platform,
         )
         self.volume = VolumeResource(
-            config=config, opts=opts, project_labels=project_labels, host=self.host
+            config=config,
+            opts=self.child_opts,
+            project_labels=project_labels,
+            host=self.host,
         )
+
+        self.register_outputs({})
 
 
 @dataclasses.dataclass
 class DockerResourceArgs:
     resource: DockerResource
     models: dict[str, ServiceModel]
-    project_labels: dict[str, str]
     hostnames: Hostnames
     configs: DockerServiceModelConfigs
 
@@ -82,3 +95,7 @@ class DockerResourceArgs:
     @property
     def volume(self) -> VolumeResource:
         return self.resource.volume
+
+    @property
+    def project_labels(self) -> dict[str, str]:
+        return self.resource.project_labels

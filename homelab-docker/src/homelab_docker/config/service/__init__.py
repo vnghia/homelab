@@ -7,7 +7,6 @@ from pydantic import ConfigDict
 
 if typing.TYPE_CHECKING:
     from ...model.service import ServiceModel
-    from .database import ServiceDatabaseConfig
 
 
 class ServiceConfigBase(HomelabBaseModel):
@@ -33,11 +32,3 @@ class ServiceConfigBase(HomelabBaseModel):
         } | self.extra(AllowExtraServiceModel)
 
         return dict(results)
-
-    @property
-    def databases(self) -> dict[str, ServiceDatabaseConfig]:
-        return {
-            name: service.databases
-            for name, service in self.services.items()
-            if service.databases
-        }

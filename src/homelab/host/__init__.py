@@ -1,4 +1,4 @@
-from homelab_docker.config import DockerConfig, DockerServiceModelConfigs
+from homelab_docker.config import DockerServiceModelConfigs
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.host import HostResourceBase
@@ -8,34 +8,27 @@ from homelab_network.resource.network import NetworkResource
 from pulumi import ResourceOptions
 from pydantic.alias_generators import to_snake
 
-from ..docker import Docker
-
 
 class HostBase[T: ServiceConfigBase](HostResourceBase):
     def __init__(
         self,
-        config: DockerConfig[T],
+        config: T,
         *,
         opts: ResourceOptions | None,
         project_prefix: str,
+        project_labels: dict[str, str],
         network_resource: NetworkResource,
         docker_service_model_configs: DockerServiceModelConfigs,
     ) -> None:
         super().__init__(
-            config,
             opts=opts,
             project_prefix=project_prefix,
+            project_labels=project_labels,
             network_resource=network_resource,
-        )
-
-        self.docker = Docker(
-            config,
-            opts=self.child_opts,
-            project_prefix=self.project_prefix,
-            host=self.name(),
-            hostnames=self.network.hostnames,
             docker_service_model_configs=docker_service_model_configs,
         )
+
+        self.services_config = config
 
     def build_extra_services(self) -> None:
         self.extra_services = {
@@ -44,10 +37,10 @@ class HostBase[T: ServiceConfigBase](HostResourceBase):
             )(
                 model,
                 opts=self.child_opts,
-                docker_resource_args=self.docker.resource_args,
+                docker_resource_args=self.docker_resource_args,
             ).build()
             for service, model in ExtraService.sort_depends_on(
-                self.docker.services_config.extra(ServiceWithConfigModel[ExtraConfig])
+                self.services_config.extra(ServiceWithConfigModel[ExtraConfig])
             ).items()
         }
 

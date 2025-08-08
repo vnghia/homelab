@@ -11,6 +11,7 @@ from .image import ImageConfig
 from .network import NetworkConfig
 from .plugin import PluginConfig
 from .service import ServiceConfigBase
+from .service.database import ServiceDatabaseConfig
 from .volume import VolumeConfig
 
 
@@ -34,6 +35,14 @@ class DockerNoServiceConfig(HomelabBaseModel):
 
 class DockerServiceModelConfig(DockerNoServiceConfig):
     services: dict[str, ServiceModel]
+
+    @property
+    def databases(self) -> dict[str, ServiceDatabaseConfig]:
+        return {
+            name: service.databases
+            for name, service in self.services.items()
+            if service.databases
+        }
 
 
 class DockerServiceModelConfigs(HomelabRootModel[dict[str, DockerServiceModelConfig]]):

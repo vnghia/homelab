@@ -4,7 +4,8 @@ from homelab_network.resource.network import NetworkResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
-from ..config import DockerNoServiceConfig
+from ..config import DockerServiceModelConfigs
+from ..resource import DockerResource, DockerResourceArgs
 from ..resource.file import FileVolumeProxy
 from ..resource.service import ServiceResourceBase
 
@@ -12,13 +13,14 @@ from ..resource.service import ServiceResourceBase
 class HostResourceBase(ComponentResource):
     def __init__(
         self,
-        config: DockerNoServiceConfig,
         *,
         opts: ResourceOptions | None,
         project_prefix: str,
+        project_labels: dict[str, str],
         network_resource: NetworkResource,
+        docker_service_model_configs: DockerServiceModelConfigs,
     ) -> None:
-        self.config = config
+        self.config = docker_service_model_configs[self.name()]
 
         super().__init__(
             self.name(),
@@ -43,6 +45,21 @@ class HostResourceBase(ComponentResource):
         self.project_prefix = project_prefix
         self.network = network_resource
         self.hostname = "{}-{}".format(self.project_prefix, self.name())
+
+        self.docker_resource = DockerResource(
+            self.config,
+            opts=self.child_opts,
+            project_prefix=project_prefix,
+            project_labels=project_labels,
+            host=self.name(),
+        )
+        self.docker_resource_args = DockerResourceArgs(
+            resource=self.docker_resource,
+            models=self.config.services,
+            hostnames=network_resource.hostnames,
+            configs=docker_service_model_configs,
+        )
+
         self.services: dict[str, ServiceResourceBase] = {}
 
         FileVolumeProxy.pull_image(self.config.host.ssh)
