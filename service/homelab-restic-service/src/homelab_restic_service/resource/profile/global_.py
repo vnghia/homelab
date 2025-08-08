@@ -4,7 +4,6 @@ import functools
 import operator
 import typing
 
-from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, YamlDumper
 from pulumi import ResourceOptions
@@ -55,8 +54,8 @@ class ResticGlobalProfileResource(
                 },
                 "includes": [
                     profile.to_path(
-                        ExtractorArgs.from_service(
-                            restic_service, restic_config.profile_dir.container
+                        restic_service.extractor_args_from_self(
+                            restic_config.profile_dir.container
                         )
                     )
                     for profile in all_profiles

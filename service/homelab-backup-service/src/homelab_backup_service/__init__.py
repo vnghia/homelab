@@ -28,9 +28,9 @@ from homelab_dagu_config.model.step.run.subdag import (
 from homelab_dagu_config.model.step.script import DaguDagStepScriptModel
 from homelab_dagu_service import DaguService
 from homelab_dagu_service.model import DaguDagModelBuilder
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
 from homelab_extract.transform.string import ExtractTransformString
@@ -63,14 +63,14 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         opts: ResourceOptions,
         dagu_service: DaguService,
         restic_service: ResticService,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         pre_volume_backups = []
 
         backup_configs = {}
-        for service in self.SERVICES:
+        for service in self.extractor_args.services:
             service_model = self.DEFAULT_BACKUP_MODEL.model_copy()
             if service in restic_service.service_groups:
                 volume_model = BackupServiceVolumeModel()

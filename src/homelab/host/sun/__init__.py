@@ -44,47 +44,47 @@ class SunHost(HostBase[SunServiceConfig]):
             opts=self.child_opts,
             hostname=self.hostname,
             internal_aliases=self.network.config.aliases,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.gluetun = GluetunService(
             self.services_config.gluetun,
             opts=self.child_opts,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.crowdsec = CrowdsecService(
             self.services_config.crowdsec,
             opts=self.child_opts,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
         self.traefik = TraefikService(
             self.services_config.traefik,
             opts=self.child_opts,
             network_resource=self.network,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
         self.ddns = DdnsService(
             self.services_config.ddns,
             opts=self.child_opts,
             network_resource=self.network,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.dagu = DaguService(
             self.services_config.dagu,
             opts=self.child_opts,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
         self.kanidm = KanidmService(
             self.services_config.kanidm,
             opts=self.child_opts,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
         self.ntfy = NtfyService(
             self.services_config.ntfy,
             opts=self.child_opts,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.build_extra_services()
@@ -94,14 +94,14 @@ class SunHost(HostBase[SunServiceConfig]):
             self.services_config.barman,
             opts=self.child_opts,
             backup_config=self.services_config.backup.config,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.balite = BaliteService(
             self.services_config.balite,
             opts=self.child_opts,
             backup_config=self.services_config.backup.config,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.restic = ResticService(
@@ -111,7 +111,7 @@ class SunHost(HostBase[SunServiceConfig]):
             backup_config=self.services_config.backup.config,
             barman_service=self.barman,
             balite_service=self.balite,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.file = File(
@@ -123,7 +123,7 @@ class SunHost(HostBase[SunServiceConfig]):
             opts=self.child_opts,
             dagu_service=self.dagu,
             restic_service=self.restic,
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.register_outputs({})

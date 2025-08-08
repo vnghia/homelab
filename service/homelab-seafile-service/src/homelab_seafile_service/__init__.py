@@ -1,5 +1,5 @@
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_extra_service import ExtraService
 from pulumi import ResourceOptions
 
@@ -12,7 +12,7 @@ class SeafileService(ExtraService[SeafileConfig]):
         model: ServiceWithConfigModel[SeafileConfig],
         *,
         opts: ResourceOptions,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
         self.build()

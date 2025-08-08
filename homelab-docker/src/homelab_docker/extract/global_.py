@@ -102,7 +102,7 @@ class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
         service = self.root.service
         return extractor_args.with_service(
             (
-                extractor_args.service.SERVICES.get(
+                extractor_args.services.get(
                     service,
                     extractor_args.docker_resource_args.config.services[service],
                 )

@@ -1,6 +1,6 @@
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from pulumi import ResourceOptions
@@ -14,9 +14,9 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
         model: ServiceWithConfigModel[GluetunConfig],
         *,
         opts: ResourceOptions,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         if self.config.opvn:
             self.opvn = FileResource(
@@ -27,7 +27,7 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
                 ),
                 content=self.config.opvn,
                 mode=0o444,
-                docker_resources_args=self.docker_resource_args,
+                docker_resources_args=self.extractor_args.docker_resource_args,
             )
             self.options[None].files = [self.opvn]
 
@@ -35,7 +35,9 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
             "FIREWALL_VPN_INPUT_PORTS": ",".join(
                 map(
                     str,
-                    sorted(self.docker_resource_args.config.vpn_.ports.values()),
+                    sorted(
+                        self.extractor_args.docker_resource_args.config.vpn_.ports.values()
+                    ),
                 )
             )
         }

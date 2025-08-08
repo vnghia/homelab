@@ -2,12 +2,12 @@ from collections import defaultdict
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupGlobalConfig
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
 from homelab_pydantic import AbsolutePath
@@ -26,9 +26,9 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         *,
         opts: ResourceOptions,
         backup_config: BackupGlobalConfig,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.backup_config = backup_config
 
@@ -41,8 +41,11 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
 
         for (
             service_name,
-            database_resource,
-        ) in self.DATABASE_RESOURCES.items():
+            service_resource,
+        ) in self.extractor_args.services.items():
+            database_resource = service_resource._database
+            if not database_resource:
+                continue
             for name, sources in database_resource.source_config.get(
                 DatabaseType.POSTGRES, {}
             ).items():

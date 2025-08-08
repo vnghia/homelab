@@ -5,6 +5,7 @@ from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from ..config import DockerServiceModelConfigs
+from ..extract import ExtractorArgs
 from ..resource import DockerResource, DockerResourceArgs
 from ..resource.file import FileVolumeProxy
 from ..resource.service import ServiceResourceBase
@@ -61,6 +62,7 @@ class HostResourceBase(ComponentResource):
         )
 
         self.services: dict[str, ServiceResourceBase] = {}
+        self.extractor_args = ExtractorArgs.from_host(self)
 
         FileVolumeProxy.pull_image(self.config.host.ssh)
 

@@ -12,7 +12,7 @@ class TraefikFile(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts=opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        for service in ServiceWithConfigResourceBase.SERVICES.values():
+        for service in traefik_service.extractor_args.services.values():
             if (
                 isinstance(service, ServiceWithConfigResourceBase)
                 and isinstance(service.config, TraefikServiceConfigBase)

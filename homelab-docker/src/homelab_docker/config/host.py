@@ -2,6 +2,7 @@ from homelab_pydantic import HomelabBaseModel
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from ..model.platform import Platform
+from ..model.service import ServiceModel
 
 
 class HostConfig(HomelabBaseModel):
@@ -13,3 +14,7 @@ class HostConfig(HomelabBaseModel):
     @property
     def ssh(self) -> str:
         return "ssh://{}@{}".format(self.user, self.address)
+
+
+class HostServiceModelConfig(HostConfig):
+    services: dict[str, ServiceModel]

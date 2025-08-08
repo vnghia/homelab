@@ -32,7 +32,7 @@ class TraefikDynamicServiceFullModelBuilder(
             match network_config.mode:
                 case NetworkMode.VPN:
                     vpn_config = extractor_args.docker_resource_args.config.vpn_
-                    vpn_service = service.SERVICES[vpn_config.service]
+                    vpn_service = extractor_args.host.services[vpn_config.service]
                     vpn_service.containers[vpn_config.container]
                     service_name = vpn_service.add_service_name(vpn_config.container)
                 case NetworkMode.HOST:

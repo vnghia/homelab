@@ -13,7 +13,7 @@ from ....model.database.type import DatabaseType
 from .type import ServiceDatabaseTypeResource
 
 if typing.TYPE_CHECKING:
-    from ...service import ServiceResourceBase
+    from ....extract import ExtractorArgs
 
 
 class ServiceDatabaseContainers(
@@ -31,9 +31,9 @@ class ServiceDatabaseResource(ComponentResource):
         *,
         opts: ResourceOptions,
         database_config: DatabaseConfig,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(self.RESOURCE_NAME, main_service.name(), None, opts)
+        super().__init__(self.RESOURCE_NAME, extractor_args.service.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.config = config
@@ -44,7 +44,7 @@ class ServiceDatabaseResource(ComponentResource):
                     model,
                     opts=self.child_opts,
                     database_config=database_config,
-                    main_service=main_service,
+                    extractor_args=extractor_args,
                     name=name,
                 )
                 for name, model in config.items()

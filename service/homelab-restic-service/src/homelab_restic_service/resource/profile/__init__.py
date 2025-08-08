@@ -33,7 +33,7 @@ class ResticProfileResource(
         if not self.backup_config:
             raise ValueError("`False` backup config should be skipped sooner")
 
-        self.main_service = restic_service.SERVICES[self.volume.service]
+        self.main_service = restic_service.extractor_args.services[self.volume.service]
 
         source = None
         if self.backup_config.source:

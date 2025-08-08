@@ -1,9 +1,9 @@
 from collections import defaultdict
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_extra_service import ExtraService
 from homelab_pydantic.path import AbsolutePath
@@ -21,9 +21,9 @@ class DaguService(ExtraService[DaguConfig]):
         model: ServiceWithConfigModel[DaguConfig],
         *,
         opts: ResourceOptions,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
         self.build()
 
         self.dags_dir_volume_path = ServiceExtractor(

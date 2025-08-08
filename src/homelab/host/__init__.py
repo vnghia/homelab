@@ -34,11 +34,7 @@ class HostBase[T: ServiceConfigBase](HostResourceBase):
         self.extra_services = {
             service: type(
                 "{}Service".format(service.capitalize()), (ExtraService,), {}
-            )(
-                model,
-                opts=self.child_opts,
-                docker_resource_args=self.docker_resource_args,
-            ).build()
+            )(model, opts=self.child_opts, extractor_args=self.extractor_args).build()
             for service, model in ExtraService.sort_depends_on(
                 self.services_config.extra(ServiceWithConfigModel[ExtraConfig])
             ).items()

@@ -6,7 +6,7 @@ from homelab_pydantic.model import HomelabBaseModel
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
-    from ...resource.service import ServiceResourceBase
+    from ...extract import ExtractorArgs
 
 
 class ContainerMailConfig(HomelabBaseModel):
@@ -18,8 +18,8 @@ class ContainerMailConfig(HomelabBaseModel):
     username: str | None = None
     password: str | None = None
 
-    def to_envs(self, main_service: ServiceResourceBase) -> dict[str, Output[str]]:
-        mail = main_service.docker_resource_args.config.mail[self.mail]
+    def to_envs(self, extractor_args: ExtractorArgs) -> dict[str, Output[str]]:
+        mail = extractor_args.docker_resource_args.config.mail[self.mail]
 
         return {
             k: Output.from_input(v)

@@ -3,9 +3,9 @@ from ipaddress import IPv4Address, IPv6Address
 import pulumi
 import pulumi_tailscale as tailscale
 from homelab_docker.config.network import NetworkConfig
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_network.model.ip import NetworkIpOutputModel
 from pulumi import InvokeOutputOptions, ResourceOptions
@@ -19,9 +19,9 @@ class TailscaleService(ServiceResourceBase):
         opts: ResourceOptions,
         hostname: str,
         internal_aliases: list[str],
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.hostname = hostname
         self.options[None] = ContainerModelBuildArgs(

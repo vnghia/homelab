@@ -8,7 +8,7 @@ from pulumi import ComponentResource, ResourceOptions
 from ...config.service.keepass import ServiceKeepassConfig
 
 if typing.TYPE_CHECKING:
-    from ...resource.service import ServiceResourceBase
+    from ...extract import ExtractorArgs
 
 
 class ServiceKeepassResouse(ComponentResource):
@@ -19,16 +19,16 @@ class ServiceKeepassResouse(ComponentResource):
         config: ServiceKeepassConfig,
         *,
         opts: ResourceOptions,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(self.RESOURCE_NAME, main_service.name(), None, opts)
+        super().__init__(self.RESOURCE_NAME, extractor_args.service.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.keepasses = {
             name: model.build_resource(
-                main_service.add_service_name(name),
+                extractor_args.service.add_service_name(name),
                 opts=self.child_opts,
-                hostnames=main_service.docker_resource_args.hostnames,
+                hostnames=extractor_args.docker_resource_args.hostnames,
             )
             for name, model in config.root.items()
         }

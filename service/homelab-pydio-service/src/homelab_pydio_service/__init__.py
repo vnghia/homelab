@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import (
     ConfigFileResource,
     JsonDefaultModel,
@@ -48,9 +48,9 @@ class PydioService(ExtraService[PydioConfig]):
         model: ServiceWithConfigModel[PydioConfig],
         *,
         opts: ResourceOptions,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
         self.options[None].files = [
             PydioInstallConfigResource(
                 "install", opts=self.child_opts, config=self.config, pydio_service=self

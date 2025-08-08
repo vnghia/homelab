@@ -1,11 +1,11 @@
 from collections import defaultdict
 from pathlib import PosixPath
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container import ContainerModelBuildArgs
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_network.resource.network import NetworkResource
 from homelab_pydantic import RelativePath
@@ -24,9 +24,9 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         *,
         opts: ResourceOptions,
         network_resource: NetworkResource,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.dynamic_directory_volume_path = ServiceExtractor(
             self.config.path.dynamic
@@ -41,10 +41,10 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             opts=ResourceOptions(delete_before_replace=True),
             envs={
                 "CF_ZONE_API_TOKEN": network_resource.token.amce_tokens[
-                    docker_resource_args.host
+                    self.docker_resource_args.host
                 ][0].value,
                 "CF_DNS_API_TOKEN": network_resource.token.amce_tokens[
-                    docker_resource_args.host
+                    self.docker_resource_args.host
                 ][1].value,
             },
             files=[self.static],

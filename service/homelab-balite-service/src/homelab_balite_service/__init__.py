@@ -1,10 +1,10 @@
 from homelab_backup.config import BackupGlobalConfig
 from homelab_backup.config.volume import BackupVolumeConfig
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume import ContainerVolumeConfig
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
 from homelab_pydantic import AbsolutePath
@@ -20,9 +20,9 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
         *,
         opts: ResourceOptions,
         backup_config: BackupGlobalConfig,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.source_dir = ServiceExtractor(self.config.source_dir).extract_path(
             self.extractor_args
@@ -47,7 +47,7 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
 
                 for sqlite in volume_model.backup.sqlites:
                     volume_path = GlobalExtractor(sqlite).extract_volume_path(
-                        self.SERVICES[service].extractor_args
+                        self.extractor_args.services[service].extractor_args
                     )
                     if volume_path.volume != name:
                         raise ValueError(

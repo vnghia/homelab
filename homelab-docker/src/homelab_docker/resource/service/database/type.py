@@ -28,7 +28,7 @@ from ....model.service.database import ServiceDatabaseConfigModel, ServiceDataba
 from ...file import FileResource
 
 if typing.TYPE_CHECKING:
-    from ...service import ServiceResourceBase
+    from ....extract import ExtractorArgs
 
 
 class ServiceDatabaseTypeResource(ComponentResource):
@@ -39,7 +39,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
         *,
         opts: ResourceOptions,
         database_config: DatabaseConfig,
-        main_service: ServiceResourceBase,
+        extractor_args: ExtractorArgs,
         name: str | None,
     ) -> None:
         self.type = type_
@@ -50,7 +50,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
         super().__init__(type_, self.short_name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.service_name = main_service.name()
+        self.service_name = extractor_args.service.name()
         self.username = self.service_name
         self.password = SecretModel(special=False).build_resource(
             self.short_name, opts=self.child_opts
@@ -77,7 +77,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 ),
                 content=script.content,
                 mode=0o777,
-                docker_resources_args=main_service.docker_resource_args,
+                docker_resources_args=extractor_args.docker_resource_args,
             )
             for i, script in enumerate(self.config.scripts + model.scripts)
         ]
@@ -156,7 +156,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
             ).build_resource(
                 full_name,
                 opts=self.child_opts,
-                extractor_args=ExtractorArgs.from_service(main_service),
+                extractor_args=extractor_args,
                 build_args=ContainerModelBuildArgs(
                     envs={self.config.env.password: self.password.result}
                     | superuser_password_env,

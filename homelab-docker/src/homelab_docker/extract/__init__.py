@@ -8,31 +8,52 @@ from homelab_pydantic import AbsolutePath
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
+    from ..config.host import HostServiceModelConfig
     from ..model.container import ContainerModel
     from ..model.container.volume_path import ContainerVolumePath
     from ..model.service import ServiceModel
     from ..resource import DockerResourceArgs
     from ..resource.container import ContainerResource
+    from ..resource.host import HostResourceBase
     from ..resource.service import ServiceResourceBase
 
 
 @dataclasses.dataclass(frozen=True)
 class ExtractorArgs:
-    docker_resource_args: DockerResourceArgs
-    _service: ServiceResourceBase | ServiceModel | None = None
-    _container: ContainerResource | ContainerModel | None = None
+    _host: HostResourceBase | HostServiceModelConfig | None
+    _service: ServiceResourceBase | ServiceModel | None
+    _container: ContainerResource | ContainerModel | None
 
     @classmethod
+    def from_host(cls, host: HostResourceBase) -> Self:
+        return cls(_host=host, _service=None, _container=None)
+
     def from_service(
-        cls, service: ServiceResourceBase, container: str | None = None
+        self, service: ServiceResourceBase, container: str | None = None
     ) -> Self:
-        return cls(
-            docker_resource_args=service.docker_resource_args,
+        return self.__class__(
+            _host=self._host,
             _service=service,
             _container=service.containers.get(
                 container, service.model.containers.get(container)
             ),
         )
+
+    @property
+    def host(self) -> HostResourceBase:
+        from ..resource.host import HostResourceBase
+
+        if not self._host or not isinstance(self._host, HostResourceBase):
+            raise ValueError("Host is required for this extractor")
+        return self._host
+
+    @property
+    def services(self) -> dict[str, ServiceResourceBase]:
+        return self.host.services
+
+    @property
+    def docker_resource_args(self) -> DockerResourceArgs:
+        return self.host.docker_resource_args
 
     @property
     def service(self) -> ServiceResourceBase:
@@ -85,7 +106,7 @@ class ExtractorArgs:
         from ..resource.service import ServiceResourceBase
 
         return self.__class__(
-            docker_resource_args=self.docker_resource_args,
+            _host=self._host,
             _service=service or self._service,
             # Clear the container if the service has changed
             _container=self._container
@@ -104,7 +125,7 @@ class ExtractorArgs:
         self, container: ContainerResource | ContainerModel | None
     ) -> Self:
         return self.__class__(
-            docker_resource_args=self.docker_resource_args,
+            _host=self._host,
             _service=self._service,
             _container=container or self._container,
         )

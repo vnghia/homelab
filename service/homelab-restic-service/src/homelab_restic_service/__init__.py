@@ -4,11 +4,11 @@ from pathlib import PosixPath
 from homelab_backup.config import BackupGlobalConfig
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_pydantic import RelativePath
 from pulumi import ResourceOptions
@@ -33,9 +33,9 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         backup_config: BackupGlobalConfig,
         barman_service: BarmanService,
         balite_service: BaliteService,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.backup_config = backup_config
 
@@ -46,7 +46,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self.repo = ResticRepoResource(
             "repo",
             opts=self.child_opts,
-            docker_host=docker_resource_args.config.host.ssh,
+            docker_host=self.docker_resource_args.config.host.ssh,
             image=self.docker_resource_args.image.remotes[self.config.image].image_id,
             envs=self.config.dagu.dotenvs[None].to_envs(self.extractor_args),
         )

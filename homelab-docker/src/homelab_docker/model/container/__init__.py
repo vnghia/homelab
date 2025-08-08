@@ -151,7 +151,7 @@ class ContainerModel(HomelabBaseModel):
                 additional_envs |= database.build_envs(service.database)
         if self.mails:
             for mail in self.mails:
-                additional_envs |= mail.to_envs(service)
+                additional_envs |= mail.to_envs(extractor_args)
 
         return [
             Output.concat(k, "=", v)

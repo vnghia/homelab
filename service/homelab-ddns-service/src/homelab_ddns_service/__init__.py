@@ -1,5 +1,5 @@
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_extra_service import ExtraService
 from homelab_network.resource.network import NetworkResource
 from pulumi import Output, ResourceOptions
@@ -14,9 +14,9 @@ class DdnsService(ExtraService[DdnsConfig]):
         *,
         opts: ResourceOptions,
         network_resource: NetworkResource,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
         self.settings = [
             {
                 "provider": "cloudflare",
@@ -29,7 +29,7 @@ class DdnsService(ExtraService[DdnsConfig]):
                 "ip_version": ip_version,
             }
             for record in network_resource.config.records.values()
-            if record.is_ddns and record.host == docker_resource_args.host
+            if record.is_ddns and record.host == self.docker_resource_args.host
             for hostname in record.hostnames.values()
             for ip_version in ["ipv4", "ipv6"]
         ]

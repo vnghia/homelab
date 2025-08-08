@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_network.config.port import NetworkPortConfig
@@ -119,7 +118,7 @@ class TraefikStaticConfigResource(
                 "providers": {
                     "file": {
                         "directory": traefik_service.dynamic_directory_volume_path.to_path(
-                            ExtractorArgs.from_service(traefik_service, None)
+                            traefik_service.extractor_args_from_self(None)
                         ),
                         "watch": True,
                     },

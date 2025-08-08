@@ -37,9 +37,9 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
         return {
             "dotenv": [
                 dotenv.to_path(
-                    ExtractorArgs.from_service(
-                        dagu_service, dagu_config.dags_dir.container
-                    ),
+                    dagu_service.extractor_args_from_self(
+                        dagu_config.dags_dir.container
+                    )
                 )
                 for dotenv in dotenvs
             ]
@@ -49,7 +49,7 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
             "group": root.group or service.name(),
             "tags": root.tags,
             "logDir": log_dir.to_path(
-                ExtractorArgs.from_service(dagu_service, dagu_config.log_dir.container),
+                dagu_service.extractor_args_from_self(dagu_config.log_dir.container),
             )
             if log_dir
             else None,

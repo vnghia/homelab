@@ -19,22 +19,17 @@ from .secret import ServiceSecretResouse
 
 
 class ServiceResourceBase(ComponentResource):
-    CONTAINER_RESOURCES: dict[str, dict[str | None, ContainerResource]] = {}
-    DATABASE_RESOURCES: dict[str, ServiceDatabaseResource] = {}
-    SERVICES: dict[str, ServiceResourceBase] = {}
-
     def __init__(
         self,
         model: ServiceModel,
         *,
         opts: ResourceOptions,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__("{}-service".format(self.name()), self.name(), None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
         self.model = model
-        self.docker_resource_args = docker_resource_args
 
         self._database: ServiceDatabaseResource | None = None
         self._secret: ServiceSecretResouse | None = None
@@ -42,7 +37,7 @@ class ServiceResourceBase(ComponentResource):
 
         self.exports: dict[str, Output[str]] = {}
         self.containers: dict[str | None, ContainerResource] = {}
-        self.extractor_args = ExtractorArgs.from_service(self)
+        self.extractor_args = extractor_args.from_service(self)
 
         self.build_databases()
         self.build_secrets()
@@ -52,7 +47,14 @@ class ServiceResourceBase(ComponentResource):
             ContainerModelBuildArgs
         )
 
-        self.SERVICES[self.name()] = self
+        self.extractor_args.services[self.name()] = self
+
+    def extractor_args_from_self(self, container: str | None) -> ExtractorArgs:
+        return self.extractor_args.from_service(self, container)
+
+    @property
+    def docker_resource_args(self) -> DockerResourceArgs:
+        return self.extractor_args.docker_resource_args
 
     @classmethod
     def name(cls) -> str:
@@ -100,17 +102,16 @@ class ServiceResourceBase(ComponentResource):
             self._database = ServiceDatabaseResource(
                 self.model.databases,
                 opts=self.child_opts,
-                database_config=self.docker_resource_args.config.database,
-                main_service=self,
+                database_config=self.extractor_args.docker_resource_args.config.database,
+                extractor_args=self.extractor_args,
             )
-            self.DATABASE_RESOURCES[self.name()] = self._database
 
             for type_, containers in self._database.containers.items():
                 for name, versions in containers.items():
                     for version, container in versions.items():
                         pulumi.export(
                             "{}.container.{}".format(
-                                self.docker_resource_args.host,
+                                self.extractor_args.docker_resource_args.host,
                                 type_.get_full_name_version(self.name(), name, version),
                             ),
                             container.name,
@@ -126,20 +127,23 @@ class ServiceResourceBase(ComponentResource):
                 if isinstance(secret, tls.PrivateKey):
                     pulumi.export(
                         "{}.secret.{}.private-key".format(
-                            self.docker_resource_args.host, self.add_service_name(name)
+                            self.extractor_args.docker_resource_args.host,
+                            self.add_service_name(name),
                         ),
                         secret.private_key_openssh,
                     )
                     pulumi.export(
                         "{}.secret.{}.public-key".format(
-                            self.docker_resource_args.host, self.add_service_name(name)
+                            self.extractor_args.docker_resource_args.host,
+                            self.add_service_name(name),
                         ),
                         secret.public_key_openssh,
                     )
                 else:
                     pulumi.export(
                         "{}.secret.{}".format(
-                            self.docker_resource_args.host, self.add_service_name(name)
+                            self.extractor_args.docker_resource_args.host,
+                            self.add_service_name(name),
                         ),
                         secret.result,
                     )
@@ -147,7 +151,9 @@ class ServiceResourceBase(ComponentResource):
     def build_keepasses(self) -> None:
         if self.model.keepasses:
             self._keepass = ServiceKeepassResouse(
-                self.model.keepasses, opts=self.child_opts, main_service=self
+                self.model.keepasses,
+                opts=self.child_opts,
+                extractor_args=self.extractor_args,
             )
 
     def build_container(
@@ -171,14 +177,13 @@ class ServiceResourceBase(ComponentResource):
                     name, model.to_full(self.extractor_args), self.options.get(name)
                 )
                 if name is None:
-                    self.extractor_args = ExtractorArgs.from_service(self)
+                    self.extractor_args = self.extractor_args.from_service(self)
 
-        self.CONTAINER_RESOURCES[self.name()] = {}
         for name, container in self.containers.items():
-            self.CONTAINER_RESOURCES[self.name()][name] = container
             pulumi.export(
                 "{}.container.{}".format(
-                    self.docker_resource_args.host, self.add_service_name(name)
+                    self.extractor_args.docker_resource_args.host,
+                    self.add_service_name(name),
                 ),
                 container.name,
             )
@@ -190,7 +195,7 @@ class ServiceWithConfigResourceBase[T: HomelabBaseModel](ServiceResourceBase):
         model: ServiceWithConfigModel[T],
         *,
         opts: ResourceOptions,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
         self.config = model.config

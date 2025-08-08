@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file.config import (
     ConfigFileResource,
     JsonDefaultModel,
@@ -49,9 +49,9 @@ class CrowdsecService(ServiceWithConfigResourceBase[CrowdsecConfig]):
         model: ServiceWithConfigModel[CrowdsecConfig],
         *,
         opts: ResourceOptions,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.docker = DockerAcquisConfigResource(
             "docker", opts=self.child_opts, crowdsec_service=self

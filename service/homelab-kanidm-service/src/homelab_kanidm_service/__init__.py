@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pulumi
 import pulumi_tls as tls
+from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource import DockerResourceArgs
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.file.config import (
     ConfigFileResource,
@@ -69,9 +69,9 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         model: ServiceWithConfigModel[KandimConfig],
         *,
         opts: ResourceOptions,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__(model, opts=opts, docker_resource_args=docker_resource_args)
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.port = (
             GlobalExtractor(self.config.port)
