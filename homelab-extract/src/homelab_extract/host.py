@@ -6,6 +6,7 @@ from homelab_pydantic import HomelabBaseModel
 class HostInfoSource(StrEnum):
     USER = auto()
     ADDRESS = auto()
+    TIMEZONE = auto()
 
 
 class GlobalExtractHostSource(HomelabBaseModel):

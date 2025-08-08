@@ -37,7 +37,11 @@ services:
         interval: 5s
         timeout: 5s
       hostname:
-        docker: "{project}-{stack}"
+        extract:
+          project:
+        transform:
+          string:
+            template: "{project}-{stack}"
       network:
         default-bridge: true
       ports:

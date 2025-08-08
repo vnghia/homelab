@@ -45,7 +45,11 @@ services:
           secret: traefik
         ENROLL_KEY:
         ENROLL_INSTANCE_NAME:
-          docker: "{project}-{stack}"
+          extract:
+            project:
+          transform:
+            string:
+              template: "{project}-{stack}"
         COLLECTIONS: crowdsecurity/traefik
       network:
         default-bridge: true

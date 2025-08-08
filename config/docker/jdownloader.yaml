@@ -28,4 +28,8 @@ services:
         JD_EMAIL:
         JD_PASSWORD:
         JD_DEVICENAME:
-          docker: "{project}-{stack}"
+          extract:
+            project:
+          transform:
+            string:
+              template: "{project}-{stack}"

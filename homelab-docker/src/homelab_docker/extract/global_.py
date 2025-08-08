@@ -5,11 +5,11 @@ from typing import Any
 
 from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
 from homelab_extract.dict_ import GlobalExtractDictSource
-from homelab_extract.docker import GlobalExtractDockerSource
 from homelab_extract.host import GlobalExtractHostSource
 from homelab_extract.hostname import GlobalExtractHostnameSource
 from homelab_extract.json import GlobalExtractJsonSource
 from homelab_extract.kv import GlobalExtractKvSource
+from homelab_extract.project import GlobalExtractProjectSource
 from homelab_extract.service import ServiceExtract
 from homelab_extract.simple import GlobalExtractSimpleSource
 from homelab_extract.transform import ExtractTransform
@@ -21,11 +21,11 @@ from pydantic import ValidationError
 from . import ExtractorBase
 from .container import ContainerExtractor
 from .dict_ import GlobalDictSourceExtractor
-from .docker import GlobalDockerSourceExtractor
 from .host import GlobalHostSourceExtractor
 from .hostname import GlobalHostnameSourceExtractor
 from .json import GlobalJsonSourceExtractor
 from .kv import GlobalKvSourceExtractor
+from .project import GlobalProjectSourceExtractor
 from .service import ServiceExtractor, ServiceSourceExtractor
 from .simple import GlobalSimpleSourceExtractor
 from .transform import ExtractTransformer
@@ -43,11 +43,11 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         self,
     ) -> (
         GlobalDictSourceExtractor
-        | GlobalDockerSourceExtractor
         | GlobalHostSourceExtractor
         | GlobalHostnameSourceExtractor
         | GlobalJsonSourceExtractor
         | GlobalKvSourceExtractor
+        | GlobalProjectSourceExtractor
         | GlobalSimpleSourceExtractor
         | GlobalVpnSourceExtractor
         | GlobalYamlSourceExtractor
@@ -55,8 +55,6 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         root = self.root.root
         if isinstance(root, GlobalExtractDictSource):
             return GlobalDictSourceExtractor(root)
-        if isinstance(root, GlobalExtractDockerSource):
-            return GlobalDockerSourceExtractor(root)
         if isinstance(root, GlobalExtractHostSource):
             return GlobalHostSourceExtractor(root)
         if isinstance(root, GlobalExtractHostnameSource):
@@ -65,6 +63,8 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalJsonSourceExtractor(root)
         if isinstance(root, GlobalExtractKvSource):
             return GlobalKvSourceExtractor(root)
+        if isinstance(root, GlobalExtractProjectSource):
+            return GlobalProjectSourceExtractor(root)
         if isinstance(root, GlobalExtractSimpleSource):
             return GlobalSimpleSourceExtractor(root)
         if isinstance(root, GlobalExtractVpnSource):

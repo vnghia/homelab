@@ -4,11 +4,11 @@ from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 from .container import ContainerExtract
 from .dict_ import GlobalExtractDictSource
-from .docker import GlobalExtractDockerSource
 from .host import GlobalExtractHostSource
 from .hostname import GlobalExtractHostnameSource
 from .json import GlobalExtractJsonSource
 from .kv import GlobalExtractKvSource
+from .project import GlobalExtractProjectSource
 from .service import ServiceExtract, ServiceExtractSource
 from .simple import GlobalExtractSimpleSource
 from .transform import ExtractTransform
@@ -19,11 +19,11 @@ from .yaml import GlobalExtractYamlSource
 class GlobalExtractSource(
     HomelabRootModel[
         GlobalExtractDictSource
-        | GlobalExtractDockerSource
         | GlobalExtractHostSource
         | GlobalExtractHostnameSource
         | GlobalExtractJsonSource
         | GlobalExtractKvSource
+        | GlobalExtractProjectSource
         | GlobalExtractSimpleSource
         | GlobalExtractVpnSource
         | GlobalExtractYamlSource

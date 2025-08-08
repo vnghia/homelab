@@ -106,7 +106,7 @@ services:
           record: public
           scheme: https
         PAPERLESS_TIME_ZONE:
-          docker: "{timezone}"
+          host: timezone
         PAPERLESS_EMAIL_TASK_CRON: disable
         PAPERLESS_TRAIN_TASK_CRON: disable
         PAPERLESS_CONSUMER_DISABLE: true

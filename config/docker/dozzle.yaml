@@ -45,7 +45,11 @@ services:
         DOZZLE_BASE: /log
         DOZZLE_ADDR: ":8080"
         DOZZLE_FILTER:
-          docker: "label=pulumi.stack={stack}"
+          extract:
+            project:
+          transform:
+            string:
+              template: "label=pulumi.stack={stack}"
         DOZZLE_NO_ANALYTICS: true
         DOZZLE_ENABLE_ACTIONS: true
         DOZZLE_ENABLE_SHELL: true

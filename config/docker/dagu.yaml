@@ -86,7 +86,7 @@ services:
       envs:
         DAGU_PORT: 8080
         DAGU_TZ:
-          docker: "{timezone}"
+          host: timezone
         DAGU_HOME:
           volume: dagu-home
         DAGU_DAGS_DIR:

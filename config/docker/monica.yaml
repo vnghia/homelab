@@ -108,7 +108,7 @@ services:
           record: public
           scheme: https
         APP_TIMEZONE:
-          docker: "{timezone}"
+          host: timezone
         APP_TRUSTED_PROXIES: "*"
         APP_DISABLE_SIGNUP: true
         LOG_STACK: stderr

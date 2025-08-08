@@ -19,3 +19,5 @@ class GlobalHostSourceExtractor(ExtractorBase[GlobalExtractHostSource]):
                 return host.user
             case HostInfoSource.ADDRESS:
                 return host.address
+            case HostInfoSource.TIMEZONE:
+                return host.timezone
