@@ -86,4 +86,4 @@ services:
             extract:
               container:
               extract:
-                name:
+                cinfo: name

@@ -123,7 +123,7 @@ services:
             crowdsecLapiHost:
               service: crowdsec
               extract:
-                name:
+                cinfo: name
               transform:
                 string:
                   template: "{value}:8080"
@@ -185,7 +185,7 @@ services:
         container:
           service: tailscale
           extract:
-            id:
+            cinfo: id
       wud:
         template: https://github.com/traefik/traefik/releases/tag/${original}
         include-prefix: v

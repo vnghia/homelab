@@ -85,7 +85,7 @@ services:
                   params:
                     main:
                       CONTAINERS:
-                        name:
+                        cinfo: name
               - name: create-backup
                 executor:
                   model:
@@ -103,7 +103,7 @@ services:
                   params:
                     main:
                       CONTAINERS:
-                        name:
+                        cinfo: name
     keepasses:
       keepass:
         hostname:

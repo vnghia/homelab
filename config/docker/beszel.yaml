@@ -91,7 +91,7 @@ services:
                   - extract:
                       kv:
                         container:
-                          name:
+                          cinfo: name
                         port:
                           variable: PORT
                         prefix:
@@ -109,7 +109,7 @@ services:
                   - extract:
                       kv:
                         container:
-                          name:
+                          cinfo: name
                         port:
                           variable: PORT
                         prefix:
@@ -128,7 +128,7 @@ services:
                   - extract:
                       kv:
                         container:
-                          name:
+                          cinfo: name
                         port:
                           variable: PORT
                         prefix:
