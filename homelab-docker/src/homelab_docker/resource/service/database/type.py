@@ -7,6 +7,8 @@ import pulumi_docker as docker
 from homelab_extract import GlobalExtract
 from homelab_extract.container import ContainerExtract
 from homelab_extract.container.volume import ContainerExtractVolumeSource
+from homelab_extract.host import HostExtract
+from homelab_extract.service import ServiceExtract
 from homelab_pydantic import RelativePath
 from homelab_secret.model import SecretModel
 from pulumi import ComponentResource, ResourceOptions
@@ -138,8 +140,12 @@ class ServiceDatabaseTypeResource(ComponentResource):
                             self.database
                         ),
                         self.config.env.data_dir: GlobalExtract(
-                            ContainerExtract(
-                                ContainerExtractVolumeSource(volume=full_name)
+                            HostExtract(
+                                ServiceExtract(
+                                    ContainerExtract(
+                                        ContainerExtractVolumeSource(volume=full_name)
+                                    )
+                                )
                             )
                         ),
                     }

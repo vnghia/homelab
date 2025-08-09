@@ -30,7 +30,7 @@ services:
           path: kanidm.backup.json
     config:
       address:
-        host: address
+        hinfo: address
       path:
         config:
           variable: CONFIG

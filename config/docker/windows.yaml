@@ -82,8 +82,6 @@ services:
               secret:
                 encode: base32
           WINTELE_CONTAINER:
-            service:
+            container:
             extract:
-              container:
-              extract:
-                cinfo: name
+              cinfo: name

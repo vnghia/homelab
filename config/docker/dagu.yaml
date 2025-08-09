@@ -12,11 +12,9 @@ services:
   dagu:
     config:
       dags-dir:
-        extract:
-          env: DAGU_DAGS_DIR
+        env: DAGU_DAGS_DIR
       log-dir:
-        extract:
-          env: DAGU_LOG_DIR
+        env: DAGU_LOG_DIR
       traefik:
         traefik:
           record: private
@@ -86,7 +84,7 @@ services:
       envs:
         DAGU_PORT: 8080
         DAGU_TZ:
-          host: timezone
+          hinfo: timezone
         DAGU_HOME:
           volume: dagu-home
         DAGU_DAGS_DIR:

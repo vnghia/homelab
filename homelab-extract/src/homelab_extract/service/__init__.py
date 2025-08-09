@@ -24,7 +24,7 @@ class ServiceExtractSource(
 class ServiceExtractFull(HomelabBaseModel):
     container: str | None = None
     extract: ContainerExtract | ServiceExtractSource
-    transform: ExtractTransform = ExtractTransform()
+    transform: ExtractTransform | None = None
 
     @property
     def has_container(self) -> bool:
@@ -32,7 +32,7 @@ class ServiceExtractFull(HomelabBaseModel):
 
 
 class ServiceExtract(
-    HomelabRootModel[ContainerExtract | ServiceExtractSource | ServiceExtractFull]
+    HomelabRootModel[ServiceExtractFull | ServiceExtractSource | ContainerExtract]
 ):
     @property
     def container(self) -> str | None:

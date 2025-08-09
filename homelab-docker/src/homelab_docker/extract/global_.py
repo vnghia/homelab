@@ -5,15 +5,12 @@ from typing import Any
 
 from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
 from homelab_extract.dict_ import GlobalExtractDictSource
-from homelab_extract.host import GlobalExtractHostSource
 from homelab_extract.hostname import GlobalExtractHostnameSource
 from homelab_extract.json import GlobalExtractJsonSource
 from homelab_extract.kv import GlobalExtractKvSource
 from homelab_extract.project import GlobalExtractProjectSource
-from homelab_extract.service import ServiceExtract
 from homelab_extract.simple import GlobalExtractSimpleSource
 from homelab_extract.transform import ExtractTransform
-from homelab_extract.vpn import GlobalExtractVpnSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 from pydantic import ValidationError
@@ -21,15 +18,13 @@ from pydantic import ValidationError
 from . import ExtractorBase
 from .container import ContainerExtractor
 from .dict_ import GlobalDictSourceExtractor
-from .host import GlobalHostSourceExtractor
+from .host import HostExtractor, HostSourceExtractor
 from .hostname import GlobalHostnameSourceExtractor
 from .json import GlobalJsonSourceExtractor
 from .kv import GlobalKvSourceExtractor
 from .project import GlobalProjectSourceExtractor
-from .service import ServiceExtractor, ServiceSourceExtractor
 from .simple import GlobalSimpleSourceExtractor
 from .transform import ExtractTransformer
-from .vpn import GlobalVpnSourceExtractor
 from .yaml import GlobalYamlSourceExtractor
 
 if typing.TYPE_CHECKING:
@@ -43,20 +38,16 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         self,
     ) -> (
         GlobalDictSourceExtractor
-        | GlobalHostSourceExtractor
         | GlobalHostnameSourceExtractor
         | GlobalJsonSourceExtractor
         | GlobalKvSourceExtractor
         | GlobalProjectSourceExtractor
         | GlobalSimpleSourceExtractor
-        | GlobalVpnSourceExtractor
         | GlobalYamlSourceExtractor
     ):
         root = self.root.root
         if isinstance(root, GlobalExtractDictSource):
             return GlobalDictSourceExtractor(root)
-        if isinstance(root, GlobalExtractHostSource):
-            return GlobalHostSourceExtractor(root)
         if isinstance(root, GlobalExtractHostnameSource):
             return GlobalHostnameSourceExtractor(root)
         if isinstance(root, GlobalExtractJsonSource):
@@ -67,8 +58,6 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalProjectSourceExtractor(root)
         if isinstance(root, GlobalExtractSimpleSource):
             return GlobalSimpleSourceExtractor(root)
-        if isinstance(root, GlobalExtractVpnSource):
-            return GlobalVpnSourceExtractor(root)
         return GlobalYamlSourceExtractor(root)
 
     def extract_str(
@@ -85,12 +74,12 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
 
 class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
     @property
-    def extractor(self) -> ServiceExtractor | GlobalSourceExtractor:
+    def extractor(self) -> HostExtractor | GlobalSourceExtractor:
         extract = self.root.extract
         return (
             GlobalSourceExtractor(extract)
             if isinstance(extract, GlobalExtractSource)
-            else ServiceExtractor(extract)
+            else HostExtractor(extract)
         )
 
     @property
@@ -99,17 +88,8 @@ class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
         return ExtractTransformer(transform)
 
     def extractor_args(self, extractor_args: ExtractorArgs) -> ExtractorArgs:
-        service = self.root.service
-        return extractor_args.with_service(
-            (
-                extractor_args.services.get(
-                    service,
-                    extractor_args.docker_resource_args.config.services[service],
-                )
-            )
-            if service is not None
-            else None
-        )
+        # TODO: Make this works
+        return extractor_args
 
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         extractor = self.extractor
@@ -152,9 +132,7 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
             return GlobalSourceExtractor(root)
         if isinstance(root, GlobalExtractFull):
             return GlobalFullExtractor(root)
-        return cls.get_extractor(
-            GlobalExtract(GlobalExtractFull(extract=ServiceExtract(root)))
-        )
+        return cls.get_extractor(GlobalExtract(GlobalExtractFull(extract=root)))
 
     @property
     def extractor(
@@ -162,7 +140,7 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
     ) -> (
         GlobalSourceExtractor
         | GlobalFullExtractor
-        | ServiceSourceExtractor
+        | HostSourceExtractor
         | ContainerExtractor
     ):
         return self.get_extractor(self.root)

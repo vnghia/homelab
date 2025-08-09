@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import typing
 
-from homelab_extract.vpn import GlobalExtractVpnSource
+from homelab_extract.host.vpn import HostExtractVpnSource
 from pulumi import Output
 
-from . import ExtractorBase
+from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from . import ExtractorArgs
+    from .. import ExtractorArgs
 
 
-class GlobalVpnSourceExtractor(ExtractorBase[GlobalExtractVpnSource]):
+class HostVpnSourceExtractor(ExtractorBase[HostExtractVpnSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         return Output.from_input(
             str(extractor_args.docker_resource_args.config.vpn_.ports[self.root.port])

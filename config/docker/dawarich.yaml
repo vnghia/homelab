@@ -76,7 +76,7 @@ services:
           record: public
         APPLICATION_PROTOCOL: http
         TIME_ZONE:
-          host: timezone
+          hinfo: timezone
         DISABLE_TELEMETRY: true
         SECRET_KEY_BASE:
           secret: key

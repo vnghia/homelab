@@ -2,19 +2,19 @@ from __future__ import annotations
 
 import typing
 
-from homelab_extract.host import GlobalExtractHostSource, HostInfoSource
+from homelab_extract.host.info import HostExtractInfoSource, HostInfoSource
 
-from . import ExtractorBase
+from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from . import ExtractorArgs
+    from .. import ExtractorArgs
 
 
-class GlobalHostSourceExtractor(ExtractorBase[GlobalExtractHostSource]):
+class HostInfoSourceExtractor(ExtractorBase[HostExtractInfoSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> str:
-        root = self.root
+        hinfo = self.root.hinfo
         host = extractor_args.docker_resource_args.config.host
-        match root.host:
+        match hinfo:
             case HostInfoSource.USER:
                 return host.user
             case HostInfoSource.ADDRESS:

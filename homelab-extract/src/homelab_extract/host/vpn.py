@@ -1,5 +1,5 @@
 from homelab_pydantic import HomelabBaseModel
 
 
-class GlobalExtractVpnSource(HomelabBaseModel):
+class HostExtractVpnSource(HomelabBaseModel):
     port: str

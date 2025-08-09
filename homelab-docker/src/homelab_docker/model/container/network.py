@@ -11,6 +11,7 @@ from homelab_extract.container.info import (
     ContainerExtractInfoSource,
     ContainerInfoSource,
 )
+from homelab_extract.host import HostExtract, HostExtractFull
 from homelab_extract.service import ServiceExtract, ServiceExtractFull
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
@@ -66,16 +67,20 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
                 return ContainerNetworkContainerConfig(
                     container=GlobalExtract(
                         GlobalExtractFull(
-                            service=vpn_config.service,
-                            extract=ServiceExtract(
-                                ServiceExtractFull(
-                                    container=vpn_config.container,
-                                    extract=ContainerExtract(
-                                        ContainerExtractInfoSource(
-                                            cinfo=ContainerInfoSource.ID
-                                        )
+                            extract=HostExtract(
+                                HostExtractFull(
+                                    service=vpn_config.service,
+                                    extract=ServiceExtract(
+                                        ServiceExtractFull(
+                                            container=vpn_config.container,
+                                            extract=ContainerExtract(
+                                                ContainerExtractInfoSource(
+                                                    cinfo=ContainerInfoSource.ID
+                                                )
+                                            ),
+                                        ),
                                     ),
-                                ),
+                                )
                             ),
                         )
                     )

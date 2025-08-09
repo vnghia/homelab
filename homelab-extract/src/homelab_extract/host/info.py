@@ -9,5 +9,5 @@ class HostInfoSource(StrEnum):
     TIMEZONE = auto()
 
 
-class GlobalExtractHostSource(HomelabBaseModel):
-    host: HostInfoSource
+class HostExtractInfoSource(HomelabBaseModel):
+    hinfo: HostInfoSource

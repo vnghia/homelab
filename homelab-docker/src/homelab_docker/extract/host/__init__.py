@@ -2,54 +2,32 @@ from __future__ import annotations
 
 import typing
 
-from homelab_extract.service import (
-    ServiceExtract,
-    ServiceExtractFull,
-    ServiceExtractSource,
-)
-from homelab_extract.service.database import ServiceExtractDatabaseSource
-from homelab_extract.service.export import ServiceExtractExportSource
-from homelab_extract.service.keepass import ServiceExtractKeepassSource
-from homelab_extract.service.secret import ServiceExtractSecretSource
+from homelab_extract.host import HostExtract, HostExtractFull, HostExtractSource
+from homelab_extract.host.info import HostExtractInfoSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 from pydantic import ValidationError
 
 from .. import ExtractorBase
-from ..container import ContainerExtractor
+from ..service import ServiceExtractor
 from ..transform import ExtractTransformer
-from .database import ServiceDatabaseSourceExtractor
-from .export import ServiceExportSourceExtractor
-from .keepass import ServiceKeepassSourceExtractor
-from .secret import ServiceSecretSourceExtractor
-from .variable import ServiceVariableSourceExtractor
+from .info import HostInfoSourceExtractor
+from .vpn import HostVpnSourceExtractor
 
 if typing.TYPE_CHECKING:
     from ...model.container.volume_path import ContainerVolumePath
     from .. import ExtractorArgs
 
 
-class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
+class HostSourceExtractor(ExtractorBase[HostExtractSource]):
     @property
     def extractor(
         self,
-    ) -> (
-        ServiceDatabaseSourceExtractor
-        | ServiceExportSourceExtractor
-        | ServiceKeepassSourceExtractor
-        | ServiceSecretSourceExtractor
-        | ServiceVariableSourceExtractor
-    ):
+    ) -> HostInfoSourceExtractor | HostVpnSourceExtractor:
         root = self.root.root
-        if isinstance(root, ServiceExtractDatabaseSource):
-            return ServiceDatabaseSourceExtractor(root)
-        if isinstance(root, ServiceExtractExportSource):
-            return ServiceExportSourceExtractor(root)
-        if isinstance(root, ServiceExtractKeepassSource):
-            return ServiceKeepassSourceExtractor(root)
-        if isinstance(root, ServiceExtractSecretSource):
-            return ServiceSecretSourceExtractor(root)
-        return ServiceVariableSourceExtractor(root)
+        if isinstance(root, HostExtractInfoSource):
+            return HostInfoSourceExtractor(root)
+        return HostVpnSourceExtractor(root)
 
     def extract_str(
         self, extractor_args: ExtractorArgs
@@ -63,14 +41,14 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
         return self.extractor.extract_volume_path(extractor_args)
 
 
-class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
+class HostFullExtractor(ExtractorBase[HostExtractFull]):
     @property
-    def extractor(self) -> ServiceSourceExtractor | ContainerExtractor:
+    def extractor(self) -> ServiceExtractor | HostSourceExtractor:
         extract = self.root.extract
         return (
-            ServiceSourceExtractor(extract)
-            if isinstance(extract, ServiceExtractSource)
-            else ContainerExtractor(extract)
+            HostSourceExtractor(extract)
+            if isinstance(extract, HostExtractSource)
+            else ServiceExtractor(extract)
         )
 
     @property
@@ -79,13 +57,8 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
         return ExtractTransformer(transform) if transform else None
 
     def extractor_args(self, extractor_args: ExtractorArgs) -> ExtractorArgs:
-        root = self.root
-
-        return extractor_args.with_container(
-            extractor_args.get_container(root.container)
-            if root.has_container
-            else extractor_args._container
-            or extractor_args.get_container(root.container)
+        return extractor_args.with_service(
+            extractor_args.get_service(self.root.service)
         )
 
     def extract_str(
@@ -131,27 +104,22 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
         return value
 
 
-class ServiceExtractor(ExtractorBase[ServiceExtract]):
-    @property
-    def container(self) -> str | None:
-        root = self.root.root
-        return root.container if isinstance(root, ServiceExtractFull) else None
-
+class HostExtractor(ExtractorBase[HostExtract]):
     @classmethod
     def get_extractor(
-        cls, source: ServiceExtract
-    ) -> ServiceSourceExtractor | ServiceFullExtractor:
+        cls, source: HostExtract
+    ) -> HostSourceExtractor | HostFullExtractor:
         root = source.root
-        if isinstance(root, ServiceExtractSource):
-            return ServiceSourceExtractor(root)
-        if isinstance(root, ServiceExtractFull):
-            return ServiceFullExtractor(root)
-        return cls.get_extractor(ServiceExtract(ServiceExtractFull(extract=root)))
+        if isinstance(root, HostExtractSource):
+            return HostSourceExtractor(root)
+        if isinstance(root, HostExtractFull):
+            return HostFullExtractor(root)
+        return cls.get_extractor(HostExtract(HostExtractFull(extract=root)))
 
     @property
     def extractor(
         self,
-    ) -> ServiceSourceExtractor | ServiceFullExtractor:
+    ) -> HostSourceExtractor | HostFullExtractor:
         return self.get_extractor(self.root)
 
     def extract_str(
