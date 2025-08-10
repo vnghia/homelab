@@ -40,7 +40,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
 
         entrypoint = traefik_service.config.entrypoint
         router_name = main_service.add_service_name(root.name)
-        hostname = traefik_service.docker_resource_args.hostnames[root.record][
+        hostname = traefik_service.extractor_args.hostnames[root.record][
             root.hostname or router_name
         ]
 

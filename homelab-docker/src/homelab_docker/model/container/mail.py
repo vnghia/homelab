@@ -19,7 +19,7 @@ class ContainerMailConfig(HomelabBaseModel):
     password: str | None = None
 
     def to_envs(self, extractor_args: ExtractorArgs) -> dict[str, Output[str]]:
-        mail = extractor_args.docker_resource_args.config.mail[self.mail]
+        mail = extractor_args.global_args.mail[self.mail]
 
         return {
             k: Output.from_input(v)

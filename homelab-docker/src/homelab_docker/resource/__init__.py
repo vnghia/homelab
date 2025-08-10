@@ -1,6 +1,6 @@
 import dataclasses
 
-from homelab_network.model.hostname import Hostnames
+from homelab_global import GlobalArgs
 from pulumi import ComponentResource, ResourceOptions
 from pydantic_extra_types.timezone_name import TimeZoneName
 
@@ -20,29 +20,25 @@ class DockerResource(ComponentResource):
         config: DockerServiceModelConfig,
         *,
         opts: ResourceOptions,
-        project_prefix: str,
-        project_labels: dict[str, str],
+        global_args: GlobalArgs,
         host: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.project_prefix = project_prefix
-        self.project_labels = project_labels
         self.host = host
 
         self.network = NetworkResource(
             config=config.network,
             opts=self.child_opts,
-            project_labels=project_labels,
+            global_args=global_args,
             host=host,
         )
         self.image = ImageResource(
             config=config,
             opts=self.child_opts,
             platform=config.host.platform,
-            project_prefix=project_prefix,
-            project_labels=project_labels,
+            global_args=global_args,
             host=self.host,
         )
         self.plugin = PluginResource(
@@ -54,7 +50,7 @@ class DockerResource(ComponentResource):
         self.volume = VolumeResource(
             config=config,
             opts=self.child_opts,
-            project_labels=project_labels,
+            global_args=global_args,
             host=self.host,
         )
 
@@ -65,7 +61,6 @@ class DockerResource(ComponentResource):
 class DockerResourceArgs:
     resource: DockerResource
     models: dict[str, ServiceModel]
-    hostnames: Hostnames
     configs: DockerServiceModelConfigs
 
     @property
@@ -95,7 +90,3 @@ class DockerResourceArgs:
     @property
     def volume(self) -> VolumeResource:
         return self.resource.volume
-
-    @property
-    def project_labels(self) -> dict[str, str]:
-        return self.resource.project_labels

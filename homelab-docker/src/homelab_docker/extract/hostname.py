@@ -12,4 +12,4 @@ if typing.TYPE_CHECKING:
 
 class GlobalHostnameSourceExtractor(ExtractorBase[GlobalExtractHostnameSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> str:
-        return self.root.to_hostname(extractor_args.docker_resource_args.hostnames)
+        return self.root.to_hostname(extractor_args.hostnames)

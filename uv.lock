@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.13.1"
 
 [manifest]
@@ -19,6 +19,7 @@ members = [
     "homelab-extra-service",
     "homelab-extract",
     "homelab-frp-service",
+    "homelab-global",
     "homelab-gluetun-service",
     "homelab-kanidm-service",
     "homelab-mail",
@@ -430,6 +431,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extract" },
     { name = "homelab-frp-service" },
+    { name = "homelab-global" },
     { name = "homelab-gluetun-service" },
     { name = "homelab-kanidm-service" },
     { name = "homelab-mail" },
@@ -472,6 +474,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-frp-service", editable = "service/homelab-frp-service" },
+    { name = "homelab-global", editable = "homelab-global" },
     { name = "homelab-gluetun-service", editable = "service/homelab-gluetun-service" },
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
     { name = "homelab-mail", editable = "homelab-mail" },
@@ -834,6 +837,21 @@ requires-dist = [
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-global"
+version = "0.1.0"
+source = { editable = "homelab-global" }
+dependencies = [
+    { name = "homelab-pydantic" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

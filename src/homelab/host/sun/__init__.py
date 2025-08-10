@@ -5,6 +5,7 @@ from homelab_crowdsec_service import CrowdsecService
 from homelab_dagu_service import DaguService
 from homelab_ddns_service import DdnsService
 from homelab_docker.config import DockerServiceModelConfigs
+from homelab_global import GlobalArgs
 from homelab_gluetun_service import GluetunService
 from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
@@ -25,16 +26,14 @@ class SunHost(HostBase[SunServiceConfig]):
         config: SunServiceConfig,
         *,
         opts: ResourceOptions | None,
-        project_prefix: str,
-        project_labels: dict[str, str],
+        global_args: GlobalArgs,
         network_resource: NetworkResource,
         docker_service_model_configs: DockerServiceModelConfigs,
     ) -> None:
         super().__init__(
             config,
             opts=opts,
-            project_prefix=project_prefix,
-            project_labels=project_labels,
+            global_args=global_args,
             network_resource=network_resource,
             docker_service_model_configs=docker_service_model_configs,
         )

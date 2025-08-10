@@ -1,3 +1,4 @@
+from homelab_global import GlobalArgs
 from pulumi import ComponentResource, ResourceOptions
 
 from ..config import NetworkConfig
@@ -13,7 +14,7 @@ class NetworkResource(ComponentResource):
         config: NetworkConfig,
         *,
         opts: ResourceOptions | None,
-        project_prefix: str,
+        global_args: GlobalArgs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -21,7 +22,7 @@ class NetworkResource(ComponentResource):
         self.config = config
 
         self.token = TokenResource(
-            config, opts=self.child_opts, project_prefix=project_prefix
+            config, opts=self.child_opts, global_args=global_args
         )
 
         self.register_outputs({})

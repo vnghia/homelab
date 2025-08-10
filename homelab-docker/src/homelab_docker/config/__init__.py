@@ -1,7 +1,5 @@
-from homelab_mail import MailConfig
 from homelab_pydantic import HomelabBaseModel
 from homelab_pydantic.model import HomelabRootModel
-from homelab_s3 import S3Config
 from homelab_vpn import VpnConfig
 
 from ..model.service import ServiceModel
@@ -23,8 +21,6 @@ class DockerNoServiceConfig(HomelabBaseModel):
     database: DatabaseConfig = DatabaseConfig()
     plugins: PluginConfig = PluginConfig()
     volumes: VolumeConfig = VolumeConfig()
-    s3: S3Config = S3Config({})
-    mail: MailConfig = MailConfig({})
 
     @property
     def vpn_(self) -> VpnConfig:

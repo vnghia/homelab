@@ -1,5 +1,6 @@
 import pulumi
 import pulumi_docker as docker
+from homelab_global import GlobalArgs
 from pulumi import ComponentResource, ResourceOptions
 
 from homelab_docker.model.volume import LocalVolumeModel
@@ -15,7 +16,7 @@ class VolumeResource(ComponentResource):
         config: DockerServiceModelConfig,
         *,
         opts: ResourceOptions,
-        project_labels: dict[str, str],
+        global_args: GlobalArgs,
         host: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
@@ -23,7 +24,7 @@ class VolumeResource(ComponentResource):
 
         self.volumes = {
             name: model.build_resource(
-                name, opts=self.child_opts, project_labels=project_labels
+                name, opts=self.child_opts, project_labels=global_args.project.labels
             )
             for name, model in config.volumes.local.items()
         }
@@ -41,7 +42,7 @@ class VolumeResource(ComponentResource):
                             LocalVolumeModel().build_resource(
                                 full_initdb_name,
                                 opts=self.child_opts,
-                                project_labels=project_labels,
+                                project_labels=global_args.project.labels,
                             )
                         )
 
@@ -52,7 +53,7 @@ class VolumeResource(ComponentResource):
                         self.volumes[full_name] = LocalVolumeModel().build_resource(
                             full_name,
                             opts=self.child_opts,
-                            project_labels=project_labels,
+                            project_labels=global_args.project.labels,
                         )
 
                         if type_config.tmp_dir:
@@ -63,7 +64,7 @@ class VolumeResource(ComponentResource):
                                 LocalVolumeModel().build_resource(
                                     full_tmp_name,
                                     opts=self.child_opts,
-                                    project_labels=project_labels,
+                                    project_labels=global_args.project.labels,
                                 )
                             )
 

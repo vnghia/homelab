@@ -4,6 +4,8 @@ import dataclasses
 import typing
 from typing import Any, Protocol, Self, TypeVar
 
+from homelab_global import GlobalArgs
+from homelab_network.model.hostname import Hostnames
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 
@@ -20,18 +22,30 @@ if typing.TYPE_CHECKING:
 
 @dataclasses.dataclass(frozen=True)
 class ExtractorArgs:
+    global_args: GlobalArgs
+    hostnames: Hostnames
     _host: HostResourceBase | HostServiceModelConfig | None
     _service: ServiceResourceBase | ServiceModel | None
     _container: ContainerResource | ContainerModel | None
 
     @classmethod
-    def from_host(cls, host: HostResourceBase) -> Self:
-        return cls(_host=host, _service=None, _container=None)
+    def from_host(
+        cls, global_args: GlobalArgs, hostnames: Hostnames, host: HostResourceBase
+    ) -> Self:
+        return cls(
+            global_args=global_args,
+            hostnames=hostnames,
+            _host=host,
+            _service=None,
+            _container=None,
+        )
 
     def from_service(
         self, service: ServiceResourceBase, container: str | None = None
     ) -> Self:
         return self.__class__(
+            global_args=self.global_args,
+            hostnames=self.hostnames,
             _host=self._host,
             _service=service,
             _container=service.containers.get(
@@ -121,6 +135,8 @@ class ExtractorArgs:
         from ..resource.service import ServiceResourceBase
 
         return self.__class__(
+            global_args=self.global_args,
+            hostnames=self.hostnames,
             _host=self._host,
             _service=service or self._service,
             # Clear the container if the service has changed
@@ -140,6 +156,8 @@ class ExtractorArgs:
         self, container: ContainerResource | ContainerModel | None
     ) -> Self:
         return self.__class__(
+            global_args=self.global_args,
+            hostnames=self.hostnames,
             _host=self._host,
             _service=self._service,
             _container=container or self._container,

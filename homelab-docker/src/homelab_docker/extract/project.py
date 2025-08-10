@@ -15,5 +15,5 @@ class GlobalProjectSourceExtractor(ExtractorBase[GlobalExtractProjectSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return {
             k.removeprefix("pulumi."): v
-            for k, v in extractor_args.docker_resource_args.project_labels.items()
+            for k, v in extractor_args.global_args.project.labels.items()
         }

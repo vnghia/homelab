@@ -24,7 +24,7 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
 
     def build(self) -> Self:
         for name, key in self.config.s3.root.items():
-            s3 = self.docker_resource_args.config.s3[key]
+            s3 = self.extractor_args.global_args.s3[key]
             self.options[name].envs = {**self.options[name].envs, **s3.to_envs()}
 
         for name, config in self.config.files.root.items():

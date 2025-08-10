@@ -1,4 +1,5 @@
 import pulumi
+from homelab_global import GlobalArgs
 from pulumi import ComponentResource, ResourceOptions
 
 from ..config import DockerNoServiceConfig
@@ -14,8 +15,7 @@ class ImageResource(ComponentResource):
         *,
         opts: ResourceOptions,
         platform: Platform,
-        project_prefix: str,
-        project_labels: dict[str, str],
+        global_args: GlobalArgs,
         host: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
@@ -31,8 +31,8 @@ class ImageResource(ComponentResource):
                 name,
                 opts=self.child_opts,
                 remote_images=self.remotes,
-                project_prefix=project_prefix,
-                project_labels=project_labels,
+                project_prefix=global_args.project.prefix,
+                project_labels=global_args.project.labels,
             )
             for name, model in config.images.build.items()
         }

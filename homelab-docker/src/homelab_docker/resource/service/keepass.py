@@ -28,7 +28,7 @@ class ServiceKeepassResouse(ComponentResource):
             name: model.build_resource(
                 extractor_args.service.add_service_name(name),
                 opts=self.child_opts,
-                hostnames=extractor_args.docker_resource_args.hostnames,
+                hostnames=extractor_args.hostnames,
             )
             for name, model in config.root.items()
         }

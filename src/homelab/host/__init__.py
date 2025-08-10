@@ -4,6 +4,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.host import HostResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
+from homelab_global import GlobalArgs
 from homelab_network.resource.network import NetworkResource
 from pulumi import ResourceOptions
 from pydantic.alias_generators import to_snake
@@ -15,15 +16,13 @@ class HostBase[T: ServiceConfigBase](HostResourceBase):
         config: T,
         *,
         opts: ResourceOptions | None,
-        project_prefix: str,
-        project_labels: dict[str, str],
+        global_args: GlobalArgs,
         network_resource: NetworkResource,
         docker_service_model_configs: DockerServiceModelConfigs,
     ) -> None:
         super().__init__(
             opts=opts,
-            project_prefix=project_prefix,
-            project_labels=project_labels,
+            global_args=global_args,
             network_resource=network_resource,
             docker_service_model_configs=docker_service_model_configs,
         )

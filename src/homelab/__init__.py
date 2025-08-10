@@ -16,11 +16,10 @@ class Homelab:
         self.config = Config[SunServiceConfig, EarthServiceConfig].build(
             DockerConfigs[SunServiceConfig, EarthServiceConfig]
         )
-        self.project_prefix = Config.get_name(None, project=True, stack=True)
-        self.project_labels = Config.PROJECT_LABELS
+        self.global_args = self.config.global_args
 
         self.network = NetworkResource(
-            self.config.network, opts=None, project_prefix=self.project_prefix
+            self.config.network, opts=None, global_args=self.global_args
         )
 
         self.docker_service_model_configs = self.config.dockers.service_model
@@ -28,16 +27,14 @@ class Homelab:
         self.sun = SunHost(
             self.config.dockers.sun.services,
             opts=None,
-            project_prefix=self.project_prefix,
-            project_labels=self.project_labels,
+            global_args=self.global_args,
             network_resource=self.network,
             docker_service_model_configs=self.docker_service_model_configs,
         )
         self.earth = EarthHost(
             self.config.dockers.earth.services,
             opts=None,
-            project_prefix=self.project_prefix,
-            project_labels=self.project_labels,
+            global_args=self.global_args,
             network_resource=self.network,
             docker_service_model_configs=self.docker_service_model_configs,
         )

@@ -1,15 +1,17 @@
 from pathlib import Path
-from typing import Any, ClassVar, Self, Type
+from typing import Any, Self, Type
 
 import deepmerge
 import pulumi
 import yaml
 from homelab_docker.config import DockerConfig, DockerServiceModelConfigs
 from homelab_docker.config.service import ServiceConfigBase
+from homelab_global import GlobalArgs, ProjectArgs
+from homelab_global.config import GlobalConfig
 from homelab_network.config import NetworkConfig
 from homelab_pydantic import HomelabBaseModel
 
-from .constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
+from homelab_config.constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
 
 
 class DockerConfigs[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](
@@ -26,12 +28,9 @@ class DockerConfigs[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](
 
 
 class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):
-    PROJECT_NAME: ClassVar[str] = PROJECT_NAME
-    PROJECT_STACK: ClassVar[str] = PROJECT_STACK
-    PROJECT_LABELS: ClassVar[dict[str, str]] = PROJECT_LABELS
-
     dockers: DockerConfigs[TSun, TEarth]
     network: NetworkConfig
+    global_: GlobalConfig
 
     @classmethod
     def get_key(cls, key: str) -> Any:
@@ -89,18 +88,19 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
         )
 
     @classmethod
-    def get_name(
-        cls, name: str | None, project: bool = False, stack: bool = True
-    ) -> str:
-        return "-".join(
-            ([cls.PROJECT_NAME] if project or not name else [])
-            + ([name] if name else [])
-            + ([cls.PROJECT_STACK] if stack else [])
-        )
-
-    @classmethod
     def build(cls, docker_type: Type[DockerConfigs[TSun, TEarth]]) -> Self:
         return cls(
             dockers=cls.get_docker_configs(docker_type),
             network=NetworkConfig.model_validate(cls.get_key("network")),
+            global_=GlobalConfig.model_validate(cls.get_key("global")),
+        )
+
+    @property
+    def global_args(self) -> GlobalArgs:
+        return GlobalArgs(
+            project=ProjectArgs(
+                name=PROJECT_NAME, stack=PROJECT_STACK, labels=PROJECT_LABELS
+            ),
+            s3=self.global_.s3,
+            mail=self.global_.mail,
         )
