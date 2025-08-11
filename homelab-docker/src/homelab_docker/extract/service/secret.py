@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+import pulumi_random as random
 import pulumi_tls as tls
 from homelab_extract.service.secret import ServiceExtractSecretSource
 from pulumi import Output
@@ -15,7 +16,7 @@ if typing.TYPE_CHECKING:
 class ServiceSecretSourceExtractor(ExtractorBase[ServiceExtractSecretSource]):
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> Output[str] | dict[str, Output[str]]:
+    ) -> Output[str] | random.RandomPassword | dict[str, Output[str]]:
         root = self.root
         secret = extractor_args.service.secret.get(root.secret)
         if isinstance(secret, tls.PrivateKey):
@@ -25,4 +26,6 @@ class ServiceSecretSourceExtractor(ExtractorBase[ServiceExtractSecretSource]):
                 "private_key_openssh": secret.private_key_openssh,
                 "public_key_openssh": secret.public_key_openssh,
             }
-        return secret.result
+        if isinstance(secret, random.RandomUuid):
+            return secret.result
+        return secret

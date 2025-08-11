@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+import pulumi_random as random
 from homelab_extract.host import HostExtract, HostExtractFull, HostExtractSource
 from homelab_extract.host.info import HostExtractInfoSource
 from homelab_extract.host.variable import HostExtractVariableSource
@@ -67,7 +68,7 @@ class HostFullExtractor(ExtractorBase[HostExtractFull]):
 
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | dict[str, Output[str]]:
+    ) -> str | Output[str] | random.RandomPassword | dict[str, Output[str]]:
         extractor = self.extractor
         transformer = self.transfomer
         extractor_args = self.extractor_args(extractor_args)
@@ -128,7 +129,7 @@ class HostExtractor(ExtractorBase[HostExtract]):
 
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | dict[str, Output[str]]:
+    ) -> str | Output[str] | random.RandomPassword | dict[str, Output[str]]:
         return self.extractor.extract_str(extractor_args)
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:

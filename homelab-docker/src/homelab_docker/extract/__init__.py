@@ -4,6 +4,7 @@ import dataclasses
 import typing
 from typing import Any, Protocol, Self, TypeVar
 
+import pulumi_random as random
 from homelab_global import GlobalArgs
 from homelab_network.model.hostname import Hostnames
 from homelab_pydantic import AbsolutePath
@@ -184,7 +185,13 @@ class ExtractorBase(Protocol[T]):
 
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | dict[str, Output[str]] | dict[Output[str], Any]:
+    ) -> (
+        str
+        | Output[str]
+        | dict[str, Output[str]]
+        | random.RandomPassword
+        | dict[Output[str], Any]
+    ):
         raise TypeError("Could not extract str from {}".format(self.name))
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
