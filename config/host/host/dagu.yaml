@@ -3,7 +3,7 @@ docker:
     remote:
       dagu:
         repo: ghcr.io/dagu-org/dagu
-        tag: "1.17.4"
+        tag: "1.20.0"
   volumes:
     local:
       dagu-home: {}
