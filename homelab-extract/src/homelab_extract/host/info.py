@@ -4,6 +4,7 @@ from homelab_pydantic import HomelabBaseModel
 
 
 class HostInfoSource(StrEnum):
+    NAME = auto()
     USER = auto()
     ADDRESS = auto()
     TIMEZONE = auto()

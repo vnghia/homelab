@@ -22,7 +22,10 @@ class HostConfig[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBase
     @property
     def service_model(self) -> HostServiceModelConfig:
         return HostServiceModelConfig(
-            {"sun": self.sun.service_model(), "earth": self.earth.service_model()}
+            {
+                "sun": self.sun.service_model("sun"),
+                "earth": self.earth.service_model("earth"),
+            }
         )
 
 

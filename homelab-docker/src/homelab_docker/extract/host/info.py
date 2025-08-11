@@ -15,6 +15,8 @@ class HostInfoSourceExtractor(ExtractorBase[HostExtractInfoSource]):
         hinfo = self.root.hinfo
         host = extractor_args.host_model
         match hinfo:
+            case HostInfoSource.NAME:
+                return host.name
             case HostInfoSource.USER:
                 return host.access.user
             case HostInfoSource.ADDRESS:

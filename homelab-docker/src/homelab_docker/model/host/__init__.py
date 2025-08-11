@@ -23,6 +23,7 @@ class HostNoServiceModel(HomelabBaseModel):
 
 
 class HostServiceModelModel(HostNoServiceModel):
+    name: str
     services: dict[str, ServiceModel]
 
     @property
@@ -37,7 +38,9 @@ class HostServiceModelModel(HostNoServiceModel):
 class HostModel[T: ServiceConfigBase](HostNoServiceModel):
     services: T
 
-    def service_model(self) -> HostServiceModelModel:
+    def service_model(self, name: str) -> HostServiceModelModel:
         return HostServiceModelModel(
-            services=self.services.services, **self.model_dump(exclude={"services"})
+            name=name,
+            services=self.services.services,
+            **self.model_dump(exclude={"services"}),
         )
