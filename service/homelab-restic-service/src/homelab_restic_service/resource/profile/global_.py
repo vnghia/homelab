@@ -20,13 +20,7 @@ class ResticGlobalProfileResource(
     validator = schema.ResticProfileModel
     dumper = YamlDumper[schema.ResticProfileModel]
 
-    def __init__(
-        self,
-        *,
-        opts: ResourceOptions,
-        hostname: str,
-        restic_service: ResticService,
-    ) -> None:
+    def __init__(self, *, opts: ResourceOptions, restic_service: ResticService) -> None:
         restic_config = restic_service.config
 
         all_profiles = restic_service.profiles + restic_service.database_profiles
@@ -64,7 +58,9 @@ class ResticGlobalProfileResource(
                         "cleanup-cache": True,
                         "backup": {
                             "source-relative": True,
-                            "host": hostname,
+                            "host": GlobalExtractor(restic_config.hostname).extract_str(
+                                restic_service.extractor_args
+                            ),
                             "source": ["."],
                         }
                         | group_by_options,

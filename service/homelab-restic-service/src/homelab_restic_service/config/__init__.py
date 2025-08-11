@@ -10,6 +10,7 @@ class ResticConfig(DaguServiceConfigBase):
     profile_dir: GlobalExtract
     cache_dir: GlobalExtract
 
+    hostname: GlobalExtract
     password: GlobalExtract
     keep: ResticKeepConfig
 

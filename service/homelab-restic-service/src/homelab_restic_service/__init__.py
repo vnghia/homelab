@@ -29,7 +29,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         model: ServiceWithConfigModel[ResticConfig],
         *,
         opts: ResourceOptions,
-        hostname: str,
         backup_config: BackupGlobalConfig,
         barman_service: BarmanService,
         balite_service: BaliteService,
@@ -103,9 +102,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             )
 
         self.global_ = ResticGlobalProfileResource(
-            opts=self.child_opts,
-            hostname=hostname,
-            restic_service=self,
+            opts=self.child_opts, restic_service=self
         )
 
         # No need to specify file dependencies because the file are created after `pulumi up`

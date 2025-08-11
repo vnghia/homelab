@@ -18,6 +18,8 @@ services:
         volume: restic-profile
       cache-dir:
         env: RESTIC_CACHE_DIR
+      hostname:
+        hvariable: FULL_HOSTNAME
       password:
         secret: password
       keep:

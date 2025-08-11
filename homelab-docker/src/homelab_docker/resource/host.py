@@ -44,7 +44,6 @@ class HostResourceBase(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.network = network_resource
-        self.hostname = "{}-{}".format(global_args.project.prefix, self.name())
 
         self.docker = DockerResource(
             self.model,

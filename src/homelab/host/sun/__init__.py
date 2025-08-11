@@ -105,7 +105,6 @@ class SunHost(HostBase[SunServiceConfig]):
         self.restic = ResticService(
             self.services_config.restic,
             opts=self.child_opts,
-            hostname=self.hostname,
             backup_config=self.services_config.backup.config,
             barman_service=self.barman,
             balite_service=self.balite,
