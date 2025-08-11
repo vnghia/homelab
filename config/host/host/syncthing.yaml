@@ -38,11 +38,7 @@ services:
         interval: 5s
         timeout: 5s
       hostname:
-        extract:
-          project:
-        transform:
-          string:
-            template: "{project}-{stack}"
+        hvariable: FULL_HOSTNAME
       network:
         default-bridge: true
       ports:

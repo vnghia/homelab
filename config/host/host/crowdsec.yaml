@@ -46,11 +46,7 @@ services:
           secret: traefik
         ENROLL_KEY:
         ENROLL_INSTANCE_NAME:
-          extract:
-            project:
-          transform:
-            string:
-              template: "{project}-{stack}"
+          hvariable: FULL_HOSTNAME
         COLLECTIONS: crowdsecurity/traefik
       network:
         default-bridge: true
