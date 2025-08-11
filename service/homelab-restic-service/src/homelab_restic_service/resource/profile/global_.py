@@ -4,7 +4,7 @@ import functools
 import operator
 import typing
 
-from homelab_docker.extract.service import ServiceExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, YamlDumper
 from pulumi import ResourceOptions
 
@@ -53,16 +53,12 @@ class ResticGlobalProfileResource(
                     "initialize": False,
                 },
                 "includes": [
-                    profile.to_path(
-                        restic_service.extractor_args_from_self(
-                            restic_config.profile_dir.container
-                        )
-                    )
+                    profile.to_path(restic_service.extractor_args)
                     for profile in all_profiles
                 ],
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
-                        "cache-dir": ServiceExtractor(
+                        "cache-dir": GlobalExtractor(
                             restic_config.cache_dir
                         ).extract_path(restic_service.extractor_args),
                         "cleanup-cache": True,

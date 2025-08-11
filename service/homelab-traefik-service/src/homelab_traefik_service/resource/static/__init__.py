@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.extract.service import ServiceExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_network.config.port import NetworkPortConfig
 from pulumi import ResourceOptions
@@ -32,7 +32,7 @@ class TraefikStaticConfigResource(
     ) -> None:
         traefik_config = traefik_service.config
 
-        static_volume_path = ServiceExtractor(
+        static_volume_path = GlobalExtractor(
             traefik_service.config.path.static
         ).extract_volume_path(traefik_service.extractor_args)
 
@@ -71,7 +71,7 @@ class TraefikStaticConfigResource(
                 "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
                 "accessLog": {"format": "json"},
                 "api": {
-                    "basePath": ServiceExtractor(traefik_config.path.api).extract_str(
+                    "basePath": GlobalExtractor(traefik_config.path.api).extract_str(
                         traefik_service.extractor_args
                     ),
                     "dashboard": True,
@@ -129,7 +129,7 @@ class TraefikStaticConfigResource(
                         "acme": {
                             "caServer": str(traefik_config.acme.server),
                             "email": traefik_config.acme.email,
-                            "storage": ServiceExtractor(
+                            "storage": GlobalExtractor(
                                 traefik_config.acme.storage
                             ).extract_path(traefik_service.extractor_args),
                             "dnsChallenge": {

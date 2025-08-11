@@ -1,19 +1,19 @@
-from homelab_extract.service import ServiceExtract
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_traefik_config import TraefikServiceConfigBase
 from pydantic import HttpUrl, IPvAnyAddress
 
 
 class TraefikPathConfig(HomelabBaseModel):
-    static: ServiceExtract
-    dynamic: ServiceExtract
-    api: ServiceExtract
+    static: GlobalExtract
+    dynamic: GlobalExtract
+    api: GlobalExtract
 
 
 class TraefikAcmeConfig(HomelabBaseModel):
     server: HttpUrl
     email: str
-    storage: ServiceExtract
+    storage: GlobalExtract
     disable_checks: bool
     require_all_rns: bool
     disable_ans_checks: bool

@@ -5,7 +5,7 @@ from homelab_backup.config import BackupGlobalConfig
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.extract.service import ServiceExtractor
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -39,7 +39,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.backup_config = backup_config
 
-        self.profile_dir_volume_path = ServiceExtractor(
+        self.profile_dir_volume_path = GlobalExtractor(
             self.config.profile_dir
         ).extract_volume_path(self.extractor_args)
 
