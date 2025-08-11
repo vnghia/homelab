@@ -55,7 +55,7 @@ services:
           service:
             container: backend
             port:
-              variable: BACKEND_PORT
+              svariable: BACKEND_PORT
         frontend:
           name: frontend
           hostname: impress
@@ -63,7 +63,7 @@ services:
           service:
             container: frontend
             port:
-              variable: FRONTEND_PORT
+              svariable: FRONTEND_PORT
         collaboration:
           name: collaboration
           hostname: impress
@@ -72,7 +72,7 @@ services:
           service:
             container: collaboration
             port:
-              variable: COLLABORATION_PORT
+              svariable: COLLABORATION_PORT
       s3:
         backend:
     databases:
@@ -131,7 +131,7 @@ services:
               export: impress
           OIDC_OP_JWKS_ENDPOINT:
             extract:
-              variable: OAUTH_URL
+              svariable: OAUTH_URL
             transform:
               string:
                 template: "{value}/public_key.jwk"
@@ -153,7 +153,7 @@ services:
                 template: "{value}/oauth2/token"
           OIDC_OP_USER_ENDPOINT:
             extract:
-              variable: OAUTH_URL
+              svariable: OAUTH_URL
             transform:
               string:
                 template: "{value}/userinfo"
@@ -210,7 +210,7 @@ services:
                 template: "{value}/collaboration/ws/"
           Y_PROVIDER_API_BASE_URL:
             extract:
-              variable: COLLABORATION_PORT
+              svariable: COLLABORATION_PORT
             transform:
               string:
                 template: "http://impress-collaboration:{value}/api"

@@ -21,7 +21,7 @@ services:
           record: private
           service:
             port:
-              variable: PORT
+              svariable: PORT
     container:
       image: syncthing
       healthcheck:
@@ -31,7 +31,7 @@ services:
           - "--spider"
           - "-q"
           - extract:
-              variable: PORT
+              svariable: PORT
             transform:
               string:
                 template: "http://localhost:{value}/rest/noauth/health"
@@ -60,7 +60,7 @@ services:
       envs:
         STGUIADDRESS:
           extract:
-            variable: PORT
+            svariable: PORT
           transform:
             string:
               template: "0.0.0.0:{value}"

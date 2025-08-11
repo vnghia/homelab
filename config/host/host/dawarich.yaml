@@ -20,7 +20,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
     databases:
       postgres:
         postgres:
@@ -52,7 +52,7 @@ services:
         - bin/rails
         - server
         - "-p"
-        - variable: PORT
+        - svariable: PORT
         - "-b"
         - "::"
       entrypoint: ["web-entrypoint.sh"]

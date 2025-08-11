@@ -42,7 +42,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
     databases:
       postgres:
         postgres: {}
@@ -80,7 +80,7 @@ services:
           secret: nextauth
         MEILI_HOST:
           extract:
-            variable: MELISEARCH_PORT
+            svariable: MELISEARCH_PORT
           transform:
             string:
               template: "http://linkwarden-meilisearch:{value}"

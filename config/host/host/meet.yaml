@@ -65,7 +65,7 @@ services:
           service:
             container: backend
             port:
-              variable: BACKEND_PORT
+              svariable: BACKEND_PORT
         frontend:
           name: frontend
           hostname: meet
@@ -73,7 +73,7 @@ services:
           service:
             container: frontend
             port:
-              variable: FRONTEND_PORT
+              svariable: FRONTEND_PORT
     databases:
       postgres:
         postgres: {}
@@ -133,7 +133,7 @@ services:
               export: meet
           OIDC_OP_JWKS_ENDPOINT:
             extract:
-              variable: OAUTH_URL
+              svariable: OAUTH_URL
             transform:
               string:
                 template: "{value}/public_key.jwk"
@@ -155,7 +155,7 @@ services:
                 template: "{value}/oauth2/token"
           OIDC_OP_USER_ENDPOINT:
             extract:
-              variable: OAUTH_URL
+              svariable: OAUTH_URL
             transform:
               string:
                 template: "{value}/userinfo"

@@ -1,3 +1,4 @@
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_vpn import VpnConfig
 from pydantic_extra_types.timezone_name import TimeZoneName
@@ -14,6 +15,7 @@ class HostNoServiceModel(HomelabBaseModel):
     timezone: TimeZoneName
     vpn: VpnConfig | None = None
     docker: DockerConfig
+    variables: dict[str, GlobalExtract] = {}
 
     @property
     def vpn_(self) -> VpnConfig:

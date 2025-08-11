@@ -100,28 +100,28 @@ services:
           service:
             container: radarr
             port:
-              variable: RADARR_PORT
+              svariable: RADARR_PORT
         sonarr:
           name: sonarr
           record: private
           service:
             container: sonarr
             port:
-              variable: SONARR_PORT
+              svariable: SONARR_PORT
         prowlarr:
           name: prowlarr
           record: private
           service:
             container: prowlarr
             port:
-              variable: PROWLARR_PORT
+              svariable: PROWLARR_PORT
         bazarr:
           name: bazarr
           record: private
           service:
             container: bazarr
             port:
-              variable: BAZARR_PORT
+              svariable: BAZARR_PORT
     keepasses:
       radarr:
         hostname:

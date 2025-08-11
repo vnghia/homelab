@@ -38,25 +38,25 @@ services:
         volume: traefik-config
       STATIC_PATH:
         extract:
-          variable: CONFIG_PATH
+          svariable: CONFIG_PATH
         transform:
           path: static.toml
       API_PATH: /proxy
     config:
       path:
         static:
-          variable: STATIC_PATH
+          svariable: STATIC_PATH
         dynamic:
           extract:
-            variable: CONFIG_PATH
+            svariable: CONFIG_PATH
           transform:
             path: dynamic
         api:
-          variable: API_PATH
+          svariable: API_PATH
       acme:
         server: https://acme-v02.api.letsencrypt.org/directory
         storage:
-          variable: CERT_PATH
+          svariable: CERT_PATH
         disable-checks: false
         require-all-rns: false
         disable-ans-checks: true
@@ -163,7 +163,7 @@ services:
           record: private
           hostname: system
           prefix:
-            variable: API_PATH
+            svariable: API_PATH
           service: "api@internal"
     secrets:
       oidc:
@@ -173,7 +173,7 @@ services:
       command:
         - "traefik"
         - "--configFile"
-        - variable: STATIC_PATH
+        - svariable: STATIC_PATH
       healthcheck:
         tests: ["CMD", "traefik", "healthcheck", "--ping"]
         interval: 30s

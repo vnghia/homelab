@@ -35,7 +35,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
     databases:
       postgres:
         postgres: {}

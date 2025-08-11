@@ -13,7 +13,7 @@ docker:
       kanidm-backup:
         backup:
           source:
-            variable: BACKUP
+            svariable: BACKUP
           file: true
 services:
   kanidm:
@@ -34,7 +34,7 @@ services:
         hinfo: address
       path:
         config:
-          variable: CONFIG
+          svariable: CONFIG
         tls-key:
           extract:
             volume: kanidm-data
@@ -51,7 +51,7 @@ services:
           transform:
             path: kanidm.db
       port:
-        variable: PORT
+        svariable: PORT
       domain:
         hostname: kanidm
         record: public
@@ -71,7 +71,7 @@ services:
           service:
             scheme: https
             port:
-              variable: PORT
+              svariable: PORT
       dagu:
         dag:
           pre-backup-volume:
@@ -95,8 +95,8 @@ services:
                   - "database"
                   - "backup"
                   - "-c"
-                  - variable: CONFIG
-                  - variable: BACKUP
+                  - svariable: CONFIG
+                  - svariable: BACKUP
               - name: start-container
                 run:
                   service: dagu
@@ -116,14 +116,14 @@ services:
         - "/sbin/kanidmd"
         - "server"
         - "-c"
-        - variable: CONFIG
+        - svariable: CONFIG
       healthcheck:
         tests:
           - "CMD"
           - "/sbin/kanidmd"
           - "healthcheck"
           - "-c"
-          - variable: CONFIG
+          - svariable: CONFIG
         interval: 30s
         timeout: 5s
         retries: 5

@@ -15,13 +15,13 @@ services:
       envs:
         MEILI_DB_PATH:
           extract:
-            variable: MELISEARCH_VOLUME
+            svariable: MELISEARCH_VOLUME
           transform:
             path: data.ms
         MEILI_ENV: production
         MEILI_HTTP_ADDR:
           extract:
-            variable: MELISEARCH_PORT
+            svariable: MELISEARCH_PORT
           transform:
             string:
               template: "0.0.0.0:{value}"
@@ -30,12 +30,12 @@ services:
         MEILI_NO_ANALYTICS: true
         MEILI_DUMP_DIR:
           extract:
-            variable: MELISEARCH_VOLUME
+            svariable: MELISEARCH_VOLUME
           transform:
             path: dumps
         MEILI_SCHEDULE_SNAPSHOT: 86400
         MEILI_SNAPSHOT_DIR:
           extract:
-            variable: MELISEARCH_VOLUME
+            svariable: MELISEARCH_VOLUME
           transform:
             path: snapshots

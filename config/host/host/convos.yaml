@@ -31,7 +31,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
           middlewares:
             - service: traefik
               name: oidc

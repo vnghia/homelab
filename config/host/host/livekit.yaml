@@ -17,7 +17,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
     databases:
       valkey:
         valkey: {}

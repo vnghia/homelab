@@ -35,7 +35,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
           middlewares:
             - service: traefik
               name: oidc
@@ -55,7 +55,7 @@ services:
             port:
               service: nginx-static
               extract:
-                variable: PORT
+                svariable: PORT
           middlewares:
             - service: traefik
               name: oidc
@@ -74,7 +74,7 @@ services:
             port:
               service: nginx-static
               extract:
-                variable: PORT
+                svariable: PORT
           middlewares:
             - service: traefik
               name: oidc

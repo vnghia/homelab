@@ -20,7 +20,7 @@ services:
             env: ROOT_URL
           service:
             port:
-              variable: PORT
+              svariable: PORT
     container:
       image: ddns
       healthcheck:
@@ -40,7 +40,7 @@ services:
       envs:
         LISTENING_ADDRESS:
           extract:
-            variable: PORT
+            svariable: PORT
           transform:
             string:
               template: ":{value}"

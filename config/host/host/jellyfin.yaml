@@ -59,7 +59,7 @@ services:
           service:
             port:
               extract:
-                variable: PORT
+                svariable: PORT
     variables:
       PORT: 8096
     keepasses:

@@ -14,7 +14,7 @@ services:
           record: private
           service:
             port:
-              variable: PORT
+              svariable: PORT
     databases:
       postgres:
         postgres:
@@ -42,7 +42,7 @@ services:
           port: bitmagnet
         HTTP_SERVER_LOCAL_ADDRESS:
           extract:
-            variable: PORT
+            svariable: PORT
           transform:
             string:
               template: ":{value}"

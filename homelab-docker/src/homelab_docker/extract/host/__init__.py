@@ -4,6 +4,7 @@ import typing
 
 from homelab_extract.host import HostExtract, HostExtractFull, HostExtractSource
 from homelab_extract.host.info import HostExtractInfoSource
+from homelab_extract.host.variable import HostExtractVariableSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 from pydantic import ValidationError
@@ -12,6 +13,7 @@ from .. import ExtractorBase
 from ..service import ServiceExtractor
 from ..transform import ExtractTransformer
 from .info import HostInfoSourceExtractor
+from .variable import HostVariableSourceExtractor
 from .vpn import HostVpnSourceExtractor
 
 if typing.TYPE_CHECKING:
@@ -23,10 +25,12 @@ class HostSourceExtractor(ExtractorBase[HostExtractSource]):
     @property
     def extractor(
         self,
-    ) -> HostInfoSourceExtractor | HostVpnSourceExtractor:
+    ) -> HostInfoSourceExtractor | HostVariableSourceExtractor | HostVpnSourceExtractor:
         root = self.root.root
         if isinstance(root, HostExtractInfoSource):
             return HostInfoSourceExtractor(root)
+        if isinstance(root, HostExtractVariableSource):
+            return HostVariableSourceExtractor(root)
         return HostVpnSourceExtractor(root)
 
     def extract_str(

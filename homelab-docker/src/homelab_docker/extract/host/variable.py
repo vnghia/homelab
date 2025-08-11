@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from homelab_extract.service.variable import ServiceExtractVariableSource
+from homelab_extract.host.variable import HostExtractVariableSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 
@@ -14,13 +14,11 @@ if typing.TYPE_CHECKING:
     from ..global_ import GlobalExtractor
 
 
-class ServiceVariableSourceExtractor(ExtractorBase[ServiceExtractVariableSource]):
+class HostVariableSourceExtractor(ExtractorBase[HostExtractVariableSource]):
     def get_variable(self, extractor_args: ExtractorArgs) -> GlobalExtractor:
         from ..global_ import GlobalExtractor
 
-        return GlobalExtractor(
-            extractor_args.service_model.variables[self.root.svariable]
-        )
+        return GlobalExtractor(extractor_args.host_model.variables[self.root.hvariable])
 
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
         return self.get_variable(extractor_args).extract_str(extractor_args)

@@ -57,7 +57,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
           middlewares:
             - name: limit
               data:
@@ -142,7 +142,7 @@ services:
       envs:
         PROXY_HTTP_ADDR:
           extract:
-            variable: PORT
+            svariable: PORT
           transform:
             string:
               template: "0.0.0.0:{value}"

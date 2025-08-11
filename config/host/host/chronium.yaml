@@ -12,7 +12,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
     secrets:
       token:
         special: false

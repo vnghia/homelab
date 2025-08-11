@@ -1,0 +1,15 @@
+variables:
+  FULL_HOSTNAME:
+    extract:
+      kv:
+        project:
+          extract:
+            project:
+          transform:
+            string:
+              template: "{project}-{stack}"
+        host:
+          hinfo: name
+    transform:
+      string:
+        template: "{project}-{host}"

@@ -26,7 +26,7 @@ services:
           record: public
           service:
             port:
-              variable: PORT
+              svariable: PORT
     keepasses:
       keepass:
         hostname:

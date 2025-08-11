@@ -24,16 +24,16 @@ services:
           record: private
           hostname: system
           prefix:
-            variable: PREFIX
+            svariable: PREFIX
           service:
             port:
-              variable: PORT
+              svariable: PORT
           middlewares:
             - name: strip-prefix
               data:
                 stripPrefix:
                   prefixes:
-                    - variable: PREFIX
+                    - svariable: PREFIX
       files:
         file:
           private-key:
@@ -94,9 +94,9 @@ services:
                         container:
                           cinfo: name
                         port:
-                          variable: PORT
+                          svariable: PORT
                         prefix:
-                          variable: PREFIX
+                          svariable: PREFIX
                     transform:
                       string:
                         template: "http://{container}:{port}/api/collections/_superusers/auth-with-password"
@@ -112,9 +112,9 @@ services:
                         container:
                           cinfo: name
                         port:
-                          variable: PORT
+                          svariable: PORT
                         prefix:
-                          variable: PREFIX
+                          svariable: PREFIX
                     transform:
                       string:
                         template: "http://{container}:{port}/api/backups/output.zip"
@@ -131,9 +131,9 @@ services:
                         container:
                           cinfo: name
                         port:
-                          variable: PORT
+                          svariable: PORT
                         prefix:
-                          variable: PREFIX
+                          svariable: PREFIX
                     transform:
                       string:
                         template: "http://{container}:{port}/api/backups"
@@ -163,7 +163,7 @@ services:
                 record: private
                 scheme: https
               prefix:
-                variable: PREFIX
+                svariable: PREFIX
           transform:
             string:
               template: "{base}{prefix}"
