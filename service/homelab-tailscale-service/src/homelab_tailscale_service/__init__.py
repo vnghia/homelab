@@ -17,19 +17,14 @@ class TailscaleService(ServiceResourceBase):
         model: ServiceModel,
         *,
         opts: ResourceOptions,
-        hostname: str,
         internal_aliases: list[str],
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
-        self.hostname = hostname
         self.options[None] = ContainerModelBuildArgs(
             opts=ResourceOptions(delete_before_replace=True),
-            envs={
-                "TS_AUTHKEY": self.build_authkey().key,
-                "TS_HOSTNAME": self.hostname,
-            },
+            envs={"TS_AUTHKEY": self.build_authkey().key},
             aliases={
                 NetworkConfig.INTERNAL_BRIDGE: internal_aliases,
                 NetworkConfig.PROXY_BRIDGE: [NetworkConfig.PROXY_ALIAS],
@@ -38,7 +33,7 @@ class TailscaleService(ServiceResourceBase):
         self.build_containers()
 
         self.device = tailscale.get_device_output(
-            hostname=self.hostname,
+            hostname=self.container.resource.hostname,
             opts=InvokeOutputOptions(depends_on=[self.container.resource]),
         )
         self.ipv4 = self.device.apply(lambda x: IPv4Address(x.addresses[0]))
