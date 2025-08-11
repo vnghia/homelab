@@ -6,7 +6,6 @@ from homelab_dagu_service.config import DaguConfig
 from homelab_ddns_service.config import DdnsConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceModel, ServiceWithConfigModel
-from homelab_extra_service.config import ExtraConfig
 from homelab_gluetun_service.config import GluetunConfig
 from homelab_kanidm_service.config import KandimConfig
 from homelab_restic_service.config import ResticConfig
@@ -20,7 +19,6 @@ class SunServiceConfig(ServiceConfigBase):
     gluetun: ServiceWithConfigModel[GluetunConfig]
     crowdsec: ServiceWithConfigModel[CrowdsecConfig]
     kanidm: ServiceWithConfigModel[KandimConfig]
-    ntfy: ServiceWithConfigModel[ExtraConfig]
     dagu: ServiceWithConfigModel[DaguConfig]
     barman: ServiceWithConfigModel[BarmanConfig]
     balite: ServiceWithConfigModel[BaliteConfig]

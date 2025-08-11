@@ -24,7 +24,6 @@ members = [
     "homelab-kanidm-service",
     "homelab-mail",
     "homelab-network",
-    "homelab-ntfy-service",
     "homelab-pydantic",
     "homelab-restic-service",
     "homelab-s3",
@@ -434,7 +433,6 @@ dependencies = [
     { name = "homelab-kanidm-service" },
     { name = "homelab-mail" },
     { name = "homelab-network" },
-    { name = "homelab-ntfy-service" },
     { name = "homelab-restic-service" },
     { name = "homelab-s3" },
     { name = "homelab-s3-config" },
@@ -475,7 +473,6 @@ requires-dist = [
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
     { name = "homelab-mail", editable = "homelab-mail" },
     { name = "homelab-network", editable = "homelab-network" },
-    { name = "homelab-ntfy-service", editable = "service/homelab-ntfy-service" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
@@ -922,27 +919,6 @@ requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-cloudflare", specifier = ">=5.49.0" },
-    { name = "pydantic", specifier = ">=2.10.6" },
-]
-
-[[package]]
-name = "homelab-ntfy-service"
-version = "0.1.0"
-source = { editable = "service/homelab-ntfy-service" }
-dependencies = [
-    { name = "homelab-docker" },
-    { name = "homelab-extra-service" },
-    { name = "homelab-pydantic" },
-    { name = "pulumi" },
-    { name = "pydantic" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

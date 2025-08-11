@@ -26,7 +26,6 @@ dependencies = [
     "homelab-kanidm-service",
     "homelab-restic-service",
     "homelab-crowdsec-service",
-    "homelab-ntfy-service",
     "homelab-gluetun-service",
     "homelab-balite-service",
     "homelab-apprise-service",
@@ -79,7 +78,6 @@ homelab-extra-service = { workspace = true }
 homelab-frp-service = { workspace = true }
 homelab-gluetun-service = { workspace = true }
 homelab-kanidm-service = { workspace = true }
-homelab-ntfy-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }
 homelab-traefik-service = { workspace = true }

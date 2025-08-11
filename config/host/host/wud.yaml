@@ -10,6 +10,7 @@ docker:
 services:
   wud:
     config:
+      depends-on: [ntfy]
       traefik:
         traefik:
           record: private
@@ -44,14 +45,10 @@ services:
         WUD_WATCHER_LOCAL_WATCHBYDEFAULT: false
         WUD_WATCHER_LOCAL_WATCHEVENTS: false
         WUD_SERVER_FEATURE_DELETE: false
-        WUD_TRIGGER_NTFY_all_AUTH_PASSWORD:
+        WUD_TRIGGER_NTFY_all_AUTH_TOKEN:
           service: ntfy
           extract:
-            secret: user-password
-        WUD_TRIGGER_NTFY_all_AUTH_USER:
-          service: ntfy
-          extract:
-            secret: user-username
+            svariable: USER_TOKEN
         WUD_TRIGGER_NTFY_all_TOPIC: docker
         WUD_TRIGGER_NTFY_all_URL:
           service: ntfy

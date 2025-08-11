@@ -9,7 +9,6 @@ from homelab_global import GlobalArgs
 from homelab_gluetun_service import GluetunService
 from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
-from homelab_ntfy_service import NtfyService
 from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
@@ -76,11 +75,6 @@ class SunHost(HostBase[SunServiceConfig]):
         )
         self.kanidm = KanidmService(
             self.services_config.kanidm,
-            opts=self.child_opts,
-            extractor_args=self.extractor_args,
-        )
-        self.ntfy = NtfyService(
-            self.services_config.ntfy,
             opts=self.child_opts,
             extractor_args=self.extractor_args,
         )
