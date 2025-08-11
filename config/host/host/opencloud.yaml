@@ -115,15 +115,15 @@ services:
       transfer-secret: {}
       machine-auth-api-key: {}
       system-user-id:
-        uuid: true
+        uuid:
       system-user-api-key: {}
       storage-users-mount-id:
-        uuid: true
+        uuid:
       service-account-id:
-        uuid: true
+        uuid:
       service-account-secret: {}
       graph-application-id:
-        uuid: true
+        uuid:
       idm-service-user-password: {}
       reva-service-user-password: {}
       idp-service-user-password: {}

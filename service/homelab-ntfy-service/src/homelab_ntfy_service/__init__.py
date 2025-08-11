@@ -30,7 +30,7 @@ class NtfyService(ExtraService[ExtraConfig]):
             ),
             container=self.container.name,
             username=self.keepass[None].username,
-            password=self.keepass[None].password,
+            password=self.keepass[None].password.result,
             role=self.ADMIN_ROLE,
             acl=NtfyUserAclConfig(),
             extractor_args=self.extractor_args,

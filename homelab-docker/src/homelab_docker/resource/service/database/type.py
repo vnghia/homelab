@@ -10,7 +10,7 @@ from homelab_extract.container.volume import ContainerExtractVolumeSource
 from homelab_extract.host import HostExtract
 from homelab_extract.service import ServiceExtract
 from homelab_pydantic import RelativePath
-from homelab_secret.model import SecretModel
+from homelab_secret.model.password import SecretPasswordModel
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
@@ -54,7 +54,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
 
         self.service_name = extractor_args.service.name()
         self.username = self.service_name
-        self.password = SecretModel(special=False).build_resource(
+        self.password = SecretPasswordModel(special=False).build_resource(
             self.short_name, opts=self.child_opts
         )
         self.database = self.service_name
@@ -62,7 +62,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
         self.superuser_password = None
         superuser_password_env = {}
         if self.config.env.superuser_password:
-            self.superuser_password = SecretModel(special=False).build_resource(
+            self.superuser_password = SecretPasswordModel(special=False).build_resource(
                 "superuser-{}".format(self.short_name), opts=self.child_opts
             )
             superuser_password_env[self.config.env.superuser_password] = (

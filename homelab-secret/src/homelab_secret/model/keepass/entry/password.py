@@ -1,14 +1,12 @@
+import pulumi_random as random
 from homelab_pydantic import HomelabRootModel
-from pulumi import Output, ResourceOptions
+from pulumi import ResourceOptions
 
-from ... import SecretModel
+from ...password import SecretPasswordModel
 
 
-class KeepassEntryPasswordModel(HomelabRootModel[SecretModel | str]):
-    root: SecretModel | str = SecretModel()
+class KeepassEntryPasswordModel(HomelabRootModel[SecretPasswordModel]):
+    root: SecretPasswordModel = SecretPasswordModel()
 
-    def to_password(self, opts: ResourceOptions) -> Output[str]:
-        root = self.root
-        if isinstance(root, SecretModel):
-            return root.build_resource("password", opts).result
-        return Output.from_input(root)
+    def to_password(self, opts: ResourceOptions) -> random.RandomPassword:
+        return self.root.build_resource("password", opts)

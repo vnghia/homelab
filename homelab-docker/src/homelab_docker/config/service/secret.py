@@ -1,7 +1,10 @@
 from homelab_pydantic import HomelabRootModel
-from homelab_secret.model import SecretModel
 from homelab_secret.model.key import SecretKeyModel
+from homelab_secret.model.password import SecretPasswordModel
+from homelab_secret.model.uuid import SecretUuidModel
 
 
-class ServiceSecretConfig(HomelabRootModel[dict[str, SecretModel | SecretKeyModel]]):
+class ServiceSecretConfig(
+    HomelabRootModel[dict[str, SecretPasswordModel | SecretUuidModel | SecretKeyModel]]
+):
     pass

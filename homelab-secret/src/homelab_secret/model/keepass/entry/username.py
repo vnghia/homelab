@@ -3,11 +3,11 @@ from homelab_network.model.hostname import Hostnames
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Output, ResourceOptions
 
-from ... import SecretModel
+from ...password import SecretPasswordModel
 
 
 class KeepassEntryUsernameEmailModel(HomelabBaseModel):
-    address: SecretModel = SecretModel(length=8, special=False)
+    address: SecretPasswordModel = SecretPasswordModel(length=8, special=False)
     hostname: GlobalExtractHostnameSource
 
     def to_email(self, opts: ResourceOptions, hostnames: Hostnames) -> Output[str]:
@@ -16,16 +16,16 @@ class KeepassEntryUsernameEmailModel(HomelabBaseModel):
 
 
 class KeepassEntryUsernameModel(
-    HomelabRootModel[KeepassEntryUsernameEmailModel | SecretModel | str]
+    HomelabRootModel[KeepassEntryUsernameEmailModel | SecretPasswordModel | str]
 ):
-    root: KeepassEntryUsernameEmailModel | SecretModel | str = SecretModel(
-        length=16, special=False
+    root: KeepassEntryUsernameEmailModel | SecretPasswordModel | str = (
+        SecretPasswordModel(length=16, special=False)
     )
 
     def to_username(self, opts: ResourceOptions, hostnames: Hostnames) -> Output[str]:
         root = self.root
         if isinstance(root, KeepassEntryUsernameEmailModel):
             return root.to_email(opts=opts, hostnames=hostnames)
-        if isinstance(root, SecretModel):
+        if isinstance(root, SecretPasswordModel):
             return root.build_resource("username", opts).result
         return Output.from_input(root)

@@ -35,7 +35,7 @@ class KeepassEntryResource(ComponentResource):
     def to_props(self) -> dict[str, Any]:
         return {
             "username": self.username,
-            "password": self.password,
+            "password": self.password.result,
             "hostname": self.hostname,
             "urls": [
                 url.to_hostname(self.hostnames)
