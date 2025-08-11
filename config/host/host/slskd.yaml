@@ -1,0 +1,89 @@
+docker:
+  images:
+    remote:
+      slskd:
+        repo: ghcr.io/slskd/slskd
+        tag: "0.23.1"
+  volumes:
+    local:
+      slskd-data:
+        backup:
+          sqlites:
+            - extract:
+                volume: slskd-data
+              transform:
+                path: data/events.db
+            - extract:
+                volume: slskd-data
+              transform:
+                path: data/messaging.db
+            - extract:
+                volume: slskd-data
+              transform:
+                path: data/search.db
+            - extract:
+                volume: slskd-data
+              transform:
+                path: data/transfers.db
+      slskd-download:
+        backup: false
+      slskd-incomplete:
+        backup: false
+      slskd-tmp:
+        backup: false
+services:
+  slskd:
+    config:
+      traefik:
+        traefik:
+          record: private
+          service:
+            port:
+              env: SLSKD_HTTP_PORT
+    container:
+      image: slskd
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              env: SLSKD_HTTP_PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/health"
+        interval: 30s
+        timeout: 5s
+        retries: 1
+        start-period: 10s
+      network:
+        mode: vpn
+      volumes:
+        slskd-data: /app
+        slskd-download: /mnt/download
+        slskd-incomplete: /mnt/incomplete
+        slskd-tmp: /tmp
+      wud:
+        template: https://github.com/slskd/slskd/releases/tag/${original}
+      envs:
+        DOTNET_BUNDLE_EXTRACT_BASE_DIR:
+          extract:
+            volume: slskd-tmp
+          transform:
+            path: .net
+        SLSKD_DOWNLOADS_DIR:
+          volume: slskd-download
+        SLSKD_INCOMPLETE_DIR:
+          volume: slskd-incomplete
+        SLSKD_REMOTE_FILE_MANAGEMENT: true
+        SLSKD_SHARED_DIR: /mnt/share
+        SLSKD_SLSK_USERNAME:
+        SLSKD_SLSK_PASSWORD:
+        SLSKD_SLSK_LISTEN_PORT:
+          port: slskd
+        SLSKD_SLSK_CONNECTION_TIMEOUT: 30000
+        SLSKD_SLSK_INACTIVITY_TIMEOUT: 30000
+        SLSKD_HTTP_PORT: 38945
+        SLSKD_NO_HTTPS: true
+        SLSKD_NO_AUTH: true

@@ -1,0 +1,82 @@
+docker:
+  images:
+    remote:
+      airtrail:
+        repo: johly/airtrail
+        tag: "v2.5.2"
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            airtrail:
+              display-name: AirTrail
+              origin-url:
+                - extract:
+                    hostname: airtrail
+                    record: public
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/login"
+              origin-landing:
+                hostname: airtrail
+                record: public
+                scheme: https
+              prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
+  airtrail:
+    variables:
+      PORT: 3000
+    config:
+      traefik:
+        traefik:
+          record: public
+          service:
+            port:
+              variable: PORT
+    databases:
+      postgres:
+        postgres: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: airtrail
+          record: public
+    container:
+      image: airtrail
+      databases:
+        - postgres:
+          envs:
+            env: DB_URL
+      network:
+        default-bridge: true
+      tmpfs:
+        - path: /tmp
+          exec: true
+      wud:
+        template: https://github.com/johanohly/AirTrail/releases/tag/${original}
+        include-prefix: v
+      envs:
+        NODE_ENV: production
+        ORIGIN:
+          hostname: airtrail
+          record: public
+          scheme: https
+        OAUTH_ENABLED: true
+        OAUTH_ISSUER_URL:
+          extract:
+            hostname: kanidm
+            record: public
+            scheme: https
+          transform:
+            string:
+              template: "{value}/oauth2/openid/airtrail/.well-known/openid-configuration"
+        OAUTH_CLIENT_ID: airtrail
+        OAUTH_CLIENT_SECRET:
+          service: kanidm
+          extract:
+            export: airtrail
+        OAUTH_AUTO_REGISTER: true
+        OAUTH_AUTO_LOGIN: true

@@ -38,7 +38,7 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
                     ),
                     content=GlobalExtractor(model.content).extract_str(extractor_args),
                     mode=model.mode,
-                    docker_resources_args=self.docker_resource_args,
+                    extractor_args=self.extractor_args,
                 )
                 for resource_name, model in config.items()
             ]

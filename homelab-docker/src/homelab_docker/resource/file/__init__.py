@@ -30,12 +30,11 @@ from pydantic import (
 )
 
 from ...client import DockerClient
-from ...model.container.volume_path import ContainerVolumePath
+from ...model.docker.container.volume_path import ContainerVolumePath
 from ...model.file import FileDataModel, FileLocationModel
 
 if typing.TYPE_CHECKING:
     from ...extract import ExtractorArgs
-    from .. import DockerResourceArgs
 
 
 class FileProviderProps(HomelabBaseModel):
@@ -208,15 +207,15 @@ class FileResource(Resource, module="docker", name="File"):
         volume_path: ContainerVolumePath,
         content: Input[str],
         mode: int,
-        docker_resources_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
         self.volume_path = volume_path
-        volume = docker_resources_args.volume[volume_path.volume]
+        volume = extractor_args.host.docker.volume[volume_path.volume]
         super().__init__(
             FileProvider(),
             resource_name,
             {
-                "docker-host": docker_resources_args.config.host.ssh,
+                "docker-host": extractor_args.host_model.access.ssh,
                 "location": {
                     "volume": volume.name,
                     "path": volume_path.path.as_posix(),

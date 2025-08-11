@@ -13,11 +13,11 @@ if typing.TYPE_CHECKING:
 class HostInfoSourceExtractor(ExtractorBase[HostExtractInfoSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> str:
         hinfo = self.root.hinfo
-        host = extractor_args.docker_resource_args.config.host
+        host = extractor_args.host_model
         match hinfo:
             case HostInfoSource.USER:
-                return host.user
+                return host.access.user
             case HostInfoSource.ADDRESS:
-                return host.address
+                return host.access.address
             case HostInfoSource.TIMEZONE:
                 return host.timezone

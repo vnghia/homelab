@@ -1,0 +1,199 @@
+docker:
+  images:
+    remote:
+      wger:
+        repo: wger/server
+        tag: "latest"
+  volumes:
+    local:
+      wger-media: {}
+      wger-static:
+        backup: false
+      wger-celery-beat:
+        backup: false
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            kanidm:
+              origin-url:
+                - extract:
+                    hostname: wger
+                    record: public
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/oidc/callback"
+  wger:
+    variables:
+      PORT: 8000
+    config:
+      traefik:
+        traefik:
+          record: public
+          service:
+            port:
+              variable: PORT
+          middlewares:
+            - service: traefik
+              name: oidc
+        api:
+          name: api
+          hostname: wger
+          record: public
+          prefix: /api
+          service: "wger@file"
+        static:
+          name: static
+          hostname: wger
+          record: public
+          prefix: /static
+          service:
+            container: static
+            port:
+              service: nginx-static
+              extract:
+                variable: PORT
+          middlewares:
+            - service: traefik
+              name: oidc
+            - name: strip-static
+              data:
+                stripPrefix:
+                  prefixes:
+                    - "/static"
+        media:
+          name: media
+          hostname: wger
+          record: public
+          prefix: /media
+          service:
+            container: media
+            port:
+              service: nginx-static
+              extract:
+                variable: PORT
+          middlewares:
+            - service: traefik
+              name: oidc
+            - name: strip-media
+              data:
+                stripPrefix:
+                  prefixes:
+                    - "/media"
+    databases:
+      postgres:
+        postgres:
+          config:
+            minimum-redundancy: 1
+            last-backup-maximum-age: 1 DAYS
+            retention-policy: RECOVERY WINDOW OF 1 DAYS
+      valkey:
+        valkey: {}
+    keepasses:
+      keepass:
+        username: admin
+        hostname:
+          hostname: wger
+          record: public
+    secrets:
+      key: {}
+      jwt: {}
+      celery: {}
+    container:
+      image: wger
+      databases:
+        - postgres:
+          envs:
+            username: DJANGO_DB_USER
+            password: DJANGO_DB_PASSWORD
+            database: DJANGO_DB_DATABASE
+            host: DJANGO_DB_HOST
+            port: DJANGO_DB_PORT
+        - valkey:
+          envs:
+            env: CELERY_BROKER
+            database: 2
+        - valkey:
+          envs:
+            env: CELERY_BACKEND
+            database: 2
+        - valkey:
+          envs:
+            env: DJANGO_CACHE_LOCATION
+            database: 1
+      network:
+        default-bridge: true
+      tmpfs:
+        - /tmp
+      volumes:
+        wger-media: /home/wger/media
+        wger-static: /home/wger/static
+      envs:
+        SECRET_KEY:
+          secret: key
+        SIGNING_KEY:
+          secret: jwt
+        CSRF_TRUSTED_ORIGINS:
+          extract:
+            hostname: wger
+            record: public
+            scheme: https
+        WGER_INSTANCE: https://wger.de
+        ALLOW_REGISTRATION: "False"
+        ALLOW_GUEST_USERS: "False"
+        SYNC_EXERCISES_CELERY: "True"
+        SYNC_EXERCISE_IMAGES_CELERY: "True"
+        SYNC_EXERCISE_VIDEOS_CELERY: "True"
+        SYNC_INGREDIENTS_CELERY: "True"
+        DOWNLOAD_INGREDIENTS_FROM: WGER
+        USE_CELERY: "True"
+        CELERY_FLOWER_PASSWORD:
+          secret: celery
+        DJANGO_DB_ENGINE: django.db.backends.postgresql
+        DJANGO_PERFORM_MIGRATIONS: "True"
+        DJANGO_CACHE_BACKEND: django_redis.cache.RedisCache
+        DJANGO_CACHE_TIMEOUT: 1296000 # in seconds - 60*60*24*15, 15 Days
+        DJANGO_CACHE_CLIENT_CLASS: django_redis.client.DefaultClient
+        AXES_ENABLED: "False"
+        DJANGO_DEBUG: "False"
+        WGER_USE_GUNICORN: "True"
+        EXERCISE_CACHE_TTL: 18000 # in seconds - 5*60*60, 5 hours
+        SITE_URL:
+          extract:
+            hostname: wger
+            record: public
+            scheme: https
+        ACCESS_TOKEN_LIFETIME: 10
+        REFRESH_TOKEN_LIFETIME: 24
+        AUTH_PROXY_HEADER: HTTP_X_REMOTE_USER
+        AUTH_PROXY_USER_NAME_HEADER: HTTP_X_REMOTE_NAME
+        AUTH_PROXY_USER_EMAIL_HEADER: HTTP_X_REMOTE_EMAIL
+        AUTH_PROXY_CREATE_UNKNOWN_USER: "True"
+        LOG_LEVEL_PYTHON: INFO
+        GUNICORN_CMD_ARGS: "--workers 4 --threads 4 --worker-class gthread --proxy-protocol True --timeout 240"
+    containers:
+      worker:
+        inherit:
+        command: [/start-worker]
+        volumes:
+          wger-media: /home/wger/media
+      beat:
+        inherit:
+        command: [/start-beat]
+        volumes:
+          wger-celery-beat: /home/wger/beat
+      static:
+        inherit:
+          service: nginx-static
+          container:
+        volumes:
+          wger-static: /static
+      media:
+        inherit:
+          service: nginx-static
+          container:
+        volumes:
+          wger-media: /static

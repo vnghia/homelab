@@ -1,0 +1,7 @@
+docker:
+  plugins:
+    rclone:
+      repo: rclone/docker-volume-rclone
+      tag:
+        transform:
+          template: "{value}-1.69.0"

@@ -10,12 +10,11 @@ from homelab_pydantic import AbsolutePath
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
-    from ..config.host import HostServiceModelConfig
-    from ..model.container import ContainerModel
-    from ..model.container.volume_path import ContainerVolumePath
+    from ..model.docker.container import ContainerModel
+    from ..model.docker.container.volume_path import ContainerVolumePath
+    from ..model.host import HostServiceModelModel
     from ..model.service import ServiceModel
-    from ..resource import DockerResourceArgs
-    from ..resource.container import ContainerResource
+    from ..resource.docker.container import ContainerResource
     from ..resource.host import HostResourceBase
     from ..resource.service import ServiceResourceBase
 
@@ -24,7 +23,7 @@ if typing.TYPE_CHECKING:
 class ExtractorArgs:
     global_args: GlobalArgs
     hostnames: Hostnames
-    _host: HostResourceBase | HostServiceModelConfig | None
+    _host: HostResourceBase | HostServiceModelModel | None
     _service: ServiceResourceBase | ServiceModel | None
     _container: ContainerResource | ContainerModel | None
 
@@ -62,12 +61,18 @@ class ExtractorArgs:
         return self._host
 
     @property
-    def services(self) -> dict[str, ServiceResourceBase]:
-        return self.host.services
+    def host_model(self) -> HostServiceModelModel:
+        from ..model.host import HostServiceModelModel
+
+        if not self._host:
+            raise ValueError("Host or host model is required for this extractor")
+        if isinstance(self._host, HostServiceModelModel):
+            return self._host
+        return self._host.model
 
     @property
-    def docker_resource_args(self) -> DockerResourceArgs:
-        return self.host.docker_resource_args
+    def services(self) -> dict[str, ServiceResourceBase]:
+        return self.host.services
 
     @property
     def service(self) -> ServiceResourceBase:
@@ -89,7 +94,7 @@ class ExtractorArgs:
 
     @property
     def container(self) -> ContainerResource:
-        from ..resource.container import ContainerResource
+        from ..resource.docker.container import ContainerResource
 
         if not self._container or not isinstance(self._container, ContainerResource):
             raise ValueError("Container is required for this extractor")
@@ -97,7 +102,7 @@ class ExtractorArgs:
 
     @property
     def container_model(self) -> ContainerModel:
-        from ..model.container import ContainerModel
+        from ..model.docker.container import ContainerModel
 
         if not self._container:
             raise ValueError(
@@ -119,7 +124,7 @@ class ExtractorArgs:
         if not self._host:
             raise ValueError("Host or host model is required for this extractor")
         if isinstance(self._host, HostResourceBase):
-            return self._host.services.get(key, self._host.config.services[key])
+            return self._host.services.get(key, self._host.model.services[key])
         return self._host.services[key]
 
     def get_container(self, key: str | None) -> ContainerResource | ContainerModel:

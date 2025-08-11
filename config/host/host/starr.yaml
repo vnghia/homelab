@@ -1,0 +1,212 @@
+docker:
+  images:
+    remote:
+      radarr:
+        repo: ghcr.io/linuxserver/radarr
+        tag: "version-5.26.2.10099"
+      sonarr:
+        repo: ghcr.io/linuxserver/sonarr
+        tag: "version-4.0.15.2941"
+      prowlarr:
+        repo: ghcr.io/linuxserver/prowlarr
+        tag: "version-1.37.0.5076"
+      bazarr:
+        repo: ghcr.io/linuxserver/bazarr
+        tag: "1.5.2"
+  volumes:
+    local:
+      starr-data:
+        backup: false
+      starr-radarr-config:
+        backup:
+          sqlites:
+            - service:
+              extract:
+                container: radarr
+                extract:
+                  volume: starr-radarr-config
+                transform:
+                  path: logs.db
+            - service:
+              extract:
+                container: radarr
+                extract:
+                  volume: starr-radarr-config
+                transform:
+                  path: radarr.db
+          excludes:
+            - Backups
+            - radarr.pid
+      starr-sonarr-config:
+        backup:
+          sqlites:
+            - service:
+              extract:
+                container: sonarr
+                extract:
+                  volume: starr-sonarr-config
+                transform:
+                  path: logs.db
+            - service:
+              extract:
+                container: sonarr
+                extract:
+                  volume: starr-sonarr-config
+                transform:
+                  path: sonarr.db
+          excludes:
+            - Backups
+            - sonarr.pid
+      starr-prowlarr-config:
+        backup:
+          sqlites:
+            - service:
+              extract:
+                container: prowlarr
+                extract:
+                  volume: starr-prowlarr-config
+                transform:
+                  path: logs.db
+            - service:
+              extract:
+                container: prowlarr
+                extract:
+                  volume: starr-prowlarr-config
+                transform:
+                  path: prowlarr.db
+          excludes:
+            - Backups
+            - prowlarr.pid
+      starr-bazarr-config:
+        backup:
+          sqlites:
+            - service:
+              extract:
+                container: bazarr
+                extract:
+                  volume: starr-bazarr-config
+                transform:
+                  path: db/bazarr.db
+          excludes:
+            - backup
+            - restore
+services:
+  starr:
+    config:
+      traefik:
+        radarr:
+          name: radarr
+          record: private
+          service:
+            container: radarr
+            port:
+              variable: RADARR_PORT
+        sonarr:
+          name: sonarr
+          record: private
+          service:
+            container: sonarr
+            port:
+              variable: SONARR_PORT
+        prowlarr:
+          name: prowlarr
+          record: private
+          service:
+            container: prowlarr
+            port:
+              variable: PROWLARR_PORT
+        bazarr:
+          name: bazarr
+          record: private
+          service:
+            container: bazarr
+            port:
+              variable: BAZARR_PORT
+    keepasses:
+      radarr:
+        hostname:
+          hostname: starr-radarr
+          record: private
+      sonarr:
+        hostname:
+          hostname: starr-sonarr
+          record: private
+      prowlarr:
+        hostname:
+          hostname: starr-prowlarr
+          record: private
+      bazarr:
+        hostname:
+          hostname: starr-bazarr
+          record: private
+    variables:
+      RADARR_PORT: 7878
+      SONARR_PORT: 8989
+      PROWLARR_PORT: 9696
+      BAZARR_PORT: 6767
+    containers:
+      radarr:
+        image: radarr
+        network:
+          default-bridge: true
+        tmpfs:
+          - path: /run
+            exec: true
+        volumes:
+          starr-data: /starr
+          starr-radarr-config: /config
+        wud:
+          template: https://github.com/Radarr/Radarr/releases/tag/v${major}.${minor}.${patch}.${prerelease}
+          include-prefix: version-
+          transform: ^version-(\d+\.\d+\.\d+).(\d+)$ => $1-$2
+          semver-count: 4
+        envs:
+          S6_READ_ONLY_ROOT: 1
+      sonarr:
+        image: sonarr
+        network:
+          default-bridge: true
+        tmpfs:
+          - path: /run
+            exec: true
+        volumes:
+          starr-data: /starr
+          starr-sonarr-config: /config
+        wud:
+          template: https://github.com/Sonarr/Sonarr/releases/tag/v${major}.${minor}.${patch}.${prerelease}
+          include-prefix: version-
+          transform: ^version-(\d+\.\d+\.\d+).(\d+)$ => $1-$2
+          semver-count: 4
+        envs:
+          S6_READ_ONLY_ROOT: 1
+      prowlarr:
+        image: prowlarr
+        network:
+          mode: vpn
+        tmpfs:
+          - path: /run
+            exec: true
+        volumes:
+          starr-prowlarr-config: /config
+        wud:
+          template: https://github.com/Prowlarr/Prowlarr/releases/tag/v${major}.${minor}.${patch}.${prerelease}
+          include-prefix: version-
+          transform: ^version-(\d+\.\d+\.\d+).(\d+)$ => $1-$2
+          semver-count: 4
+        envs:
+          S6_READ_ONLY_ROOT: 1
+      bazarr:
+        image: bazarr
+        network:
+          default-bridge: true
+        tmpfs:
+          - path: /run
+            exec: true
+          - /tmp
+        volumes:
+          starr-data: /starr
+          starr-bazarr-config: /config
+        wud:
+          template: https://github.com/morpheus65535/bazarr/releases/tag/v${original}
+        envs:
+          S6_READ_ONLY_ROOT: 1

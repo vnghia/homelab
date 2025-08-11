@@ -9,10 +9,9 @@ from pulumi import ComponentResource, Output, ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from ...extract import ExtractorArgs
-from ...model.container import ContainerModel, ContainerModelBuildArgs
+from ...model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
-from .. import DockerResourceArgs
-from ..container import ContainerResource
+from ..docker.container import ContainerResource
 from .database import ServiceDatabaseResource
 from .keepass import ServiceKeepassResouse
 from .secret import ServiceSecretResouse
@@ -51,10 +50,6 @@ class ServiceResourceBase(ComponentResource):
 
     def extractor_args_from_self(self, container: str | None) -> ExtractorArgs:
         return self.extractor_args.from_service(self, container)
-
-    @property
-    def docker_resource_args(self) -> DockerResourceArgs:
-        return self.extractor_args.docker_resource_args
 
     @classmethod
     def name(cls) -> str:
@@ -102,7 +97,7 @@ class ServiceResourceBase(ComponentResource):
             self._database = ServiceDatabaseResource(
                 self.model.databases,
                 opts=self.child_opts,
-                database_config=self.extractor_args.docker_resource_args.config.database,
+                database_config=self.extractor_args.host_model.docker.database,
                 extractor_args=self.extractor_args,
             )
 
@@ -111,7 +106,7 @@ class ServiceResourceBase(ComponentResource):
                     for version, container in versions.items():
                         pulumi.export(
                             "{}.container.{}".format(
-                                self.extractor_args.docker_resource_args.host,
+                                self.extractor_args.host.name(),
                                 type_.get_full_name_version(self.name(), name, version),
                             ),
                             container.name,
@@ -127,14 +122,14 @@ class ServiceResourceBase(ComponentResource):
                 if isinstance(secret, tls.PrivateKey):
                     pulumi.export(
                         "{}.secret.{}.private-key".format(
-                            self.extractor_args.docker_resource_args.host,
+                            self.extractor_args.host.name(),
                             self.add_service_name(name),
                         ),
                         secret.private_key_openssh,
                     )
                     pulumi.export(
                         "{}.secret.{}.public-key".format(
-                            self.extractor_args.docker_resource_args.host,
+                            self.extractor_args.host.name(),
                             self.add_service_name(name),
                         ),
                         secret.public_key_openssh,
@@ -142,7 +137,7 @@ class ServiceResourceBase(ComponentResource):
                 else:
                     pulumi.export(
                         "{}.secret.{}".format(
-                            self.extractor_args.docker_resource_args.host,
+                            self.extractor_args.host.name(),
                             self.add_service_name(name),
                         ),
                         secret.result,
@@ -182,7 +177,7 @@ class ServiceResourceBase(ComponentResource):
         for name, container in self.containers.items():
             pulumi.export(
                 "{}.container.{}".format(
-                    self.extractor_args.docker_resource_args.host,
+                    self.extractor_args.host.name(),
                     self.add_service_name(name),
                 ),
                 container.name,

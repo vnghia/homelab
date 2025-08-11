@@ -14,7 +14,7 @@ from .info import ContainerInfoSourceExtractor
 from .volume import ContainerVolumeSourceExtractor
 
 if typing.TYPE_CHECKING:
-    from ...model.container.volume_path import ContainerVolumePath
+    from ...model.docker.container.volume_path import ContainerVolumePath
     from .. import ExtractorArgs
 
 

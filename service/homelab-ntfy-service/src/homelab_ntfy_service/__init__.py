@@ -33,7 +33,7 @@ class NtfyService(ExtraService[ExtraConfig]):
             password=self.keepass[None].password,
             role=self.ADMIN_ROLE,
             acl=NtfyUserAclConfig(),
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
         self.user = NtfyUserResource(
             self.USER_ROLE,
@@ -45,7 +45,7 @@ class NtfyService(ExtraService[ExtraConfig]):
             password=self.secret["{}-password".format(self.USER_ROLE)],
             role=self.USER_ROLE,
             acl=NtfyUserAclConfig({"*": NtfyUserAclPermission.WRITE_ONLY}),
-            docker_resource_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.register_outputs({})

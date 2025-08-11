@@ -14,5 +14,5 @@ if typing.TYPE_CHECKING:
 class HostVpnSourceExtractor(ExtractorBase[HostExtractVpnSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         return Output.from_input(
-            str(extractor_args.docker_resource_args.config.vpn_.ports[self.root.port])
+            str(extractor_args.host_model.vpn_.ports[self.root.port])
         )

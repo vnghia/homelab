@@ -1,0 +1,34 @@
+docker:
+  database:
+    valkey:
+      images:
+        valkey:
+          "8":
+            repo: bitnami/valkey
+            tag: "8.1.1"
+      version: 8
+      port: 6379
+      data-dir: /bitnami/valkey/data
+      env:
+        password: VALKEY_PASSWORD
+        database: VALKEY_DATABASE
+        data-dir: VALKEY_DATA_DIR
+      container:
+        healthcheck:
+          tests:
+            - "CMD"
+            - "valkey-cli"
+            - "--raw"
+            - "incr"
+            - "ping"
+          interval: 30s
+          retries: 5
+          timeout: 5s
+        envs:
+          VALKEY_AOF_ENABLED: "yes"
+          VALKEY_RDB_POLICY_DISABLED: "no"
+          VALKEY_RDB_POLICY: "900#1 600#5 300#10 120#50 60#1000 30#10000"
+        tmpfs:
+          - /opt/bitnami/valkey/tmp
+          - /opt/bitnami/valkey/etc
+          - /opt/bitnami/valkey/logs

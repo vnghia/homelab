@@ -3,7 +3,9 @@ from __future__ import annotations
 import typing
 
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.model.container.database.source import ContainerDatabaseSourceModel
+from homelab_docker.model.docker.container.database.source import (
+    ContainerDatabaseSourceModel,
+)
 from homelab_docker.model.service.database import ServiceDatabaseConfigModel
 from homelab_docker.model.service.database.postgres import (
     ServiceDatabasePostgresConfigModel,
@@ -74,5 +76,5 @@ class BarmanConfigFileResource(
                     ).extract_path(barman_service.extractor_args),
                 }
             },
-            docker_resource_args=barman_service.docker_resource_args,
+            extractor_args=barman_service.extractor_args,
         )

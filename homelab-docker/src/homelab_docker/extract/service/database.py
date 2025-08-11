@@ -20,8 +20,7 @@ class ServiceDatabaseSourceExtractor(ExtractorBase[ServiceExtractDatabaseSource]
         root = self.root
         type = DatabaseType(root.type)
         version = (
-            root.version
-            or extractor_args.docker_resource_args.config.database.root[type].version
+            root.version or extractor_args.host_model.docker.database.root[type].version
         )
         source = extractor_args.service.database.source_config[type][root.database][
             version

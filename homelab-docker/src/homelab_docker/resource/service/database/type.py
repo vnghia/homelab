@@ -14,18 +14,18 @@ from homelab_secret.model import SecretModel
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
-from ....config.database import DatabaseConfig, DatabaseTypeEnvConfig
+from ....config.docker.database import DatabaseConfig, DatabaseTypeEnvConfig
 from ....extract import ExtractorArgs
-from ....model.container import ContainerModel, ContainerModelBuildArgs
-from ....model.container.database.source import ContainerDatabaseSourceModel
-from ....model.container.image import ContainerImageModelConfig
-from ....model.container.volume import (
+from ....model.database.type import DatabaseType
+from ....model.docker.container import ContainerModel, ContainerModelBuildArgs
+from ....model.docker.container.database.source import ContainerDatabaseSourceModel
+from ....model.docker.container.image import ContainerImageModelConfig
+from ....model.docker.container.volume import (
     ContainerVolumeConfig,
     ContainerVolumeFullConfig,
     ContainerVolumesConfig,
 )
-from ....model.container.volume_path import ContainerVolumePath
-from ....model.database.type import DatabaseType
+from ....model.docker.container.volume_path import ContainerVolumePath
 from ....model.service.database import ServiceDatabaseConfigModel, ServiceDatabaseModel
 from ...file import FileResource
 
@@ -79,7 +79,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 ),
                 content=script.content,
                 mode=0o777,
-                docker_resources_args=extractor_args.docker_resource_args,
+                extractor_args=extractor_args,
             )
             for i, script in enumerate(self.config.scripts + model.scripts)
         ]

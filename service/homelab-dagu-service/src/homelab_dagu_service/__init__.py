@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
-from homelab_docker.model.container.volume_path import ContainerVolumePath
+from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_extra_service import ExtraService

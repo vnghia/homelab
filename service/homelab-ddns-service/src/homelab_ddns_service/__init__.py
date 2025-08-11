@@ -24,12 +24,12 @@ class DdnsService(ExtraService[DdnsConfig]):
                 "domain": hostname.value,
                 "ttl": 1,
                 "token": network_resource.token.ddns_tokens[
-                    self.docker_resource_args.host
+                    self.extractor_args.host.name()
                 ].value,
                 "ip_version": ip_version,
             }
             for record in network_resource.config.records.values()
-            if record.is_ddns and record.host == self.docker_resource_args.host
+            if record.is_ddns and record.host == self.extractor_args.host.name()
             for hostname in record.hostnames.values()
             for ip_version in ["ipv4", "ipv6"]
         ]

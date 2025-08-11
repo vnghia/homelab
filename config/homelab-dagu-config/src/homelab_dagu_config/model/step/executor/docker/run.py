@@ -30,9 +30,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         network_config: dict[str, Any] = {}
 
         config["autoRemove"] = self.auto_remove
-        config["image"] = model.image.to_image_name(
-            extractor_args.docker_resource_args.image
-        )
+        config["image"] = model.image.to_image_name(extractor_args.host.docker.image)
         config["pull"] = self.pull
 
         if model.user:

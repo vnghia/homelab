@@ -1,0 +1,53 @@
+docker:
+  images:
+    build:
+      balite:
+        context:
+          location: image/balite
+          base: python-alpine
+          python-builder:
+            image: python-builder
+        version: "0.1.7"
+  volumes:
+    local:
+      balite-data: {}
+services:
+  balite:
+    config:
+      source-dir:
+        env: HOMELAB_SOURCE_DIR
+      dagu:
+        docker:
+          executor:
+            run:
+              model:
+          dag:
+            params:
+              types:
+                backup:
+            tags: ["backup"]
+          dags:
+            backup:
+              command:
+                - homelab-balite
+                - backup
+                - param:
+                    type: backup
+            restore:
+              command:
+                - homelab-balite
+                - restore
+                - param:
+                    type: backup
+    container:
+      active: false
+      image:
+        build: balite
+      tmpfs:
+        - /tmp
+      volumes:
+        balite-data: /data
+      envs:
+        HOMELAB_SOURCE_DIR: /mnt
+        HOMELAB_DESTINATION_DIR:
+          volume: balite-data

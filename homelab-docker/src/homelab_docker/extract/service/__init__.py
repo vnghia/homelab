@@ -25,7 +25,7 @@ from .secret import ServiceSecretSourceExtractor
 from .variable import ServiceVariableSourceExtractor
 
 if typing.TYPE_CHECKING:
-    from ...model.container.volume_path import ContainerVolumePath
+    from ...model.docker.container.volume_path import ContainerVolumePath
     from .. import ExtractorArgs
 
 

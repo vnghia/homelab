@@ -5,9 +5,9 @@ from homelab_network.resource.network import NetworkResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
-from ..config import DockerServiceModelConfigs
+from ..config.host import HostServiceModelConfig
 from ..extract import ExtractorArgs
-from ..resource import DockerResource, DockerResourceArgs
+from ..resource.docker import DockerResource
 from ..resource.file import FileVolumeProxy
 from ..resource.service import ServiceResourceBase
 
@@ -19,9 +19,9 @@ class HostResourceBase(ComponentResource):
         opts: ResourceOptions | None,
         global_args: GlobalArgs,
         network_resource: NetworkResource,
-        docker_service_model_configs: DockerServiceModelConfigs,
+        config: HostServiceModelConfig,
     ) -> None:
-        self.config = docker_service_model_configs[self.name()]
+        self.model = config[self.name()]
 
         super().__init__(
             self.name(),
@@ -32,10 +32,10 @@ class HostResourceBase(ComponentResource):
                 ResourceOptions(
                     providers={
                         "docker": docker.Provider(
-                            self.name(), host=self.config.host.ssh
+                            self.name(), host=self.model.access.ssh
                         ),
                         "docker-build": docker_build.Provider(
-                            self.name(), host=self.config.host.ssh
+                            self.name(), host=self.model.access.ssh
                         ),
                     }
                 ),
@@ -46,16 +46,11 @@ class HostResourceBase(ComponentResource):
         self.network = network_resource
         self.hostname = "{}-{}".format(global_args.project.prefix, self.name())
 
-        self.docker_resource = DockerResource(
-            self.config,
+        self.docker = DockerResource(
+            self.model,
             opts=self.child_opts,
             global_args=global_args,
             host=self.name(),
-        )
-        self.docker_resource_args = DockerResourceArgs(
-            resource=self.docker_resource,
-            models=self.config.services,
-            configs=docker_service_model_configs,
         )
 
         self.services: dict[str, ServiceResourceBase] = {}
@@ -63,7 +58,7 @@ class HostResourceBase(ComponentResource):
             global_args, network_resource.hostnames, self
         )
 
-        FileVolumeProxy.pull_image(self.config.host.ssh)
+        FileVolumeProxy.pull_image(self.model.access.ssh)
 
     def __str__(self) -> str:
         return self.name()

@@ -1,0 +1,149 @@
+docker:
+  images:
+    remote:
+      paperless:
+        repo: ghcr.io/paperless-ngx/paperless-ngx
+        tag: "2.17.1"
+  volumes:
+    local:
+      paperless-data: {}
+      paperless-media: {}
+      paperless-static:
+        backup: false
+      paperless-tmp:
+        backup: false
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            paperless:
+              display-name: Paperless
+              origin-url:
+                - extract:
+                    hostname: paperless
+                    record: public
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/accounts/oidc/kanidm/login/callback/"
+              origin-landing:
+                hostname: paperless
+                record: public
+                scheme: https
+              prefer-short-username: true
+  paperless:
+    config:
+      traefik:
+        traefik:
+          record: public
+          service:
+            port:
+              env: PAPERLESS_PORT
+    databases:
+      postgres:
+        postgres: {}
+      valkey:
+        valkey: {}
+    keepasses:
+      keepass:
+        hostname:
+          hostname: paperless
+          record: public
+    secrets:
+      key: {}
+    container:
+      image: paperless
+      databases:
+        - postgres:
+          envs:
+            username: PAPERLESS_DBUSER
+            password: PAPERLESS_DBPASS
+            database: PAPERLESS_DBNAME
+            host: PAPERLESS_DBHOST
+            port: PAPERLESS_DBPORT
+        - valkey:
+          envs:
+            env: PAPERLESS_REDIS
+      tmpfs:
+        - path: /run
+          exec: true
+      volumes:
+        paperless-data: /usr/src/paperless/data
+        paperless-media: /usr/src/paperless/media
+        paperless-static: /usr/src/paperless/static
+        paperless-tmp: /tmp
+      wud:
+        template: https://github.com/paperless-ngx/paperless-ngx/releases/tag/v${original}
+      envs:
+        S6_READ_ONLY_ROOT: 1
+        XDG_CACHE_HOME:
+          extract:
+            volume: paperless-tmp
+          transform:
+            path: cache
+        PAPERLESS_DATA_DIR:
+          volume: paperless-data
+        PAPERLESS_MEDIA_ROOT:
+          volume: paperless-media
+        PAPERLESS_EMPTY_TRASH_DIR:
+          extract:
+            volume: paperless-data
+          transform:
+            path: .trash
+        PAPERLESS_STATICDIR:
+          volume: paperless-static
+        PAPERLESS_SECRET_KEY:
+          secret: key
+        PAPERLESS_ADMIN_USER:
+          keepass:
+          info: username
+        PAPERLESS_ADMIN_PASSWORD:
+          keepass:
+          info: password
+        PAPERLESS_URL:
+          hostname: paperless
+          record: public
+          scheme: https
+        PAPERLESS_TIME_ZONE:
+          hinfo: timezone
+        PAPERLESS_EMAIL_TASK_CRON: disable
+        PAPERLESS_TRAIN_TASK_CRON: disable
+        PAPERLESS_CONSUMER_DISABLE: true
+        PAPERLESS_CONVERT_TMPDIR:
+          volume: paperless-tmp
+        PAPERLESS_PORT: 8000
+        PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+        PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS: true
+        PAPERLESS_ACCOUNT_ALLOW_SIGNUPS: false
+        PAPERLESS_SOCIALACCOUNT_PROVIDERS:
+          json_:
+            openid_connect:
+              OAUTH_PKCE_ENABLED: true
+              APPS:
+                - provider_id: kanidm
+                  name: Kanidm
+                  client_id: paperless
+                  secret:
+                    service: kanidm
+                    extract:
+                      export: paperless
+                  settings:
+                    server_url:
+                      extract:
+                        hostname: kanidm
+                        record: public
+                        scheme: https
+                      transform:
+                        string:
+                          template: "{value}/oauth2/openid/paperless"
+        PAPERLESS_SOCIAL_AUTO_SIGNUP: true
+        PAPERLESS_SOCIAL_ACCOUNT_DEFAULT_GROUPS: default
+        PAPERLESS_DISABLE_REGULAR_LOGIN: true
+        PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
+        PYTHONPYCACHEPREFIX:
+          extract:
+            volume: paperless-tmp
+          transform:
+            path: pycache

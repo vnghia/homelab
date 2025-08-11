@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 from pathlib import PosixPath
 
-from homelab_docker.model.volume import LocalVolumeModel
+from homelab_docker.model.docker.volume import LocalVolumeModel
 from homelab_pydantic import RelativePath
 from pulumi import ResourceOptions
 

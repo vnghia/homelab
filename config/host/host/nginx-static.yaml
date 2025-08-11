@@ -1,0 +1,17 @@
+docker:
+  images:
+    remote:
+      nginx-static:
+        repo: registry.gitlab.com/txlab/docker/nginx-static
+        tag: "latest"
+services:
+  nginx-static:
+    variables:
+      PORT: 80
+    config: {}
+    container:
+      image: nginx-static
+      active: false
+      tmpfs:
+        - /var/cache/nginx
+        - /var/run

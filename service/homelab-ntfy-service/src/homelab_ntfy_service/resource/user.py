@@ -8,7 +8,7 @@ from typing import Any, ClassVar
 import pulumi
 from docker.models.containers import Container
 from homelab_docker.client import DockerClient
-from homelab_docker.resource import DockerResourceArgs
+from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
@@ -194,13 +194,13 @@ class NtfyUserResource(Resource, module="ntfy", name="User"):
         password: Input[str],
         role: Input[str],
         acl: NtfyUserAclConfig,
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(
             NtfyUserProvider(),
             resource_name,
             {
-                "docker-host": docker_resource_args.config.host.ssh,
+                "docker-host": extractor_args.host_model.access.ssh,
                 "container": container,
                 "username": username,
                 "password": password,

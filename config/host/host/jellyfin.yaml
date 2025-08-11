@@ -1,0 +1,102 @@
+docker:
+  images:
+    remote:
+      jellyfin:
+        repo: ghcr.io/jellyfin/jellyfin
+        tag: "10.10.7"
+  volumes:
+    local:
+      jellyfin-data:
+        backup:
+          sqlites:
+            - extract:
+                volume: jellyfin-data
+              transform:
+                path: data/library.db
+            - extract:
+                volume: jellyfin-data
+              transform:
+                path: data/jellyfin.db
+      jellyfin-config: {}
+      jellyfin-cache: {}
+      jellyfin-log: {}
+      jellyfin-starr:
+        backup: false
+      jellyfin-downloads:
+        backup: false
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            jellyfin:
+              display-name: Jellyfin
+              origin-url:
+                - extract:
+                    hostname: jellyfin
+                    record: public
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/sso/OID/redirect/kanidm"
+                - org.jellyfin.mobile://login-callback
+              origin-landing:
+                hostname: jellyfin
+                record: public
+                scheme: https
+              prefer-short-username: true
+              claim-maps:
+                role:
+                  values-by-group:
+                    role_admin: [admin]
+                    role_user: [user]
+  jellyfin:
+    config:
+      traefik:
+        traefik:
+          record: public
+          service:
+            port:
+              extract:
+                variable: PORT
+    variables:
+      PORT: 8096
+    keepasses:
+      keepass:
+        hostname:
+          hostname: jellyfin
+          record: public
+    container:
+      image: jellyfin
+      devices:
+        - /dev/dri/renderD128
+      network:
+        default-bridge: true
+      volumes:
+        jellyfin-config: /mnt/jellyfin/config
+        jellyfin-data: /mnt/jellyfin/data
+        jellyfin-log: /mnt/jellyfin/log
+        jellyfin-cache: /mnt/jellyfin/cache
+        jellyfin-starr:
+          path: /starr/media
+          read-only: true
+        jellyfin-downloads:
+          path: /downloads/media
+          read-only: true
+      tmpfs:
+        - /tmp/jellyfin
+      wud:
+        template: https://github.com/jellyfin/jellyfin/releases/tag/v${original}
+      envs:
+        JELLYFIN_DATA_DIR:
+          volume: jellyfin-data
+        JELLYFIN_CONFIG_DIR:
+          volume: jellyfin-config
+        JELLYFIN_CACHE_DIR:
+          volume: jellyfin-cache
+        JELLYFIN_LOG_DIR:
+          volume: jellyfin-log
+        JELLYFIN_PublishedServerUrl:
+          hostname: jellyfin
+          record: public

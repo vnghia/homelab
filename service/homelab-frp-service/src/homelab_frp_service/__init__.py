@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from homelab_docker.config.network import NetworkConfig
+from homelab_docker.config.docker.network import NetworkConfig
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.model.container.port import ContainerPortProtocol
+from homelab_docker.model.docker.container.port import ContainerPortProtocol
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.file.config import (
     ConfigFileResource,
@@ -35,7 +35,7 @@ class FrpClientConfigResource(
         frp_service: FrpService,
     ) -> None:
         proxies = []
-        for prefix, service in frp_service.docker_resource_args.models.items():
+        for prefix, service in frp_service.extractor_args.host_model.services.items():
             for name, container in service.containers.items():
                 for key, port in container.build_ports().items():
                     if port.forward:
@@ -100,7 +100,7 @@ class FrpClientConfigResource(
                     *proxies,
                 ],
             },
-            docker_resource_args=frp_service.docker_resource_args,
+            extractor_args=frp_service.extractor_args,
         )
 
     @classmethod

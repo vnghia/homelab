@@ -8,7 +8,7 @@ from homelab_pydantic import AbsolutePath
 from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ...model.container.volume_path import ContainerVolumePath
+    from ...model.docker.container.volume_path import ContainerVolumePath
     from .. import ExtractorArgs
 
 
@@ -22,6 +22,6 @@ class ContainerVolumeSourceExtractor(ExtractorBase[ContainerExtractVolumeSource]
         )
 
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
-        from ...model.container.volume_path import ContainerVolumePath
+        from ...model.docker.container.volume_path import ContainerVolumePath
 
         return ContainerVolumePath(volume=self.root.volume)

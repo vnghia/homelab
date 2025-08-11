@@ -1,4 +1,4 @@
-from homelab_docker.config import DockerServiceModelConfigs
+from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.host import HostResourceBase
@@ -13,21 +13,21 @@ from pydantic.alias_generators import to_snake
 class HostBase[T: ServiceConfigBase](HostResourceBase):
     def __init__(
         self,
-        config: T,
+        service: T,
         *,
         opts: ResourceOptions | None,
         global_args: GlobalArgs,
         network_resource: NetworkResource,
-        docker_service_model_configs: DockerServiceModelConfigs,
+        config: HostServiceModelConfig,
     ) -> None:
         super().__init__(
             opts=opts,
             global_args=global_args,
             network_resource=network_resource,
-            docker_service_model_configs=docker_service_model_configs,
+            config=config,
         )
 
-        self.services_config = config
+        self.services_config = service
 
     def build_extra_services(self) -> None:
         self.extra_services = {

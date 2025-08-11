@@ -1,0 +1,36 @@
+docker:
+  images:
+    remote:
+      jdownloader:
+        repo: antlafarge/jdownloader
+        tag: "alpine-openjdk21"
+  volumes:
+    local:
+      jdownloader-config: {}
+      jdownloader-logs: {}
+      jdownloader-downloads:
+        backup: false
+      jdownloader-starr:
+        backup: false
+services:
+  jdownloader:
+    config: {}
+    container:
+      image: jdownloader
+      network:
+        mode: vpn
+      read-only: false
+      volumes:
+        jdownloader-config: /jdownloader/cfg
+        jdownloader-logs: /jdownloader/logs
+        jdownloader-downloads: /jdownloader/downloads/external
+        jdownloader-starr: /jdownloader/downloads/starr
+      envs:
+        JD_EMAIL:
+        JD_PASSWORD:
+        JD_DEVICENAME:
+          extract:
+            project:
+          transform:
+            string:
+              template: "{project}-{stack}"

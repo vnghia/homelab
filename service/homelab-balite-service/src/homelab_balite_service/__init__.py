@@ -3,7 +3,7 @@ from homelab_backup.config.volume import BackupVolumeConfig
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.extract.service import ServiceExtractor
-from homelab_docker.model.container.volume import ContainerVolumeConfig
+from homelab_docker.model.docker.container.volume import ContainerVolumeConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
@@ -33,7 +33,7 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
         for (
             name,
             volume_model,
-        ) in self.docker_resource_args.config.volumes.local.items():
+        ) in self.extractor_args.host_model.docker.volumes.local.items():
             if (
                 isinstance(volume_model.backup, BackupVolumeConfig)
                 and len(volume_model.backup.sqlites) > 0

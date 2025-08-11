@@ -1,0 +1,66 @@
+docker:
+  images:
+    remote:
+      syncthing:
+        repo: ghcr.io/syncthing/syncthing
+        tag: "1.30.0"
+  volumes:
+    local:
+      syncthing-config: {}
+      syncthing-data:
+        backup:
+          excludes:
+            - "**/*.tmp"
+services:
+  syncthing:
+    variables:
+      PORT: 8384
+    config:
+      traefik:
+        traefik:
+          record: private
+          service:
+            port:
+              variable: PORT
+    container:
+      image: syncthing
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              variable: PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/rest/noauth/health"
+        interval: 5s
+        timeout: 5s
+      hostname:
+        extract:
+          project:
+        transform:
+          string:
+            template: "{project}-{stack}"
+      network:
+        default-bridge: true
+      ports:
+        tcp:
+          internal: 22000
+          protocol: tcp
+        quic:
+          internal: 22000
+          protocol: udp
+      volumes:
+        syncthing-config: /var/syncthing/config
+        syncthing-data: /var/syncthing/data
+      wud:
+        template: https://github.com/syncthing/syncthing/releases/tag/v${original}
+      envs:
+        STGUIADDRESS:
+          extract:
+            variable: PORT
+          transform:
+            string:
+              template: "0.0.0.0:{value}"

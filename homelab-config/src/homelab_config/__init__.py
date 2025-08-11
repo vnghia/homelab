@@ -4,8 +4,9 @@ from typing import Any, Self, Type
 import deepmerge
 import pulumi
 import yaml
-from homelab_docker.config import DockerConfig, DockerServiceModelConfigs
+from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.config.service import ServiceConfigBase
+from homelab_docker.model.host import HostModel
 from homelab_global import GlobalArgs, ProjectArgs
 from homelab_global.config import GlobalConfig
 from homelab_network.config import NetworkConfig
@@ -14,21 +15,19 @@ from homelab_pydantic import HomelabBaseModel
 from homelab_config.constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
 
 
-class DockerConfigs[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](
-    HomelabBaseModel
-):
-    sun: DockerConfig[TSun]
-    earth: DockerConfig[TEarth]
+class HostConfig[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):
+    sun: HostModel[TSun]
+    earth: HostModel[TEarth]
 
     @property
-    def service_model(self) -> DockerServiceModelConfigs:
-        return DockerServiceModelConfigs(
+    def service_model(self) -> HostServiceModelConfig:
+        return HostServiceModelConfig(
             {"sun": self.sun.service_model(), "earth": self.earth.service_model()}
         )
 
 
 class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):
-    dockers: DockerConfigs[TSun, TEarth]
+    host: HostConfig[TSun, TEarth]
     network: NetworkConfig
     global_: GlobalConfig
 
@@ -49,22 +48,22 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
         )
 
     @classmethod
-    def get_docker_configs(
-        cls, docker_type: Type[DockerConfigs[TSun, TEarth]]
-    ) -> DockerConfigs[TSun, TEarth]:
-        key = "docker"
+    def get_host_config(
+        cls, docker_type: Type[HostConfig[TSun, TEarth]]
+    ) -> HostConfig[TSun, TEarth]:
+        key = "host"
 
         config_data = {}
         config_dir = (
             Path(__file__).parent.parent.parent.parent / "config" / key
         ).resolve(True)
 
-        for host in DockerConfigs.model_fields:
+        for host in HostConfig.model_fields:
             host_data: dict[str, Any] = {}
-            host_dir = config_dir / "hosts" / host
+            host_dir = config_dir / host
 
             for host_service_path in host_dir.glob("*.yaml"):
-                service_path = config_dir / host_service_path.name
+                service_path = config_dir / key / host_service_path.name
                 with (
                     open(service_path) as service_file,
                     open(host_service_path) as host_service_file,
@@ -88,9 +87,9 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
         )
 
     @classmethod
-    def build(cls, docker_type: Type[DockerConfigs[TSun, TEarth]]) -> Self:
+    def build(cls, host_type: Type[HostConfig[TSun, TEarth]]) -> Self:
         return cls(
-            dockers=cls.get_docker_configs(docker_type),
+            host=cls.get_host_config(host_type),
             network=NetworkConfig.model_validate(cls.get_key("network")),
             global_=GlobalConfig.model_validate(cls.get_key("global")),
         )

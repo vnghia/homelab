@@ -10,8 +10,8 @@ from homelab_pydantic import BaseModel, HomelabRootModel
 from pulumi import Output, ResourceOptions
 from pydantic import TypeAdapter, model_validator
 
-from ...model.container.volume_path import ContainerVolumePath
-from .. import DockerResourceArgs
+from ...extract import ExtractorArgs
+from ...model.docker.container.volume_path import ContainerVolumePath
 from . import FileResource
 
 T = TypeVar("T", bound=BaseModel)
@@ -104,7 +104,7 @@ class ConfigFileResource(Generic[T], FileResource):
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         data: Mapping[str, Any],
-        docker_resource_args: DockerResourceArgs,
+        extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(
             resource_name,
@@ -112,7 +112,7 @@ class ConfigFileResource(Generic[T], FileResource):
             volume_path=volume_path.with_suffix(self.suffix or self.dumper.suffix()),
             content=Output.json_dumps(data).apply(self.dumps),
             mode=0o444,
-            docker_resources_args=docker_resource_args,
+            extractor_args=extractor_args,
         )
 
     def validate(self, raw_data: str) -> T:

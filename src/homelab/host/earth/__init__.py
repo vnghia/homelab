@@ -1,4 +1,4 @@
-from homelab_docker.config import DockerServiceModelConfigs
+from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global import GlobalArgs
 from homelab_network.resource.network import NetworkResource
 from pulumi import ResourceOptions
@@ -10,19 +10,19 @@ from .config import EarthServiceConfig
 class EarthHost(HostBase[EarthServiceConfig]):
     def __init__(
         self,
-        config: EarthServiceConfig,
+        service: EarthServiceConfig,
         *,
         opts: ResourceOptions | None,
         global_args: GlobalArgs,
         network_resource: NetworkResource,
-        docker_service_model_configs: DockerServiceModelConfigs,
+        config: HostServiceModelConfig,
     ) -> None:
         super().__init__(
-            config,
+            service,
             opts=opts,
             global_args=global_args,
             network_resource=network_resource,
-            docker_service_model_configs=docker_service_model_configs,
+            config=config,
         )
 
         self.build_extra_services()

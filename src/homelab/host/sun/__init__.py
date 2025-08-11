@@ -4,7 +4,7 @@ from homelab_barman_service import BarmanService
 from homelab_crowdsec_service import CrowdsecService
 from homelab_dagu_service import DaguService
 from homelab_ddns_service import DdnsService
-from homelab_docker.config import DockerServiceModelConfigs
+from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global import GlobalArgs
 from homelab_gluetun_service import GluetunService
 from homelab_kanidm_service import KanidmService
@@ -23,19 +23,19 @@ from .config import SunServiceConfig
 class SunHost(HostBase[SunServiceConfig]):
     def __init__(
         self,
-        config: SunServiceConfig,
+        service: SunServiceConfig,
         *,
         opts: ResourceOptions | None,
         global_args: GlobalArgs,
         network_resource: NetworkResource,
-        docker_service_model_configs: DockerServiceModelConfigs,
+        config: HostServiceModelConfig,
     ) -> None:
         super().__init__(
-            config,
+            service,
             opts=opts,
             global_args=global_args,
             network_resource=network_resource,
-            docker_service_model_configs=docker_service_model_configs,
+            config=config,
         )
 
         self.tailscale = TailscaleService(

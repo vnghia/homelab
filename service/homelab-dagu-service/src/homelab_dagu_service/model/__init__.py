@@ -5,7 +5,7 @@ from typing import Any
 
 from homelab_dagu_config.model import DaguDagModel
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.model.container.volume_path import ContainerVolumePath
+from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
 

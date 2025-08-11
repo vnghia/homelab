@@ -55,7 +55,7 @@ class KanidmServerConfigResource(
                 "domain": GlobalExtractor(config.domain).extract_str(extractor_args),
                 "origin": GlobalExtractor(config.origin).extract_str(extractor_args),
             },
-            docker_resource_args=kanidm_service.docker_resource_args,
+            extractor_args=kanidm_service.extractor_args,
         )
 
 
@@ -98,7 +98,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             ),
             content=self.key.private_key_pem,
             mode=0o440,
-            docker_resources_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
         self.chain_file = FileResource(
             "chain",
@@ -108,7 +108,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             ),
             content=self.chain.cert_pem,
             mode=0o440,
-            docker_resources_args=self.docker_resource_args,
+            extractor_args=self.extractor_args,
         )
 
         self.config_file = KanidmServerConfigResource(

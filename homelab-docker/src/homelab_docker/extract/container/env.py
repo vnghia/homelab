@@ -9,7 +9,7 @@ from pulumi import Output
 from .. import ExtractorBase
 
 if typing.TYPE_CHECKING:
-    from ...model.container.volume_path import ContainerVolumePath
+    from ...model.docker.container.volume_path import ContainerVolumePath
     from .. import ExtractorArgs
     from ..global_ import GlobalExtractor
 

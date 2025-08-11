@@ -38,7 +38,7 @@ class PydioInstallConfigResource(
             data=GlobalExtractor.extract_recursively(
                 config.install, pydio_service.extractor_args
             ),
-            docker_resource_args=pydio_service.docker_resource_args,
+            extractor_args=pydio_service.extractor_args,
         )
 
 

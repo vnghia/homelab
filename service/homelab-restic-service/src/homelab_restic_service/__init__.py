@@ -6,8 +6,8 @@ from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
-from homelab_docker.model.container.volume_path import ContainerVolumePath
 from homelab_docker.model.database.type import DatabaseType
+from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_pydantic import RelativePath
@@ -46,8 +46,10 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self.repo = ResticRepoResource(
             "repo",
             opts=self.child_opts,
-            docker_host=self.docker_resource_args.config.host.ssh,
-            image=self.docker_resource_args.image.remotes[self.config.image].image_id,
+            docker_host=self.extractor_args.host_model.access.ssh,
+            image=self.extractor_args.host.docker.image.remotes[
+                self.config.image
+            ].image_id,
             envs=self.config.dagu.dotenvs[None].to_envs(self.extractor_args),
         )
 
@@ -57,7 +59,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         for (
             name,
             volume_model,
-        ) in self.docker_resource_args.config.volumes.local.items():
+        ) in self.extractor_args.host_model.docker.volumes.local.items():
             config = ResticVolumeConfig(name=name, model=volume_model)
             database_type = self.config.database.find(name)
             if database_type:

@@ -12,7 +12,7 @@ from .secret import ExtractSecretTransformer
 from .string import ExtractStringTransformer
 
 if typing.TYPE_CHECKING:
-    from ...model.container.volume_path import ContainerVolumePath
+    from ...model.docker.container.volume_path import ContainerVolumePath
 
 
 class ExtractTransformer(HomelabRootModel[ExtractTransform]):

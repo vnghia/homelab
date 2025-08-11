@@ -7,7 +7,7 @@ from homelab_pydantic import AbsolutePath
 from homelab_pydantic.model import HomelabRootModel
 
 if typing.TYPE_CHECKING:
-    from ...model.container.volume_path import ContainerVolumePath
+    from ...model.docker.container.volume_path import ContainerVolumePath
 
 
 class ExtractPathTransformer(HomelabRootModel[ExtractTransformPath]):

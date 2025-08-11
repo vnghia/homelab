@@ -6,7 +6,7 @@ import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
-from ....config.database import DatabaseConfig
+from ....config.docker.database import DatabaseConfig
 from ....config.service.database import ServiceDatabaseConfig
 from ....config.service.database.source import ServiceDatabaseSourceConfig
 from ....model.database.type import DatabaseType

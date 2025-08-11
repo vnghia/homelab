@@ -7,7 +7,7 @@ from pydantic import Field
 from ...config.service.database import ServiceDatabaseConfig
 from ...config.service.keepass import ServiceKeepassConfig
 from ...config.service.secret import ServiceSecretConfig
-from ..container import ContainerModel
+from ..docker.container import ContainerModel
 
 
 class ServiceModel(HomelabBaseModel):

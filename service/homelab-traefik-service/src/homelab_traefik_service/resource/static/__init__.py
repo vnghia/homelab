@@ -47,7 +47,7 @@ class TraefikStaticConfigResource(
         proxy_protocol = (
             {
                 "proxyProtocol": {
-                    "trustedIPs": traefik_service.docker_resource_args.network.proxy_bridge.ipam_configs.apply(
+                    "trustedIPs": traefik_service.extractor_args.host.docker.network.proxy_bridge.ipam_configs.apply(
                         lambda ipam_configs: [
                             str(ip) for ip in traefik_config.proxy_protocol.ips
                         ]
@@ -155,5 +155,5 @@ class TraefikStaticConfigResource(
                     },
                 },
             },
-            docker_resource_args=traefik_service.docker_resource_args,
+            extractor_args=traefik_service.extractor_args,
         )

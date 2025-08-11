@@ -1,0 +1,56 @@
+docker:
+  images:
+    remote:
+      dozzle:
+        repo: ghcr.io/amir20/dozzle
+        tag: "v8.13.8"
+services:
+  dozzle:
+    config:
+      traefik:
+        traefik:
+          record: private
+          hostname: system
+          service:
+            port:
+              extract:
+                env: DOZZLE_ADDR
+              transform:
+                string:
+                  capture: ":(\\d+)"
+          middlewares:
+            - name: redirect
+              data:
+                redirectRegex:
+                  regex: "^https://([^/]+)/?$"
+                  replacement:
+                    extract:
+                      env: DOZZLE_BASE
+                    transform:
+                      string:
+                        template: "https://${{1}}{value}/"
+    container:
+      image: dozzle
+      docker-socket:
+        write: false
+      healthcheck:
+        tests: ["CMD", "/dozzle", "healthcheck"]
+        interval: 30s
+        timeout: 30s
+        retries: 5
+        start-period: 30s
+      wud:
+        template: https://github.com/amir20/dozzle/releases/tag/${original}
+        include-prefix: v
+      envs:
+        DOZZLE_BASE: /log
+        DOZZLE_ADDR: ":8080"
+        DOZZLE_FILTER:
+          extract:
+            project:
+          transform:
+            string:
+              template: "label=pulumi.stack={stack}"
+        DOZZLE_NO_ANALYTICS: true
+        DOZZLE_ENABLE_ACTIONS: true
+        DOZZLE_ENABLE_SHELL: true

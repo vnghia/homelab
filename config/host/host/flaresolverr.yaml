@@ -1,0 +1,19 @@
+docker:
+  images:
+    remote:
+      flaresolverr:
+        repo: ghcr.io/flaresolverr/flaresolverr
+        tag: "v3.3.25"
+services:
+  flaresolverr:
+    config: {}
+    container:
+      image: flaresolverr
+      network:
+        mode: vpn
+      read-only: false
+      wud:
+        template: https://github.com/FlareSolverr/FlareSolverr/releases/tag/${original}
+        include-prefix: v
+      envs:
+        PORT: 8191

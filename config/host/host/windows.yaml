@@ -1,0 +1,88 @@
+docker:
+  images:
+    remote:
+      windows:
+        repo: ghcr.io/dockur/windows
+        tag: "4.35"
+    build:
+      wintele:
+        context:
+          location: image/telegram/wintele
+          base: python-alpine
+          python-builder:
+            image: python-builder
+        version: "0.0.1"
+  volumes:
+    local:
+      windows-storage:
+        backup: false
+services:
+  windows:
+    variables:
+      PORT: 8006
+    config:
+      traefik:
+        traefik:
+          record: public
+          service:
+            port:
+              variable: PORT
+    keepasses:
+      keepass:
+        hostname:
+          hostname: windows
+          record: public
+    secrets:
+      totp:
+        special: false
+    container:
+      image: windows
+      capabilities:
+        - NET_ADMIN
+      devices:
+        - /dev/kvm
+        - /dev/net/tun
+      network:
+        default-bridge: true
+      ports:
+        rdp-tcp:
+          internal: 3389
+          protocol: tcp
+        rdp-udp:
+          internal: 3389
+          protocol: udp
+      read-only: false
+      volumes:
+        windows-storage: /storage
+      envs:
+        VERSION: tiny11
+        RAM_SIZE: "6G"
+        CPU_CORES: 4
+        RAM_CHECK: "N"
+        DISPLAY: disabled
+        USERNAME:
+          keepass:
+          info: username
+        PASSWORD:
+          keepass:
+          info: password
+    containers:
+      wintele:
+        image:
+          build: wintele
+        docker-socket:
+          write: false
+        network:
+          default-bridge: true
+        envs:
+          WINTELE_TOKEN:
+          WINTELE_TOTP:
+            extract:
+              secret: totp
+            transform:
+              secret:
+                encode: base32
+          WINTELE_CONTAINER:
+            container:
+            extract:
+              cinfo: name

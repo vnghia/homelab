@@ -2,7 +2,7 @@ from typing import Any
 
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.model.container.network import (
+from homelab_docker.model.docker.container.network import (
     ContainerNetworkModeConfig,
     NetworkMode,
 )
@@ -31,7 +31,7 @@ class TraefikDynamicServiceFullModelBuilder(
         elif isinstance(network_config, ContainerNetworkModeConfig):
             match network_config.mode:
                 case NetworkMode.VPN:
-                    vpn_config = extractor_args.docker_resource_args.config.vpn_
+                    vpn_config = extractor_args.host_model.vpn_
                     vpn_service = extractor_args.host.services[vpn_config.service]
                     vpn_service.containers[vpn_config.container]
                     service_name = vpn_service.add_service_name(vpn_config.container)

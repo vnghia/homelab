@@ -27,7 +27,7 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
                 ),
                 content=self.config.opvn,
                 mode=0o444,
-                docker_resources_args=self.extractor_args.docker_resource_args,
+                extractor_args=extractor_args,
             )
             self.options[None].files = [self.opvn]
 
@@ -35,9 +35,7 @@ class GluetunService(ServiceWithConfigResourceBase[GluetunConfig]):
             "FIREWALL_VPN_INPUT_PORTS": ",".join(
                 map(
                     str,
-                    sorted(
-                        self.extractor_args.docker_resource_args.config.vpn_.ports.values()
-                    ),
+                    sorted(self.extractor_args.host_model.vpn_.ports.values()),
                 )
             )
         }

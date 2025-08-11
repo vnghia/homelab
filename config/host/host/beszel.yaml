@@ -1,0 +1,169 @@
+docker:
+  images:
+    remote:
+      beszel:
+        repo: ghcr.io/henrygd/beszel/beszel
+        tag: "0.12.1"
+  volumes:
+    local:
+      beszel-data:
+        backup:
+          source:
+            extract:
+              volume: beszel-data
+            transform:
+              path: backups
+services:
+  beszel:
+    variables:
+      PORT: 8090
+      PREFIX: /xana
+    config:
+      traefik:
+        traefik:
+          record: private
+          hostname: system
+          prefix:
+            variable: PREFIX
+          service:
+            port:
+              variable: PORT
+          middlewares:
+            - name: strip-prefix
+              data:
+                stripPrefix:
+                  prefixes:
+                    - variable: PREFIX
+      files:
+        file:
+          private-key:
+            path:
+              extract:
+                volume: beszel-data
+              transform:
+                path: id_ed25519
+            content:
+              extract:
+                secret: ssh
+              transform:
+                string:
+                  template: "{private_key_openssh}"
+          public-key:
+            path:
+              extract:
+                volume: beszel-data
+              transform:
+                path: id_ed25519.pub
+            content:
+              extract:
+                secret: ssh
+              transform:
+                string:
+                  template: "{public_key_openssh}"
+      dagu:
+        dotenvs:
+          dotenv:
+            envs:
+              BESZEL_USERNAME:
+                keepass:
+                info: username
+              BESZEL_PASSWORD:
+                keepass:
+                info: password
+        dag:
+          pre-backup-volume:
+            name: pre-backup-volume
+            path: beszel-pre-backup-volume
+            dotenvs:
+              - null
+            tags: ["backup"]
+            steps:
+              - name: auth-with-password
+                executor:
+                  headers:
+                    Content-Type: application/json
+                  body:
+                    json_:
+                      identity: ${BESZEL_USERNAME}
+                      password: ${BESZEL_PASSWORD}
+                  silent: true
+                run:
+                  - "POST"
+                  - extract:
+                      kv:
+                        container:
+                          cinfo: name
+                        port:
+                          variable: PORT
+                        prefix:
+                          variable: PREFIX
+                    transform:
+                      string:
+                        template: "http://{container}:{port}/api/collections/_superusers/auth-with-password"
+                output: AUTH
+              - name: delete-backup
+                executor:
+                  headers:
+                    Authorization: ${AUTH.token}
+                run:
+                  - "DELETE"
+                  - extract:
+                      kv:
+                        container:
+                          cinfo: name
+                        port:
+                          variable: PORT
+                        prefix:
+                          variable: PREFIX
+                    transform:
+                      string:
+                        template: "http://{container}:{port}/api/backups/output.zip"
+              - name: create-backup
+                executor:
+                  headers:
+                    Content-Type: application/json
+                    Authorization: ${AUTH.token}
+                  body: '{"name": "output.zip"}'
+                run:
+                  - "POST"
+                  - extract:
+                      kv:
+                        container:
+                          cinfo: name
+                        port:
+                          variable: PORT
+                        prefix:
+                          variable: PREFIX
+                    transform:
+                      string:
+                        template: "http://{container}:{port}/api/backups"
+    secrets:
+      ssh:
+        algorithm: ED25519
+    keepasses:
+      keepass:
+        hostname:
+          hostname: system
+          record: private
+    container:
+      image: beszel
+      network:
+        default-bridge: true
+      volumes:
+        beszel-data: /beszel_data
+        "/var/lib/beszel-agent": /var/lib/beszel-agent
+      wud:
+        template: https://github.com/henrygd/beszel/releases/tag/v${original}
+      envs:
+        APP_URL:
+          extract:
+            kv:
+              base:
+                hostname: system
+                record: private
+                scheme: https
+              prefix:
+                variable: PREFIX
+          transform:
+            string:
+              template: "{base}{prefix}"
