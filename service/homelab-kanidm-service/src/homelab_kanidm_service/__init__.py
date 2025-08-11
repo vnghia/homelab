@@ -123,12 +123,14 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             container=self.container.id,
             account="admin",
             config_path=self.config_file.path,
+            extractor_args=self.extractor_args,
         )
         self.idm_admin = KanidmPasswordResource(
             opts=self.child_opts,
             container=self.container.id,
             account="idm_admin",
             config_path=self.config_file.path,
+            extractor_args=self.extractor_args,
         )
         pulumi.export("kanidm.admin", self.admin.password)
         pulumi.export("kanidm.idm_admin", self.idm_admin.password)

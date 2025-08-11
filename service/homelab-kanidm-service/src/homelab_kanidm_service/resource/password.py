@@ -2,6 +2,7 @@ import re
 from typing import Any, ClassVar
 
 from homelab_docker.client import DockerClient
+from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider, UpdateResult
@@ -64,11 +65,13 @@ class KanidmPasswordResource(Resource, module="kanidm", name="Password"):
         container: Input[str],
         account: str,
         config_path: AbsolutePath,
+        extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(
             KanidmPasswordProvider(),
             account,
             {
+                "docker_host": extractor_args.host_model.access.ssh,
                 "container": container,
                 "account": account,
                 "config_path": config_path.as_posix(),
