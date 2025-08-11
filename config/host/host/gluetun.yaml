@@ -4,18 +4,12 @@ docker:
       gluetun:
         repo: ghcr.io/qdm12/gluetun
         tag: "v3.40.0"
-  volumes:
-    local:
-      gluetun-opvn:
-        backup: false
 vpn:
   service: gluetun
   ports:
 services:
   gluetun:
-    config:
-      opvn_path:
-        env: OPENVPN_CUSTOM_CONFIG
+    config: {}
     container:
       image: gluetun
       capabilities:
@@ -29,19 +23,9 @@ services:
       network:
         default-bridge: true
       read-only: false
-      volumes:
-        gluetun-opvn:
-          path: /gluetun/opvn
-          read-only: true
       wud:
         template: https://github.com/qdm12/gluetun/releases/tag/${original}
         include-prefix: v
       envs:
         DNS_KEEP_NAMESERVER: "on"
         VPN_SERVICE_PROVIDER: custom
-        OPENVPN_VERSION: "2.5"
-        OPENVPN_CUSTOM_CONFIG:
-          extract:
-            volume: gluetun-opvn
-          transform:
-            path: custom.conf

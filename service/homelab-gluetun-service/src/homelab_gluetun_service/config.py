@@ -1,7 +1,11 @@
-from homelab_extract.service import ServiceExtract
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
 
+class GluetunOpenVPNConfig(HomelabBaseModel):
+    content: GlobalExtract
+    path: GlobalExtract
+
+
 class GluetunConfig(HomelabBaseModel):
-    opvn: str | None = None
-    opvn_path: ServiceExtract
+    open_vpn: GluetunOpenVPNConfig | None = None
