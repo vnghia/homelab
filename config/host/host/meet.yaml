@@ -61,7 +61,17 @@ services:
           hostname: meet
           record: public
           rules:
-            - (PathPrefix(`/api`) || PathPrefix(`/admin`))
+            - (PathPrefix(`/api`) || PathPrefix(`/static`))
+          service:
+            container: backend
+            port:
+              svariable: BACKEND_PORT
+        backend-admin:
+          name: backend-admin
+          hostname: meet-admin
+          record: private
+          rules:
+            - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
           service:
             container: backend
             port:
@@ -79,6 +89,15 @@ services:
         postgres: {}
       valkey:
         valkey: {}
+    keepasses:
+      keepass:
+        username:
+          hostname:
+            hostname: meet-admin
+            record: private
+        hostname:
+          hostname: meet-admin
+          record: private
     secrets:
       django: {}
     containers:
@@ -109,12 +128,31 @@ services:
           include-prefix: v
         envs:
           DJANGO_ALLOWED_HOSTS:
-            hostname: meet
-            record: public
+            extract:
+              kv:
+                user:
+                  hostname: meet
+                  record: public
+                admin:
+                  hostname: meet-admin
+                  record: private
+            transform:
+              string:
+                template: "{user},{admin}"
           DJANGO_CSRF_TRUSTED_ORIGINS:
-            hostname: meet
-            record: public
-            scheme: https
+            extract:
+              kv:
+                user:
+                  hostname: meet
+                  record: public
+                  scheme: https
+                admin:
+                  hostname: meet-admin
+                  record: private
+                  scheme: https
+            transform:
+              string:
+                template: "{user},{admin}"
           CSRF_TRUSTED_ORIGINS:
             env: DJANGO_CSRF_TRUSTED_ORIGINS
           DJANGO_SECRET_KEY:
