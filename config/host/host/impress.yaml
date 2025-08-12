@@ -187,8 +187,8 @@ services:
             scheme: "https"
           OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION: false
           OIDC_STORE_ACCESS_TOKEN: true
-          USER_OIDC_FIELDS_TO_FULLNAME: name
-          USER_OIDC_FIELD_TO_SHORTNAME: preferred_username
+          OIDC_USERINFO_FULLNAME_FIELDS: name
+          OIDC_USERINFO_SHORTNAME_FIELD: preferred_username
           FRONTEND_HOMEPAGE_FEATURE_ENABLED: false
           COLLABORATION_SERVER_SECRET:
             secret: collaboration
