@@ -1,0 +1,46 @@
+docker:
+  images:
+    remote:
+      pdf:
+        repo: ghcr.io/stirling-tools/stirling-pdf
+        tag: "1.2.0"
+  volumes:
+    local:
+      pdf-configs: {}
+      pdf-logs: {}
+      pdf-customfiles: {}
+      pdf-tessdata: {}
+      pdf-pipeline: {}
+services:
+  pdf:
+    config:
+      traefik:
+        traefik:
+          record: private
+          service:
+            port:
+              env: SERVER_PORT
+    container:
+      image: pdf
+      tmpfs:
+        - /tmp
+        - /home/stirlingpdfuser
+      volumes:
+        pdf-configs: /configs
+        pdf-logs: /logs
+        pdf-customfiles: /customFiles
+        pdf-tessdata: /usr/share/tessdata
+        pdf-pipeline: /pipeline
+      wud:
+        template: https://github.com/Stirling-Tools/Stirling-PDF/releases/tag/v${original}
+      envs:
+        DISABLE_ADDITIONAL_FEATURES: true
+        SECURITY_ENABLELOGIN: false
+        SECURITY_CSRFDISABLED: true
+        UI_APPNAME:
+        UI_APPNAVBARNAME:
+          env: UI_APPNAME
+        SYSTEM_SHOWUPDATE: false
+        SYSTEM_ENABLEANALYTICS: false
+        SERVER_PORT: 8080
+        LOGGING_LEVEL_ROOT: INFO
