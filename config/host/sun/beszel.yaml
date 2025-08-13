@@ -1,0 +1,6 @@
+services:
+  beszel:
+    container:
+      hosts:
+        - host: earth
+          internal: true
