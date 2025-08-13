@@ -6,6 +6,7 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 from ...config.docker import DockerConfig
 from ...config.service import ServiceConfigBase
 from ...config.service.database import ServiceDatabaseConfig
+from ...model.host.ip import HostIpModel
 from ...model.service import ServiceModel
 from .access import HostAccessModel
 
@@ -13,6 +14,7 @@ from .access import HostAccessModel
 class HostNoServiceModel(HomelabBaseModel):
     access: HostAccessModel
     timezone: TimeZoneName
+    ip: HostIpModel = HostIpModel()
     vpn: VpnConfig | None = None
     docker: DockerConfig
     variables: dict[str, GlobalExtract] = {}

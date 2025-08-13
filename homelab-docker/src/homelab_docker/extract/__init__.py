@@ -130,6 +130,14 @@ class ExtractorArgs:
             return self._host
         return HostResourceBase.HOSTS.get(key, self.config[key])
 
+    def get_host_model(self, key: str | None) -> HostServiceModelModel:
+        from ..resource.host import HostResourceBase
+
+        host = self.get_host(key)
+        if isinstance(host, HostResourceBase):
+            return host.model
+        return host
+
     def get_service(self, key: str | None) -> ServiceResourceBase | ServiceModel:
         from ..resource.host import HostResourceBase
 

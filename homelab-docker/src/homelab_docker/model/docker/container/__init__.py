@@ -244,7 +244,9 @@ class ContainerModel(HomelabBaseModel):
             hostname=GlobalExtractor(self.hostname).extract_str(extractor_args)
             if self.hostname
             else None,
-            hosts=[host.to_args() for host in self.hosts] if self.hosts else None,
+            hosts=[host.to_args(extractor_args) for host in self.hosts]
+            if self.hosts
+            else None,
             init=self.init,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,

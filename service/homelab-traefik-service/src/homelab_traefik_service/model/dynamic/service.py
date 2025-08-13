@@ -2,6 +2,7 @@ from typing import Any
 
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
+from homelab_docker.model.docker.container.host import ContainerHostModeConfig
 from homelab_docker.model.docker.container.network import (
     ContainerNetworkModeConfig,
     NetworkMode,
@@ -36,7 +37,7 @@ class TraefikDynamicServiceFullModelBuilder(
                     vpn_service.containers[vpn_config.container]
                     service_name = vpn_service.add_service_name(vpn_config.container)
                 case NetworkMode.HOST:
-                    service_name = "host.docker.internal"
+                    service_name = ContainerHostModeConfig.LOCALHOST_HOST
         else:
             service.containers[root.container]
             service_name = service.add_service_name(root.container)
