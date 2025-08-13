@@ -1,0 +1,7 @@
+services:
+  dozzle:
+    container:
+      active: false
+    containers:
+      agent:
+        active: true

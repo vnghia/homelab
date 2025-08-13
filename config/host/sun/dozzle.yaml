@@ -1,0 +1,10 @@
+services:
+  dozzle:
+    container:
+      active: true
+      hosts:
+        - host: earth
+          internal: true
+    containers:
+      agent:
+        active: false

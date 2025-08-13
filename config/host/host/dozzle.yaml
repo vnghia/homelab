@@ -6,6 +6,8 @@ docker:
         tag: "v8.13.8"
 services:
   dozzle:
+    variables:
+      AGENT_PORT: &agent-port 7007
     config:
       traefik:
         traefik:
@@ -39,6 +41,8 @@ services:
         timeout: 30s
         retries: 5
         start-period: 30s
+      network:
+        default-bridge: true
       wud:
         template: https://github.com/amir20/dozzle/releases/tag/${original}
         include-prefix: v
@@ -54,3 +58,28 @@ services:
         DOZZLE_NO_ANALYTICS: true
         DOZZLE_ENABLE_ACTIONS: true
         DOZZLE_ENABLE_SHELL: true
+        DOZZLE_REMOTE_AGENT:
+          extract:
+            kv:
+              earth:
+                host: earth
+                extract:
+                  hinfo: address
+              port:
+                svariable: AGENT_PORT
+          transform:
+            string:
+              template: "{earth}:{port}"
+    containers:
+      agent:
+        inherit:
+        command: ["agent"]
+        ports:
+          agent:
+            internal: *agent-port
+            ips:
+              v4: 0.0.0.0
+            protocol: tcp
+        tmpfs:
+          - /tmp
+        wud:
