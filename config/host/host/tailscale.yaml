@@ -27,8 +27,7 @@ services:
       hostname:
         env: TS_HOSTNAME
       hosts:
-        - host: host.docker.internal
-          ip: host-gateway
+        - mode: localhost
       network:
         default-bridge: true
         proxy-bridge: true

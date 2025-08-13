@@ -1,0 +1,6 @@
+services:
+  tailscale:
+    container:
+      hosts:
+        - host: earth
+          internal: true
