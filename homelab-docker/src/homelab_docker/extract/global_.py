@@ -88,8 +88,7 @@ class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
         return ExtractTransformer(transform)
 
     def extractor_args(self, extractor_args: ExtractorArgs) -> ExtractorArgs:
-        # TODO: Make this works
-        return extractor_args
+        return extractor_args.with_host(extractor_args.get_host(self.root.host))
 
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         extractor = self.extractor

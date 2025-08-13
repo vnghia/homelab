@@ -13,6 +13,8 @@ from ..resource.service import ServiceResourceBase
 
 
 class HostResourceBase(ComponentResource):
+    HOSTS: dict[str, "HostResourceBase"] = {}
+
     def __init__(
         self,
         *,
@@ -54,10 +56,12 @@ class HostResourceBase(ComponentResource):
 
         self.services: dict[str, ServiceResourceBase] = {}
         self.extractor_args = ExtractorArgs.from_host(
-            global_args, network_resource.hostnames, self
+            global_args, network_resource.hostnames, config, self
         )
 
         FileVolumeProxy.pull_image(self.model.access.ssh)
+
+        self.HOSTS[self.name()] = self
 
     def __str__(self) -> str:
         return self.name()

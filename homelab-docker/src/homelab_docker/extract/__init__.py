@@ -11,6 +11,7 @@ from homelab_pydantic import AbsolutePath
 from pulumi import Output
 
 if typing.TYPE_CHECKING:
+    from ..config.host import HostServiceModelConfig
     from ..model.docker.container import ContainerModel
     from ..model.docker.container.volume_path import ContainerVolumePath
     from ..model.host import HostServiceModelModel
@@ -24,17 +25,23 @@ if typing.TYPE_CHECKING:
 class ExtractorArgs:
     global_args: GlobalArgs
     hostnames: Hostnames
+    config: HostServiceModelConfig
     _host: HostResourceBase | HostServiceModelModel | None
     _service: ServiceResourceBase | ServiceModel | None
     _container: ContainerResource | ContainerModel | None
 
     @classmethod
     def from_host(
-        cls, global_args: GlobalArgs, hostnames: Hostnames, host: HostResourceBase
+        cls,
+        global_args: GlobalArgs,
+        hostnames: Hostnames,
+        config: HostServiceModelConfig,
+        host: HostResourceBase,
     ) -> Self:
         return cls(
             global_args=global_args,
             hostnames=hostnames,
+            config=config,
             _host=host,
             _service=None,
             _container=None,
@@ -46,6 +53,7 @@ class ExtractorArgs:
         return self.__class__(
             global_args=self.global_args,
             hostnames=self.hostnames,
+            config=self.config,
             _host=self._host,
             _service=service,
             _container=service.containers.get(
@@ -113,6 +121,15 @@ class ExtractorArgs:
             return self._container
         return self._container.model
 
+    def get_host(self, key: str | None) -> HostResourceBase | HostServiceModelModel:
+        from ..resource.host import HostResourceBase
+
+        if not key:
+            if not self._host:
+                raise ValueError("Host or host model is required for this extractor")
+            return self._host
+        return HostResourceBase.HOSTS.get(key, self.config[key])
+
     def get_service(self, key: str | None) -> ServiceResourceBase | ServiceModel:
         from ..resource.host import HostResourceBase
 
@@ -137,12 +154,33 @@ class ExtractorArgs:
             return self._service.containers.get(key, self._service.model[key])
         return self._service[key]
 
+    def with_host(self, host: HostResourceBase | HostServiceModelModel | None) -> Self:
+        from ..resource.host import HostResourceBase
+
+        same_host = (
+            isinstance(host, HostResourceBase)
+            and isinstance(self._host, HostResourceBase)
+            and host.name() == self._host.name()
+        ) or (host is None)
+
+        return self.__class__(
+            global_args=self.global_args,
+            hostnames=self.hostnames,
+            config=self.config,
+            _host=host or self._host,
+            # Clear the service if the host has changed
+            _service=self._service if same_host else None,
+            # Clear the container if the host has changed
+            _container=self._container if same_host else None,
+        )
+
     def with_service(self, service: ServiceResourceBase | ServiceModel | None) -> Self:
         from ..resource.service import ServiceResourceBase
 
         return self.__class__(
             global_args=self.global_args,
             hostnames=self.hostnames,
+            config=self.config,
             _host=self._host,
             _service=service or self._service,
             # Clear the container if the service has changed
@@ -164,6 +202,7 @@ class ExtractorArgs:
         return self.__class__(
             global_args=self.global_args,
             hostnames=self.hostnames,
+            config=self.config,
             _host=self._host,
             _service=self._service,
             _container=container or self._container,
