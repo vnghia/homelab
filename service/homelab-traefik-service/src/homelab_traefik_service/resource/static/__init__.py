@@ -5,7 +5,7 @@ import typing
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_network.config.port import NetworkPortConfig
-from pulumi import ResourceOptions
+from pulumi import Output, ResourceOptions
 
 from . import schema
 
@@ -44,24 +44,32 @@ class TraefikStaticConfigResource(
             }
         }
 
-        proxy_protocol = (
-            {
-                "proxyProtocol": {
-                    "trustedIPs": traefik_service.extractor_args.host.docker.network.proxy_bridge.ipam_configs.apply(
-                        lambda ipam_configs: [
-                            str(ip) for ip in traefik_config.proxy_protocol.ips
-                        ]
-                        + [
-                            ipam_config.subnet
-                            for ipam_config in ipam_configs
-                            if ipam_config.subnet
-                        ]
-                    )
-                }
+        proxy_protocol = {}
+        if traefik_config.proxy_protocol.enabled:
+            proxy_bridge = (
+                traefik_service.extractor_args.host.docker.network.proxy_bridge
+            )
+            proxy_ips = (
+                proxy_bridge.ipam_configs.apply(
+                    lambda ipam_configs: [
+                        ipam_config.subnet
+                        for ipam_config in ipam_configs
+                        if ipam_config.subnet
+                    ]
+                )
+                if proxy_bridge
+                else None
+            )
+            proxy_protocol["proxyProtocol"] = {
+                "trustedIPs": Output.all(
+                    trusted_ips=traefik_config.proxy_protocol.ips,
+                    proxy_ips=proxy_ips,
+                ).apply(
+                    lambda args: [
+                        str(ip) for ip in args["trusted_ips"] + args["proxy_ips"]
+                    ]
+                )
             }
-            if traefik_config.proxy_protocol.enabled
-            else {}
-        )
 
         super().__init__(
             "static",

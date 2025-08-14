@@ -15,10 +15,16 @@ class NetworkConfig(HomelabBaseModel):
 
     default_bridge: BridgeNetworkModel
     internal_bridge: BridgeNetworkModel
-    proxy_bridge: BridgeNetworkModel
+    proxy_bridge: BridgeNetworkModel | None = None
 
-    @field_validator("internal_bridge", "proxy_bridge", mode="after")
+    @field_validator("internal_bridge", mode="after")
     def set_internal_flag(
         cls, internal_bridge: BridgeNetworkModel
     ) -> BridgeNetworkModel:
         return internal_bridge.__replace__(internal=True)
+
+    @field_validator("proxy_bridge", mode="after")
+    def set_proxy_flag(
+        cls, proxy_bridge: BridgeNetworkModel | None
+    ) -> BridgeNetworkModel | None:
+        return proxy_bridge.__replace__(internal=True) if proxy_bridge else None

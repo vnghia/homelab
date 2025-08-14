@@ -2,4 +2,3 @@ docker:
   network:
     default-bridge: {}
     internal-bridge: {}
-    proxy-bridge: {}

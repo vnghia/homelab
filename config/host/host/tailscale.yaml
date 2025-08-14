@@ -30,7 +30,6 @@ services:
         - mode: localhost
       network:
         default-bridge: true
-        proxy-bridge: true
       ports:
         http:
           internal: 81

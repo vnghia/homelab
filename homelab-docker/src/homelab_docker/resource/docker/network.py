@@ -30,19 +30,22 @@ class NetworkResource(ComponentResource):
             opts=self.child_opts,
             project_labels=global_args.project.labels,
         )
-        self.proxy_bridge = config.proxy_bridge.build_resource(
-            config.PROXY_BRIDGE,
-            opts=self.child_opts,
-            project_labels=global_args.project.labels,
-        )
+        self.proxy_bridge = None
+        if config.proxy_bridge:
+            self.proxy_bridge = config.proxy_bridge.build_resource(
+                config.PROXY_BRIDGE,
+                opts=self.child_opts,
+                project_labels=global_args.project.labels,
+            )
 
         export = {
             config.DEFAULT_BRIDGE: self.default_bridge.name,
             config.INTERNAL_BRIDGE: self.internal_bridge.name,
-            config.PROXY_BRIDGE: self.proxy_bridge.name,
+            config.PROXY_BRIDGE: self.proxy_bridge.name if self.proxy_bridge else None,
         }
         for name, value in export.items():
-            pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
+            if value:
+                pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
         self.register_outputs(export)
 
     def default_bridge_args(
@@ -62,6 +65,8 @@ class NetworkResource(ComponentResource):
     def proxy_bridge_args(
         self, aliases: list[str]
     ) -> docker.ContainerNetworksAdvancedArgs:
+        if not self.proxy_bridge:
+            raise ValueError("Proxy bridge network is not configured")
         return docker.ContainerNetworksAdvancedArgs(
             name=self.proxy_bridge.name, aliases=aliases
         )
