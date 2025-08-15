@@ -3,7 +3,7 @@ docker:
     remote:
       linkwarden:
         repo: ghcr.io/linkwarden/linkwarden
-        tag: "v2.11.5"
+        tag: "v2.11.7"
   volumes:
     local:
       linkwarden-data: {}
