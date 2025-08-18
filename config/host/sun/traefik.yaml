@@ -1,0 +1,22 @@
+services:
+  traefik:
+    config:
+      entrypoints:
+        private-http:
+          port: 80
+          to: 443
+        public-http:
+          port: 81
+          to: 443
+        private-https:
+          port: 443
+          http3: {}
+          timeout: &timeout
+            read: 12h
+            write: 12h
+            idle: 12h
+        public-https:
+          port: 444
+          http3:
+            port: 443
+          timeout: *timeout

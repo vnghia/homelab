@@ -61,15 +61,6 @@ services:
         require-all-rns: false
         disable-ans-checks: true
         delay-before-checks: 60s
-      entrypoint:
-        public-http: "public-http"
-        private-http: "private-http"
-        public-https: "public-https"
-        private-https: "private-https"
-      timeout:
-        read: 12h
-        write: 12h
-        idle: 12h
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin

@@ -5,7 +5,7 @@ import typing
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
 from homelab_network.config.port import NetworkPortConfig
-from pulumi import Output, ResourceOptions
+from pulumi import ResourceOptions
 
 from . import schema
 
@@ -36,41 +36,6 @@ class TraefikStaticConfigResource(
             traefik_service.config.path.static
         ).extract_volume_path(traefik_service.extractor_args)
 
-        timeouts = {
-            "respondingTimeouts": {
-                "readTimeout": traefik_config.timeout.read,
-                "writeTimeout": traefik_config.timeout.idle,
-                "idleTimeout": traefik_config.timeout.write,
-            }
-        }
-
-        proxy_protocol = {}
-        if traefik_config.proxy_protocol.enabled:
-            proxy_bridge = (
-                traefik_service.extractor_args.host.docker.network.proxy_bridge
-            )
-            proxy_ips = (
-                proxy_bridge.ipam_configs.apply(
-                    lambda ipam_configs: [
-                        ipam_config.subnet
-                        for ipam_config in ipam_configs
-                        if ipam_config.subnet
-                    ]
-                )
-                if proxy_bridge
-                else None
-            )
-            proxy_protocol["proxyProtocol"] = {
-                "trustedIPs": Output.all(
-                    trusted_ips=traefik_config.proxy_protocol.ips,
-                    proxy_ips=proxy_ips,
-                ).apply(
-                    lambda args: [
-                        str(ip) for ip in args["trusted_ips"] + args["proxy_ips"]
-                    ]
-                )
-            }
-
         super().__init__(
             "static",
             opts=opts,
@@ -88,40 +53,8 @@ class TraefikStaticConfigResource(
                 "log": {"level": "INFO", "format": "json"},
                 "ping": {},
                 "entryPoints": {
-                    traefik_config.entrypoint.private_http: {
-                        "address": "[::]:{}".format(port.HTTP),
-                        "http": {
-                            "redirections": {
-                                "entryPoint": {
-                                    "to": ":{}".format(port.HTTPS),
-                                    "scheme": "https",
-                                }
-                            }
-                        },
-                    },
-                    traefik_config.entrypoint.public_http: {
-                        "address": "[::]:{}".format(port.internal.http),
-                        "http": {
-                            "redirections": {
-                                "entryPoint": {
-                                    "to": ":{}".format(port.external.https),
-                                    "scheme": "https",
-                                }
-                            }
-                        },
-                    }
-                    | proxy_protocol,
-                    traefik_config.entrypoint.private_https: {
-                        "address": "[::]:{}".format(port.HTTPS),
-                        "http3": {},
-                        "transport": timeouts,
-                    },
-                    traefik_config.entrypoint.public_https: {
-                        "address": "[::]:{}".format(port.internal.https),
-                        "http3": {"advertisedPort": port.external.https},
-                        "transport": timeouts,
-                    }
-                    | proxy_protocol,
+                    key: entrypoint.to_entry_point(traefik_service.extractor_args)
+                    for key, entrypoint in traefik_config.entrypoints.root.items()
                 },
                 "providers": {
                     "file": {

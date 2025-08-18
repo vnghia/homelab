@@ -38,7 +38,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         root = self.root
         main_service = extractor_args.service
 
-        entrypoint = traefik_service.config.entrypoint
+        # TODO: Avoid hardcoded entrypoint name
         router_name = main_service.add_service_name(root.name)
         hostname = traefik_service.extractor_args.hostnames[root.record][
             root.hostname or router_name
@@ -115,9 +115,9 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                 "routers": {
                     router_name: {
                         "service": service,
-                        "entryPoints": [entrypoint.public_https]
+                        "entryPoints": ["public-https"]
                         if hostname.public
-                        else [entrypoint.private_https],
+                        else ["private-https"],
                         "rule": rule,
                         "tls": {"certResolver": traefik_service.static.CERT_RESOLVER},
                     }
@@ -127,7 +127,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                     {
                         "{}-private".format(router_name): {
                             "service": service,
-                            "entryPoints": [entrypoint.private_https],
+                            "entryPoints": ["private-https"],
                             "rule": rule,
                             "tls": {
                                 "certResolver": traefik_service.static.CERT_RESOLVER
@@ -143,7 +143,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                     else {
                         "{}-local".format(router_name): {
                             "service": service,
-                            "entryPoints": [entrypoint.public_https],
+                            "entryPoints": ["public-https"],
                             "rule": rule,
                             "tls": {
                                 "certResolver": traefik_service.static.CERT_RESOLVER

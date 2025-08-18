@@ -3,6 +3,8 @@ from homelab_pydantic import HomelabBaseModel
 from homelab_traefik_config import TraefikServiceConfigBase
 from pydantic import HttpUrl, IPvAnyAddress
 
+from .entrypoint import TraefikEntrypointConfig
+
 
 class TraefikPathConfig(HomelabBaseModel):
     static: GlobalExtract
@@ -18,13 +20,6 @@ class TraefikAcmeConfig(HomelabBaseModel):
     require_all_rns: bool
     disable_ans_checks: bool
     delay_before_checks: str
-
-
-class TraefikEntrypointConfig(HomelabBaseModel):
-    public_http: str
-    private_http: str
-    public_https: str
-    private_https: str
 
 
 class TraefikTimeoutConfig(HomelabBaseModel):
@@ -46,7 +41,5 @@ class TraefikPluginConfig(HomelabBaseModel):
 class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):
     path: TraefikPathConfig
     acme: TraefikAcmeConfig
-    entrypoint: TraefikEntrypointConfig
-    timeout: TraefikTimeoutConfig
-    proxy_protocol: TraefikProxyProtocolConfig = TraefikProxyProtocolConfig()
+    entrypoints: TraefikEntrypointConfig
     plugins: dict[str, TraefikPluginConfig] = {}
