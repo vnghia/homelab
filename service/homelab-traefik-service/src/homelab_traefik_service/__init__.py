@@ -32,9 +32,7 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             self.config.path.dynamic
         ).extract_volume_path(self.extractor_args)
         self.static = TraefikStaticConfigResource(
-            opts=self.child_opts,
-            traefik_service=self,
-            port=network_resource.config.port,
+            opts=self.child_opts, traefik_service=self
         )
 
         self.options[None] = ContainerModelBuildArgs(

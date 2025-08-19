@@ -1,7 +1,0 @@
-port:
-  internal:
-    http: 81
-    https: 444
-  external:
-    http: 80
-    https: 443

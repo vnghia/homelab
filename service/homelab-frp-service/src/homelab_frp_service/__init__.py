@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from homelab_docker.config.docker.network import NetworkConfig
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container.port import ContainerPortProtocol
@@ -13,7 +12,6 @@ from homelab_docker.resource.file.config import (
     TomlDumper,
 )
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
-from homelab_network.resource.network import NetworkResource
 from pulumi import ResourceOptions
 from pydantic import PositiveInt
 
@@ -27,12 +25,7 @@ class FrpClientConfigResource(
     dumper = TomlDumper[JsonDefaultModel]
 
     def __init__(
-        self,
-        resource_name: str,
-        *,
-        opts: ResourceOptions,
-        network_resource: NetworkResource,
-        frp_service: FrpService,
+        self, resource_name: str, *, opts: ResourceOptions, frp_service: FrpService
     ) -> None:
         proxies = []
         for prefix, service in frp_service.extractor_args.host_model.services.items():
@@ -53,7 +46,6 @@ class FrpClientConfigResource(
                         )
                         proxies.append(proxy)
 
-        port_config = network_resource.config.port
         config = frp_service.config
         super().__init__(
             resource_name,
@@ -72,33 +64,7 @@ class FrpClientConfigResource(
                     "poolCount": config.pool,
                     "tcpMux": True,
                 },
-                "proxies": [
-                    self.build_proxy(
-                        "http",
-                        NetworkConfig.PROXY_ALIAS,
-                        port_config.internal.http,
-                        port_config.external.http,
-                        ContainerPortProtocol.TCP,
-                        True,
-                    ),
-                    self.build_proxy(
-                        "https",
-                        NetworkConfig.PROXY_ALIAS,
-                        port_config.internal.https,
-                        port_config.external.https,
-                        ContainerPortProtocol.TCP,
-                        True,
-                    ),
-                    self.build_proxy(
-                        "h3",
-                        NetworkConfig.PROXY_ALIAS,
-                        port_config.internal.https,
-                        port_config.external.https,
-                        ContainerPortProtocol.UDP,
-                        True,
-                    ),
-                    *proxies,
-                ],
+                "proxies": proxies,
             },
             extractor_args=frp_service.extractor_args,
         )
@@ -133,16 +99,12 @@ class FrpService(ServiceWithConfigResourceBase[FrpConfig]):
         model: ServiceWithConfigModel[FrpConfig],
         *,
         opts: ResourceOptions,
-        network_resource: NetworkResource,
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.client_config = FrpClientConfigResource(
-            "client-config",
-            opts=self.child_opts,
-            network_resource=network_resource,
-            frp_service=self,
+            "client-config", opts=self.child_opts, frp_service=self
         )
         self.options[None].files = [self.client_config]
         self.build_containers()

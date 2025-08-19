@@ -4,7 +4,6 @@ import typing
 
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
-from homelab_network.config.port import NetworkPortConfig
 from pulumi import ResourceOptions
 
 from . import schema
@@ -24,11 +23,7 @@ class TraefikStaticConfigResource(
     CERT_RESOLVER = "cert-resolver"
 
     def __init__(
-        self,
-        *,
-        opts: ResourceOptions,
-        traefik_service: TraefikService,
-        port: NetworkPortConfig,
+        self, *, opts: ResourceOptions, traefik_service: TraefikService
     ) -> None:
         traefik_config = traefik_service.config
 
