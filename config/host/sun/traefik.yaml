@@ -3,20 +3,41 @@ services:
     config:
       entrypoints:
         private-http:
-          port: 80
-          to: 443
+          port:
+            service: tailscale
+            extract:
+              svariable: HTTP_EXTERNAL_PORT
+          to:
+            service: tailscale
+            extract:
+              svariable: HTTPS_EXTERNAL_PORT
         public-http:
-          port: 81
-          to: 443
+          port:
+            service: tailscale
+            extract:
+              svariable: HTTP_INTERNAL_PORT
+          to:
+            service: tailscale
+            extract:
+              svariable: HTTPS_EXTERNAL_PORT
         private-https:
-          port: 443
+          port:
+            service: tailscale
+            extract:
+              svariable: HTTPS_EXTERNAL_PORT
           http3: {}
           timeout: &timeout
             read: 12h
             write: 12h
             idle: 12h
         public-https:
-          port: 444
+          port:
+            service: tailscale
+            extract:
+              svariable: HTTPS_INTERNAL_PORT
           http3:
-            port: 443
+            port:
+              service: tailscale
+              extract:
+                svariable: HTTPS_EXTERNAL_PORT
           timeout: *timeout

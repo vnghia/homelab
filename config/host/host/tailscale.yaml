@@ -30,22 +30,6 @@ services:
         - mode: localhost
       network:
         default-bridge: true
-      ports:
-        http:
-          internal: 81
-          external: 80
-          protocol: tcp
-        https:
-          internal: &https-port 444
-          external: 443
-          protocol: tcp
-        h3:
-          internal: *https-port
-          external: 443
-          protocol: udp
-        udp:
-          internal: 48470
-          protocol: udp
       tmpfs:
         - /tmp
         - /run
