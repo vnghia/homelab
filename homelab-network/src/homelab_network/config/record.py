@@ -23,10 +23,7 @@ class RecordConfig(HomelabBaseModel):
 
     @property
     def hostnames(self) -> dict[str, Hostname]:
-        return {
-            hostname: Hostname(value=self[hostname], public=self.public)
-            for hostname in self.records
-        }
+        return {hostname: Hostname(value=self[hostname]) for hostname in self.records}
 
     @property
     def aliases(self) -> list[str]:

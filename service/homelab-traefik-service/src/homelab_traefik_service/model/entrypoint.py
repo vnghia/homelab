@@ -83,6 +83,7 @@ class TraefikEntrypointProxyProtocolModel(HomelabBaseModel):
 
 
 class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
+    local: bool = False
     http3: TraefikEntrypointHttp3Model | None = None
     timeout: TraefikEntrypointTimeoutModel | None = None
     proxy_protocol: TraefikEntrypointProxyProtocolModel | None = None
@@ -115,3 +116,10 @@ class TraefikEntrypointModel(
         if isinstance(root, TraefikEntrypointFullModel):
             return root.middlewares
         return []
+
+    @property
+    def local(self) -> bool:
+        root = self.root
+        if isinstance(root, TraefikEntrypointFullModel):
+            return root.local
+        return False

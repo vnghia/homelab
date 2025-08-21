@@ -37,7 +37,6 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         traefik_config = traefik_service.config
         main_service = extractor_args.service
 
-        # TODO: Avoid hardcoded entrypoint name
         router_name = main_service.add_service_name(root.name)
         hostname = traefik_service.extractor_args.hostnames[root.record][
             root.hostname or router_name
@@ -66,22 +65,21 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             )
         ).apply(lambda extractor_args: " && ".join(extractor_args))
 
-        private_middlewares = [
+        local_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
                 traefik_service, extractor_args
             )
             for middleware in [
                 TraefikDynamicMiddlewareModel(
                     TraefikDynamicMiddlewareUseModel(
-                        service=traefik_service.name(),
-                        name=self.LOCAL_MIDDLEWARE,
+                        service=traefik_service.name(), name=self.LOCAL_MIDDLEWARE
                     )
                 ),
             ]
         ]
 
         entrypoint = traefik_config.entrypoint.mapping[root.record]
-        entrypoint_model = traefik_config.entrypoint.config[entrypoint]
+        entrypoint_config = traefik_config.entrypoint.config[entrypoint]
         entrypoint_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(
                 TraefikDynamicMiddlewareModel(
@@ -90,7 +88,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                     )
                 )
             ).get_name(traefik_service, extractor_args)
-            for middleware in entrypoint_model.middlewares
+            for middleware in entrypoint_config.middlewares
         ]
         service_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
@@ -113,32 +111,18 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                 }
                 | (
                     {
-                        "{}-private".format(router_name): {
-                            "service": service,
-                            "entryPoints": ["private-https"],
-                            "rule": rule,
-                            "tls": {
-                                "certResolver": traefik_service.static.CERT_RESOLVER
-                            },
-                        }
-                        | (
-                            {"middlewares": service_middlewares}
-                            if service_middlewares
-                            else {}
-                        )
-                    }
-                    if hostname.public
-                    else {
                         "{}-local".format(router_name): {
                             "service": service,
-                            "entryPoints": ["public-https"],
+                            "entryPoints": [traefik_config.entrypoint.local_entrypoint],
                             "rule": rule,
                             "tls": {
                                 "certResolver": traefik_service.static.CERT_RESOLVER
                             },
-                            "middlewares": private_middlewares + service_middlewares,
+                            "middlewares": local_middlewares + service_middlewares,
                         }
                     }
+                    if entrypoint_config.local
+                    else {}
                 ),
             }
         }

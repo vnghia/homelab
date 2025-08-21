@@ -26,6 +26,7 @@ services:
               service: tailscale
               extract:
                 svariable: HTTPS_EXTERNAL_PORT
+            local: true
             http3: {}
             timeout: &timeout
               read: 12h
@@ -48,3 +49,4 @@ services:
         mapping:
           public: "public-https"
           private: "private-https"
+        local-entrypoint: public-https
