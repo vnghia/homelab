@@ -15,18 +15,6 @@ docker:
       traefik-tmp:
         backup: false
 services:
-  kanidm:
-    config:
-      state:
-        systems:
-          oauth2:
-            kanidm:
-              display-name: Kanidm
-              origin-landing:
-                hostname: kanidm
-                record: public
-                scheme: https
-              prefer-short-username: true
   traefik:
     variables:
       CERT_PATH:
@@ -61,16 +49,6 @@ services:
         require-all-rns: false
         disable-ans-checks: true
         delay-before-checks: 60s
-      plugins:
-        crowdsec:
-          name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
-          version: "v1.4.4"
-        geoblock:
-          name: github.com/david-garcia-garcia/traefik-geoblock
-          version: "v1.1.0"
-        oidc:
-          name: github.com/sevensolutions/traefik-oidc-auth
-          version: "v0.13.0"
       traefik:
         local:
           name: local
@@ -79,86 +57,6 @@ services:
               sourceRange:
                 - "192.168.0.0/16"
                 - "fc00::/10"
-        geoblock:
-          name: geoblock
-          plugin: geoblock
-          data:
-            enabled: true
-            defaultAllow: false
-            databaseFilePath:
-              extract:
-                volume: traefik-plugin
-              transform:
-                path: sources
-            allowedCountries:
-            allowPrivate: true
-            banIfError: true
-            logLevel: "info"
-            logFormat: "json"
-            logBannedRequests: true
-            databaseAutoUpdate: true
-            databaseAutoUpdateDir:
-              extract:
-                volume: traefik-data
-              transform:
-                path: ip2database
-        crowdsec:
-          name: crowdsec
-          plugin: crowdsec
-          data:
-            enabled: true
-            crowdsecMode: stream
-            crowdseclapikey:
-              service: crowdsec
-              extract:
-                secret: traefik
-            crowdsecLapiHost:
-              service: crowdsec
-              extract:
-                cinfo: name
-              transform:
-                string:
-                  template: "{value}:8080"
-        oidc:
-          name: oidc
-          plugin: oidc
-          data:
-            Secret:
-              secret: oidc
-            Provider:
-              Url:
-                extract:
-                  hostname: kanidm
-                  record: public
-                  scheme: https
-                transform:
-                  string:
-                    template: "{value}/oauth2/openid/kanidm"
-              ClientId: kanidm
-              ClientSecret:
-                service: kanidm
-                extract:
-                  export: kanidm
-              TokenValidation: IdToken
-              UsePkce: true
-            Scopes: ["openid", "profile", "email"]
-            Headers:
-              - Name: X-Remote-User
-                Value: "{{`{{ .claims.preferred_username }}`}}"
-              - Name: X-Remote-Name
-                Value: "{{`{{ .claims.name }}`}}"
-              - Name: X-Remote-Email
-                Value: "{{`{{ .claims.email }}`}}"
-        dashboard:
-          name: dashboard
-          record: private
-          hostname: system
-          prefix:
-            svariable: API_PATH
-          service: "api@internal"
-    secrets:
-      oidc:
-        length: 32
     container:
       image: traefik
       command:
