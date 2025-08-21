@@ -1,4 +1,4 @@
-from typing import Any, Mapping
+from typing import Any
 
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
@@ -86,6 +86,7 @@ class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
     http3: TraefikEntrypointHttp3Model | None = None
     timeout: TraefikEntrypointTimeoutModel | None = None
     proxy_protocol: TraefikEntrypointProxyProtocolModel | None = None
+    middlewares: list[str] = []
 
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return (
@@ -107,3 +108,10 @@ class TraefikEntrypointModel(
 ):
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return self.root.to_entry_point(extractor_args)
+
+    @property
+    def middlewares(self) -> list[str]:
+        root = self.root
+        if isinstance(root, TraefikEntrypointFullModel):
+            return root.middlewares
+        return []

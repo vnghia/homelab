@@ -5,4 +5,4 @@ from ..model.entrypoint import TraefikEntrypointModel
 
 class TraefikEntrypointConfig(HomelabBaseModel):
     config: dict[str, TraefikEntrypointModel]
-    mapping: dict[str, list[str]]
+    mapping: dict[str, str]

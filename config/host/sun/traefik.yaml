@@ -42,6 +42,9 @@ services:
                 extract:
                   svariable: HTTPS_EXTERNAL_PORT
             timeout: *timeout
+            middlewares:
+              - geoblock
+              - crowdsec
         mapping:
-          public: ["public-https"]
-          private: ["private-https"]
+          public: "public-https"
+          private: "private-https"

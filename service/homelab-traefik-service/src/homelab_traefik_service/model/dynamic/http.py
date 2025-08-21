@@ -29,8 +29,6 @@ if typing.TYPE_CHECKING:
 
 class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
     LOCAL_MIDDLEWARE: ClassVar[str] = "local"
-    GEOBLOCK_MIDDLEWARE: ClassVar[str] = "geoblock"
-    CROWDSEC_MIDDLEWARE: ClassVar[str] = "crowdsec"
 
     def to_data(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
@@ -68,25 +66,6 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             )
         ).apply(lambda extractor_args: " && ".join(extractor_args))
 
-        public_middlewares = [
-            TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
-                traefik_service, extractor_args
-            )
-            for middleware in [
-                TraefikDynamicMiddlewareModel(
-                    TraefikDynamicMiddlewareUseModel(
-                        service=traefik_service.name(),
-                        name=self.GEOBLOCK_MIDDLEWARE,
-                    )
-                ),
-                TraefikDynamicMiddlewareModel(
-                    TraefikDynamicMiddlewareUseModel(
-                        service=traefik_service.name(),
-                        name=self.CROWDSEC_MIDDLEWARE,
-                    )
-                ),
-            ]
-        ]
         private_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
                 traefik_service, extractor_args
@@ -101,23 +80,32 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             ]
         ]
 
+        entrypoint = traefik_config.entrypoint.mapping[root.record]
+        entrypoint_model = traefik_config.entrypoint.config[entrypoint]
+        entrypoint_middlewares = [
+            TraefikDynamicMiddlewareModelBuilder(
+                TraefikDynamicMiddlewareModel(
+                    TraefikDynamicMiddlewareUseModel(
+                        service=traefik_service.name(), name=middleware
+                    )
+                )
+            ).get_name(traefik_service, extractor_args)
+            for middleware in entrypoint_model.middlewares
+        ]
         service_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
                 traefik_service, extractor_args
             )
             for middleware in root.middlewares
         ]
-        all_middlewares = (
-            public_middlewares if hostname.public else []
-        ) + service_middlewares
+        all_middlewares = entrypoint_middlewares + service_middlewares
 
-        entrypoints = traefik_config.entrypoint.mapping[root.record]
         data: dict[str, Any] = {
             "http": {
                 "routers": {
                     router_name: {
                         "service": service,
-                        "entryPoints": entrypoints,
+                        "entryPoints": [entrypoint],
                         "rule": rule,
                         "tls": {"certResolver": traefik_service.static.CERT_RESOLVER},
                     }
