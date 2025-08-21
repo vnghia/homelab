@@ -36,6 +36,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
         root = self.root
+        traefik_config = traefik_service.config
         main_service = extractor_args.service
 
         # TODO: Avoid hardcoded entrypoint name
@@ -110,14 +111,13 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             public_middlewares if hostname.public else []
         ) + service_middlewares
 
+        entrypoints = traefik_config.entrypoint.mapping[root.record]
         data: dict[str, Any] = {
             "http": {
                 "routers": {
                     router_name: {
                         "service": service,
-                        "entryPoints": ["public-https"]
-                        if hostname.public
-                        else ["private-https"],
+                        "entryPoints": entrypoints,
                         "rule": rule,
                         "tls": {"certResolver": traefik_service.static.CERT_RESOLVER},
                     }

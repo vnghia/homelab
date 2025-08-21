@@ -49,7 +49,7 @@ class TraefikStaticConfigResource(
                 "ping": {},
                 "entryPoints": {
                     key: entrypoint.to_entry_point(traefik_service.extractor_args)
-                    for key, entrypoint in traefik_config.entrypoints.root.items()
+                    for key, entrypoint in traefik_config.entrypoint.config.items()
                 },
                 "providers": {
                     "file": {

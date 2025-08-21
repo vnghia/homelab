@@ -41,5 +41,5 @@ class TraefikPluginConfig(HomelabBaseModel):
 class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):
     path: TraefikPathConfig
     acme: TraefikAcmeConfig
-    entrypoints: TraefikEntrypointConfig
+    entrypoint: TraefikEntrypointConfig
     plugins: dict[str, TraefikPluginConfig] = {}
