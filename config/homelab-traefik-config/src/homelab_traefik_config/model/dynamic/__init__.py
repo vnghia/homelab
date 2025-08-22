@@ -7,4 +7,9 @@ from .middleware import TraefikDynamicMiddlewareBuildModel
 class TraefikDynamicModel(
     HomelabRootModel[TraefikDynamicHttpModel | TraefikDynamicMiddlewareBuildModel]
 ):
-    pass
+    @property
+    def active(self) -> bool:
+        root = self.root
+        if isinstance(root, TraefikDynamicHttpModel):
+            return root.active
+        return True

@@ -26,4 +26,5 @@ class TraefikServiceConfigBuilder(HomelabRootModel[TraefikServiceConfig]):
                 extractor_args=extractor_args,
             )
             for name, model in root.items()
+            if model.active
         }

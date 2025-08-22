@@ -6,6 +6,7 @@ from .service import TraefikDynamicServiceModel
 
 
 class TraefikDynamicHttpModel(HomelabBaseModel):
+    active: bool = True
     name: str | None = None
     record: str
     hostname: str | None = None
