@@ -14,7 +14,6 @@ from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 
-from ...file import File
 from .. import HostBase
 from .config import SunServiceConfig
 
@@ -105,9 +104,7 @@ class SunHost(HostBase[SunServiceConfig]):
             extractor_args=self.extractor_args,
         )
 
-        self.file = File(
-            opts=self.child_opts, traefik_service=self.traefik, dagu_service=self.dagu
-        )
+        self.build_file()
 
         self.backup = BackupService(
             self.services_config.backup,
@@ -118,3 +115,11 @@ class SunHost(HostBase[SunServiceConfig]):
         )
 
         self.register_outputs({})
+
+    @property
+    def traefik_service(self) -> TraefikService | None:
+        return self.traefik
+
+    @property
+    def dagu_service(self) -> DaguService | None:
+        return self.dagu

@@ -13,14 +13,17 @@ class File(ComponentResource):
         self,
         *,
         opts: ResourceOptions,
-        traefik_service: TraefikService,
-        dagu_service: DaguService,
+        traefik_service: TraefikService | None,
+        dagu_service: DaguService | None,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.traefik = TraefikFile(
-            opts=self.child_opts, traefik_service=traefik_service
-        )
-        self.dagu = DaguFile(opts=self.child_opts, dagu_service=dagu_service)
+        if traefik_service:
+            self.traefik = TraefikFile(
+                opts=self.child_opts, traefik_service=traefik_service
+            )
+        if dagu_service:
+            self.dagu = DaguFile(opts=self.child_opts, dagu_service=dagu_service)
+
         self.register_outputs({})

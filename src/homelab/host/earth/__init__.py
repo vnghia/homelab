@@ -27,4 +27,6 @@ class EarthHost(HostBase[EarthServiceConfig]):
 
         self.build_extra_services()
 
+        self.build_file()
+
         self.register_outputs({})

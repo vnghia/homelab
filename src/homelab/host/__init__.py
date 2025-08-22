@@ -1,3 +1,6 @@
+from abc import abstractmethod
+
+from homelab_dagu_service import DaguService
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -6,8 +9,11 @@ from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_global import GlobalArgs
 from homelab_network.resource.network import NetworkResource
+from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 from pydantic.alias_generators import to_snake
+
+from ..file import File
 
 
 class HostBase[T: ServiceConfigBase](HostResourceBase):
@@ -39,6 +45,21 @@ class HostBase[T: ServiceConfigBase](HostResourceBase):
             ).items()
         }
 
+    def build_file(self) -> None:
+        self.file = File(
+            opts=self.child_opts,
+            traefik_service=self.traefik_service,
+            dagu_service=self.dagu_service,
+        )
+
     @classmethod
     def name(cls) -> str:
         return to_snake(cls.__name__.removesuffix("Host")).replace("_", "-")
+
+    @property
+    def traefik_service(self) -> TraefikService | None:
+        return None
+
+    @property
+    def dagu_service(self) -> DaguService | None:
+        return None
