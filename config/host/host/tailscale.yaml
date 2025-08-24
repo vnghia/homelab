@@ -11,6 +11,8 @@ services:
   tailscale:
     variables:
       PORT:
+        port: udp
+        info: internal
     container:
       image: tailscale
       capabilities:
@@ -31,6 +33,10 @@ services:
       network:
         bridge:
           default: {}
+      ports:
+        udp:
+          internal:
+          protocol: udp
       tmpfs:
         - /tmp
         - /run
