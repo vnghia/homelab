@@ -49,6 +49,7 @@ services:
               service: tailscale
               extract:
                 svariable: HTTPS_INTERNAL_PORT
+            internal: true
             http3:
               port:
                 service: tailscale
@@ -62,6 +63,7 @@ services:
           solar: "public-https"
           sun: "private-https"
         local-entrypoint: public-https
+        internal-entrypoint: private-https
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin

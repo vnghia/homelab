@@ -113,7 +113,9 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                     {
                         "{}-local".format(router_name): {
                             "service": service,
-                            "entryPoints": [traefik_config.entrypoint.local_entrypoint],
+                            "entryPoints": [
+                                traefik_config.entrypoint.local_entrypoint_
+                            ],
                             "rule": rule,
                             "tls": {
                                 "certResolver": traefik_service.static.CERT_RESOLVER
@@ -122,6 +124,23 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                         }
                     }
                     if entrypoint_config.local
+                    else {}
+                )
+                | (
+                    {
+                        "{}-internal".format(router_name): {
+                            "service": service,
+                            "entryPoints": [
+                                traefik_config.entrypoint.internal_entrypoint_
+                            ],
+                            "rule": rule,
+                            "tls": {
+                                "certResolver": traefik_service.static.CERT_RESOLVER
+                            },
+                            "middlewares": service_middlewares,
+                        }
+                    }
+                    if entrypoint_config.internal
                     else {}
                 ),
             }
