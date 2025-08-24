@@ -72,7 +72,8 @@ services:
       devices:
         - /dev/dri/renderD128
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       volumes:
         jellyfin-config: /mnt/jellyfin/config
         jellyfin-data: /mnt/jellyfin/data

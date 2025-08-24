@@ -21,7 +21,8 @@ services:
         retries: 1
         start-period: 10s
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       read-only: false
       wud:
         template: https://github.com/qdm12/gluetun/releases/tag/${original}

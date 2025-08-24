@@ -24,7 +24,8 @@ services:
     container:
       image: livekit
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       ports:
         livekit-tcp:
           internal: *tcp-port

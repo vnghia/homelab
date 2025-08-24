@@ -42,7 +42,8 @@ services:
           envs:
             env: REDIS_URL
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       tmpfs:
         - /tmp
         - /rails/tmp/sockets
@@ -65,5 +66,7 @@ services:
         inherit:
         command: ["bundle", "exec", "sidekiq"]
         network:
-          default-bridge: false
+          bridge:
+            default:
+              active: false
         wud:

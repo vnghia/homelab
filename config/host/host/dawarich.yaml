@@ -57,7 +57,8 @@ services:
         - "::"
       entrypoint: ["web-entrypoint.sh"]
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       tmpfs:
         - /tmp
         - /var/app/tmp/cache

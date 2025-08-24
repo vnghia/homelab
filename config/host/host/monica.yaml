@@ -150,7 +150,8 @@ services:
         MEILISEARCH_KEY:
           secret: meilisearch-key
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       read-only: false
       # TODO: Make this container work with read-only filesystem
       # tmpfs:

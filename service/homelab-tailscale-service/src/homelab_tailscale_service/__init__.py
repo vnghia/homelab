@@ -2,7 +2,6 @@ from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_tailscale as tailscale
-from homelab_docker.config.docker.network import NetworkConfig
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.model.docker.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
@@ -17,7 +16,6 @@ class TailscaleService(ServiceResourceBase):
         model: ServiceModel,
         *,
         opts: ResourceOptions,
-        internal_aliases: list[str],
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
@@ -25,10 +23,6 @@ class TailscaleService(ServiceResourceBase):
         self.options[None] = ContainerModelBuildArgs(
             opts=ResourceOptions(delete_before_replace=True),
             envs={"TS_AUTHKEY": self.build_authkey().key},
-            aliases={
-                NetworkConfig.INTERNAL_BRIDGE: internal_aliases,
-                NetworkConfig.PROXY_BRIDGE: [NetworkConfig.PROXY_ALIAS],
-            },
         )
         self.build_containers()
 

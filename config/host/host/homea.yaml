@@ -15,7 +15,8 @@ services:
     container:
       image: homea
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       ports:
         http:
           internal: *port

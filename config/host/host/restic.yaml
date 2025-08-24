@@ -111,8 +111,10 @@ services:
       active: false
       image: resticprofile
       network:
-        default-bridge: true
-        internal-bridge: false
+        bridge:
+          default: {}
+          internal:
+            active: false
       tmpfs:
         - /tmp
       volumes:

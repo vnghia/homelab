@@ -148,7 +148,8 @@ services:
       radarr:
         image: radarr
         network:
-          default-bridge: true
+          bridge:
+            default: {}
         tmpfs:
           - path: /run
             exec: true
@@ -165,7 +166,8 @@ services:
       sonarr:
         image: sonarr
         network:
-          default-bridge: true
+          bridge:
+            default: {}
         tmpfs:
           - path: /run
             exec: true
@@ -198,7 +200,8 @@ services:
       bazarr:
         image: bazarr
         network:
-          default-bridge: true
+          bridge:
+            default: {}
         tmpfs:
           - path: /run
             exec: true

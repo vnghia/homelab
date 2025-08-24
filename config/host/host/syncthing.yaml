@@ -40,7 +40,8 @@ services:
       hostname:
         hvariable: FULL_HOSTNAME
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       ports:
         tcp:
           internal: 22000

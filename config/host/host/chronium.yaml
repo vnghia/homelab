@@ -21,7 +21,8 @@ services:
     container:
       image: chromium
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       read-only: false
       envs:
         TIMEOUT: 10000

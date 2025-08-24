@@ -34,7 +34,8 @@ services:
         interval: 30s
         timeout: 5s
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       volumes:
         wud-storage: /store
       wud:

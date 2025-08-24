@@ -29,7 +29,8 @@ services:
       hosts:
         - mode: localhost
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       tmpfs:
         - /tmp
         - /run

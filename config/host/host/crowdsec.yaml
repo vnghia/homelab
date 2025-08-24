@@ -49,7 +49,8 @@ services:
           hvariable: FULL_HOSTNAME
         COLLECTIONS: crowdsecurity/traefik
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       tmpfs:
         - /tmp
       wud:

@@ -63,6 +63,17 @@ class HomelabRootModel[T](RootModel[T]):
             data.pop("__provider", None)
         return data
 
+    def model_merge(self, other: Self, override: bool = False) -> Self:
+        left_data = self.model_dump(mode="json", by_alias=True, exclude_unset=True)
+        right_data = other.model_dump(mode="json", by_alias=True, exclude_unset=True)
+
+        merged_data = (
+            override_merger.merge(left_data, right_data)
+            if override
+            else deepmerge.always_merger.merge(left_data, right_data)
+        )
+        return self.__class__(**merged_data)
+
 
 class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
     NONE_KEY: ClassVar[str]

@@ -125,7 +125,8 @@ services:
             env: DJANGO_CACHE_LOCATION
             database: 1
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       tmpfs:
         - /tmp
       volumes:

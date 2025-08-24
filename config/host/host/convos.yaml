@@ -45,7 +45,8 @@ services:
     container:
       image: convos
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       volumes:
         convos-data: /data
       wud:

@@ -64,7 +64,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
             model.docker_socket, extractor_args, build_args
         )
 
-        network_args = model.network.to_args(None, extractor_args, build_args)
+        network_args = model.network.to_args(None, extractor_args)
         if network_args.advanced:
             network_config["endpointsConfig"] = {
                 network.name: {"aliases": network.aliases}

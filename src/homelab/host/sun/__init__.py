@@ -39,7 +39,6 @@ class SunHost(HostBase[SunServiceConfig]):
         self.tailscale = TailscaleService(
             self.services_config.tailscale,
             opts=self.child_opts,
-            internal_aliases=self.network.config.aliases,
             extractor_args=self.extractor_args,
         )
 

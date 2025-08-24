@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 from homelab_dagu_service import DaguService
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.config.service import ServiceConfigBase

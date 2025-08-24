@@ -51,7 +51,8 @@ services:
           envs:
             env: DB_URL
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       tmpfs:
         - path: /tmp
           exec: true

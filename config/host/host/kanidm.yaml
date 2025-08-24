@@ -130,7 +130,8 @@ services:
         start-interval: 5s
         start-period: 10s
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       ports:
         https:
           internal: *port

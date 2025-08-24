@@ -3,7 +3,7 @@ from homelab_pydantic import HomelabBaseModel
 
 from ..model.hostname import Hostname
 from ..model.ip import NetworkIpModel, NetworkIpSource
-from ..model.record import RecordFullModel, RecordModel
+from ..model.record import RecordModel
 from .ip import NetworkIpConfig
 
 
@@ -24,14 +24,6 @@ class RecordConfig(HomelabBaseModel):
     @property
     def hostnames(self) -> dict[str, Hostname]:
         return {hostname: Hostname(value=self[hostname]) for hostname in self.records}
-
-    @property
-    def aliases(self) -> list[str]:
-        return [
-            self[hostname]
-            for hostname, model in self.records.items()
-            if isinstance(model.root, RecordFullModel) and model.root.alias
-        ]
 
     @property
     def is_ddns(self) -> bool:

@@ -43,7 +43,8 @@ services:
         - /dev/kvm
         - /dev/net/tun
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       ports:
         rdp-tcp:
           internal: 3389
@@ -73,7 +74,8 @@ services:
         docker-socket:
           write: false
         network:
-          default-bridge: true
+          bridge:
+            default: {}
         envs:
           WINTELE_TOKEN:
           WINTELE_TOTP:

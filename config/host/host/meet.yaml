@@ -120,7 +120,8 @@ services:
               env: DJANGO_CELERY_BROKER_URL
               database: 0
         network:
-          default-bridge: true
+          bridge:
+            default: {}
         tmpfs:
           - /tmp
         wud:

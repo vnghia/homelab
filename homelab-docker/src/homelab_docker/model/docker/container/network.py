@@ -20,7 +20,6 @@ from ....extract.global_ import GlobalExtractor
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
-    from . import ContainerModelBuildArgs
 
 
 @dataclasses.dataclass
@@ -38,10 +37,7 @@ class ContainerNetworkContainerConfig(HomelabBaseModel):
     container: GlobalExtract
 
     def to_args(
-        self,
-        _resource_name: str | None,
-        extractor_args: ExtractorArgs,
-        _build_args: ContainerModelBuildArgs,
+        self, _resource_name: str | None, extractor_args: ExtractorArgs
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
             mode=Output.format(
@@ -56,10 +52,7 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     mode: NetworkMode
 
     def to_args(
-        self,
-        resource_name: str | None,
-        extractor_args: ExtractorArgs,
-        build_args: ContainerModelBuildArgs,
+        self, resource_name: str | None, extractor_args: ExtractorArgs
     ) -> ContainerNetworkArgs:
         match self.mode:
             case NetworkMode.VPN:
@@ -84,64 +77,40 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
                             ),
                         )
                     )
-                ).to_args(resource_name, extractor_args, build_args)
+                ).to_args(resource_name, extractor_args)
             case NetworkMode.HOST:
                 return ContainerNetworkArgs(mode="host", advanced=[])
 
 
+class ContainerBridgeNetworkConfig(HomelabBaseModel):
+    active: bool = True
+    aliases: list[GlobalExtract] = []
+
+
 class ContainerCommonNetworkConfig(HomelabBaseModel):
-    default_bridge: bool = False
-    internal_bridge: bool = True
-    proxy_bridge: bool = False
+    bridge: dict[str, ContainerBridgeNetworkConfig] = {}
 
     def to_args(
-        self,
-        resource_name: str | None,
-        extractor_args: ExtractorArgs,
-        build_args: ContainerModelBuildArgs,
+        self, resource_name: str | None, extractor_args: ExtractorArgs
     ) -> ContainerNetworkArgs:
-        from ....config.docker.network import NetworkConfig
-
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
         resource_aliases = [resource_name] if resource_name else []
         return ContainerNetworkArgs(
             mode="bridge",
-            advanced=(
-                [
-                    extractor_args.host.docker.network.default_bridge_args(
-                        [
-                            *resource_aliases,
-                            *build_args.aliases.get(NetworkConfig.DEFAULT_BRIDGE, []),
-                        ]
-                    )
-                ]
-                if self.default_bridge
-                else []
-            )
-            + (
-                [
-                    extractor_args.host.docker.network.internal_bridge_args(
-                        [
-                            *resource_aliases,
-                            *build_args.aliases.get(NetworkConfig.INTERNAL_BRIDGE, []),
-                        ]
-                    )
-                ]
-                if self.internal_bridge
-                else []
-            )
-            + (
-                [
-                    extractor_args.host.docker.network.proxy_bridge_args(
-                        [
-                            *resource_aliases,
-                            *build_args.aliases.get(NetworkConfig.PROXY_BRIDGE, []),
-                        ]
-                    )
-                ]
-                if self.proxy_bridge
-                else []
-            ),
+            advanced=[
+                extractor_args.host.docker.network.get_bridge_args(
+                    name,
+                    [
+                        *resource_aliases,
+                        *[
+                            GlobalExtractor(alias).extract_str(extractor_args)
+                            for alias in config.aliases
+                        ],
+                    ],
+                )
+                for name, config in self.bridge.items()
+                if config.active
+            ],
         )
 
 
@@ -159,9 +128,10 @@ class ContainerNetworkConfig(
     ) = ContainerCommonNetworkConfig()
 
     def to_args(
-        self,
-        resource_name: str | None,
-        extractor_args: ExtractorArgs,
-        build_args: ContainerModelBuildArgs,
+        self, resource_name: str | None, extractor_args: ExtractorArgs
     ) -> ContainerNetworkArgs:
-        return self.root.to_args(resource_name, extractor_args, build_args)
+        default = extractor_args.host_model.docker.network.default.root
+        root = self.root
+        if type(default) is type(root):
+            return default.model_merge(root).to_args(resource_name, extractor_args)  # type: ignore
+        return root.to_args(resource_name, extractor_args)

@@ -38,7 +38,8 @@ services:
             host: DB_POSTGRESDB_HOST
             port: DB_POSTGRESDB_PORT
       network:
-        default-bridge: true
+        bridge:
+          default: {}
       tmpfs:
         - path: /home/node/.cache/n8n/public
           uid: 1000

@@ -17,6 +17,21 @@ services:
       hosts:
         - host: earth
           internal: true
+      network:
+        bridge:
+          internal:
+            aliases:
+              - record: public
+                hostname: kanidm
+              # TODO: Disable this after https://github.com/opencloud-eu/opencloud/issues/705
+              - record: public
+                hostname: opencloud
+              - record: public
+                hostname: impress
+              - record: public
+                hostname: chromium
+              - record: public
+                hostname: livekit
       ports:
         http:
           internal: 81
