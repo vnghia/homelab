@@ -43,7 +43,6 @@ class RecordResource(ComponentResource):
                 for key, record in config.records.items()
             }
         self.hostnames = config.hostnames
-        self.public = config.public
 
         self.local_records: defaultdict[IPvAnyAddress, set[str]] = defaultdict(set)
         for key, hostname in self.hostnames.items():
