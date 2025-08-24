@@ -70,14 +70,30 @@ class TraefikEntrypointTimeoutModel(HomelabBaseModel):
 
 
 class TraefikEntrypointProxyProtocolModel(HomelabBaseModel):
-    ips: list[GlobalExtract]
+    ips: list[GlobalExtract] = []
+    proxy_network: str | None = None
 
     def to_config(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
+        ips = [GlobalExtractor(ip).extract_str(extractor_args) for ip in self.ips]
+        proxy_ips = (
+            extractor_args.host.docker.network.bridge[
+                self.proxy_network
+            ].ipam_configs.apply(
+                lambda ipam_configs: [
+                    ipam_config.subnet
+                    for ipam_config in ipam_configs
+                    if ipam_config.subnet
+                ]
+            )
+            if self.proxy_network
+            else None
+        )
+
         return {
             "proxyProtocol": {
-                "trustedIPs": [
-                    GlobalExtractor(ip).extract_str(extractor_args) for ip in self.ips
-                ]
+                "trustedIPs": Output.all(ips=ips, proxy_ips=proxy_ips).apply(
+                    lambda args: list(args["ips"] + (args["proxy_ips"] or []))
+                )
             }
         }
 
