@@ -10,7 +10,7 @@ docker:
 services:
   tailscale:
     variables:
-      PORT: 48470
+      PORT:
     container:
       image: tailscale
       capabilities:

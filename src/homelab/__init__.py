@@ -52,6 +52,7 @@ class Homelab:
             self.config.network,
             opts=None,
             source_ips={
-                SunHost.name(): {NetworkIpSource.TAILSCALE: self.sun.tailscale.ip}
+                SunHost.name(): {NetworkIpSource.TAILSCALE: self.sun.tailscale.ip},
+                EarthHost.name(): {NetworkIpSource.TAILSCALE: self.earth.tailscale.ip},
             },
         )

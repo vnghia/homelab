@@ -1,6 +1,7 @@
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global import GlobalArgs
 from homelab_network.resource.network import NetworkResource
+from homelab_tailscale_service import TailscaleService
 from pulumi import ResourceOptions
 
 from .. import HostBase
@@ -23,6 +24,12 @@ class EarthHost(HostBase[EarthServiceConfig]):
             global_args=global_args,
             network_resource=network_resource,
             config=config,
+        )
+
+        self.tailscale = TailscaleService(
+            self.services_config.tailscale,
+            opts=self.child_opts,
+            extractor_args=self.extractor_args,
         )
 
         self.build_extra_services()
