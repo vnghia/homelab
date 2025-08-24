@@ -14,7 +14,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               svariable: PORT

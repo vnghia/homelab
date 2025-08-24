@@ -16,7 +16,7 @@ services:
     config:
       traefik:
         traefik:
-          record: private
+          record: sun
           service:
             port:
               env: SERVER_PORT

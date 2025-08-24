@@ -21,7 +21,7 @@ services:
     config:
       traefik:
         traefik:
-          record: private
+          record: sun
           hostname: system
           prefix:
             svariable: PREFIX
@@ -144,7 +144,7 @@ services:
       keepass:
         hostname:
           hostname: system
-          record: private
+          record: sun
     container:
       image: beszel
       network:
@@ -161,7 +161,7 @@ services:
             kv:
               base:
                 hostname: system
-                record: private
+                record: sun
                 scheme: https
               prefix:
                 svariable: PREFIX

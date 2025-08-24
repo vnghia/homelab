@@ -17,7 +17,7 @@ services:
               origin-url:
                 - extract:
                     hostname: convos
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
@@ -28,7 +28,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               svariable: PORT
@@ -39,7 +39,7 @@ services:
       keepass:
         hostname:
           hostname: convos
-          record: public
+          record: solar
     secrets:
       local: {}
     container:

@@ -96,28 +96,28 @@ services:
       traefik:
         radarr:
           name: radarr
-          record: private
+          record: sun
           service:
             container: radarr
             port:
               svariable: RADARR_PORT
         sonarr:
           name: sonarr
-          record: private
+          record: sun
           service:
             container: sonarr
             port:
               svariable: SONARR_PORT
         prowlarr:
           name: prowlarr
-          record: private
+          record: sun
           service:
             container: prowlarr
             port:
               svariable: PROWLARR_PORT
         bazarr:
           name: bazarr
-          record: private
+          record: sun
           service:
             container: bazarr
             port:
@@ -126,19 +126,19 @@ services:
       radarr:
         hostname:
           hostname: starr-radarr
-          record: private
+          record: sun
       sonarr:
         hostname:
           hostname: starr-sonarr
-          record: private
+          record: sun
       prowlarr:
         hostname:
           hostname: starr-prowlarr
-          record: private
+          record: sun
       bazarr:
         hostname:
           hostname: starr-bazarr
-          record: private
+          record: sun
     variables:
       RADARR_PORT: 7878
       SONARR_PORT: 8989

@@ -23,7 +23,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               svariable: PORT
@@ -31,7 +31,7 @@ services:
       keepass:
         hostname:
           hostname: windows
-          record: public
+          record: solar
     secrets:
       totp:
         special: false

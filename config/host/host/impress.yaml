@@ -21,14 +21,14 @@ services:
               origin-url:
                 - extract:
                     hostname: impress
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
                       template: "{value}/api/v1.0/callback/"
               origin-landing:
                 hostname: impress
-                record: public
+                record: solar
                 scheme: https
               prefer-short-username: true
   impress:
@@ -39,7 +39,7 @@ services:
       OAUTH_URL:
         extract:
           hostname: kanidm
-          record: public
+          record: solar
           scheme: https
         transform:
           string:
@@ -49,7 +49,7 @@ services:
         backend:
           name: backend
           hostname: impress
-          record: public
+          record: solar
           rules:
             - (PathPrefix(`/api`) || PathPrefix(`/admin`))
           service:
@@ -59,7 +59,7 @@ services:
         frontend:
           name: frontend
           hostname: impress
-          record: public
+          record: solar
           service:
             container: frontend
             port:
@@ -67,7 +67,7 @@ services:
         collaboration:
           name: collaboration
           hostname: impress
-          record: public
+          record: solar
           prefix: /collaboration
           service:
             container: collaboration
@@ -114,10 +114,10 @@ services:
           # TODO: Configure OIDC properly after https://github.com/suitenumerique/docs/issues/1186
           DJANGO_ALLOWED_HOSTS:
             hostname: impress
-            record: public
+            record: solar
           DJANGO_CSRF_TRUSTED_ORIGINS:
             hostname: impress
-            record: public
+            record: solar
             scheme: https
           DJANGO_SECRET_KEY:
             secret: django
@@ -139,7 +139,7 @@ services:
           OIDC_OP_AUTHORIZATION_ENDPOINT:
             extract:
               hostname: kanidm
-              record: public
+              record: solar
               scheme: https
             transform:
               string:
@@ -147,7 +147,7 @@ services:
           OIDC_OP_TOKEN_ENDPOINT:
             extract:
               hostname: kanidm
-              record: public
+              record: solar
               scheme: https
             transform:
               string:
@@ -161,7 +161,7 @@ services:
           OIDC_OP_LOGOUT_ENDPOINT:
             extract:
               hostname: kanidm
-              record: public
+              record: solar
               scheme: https
             transform:
               string:
@@ -169,22 +169,22 @@ services:
           OIDC_RP_SCOPES: openid profile email
           LOGIN_REDIRECT_URL:
             hostname: impress
-            record: public
+            record: solar
             scheme: https
           LOGIN_REDIRECT_URL_FAILURE:
             hostname: impress
-            record: public
+            record: solar
             scheme: https
           LOGOUT_REDIRECT_URL:
             hostname: impress
-            record: public
+            record: solar
             scheme: https
           OIDC_USE_NONCE: false
           OIDC_USE_PKCE: true
           OIDC_REDIRECT_REQUIRE_HTTPS: true
           OIDC_REDIRECT_ALLOWED_HOSTS:
             hostname: impress
-            record: public
+            record: solar
             scheme: "https"
           OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION: false
           OIDC_STORE_ACCESS_TOKEN: true
@@ -196,7 +196,7 @@ services:
           COLLABORATION_API_URL:
             extract:
               hostname: impress
-              record: public
+              record: solar
               scheme: https
             transform:
               string:
@@ -204,7 +204,7 @@ services:
           COLLABORATION_WS_URL:
             extract:
               hostname: impress
-              record: public
+              record: solar
               scheme: wss
             transform:
               string:
@@ -230,11 +230,11 @@ services:
           COLLABORATION_LOGGING: true
           COLLABORATION_SERVER_ORIGIN:
             hostname: impress
-            record: public
+            record: solar
             scheme: https
           COLLABORATION_BACKEND_BASE_URL:
             hostname: impress
-            record: public
+            record: solar
             scheme: https
           COLLABORATION_SERVER_SECRET:
             secret: collaboration

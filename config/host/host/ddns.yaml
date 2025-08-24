@@ -14,7 +14,7 @@ services:
     config:
       traefik:
         traefik:
-          record: private
+          record: sun
           hostname: system
           prefix:
             env: ROOT_URL

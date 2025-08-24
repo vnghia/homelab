@@ -21,16 +21,16 @@ services:
         bridge:
           internal:
             aliases:
-              - record: public
+              - record: solar
                 hostname: kanidm
               # TODO: Disable this after https://github.com/opencloud-eu/opencloud/issues/705
-              - record: public
+              - record: solar
                 hostname: opencloud
-              - record: public
+              - record: solar
                 hostname: impress
-              - record: public
+              - record: solar
                 hostname: chromium
-              - record: public
+              - record: solar
                 hostname: livekit
       ports:
         http:

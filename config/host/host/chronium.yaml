@@ -9,7 +9,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               svariable: PORT
@@ -32,6 +32,6 @@ services:
         HEALTH: true
         PROXY_HOST:
           hostname: chromium
-          record: public
+          record: solar
         PROXY_PORT: 443
         PROXY_SSL: true

@@ -11,7 +11,7 @@ services:
     config:
       traefik:
         traefik:
-          record: private
+          record: sun
           hostname: system
           service:
             port:

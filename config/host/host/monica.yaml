@@ -25,7 +25,7 @@ services:
                     svariable: MONICA_REDIRECT_URI
               origin-landing:
                 hostname: monica
-                record: public
+                record: solar
                 scheme: https
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
@@ -45,7 +45,7 @@ services:
       MONICA_REDIRECT_URI:
         extract:
           hostname: monica
-          record: public
+          record: solar
           scheme: https
         transform:
           string:
@@ -57,7 +57,7 @@ services:
       depends-on: [meilisearch]
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port: 80
     databases:
@@ -69,7 +69,7 @@ services:
       keepass:
         hostname:
           hostname: monica
-          record: public
+          record: solar
         apps:
           - at.bitfire.davdroid
     secrets:
@@ -106,7 +106,7 @@ services:
         APP_DEBUG: false
         APP_URL:
           hostname: monica
-          record: public
+          record: solar
           scheme: https
         APP_TIMEZONE:
           hinfo: timezone
@@ -134,7 +134,7 @@ services:
           svariable: MONICA_REDIRECT_URI
         KANIDM_BASE_URL:
           hostname: kanidm
-          record: public
+          record: solar
           scheme: https
         LOGIN_PROVIDERS: kanidm
         MAPBOX_USERNAME: mapbox

@@ -8,7 +8,7 @@ services:
               display-name: Kanidm
               origin-landing:
                 hostname: kanidm
-                record: public
+                record: solar
                 scheme: https
               prefer-short-username: true
   traefik:
@@ -59,8 +59,8 @@ services:
               - geoblock
               - crowdsec
         mapping:
-          public: "public-https"
-          private: "private-https"
+          solar: "public-https"
+          sun: "private-https"
         local-entrypoint: public-https
       plugins:
         crowdsec:
@@ -123,7 +123,7 @@ services:
               Url:
                 extract:
                   hostname: kanidm
-                  record: public
+                  record: solar
                   scheme: https
                 transform:
                   string:
@@ -145,7 +145,7 @@ services:
                 Value: "{{`{{ .claims.email }}`}}"
         dashboard:
           name: dashboard
-          record: private
+          record: sun
           hostname: system
           prefix:
             svariable: API_PATH

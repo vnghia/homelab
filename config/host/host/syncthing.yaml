@@ -18,7 +18,7 @@ services:
     config:
       traefik:
         traefik:
-          record: private
+          record: sun
           service:
             port:
               svariable: PORT

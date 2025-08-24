@@ -20,18 +20,18 @@ services:
               display-name: OpenCloud
               origin-url:
                 - hostname: opencloud
-                  record: public
+                  record: solar
                   scheme: https
                 - extract:
                     hostname: opencloud
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
                       template: "{value}/oidc-callback.html"
                 - extract:
                     hostname: opencloud
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
@@ -40,7 +40,7 @@ services:
                 - oc://ios.opencloud.eu
               origin-landing:
                 hostname: opencloud
-                record: public
+                record: solar
                 scheme: https
               prefer-short-username: true
               claim-maps:
@@ -54,7 +54,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               svariable: PORT
@@ -80,7 +80,7 @@ services:
                     - "'self'"
                     - "blob:"
                     - hostname: kanidm
-                      record: public
+                      record: solar
                       scheme: https
                   default-src:
                     - "'none'"
@@ -150,7 +150,7 @@ services:
         OC_LOG_LEVEL: info
         OC_URL:
           hostname: opencloud
-          record: public
+          record: solar
           scheme: https
         GATEWAY_GRPC_ADDR: 0.0.0.0:9142
         OC_GATEWAY_GRPC_ADDR:
@@ -198,7 +198,7 @@ services:
         OC_OIDC_ISSUER:
           extract:
             hostname: kanidm
-            record: public
+            record: solar
             scheme: https
           transform:
             string:

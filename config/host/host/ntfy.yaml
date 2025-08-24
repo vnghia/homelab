@@ -27,7 +27,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           hostname: ntfy
           service:
             port:
@@ -40,7 +40,7 @@ services:
       keepass:
         hostname:
           hostname: ntfy
-          record: public
+          record: solar
         apps:
           - io.heckel.ntfy
     secrets:
@@ -72,7 +72,7 @@ services:
         NTFY_BASE_URL:
           extract:
             hostname: ntfy
-            record: public
+            record: solar
             scheme: https
         NTFY_LISTEN_HTTP: ":8080"
         NTFY_CACHE_FILE:

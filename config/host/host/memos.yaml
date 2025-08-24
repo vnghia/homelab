@@ -18,14 +18,14 @@ services:
               origin-url:
                 - extract:
                     hostname: memos
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
                       template: "{value}/auth/callback"
               origin-landing:
                 hostname: memos
-                record: public
+                record: solar
                 scheme: https
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
@@ -33,7 +33,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               env: MEMOS_PORT
@@ -44,7 +44,7 @@ services:
       keepass:
         hostname:
           hostname: memos
-          record: public
+          record: solar
         apps:
           - me.mudkip.moememos
     container:

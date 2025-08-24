@@ -23,21 +23,21 @@ services:
               origin-url:
                 - extract:
                     hostname: paperless
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
                       template: "{value}/accounts/oidc/kanidm/login/callback/"
               origin-landing:
                 hostname: paperless
-                record: public
+                record: solar
                 scheme: https
               prefer-short-username: true
   paperless:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               env: PAPERLESS_PORT
@@ -50,7 +50,7 @@ services:
       keepass:
         hostname:
           hostname: paperless
-          record: public
+          record: solar
     secrets:
       key: {}
     container:
@@ -104,7 +104,7 @@ services:
           info: password
         PAPERLESS_URL:
           hostname: paperless
-          record: public
+          record: solar
           scheme: https
         PAPERLESS_TIME_ZONE:
           hinfo: timezone
@@ -133,7 +133,7 @@ services:
                     server_url:
                       extract:
                         hostname: kanidm
-                        record: public
+                        record: solar
                         scheme: https
                       transform:
                         string:

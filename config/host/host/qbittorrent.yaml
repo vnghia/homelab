@@ -16,7 +16,7 @@ services:
     config:
       traefik:
         traefik:
-          record: private
+          record: sun
           service:
             port:
               env: WEBUI_PORT
@@ -24,7 +24,7 @@ services:
       keepass:
         hostname:
           hostname: qbittorrent
-          record: private
+          record: sun
     container:
       image: qbittorrent
       network:

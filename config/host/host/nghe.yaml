@@ -13,7 +13,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               env: NGHE_SERVER__PORT

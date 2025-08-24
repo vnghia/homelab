@@ -12,7 +12,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               env: N8N_PORT
@@ -23,7 +23,7 @@ services:
       keepass:
         hostname:
           hostname: n8n
-          record: public
+          record: solar
     secrets:
       key: {}
       jwt: {}
@@ -67,9 +67,9 @@ services:
         N8N_LICENSE_ACTIVATION_KEY:
         N8N_EDITOR_BASE_URL:
           hostname: n8n
-          record: public
+          record: solar
           scheme: https
         WEBHOOK_URL:
           hostname: n8n
-          record: public
+          record: solar
           scheme: https

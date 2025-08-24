@@ -18,7 +18,7 @@ services:
         env: DAGU_LOG_DIR
       traefik:
         traefik:
-          record: private
+          record: sun
           service:
             port:
               env: DAGU_PORT

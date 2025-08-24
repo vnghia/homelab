@@ -54,10 +54,10 @@ services:
         svariable: PORT
       domain:
         hostname: kanidm
-        record: public
+        record: solar
       origin:
         hostname: kanidm
-        record: public
+        record: solar
         scheme: https
       state:
         persons:
@@ -67,7 +67,7 @@ services:
             display-name: "Me"
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             scheme: https
             port:
@@ -109,7 +109,7 @@ services:
       keepass:
         hostname:
           hostname: kanidm
-          record: public
+          record: solar
     container:
       image: kanidm-server
       command:

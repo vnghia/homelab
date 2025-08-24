@@ -21,7 +21,7 @@ services:
               origin-url:
                 - extract:
                     hostname: wger
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
@@ -32,7 +32,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               svariable: PORT
@@ -42,13 +42,13 @@ services:
         api:
           name: api
           hostname: wger
-          record: public
+          record: solar
           prefix: /api
           service: "wger@file"
         static:
           name: static
           hostname: wger
-          record: public
+          record: solar
           prefix: /static
           service:
             container: static
@@ -67,7 +67,7 @@ services:
         media:
           name: media
           hostname: wger
-          record: public
+          record: solar
           prefix: /media
           service:
             container: media
@@ -97,7 +97,7 @@ services:
         username: admin
         hostname:
           hostname: wger
-          record: public
+          record: solar
     secrets:
       key: {}
       jwt: {}
@@ -140,7 +140,7 @@ services:
         CSRF_TRUSTED_ORIGINS:
           extract:
             hostname: wger
-            record: public
+            record: solar
             scheme: https
         WGER_INSTANCE: https://wger.de
         ALLOW_REGISTRATION: "False"
@@ -165,7 +165,7 @@ services:
         SITE_URL:
           extract:
             hostname: wger
-            record: public
+            record: solar
             scheme: https
         ACCESS_TOKEN_LIFETIME: 10
         REFRESH_TOKEN_LIFETIME: 24

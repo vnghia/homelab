@@ -18,14 +18,14 @@ services:
               origin-url:
                 - extract:
                     hostname: meet
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
                       template: "{value}/api/v1.0/callback/"
               origin-landing:
                 hostname: meet
-                record: public
+                record: solar
                 scheme: https
               prefer-short-username: true
   livekit:
@@ -49,7 +49,7 @@ services:
       OAUTH_URL:
         extract:
           hostname: kanidm
-          record: public
+          record: solar
           scheme: https
         transform:
           string:
@@ -59,7 +59,7 @@ services:
         backend:
           name: backend
           hostname: meet
-          record: public
+          record: solar
           rules:
             - (PathPrefix(`/api`) || PathPrefix(`/static`))
           service:
@@ -69,7 +69,7 @@ services:
         backend-admin:
           name: backend-admin
           hostname: meet-admin
-          record: private
+          record: sun
           rules:
             - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
           service:
@@ -79,7 +79,7 @@ services:
         frontend:
           name: frontend
           hostname: meet
-          record: public
+          record: solar
           service:
             container: frontend
             port:
@@ -94,10 +94,10 @@ services:
         username:
           hostname:
             hostname: meet-admin
-            record: private
+            record: sun
         hostname:
           hostname: meet-admin
-          record: private
+          record: sun
     secrets:
       django: {}
     containers:
@@ -133,10 +133,10 @@ services:
               kv:
                 user:
                   hostname: meet
-                  record: public
+                  record: solar
                 admin:
                   hostname: meet-admin
-                  record: private
+                  record: sun
             transform:
               string:
                 template: "{user},{admin}"
@@ -145,11 +145,11 @@ services:
               kv:
                 user:
                   hostname: meet
-                  record: public
+                  record: solar
                   scheme: https
                 admin:
                   hostname: meet-admin
-                  record: private
+                  record: sun
                   scheme: https
             transform:
               string:
@@ -179,7 +179,7 @@ services:
           OIDC_OP_AUTHORIZATION_ENDPOINT:
             extract:
               hostname: kanidm
-              record: public
+              record: solar
               scheme: https
             transform:
               string:
@@ -187,7 +187,7 @@ services:
           OIDC_OP_TOKEN_ENDPOINT:
             extract:
               hostname: kanidm
-              record: public
+              record: solar
               scheme: https
             transform:
               string:
@@ -201,7 +201,7 @@ services:
           OIDC_OP_LOGOUT_ENDPOINT:
             extract:
               hostname: kanidm
-              record: public
+              record: solar
               scheme: https
             transform:
               string:
@@ -209,22 +209,22 @@ services:
           OIDC_RP_SCOPES: openid profile email
           LOGIN_REDIRECT_URL:
             hostname: meet
-            record: public
+            record: solar
             scheme: https
           LOGIN_REDIRECT_URL_FAILURE:
             hostname: meet
-            record: public
+            record: solar
             scheme: https
           LOGOUT_REDIRECT_URL:
             hostname: meet
-            record: public
+            record: solar
             scheme: https
           OIDC_USE_NONCE: false
           OIDC_USE_PKCE: true
           OIDC_REDIRECT_REQUIRE_HTTPS: true
           OIDC_REDIRECT_ALLOWED_HOSTS:
             hostname: meet
-            record: public
+            record: solar
             scheme: "https"
           OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION: false
           OIDC_STORE_ACCESS_TOKEN: true
@@ -233,7 +233,7 @@ services:
           ALLOW_UNREGISTERED_ROOMS: false
           LIVEKIT_API_URL:
             hostname: livekit
-            record: public
+            record: solar
             scheme: "https"
           LIVEKIT_API_KEY:
             service: livekit

@@ -13,7 +13,7 @@ services:
       depends-on: [ntfy]
       traefik:
         traefik:
-          record: private
+          record: sun
           service:
             port:
               env: WUD_SERVER_PORT

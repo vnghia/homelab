@@ -19,14 +19,14 @@ services:
               origin-url:
                 - extract:
                     hostname: linkwarden
-                    record: public
+                    record: solar
                     scheme: https
                   transform:
                     string:
                       template: "{value}/api/v1/auth/callback/authentik"
               origin-landing:
                 hostname: linkwarden
-                record: public
+                record: solar
                 scheme: https
               prefer-short-username: true
               enable-legacy-crypto: true
@@ -39,7 +39,7 @@ services:
     config:
       traefik:
         traefik:
-          record: public
+          record: solar
           service:
             port:
               svariable: PORT
@@ -71,7 +71,7 @@ services:
         NEXTAUTH_URL:
           extract:
             hostname: linkwarden
-            record: public
+            record: solar
             scheme: https
           transform:
             string:
@@ -93,7 +93,7 @@ services:
         AUTHENTIK_ISSUER:
           extract:
             hostname: kanidm
-            record: public
+            record: solar
             scheme: https
           transform:
             string:
