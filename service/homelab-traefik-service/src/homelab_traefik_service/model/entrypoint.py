@@ -61,10 +61,12 @@ class TraefikEntrypointTimeoutModel(HomelabBaseModel):
 
     def to_config(self) -> dict[str, Any]:
         return {
-            "respondingTimeouts": {
-                "readTimeout": self.read,
-                "writeTimeout": self.idle,
-                "idleTimeout": self.write,
+            "transport": {
+                "respondingTimeouts": {
+                    "readTimeout": self.read,
+                    "writeTimeout": self.idle,
+                    "idleTimeout": self.write,
+                }
             }
         }
 
@@ -110,8 +112,8 @@ class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
         return (
             {
                 "address": self.to_address(extractor_args),
-                "transport": (self.timeout.to_config() if self.timeout else {}),
             }
+            | (self.timeout.to_config() if self.timeout else {})
             | (self.http3.to_config(extractor_args) if self.http3 else {})
             | (
                 self.proxy_protocol.to_config(extractor_args)

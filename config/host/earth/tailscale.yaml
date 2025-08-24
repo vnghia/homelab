@@ -1,0 +1,23 @@
+services:
+  tailscale:
+    variables:
+      HTTP_PORT:
+        port: http
+        info: internal
+      HTTPS_PORT:
+        port: https
+        info: internal
+    container:
+      hosts:
+        - host: sun
+          internal: true
+      ports:
+        http:
+          internal: 80
+          protocol: tcp
+        https:
+          internal: &https-port 443
+          protocol: tcp
+        h3:
+          internal: *https-port
+          protocol: udp

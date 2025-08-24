@@ -1,0 +1,22 @@
+services:
+  traefik:
+    config:
+      entrypoint:
+        config:
+          http:
+            port:
+              service: tailscale
+              extract:
+                svariable: HTTP_PORT
+            to:
+              service: tailscale
+              extract:
+                svariable: HTTPS_PORT
+          https:
+            port:
+              service: tailscale
+              extract:
+                svariable: HTTPS_PORT
+            http3: {}
+        mapping:
+          earth: "https"

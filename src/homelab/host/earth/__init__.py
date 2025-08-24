@@ -2,6 +2,7 @@ from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global import GlobalArgs
 from homelab_network.resource.network import NetworkResource
 from homelab_tailscale_service import TailscaleService
+from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 
 from .. import HostBase
@@ -32,8 +33,19 @@ class EarthHost(HostBase[EarthServiceConfig]):
             extractor_args=self.extractor_args,
         )
 
+        self.traefik = TraefikService(
+            self.services_config.traefik,
+            opts=self.child_opts,
+            network_resource=self.network,
+            extractor_args=self.extractor_args,
+        )
+
         self.build_extra_services()
 
         self.build_file()
 
         self.register_outputs({})
+
+    @property
+    def traefik_service(self) -> TraefikService | None:
+        return self.traefik

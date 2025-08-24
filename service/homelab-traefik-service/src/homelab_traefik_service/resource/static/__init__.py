@@ -81,15 +81,21 @@ class TraefikStaticConfigResource(
                         }
                     },
                 },
-                "experimental": {
-                    "plugins": {
-                        name: {
-                            "moduleName": model.name,
-                            "version": model.version,
+            }
+            | (
+                {
+                    "experimental": {
+                        "plugins": {
+                            name: {
+                                "moduleName": model.name,
+                                "version": model.version,
+                            }
+                            for name, model in traefik_config.plugins.items()
                         }
-                        for name, model in traefik_config.plugins.items()
-                    },
-                },
-            },
+                    }
+                }
+                if traefik_config.plugins
+                else {}
+            ),
             extractor_args=traefik_service.extractor_args,
         )

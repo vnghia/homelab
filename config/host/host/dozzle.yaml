@@ -8,29 +8,7 @@ services:
   dozzle:
     variables:
       AGENT_PORT: &agent-port 7007
-    config:
-      traefik:
-        traefik:
-          record: sun
-          hostname: system
-          service:
-            port:
-              extract:
-                env: DOZZLE_ADDR
-              transform:
-                string:
-                  capture: ":(\\d+)"
-          middlewares:
-            - name: redirect
-              data:
-                redirectRegex:
-                  regex: "^https://([^/]+)/?$"
-                  replacement:
-                    extract:
-                      env: DOZZLE_BASE
-                    transform:
-                      string:
-                        template: "https://${{1}}{value}/"
+    config: {}
     container:
       image: dozzle
       docker-socket:
