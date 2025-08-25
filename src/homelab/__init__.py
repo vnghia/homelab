@@ -42,7 +42,7 @@ class Homelab:
         self.keepass = KeepassResource(
             {
                 service.add_service_name(name): resource
-                for service in self.sun.services.values()
+                for service in (self.sun.services | self.earth.services).values()
                 if service._keepass
                 for name, resource in service._keepass.keepasses.items()
             }
