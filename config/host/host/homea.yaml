@@ -10,17 +10,28 @@ docker:
 services:
   homea:
     variables:
-      PORT: &port 8123
-    config: {}
+      PORT: 8123
+    config:
+      traefik:
+        traefik:
+          record: earth
+          service:
+            port:
+              svariable: PORT
+    keepasses:
+      keepass:
+        username:
+          length: 16
+          special: false
+          upper: false
+        hostname:
+          hostname: homea
+          record: earth
     container:
       image: homea
       network:
         bridge:
           default: {}
-      ports:
-        http:
-          internal: *port
-          protocol: tcp
       tmpfs:
         - path: /run
           exec: true
