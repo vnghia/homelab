@@ -3,7 +3,7 @@ docker:
     remote:
       syncthing:
         repo: ghcr.io/syncthing/syncthing
-        tag: "2.0.1"
+        tag: "2.0.3"
   volumes:
     local:
       syncthing-config: {}
