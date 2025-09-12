@@ -3,10 +3,10 @@ docker:
     remote:
       immich-server:
         repo: ghcr.io/immich-app/immich-server
-        tag: "v1.139.4"
+        tag: "v1.141.1"
       immich-machine-learning:
         repo: ghcr.io/immich-app/immich-machine-learning
-        tag: "v1.139.4-rocm"
+        tag: "v1.141.1-rocm"
   volumes:
     local:
       immich-data: {}
