@@ -3,7 +3,7 @@ docker:
     remote:
       crowdsec:
         repo: ghcr.io/crowdsecurity/crowdsec
-        tag: "v1.6.11"
+        tag: "v1.7.0"
   volumes:
     local:
       crowdsec-data:
