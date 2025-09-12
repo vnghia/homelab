@@ -43,6 +43,7 @@ class ContainerModelBuildArgs:
 
 class ContainerModel(HomelabBaseModel):
     active: bool = True
+    delete_before_replace: bool = False
     inherit: ContainerInheritConfig = ContainerInheritConfig()
 
     raw_image: ContainerImageModelConfig | None = Field(None, alias="image")
@@ -223,7 +224,8 @@ class ContainerModel(HomelabBaseModel):
                 ResourceOptions(
                     replace_on_changes=["*"],
                     depends_on=depends_on,
-                    delete_before_replace=bool(self.ports),
+                    delete_before_replace=self.delete_before_replace
+                    or bool(self.ports),
                 ),
             ),
             image=self.image.to_image_name(extractor_args.host.docker.image),
