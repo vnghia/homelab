@@ -3,7 +3,7 @@ docker:
     remote:
       traefik:
         repo: traefik
-        tag: "v3.5.1"
+        tag: "v3.5.2"
   volumes:
     local:
       traefik-config:
