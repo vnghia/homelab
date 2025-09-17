@@ -3,7 +3,7 @@ docker:
     remote:
       meet-backend:
         repo: lasuite/meet-backend
-        tag: &meet-version "v0.1.36"
+        tag: &meet-version "v0.1.37"
       meet-frontend:
         repo: lasuite/meet-frontend
         tag: *meet-version
@@ -228,7 +228,6 @@ services:
             record: solar
             scheme: "https"
           OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION: false
-          OIDC_STORE_ACCESS_TOKEN: true
           USER_OIDC_FIELDS_TO_FULLNAME: name
           USER_OIDC_FIELD_TO_SHORTNAME: preferred_username
           ALLOW_UNREGISTERED_ROOMS: false
