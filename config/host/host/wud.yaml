@@ -59,3 +59,6 @@ services:
             string:
               capture: ":(\\d+)"
               template: "http://ntfy:{value}"
+        WUD_TRIGGER_PUSHOVER_all_USER:
+        WUD_TRIGGER_PUSHOVER_all_TOKEN:
+        WUD_TRIGGER_PUSHOVER_all_HTML: 1
