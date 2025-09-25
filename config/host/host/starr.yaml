@@ -12,7 +12,7 @@ docker:
         tag: "version-2.0.5.5160"
       bazarr:
         repo: ghcr.io/linuxserver/bazarr
-        tag: "1.5.2"
+        tag: "1.5.3"
   volumes:
     local:
       starr-data:
