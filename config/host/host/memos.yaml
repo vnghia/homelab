@@ -3,7 +3,7 @@ docker:
     remote:
       memos:
         repo: ghcr.io/usememos/memos
-        tag: "0.25.0"
+        tag: "0.25.1"
   volumes:
     local:
       memos-data: {}
