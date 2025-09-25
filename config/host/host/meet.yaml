@@ -160,8 +160,7 @@ services:
             secret: django
           DJANGO_SETTINGS_MODULE: meet.settings
           DJANGO_CONFIGURATION: Production
-          # TODO: Re-enable this after https://github.com/suitenumerique/meet/issues/708
-          FRONTEND_IS_SILENT_LOGIN_ENABLED: false
+          FRONTEND_IS_SILENT_LOGIN_ENABLED: true
           FRONTEND_USE_FRENCH_GOV_FOOTER: false
           FRONTEND_USE_PROCONNECT_BUTTON: false
           OIDC_CREATE_USER: true
