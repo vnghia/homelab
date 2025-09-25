@@ -1,0 +1,123 @@
+docker:
+  images:
+    remote:
+      donetick:
+        repo: donetick/donetick
+        tag: "v0.1.62"
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            donetick:
+              display-name: Donetick
+              origin-url:
+                - service: donetick
+                  extract:
+                    svariable: REDIRECT_URL
+              origin-landing:
+                hostname: donetick
+                record: solar
+                scheme: https
+              prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
+  donetick:
+    variables:
+      PORT: 2021
+      REDIRECT_URL:
+        extract:
+          hostname: donetick
+          record: solar
+          scheme: https
+        transform:
+          string:
+            template: "{value}/auth/oauth2"
+      OAUTH_URL:
+        extract:
+          hostname: kanidm
+          record: solar
+          scheme: https
+        transform:
+          string:
+            template: "{value}/oauth2/openid/donetick"
+    config:
+      traefik:
+        traefik:
+          record: solar
+          service:
+            port:
+              svariable: PORT
+    databases:
+      postgres:
+        postgres: {}
+    secrets:
+      key:
+        length: 32
+    container:
+      image: donetick
+      databases:
+        - postgres:
+          envs:
+            username: DT_DATABASE_USER
+            password: DT_DATABASE_PASSWORD
+            database: DT_DATABASE_NAME
+            host: DT_DATABASE_HOST
+            port: DT_DATABASE_PORT
+      wud:
+        template: https://github.com/donetick/donetick/releases/tag/${original}
+        include-prefix: v
+      envs:
+        DONETICK_DISABLE_SIGNUP: true
+        DT_ENV: selfhosted
+        DT_IS_DONE_TICK_DOT_COM: false
+        DT_IS_USER_CREATION_DISABLED: true
+        DT_JWT_SECRET:
+          secret: key
+        DT_DATABASE_TYPE: postgres
+        DT_DATABASE_MIGRATION: true
+        DT_SERVER_PORT:
+          svariable: PORT
+        DT_SERVER_CORS_ALLOW_ORIGINS:
+          hostname: donetick
+          record: solar
+          scheme: https
+        DT_SERVER_SERVE_FRONTEND: true
+        DT_LOGGING_LEVEL: debug
+        DT_LOGGING_ENCODING: json
+        DT_LOGGING_DEVELOPMENT: false
+        DT_OAUTH2_CLIENT_ID: donetick
+        DT_OAUTH2_CLIENT_SECRET:
+          service: kanidm
+          extract:
+            export: donetick
+        DT_OAUTH2_REDIRECT_URL:
+          svariable: REDIRECT_URL
+        DT_OAUTH2_SCOPES: openid profile email
+        DT_OAUTH2_AUTH_URL:
+          extract:
+            hostname: kanidm
+            record: solar
+            scheme: https
+          transform:
+            string:
+              template: "{value}/ui/oauth2"
+        DT_OAUTH2_TOKEN_URL:
+          extract:
+            hostname: kanidm
+            record: solar
+            scheme: https
+          transform:
+            string:
+              template: "{value}/oauth2/token"
+        DT_OAUTH2_USER_INFO_URL:
+          extract:
+            svariable: OAUTH_URL
+          transform:
+            string:
+              template: "{value}/userinfo"
+        DT_OAUTH2_NAME: Kanidm
+        DT_REALTIME_ENABLED: true
+        DT_REALTIME_SSE_ENABLED: true
+        DT_REALTIME_ENABLE_COMPRESSION: true
+        DT_REALTIME_ALLOWED_ORIGINS: "*"
