@@ -168,3 +168,6 @@ services:
           transform:
             string:
               template: "{base}{prefix}"
+        AUTO_LOGIN:
+          keepass:
+          info: username
