@@ -29,6 +29,9 @@ services:
           record: earth
     container:
       image: homea
+      capabilities:
+        - NET_ADMIN
+        - NET_RAW
       network:
         bridge:
           default: {}
