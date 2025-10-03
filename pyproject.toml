@@ -42,13 +42,11 @@ classifiers = ["Private :: Do Not Upload"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[dependency-groups]
+dev = ["mypy>=1.14.1", "datamodel-code-generator[http]>=0.28.1", "ruff>=0.9.6"]
+
 [tool.uv]
 managed = true
-dev-dependencies = [
-    "mypy>=1.14.1",
-    "datamodel-code-generator[http]>=0.28.1",
-    "ruff>=0.9.6",
-]
 
 [tool.uv.sources]
 homelab-backup = { workspace = true }
