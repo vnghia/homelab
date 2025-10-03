@@ -76,6 +76,7 @@ services:
           secret: key
         DT_DATABASE_TYPE: postgres
         DT_DATABASE_MIGRATION: true
+        DT_DATABASE_LOGGER: 1
         DT_SERVER_PORT:
           svariable: PORT
         DT_SERVER_CORS_ALLOW_ORIGINS:
@@ -83,7 +84,7 @@ services:
           record: solar
           scheme: https
         DT_SERVER_SERVE_FRONTEND: true
-        DT_LOGGING_LEVEL: debug
+        DT_LOGGING_LEVEL: info
         DT_LOGGING_ENCODING: json
         DT_LOGGING_DEVELOPMENT: false
         DT_OAUTH2_CLIENT_ID: donetick
