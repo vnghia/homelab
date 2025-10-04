@@ -3,7 +3,7 @@ docker:
     remote:
       dagu:
         repo: ghcr.io/dagu-org/dagu
-        tag: "1.20.0"
+        tag: "1.22.9"
   volumes:
     local:
       dagu-home: {}
@@ -115,7 +115,7 @@ services:
             volume: dagu-home
           transform:
             path: logs/admin
-        DAGU_PERMISSIONS_WRITE_DAGS: "false"
+        DAGU_PERMISSIONS_WRITE_DAGS: false
         DAGU_LOG_FORMAT: json
     containers:
       docker:

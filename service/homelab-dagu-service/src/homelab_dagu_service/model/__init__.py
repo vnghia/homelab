@@ -35,6 +35,7 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
         )
 
         return {
+            "runConfig": {"disableRunIdEdit": True},
             "dotenv": [
                 dotenv.to_path(
                     dagu_service.extractor_args_from_self(
@@ -66,7 +67,11 @@ class DaguDagModelBuilder(HomelabRootModel[DaguDagModel]):
                 )
                 for step in root.steps
             ],
-        }
+        } | (
+            {"type": "graph"}
+            if any(step.depends is not None for step in root.steps)
+            else {}
+        )
 
     def build_resource(
         self,

@@ -30,7 +30,7 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
         return (
             {
                 "name": root.name,
-                "dir": root.dir,
+                "workingDir": root.dir,
                 "executor": root.executor.to_executor(extractor_args, dotenvs)
                 if root.executor
                 else None,
