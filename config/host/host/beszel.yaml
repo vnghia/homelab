@@ -3,7 +3,7 @@ docker:
     remote:
       beszel:
         repo: ghcr.io/henrygd/beszel/beszel
-        tag: "0.12.12"
+        tag: "0.13.0"
   volumes:
     local:
       beszel-data:
