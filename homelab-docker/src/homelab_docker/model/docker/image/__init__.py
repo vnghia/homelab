@@ -8,10 +8,17 @@ from ..platform import Platform, PlatformString
 class RemoteImageModel(HomelabBaseModel):
     repo: PlatformString
     tag: PlatformString
+    prefix: PlatformString | None = None
+    suffix: PlatformString | None = None
     delete_before_replace: bool = False
 
     def build_name(self, platform: Platform) -> str:
-        return "{}:{}".format(self.repo.to_str(platform), self.tag.to_str(platform))
+        tag = self.tag.to_str(platform)
+        if self.prefix:
+            tag = self.prefix.to_str(platform) + tag
+        if self.suffix:
+            tag = tag + self.suffix.to_str(platform)
+        return "{}:{}".format(self.repo.to_str(platform), tag)
 
     def build_resource(
         self,
