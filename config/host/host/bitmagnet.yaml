@@ -19,9 +19,10 @@ services:
       postgres:
         postgres:
           config:
-            minimum-redundancy: 1
-            last-backup-maximum-age: 1 DAYS
-            retention-policy: REDUNDANCY 1
+            backup:
+              minimum-redundancy: 1
+              last-backup-maximum-age: 1 DAYS
+              retention-policy: REDUNDANCY 1
     container:
       image: bitmagnet
       network:

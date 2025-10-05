@@ -42,14 +42,18 @@ class BarmanConfigFileResource(
         minimum_redundancy = None
         last_backup_maximum_age = None
         retention_policy = None
+
         if database_config_model:
             if not isinstance(
                 database_config_model.root, ServiceDatabasePostgresConfigModel
             ):
                 raise TypeError("Service database config model is not Postgres config")
-            minimum_redundancy = database_config_model.root.minimum_redundancy
-            last_backup_maximum_age = database_config_model.root.last_backup_maximum_age
-            retention_policy = database_config_model.root.retention_policy
+
+            backup_config = database_config_model.root.backup
+            if backup_config:
+                minimum_redundancy = backup_config.minimum_redundancy
+                last_backup_maximum_age = backup_config.last_backup_maximum_age
+                retention_policy = backup_config.retention_policy
 
         super().__init__(
             self.name,
