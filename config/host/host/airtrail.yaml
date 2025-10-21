@@ -3,7 +3,7 @@ docker:
     remote:
       airtrail:
         repo: johly/airtrail
-        tag: "v2.7.1"
+        tag: "v3.2.0"
 services:
   kanidm:
     config:
@@ -81,3 +81,4 @@ services:
             export: airtrail
         OAUTH_AUTO_REGISTER: true
         OAUTH_AUTO_LOGIN: true
+        OAUTH_HIDE_PASSWORD_FORM: true
