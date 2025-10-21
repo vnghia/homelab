@@ -4,6 +4,7 @@ from homelab_network.model.ip import NetworkIpSource
 from homelab_network.resource.hostname import NetworkHostnameResource
 from homelab_network.resource.network import NetworkResource
 from homelab_secret.resource.keepass import KeepassResource
+from loguru import logger
 
 from .host.earth import EarthHost
 from .host.earth.config import EarthServiceConfig
@@ -12,6 +13,7 @@ from .host.sun.config import SunServiceConfig
 
 
 class Homelab:
+    @logger.catch(reraise=True)
     def __init__(self) -> None:
         self.config = Config[SunServiceConfig, EarthServiceConfig].build(
             HostConfig[SunServiceConfig, EarthServiceConfig]
