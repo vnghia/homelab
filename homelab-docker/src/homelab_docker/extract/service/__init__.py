@@ -11,6 +11,7 @@ from homelab_extract.service import (
 from homelab_extract.service.database import ServiceExtractDatabaseSource
 from homelab_extract.service.export import ServiceExtractExportSource
 from homelab_extract.service.keepass import ServiceExtractKeepassSource
+from homelab_extract.service.key import ServiceExtractKeySource
 from homelab_extract.service.secret import ServiceExtractSecretSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
@@ -22,6 +23,7 @@ from ..transform import ExtractTransformer
 from .database import ServiceDatabaseSourceExtractor
 from .export import ServiceExportSourceExtractor
 from .keepass import ServiceKeepassSourceExtractor
+from .key import ServiceKeySourceExtractor
 from .secret import ServiceSecretSourceExtractor
 from .variable import ServiceVariableSourceExtractor
 
@@ -38,6 +40,7 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
         ServiceDatabaseSourceExtractor
         | ServiceExportSourceExtractor
         | ServiceKeepassSourceExtractor
+        | ServiceKeySourceExtractor
         | ServiceSecretSourceExtractor
         | ServiceVariableSourceExtractor
     ):
@@ -48,6 +51,8 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
             return ServiceExportSourceExtractor(root)
         if isinstance(root, ServiceExtractKeepassSource):
             return ServiceKeepassSourceExtractor(root)
+        if isinstance(root, ServiceExtractKeySource):
+            return ServiceKeySourceExtractor(root)
         if isinstance(root, ServiceExtractSecretSource):
             return ServiceSecretSourceExtractor(root)
         return ServiceVariableSourceExtractor(root)

@@ -5,6 +5,7 @@ from ..transform import ExtractTransform
 from .database import ServiceExtractDatabaseSource
 from .export import ServiceExtractExportSource
 from .keepass import ServiceExtractKeepassSource
+from .key import ServiceExtractKeySource
 from .secret import ServiceExtractSecretSource
 from .variable import ServiceExtractVariableSource
 
@@ -14,6 +15,7 @@ class ServiceExtractSource(
         ServiceExtractDatabaseSource
         | ServiceExtractExportSource
         | ServiceExtractKeepassSource
+        | ServiceExtractKeySource
         | ServiceExtractSecretSource
         | ServiceExtractVariableSource
     ]
