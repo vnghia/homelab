@@ -1,16 +1,9 @@
 from __future__ import annotations
 
 import pulumi
-import pulumi_tls as tls
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource.file import FileResource
-from homelab_docker.resource.file.config import (
-    ConfigFileResource,
-    JsonDefaultModel,
-    TomlDumper,
-)
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from pulumi import Output, ResourceOptions
 
@@ -18,45 +11,6 @@ from .client import KanidmClient
 from .config import KandimConfig
 from .resource.password import KanidmPasswordResource
 from .resource.state import KanidmStateResource
-
-
-class KanidmServerConfigResource(
-    ConfigFileResource[JsonDefaultModel], module="kanidm", name="ServerConfig"
-):
-    validator = JsonDefaultModel
-    dumper = TomlDumper[JsonDefaultModel]
-
-    def __init__(
-        self,
-        resource_name: str,
-        *,
-        opts: ResourceOptions,
-        kanidm_service: KanidmService,
-    ) -> None:
-        config = kanidm_service.config
-        path = GlobalExtractor(kanidm_service.config.path.config)
-        extractor_args = kanidm_service.extractor_args
-        self.path = path.extract_path(extractor_args)
-
-        super().__init__(
-            resource_name,
-            opts=opts,
-            volume_path=path.extract_volume_path(extractor_args),
-            data={
-                "version": "2",
-                "bindaddress": Output.format("[::]:{}", kanidm_service.port),
-                "db_path": GlobalExtractor(config.path.db).extract_path(extractor_args),
-                "tls_key": GlobalExtractor(config.path.tls_key).extract_path(
-                    extractor_args
-                ),
-                "tls_chain": GlobalExtractor(config.path.tls_chain).extract_path(
-                    extractor_args
-                ),
-                "domain": GlobalExtractor(config.domain).extract_str(extractor_args),
-                "origin": GlobalExtractor(config.origin).extract_str(extractor_args),
-            },
-            extractor_args=kanidm_service.extractor_args,
-        )
 
 
 class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
@@ -73,63 +27,23 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
-        self.port = (
-            GlobalExtractor(self.config.port)
-            .extract_str(self.extractor_args)
-            .apply(int)
-        )
-
-        self.key = tls.PrivateKey(
-            "key", opts=self.child_opts, algorithm="ECDSA", ecdsa_curve="P256"
-        )
-        self.chain = tls.SelfSignedCert(
-            "chain",
-            opts=self.child_opts,
-            allowed_uses=["any_extended"],
-            private_key_pem=self.key.private_key_pem,
-            validity_period_hours=100 * 365 * 60,
-        )
-
-        self.key_file = FileResource(
-            "key",
-            opts=self.child_opts,
-            volume_path=GlobalExtractor(self.config.path.tls_key).extract_volume_path(
-                self.extractor_args
-            ),
-            content=self.key.private_key_pem,
-            mode=0o440,
-            extractor_args=self.extractor_args,
-        )
-        self.chain_file = FileResource(
-            "chain",
-            opts=self.child_opts,
-            volume_path=GlobalExtractor(self.config.path.tls_chain).extract_volume_path(
-                self.extractor_args
-            ),
-            content=self.chain.cert_pem,
-            mode=0o440,
-            extractor_args=self.extractor_args,
-        )
-
-        self.config_file = KanidmServerConfigResource(
-            "server", opts=self.child_opts, kanidm_service=self
-        )
-
-        self.options[None].files = [self.key_file, self.chain_file, self.config_file]
         self.build_containers()
 
+        self.config_path = GlobalExtractor(self.config.path).extract_path(
+            self.extractor_args
+        )
         self.admin = KanidmPasswordResource(
             opts=self.child_opts,
             container=self.container.id,
             account="admin",
-            config_path=self.config_file.path,
+            config_path=self.config_path,
             extractor_args=self.extractor_args,
         )
         self.idm_admin = KanidmPasswordResource(
             opts=self.child_opts,
             container=self.container.id,
             account="idm_admin",
-            config_path=self.config_file.path,
+            config_path=self.config_path,
             extractor_args=self.extractor_args,
         )
         pulumi.export("kanidm.admin", self.admin.password)
@@ -138,7 +52,9 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         self.url = Output.format(
             "https://{}:{}",
             GlobalExtractor(self.config.address).extract_str(self.extractor_args),
-            GlobalExtractor(self.config.port).extract_str(self.extractor_args),
+            GlobalExtractor(self.config.port)
+            .extract_str(self.extractor_args)
+            .apply(int),
         )
 
         self.state = KanidmStateResource(
