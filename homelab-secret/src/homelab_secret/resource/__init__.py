@@ -22,3 +22,9 @@ class SecretResource:
         if isinstance(secret, tls.PrivateKey):
             return secret
         raise TypeError("Secret {} is not a valid private key".format(key))
+
+    def get_cert(self, key: str) -> tls.SelfSignedCert:
+        secret = self.secrets[key]
+        if isinstance(secret, tls.SelfSignedCert):
+            return secret
+        raise TypeError("Secret {} is not a valid certificate".format(key))

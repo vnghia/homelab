@@ -39,3 +39,6 @@ class ServiceSecretResource(ComponentResource):
 
     def get_key(self, key: str) -> tls.PrivateKey:
         return self.secrets.get_key(key)
+
+    def get_cert(self, key: str) -> tls.SelfSignedCert:
+        return self.secrets.get_cert(key)

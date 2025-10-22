@@ -8,6 +8,7 @@ from homelab_extract.service import (
     ServiceExtractFull,
     ServiceExtractSource,
 )
+from homelab_extract.service.cert import ServiceExtractCertSource
 from homelab_extract.service.database import ServiceExtractDatabaseSource
 from homelab_extract.service.export import ServiceExtractExportSource
 from homelab_extract.service.keepass import ServiceExtractKeepassSource
@@ -20,6 +21,7 @@ from pydantic import ValidationError
 from .. import ExtractorBase
 from ..container import ContainerExtractor
 from ..transform import ExtractTransformer
+from .cert import ServiceCertSourceExtractor
 from .database import ServiceDatabaseSourceExtractor
 from .export import ServiceExportSourceExtractor
 from .keepass import ServiceKeepassSourceExtractor
@@ -37,7 +39,8 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
     def extractor(
         self,
     ) -> (
-        ServiceDatabaseSourceExtractor
+        ServiceCertSourceExtractor
+        | ServiceDatabaseSourceExtractor
         | ServiceExportSourceExtractor
         | ServiceKeepassSourceExtractor
         | ServiceKeySourceExtractor
@@ -45,6 +48,8 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
         | ServiceVariableSourceExtractor
     ):
         root = self.root.root
+        if isinstance(root, ServiceExtractCertSource):
+            return ServiceCertSourceExtractor(root)
         if isinstance(root, ServiceExtractDatabaseSource):
             return ServiceDatabaseSourceExtractor(root)
         if isinstance(root, ServiceExtractExportSource):

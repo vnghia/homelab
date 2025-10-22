@@ -2,6 +2,7 @@ from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 from ..container import ContainerExtract
 from ..transform import ExtractTransform
+from .cert import ServiceExtractCertSource
 from .database import ServiceExtractDatabaseSource
 from .export import ServiceExtractExportSource
 from .keepass import ServiceExtractKeepassSource
@@ -12,7 +13,8 @@ from .variable import ServiceExtractVariableSource
 
 class ServiceExtractSource(
     HomelabRootModel[
-        ServiceExtractDatabaseSource
+        ServiceExtractCertSource
+        | ServiceExtractDatabaseSource
         | ServiceExtractExportSource
         | ServiceExtractKeepassSource
         | ServiceExtractKeySource
