@@ -13,7 +13,7 @@ if typing.TYPE_CHECKING:
 
 class GlobalConfigSourceExtractor(ExtractorBase[GlobalExtractConfigSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
-        from ..resource.file.config import JsonDefaultModel, YamlDumper
+        from ..resource.file.config import JsonDefaultModel, TomlDumper, YamlDumper
         from .global_ import GlobalExtractor
 
         json_data = Output.json_dumps(
@@ -26,4 +26,8 @@ class GlobalConfigSourceExtractor(ExtractorBase[GlobalExtractConfigSource]):
             case GlobalExtractConfigFormat.YAML:
                 return json_data.apply(JsonDefaultModel.model_validate_json).apply(
                     YamlDumper.dumps
+                )
+            case GlobalExtractConfigFormat.TOML:
+                return json_data.apply(JsonDefaultModel.model_validate_json).apply(
+                    TomlDumper.dumps
                 )

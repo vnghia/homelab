@@ -7,6 +7,7 @@ from homelab_pydantic import HomelabBaseModel
 class GlobalExtractConfigFormat(StrEnum):
     JSON = auto()
     YAML = auto()
+    TOML = auto()
 
 
 class GlobalExtractConfigSource(HomelabBaseModel):
