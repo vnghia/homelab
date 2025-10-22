@@ -1,0 +1,44 @@
+docker:
+  images:
+    remote:
+      docker-dind:
+        repo: docker
+        tag: &docker-version "28.5.1"
+        suffix: "-dind"
+      docker-cli:
+        repo: docker
+        tag: *docker-version
+        suffix: "-cli"
+services:
+  docker:
+    config:
+      dagu:
+        docker:
+          executor:
+            run:
+              model: cli
+          dags:
+            start:
+              dag:
+                params:
+                  main:
+                    CONTAINERS: ""
+              command:
+                - "docker"
+                - "start"
+                - param: CONTAINERS
+            stop:
+              dag:
+                params:
+                  main:
+                    CONTAINERS: ""
+              command:
+                - "docker"
+                - "stop"
+                - param: CONTAINERS
+    containers:
+      cli:
+        active: false
+        image: docker-cli
+        docker-socket:
+          write: false

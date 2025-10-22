@@ -23,29 +23,6 @@ services:
             port:
               env: DAGU_PORT
       dagu:
-        docker:
-          executor:
-            run:
-              model: docker
-          dags:
-            start:
-              dag:
-                params:
-                  main:
-                    CONTAINERS: ""
-              command:
-                - "docker"
-                - "start"
-                - param: CONTAINERS
-            stop:
-              dag:
-                params:
-                  main:
-                    CONTAINERS: ""
-              command:
-                - "docker"
-                - "stop"
-                - param: CONTAINERS
         dag:
           dag:
             name: dummy

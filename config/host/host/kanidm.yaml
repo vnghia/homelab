@@ -73,6 +73,7 @@ services:
             port:
               svariable: PORT
       dagu:
+        depends-on: [docker]
         dag:
           pre-backup-volume:
             name: pre-backup-volume
@@ -81,7 +82,7 @@ services:
             steps:
               - name: stop-container
                 run:
-                  service: dagu
+                  service: docker
                   dag: stop
                   params:
                     main:
@@ -99,7 +100,7 @@ services:
                   - svariable: BACKUP
               - name: start-container
                 run:
-                  service: dagu
+                  service: docker
                   dag: start
                   params:
                     main:

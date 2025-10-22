@@ -10,6 +10,3 @@ docker:
       python-builder:
         repo: ghcr.io/astral-sh/uv
         tag: "0.6.12-python3.13-alpine"
-      docker:
-        repo: docker
-        tag: "28.3.2-cli-alpine3.22"
