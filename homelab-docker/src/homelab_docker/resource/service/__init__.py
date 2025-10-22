@@ -134,6 +134,14 @@ class ServiceResourceBase(ComponentResource):
                         ),
                         secret.public_key_openssh,
                     )
+                elif isinstance(secret, tls.SelfSignedCert):
+                    pulumi.export(
+                        "{}.secret.{}.cert".format(
+                            self.extractor_args.host.name(),
+                            self.add_service_name(name),
+                        ),
+                        secret.cert_pem,
+                    )
                 else:
                     pulumi.export(
                         "{}.secret.{}".format(

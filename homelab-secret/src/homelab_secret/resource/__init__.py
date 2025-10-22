@@ -6,7 +6,10 @@ import pulumi_tls as tls
 
 @dataclasses.dataclass
 class SecretResource:
-    secrets: dict[str, random.RandomUuid | random.RandomPassword | tls.PrivateKey]
+    secrets: dict[
+        str,
+        random.RandomUuid | random.RandomPassword | tls.PrivateKey | tls.SelfSignedCert,
+    ]
 
     def get_secret(self, key: str) -> random.RandomUuid | random.RandomPassword:
         secret = self.secrets[key]
