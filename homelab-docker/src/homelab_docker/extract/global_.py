@@ -4,28 +4,26 @@ import typing
 from typing import Any
 
 from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
+from homelab_extract.config import GlobalExtractConfigSource
 from homelab_extract.dict_ import GlobalExtractDictSource
 from homelab_extract.hostname import GlobalExtractHostnameSource
-from homelab_extract.json import GlobalExtractJsonSource
 from homelab_extract.kv import GlobalExtractKvSource
 from homelab_extract.project import GlobalExtractProjectSource
-from homelab_extract.simple import GlobalExtractSimpleSource
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 from pydantic import ValidationError
 
 from . import ExtractorBase
+from .config import GlobalConfigSourceExtractor
 from .container import ContainerExtractor
 from .dict_ import GlobalDictSourceExtractor
 from .host import HostExtractor, HostSourceExtractor
 from .hostname import GlobalHostnameSourceExtractor
-from .json import GlobalJsonSourceExtractor
 from .kv import GlobalKvSourceExtractor
 from .project import GlobalProjectSourceExtractor
 from .simple import GlobalSimpleSourceExtractor
 from .transform import ExtractTransformer
-from .yaml import GlobalYamlSourceExtractor
 
 if typing.TYPE_CHECKING:
     from ..model.docker.container.volume_path import ContainerVolumePath
@@ -37,28 +35,25 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
     def extractor(
         self,
     ) -> (
-        GlobalDictSourceExtractor
+        GlobalConfigSourceExtractor
+        | GlobalDictSourceExtractor
         | GlobalHostnameSourceExtractor
-        | GlobalJsonSourceExtractor
         | GlobalKvSourceExtractor
         | GlobalProjectSourceExtractor
         | GlobalSimpleSourceExtractor
-        | GlobalYamlSourceExtractor
     ):
         root = self.root.root
+        if isinstance(root, GlobalExtractConfigSource):
+            return GlobalConfigSourceExtractor(root)
         if isinstance(root, GlobalExtractDictSource):
             return GlobalDictSourceExtractor(root)
         if isinstance(root, GlobalExtractHostnameSource):
             return GlobalHostnameSourceExtractor(root)
-        if isinstance(root, GlobalExtractJsonSource):
-            return GlobalJsonSourceExtractor(root)
         if isinstance(root, GlobalExtractKvSource):
             return GlobalKvSourceExtractor(root)
         if isinstance(root, GlobalExtractProjectSource):
             return GlobalProjectSourceExtractor(root)
-        if isinstance(root, GlobalExtractSimpleSource):
-            return GlobalSimpleSourceExtractor(root)
-        return GlobalYamlSourceExtractor(root)
+        return GlobalSimpleSourceExtractor(root)
 
     def extract_str(
         self, extractor_args: ExtractorArgs

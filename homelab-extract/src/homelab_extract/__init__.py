@@ -2,26 +2,24 @@ from typing import Self
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
+from .config import GlobalExtractConfigSource
 from .dict_ import GlobalExtractDictSource
 from .host import HostExtract
 from .hostname import GlobalExtractHostnameSource
-from .json import GlobalExtractJsonSource
 from .kv import GlobalExtractKvSource
 from .project import GlobalExtractProjectSource
 from .simple import GlobalExtractSimpleSource
 from .transform import ExtractTransform
-from .yaml import GlobalExtractYamlSource
 
 
 class GlobalExtractSource(
     HomelabRootModel[
-        GlobalExtractDictSource
+        GlobalExtractConfigSource
+        | GlobalExtractDictSource
         | GlobalExtractHostnameSource
-        | GlobalExtractJsonSource
         | GlobalExtractKvSource
         | GlobalExtractProjectSource
         | GlobalExtractSimpleSource
-        | GlobalExtractYamlSource
     ]
 ):
     pass

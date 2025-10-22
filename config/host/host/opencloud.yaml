@@ -72,7 +72,8 @@ services:
           path:
             env: PROXY_CSP_CONFIG_FILE_LOCATION
           content:
-            yaml:
+            format: yaml
+            data:
               directives:
                 child-src:
                   - "'self'"

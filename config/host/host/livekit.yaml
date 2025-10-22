@@ -40,7 +40,8 @@ services:
         include-prefix: v
       envs:
         LIVEKIT_CONFIG:
-          yaml:
+          format: yaml
+          data:
             port: *port
             rtc:
               tcp_port: *tcp-port

@@ -37,7 +37,8 @@ services:
     container:
       envs:
         LIVEKIT_CONFIG:
-          yaml:
+          format: yaml
+          data:
             keys:
               dict_:
                 - - secret: meet-api-key

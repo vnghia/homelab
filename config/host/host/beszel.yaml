@@ -57,7 +57,8 @@ services:
                   headers:
                     Content-Type: application/json
                   body:
-                    json_:
+                    format: json
+                    data:
                       identity: ${BESZEL_USERNAME}
                       password: ${BESZEL_PASSWORD}
                   silent: true

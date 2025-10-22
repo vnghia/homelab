@@ -118,7 +118,8 @@ services:
         PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS: true
         PAPERLESS_ACCOUNT_ALLOW_SIGNUPS: false
         PAPERLESS_SOCIALACCOUNT_PROVIDERS:
-          json_:
+          format: json
+          data:
             openid_connect:
               OAUTH_PKCE_ENABLED: true
               APPS:
