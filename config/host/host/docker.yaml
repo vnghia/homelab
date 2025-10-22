@@ -37,6 +37,11 @@ services:
                 - "stop"
                 - param: CONTAINERS
     containers:
+      dind:
+        active: false
+        image: docker-dind
+        docker-socket:
+          write: false
       cli:
         active: false
         image: docker-cli
