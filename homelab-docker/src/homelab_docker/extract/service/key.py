@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-import pulumi_tls as tls
 from homelab_extract.service.key import ServiceExtractKeySource
 from pulumi import Output
 
@@ -17,10 +16,8 @@ class ServiceKeySourceExtractor(ExtractorBase[ServiceExtractKeySource]):
         self, extractor_args: ExtractorArgs
     ) -> Output[str] | dict[str, Output[str]]:
         root = self.root
-        key = extractor_args.service.secret.get(root.key)
+        key = extractor_args.service.secret.get_key(root.key)
 
-        if not isinstance(key, tls.PrivateKey):
-            raise TypeError("Key {} is not a valid key".format(root.key))
         data = {
             "private_pem": key.private_key_pem,
             "public_pem": key.public_key_pem,

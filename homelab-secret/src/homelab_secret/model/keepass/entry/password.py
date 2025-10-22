@@ -9,4 +9,4 @@ class KeepassEntryPasswordModel(HomelabRootModel[SecretPasswordModel]):
     root: SecretPasswordModel = SecretPasswordModel()
 
     def to_password(self, opts: ResourceOptions) -> random.RandomPassword:
-        return self.root.build_resource("password", opts)
+        return self.root.build_resource("password", opts, None)

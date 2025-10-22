@@ -1,8 +1,15 @@
+from __future__ import annotations
+
+import typing
+
 import pulumi_tls as tls
 from pulumi import ResourceOptions
 from pydantic import PositiveInt
 
 from . import SecretModel
+
+if typing.TYPE_CHECKING:
+    from ..resource import SecretResource
 
 
 class SecretKeyModel(SecretModel):
@@ -11,7 +18,7 @@ class SecretKeyModel(SecretModel):
     rsa_bits: PositiveInt | None = None
 
     def build_resource(
-        self, resource_name: str, opts: ResourceOptions
+        self, resource_name: str, opts: ResourceOptions, resource: SecretResource | None
     ) -> tls.PrivateKey:
         opts = self.opts(opts)
         return tls.PrivateKey(

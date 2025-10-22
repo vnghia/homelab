@@ -13,8 +13,8 @@ from ...model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from ..docker.container import ContainerResource
 from .database import ServiceDatabaseResource
-from .keepass import ServiceKeepassResouse
-from .secret import ServiceSecretResouse
+from .keepass import ServiceKeepassResource
+from .secret import ServiceSecretResource
 
 
 class ServiceResourceBase(ComponentResource):
@@ -31,8 +31,8 @@ class ServiceResourceBase(ComponentResource):
         self.model = model
 
         self._database: ServiceDatabaseResource | None = None
-        self._secret: ServiceSecretResouse | None = None
-        self._keepass: ServiceKeepassResouse | None = None
+        self._secret: ServiceSecretResource | None = None
+        self._keepass: ServiceKeepassResource | None = None
 
         self.exports: dict[str, Output[str]] = {}
         self.containers: dict[str | None, ContainerResource] = {}
@@ -77,7 +77,7 @@ class ServiceResourceBase(ComponentResource):
         return self._database
 
     @property
-    def secret(self) -> ServiceSecretResouse:
+    def secret(self) -> ServiceSecretResource:
         if not self._secret:
             raise ValueError(
                 "{} service is not configured with secret".format(self.name())
@@ -85,7 +85,7 @@ class ServiceResourceBase(ComponentResource):
         return self._secret
 
     @property
-    def keepass(self) -> ServiceKeepassResouse:
+    def keepass(self) -> ServiceKeepassResource:
         if not self._keepass:
             raise ValueError(
                 "{} service is not configured with keepass".format(self.name())
@@ -114,11 +114,11 @@ class ServiceResourceBase(ComponentResource):
 
     def build_secrets(self) -> None:
         if self.model.secrets:
-            self._secret = ServiceSecretResouse(
+            self._secret = ServiceSecretResource(
                 self.model.secrets, opts=self.child_opts, main_service=self
             )
 
-            for name, secret in self._secret.secrets.items():
+            for name, secret in self._secret.secrets.secrets.items():
                 if isinstance(secret, tls.PrivateKey):
                     pulumi.export(
                         "{}.secret.{}.private-key".format(
@@ -145,7 +145,7 @@ class ServiceResourceBase(ComponentResource):
 
     def build_keepasses(self) -> None:
         if self.model.keepasses:
-            self._keepass = ServiceKeepassResouse(
+            self._keepass = ServiceKeepassResource(
                 self.model.keepasses,
                 opts=self.child_opts,
                 extractor_args=self.extractor_args,

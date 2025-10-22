@@ -11,7 +11,7 @@ if typing.TYPE_CHECKING:
     from ...extract import ExtractorArgs
 
 
-class ServiceKeepassResouse(ComponentResource):
+class ServiceKeepassResource(ComponentResource):
     RESOURCE_NAME = "keepass"
 
     def __init__(

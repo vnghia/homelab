@@ -15,12 +15,10 @@ if typing.TYPE_CHECKING:
 class ServiceSecretSourceExtractor(ExtractorBase[ServiceExtractSecretSource]):
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> Output[str] | random.RandomPassword | dict[str, Output[str]]:
+    ) -> Output[str] | random.RandomPassword:
         root = self.root
-        secret = extractor_args.service.secret.get(root.secret)
+        secret = extractor_args.service.secret.get_secret(root.secret)
 
         if isinstance(secret, random.RandomUuid):
             return secret.result
-        if isinstance(secret, random.RandomPassword):
-            return secret
-        raise TypeError("Secret {} is not a valid uuid or password".format(root.secret))
+        return secret
