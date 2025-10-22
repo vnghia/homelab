@@ -1,9 +1,7 @@
 from typing import Self
 
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from pulumi import ResourceOptions
 
@@ -26,22 +24,6 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
         for name, key in self.config.s3.root.items():
             s3 = self.extractor_args.global_args.s3[key]
             self.options[name].envs = {**self.options[name].envs, **s3.to_envs()}
-
-        for name, config in self.config.files.root.items():
-            extractor_args = self.extractor_args_from_self(name)
-            self.options[name].files = [
-                FileResource(
-                    resource_name,
-                    opts=self.child_opts,
-                    volume_path=GlobalExtractor(model.path).extract_volume_path(
-                        extractor_args
-                    ),
-                    content=GlobalExtractor(model.content).extract_str(extractor_args),
-                    mode=model.mode,
-                    extractor_args=self.extractor_args,
-                )
-                for resource_name, model in config.items()
-            ]
 
         self.build_containers()
 

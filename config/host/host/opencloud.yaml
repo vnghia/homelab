@@ -66,50 +66,50 @@ services:
                   memRequestBodyBytes: 500000000
                   maxResponseBodyBytes: 50000000000
                   memResponseBodyBytes: 500000000
-      files:
-        file:
-          csp:
-            path:
-              env: PROXY_CSP_CONFIG_FILE_LOCATION
-            content:
-              yaml:
-                directives:
-                  child-src:
-                    - "'self'"
-                  connect-src:
-                    - "'self'"
-                    - "blob:"
-                    - hostname: kanidm
-                      record: solar
-                      scheme: https
-                  default-src:
-                    - "'none'"
-                  font-src:
-                    - "'self'"
-                  frame-ancestors:
-                    - "'self'"
-                  frame-src:
-                    - "'self'"
-                    - "blob:"
-                    - "https://embed.diagrams.net/"
-                  img-src:
-                    - "'self'"
-                    - "data:"
-                    - "blob:"
-                  manifest-src:
-                    - "'self'"
-                  media-src:
-                    - "'self'"
-                    - "data:"
-                  object-src:
-                    - "'self'"
-                    - "blob:"
-                  script-src:
-                    - "'self'"
-                    - "'unsafe-inline'"
-                  style-src:
-                    - "'self'"
-                    - "'unsafe-inline'"
+    files:
+      file:
+        csp:
+          path:
+            env: PROXY_CSP_CONFIG_FILE_LOCATION
+          content:
+            yaml:
+              directives:
+                child-src:
+                  - "'self'"
+                connect-src:
+                  - "'self'"
+                  - "blob:"
+                  - hostname: kanidm
+                    record: solar
+                    scheme: https
+                default-src:
+                  - "'none'"
+                font-src:
+                  - "'self'"
+                frame-ancestors:
+                  - "'self'"
+                frame-src:
+                  - "'self'"
+                  - "blob:"
+                  - "https://embed.diagrams.net/"
+                img-src:
+                  - "'self'"
+                  - "data:"
+                  - "blob:"
+                manifest-src:
+                  - "'self'"
+                media-src:
+                  - "'self'"
+                  - "data:"
+                object-src:
+                  - "'self'"
+                  - "blob:"
+                script-src:
+                  - "'self'"
+                  - "'unsafe-inline'"
+                style-src:
+                  - "'self'"
+                  - "'unsafe-inline'"
     secrets:
       jwt-secret: {}
       transfer-secret: {}

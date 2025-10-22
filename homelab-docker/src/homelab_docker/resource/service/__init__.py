@@ -12,6 +12,7 @@ from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from ..docker.container import ContainerResource
+from ..file import FileResource
 from .database import ServiceDatabaseResource
 from .keepass import ServiceKeepassResource
 from .secret import ServiceSecretResource
@@ -174,6 +175,29 @@ class ServiceResourceBase(ComponentResource):
         return ContainerResource(model=model, resource=resource)
 
     def build_containers(self) -> None:
+        from ...extract.global_ import GlobalExtractor
+
+        if self.model.files:
+            for name, config in self.model.files.root.items():
+                extractor_args = self.extractor_args_from_self(name or None)
+                files = [
+                    FileResource(
+                        resource_name,
+                        opts=self.child_opts,
+                        volume_path=GlobalExtractor(model.path).extract_volume_path(
+                            extractor_args
+                        ),
+                        content=GlobalExtractor(model.content).extract_str(
+                            extractor_args
+                        ),
+                        mode=model.mode,
+                        extractor_args=self.extractor_args,
+                    )
+                    for resource_name, model in config.items()
+                ]
+                if name != "":
+                    self.options[name].files = [*self.options[name].files, *files]
+
         for name, model in self.model.containers.items():
             if model.active:
                 self.containers[name] = self.build_container(

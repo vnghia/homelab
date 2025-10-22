@@ -34,28 +34,6 @@ services:
                 stripPrefix:
                   prefixes:
                     - svariable: PREFIX
-      files:
-        file:
-          private-key:
-            path:
-              extract:
-                volume: beszel-data
-              transform:
-                path: id_ed25519
-            content:
-              extract:
-                key: ssh
-                info: private_openssh
-          public-key:
-            path:
-              extract:
-                volume: beszel-data
-              transform:
-                path: id_ed25519.pub
-            content:
-              extract:
-                key: ssh
-                info: public_openssh
       dagu:
         dotenvs:
           dotenv:
@@ -133,6 +111,28 @@ services:
                     transform:
                       string:
                         template: "http://{container}:{port}/api/backups"
+    files:
+      file:
+        private-key:
+          path:
+            extract:
+              volume: beszel-data
+            transform:
+              path: id_ed25519
+          content:
+            extract:
+              key: ssh
+              info: private_openssh
+        public-key:
+          path:
+            extract:
+              volume: beszel-data
+            transform:
+              path: id_ed25519.pub
+          content:
+            extract:
+              key: ssh
+              info: public_openssh
     secrets:
       ssh:
         algorithm: ED25519
