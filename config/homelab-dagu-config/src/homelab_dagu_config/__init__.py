@@ -15,6 +15,7 @@ class DaguDagsConfig(HomelabServiceConfigDict[DaguDagModel]):
 
 
 class DaguServiceConfig(HomelabBaseModel):
+    depends_on: list[str] = []
     dotenvs: DaguDagDotenvConfig = DaguDagDotenvConfig({})
     docker: DaguDagDockerGroupConfig | None = None
     dag: DaguDagsConfig = DaguDagsConfig({})
