@@ -157,6 +157,8 @@ services:
         image: docker-proxy
         docker-socket:
           write: false
+        wud:
+          template: https://github.com/wollomatic/socket-proxy/releases/tag/${original}
         envs:
           SP_LISTENIP: 0.0.0.0
           SP_ALLOWFROM: tailscale

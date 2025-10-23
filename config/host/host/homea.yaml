@@ -44,3 +44,5 @@ services:
         "/run/dbus":
           path: /run/dbus
           read-only: true
+      wud:
+        template: https://www.home-assistant.io/changelogs/core-${major}.${minor}

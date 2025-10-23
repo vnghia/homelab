@@ -21,3 +21,4 @@ services:
         h3:
           internal: *https-port
           protocol: udp
+      wud:

@@ -20,3 +20,5 @@ services:
             http3: {}
         mapping:
           earth: "https"
+    container:
+      wud:
