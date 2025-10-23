@@ -5,8 +5,8 @@ from enum import StrEnum, auto
 from typing import ClassVar
 
 import pulumi_docker as docker
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
-from pydantic import IPvAnyAddress
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
@@ -17,22 +17,36 @@ class HostMode(StrEnum):
 
 
 class ContainerHostFullConfig(HomelabBaseModel):
-    host: str
-    ip: IPvAnyAddress | str
+    host: GlobalExtract
+    ip: GlobalExtract
 
     def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHostArgs:
-        return docker.ContainerHostArgs(host=self.host, ip=str(self.ip))
+        from ....extract.global_ import GlobalExtractor
+
+        return docker.ContainerHostArgs(
+            host=GlobalExtractor(self.host).extract_str(extractor_args),
+            ip=GlobalExtractor(self.ip).extract_str(extractor_args),
+        )
 
 
 class ContainerHostHostConfig(HomelabBaseModel):
     host: str
     internal: bool
+    hostname: GlobalExtract | None = None
 
     def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHostArgs:
         host_model = extractor_args.get_host_model(self.host)
         return ContainerHostFullConfig(
-            host=host_model.access.address,
-            ip=host_model.ip.internal_ if self.internal else host_model.ip.external_,
+            host=self.hostname
+            if self.hostname
+            else GlobalExtract.from_simple(host_model.access.address),
+            ip=GlobalExtract.from_simple(
+                str(
+                    host_model.ip.internal_
+                    if self.internal
+                    else host_model.ip.external_
+                )
+            ),
         ).to_args(extractor_args)
 
 
@@ -46,7 +60,8 @@ class ContainerHostModeConfig(HomelabBaseModel):
         match self.mode:
             case HostMode.LOCALHOST:
                 return ContainerHostFullConfig(
-                    host=self.LOCALHOST_HOST, ip=self.LOCALHOST_IP
+                    host=GlobalExtract.from_simple(self.LOCALHOST_HOST),
+                    ip=GlobalExtract.from_simple(self.LOCALHOST_IP),
                 ).to_args(extractor_args)
 
 
