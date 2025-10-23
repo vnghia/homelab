@@ -128,6 +128,17 @@ services:
           common-name:
             hostname: docker-proxy
           organizational-unit: SERVER
+      client-key:
+        algorithm: ED25519
+      client-cert:
+        ca-key: ca-key
+        ca-cert: ca-cert
+        key: client-key
+        allowed-uses: ["client_auth"]
+        subject:
+          common-name:
+            hostname: docker-proxy
+          organizational-unit: CLIENT
     containers:
       proxy:
         active: false

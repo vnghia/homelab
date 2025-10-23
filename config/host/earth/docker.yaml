@@ -13,6 +13,10 @@ services:
         subject:
           common-name:
             record: earth
+      client-cert:
+        subject:
+          common-name:
+            record: earth
     containers:
       proxy:
         active: true
