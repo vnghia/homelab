@@ -4,6 +4,7 @@ import typing
 
 import pulumi_random as random
 from homelab_extract.service import (
+    ServiceContainerExtractFull,
     ServiceExtract,
     ServiceExtractFull,
     ServiceExtractSource,
@@ -98,10 +99,16 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
         root = self.root
 
         return extractor_args.with_container(
-            extractor_args.get_container(root.container)
-            if root.has_container
-            else extractor_args._container
-            or extractor_args.get_container(root.container)
+            extractor_args.with_service(
+                extractor_args.get_service(root.container.service)
+            ).get_container(root.container.container)
+            if isinstance(root.container, ServiceContainerExtractFull)
+            else (
+                extractor_args.get_container(root.container)
+                if root.has_container
+                else extractor_args._container
+                or extractor_args.get_container(root.container)
+            )
         )
 
     def extract_str(
@@ -148,11 +155,6 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
 
 
 class ServiceExtractor(ExtractorBase[ServiceExtract]):
-    @property
-    def container(self) -> str | None:
-        root = self.root.root
-        return root.container if isinstance(root, ServiceExtractFull) else None
-
     @classmethod
     def get_extractor(
         cls, source: ServiceExtract

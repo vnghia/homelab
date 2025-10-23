@@ -27,8 +27,13 @@ class ServiceExtractSource(
     pass
 
 
-class ServiceExtractFull(HomelabBaseModel):
+class ServiceContainerExtractFull(HomelabBaseModel):
+    service: str | None = None
     container: str | None = None
+
+
+class ServiceExtractFull(HomelabBaseModel):
+    container: str | ServiceContainerExtractFull | None = None
     extract: ContainerExtract | ServiceExtractSource
     transform: ExtractTransform | None = None
 
@@ -43,5 +48,8 @@ class ServiceExtract(
     @property
     def container(self) -> str | None:
         root = self.root
-
-        return root.container if isinstance(root, ServiceExtractFull) else None
+        if isinstance(root, ServiceExtractFull):
+            if isinstance(root.container, ServiceContainerExtractFull):
+                raise ValueError("Context switching is required")
+            return root.container
+        return None
