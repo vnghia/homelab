@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pulumi_docker as docker
 import pulumi_docker_build as docker_build
 from homelab_global import GlobalArgs
@@ -13,7 +15,7 @@ from ..resource.service import ServiceResourceBase
 
 
 class HostResourceBase(ComponentResource):
-    HOSTS: dict[str, "HostResourceBase"] = {}
+    HOSTS: dict[str, HostResourceBase] = {}
 
     def __init__(
         self,

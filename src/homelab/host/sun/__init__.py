@@ -77,9 +77,7 @@ class SunHost(HostBase[SunServiceConfig]):
             extractor_args=self.extractor_args,
         )
 
-        self.build_extra_services()
-
-        # It should always be the last service
+    def build_final_services_before_file(self) -> None:
         self.barman = BarmanService(
             self.services_config.barman,
             opts=self.child_opts,
@@ -103,8 +101,7 @@ class SunHost(HostBase[SunServiceConfig]):
             extractor_args=self.extractor_args,
         )
 
-        self.build_file()
-
+    def build_final_services_after_file(self) -> None:
         self.backup = BackupService(
             self.services_config.backup,
             opts=self.child_opts,
@@ -112,8 +109,6 @@ class SunHost(HostBase[SunServiceConfig]):
             restic_service=self.restic,
             extractor_args=self.extractor_args,
         )
-
-        self.register_outputs({})
 
     @property
     def traefik_service(self) -> TraefikService | None:

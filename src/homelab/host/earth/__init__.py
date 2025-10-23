@@ -40,12 +40,6 @@ class EarthHost(HostBase[EarthServiceConfig]):
             extractor_args=self.extractor_args,
         )
 
-        self.build_extra_services()
-
-        self.build_file()
-
-        self.register_outputs({})
-
     @property
     def traefik_service(self) -> TraefikService | None:
         return self.traefik

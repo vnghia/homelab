@@ -1,3 +1,6 @@
+import operator
+from functools import reduce
+
 import json_fix as json_fix
 from homelab_config import Config, HostConfig
 from homelab_network.model.ip import NetworkIpSource
@@ -6,6 +9,7 @@ from homelab_network.resource.network import NetworkResource
 from homelab_secret.resource.keepass import KeepassResource
 from loguru import logger
 
+from .host import HostBase
 from .host.earth import EarthHost
 from .host.earth.config import EarthServiceConfig
 from .host.sun import SunHost
@@ -41,10 +45,17 @@ class Homelab:
             config=self.host_config,
         )
 
+        HostBase.finalize()
+
         self.keepass = KeepassResource(
             {
                 service.add_service_name(name): resource
-                for service in (self.sun.services | self.earth.services).values()
+                for service in (
+                    reduce(
+                        operator.or_,
+                        [host.services for host in HostBase.HOSTS.values()],
+                    )
+                ).values()
                 if service._keepass
                 for name, resource in service._keepass.keepasses.items()
             }

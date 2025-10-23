@@ -31,23 +31,3 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
             self.register_outputs({})
 
         return self
-
-    @classmethod
-    def extract_depends_on(
-        cls, models: dict[str, ServiceWithConfigModel[ExtraConfig]], name: str
-    ) -> dict[str, None]:
-        results: dict[str, None] = {}
-        for depend_on in models[name].config.depends_on:
-            results |= cls.extract_depends_on(models, depend_on)
-        return results | {name: None}
-
-    @classmethod
-    def sort_depends_on(
-        cls, models: dict[str, ServiceWithConfigModel[ExtraConfig]]
-    ) -> dict[str, ServiceWithConfigModel[ExtraConfig]]:
-        results: dict[str, ServiceWithConfigModel[ExtraConfig]] = {}
-        for name in models:
-            depends_on = cls.extract_depends_on(models, name)
-            for depend_on in depends_on:
-                results[depend_on] = models[depend_on]
-        return results
