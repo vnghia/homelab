@@ -22,12 +22,12 @@ services:
         extract:
           svolume: docker-earth-mtls
         transform:
-          path: server.crt
+          path: client.crt
       EARTH_KEY_PATH:
         extract:
           svolume: docker-earth-mtls
         transform:
-          path: server.pem
+          path: client.pem
     config:
       depends-on:
         - host: earth
