@@ -158,12 +158,13 @@ services:
         docker-socket:
           write: false
         envs:
-          SP_ALLOWFROM: traefik
+          SP_LISTENIP: 0.0.0.0
+          SP_ALLOWFROM: tailscale
           SP_LOGJSON: true
-          SP_LOGLEVEL: DEBUG
+          SP_LOGLEVEL: INFO
           SP_PROXYPORT:
             svariable: PROXY_PORT
-          SP_ALLOW_GET: ".*"
+          SP_ALLOW_GET: '/(v1\.\d{1,2}/)?(_ping|version|containers/json|images/.+/json)'
       cli:
         active: false
         image: docker-cli
