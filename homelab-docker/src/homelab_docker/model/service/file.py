@@ -4,6 +4,8 @@ from pydantic import PositiveInt
 
 
 class ServiceFileModel(HomelabBaseModel):
+    active: bool = True
+    bind: bool = True
     path: GlobalExtract
     mode: PositiveInt = 0o444
     content: GlobalExtract
