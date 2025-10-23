@@ -1,6 +1,9 @@
 docker:
   images:
     remote:
+      docker-proxy:
+        repo: ghcr.io/wollomatic/socket-proxy
+        tag: "1.10.0"
       docker-cli:
         repo: docker
         tag: "28.5.1-cli"
@@ -10,7 +13,17 @@ docker:
         backup: false
 services:
   docker:
+    variables:
+      PROXY_PORT: 2375
     config:
+      traefik:
+        proxy:
+          name: proxy
+          hostname: docker-proxy
+          service:
+            container: proxy
+            port:
+              svariable: PROXY_PORT
       dagu:
         docker:
           executor:
@@ -42,7 +55,7 @@ services:
             extract:
               svolume: docker-cert
             transform:
-              path: server/ca.pem
+              path: ca.crt
           content:
             cert: ca-cert
         cert:
@@ -50,7 +63,7 @@ services:
             extract:
               svolume: docker-cert
             transform:
-              path: server/cert.pem
+              path: server.crt
           content:
             cert: server-cert
         key:
@@ -58,7 +71,7 @@ services:
             extract:
               svolume: docker-cert
             transform:
-              path: server/key.pem
+              path: server.pem
           content:
             key: server-key
             info: private_pem
@@ -69,7 +82,7 @@ services:
         key: ca-key
         subject:
           common-name:
-            hinfo: address
+            hostname: docker-proxy
           organizational-unit: CA
         is-ca-certificate: true
       server-key:
@@ -81,9 +94,21 @@ services:
         allowed-uses: ["server_auth"]
         subject:
           common-name:
-            hinfo: address
+            hostname: docker-proxy
           organizational-unit: SERVER
     containers:
+      proxy:
+        active: false
+        image: docker-proxy
+        docker-socket:
+          write: false
+        envs:
+          SP_ALLOWFROM: traefik
+          SP_LOGJSON: true
+          SP_LOGLEVEL: DEBUG
+          SP_PROXYPORT:
+            svariable: PROXY_PORT
+          SP_ALLOW_GET: ".*"
       cli:
         active: false
         image: docker-cli

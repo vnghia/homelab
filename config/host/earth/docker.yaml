@@ -1,0 +1,18 @@
+services:
+  docker:
+    config:
+      traefik:
+        proxy:
+          record: earth
+    secrets:
+      ca-cert:
+        subject:
+          common-name:
+            record: earth
+      server-cert:
+        subject:
+          common-name:
+            record: earth
+    containers:
+      proxy:
+        active: true

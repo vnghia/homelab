@@ -1,4 +1,9 @@
 services:
   docker:
+    config:
+      traefik:
+        proxy:
+          active: false
+          record: sun
     files: null
     secrets: null
