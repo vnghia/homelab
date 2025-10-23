@@ -8,7 +8,11 @@ import pulumi_tls as tls
 class SecretResource:
     secrets: dict[
         str,
-        random.RandomUuid | random.RandomPassword | tls.PrivateKey | tls.SelfSignedCert,
+        random.RandomUuid
+        | random.RandomPassword
+        | tls.PrivateKey
+        | tls.LocallySignedCert
+        | tls.SelfSignedCert,
     ]
 
     def get_secret(self, key: str) -> random.RandomUuid | random.RandomPassword:
@@ -23,8 +27,14 @@ class SecretResource:
             return secret
         raise TypeError("Secret {} is not a valid private key".format(key))
 
-    def get_cert(self, key: str) -> tls.SelfSignedCert:
+    def get_cert(self, key: str) -> tls.LocallySignedCert | tls.SelfSignedCert:
+        secret = self.secrets[key]
+        if isinstance(secret, (tls.LocallySignedCert, tls.SelfSignedCert)):
+            return secret
+        raise TypeError("Secret {} is not a valid certificate".format(key))
+
+    def get_self_signed_cert(self, key: str) -> tls.SelfSignedCert:
         secret = self.secrets[key]
         if isinstance(secret, tls.SelfSignedCert):
             return secret
-        raise TypeError("Secret {} is not a valid certificate".format(key))
+        raise TypeError("Secret {} is not a valid self-signed certificate".format(key))

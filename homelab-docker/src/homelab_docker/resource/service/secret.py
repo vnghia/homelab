@@ -4,10 +4,12 @@ import typing
 
 import pulumi_random as random
 import pulumi_tls as tls
+from homelab_secret.model.cert import SecretCertModel
 from homelab_secret.resource import SecretResource
 from pulumi import ComponentResource, ResourceOptions
 
 from ...config.service.secret import ServiceSecretConfig
+from ..secret.cert import SecretCertBuilder
 
 if typing.TYPE_CHECKING:
     from ...resource.service import ServiceResourceBase
@@ -28,9 +30,17 @@ class ServiceSecretResource(ComponentResource):
 
         self.secrets = SecretResource(secrets={})
         for name, model in config.root.items():
-            self.secrets.secrets[name] = model.build_resource(
-                name, opts=self.child_opts, resource=self.secrets
-            )
+            if isinstance(model, SecretCertModel):
+                self.secrets.secrets[name] = SecretCertBuilder(model).build_resource(
+                    name,
+                    opts=self.child_opts,
+                    resource=self.secrets,
+                    extractor_args=main_service.extractor_args,
+                )
+            else:
+                self.secrets.secrets[name] = model.build_resource(
+                    name, opts=self.child_opts, resource=self.secrets
+                )
 
         self.register_outputs({})
 
@@ -40,5 +50,5 @@ class ServiceSecretResource(ComponentResource):
     def get_key(self, key: str) -> tls.PrivateKey:
         return self.secrets.get_key(key)
 
-    def get_cert(self, key: str) -> tls.SelfSignedCert:
+    def get_cert(self, key: str) -> tls.LocallySignedCert | tls.SelfSignedCert:
         return self.secrets.get_cert(key)
