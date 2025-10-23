@@ -9,9 +9,31 @@ docker:
         tag: "28.5.1-cli"
   volumes:
     local:
-      docker-cert:
+      docker-proxy-mtls:
         backup: false
 services:
+  traefik:
+    variables:
+      DOCKER_PROXY_CA_PATH:
+        extract:
+          svolume: docker-proxy-mtls
+        transform:
+          path: ca.crt
+      DOCKER_PROXY_SERVER_CERT_PATH:
+        extract:
+          svolume: docker-proxy-mtls
+        transform:
+          path: server.crt
+      DOCKER_PROXY_SERVER_KEY_PATH:
+        extract:
+          svolume: docker-proxy-mtls
+        transform:
+          path: server.pem
+    container:
+      volumes:
+        docker-proxy-mtls:
+          path: /etc/traefik/cert/docker-proxy-mtls
+          read-only: true
   docker:
     variables:
       PROXY_PORT: 2375
@@ -24,6 +46,16 @@ services:
             container: proxy
             port:
               svariable: PROXY_PORT
+          tls:
+            name: proxy
+            certs:
+              - cert:
+                  svariable: DOCKER_PROXY_SERVER_CERT_PATH
+                key:
+                  svariable: DOCKER_PROXY_SERVER_KEY_PATH
+            mtls:
+              cas:
+                - svariable: DOCKER_PROXY_CA_PATH
       dagu:
         docker:
           executor:
@@ -49,29 +81,29 @@ services:
                 - "stop"
                 - param: CONTAINERS
     files:
-      "":
+      file:
         ca:
+          bind: false
           path:
+            service: traefik
             extract:
-              svolume: docker-cert
-            transform:
-              path: ca.crt
+              svariable: DOCKER_PROXY_CA_PATH
           content:
             cert: ca-cert
         cert:
+          bind: false
           path:
+            service: traefik
             extract:
-              svolume: docker-cert
-            transform:
-              path: server.crt
+              svariable: DOCKER_PROXY_SERVER_CERT_PATH
           content:
             cert: server-cert
         key:
+          bind: false
           path:
+            service: traefik
             extract:
-              svolume: docker-cert
-            transform:
-              path: server.pem
+              svariable: DOCKER_PROXY_SERVER_KEY_PATH
           content:
             key: server-key
             info: private_pem

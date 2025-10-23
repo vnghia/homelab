@@ -1,4 +1,14 @@
+docker:
+  volumes:
+    local:
+      docker-proxy-mtls:
+        active: false
 services:
+  traefik:
+    container:
+      volumes:
+        docker-proxy-mtls:
+          active: false
   docker:
     config:
       traefik:
