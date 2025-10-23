@@ -38,6 +38,8 @@ class SecretLocallySignedCertBuilder(HomelabRootModel[SecretLocallySignedCertMod
         resource: SecretResource,
         extractor_args: ExtractorArgs,
     ) -> tls.LocallySignedCert:
+        from ....extract.global_ import GlobalExtractor
+
         root = self.root
         opts = root.opts(opts)
         ca_key = resource.get_key(root.ca_key)
@@ -53,6 +55,11 @@ class SecretLocallySignedCertBuilder(HomelabRootModel[SecretLocallySignedCertMod
                 "cert-request-{}".format(resource_name),
                 opts=opts,
                 private_key_pem=resource.get_key(root.key).private_key_pem,
+                dns_names=[
+                    GlobalExtractor(dns).extract_str(extractor_args) for dns in root.dns
+                ]
+                if root.dns
+                else None,
                 subject=SecretLocallySignedCertSubjectBuilder(root.subject).to_args(
                     extractor_args
                 )

@@ -38,6 +38,8 @@ class SecretSelfSignedCertBuilder(HomelabRootModel[SecretSelfSignedCertModel]):
         resource: SecretResource,
         extractor_args: ExtractorArgs,
     ) -> tls.SelfSignedCert:
+        from ....extract.global_ import GlobalExtractor
+
         root = self.root
         opts = root.opts(opts)
         key = resource.get_key(root.key)
@@ -47,6 +49,11 @@ class SecretSelfSignedCertBuilder(HomelabRootModel[SecretSelfSignedCertModel]):
             opts=opts,
             allowed_uses=root.allowed_uses,
             private_key_pem=key.private_key_pem,
+            dns_names=[
+                GlobalExtractor(dns).extract_str(extractor_args) for dns in root.dns
+            ]
+            if root.dns
+            else None,
             subject=SecretSelfSignedCertSubjectBuilder(root.subject).to_args(
                 extractor_args
             )
