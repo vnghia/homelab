@@ -14,6 +14,7 @@ from homelab_extract.service.export import ServiceExtractExportSource
 from homelab_extract.service.keepass import ServiceExtractKeepassSource
 from homelab_extract.service.key import ServiceExtractKeySource
 from homelab_extract.service.secret import ServiceExtractSecretSource
+from homelab_extract.service.variable import ServiceExtractVariableSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 from pydantic import ValidationError
@@ -28,6 +29,7 @@ from .keepass import ServiceKeepassSourceExtractor
 from .key import ServiceKeySourceExtractor
 from .secret import ServiceSecretSourceExtractor
 from .variable import ServiceVariableSourceExtractor
+from .volume import ServiceVolumeSourceExtractor
 
 if typing.TYPE_CHECKING:
     from ...model.docker.container.volume_path import ContainerVolumePath
@@ -46,6 +48,7 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
         | ServiceKeySourceExtractor
         | ServiceSecretSourceExtractor
         | ServiceVariableSourceExtractor
+        | ServiceVolumeSourceExtractor
     ):
         root = self.root.root
         if isinstance(root, ServiceExtractCertSource):
@@ -60,7 +63,9 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
             return ServiceKeySourceExtractor(root)
         if isinstance(root, ServiceExtractSecretSource):
             return ServiceSecretSourceExtractor(root)
-        return ServiceVariableSourceExtractor(root)
+        if isinstance(root, ServiceExtractVariableSource):
+            return ServiceVariableSourceExtractor(root)
+        return ServiceVolumeSourceExtractor(root)
 
     def extract_str(
         self, extractor_args: ExtractorArgs

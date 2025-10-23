@@ -9,6 +9,7 @@ from .keepass import ServiceExtractKeepassSource
 from .key import ServiceExtractKeySource
 from .secret import ServiceExtractSecretSource
 from .variable import ServiceExtractVariableSource
+from .volume import ServiceExtractVolumeSource
 
 
 class ServiceExtractSource(
@@ -20,6 +21,7 @@ class ServiceExtractSource(
         | ServiceExtractKeySource
         | ServiceExtractSecretSource
         | ServiceExtractVariableSource
+        | ServiceExtractVolumeSource
     ]
 ):
     pass
