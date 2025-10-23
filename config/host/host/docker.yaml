@@ -13,22 +13,6 @@ docker:
         backup: false
 services:
   traefik:
-    variables:
-      DOCKER_PROXY_CA_PATH:
-        extract:
-          svolume: docker-proxy-mtls
-        transform:
-          path: ca.crt
-      DOCKER_PROXY_SERVER_CERT_PATH:
-        extract:
-          svolume: docker-proxy-mtls
-        transform:
-          path: server.crt
-      DOCKER_PROXY_SERVER_KEY_PATH:
-        extract:
-          svolume: docker-proxy-mtls
-        transform:
-          path: server.pem
     container:
       volumes:
         docker-proxy-mtls:
@@ -37,6 +21,21 @@ services:
   docker:
     variables:
       PROXY_PORT: 2375
+      CA_PATH:
+        extract:
+          svolume: docker-proxy-mtls
+        transform:
+          path: ca.crt
+      CERT_PATH:
+        extract:
+          svolume: docker-proxy-mtls
+        transform:
+          path: server.crt
+      KEY_PATH:
+        extract:
+          svolume: docker-proxy-mtls
+        transform:
+          path: server.pem
     config:
       traefik:
         proxy:
@@ -50,12 +49,27 @@ services:
             name: proxy
             certs:
               - cert:
-                  svariable: DOCKER_PROXY_SERVER_CERT_PATH
+                  service: docker
+                  extract:
+                    container:
+                      service: traefik
+                    extract:
+                      svariable: CERT_PATH
                 key:
-                  svariable: DOCKER_PROXY_SERVER_KEY_PATH
+                  service: docker
+                  extract:
+                    container:
+                      service: traefik
+                    extract:
+                      svariable: KEY_PATH
             mtls:
               cas:
-                - svariable: DOCKER_PROXY_CA_PATH
+                - service: docker
+                  extract:
+                    container:
+                      service: traefik
+                    extract:
+                      svariable: CA_PATH
       dagu:
         docker:
           executor:
@@ -85,25 +99,19 @@ services:
         ca:
           bind: false
           path:
-            service: traefik
-            extract:
-              svariable: DOCKER_PROXY_CA_PATH
+            svariable: CA_PATH
           content:
             cert: ca-cert
         cert:
           bind: false
           path:
-            service: traefik
-            extract:
-              svariable: DOCKER_PROXY_SERVER_CERT_PATH
+            svariable: CERT_PATH
           content:
             cert: server-cert
         key:
           bind: false
           path:
-            service: traefik
-            extract:
-              svariable: DOCKER_PROXY_SERVER_KEY_PATH
+            svariable: KEY_PATH
           content:
             key: server-key
             info: private_pem
