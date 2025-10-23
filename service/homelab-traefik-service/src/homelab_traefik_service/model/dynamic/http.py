@@ -21,6 +21,7 @@ from .service import (
     TraefikDynamicServiceFullModelBuilder,
     TraefikDynamicServiceModelBuilder,
 )
+from .tls import TraefikDynamicTlsModelBuilder
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
@@ -98,6 +99,16 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         ]
         all_middlewares = entrypoint_middlewares + service_middlewares
 
+        tls = None
+        tls_router: dict[str, Any] = {}
+        if root.tls:
+            tls = TraefikDynamicTlsModelBuilder(root.tls).to_data(
+                traefik_service, extractor_args
+            )
+            tls_router["options"] = main_service.add_service_name(root.tls.name)
+        else:
+            tls_router["certResolver"] = traefik_service.static.CERT_RESOLVER
+
         data: dict[str, Any] = {
             "http": {
                 "routers": {
@@ -105,7 +116,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                         "service": service,
                         "entryPoints": [entrypoint],
                         "rule": rule,
-                        "tls": {"certResolver": traefik_service.static.CERT_RESOLVER},
+                        "tls": tls_router,
                     }
                     | ({"middlewares": all_middlewares} if all_middlewares else {})
                 }
@@ -117,9 +128,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                                 traefik_config.entrypoint.local_entrypoint_
                             ],
                             "rule": rule,
-                            "tls": {
-                                "certResolver": traefik_service.static.CERT_RESOLVER
-                            },
+                            "tls": tls_router,
                             "middlewares": local_middlewares + service_middlewares,
                         }
                     }
@@ -134,9 +143,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                                 traefik_config.entrypoint.internal_entrypoint_
                             ],
                             "rule": rule,
-                            "tls": {
-                                "certResolver": traefik_service.static.CERT_RESOLVER
-                            },
+                            "tls": tls_router,
                             "middlewares": service_middlewares,
                         }
                     }
@@ -164,6 +171,9 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         )
         if middlewares:
             data["http"]["middlewares"] = middlewares
+
+        if tls:
+            data |= tls
 
         return data
 
