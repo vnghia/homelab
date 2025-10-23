@@ -3,6 +3,8 @@ docker:
     local:
       docker-proxy-mtls:
         active: false
+      docker-earth-mtls:
+        backup: false
 services:
   traefik:
     container:
@@ -10,10 +12,67 @@ services:
         docker-proxy-mtls:
           active: false
   docker:
+    variables:
+      EARTH_CA_PATH:
+        extract:
+          svolume: docker-earth-mtls
+        transform:
+          path: ca.crt
+      EARTH_CERT_PATH:
+        extract:
+          svolume: docker-earth-mtls
+        transform:
+          path: server.crt
+      EARTH_KEY_PATH:
+        extract:
+          svolume: docker-earth-mtls
+        transform:
+          path: server.pem
     config:
+      depends-on:
+        - host: earth
+          service: docker
       traefik:
         proxy:
           active: false
           record: sun
-    files: null
+    files:
+      file:
+        ca:
+          active: false
+        cert:
+          active: false
+        key:
+          active: false
+        earth-ca:
+          bind: false
+          path:
+            svariable: EARTH_CA_PATH
+          content:
+            host: earth
+            extract:
+              service: docker
+              extract:
+                cert: ca-cert
+        earth-cert:
+          bind: false
+          path:
+            svariable: EARTH_CERT_PATH
+          content:
+            host: earth
+            extract:
+              service: docker
+              extract:
+                cert: client-cert
+        earth-key:
+          bind: false
+          path:
+            svariable: EARTH_KEY_PATH
+          content:
+            host: earth
+            extract:
+              service: docker
+              extract:
+                key: client-key
+                info: private_pem
     secrets: null
