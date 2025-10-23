@@ -7,6 +7,7 @@ from pulumi import ResourceOptions
 
 
 class LocalVolumeModel(HomelabBaseModel):
+    active: bool = True
     backup: Literal[False] | BackupVolumeConfig = BackupVolumeConfig()
 
     bind: AbsolutePath | None = None

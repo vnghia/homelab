@@ -26,6 +26,7 @@ class VolumeResource(ComponentResource):
                 name, opts=self.child_opts, project_labels=global_args.project.labels
             )
             for name, model in config.docker.volumes.local.items()
+            if model.active
         }
 
         for service_name, database in config.databases.items():
