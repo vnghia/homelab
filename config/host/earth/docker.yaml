@@ -10,6 +10,9 @@ services:
           common-name:
             record: earth
       server-cert:
+        dns:
+          - hostname: docker-proxy
+            record: earth
         subject:
           common-name:
             record: earth

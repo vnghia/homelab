@@ -120,6 +120,9 @@ services:
         algorithm: ED25519
       ca-cert:
         key: ca-key
+        allowed-uses:
+          - "crl_signing"
+          - "cert_signing"
         subject:
           common-name:
             hostname: docker-proxy
@@ -132,6 +135,7 @@ services:
         ca-cert: ca-cert
         key: server-key
         allowed-uses: ["server_auth"]
+        dns:
         subject:
           common-name:
             hostname: docker-proxy
