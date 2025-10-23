@@ -1,14 +1,13 @@
 docker:
   images:
     remote:
-      docker-dind:
-        repo: docker
-        tag: &docker-version "28.5.1"
-        suffix: "-dind"
       docker-cli:
         repo: docker
-        tag: *docker-version
-        suffix: "-cli"
+        tag: "28.5.1-cli"
+  volumes:
+    local:
+      docker-cert:
+        backup: false
 services:
   docker:
     config:
@@ -36,12 +35,55 @@ services:
                 - "docker"
                 - "stop"
                 - param: CONTAINERS
+    files:
+      "":
+        ca:
+          path:
+            extract:
+              svolume: docker-cert
+            transform:
+              path: server/ca.pem
+          content:
+            cert: ca-cert
+        cert:
+          path:
+            extract:
+              svolume: docker-cert
+            transform:
+              path: server/cert.pem
+          content:
+            cert: server-cert
+        key:
+          path:
+            extract:
+              svolume: docker-cert
+            transform:
+              path: server/key.pem
+          content:
+            key: server-key
+            info: private_pem
+    secrets:
+      ca-key:
+        algorithm: ED25519
+      ca-cert:
+        key: ca-key
+        subject:
+          common-name:
+            hinfo: address
+          organizational-unit: CA
+        is-ca-certificate: true
+      server-key:
+        algorithm: ED25519
+      server-cert:
+        ca-key: ca-key
+        ca-cert: ca-cert
+        key: server-key
+        allowed-uses: ["server_auth"]
+        subject:
+          common-name:
+            hinfo: address
+          organizational-unit: SERVER
     containers:
-      dind:
-        active: false
-        image: docker-dind
-        docker-socket:
-          write: false
       cli:
         active: false
         image: docker-cli
