@@ -18,6 +18,7 @@ if typing.TYPE_CHECKING:
 
 
 class ContainerVolumeFullConfig(HomelabBaseModel):
+    active: bool = True
     path: GlobalExtract
     read_only: bool = False
 
@@ -46,6 +47,13 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
 class ContainerVolumeConfig(
     HomelabRootModel[GlobalExtract | ContainerVolumeFullConfig]
 ):
+    @property
+    def active(self) -> bool:
+        root = self.root
+        if isinstance(root, ContainerVolumeFullConfig):
+            return root.active
+        return True
+
     def to_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         root = self.root
         if isinstance(root, GlobalExtract):
@@ -75,6 +83,8 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
     ) -> list[docker.ContainerVolumeArgs]:
         volumes = {}
         for key, config in self.root.items():
+            if not config.active:
+                continue
             try:
                 volume: AbsolutePath | str = AbsolutePath(PosixPath(key))
             except ValidationError:
