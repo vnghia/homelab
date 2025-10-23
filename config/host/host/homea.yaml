@@ -35,6 +35,7 @@ services:
       network:
         bridge:
           default: {}
+      privileged: true
       tmpfs:
         - path: /run
           exec: true
