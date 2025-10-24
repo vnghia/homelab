@@ -1,19 +1,19 @@
 from homelab_pydantic import HomelabBaseModel
-from pydantic import IPvAnyAddress
+from netaddr_pydantic import IPAddress
 
 
 class HostIpModel(HomelabBaseModel):
-    internal: IPvAnyAddress | None = None
-    external: IPvAnyAddress | None = None
+    internal: IPAddress | None = None
+    external: IPAddress | None = None
 
     @property
-    def internal_(self) -> IPvAnyAddress:
+    def internal_(self) -> IPAddress:
         if not self.internal:
             raise ValueError("Host internal ip is not configured")
         return self.internal
 
     @property
-    def external_(self) -> IPvAnyAddress:
+    def external_(self) -> IPAddress:
         if not self.external:
             raise ValueError("Host external ip is not configured")
         return self.external

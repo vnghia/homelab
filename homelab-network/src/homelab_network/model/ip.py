@@ -1,11 +1,10 @@
 import dataclasses
 from enum import StrEnum, auto
-from ipaddress import IPv4Address, IPv6Address
 from typing import Self
 
 from homelab_pydantic import HomelabBaseModel
+from netaddr_pydantic import IPAddress, IPv4Address, IPv6Address
 from pulumi import Output
-from pydantic import IPvAnyAddress
 
 
 class NetworkIpSource(StrEnum):
@@ -27,5 +26,5 @@ class NetworkIpOutputModel:
     def from_model(cls, model: NetworkIpModel) -> Self:
         return cls(v4=Output.from_input(model.v4), v6=Output.from_input(model.v6))
 
-    def to_dict(self) -> dict[str, Output[IPvAnyAddress]]:
+    def to_dict(self) -> dict[str, Output[IPAddress]]:
         return {"v4": self.v4, "v6": self.v6}

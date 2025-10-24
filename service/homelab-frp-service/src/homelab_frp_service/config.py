@@ -1,10 +1,11 @@
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
-from pydantic import IPvAnyAddress, PositiveInt
+from netaddr_pydantic import IPAddress
+from pydantic import PositiveInt
 
 
 class FrpServerConfig(HomelabBaseModel):
-    addr: IPvAnyAddress
+    addr: IPAddress
     port: PositiveInt
     token: str
 

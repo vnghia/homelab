@@ -1,7 +1,8 @@
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_traefik_config import TraefikServiceConfigBase
-from pydantic import HttpUrl, IPvAnyAddress
+from netaddr_pydantic import IPAddress
+from pydantic import HttpUrl
 
 from .entrypoint import TraefikEntrypointConfig
 
@@ -30,7 +31,7 @@ class TraefikTimeoutConfig(HomelabBaseModel):
 
 class TraefikProxyProtocolConfig(HomelabBaseModel):
     enabled: bool = False
-    ips: list[IPvAnyAddress] = []
+    ips: list[IPAddress] = []
 
 
 class TraefikPluginConfig(HomelabBaseModel):

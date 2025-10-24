@@ -1,10 +1,10 @@
 from enum import StrEnum, auto
-from ipaddress import IPv6Address
-from typing import Self
+from typing import ClassVar, Literal, Self
 
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
-from pydantic import IPvAnyAddress, PositiveInt
+from netaddr_pydantic import IPAddress
+from pydantic import PositiveInt
 
 
 class ContainerPortProtocol(StrEnum):
@@ -17,9 +17,11 @@ class ContainerPortForwardConfig(HomelabBaseModel):
 
 
 class ContainerPortConfig(HomelabBaseModel):
+    IP_V6: ClassVar[Literal[6]] = 6
+
     internal: PositiveInt
     external: PositiveInt
-    ip: IPvAnyAddress
+    ip: IPAddress
     protocol: ContainerPortProtocol | None = None
     forward: ContainerPortForwardConfig | None = None
 
@@ -38,7 +40,7 @@ class ContainerPortConfig(HomelabBaseModel):
             (2 if self.protocol == ContainerPortProtocol.UDP else 1)
             if self.protocol
             else 0,
-            isinstance(self.ip, IPv6Address),
+            self.ip.version == self.IP_V6,
             str(self.ip),
         )
 

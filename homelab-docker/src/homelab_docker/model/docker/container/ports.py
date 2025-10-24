@@ -1,7 +1,7 @@
-from ipaddress import IPv4Address, IPv6Address
-
+import netaddr
 from homelab_pydantic import HomelabBaseModel
-from pydantic import IPvAnyAddress, PositiveInt
+from netaddr_pydantic import IPAddress
+from pydantic import PositiveInt
 
 from .port import ContainerPortConfig, ContainerPortForwardConfig, ContainerPortProtocol
 
@@ -10,9 +10,9 @@ class ContainerPortsConfig(HomelabBaseModel):
     internal: PositiveInt | None = None
     external: PositiveInt | None = None
     range: tuple[PositiveInt, PositiveInt] | None = None
-    ips: dict[str, IPvAnyAddress] = {
-        "v4": IPv4Address("0.0.0.0"),
-        "v6": IPv6Address("::"),
+    ips: dict[str, IPAddress] = {
+        "v4": netaddr.IPAddress("0.0.0.0"),
+        "v6": netaddr.IPAddress("::"),
     }
     protocol: ContainerPortProtocol | None = None
     forward: ContainerPortForwardConfig | None = None
