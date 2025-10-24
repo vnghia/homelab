@@ -1,0 +1,53 @@
+docker:
+  images:
+    remote:
+      mqtt:
+        repo: rmqtt/rmqtt
+        tag: "0.17.0"
+  volumes:
+    local:
+      mqtt-config:
+        backup: false
+services:
+  mqtt:
+    variables:
+      CONFIG_PATH:
+        extract:
+          volume: mqtt-config
+        transform:
+          path: rmqtt.toml
+      TCP_INTERNAL_PORT: 1883
+    config: {}
+    files:
+      file:
+        config:
+          path:
+            svariable: CONFIG_PATH
+          content:
+            format: toml
+            data:
+              log:
+                level: info
+              listener:
+                tcp:
+                  internal:
+                    enable: true
+                    addr:
+                      extract:
+                        svariable: TCP_INTERNAL_PORT
+                      transform:
+                        string:
+                          template: "0.0.0.0:{value}"
+                    allow_anonymous: false
+                    proxy_protocol: true
+    container:
+      image: mqtt
+      command:
+        - "-f"
+        - svariable: CONFIG_PATH
+      volumes:
+        mqtt-config:
+          path: /etc/rqmtt/
+          read-only: false
+      wud:
+        template: https://github.com/rmqtt/rmqtt/releases/tag/${original}
