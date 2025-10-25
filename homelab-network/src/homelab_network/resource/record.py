@@ -38,7 +38,7 @@ class RecordResource(ComponentResource):
                         zone_id=config.zone_id,
                         ip=ip,
                     )
-                    for key_ip, ip in source_ip.to_dict().items()
+                    for key_ip, ip in source_ip.data.items()
                 ]
                 for key, record in config.records.items()
             }
@@ -49,6 +49,6 @@ class RecordResource(ComponentResource):
             value = hostname.value
             pulumi.export("record.{}.{}".format(name, key), value)
             if config.local_ip:
-                self.local_records[config.local_ip.v4].add(value)
-                self.local_records[config.local_ip.v6].add(value)
+                for ip in config.local_ip.root.values():
+                    self.local_records[ip].add(value)
         self.register_outputs({})

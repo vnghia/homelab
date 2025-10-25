@@ -4,7 +4,7 @@ from homelab_docker.extract import ExtractorArgs
 from homelab_docker.model.docker.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
-from homelab_network.model.ip import NetworkIpOutputModel
+from homelab_network.model.ip import NetworkIpModel, NetworkIpOutputModel
 from netaddr_pydantic import IPv4Address, IPv6Address
 from pulumi import InvokeOutputOptions, ResourceOptions
 from pydantic import TypeAdapter
@@ -36,7 +36,9 @@ class TailscaleService(ServiceResourceBase):
         self.ipv6 = self.device.apply(
             lambda x: TypeAdapter(IPv6Address).validate_python(x.addresses[1])
         )
-        self.ip = NetworkIpOutputModel(v4=self.ipv4, v6=self.ipv6)
+        self.ip = NetworkIpOutputModel(
+            {NetworkIpModel.V4: self.ipv4, NetworkIpModel.V6: self.ipv6}
+        )
 
         pulumi.export(
             "{}.tailscale.ipv4".format(self.extractor_args.host.name()),
