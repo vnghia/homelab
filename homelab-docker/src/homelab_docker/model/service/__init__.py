@@ -20,6 +20,10 @@ class ServiceModel(HomelabBaseModel):
     container_: ContainerModel | None = Field(None, alias="container")
     containers_: dict[str, ContainerModel] = Field({}, alias="containers")
 
+    @classmethod
+    def add_service_name(cls, service_name: str, name: str | None) -> str:
+        return "{}-{}".format(service_name, name) if name else service_name
+
     @cached_property
     def containers(self) -> dict[str | None, ContainerModel]:
         return ({None: self.container_} if self.container_ else {}) | self.containers_

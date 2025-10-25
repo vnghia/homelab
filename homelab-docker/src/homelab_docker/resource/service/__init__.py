@@ -58,8 +58,7 @@ class ServiceResourceBase(ComponentResource):
 
     @classmethod
     def add_service_name(cls, name: str | None, prefix: str | None = None) -> str:
-        prefix = prefix or cls.name()
-        return "{}-{}".format(prefix, name) if name else prefix
+        return ServiceModel.add_service_name(prefix or cls.name(), name)
 
     @classmethod
     def get_key(cls, name: str | None) -> str | None:
