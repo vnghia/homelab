@@ -4,6 +4,9 @@ docker:
       default: {}
       internal:
         internal: true
+      vpn:
+        ipam:
+        icc: false
     default:
       bridge:
         internal: {}
