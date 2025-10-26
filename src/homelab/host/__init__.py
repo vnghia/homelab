@@ -43,11 +43,12 @@ class HostBaseNoConfig(HostResourceBase):
             return
 
         model = self.extra_services_config[service]
-        for depend in model.config.depends_on:
-            depend_full = depend.to_full()
-            self.HOST_BASES[depend_full.host or self.name()].build_extra_service(
-                depend_full.service
-            )
+        if model.depends_on:
+            for depend in model.depends_on:
+                depend_full = depend.to_full()
+                (
+                    self.HOST_BASES[depend_full.host] if depend_full.host else self
+                ).build_extra_service(depend_full.service)
 
         type("{}Service".format(service.capitalize()), (ExtraService,), {})(
             model, opts=self.child_opts, extractor_args=self.extractor_args
@@ -106,6 +107,23 @@ class HostBase[T: ServiceConfigBase](HostBaseNoConfig):
         )
 
         self.services_config = service
+        self.build_initial_extra_services()
+
+    def build_initial_extra_services(self) -> None:
+        for service, model in self.services_config.services.items():
+            if service in self.extra_services_config or not model.depends_on:
+                continue
+            for depend in model.depends_on:
+                depend_full = depend.to_full()
+                if depend_full.host:
+                    raise ValueError(
+                        "Building initial extra services does not support switching host"
+                    )
+                if depend_full.service not in self.extra_services_config:
+                    raise ValueError(
+                        "Building initial extra services only supports extra services"
+                    )
+                self.build_extra_service(depend_full.service)
 
     @classmethod
     def name(cls) -> str:

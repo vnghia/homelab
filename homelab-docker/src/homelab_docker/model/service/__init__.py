@@ -5,6 +5,7 @@ from homelab_pydantic import HomelabBaseModel
 from pydantic import Field
 
 from ...config.service.database import ServiceDatabaseConfig
+from ...config.service.depend_on import ServiceDependOnConfig
 from ...config.service.file import ServiceFileConfig
 from ...config.service.keepass import ServiceKeepassConfig
 from ...config.service.secret import ServiceSecretConfig
@@ -12,6 +13,8 @@ from ..docker.container import ContainerModel
 
 
 class ServiceModel(HomelabBaseModel):
+    depends_on: list[ServiceDependOnConfig] | None = None
+
     variables: dict[str, GlobalExtract] = {}
     databases: ServiceDatabaseConfig | None = None
     files: ServiceFileConfig | None = None

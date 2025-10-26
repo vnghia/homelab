@@ -7,11 +7,15 @@ docker:
         backup: false
 services:
   traefik:
+    depends-on: null
     container:
       volumes:
         docker-proxy-mtls:
           active: false
   docker:
+    depends-on:
+      - host: earth
+        service: docker
     variables:
       EARTH_CA_PATH:
         extract:
@@ -29,9 +33,6 @@ services:
         transform:
           path: client.pem
     config:
-      depends-on:
-        - host: earth
-          service: docker
       traefik:
         proxy:
           active: false

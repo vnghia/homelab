@@ -9,8 +9,8 @@ docker:
       wud-storage: {}
 services:
   wud:
+    depends-on: [ntfy]
     config:
-      depends-on: [ntfy]
       traefik:
         traefik:
           record: sun

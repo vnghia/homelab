@@ -41,6 +41,7 @@ services:
                   values-by-group:
                     openid: ["Name"]
   monica:
+    depends-on: [meilisearch]
     variables:
       MONICA_REDIRECT_URI:
         extract:
@@ -54,7 +55,6 @@ services:
       MELISEARCH_VOLUME:
         volume: monica-meilisearch-data
     config:
-      depends-on: [meilisearch]
       traefik:
         traefik:
           record: solar

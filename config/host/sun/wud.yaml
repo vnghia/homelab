@@ -1,8 +1,8 @@
 services:
   wud:
-    config:
-      depends-on:
-        - docker
+    depends-on:
+      - docker
+    config: {}
     container:
       hosts:
         - host: earth

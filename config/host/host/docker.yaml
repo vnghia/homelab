@@ -13,6 +13,7 @@ docker:
         backup: false
 services:
   traefik:
+    depends-on: ["docker"]
     container:
       volumes:
         docker-proxy-mtls:
