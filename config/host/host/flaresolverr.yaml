@@ -10,7 +10,8 @@ services:
     container:
       image: flaresolverr
       network:
-        mode: vpn
+        bridge:
+          vpn: {}
       read-only: false
       wud:
         template: https://github.com/FlareSolverr/FlareSolverr/releases/tag/${original}

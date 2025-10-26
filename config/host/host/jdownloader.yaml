@@ -18,7 +18,8 @@ services:
     container:
       image: jdownloader
       network:
-        mode: vpn
+        bridge:
+          vpn: {}
       read-only: false
       volumes:
         jdownloader-config: /jdownloader/cfg

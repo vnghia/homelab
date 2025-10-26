@@ -56,7 +56,8 @@ services:
           envs:
             env: DATABASE_URL
       network:
-        mode: vpn
+        bridge:
+          vpn: {}
       tmpfs:
         - /tmp
         - /usr/local/share/.cache/yarn

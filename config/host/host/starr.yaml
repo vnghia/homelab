@@ -184,7 +184,8 @@ services:
       prowlarr:
         image: prowlarr
         network:
-          mode: vpn
+          bridge:
+            vpn: {}
         tmpfs:
           - path: /run
             exec: true
