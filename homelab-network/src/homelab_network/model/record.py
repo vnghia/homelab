@@ -1,5 +1,6 @@
 from typing import ClassVar
 
+import netaddr
 import pulumi_cloudflare as cloudflare
 from homelab_pydantic import HomelabRootModel
 from netaddr_pydantic import IPAddress
@@ -19,7 +20,9 @@ class RecordModel(HomelabRootModel[str]):
         ip: Input[IPAddress],
     ) -> cloudflare.DnsRecord:
         type_ = Output.from_input(ip).apply(
-            lambda x: "A" if x.version == self.IPV4_VERSION else "AAAA"
+            lambda x: "A"
+            if netaddr.IPAddress(x).version == self.IPV4_VERSION
+            else "AAAA"
         )
         return cloudflare.DnsRecord(
             resource_name,
