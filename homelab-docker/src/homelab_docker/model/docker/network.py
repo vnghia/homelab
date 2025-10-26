@@ -39,6 +39,7 @@ class BridgeNetworkModel(HomelabBaseModel):
     ipv6: bool = True
     internal: bool = False
     ipam: list[BridgeIpamNetworkModel] = []
+    icc: bool = True
     labels: dict[str, str] = {}
     options: dict[str, str] = {}
 
@@ -49,6 +50,10 @@ class BridgeNetworkModel(HomelabBaseModel):
         opts: ResourceOptions,
         project_labels: dict[str, str],
     ) -> docker.Network:
+        options = self.options
+        if not self.icc:
+            options["enable_icc"] = "false"
+
         return docker.Network(
             resource_name,
             opts=opts,
