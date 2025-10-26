@@ -196,6 +196,19 @@ class ContainerModel(HomelabBaseModel):
             | {file.id: file.hash for file in build_args.files}
         )
 
+    def build_args(
+        self,
+        build_args: ContainerModelBuildArgs | None,
+        extractor_args: ExtractorArgs,
+    ) -> ContainerModelBuildArgs:
+        build_args = build_args or ContainerModelBuildArgs()
+        files = list(build_args.files)
+        for volume in self.volumes.volumes:
+            if isinstance(volume, str):
+                files += extractor_args.host.docker.volume.files[volume]
+        build_args.files = files
+        return build_args
+
     def build_resource(
         self,
         resource_name: str,
@@ -207,7 +220,7 @@ class ContainerModel(HomelabBaseModel):
         extractor_args = extractor_args.with_container(self)
         service = extractor_args.service
 
-        build_args = build_args or ContainerModelBuildArgs()
+        build_args = self.build_args(build_args, extractor_args)
         network_args = self.network.to_args(resource_name, extractor_args)
 
         depends_on: list[Resource] = []

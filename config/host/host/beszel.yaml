@@ -113,25 +113,24 @@ services:
                       string:
                         template: "http://{container}:{port}/api/backups"
     files:
-      file:
-        private-key:
-          path:
-            extract:
-              volume: beszel-data
-            transform:
-              path: id_ed25519
-          content:
-            key: ssh
-            info: private_openssh
-        public-key:
-          path:
-            extract:
-              volume: beszel-data
-            transform:
-              path: id_ed25519.pub
-          content:
-            key: ssh
-            info: public_openssh
+      private-key:
+        path:
+          extract:
+            volume: beszel-data
+          transform:
+            path: id_ed25519
+        content:
+          key: ssh
+          info: private_openssh
+      public-key:
+        path:
+          extract:
+            volume: beszel-data
+          transform:
+            path: id_ed25519.pub
+        content:
+          key: ssh
+          info: public_openssh
     secrets:
       ssh:
         algorithm: ED25519

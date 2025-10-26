@@ -23,7 +23,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         service = extractor_args.service
         model = service.model[self.model].to_full(extractor_args)
 
-        build_args = service.options[self.model]
+        build_args = model.build_args(service.options[self.model], extractor_args)
         config: dict[str, Any] = {}
         container_config: dict[str, Any] = {}
         host_config: dict[str, Any] = {}

@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+import typing
+from collections import defaultdict
+
 import pulumi
 import pulumi_docker as docker
 from homelab_global import GlobalArgs
@@ -5,6 +10,9 @@ from pulumi import ComponentResource, ResourceOptions
 
 from ...model.docker.volume import LocalVolumeModel
 from ...model.host import HostServiceModelModel
+
+if typing.TYPE_CHECKING:
+    from ...resource.file import FileResource
 
 
 class VolumeResource(ComponentResource):
@@ -28,6 +36,7 @@ class VolumeResource(ComponentResource):
             for name, model in config.docker.volumes.local.items()
             if model.active
         }
+        self.files: defaultdict[str, list[FileResource]] = defaultdict(list)
 
         for service_name, database in config.databases.items():
             for type_, database_config in database.root.items():
@@ -72,6 +81,9 @@ class VolumeResource(ComponentResource):
         for name, value in export.items():
             pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
         self.register_outputs(export)
+
+    def add_file(self, file: FileResource) -> None:
+        self.files[file.volume_path.volume].append(file)
 
     def __getitem__(self, key: str) -> docker.Volume:
         return self.volumes[key]

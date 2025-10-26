@@ -37,44 +37,40 @@ services:
           active: false
           record: sun
     files:
-      file:
-        ca:
-          active: false
-        cert:
-          active: false
-        key:
-          active: false
-        earth-ca:
-          bind: false
-          path:
-            svariable: EARTH_CA_PATH
-          content:
-            host: earth
+      ca:
+        active: false
+      cert:
+        active: false
+      key:
+        active: false
+      earth-ca:
+        path:
+          svariable: EARTH_CA_PATH
+        content:
+          host: earth
+          extract:
+            service: docker
             extract:
-              service: docker
-              extract:
-                mtls: proxy-mtls
-                info: ca_cert
-        earth-cert:
-          bind: false
-          path:
-            svariable: EARTH_CERT_PATH
-          content:
-            host: earth
+              mtls: proxy-mtls
+              info: ca_cert
+      earth-cert:
+        path:
+          svariable: EARTH_CERT_PATH
+        content:
+          host: earth
+          extract:
+            service: docker
             extract:
-              service: docker
-              extract:
-                mtls: proxy-mtls
-                info: client_cert
-        earth-key:
-          bind: false
-          path:
-            svariable: EARTH_KEY_PATH
-          content:
-            host: earth
+              mtls: proxy-mtls
+              info: client_cert
+      earth-key:
+        path:
+          svariable: EARTH_KEY_PATH
+        content:
+          host: earth
+          extract:
+            service: docker
             extract:
-              service: docker
-              extract:
-                mtls: proxy-mtls
-                info: client_key
+              mtls: proxy-mtls
+              info: client_key
     secrets: null

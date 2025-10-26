@@ -189,27 +189,24 @@ class ServiceResourceBase(ComponentResource):
         from ...extract.global_ import GlobalExtractor
 
         if self.model.files:
-            for name, config in self.model.files.root.items():
-                extractor_args = self.extractor_args_from_self(name)
-                files = []
-                for file_resource_name, file_model in config.items():
-                    if file_model.active:
-                        file = FileResource(
-                            file_resource_name,
-                            opts=self.child_opts,
-                            volume_path=GlobalExtractor(
-                                file_model.path
-                            ).extract_volume_path(extractor_args),
-                            content=GlobalExtractor(file_model.content).extract_str(
-                                extractor_args
-                            ),
-                            mode=file_model.mode,
-                            extractor_args=self.extractor_args,
-                        )
-                        if file_model.bind:
-                            files.append(file)
-                if files:
-                    self.options[name].files = [*self.options[name].files, *files]
+            for file_resource_name, file_model in self.model.files.root.items():
+                if not file_resource_name:
+                    raise RuntimeError("File resource name is not valid")
+                if file_model.active:
+                    file = FileResource(
+                        file_resource_name,
+                        opts=self.child_opts,
+                        volume_path=GlobalExtractor(
+                            file_model.path
+                        ).extract_volume_path(self.extractor_args),
+                        content=GlobalExtractor(file_model.content).extract_str(
+                            self.extractor_args
+                        ),
+                        mode=file_model.mode,
+                        extractor_args=self.extractor_args,
+                    )
+                    if file_model.bind:
+                        self.extractor_args.host.docker.volume.add_file(file)
 
         for name, model in self.model.containers.items():
             if model.active:

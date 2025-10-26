@@ -19,27 +19,26 @@ services:
       TCP_INTERNAL_PORT: 1883
     config: {}
     files:
-      file:
-        config:
-          path:
-            svariable: CONFIG_PATH
-          content:
-            format: toml
-            data:
-              log:
-                level: info
-              listener:
-                tcp:
-                  internal:
-                    enable: true
-                    addr:
-                      extract:
-                        svariable: TCP_INTERNAL_PORT
-                      transform:
-                        string:
-                          template: "0.0.0.0:{value}"
-                    allow_anonymous: false
-                    proxy_protocol: true
+      config:
+        path:
+          svariable: CONFIG_PATH
+        content:
+          format: toml
+          data:
+            log:
+              level: info
+            listener:
+              tcp:
+                internal:
+                  enable: true
+                  addr:
+                    extract:
+                      svariable: TCP_INTERNAL_PORT
+                    transform:
+                      string:
+                        template: "0.0.0.0:{value}"
+                  allow_anonymous: false
+                  proxy_protocol: true
     container:
       image: mqtt
       command:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from functools import cached_property
 from pathlib import PosixPath
 
 import pulumi_docker as docker
@@ -75,12 +76,8 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
     def __getitem__(self, key: str) -> ContainerVolumeConfig:
         return self.root[key]
 
-    def to_args(
-        self,
-        docker_socket_config: ContainerDockerSocketConfig | None,
-        extractor_args: ExtractorArgs,
-        build_args: ContainerModelBuildArgs,
-    ) -> list[docker.ContainerVolumeArgs]:
+    @cached_property
+    def volumes(self) -> dict[str | AbsolutePath, ContainerVolumeConfig]:
         volumes = {}
         for key, config in self.root.items():
             if not config.active:
@@ -90,7 +87,15 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
             except ValidationError:
                 volume = key
             volumes[volume] = config
+        return volumes
 
+    def to_args(
+        self,
+        docker_socket_config: ContainerDockerSocketConfig | None,
+        extractor_args: ExtractorArgs,
+        build_args: ContainerModelBuildArgs,
+    ) -> list[docker.ContainerVolumeArgs]:
+        volumes = self.volumes
         return (
             (
                 [

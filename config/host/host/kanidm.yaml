@@ -94,47 +94,46 @@ services:
                       CONTAINERS:
                         cinfo: name
     files:
-      file:
-        key:
-          path:
-            svariable: TLS_KEY
-          content:
-            key: key
-            info: private_pem
-        chain:
-          path:
-            svariable: TLS_CHAIN
-          content:
-            cert: chain
-        config:
-          path:
-            svariable: CONFIG
-          content:
-            format: toml
-            data:
-              version: "2"
-              bindaddress:
-                extract:
-                  svariable: PORT
-                transform:
-                  string:
-                    template: "[::]:{value}"
-              db_path:
-                extract:
-                  volume: kanidm-data
-                transform:
-                  path: kanidm.db
-              tls_key:
-                svariable: TLS_KEY
-              tls_chain:
-                svariable: TLS_CHAIN
-              domain:
-                hostname: kanidm
-                record: solar
-              origin:
-                hostname: kanidm
-                record: solar
-                scheme: https
+      key:
+        path:
+          svariable: TLS_KEY
+        content:
+          key: key
+          info: private_pem
+      chain:
+        path:
+          svariable: TLS_CHAIN
+        content:
+          cert: chain
+      config:
+        path:
+          svariable: CONFIG
+        content:
+          format: toml
+          data:
+            version: "2"
+            bindaddress:
+              extract:
+                svariable: PORT
+              transform:
+                string:
+                  template: "[::]:{value}"
+            db_path:
+              extract:
+                volume: kanidm-data
+              transform:
+                path: kanidm.db
+            tls_key:
+              svariable: TLS_KEY
+            tls_chain:
+              svariable: TLS_CHAIN
+            domain:
+              hostname: kanidm
+              record: solar
+            origin:
+              hostname: kanidm
+              record: solar
+              scheme: https
     secrets:
       key:
         algorithm: ECDSA

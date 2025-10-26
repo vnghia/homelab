@@ -95,28 +95,24 @@ services:
                 - "stop"
                 - param: CONTAINERS
     files:
-      file:
-        ca:
-          bind: false
-          path:
-            svariable: CA_PATH
-          content:
-            mtls: proxy-mtls
-            info: ca_cert
-        cert:
-          bind: false
-          path:
-            svariable: CERT_PATH
-          content:
-            mtls: proxy-mtls
-            info: server_cert
-        key:
-          bind: false
-          path:
-            svariable: KEY_PATH
-          content:
-            mtls: proxy-mtls
-            info: server_key
+      ca:
+        path:
+          svariable: CA_PATH
+        content:
+          mtls: proxy-mtls
+          info: ca_cert
+      cert:
+        path:
+          svariable: CERT_PATH
+        content:
+          mtls: proxy-mtls
+          info: server_cert
+      key:
+        path:
+          svariable: KEY_PATH
+        content:
+          mtls: proxy-mtls
+          info: server_key
     secrets:
       proxy-mtls:
         algorithm: ED25519
