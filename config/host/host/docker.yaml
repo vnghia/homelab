@@ -101,56 +101,27 @@ services:
           path:
             svariable: CA_PATH
           content:
-            cert: ca-cert
+            mtls: proxy-mtls
+            info: ca_cert
         cert:
           bind: false
           path:
             svariable: CERT_PATH
           content:
-            cert: server-cert
+            mtls: proxy-mtls
+            info: server_cert
         key:
           bind: false
           path:
             svariable: KEY_PATH
           content:
-            key: server-key
-            info: private_pem
+            mtls: proxy-mtls
+            info: server_key
     secrets:
-      ca-key:
+      proxy-mtls:
         algorithm: ED25519
-      ca-cert:
-        key: ca-key
-        allowed-uses:
-          - "crl_signing"
-          - "cert_signing"
-        subject:
-          common-name:
-            hostname: docker-proxy
-          organizational-unit: CA
-        is-ca-certificate: true
-      server-key:
-        algorithm: ED25519
-      server-cert:
-        ca-key: ca-key
-        ca-cert: ca-cert
-        key: server-key
-        allowed-uses: ["server_auth"]
-        dns:
-        subject:
-          common-name:
-            hostname: docker-proxy
-          organizational-unit: SERVER
-      client-key:
-        algorithm: ED25519
-      client-cert:
-        ca-key: ca-key
-        ca-cert: ca-cert
-        key: client-key
-        allowed-uses: ["client_auth"]
-        subject:
-          common-name:
-            hostname: docker-proxy
-          organizational-unit: CLIENT
+        hostname:
+          hostname: docker-proxy
     containers:
       proxy:
         active: false

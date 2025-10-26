@@ -53,7 +53,8 @@ services:
             extract:
               service: docker
               extract:
-                cert: ca-cert
+                mtls: proxy-mtls
+                info: ca_cert
         earth-cert:
           bind: false
           path:
@@ -63,7 +64,8 @@ services:
             extract:
               service: docker
               extract:
-                cert: client-cert
+                mtls: proxy-mtls
+                info: client_cert
         earth-key:
           bind: false
           path:
@@ -73,6 +75,6 @@ services:
             extract:
               service: docker
               extract:
-                key: client-key
-                info: private_pem
+                mtls: proxy-mtls
+                info: client_key
     secrets: null

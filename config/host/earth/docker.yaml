@@ -5,21 +5,9 @@ services:
         proxy:
           record: earth
     secrets:
-      ca-cert:
-        subject:
-          common-name:
-            record: earth
-      server-cert:
-        dns:
-          - hostname: docker-proxy
-            record: earth
-        subject:
-          common-name:
-            record: earth
-      client-cert:
-        subject:
-          common-name:
-            record: earth
+      proxy-mtls:
+        hostname:
+          record: earth
     containers:
       proxy:
         active: true
