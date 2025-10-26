@@ -1,5 +1,5 @@
 from homelab_pydantic import HomelabBaseModel
-from pulumi import ResourceOptions
+from pulumi import ComponentResource, ResourceOptions
 
 
 class SecretModel(HomelabBaseModel):
@@ -8,5 +8,11 @@ class SecretModel(HomelabBaseModel):
     def opts(self, opts: ResourceOptions) -> ResourceOptions:
         return ResourceOptions.merge(
             opts,
-            ResourceOptions(protect=self.protect, additional_secret_outputs=["result"]),
+            ResourceOptions(
+                protect=self.protect or opts.protect,
+                additional_secret_outputs=["result"],
+            ),
         )
+
+    def child_opts(self, t: str, name: str, opts: ResourceOptions) -> ResourceOptions:
+        return ResourceOptions(parent=ComponentResource(t, name, None, self.opts(opts)))

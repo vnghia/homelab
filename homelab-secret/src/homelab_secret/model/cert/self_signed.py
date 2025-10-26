@@ -4,4 +4,4 @@ from .base import SecretCertBaseModel
 
 
 class SecretSelfSignedCertModel(SecretCertBaseModel):
-    key: str
+    key: str | None

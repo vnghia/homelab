@@ -6,6 +6,7 @@ import pulumi_random as random
 import pulumi_tls as tls
 from homelab_secret.model.cert import SecretCertModel
 from homelab_secret.resource import SecretResource
+from homelab_secret.resource.cert.mtls import SecretMTlsResource
 from pulumi import ComponentResource, ResourceOptions
 
 from ...config.service.secret import ServiceSecretConfig
@@ -48,7 +49,10 @@ class ServiceSecretResource(ComponentResource):
         return self.secrets.get_secret(key)
 
     def get_key(self, key: str) -> tls.PrivateKey:
-        return self.secrets.get_key(key)
+        return self.secrets.get_key(key, None)
 
     def get_cert(self, key: str) -> tls.LocallySignedCert | tls.SelfSignedCert:
         return self.secrets.get_cert(key)
+
+    def get_mtls(self, key: str) -> SecretMTlsResource:
+        return self.secrets.get_mtls(key)

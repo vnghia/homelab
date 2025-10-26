@@ -14,6 +14,7 @@ from homelab_extract.service.database import ServiceExtractDatabaseSource
 from homelab_extract.service.export import ServiceExtractExportSource
 from homelab_extract.service.keepass import ServiceExtractKeepassSource
 from homelab_extract.service.key import ServiceExtractKeySource
+from homelab_extract.service.mtls import ServiceExtractMTlsSource
 from homelab_extract.service.secret import ServiceExtractSecretSource
 from homelab_extract.service.variable import ServiceExtractVariableSource
 from homelab_pydantic import AbsolutePath
@@ -28,6 +29,7 @@ from .database import ServiceDatabaseSourceExtractor
 from .export import ServiceExportSourceExtractor
 from .keepass import ServiceKeepassSourceExtractor
 from .key import ServiceKeySourceExtractor
+from .mtls import ServiceMTlsSourceExtractor
 from .secret import ServiceSecretSourceExtractor
 from .variable import ServiceVariableSourceExtractor
 from .volume import ServiceVolumeSourceExtractor
@@ -47,6 +49,7 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
         | ServiceExportSourceExtractor
         | ServiceKeepassSourceExtractor
         | ServiceKeySourceExtractor
+        | ServiceMTlsSourceExtractor
         | ServiceSecretSourceExtractor
         | ServiceVariableSourceExtractor
         | ServiceVolumeSourceExtractor
@@ -62,6 +65,8 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
             return ServiceKeepassSourceExtractor(root)
         if isinstance(root, ServiceExtractKeySource):
             return ServiceKeySourceExtractor(root)
+        if isinstance(root, ServiceExtractMTlsSource):
+            return ServiceMTlsSourceExtractor(root)
         if isinstance(root, ServiceExtractSecretSource):
             return ServiceSecretSourceExtractor(root)
         if isinstance(root, ServiceExtractVariableSource):

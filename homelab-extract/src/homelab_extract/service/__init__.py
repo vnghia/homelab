@@ -7,6 +7,7 @@ from .database import ServiceExtractDatabaseSource
 from .export import ServiceExtractExportSource
 from .keepass import ServiceExtractKeepassSource
 from .key import ServiceExtractKeySource
+from .mtls import ServiceExtractMTlsSource
 from .secret import ServiceExtractSecretSource
 from .variable import ServiceExtractVariableSource
 from .volume import ServiceExtractVolumeSource
@@ -19,6 +20,7 @@ class ServiceExtractSource(
         | ServiceExtractExportSource
         | ServiceExtractKeepassSource
         | ServiceExtractKeySource
+        | ServiceExtractMTlsSource
         | ServiceExtractSecretSource
         | ServiceExtractVariableSource
         | ServiceExtractVolumeSource

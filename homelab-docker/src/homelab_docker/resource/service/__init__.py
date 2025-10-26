@@ -4,7 +4,9 @@ from collections import defaultdict
 
 import pulumi
 import pulumi_tls as tls
+from homelab_extract.service.mtls import MTlsInfoSourceModel
 from homelab_pydantic import HomelabBaseModel
+from homelab_secret.resource.cert.mtls import SecretMTlsResource
 from pulumi import ComponentResource, Output, ResourceOptions
 from pydantic.alias_generators import to_snake
 
@@ -142,6 +144,16 @@ class ServiceResourceBase(ComponentResource):
                         ),
                         secret.cert_pem,
                     )
+                elif isinstance(secret, SecretMTlsResource):
+                    for info in MTlsInfoSourceModel:
+                        pulumi.export(
+                            "{}.secret.{}.{}".format(
+                                self.extractor_args.host.name(),
+                                self.add_service_name(name),
+                                info.replace("_", "-"),
+                            ),
+                            secret.get_info(info),
+                        )
                 else:
                     pulumi.export(
                         "{}.secret.{}".format(

@@ -37,12 +37,13 @@ class SecretSelfSignedCertBuilder(HomelabRootModel[SecretSelfSignedCertModel]):
         opts: ResourceOptions,
         resource: SecretResource,
         extractor_args: ExtractorArgs,
+        key: tls.PrivateKey | None,
     ) -> tls.SelfSignedCert:
         from ....extract.global_ import GlobalExtractor
 
         root = self.root
         opts = root.opts(opts)
-        key = resource.get_key(root.key)
+        key = resource.get_key(root.key, key)
 
         return tls.SelfSignedCert(
             resource_name,
