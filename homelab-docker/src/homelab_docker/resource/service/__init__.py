@@ -15,6 +15,7 @@ from ...model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from ..docker.container import ContainerResource
 from ..file import FileResource
+from ..vpn import VpnModelBuilder
 from .database import ServiceDatabaseResource
 from .keepass import ServiceKeepassResource
 from .secret import ServiceSecretResource
@@ -208,7 +209,22 @@ class ServiceResourceBase(ComponentResource):
                     if file_model.bind:
                         self.extractor_args.host.docker.volume.add_file(file)
 
-        for name, model in self.model.containers.items():
+        containers = self.model.containers
+        if self.model.vpn:
+            host_vpn_config = self.extractor_args.host_model.vpn_
+            vpn = self.model.vpn
+            self.options[vpn.VPN_CONTAINER].envs = VpnModelBuilder(vpn.root).build_envs(
+                self.extractor_args
+            )
+
+            vpn_containers: dict[str | None, ContainerModel] = {
+                vpn.VPN_CONTAINER: self.extractor_args.host_model.services[
+                    host_vpn_config.service
+                ][host_vpn_config.container].__replace__(ports={}, wud=None)
+            }
+            containers = vpn_containers | containers
+
+        for name, model in containers.items():
             if model.active:
                 self.containers[name] = self.build_container(
                     name, model.to_full(self.extractor_args), self.options.get(name)

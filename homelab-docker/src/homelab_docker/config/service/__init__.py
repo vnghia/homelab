@@ -26,7 +26,9 @@ class ServiceConfigBase(HomelabBaseModel):
             model_config = ConfigDict(extra="ignore")
 
         results: typing.Mapping[str, ServiceModel] = {
-            name: AllowExtraServiceModel.model_validate(service.model_dump())
+            name: AllowExtraServiceModel.model_validate(
+                service.model_dump(exclude_unset=True)
+            )
             for name, service in self
             if isinstance(service, ServiceModel)
         } | self.extra(AllowExtraServiceModel)

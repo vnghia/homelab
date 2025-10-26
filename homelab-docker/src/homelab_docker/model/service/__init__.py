@@ -2,6 +2,7 @@ from functools import cached_property
 
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
+from homelab_vpn.config.service import ServiceVpnConfig
 from pydantic import Field
 
 from ...config.service.database import ServiceDatabaseConfig
@@ -20,6 +21,7 @@ class ServiceModel(HomelabBaseModel):
     files: ServiceFileConfig | None = None
     secrets: ServiceSecretConfig | None = None
     keepasses: ServiceKeepassConfig | None = None
+    vpn: ServiceVpnConfig | None = None
     container_: ContainerModel | None = Field(None, alias="container")
     containers_: dict[str, ContainerModel] = Field({}, alias="containers")
 

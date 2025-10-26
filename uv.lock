@@ -1211,12 +1211,14 @@ name = "homelab-vpn"
 version = "0.1.0"
 source = { editable = "homelab-vpn" }
 dependencies = [
+    { name = "homelab-extract" },
     { name = "homelab-pydantic" },
     { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
