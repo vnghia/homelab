@@ -5,7 +5,6 @@ import typing
 import pulumi_random as random
 from homelab_extract.host import HostExtract, HostExtractFull, HostExtractSource
 from homelab_extract.host.info import HostExtractInfoSource
-from homelab_extract.host.variable import HostExtractVariableSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
 from pydantic import ValidationError
@@ -15,7 +14,6 @@ from ..service import ServiceExtractor
 from ..transform import ExtractTransformer
 from .info import HostInfoSourceExtractor
 from .variable import HostVariableSourceExtractor
-from .vpn import HostVpnSourceExtractor
 
 if typing.TYPE_CHECKING:
     from ...model.docker.container.volume_path import ContainerVolumePath
@@ -26,13 +24,11 @@ class HostSourceExtractor(ExtractorBase[HostExtractSource]):
     @property
     def extractor(
         self,
-    ) -> HostInfoSourceExtractor | HostVariableSourceExtractor | HostVpnSourceExtractor:
+    ) -> HostInfoSourceExtractor | HostVariableSourceExtractor:
         root = self.root.root
         if isinstance(root, HostExtractInfoSource):
             return HostInfoSourceExtractor(root)
-        if isinstance(root, HostExtractVariableSource):
-            return HostVariableSourceExtractor(root)
-        return HostVpnSourceExtractor(root)
+        return HostVariableSourceExtractor(root)
 
     def extract_str(
         self, extractor_args: ExtractorArgs

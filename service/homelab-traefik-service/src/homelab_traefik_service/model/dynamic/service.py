@@ -13,6 +13,7 @@ from homelab_traefik_config.model.dynamic.service import (
     TraefikDynamicServiceModel,
     TraefikDynamicServiceType,
 )
+from homelab_vpn.config.service import ServiceVpnConfig
 from pulumi import Output
 from pydantic import AnyUrl, PositiveInt, TypeAdapter
 
@@ -32,10 +33,10 @@ class TraefikDynamicServiceFullModelBuilder(
         elif isinstance(network_config, ContainerNetworkModeConfig):
             match network_config.mode:
                 case NetworkMode.VPN:
-                    vpn_config = extractor_args.host_model.vpn_
-                    vpn_service = extractor_args.host.services[vpn_config.service]
-                    vpn_service.containers[vpn_config.container]
-                    service_name = vpn_service.add_service_name(vpn_config.container)
+                    service.containers[ServiceVpnConfig.VPN_CONTAINER]
+                    service_name = service.add_service_name(
+                        ServiceVpnConfig.VPN_CONTAINER
+                    )
                 case NetworkMode.HOST:
                     service_name = ContainerHostModeConfig.LOCALHOST_HOST
         else:

@@ -6,14 +6,12 @@ docker:
         tag: "v3.40.0"
 vpn:
   service: gluetun
-  ports:
 services:
   gluetun:
     config: {}
     container:
+      active: false
       image: gluetun
-      capabilities:
-        - NET_ADMIN
       healthcheck:
         tests: ["CMD", "/gluetun-entrypoint", "healthcheck"]
         interval: 30s
@@ -29,4 +27,3 @@ services:
         include-prefix: v
       envs:
         DNS_KEEP_NAMESERVER: "on"
-        VPN_SERVICE_PROVIDER: custom

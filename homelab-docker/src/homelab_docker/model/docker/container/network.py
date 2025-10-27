@@ -5,15 +5,16 @@ import typing
 from enum import StrEnum, auto
 
 import pulumi_docker as docker
-from homelab_extract import GlobalExtract, GlobalExtractFull
+from homelab_extract import GlobalExtract
 from homelab_extract.container import ContainerExtract
 from homelab_extract.container.info import (
     ContainerExtractInfoSource,
     ContainerInfoSource,
 )
-from homelab_extract.host import HostExtract, HostExtractFull
+from homelab_extract.host import HostExtract
 from homelab_extract.service import ServiceExtract, ServiceExtractFull
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from homelab_vpn.config.service import ServiceVpnConfig
 from pulumi import Input, Output
 
 from ....extract.global_ import GlobalExtractor
@@ -56,25 +57,19 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     ) -> ContainerNetworkArgs:
         match self.mode:
             case NetworkMode.VPN:
-                vpn_config = extractor_args.host_model.vpn_
                 return ContainerNetworkContainerConfig(
                     container=GlobalExtract(
-                        GlobalExtractFull(
-                            extract=HostExtract(
-                                HostExtractFull(
-                                    service=vpn_config.service,
-                                    extract=ServiceExtract(
-                                        ServiceExtractFull(
-                                            container=vpn_config.container,
-                                            extract=ContainerExtract(
-                                                ContainerExtractInfoSource(
-                                                    cinfo=ContainerInfoSource.ID
-                                                )
-                                            ),
-                                        ),
+                        HostExtract(
+                            ServiceExtract(
+                                ServiceExtractFull(
+                                    container=ServiceVpnConfig.VPN_CONTAINER,
+                                    extract=ContainerExtract(
+                                        ContainerExtractInfoSource(
+                                            cinfo=ContainerInfoSource.ID
+                                        )
                                     ),
                                 )
-                            ),
+                            )
                         )
                     )
                 ).to_args(resource_name, extractor_args)

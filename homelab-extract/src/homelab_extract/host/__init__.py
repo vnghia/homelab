@@ -4,13 +4,10 @@ from ..service import ServiceExtract
 from ..transform import ExtractTransform
 from .info import HostExtractInfoSource
 from .variable import HostExtractVariableSource
-from .vpn import HostExtractVpnSource
 
 
 class HostExtractSource(
-    HomelabRootModel[
-        HostExtractInfoSource | HostExtractVariableSource | HostExtractVpnSource
-    ]
+    HomelabRootModel[HostExtractInfoSource | HostExtractVariableSource]
 ):
     pass
 

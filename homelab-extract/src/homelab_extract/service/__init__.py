@@ -11,6 +11,7 @@ from .mtls import ServiceExtractMTlsSource
 from .secret import ServiceExtractSecretSource
 from .variable import ServiceExtractVariableSource
 from .volume import ServiceExtractVolumeSource
+from .vpn import ServiceExtractVpnSource
 
 
 class ServiceExtractSource(
@@ -24,6 +25,7 @@ class ServiceExtractSource(
         | ServiceExtractSecretSource
         | ServiceExtractVariableSource
         | ServiceExtractVolumeSource
+        | ServiceExtractVpnSource
     ]
 ):
     pass

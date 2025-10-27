@@ -26,7 +26,6 @@ dependencies = [
     "homelab-kanidm-service",
     "homelab-restic-service",
     "homelab-crowdsec-service",
-    "homelab-gluetun-service",
     "homelab-balite-service",
     "homelab-apprise-service",
     "pulumi>=3.148.0",
@@ -76,7 +75,6 @@ homelab-dagu-service = { workspace = true }
 homelab-ddns-service = { workspace = true }
 homelab-extra-service = { workspace = true }
 homelab-frp-service = { workspace = true }
-homelab-gluetun-service = { workspace = true }
 homelab-kanidm-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }

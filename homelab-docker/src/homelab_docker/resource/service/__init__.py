@@ -220,7 +220,9 @@ class ServiceResourceBase(ComponentResource):
             vpn_containers: dict[str | None, ContainerModel] = {
                 vpn.VPN_CONTAINER: self.extractor_args.host_model.services[
                     host_vpn_config.service
-                ][host_vpn_config.container].__replace__(ports={}, wud=None)
+                ][host_vpn_config.container].__replace__(
+                    active=True, ports={}, wud=None
+                )
             }
             containers = vpn_containers | containers
 

@@ -6,7 +6,6 @@ from homelab_dagu_service import DaguService
 from homelab_ddns_service import DdnsService
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global import GlobalArgs
-from homelab_gluetun_service import GluetunService
 from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
 from homelab_restic_service import ResticService
@@ -38,12 +37,6 @@ class SunHost(HostBase[SunServiceConfig]):
 
         self.tailscale = TailscaleService(
             self.services_config.tailscale,
-            opts=self.child_opts,
-            extractor_args=self.extractor_args,
-        )
-
-        self.gluetun = GluetunService(
-            self.services_config.gluetun,
             opts=self.child_opts,
             extractor_args=self.extractor_args,
         )

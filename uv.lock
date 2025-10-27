@@ -26,7 +26,6 @@ members = [
     "homelab-extract",
     "homelab-frp-service",
     "homelab-global",
-    "homelab-gluetun-service",
     "homelab-kanidm-service",
     "homelab-mail",
     "homelab-network",
@@ -543,7 +542,6 @@ dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-frp-service" },
     { name = "homelab-global" },
-    { name = "homelab-gluetun-service" },
     { name = "homelab-kanidm-service" },
     { name = "homelab-mail" },
     { name = "homelab-network" },
@@ -585,7 +583,6 @@ requires-dist = [
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-frp-service", editable = "service/homelab-frp-service" },
     { name = "homelab-global", editable = "homelab-global" },
-    { name = "homelab-gluetun-service", editable = "service/homelab-gluetun-service" },
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
     { name = "homelab-mail", editable = "homelab-mail" },
     { name = "homelab-network", editable = "homelab-network" },
@@ -961,25 +958,6 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "pydantic", specifier = ">=2.10.6" },
-]
-
-[[package]]
-name = "homelab-gluetun-service"
-version = "0.1.0"
-source = { editable = "service/homelab-gluetun-service" }
-dependencies = [
-    { name = "homelab-docker" },
-    { name = "homelab-pydantic" },
-    { name = "pulumi" },
-    { name = "pydantic" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

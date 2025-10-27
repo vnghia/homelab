@@ -36,6 +36,12 @@ class ServiceModel(HomelabBaseModel):
     def __getitem__(self, key: str | None) -> ContainerModel:
         return self.containers[key]
 
+    @property
+    def vpn_(self) -> ServiceVpnConfig:
+        if not self.vpn:
+            raise ValueError("Service vpn config is not provided")
+        return self.vpn
+
 
 class ServiceWithConfigModel[T: HomelabBaseModel](ServiceModel):
     config: T
