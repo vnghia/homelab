@@ -1,7 +1,8 @@
 docker:
   network:
     bridge:
-      default: {}
+      default:
+        icc: false
       internal:
         internal: true
       vpn:
