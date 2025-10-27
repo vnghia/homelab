@@ -28,4 +28,4 @@ services:
         template: https://github.com/qdm12/gluetun/releases/tag/${original}
         include-prefix: v
       envs:
-        DNS_KEEP_NAMESERVER: "on"
+        DOT: "off"
