@@ -18,6 +18,7 @@ from homelab_vpn.config.service import ServiceVpnConfig
 from pulumi import Input, Output
 
 from ....extract.global_ import GlobalExtractor
+from ....model.docker.network import BridgeNetworkModel
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
@@ -85,23 +86,37 @@ class ContainerBridgeNetworkConfig(HomelabBaseModel):
 class ContainerCommonNetworkConfig(HomelabBaseModel):
     bridge: dict[str, ContainerBridgeNetworkConfig] = {}
 
+    def build_resource_aliases(
+        self,
+        resource_name: str | None,
+        bridge_model: BridgeNetworkModel,
+        bridge_config: ContainerBridgeNetworkConfig,
+        extractor_args: ExtractorArgs,
+    ) -> list[Input[str]]:
+        if bridge_model.icc:
+            resource_aliases: list[Input[str]] = []
+            if resource_name:
+                resource_aliases.append(resource_name)
+            resource_aliases += [
+                GlobalExtractor(alias).extract_str(extractor_args)
+                for alias in bridge_config.aliases
+            ]
+            return resource_aliases
+        return []
+
     def to_args(
         self, resource_name: str | None, extractor_args: ExtractorArgs
     ) -> ContainerNetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
-        resource_aliases = [resource_name] if resource_name else []
+        bridge_config = extractor_args.host.docker.network.config.bridge
         return ContainerNetworkArgs(
             mode="bridge",
             advanced=[
                 extractor_args.host.docker.network.get_bridge_args(
                     name,
-                    [
-                        *resource_aliases,
-                        *[
-                            GlobalExtractor(alias).extract_str(extractor_args)
-                            for alias in config.aliases
-                        ],
-                    ],
+                    self.build_resource_aliases(
+                        resource_name, bridge_config[name], config, extractor_args
+                    ),
                 )
                 for name, config in self.bridge.items()
                 if config.active

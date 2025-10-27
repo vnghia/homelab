@@ -19,6 +19,7 @@ class NetworkResource(ComponentResource):
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
+        self.config = config
 
         self.bridge = {
             key: model.build_resource(
@@ -26,7 +27,7 @@ class NetworkResource(ComponentResource):
                 opts=self.child_opts,
                 project_labels=global_args.project.labels,
             )
-            for key, model in config.bridge.items()
+            for key, model in self.config.bridge.items()
         }
 
         for value in self.bridge.values():
