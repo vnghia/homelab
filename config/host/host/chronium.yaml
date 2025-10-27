@@ -22,7 +22,7 @@ services:
       image: chromium
       network:
         bridge:
-          default: {}
+          vpn: {}
       read-only: false
       envs:
         TIMEOUT: 10000

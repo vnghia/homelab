@@ -34,7 +34,7 @@ services:
         - NET_RAW
       network:
         bridge:
-          default: {}
+          vpn: {}
       privileged: true
       tmpfs:
         - path: /run

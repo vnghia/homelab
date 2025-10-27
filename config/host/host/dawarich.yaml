@@ -58,7 +58,7 @@ services:
       entrypoint: ["web-entrypoint.sh"]
       network:
         bridge:
-          default: {}
+          vpn: {}
       tmpfs:
         - /tmp
         - /var/app/tmp/cache

@@ -39,7 +39,7 @@ services:
             port: DB_POSTGRESDB_PORT
       network:
         bridge:
-          default: {}
+          vpn: {}
       tmpfs:
         - path: /home/node/.cache/n8n/public
           uid: 1000

@@ -44,7 +44,7 @@ services:
         - /dev/net/tun
       network:
         bridge:
-          default: {}
+          vpn: {}
       ports:
         rdp-tcp:
           internal: 3389

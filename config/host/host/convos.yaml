@@ -46,7 +46,7 @@ services:
       image: convos
       network:
         bridge:
-          default: {}
+          vpn: {}
       volumes:
         convos-data: /data
       wud:

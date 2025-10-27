@@ -52,7 +52,7 @@ services:
             env: DB_URL
       network:
         bridge:
-          default: {}
+          vpn: {}
       tmpfs:
         - path: /tmp
           exec: true
