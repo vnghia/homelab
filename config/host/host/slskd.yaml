@@ -40,6 +40,9 @@ services:
           service:
             port:
               env: SLSKD_HTTP_PORT
+    vpn:
+      ports:
+        port:
     container:
       image: slskd
       healthcheck:
@@ -81,7 +84,7 @@ services:
         SLSKD_SLSK_USERNAME:
         SLSKD_SLSK_PASSWORD:
         SLSKD_SLSK_LISTEN_PORT:
-          port: slskd
+          port:
         SLSKD_SLSK_CONNECTION_TIMEOUT: 30000
         SLSKD_SLSK_INACTIVITY_TIMEOUT: 30000
         SLSKD_HTTP_PORT: 38945
