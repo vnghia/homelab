@@ -7,6 +7,7 @@ from homelab_docker.model.docker.container.network import (
     ContainerNetworkModeConfig,
     NetworkMode,
 )
+from homelab_docker.resource.service import ServiceResourceBase
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.service import (
     TraefikDynamicServiceFullModel,
@@ -21,6 +22,20 @@ from pydantic import AnyUrl, PositiveInt, TypeAdapter
 class TraefikDynamicServiceFullModelBuilder(
     HomelabRootModel[TraefikDynamicServiceFullModel]
 ):
+    def get_service_name(
+        self, container_name: str | None, service: ServiceResourceBase
+    ) -> str:
+        if (
+            container_name in service.containers
+            or container_name in service.model.containers
+        ):
+            return service.add_service_name(container_name)
+        raise KeyError(
+            "Container {} is not configured in service {}".format(
+                container_name, service.name()
+            )
+        )
+
     def to_url(
         self, type_: TraefikDynamicServiceType, extractor_args: ExtractorArgs
     ) -> Output[AnyUrl]:
@@ -33,15 +48,13 @@ class TraefikDynamicServiceFullModelBuilder(
         elif isinstance(network_config, ContainerNetworkModeConfig):
             match network_config.mode:
                 case NetworkMode.VPN:
-                    service.containers[ServiceVpnConfig.VPN_CONTAINER]
-                    service_name = service.add_service_name(
-                        ServiceVpnConfig.VPN_CONTAINER
+                    service_name = self.get_service_name(
+                        ServiceVpnConfig.VPN_CONTAINER, service
                     )
                 case NetworkMode.HOST:
                     service_name = ContainerHostModeConfig.LOCALHOST_HOST
         else:
-            service.containers[root.container]
-            service_name = service.add_service_name(root.container)
+            service_name = self.get_service_name(root.container, service)
 
         return Output.format(
             "{}://{}:{}",
