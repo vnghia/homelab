@@ -16,14 +16,19 @@ docker:
       crowdsec-config: {}
 services:
   crowdsec:
-    config:
-      docker:
-        acquis-dir:
+    config: {}
+    files:
+      docker-acquis:
+        path:
           extract:
             volume: crowdsec-config
           transform:
-            path: acquis.d
-        check-interval: 10s
+            path: acquis.d/docker.yaml
+        content:
+          format: yaml
+          data:
+            source: docker
+            use_container_labels: true
     secrets:
       traefik:
         length: 32

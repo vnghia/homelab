@@ -1,7 +1,6 @@
 from homelab_backup_service import BackupService
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
-from homelab_crowdsec_service import CrowdsecService
 from homelab_dagu_service import DaguService
 from homelab_ddns_service import DdnsService
 from homelab_docker.config.host import HostServiceModelConfig
@@ -41,11 +40,6 @@ class SunHost(HostBase[SunServiceConfig]):
             extractor_args=self.extractor_args,
         )
 
-        self.crowdsec = CrowdsecService(
-            self.services_config.crowdsec,
-            opts=self.child_opts,
-            extractor_args=self.extractor_args,
-        )
         self.traefik = TraefikService(
             self.services_config.traefik,
             opts=self.child_opts,

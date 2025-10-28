@@ -25,7 +25,6 @@ dependencies = [
     "homelab-barman-service",
     "homelab-kanidm-service",
     "homelab-restic-service",
-    "homelab-crowdsec-service",
     "homelab-balite-service",
     "homelab-apprise-service",
     "pulumi>=3.148.0",
@@ -70,7 +69,6 @@ homelab-apprise-service = { workspace = true }
 homelab-backup-service = { workspace = true }
 homelab-balite-service = { workspace = true }
 homelab-barman-service = { workspace = true }
-homelab-crowdsec-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-ddns-service = { workspace = true }
 homelab-extra-service = { workspace = true }
