@@ -69,9 +69,6 @@ services:
         interval: 30s
         timeout: 5s
         retries: 5
-      labels:
-        crowdsec.enable: true
-        crowdsec.labels.type: traefik
       network:
         container:
           service: tailscale

@@ -64,3 +64,8 @@ services:
       volumes:
         crowdsec-data: /var/lib/crowdsec/data
         crowdsec-config: /etc/crowdsec
+  traefik:
+    container:
+      labels:
+        crowdsec.enable: true
+        crowdsec.labels.type: traefik
