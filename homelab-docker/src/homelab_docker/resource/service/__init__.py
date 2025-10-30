@@ -12,6 +12,7 @@ from pydantic.alias_generators import to_snake
 
 from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerModel, ContainerModelBuildArgs
+from ...model.docker.container.ports import ContainerPortsConfig
 from ...model.service import ServiceModel, ServiceWithConfigModel
 from ..docker.container import ContainerResource
 from ..file import FileResource
@@ -221,7 +222,7 @@ class ServiceResourceBase(ComponentResource):
                 vpn.VPN_CONTAINER: self.extractor_args.host_model.services[
                     host_vpn_config.service
                 ][host_vpn_config.container].__replace__(
-                    active=True, ports={}, wud=None
+                    active=True, ports=ContainerPortsConfig(), wud=None
                 )
             }
             containers = vpn_containers | containers
