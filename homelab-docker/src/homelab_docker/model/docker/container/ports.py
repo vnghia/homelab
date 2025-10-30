@@ -15,6 +15,7 @@ from .port import ContainerPortConfig, ContainerPortForwardConfig, ContainerPort
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
+    from . import ContainerModelBuildArgs
 
 
 class ContainerPortRangeConfig(HomelabBaseModel):
@@ -64,10 +65,10 @@ class ContainerPortsConfig(
     root: dict[str, ContainerPortRangeConfig | ContainerPortConfig] = {}
 
     def to_args(
-        self, extractor_args: ExtractorArgs
+        self, extractor_args: ExtractorArgs, build_args: ContainerModelBuildArgs
     ) -> Output[list[docker.ContainerPortArgs]]:
         ports: list[Output[ContainerPortConfig]] = []
-        for config in self.root.values():
+        for config in (self | build_args.ports).root.values():
             if isinstance(config, ContainerPortConfig):
                 ports.append(config.extract_self(extractor_args))
             else:
@@ -77,3 +78,6 @@ class ContainerPortsConfig(
         return Output.all(*ports).apply(
             lambda ports: ([port.to_args() for port in sorted(ports)])
         )
+
+    def __or__(self, rhs: ContainerPortsConfig) -> ContainerPortsConfig:
+        return ContainerPortsConfig(self.root | rhs.root)

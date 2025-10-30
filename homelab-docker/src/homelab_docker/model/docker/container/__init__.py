@@ -38,6 +38,9 @@ class ContainerModelBuildArgs:
         default_factory=dict
     )
     files: Sequence[FileResource] = dataclasses.field(default_factory=list)
+    ports: ContainerPortsConfig = dataclasses.field(
+        default_factory=ContainerPortsConfig
+    )
 
 
 class ContainerModel(HomelabBaseModel):
@@ -257,7 +260,7 @@ class ContainerModel(HomelabBaseModel):
             init=self.init,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
-            ports=self.ports.to_args(extractor_args),
+            ports=self.ports.to_args(extractor_args, build_args),
             privileged=self.privileged,
             read_only=self.read_only,
             rm=self.remove,
