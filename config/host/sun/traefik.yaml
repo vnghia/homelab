@@ -108,13 +108,7 @@ services:
               service: crowdsec
               extract:
                 secret: traefik
-            crowdsecLapiHost:
-              service: crowdsec
-              extract:
-                cinfo: name
-              transform:
-                string:
-                  template: "{value}:8080"
+            crowdsecLapiHost: crowdsec:8080
         oidc:
           name: oidc
           plugin: oidc
