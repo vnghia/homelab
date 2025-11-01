@@ -61,7 +61,7 @@ services:
         retries: 1
         start-period: 10s
       network:
-        mode: vpn
+        container: vpn
       volumes:
         slskd-data: /app
         slskd-download: /mnt/download

@@ -11,10 +11,9 @@ from homelab_extract.container.info import (
     ContainerExtractInfoSource,
     ContainerInfoSource,
 )
-from homelab_extract.host import HostExtract
+from homelab_extract.host import HostExtract, HostExtractFull
 from homelab_extract.service import ServiceExtract, ServiceExtractFull
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
-from homelab_vpn.config.service import ServiceVpnConfig
 from pulumi import Input, Output
 
 from ....extract.global_ import GlobalExtractor
@@ -32,11 +31,11 @@ class ContainerNetworkArgs:
 
 class NetworkMode(StrEnum):
     HOST = auto()
-    VPN = auto()
 
 
 class ContainerNetworkContainerConfig(HomelabBaseModel):
-    container: GlobalExtract
+    service: str | None = None
+    container: str | None = None
 
     def to_args(
         self, _resource_name: str | None, extractor_args: ExtractorArgs
@@ -44,7 +43,25 @@ class ContainerNetworkContainerConfig(HomelabBaseModel):
         return ContainerNetworkArgs(
             mode=Output.format(
                 "container:{0}",
-                GlobalExtractor(self.container).extract_str(extractor_args),
+                GlobalExtractor(
+                    GlobalExtract(
+                        HostExtract(
+                            HostExtractFull(
+                                service=self.service,
+                                extract=ServiceExtract(
+                                    ServiceExtractFull(
+                                        container=self.container,
+                                        extract=ContainerExtract(
+                                            ContainerExtractInfoSource(
+                                                cinfo=ContainerInfoSource.ID
+                                            )
+                                        ),
+                                    ),
+                                ),
+                            )
+                        )
+                    )
+                ).extract_str(extractor_args),
             ),
             advanced=[],
         )
@@ -57,23 +74,6 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
         self, resource_name: str | None, extractor_args: ExtractorArgs
     ) -> ContainerNetworkArgs:
         match self.mode:
-            case NetworkMode.VPN:
-                return ContainerNetworkContainerConfig(
-                    container=GlobalExtract(
-                        HostExtract(
-                            ServiceExtract(
-                                ServiceExtractFull(
-                                    container=ServiceVpnConfig.VPN_CONTAINER,
-                                    extract=ContainerExtract(
-                                        ContainerExtractInfoSource(
-                                            cinfo=ContainerInfoSource.ID
-                                        )
-                                    ),
-                                )
-                            )
-                        )
-                    )
-                ).to_args(resource_name, extractor_args)
             case NetworkMode.HOST:
                 return ContainerNetworkArgs(mode="host", advanced=[])
 

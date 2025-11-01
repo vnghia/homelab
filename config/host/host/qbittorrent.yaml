@@ -31,7 +31,7 @@ services:
     container:
       image: qbittorrent
       network:
-        mode: vpn
+        container: vpn
       tmpfs:
         - path: /run
           exec: true

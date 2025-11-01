@@ -70,10 +70,7 @@ services:
         timeout: 5s
         retries: 5
       network:
-        container:
-          service: tailscale
-          extract:
-            cinfo: id
+        service: tailscale
       wud:
         template: https://github.com/traefik/traefik/releases/tag/${original}
         include-prefix: v

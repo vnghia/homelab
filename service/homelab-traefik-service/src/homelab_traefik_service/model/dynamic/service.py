@@ -4,6 +4,7 @@ from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container.host import ContainerHostModeConfig
 from homelab_docker.model.docker.container.network import (
+    ContainerNetworkContainerConfig,
     ContainerNetworkModeConfig,
     NetworkMode,
 )
@@ -14,7 +15,6 @@ from homelab_traefik_config.model.dynamic.service import (
     TraefikDynamicServiceModel,
     TraefikDynamicServiceType,
 )
-from homelab_vpn.config.service import ServiceVpnConfig
 from pulumi import Output
 from pydantic import AnyUrl, PositiveInt, TypeAdapter
 
@@ -47,12 +47,15 @@ class TraefikDynamicServiceFullModelBuilder(
             service_name = str(root.external)
         elif isinstance(network_config, ContainerNetworkModeConfig):
             match network_config.mode:
-                case NetworkMode.VPN:
-                    service_name = self.get_service_name(
-                        ServiceVpnConfig.VPN_CONTAINER, service
-                    )
                 case NetworkMode.HOST:
                     service_name = ContainerHostModeConfig.LOCALHOST_HOST
+        elif isinstance(network_config, ContainerNetworkContainerConfig):
+            service_name = self.get_service_name(
+                network_config.container,
+                extractor_args.services[network_config.service]
+                if network_config.service
+                else service,
+            )
         else:
             service_name = self.get_service_name(root.container, service)
 
