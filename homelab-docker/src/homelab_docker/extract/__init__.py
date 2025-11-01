@@ -57,7 +57,7 @@ class ExtractorArgs:
             _host=self._host,
             _service=service,
             _container=service.containers.get(
-                container, service.model.containers.get(container)
+                container, service.container_models.get(container)
             ),
         )
 

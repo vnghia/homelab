@@ -40,6 +40,7 @@ class ServiceResourceBase(ComponentResource):
         self._keepass: ServiceKeepassResource | None = None
 
         self.exports: dict[str, Output[str]] = {}
+        self.container_models: dict[str | None, ContainerModel] = model.containers
         self.containers: dict[str | None, ContainerResource] = {}
         self.extractor_args = extractor_args.from_service(self)
 
@@ -210,7 +211,6 @@ class ServiceResourceBase(ComponentResource):
                     if file_model.bind:
                         self.extractor_args.host.docker.volume.add_file(file)
 
-        containers = self.model.containers
         if self.model.vpn:
             host_vpn_config = self.extractor_args.host_model.vpn_
             vpn = self.model.vpn
@@ -225,9 +225,9 @@ class ServiceResourceBase(ComponentResource):
                     active=True, ports=ContainerPortsConfig(), wud=None
                 )
             }
-            containers = vpn_containers | containers
+            self.container_models = vpn_containers | self.container_models
 
-        for name, model in containers.items():
+        for name, model in self.container_models.items():
             if model.active:
                 self.containers[name] = self.build_container(
                     name, model.to_full(self.extractor_args), self.options.get(name)

@@ -27,7 +27,7 @@ class TraefikDynamicServiceFullModelBuilder(
     ) -> str:
         if (
             container_name in service.containers
-            or container_name in service.model.containers
+            or container_name in service.container_models
         ):
             return service.add_service_name(container_name)
         raise KeyError(
@@ -42,7 +42,7 @@ class TraefikDynamicServiceFullModelBuilder(
         root = self.root
         service = extractor_args.service
 
-        network_config = service.model.containers[root.container].network.root
+        network_config = service.container_models[root.container].network.root
         if root.external is not None:
             service_name = str(root.external)
         elif isinstance(network_config, ContainerNetworkModeConfig):
