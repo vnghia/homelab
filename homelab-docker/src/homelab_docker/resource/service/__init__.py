@@ -52,6 +52,10 @@ class ServiceResourceBase(ComponentResource):
             ContainerModelBuildArgs
         )
 
+        self.build_files()
+        self.build_vpn_container_model()
+        self.build_options_ports()
+
         self.extractor_args.services[self.name()] = self
 
     def extractor_args_from_self(self, container: str | None) -> ExtractorArgs:
@@ -174,21 +178,7 @@ class ServiceResourceBase(ComponentResource):
                 extractor_args=self.extractor_args,
             )
 
-    def build_container(
-        self,
-        name: str | None,
-        model: ContainerModel,
-        container_model_build_args: ContainerModelBuildArgs | None,
-    ) -> ContainerResource:
-        resource = model.build_resource(
-            self.add_service_name(name),
-            opts=self.child_opts,
-            extractor_args=self.extractor_args,
-            build_args=container_model_build_args,
-        )
-        return ContainerResource(model=model, resource=resource)
-
-    def build_containers(self) -> None:
+    def build_files(self) -> None:
         from ...extract.global_ import GlobalExtractor
 
         if self.model.files:
@@ -211,6 +201,7 @@ class ServiceResourceBase(ComponentResource):
                     if file_model.bind:
                         self.extractor_args.host.docker.volume.add_file(file)
 
+    def build_vpn_container_model(self) -> None:
         if self.model.vpn:
             host_vpn_config = self.extractor_args.host_model.vpn_
             vpn = self.model.vpn
@@ -227,6 +218,25 @@ class ServiceResourceBase(ComponentResource):
             }
             self.container_models = vpn_containers | self.container_models
 
+    def build_options_ports(self) -> None:
+        for name, ports in self.extractor_args.host_model.ports[self.name()].items():
+            self.options[name].ports |= ports
+
+    def build_container(
+        self,
+        name: str | None,
+        model: ContainerModel,
+        container_model_build_args: ContainerModelBuildArgs | None,
+    ) -> ContainerResource:
+        resource = model.build_resource(
+            self.add_service_name(name),
+            opts=self.child_opts,
+            extractor_args=self.extractor_args,
+            build_args=container_model_build_args,
+        )
+        return ContainerResource(model=model, resource=resource)
+
+    def build_containers(self) -> None:
         for name, model in self.container_models.items():
             if model.active:
                 self.containers[name] = self.build_container(

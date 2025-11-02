@@ -80,3 +80,15 @@ class ContainerPortConfig(HomelabBaseModel):
 
     def __lt__(self, other: Self) -> bool:
         return self.to_comparable() < other.to_comparable()
+
+    def with_port_service(
+        self, port: PositiveInt | GlobalExtract, service: str, force: bool
+    ) -> PositiveInt | GlobalExtract:
+        if isinstance(port, GlobalExtract):
+            return port.with_service(service, force)
+        return port
+
+    def with_service(self, service: str, force: bool) -> ContainerPortConfig:
+        internal = self.with_port_service(self.internal, service, force)
+        external = self.with_port_service(self.external, service, force)
+        return self.__replace__(internal=internal, external=external)

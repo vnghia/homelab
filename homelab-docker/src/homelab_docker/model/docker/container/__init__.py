@@ -19,7 +19,7 @@ from .host import ContainerHostConfig
 from .image import ContainerImageModelConfig
 from .inherit import ContainerInheritConfig
 from .mail import ContainerMailConfig
-from .network import ContainerNetworkConfig
+from .network import ContainerCommonNetworkConfig, ContainerNetworkConfig
 from .ports import ContainerPortsConfig
 from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
@@ -188,6 +188,14 @@ class ContainerModel(HomelabBaseModel):
             | {file.id: file.hash for file in build_args.files}
         )
 
+    def build_ports(
+        self, extractor_args: ExtractorArgs, build_args: ContainerModelBuildArgs
+    ) -> Output[list[docker.ContainerPortArgs]]:
+        network = self.network.root
+        if isinstance(network, ContainerCommonNetworkConfig):
+            return self.ports.to_args(extractor_args, build_args)
+        return Output.from_input([])
+
     def build_args(
         self,
         build_args: ContainerModelBuildArgs | None,
@@ -230,7 +238,8 @@ class ContainerModel(HomelabBaseModel):
                     replace_on_changes=["*"],
                     depends_on=depends_on,
                     delete_before_replace=self.delete_before_replace
-                    or bool(self.ports),
+                    or bool(self.ports)
+                    or bool(build_args.ports),
                 ),
             ),
             image=self.image.to_image_name(extractor_args.host.docker.image),
@@ -260,7 +269,7 @@ class ContainerModel(HomelabBaseModel):
             init=self.init,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
-            ports=self.ports.to_args(extractor_args, build_args),
+            ports=self.build_ports(extractor_args, build_args),
             privileged=self.privileged,
             read_only=self.read_only,
             rm=self.remove,

@@ -38,6 +38,18 @@ class GlobalExtract(
     def from_simple(cls, value: str) -> Self:
         return cls(GlobalExtractSource(GlobalExtractSimpleSource(value)))
 
+    def to_full(self) -> GlobalExtractFull:
+        root = self.root
+        if isinstance(root, GlobalExtractFull):
+            return root
+        return GlobalExtractFull(extract=root)
+
+    def with_service(self, service: str, force: bool) -> Self:
+        full = self.to_full()
+        if isinstance(full.extract, HostExtract):
+            full = full.__replace__(extract=full.extract.with_service(service, force))
+        return self.model_construct(full)
+
 
 GlobalExtractSource.model_rebuild()
 GlobalExtractFull.model_rebuild()
