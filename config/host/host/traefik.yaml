@@ -17,6 +17,10 @@ docker:
 services:
   traefik:
     variables:
+      HTTP_PUBLIC_BIND_PORT: 81
+      HTTP_PORT: 80
+      HTTPS_PUBLIC_BIND_PORT: 444
+      HTTPS_PORT: 443
       CERT_PATH:
         extract:
           volume: traefik-cert
@@ -49,6 +53,17 @@ services:
         require-all-rns: false
         disable-ans-checks: true
         delay-before-checks: 60s
+      entrypoint:
+        config:
+          private-http:
+            port:
+              svariable: HTTP_PORT
+            to:
+              svariable: HTTPS_PORT
+          private-https:
+            port:
+              svariable: HTTPS_PORT
+            http3: {}
       traefik:
         local:
           name: local
@@ -58,7 +73,6 @@ services:
                 - "192.168.0.0/16"
                 - "fc00::/10"
     container:
-      delete-before-replace: true
       image: traefik
       command:
         - "traefik"
@@ -71,6 +85,25 @@ services:
         retries: 5
       network:
         service: tailscale
+      ports:
+        http:
+          internal:
+            svariable: HTTP_PUBLIC_BIND_PORT
+          external:
+            svariable: HTTP_PORT
+          protocol: tcp
+        https:
+          internal:
+            svariable: HTTPS_PUBLIC_BIND_PORT
+          external:
+            svariable: HTTPS_PORT
+          protocol: tcp
+        h3:
+          internal:
+            svariable: HTTPS_PUBLIC_BIND_PORT
+          external:
+            svariable: HTTPS_PORT
+          protocol: udp
       wud:
         template: https://github.com/traefik/traefik/releases/tag/${original}
         include-prefix: v

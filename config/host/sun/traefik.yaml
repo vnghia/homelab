@@ -15,46 +15,24 @@ services:
     config:
       entrypoint:
         config:
-          private-http:
-            port:
-              service: tailscale
-              extract:
-                svariable: HTTP_EXTERNAL_PORT
-            to:
-              service: tailscale
-              extract:
-                svariable: HTTPS_EXTERNAL_PORT
           public-http:
             port:
-              service: tailscale
-              extract:
-                svariable: HTTP_INTERNAL_PORT
+              svariable: HTTP_PUBLIC_BIND_PORT
             to:
-              service: tailscale
-              extract:
-                svariable: HTTPS_EXTERNAL_PORT
+              svariable: HTTPS_PORT
           private-https:
-            port:
-              service: tailscale
-              extract:
-                svariable: HTTPS_EXTERNAL_PORT
             local: true
-            http3: {}
             timeout: &timeout
               read: 12h
               write: 12h
               idle: 12h
           public-https:
             port:
-              service: tailscale
-              extract:
-                svariable: HTTPS_INTERNAL_PORT
+              svariable: HTTPS_PUBLIC_BIND_PORT
             internal: true
             http3:
               port:
-                service: tailscale
-                extract:
-                  svariable: HTTPS_EXTERNAL_PORT
+                svariable: HTTPS_PORT
             timeout: *timeout
             middlewares:
               - geoblock

@@ -1,24 +1,11 @@
 services:
   traefik:
+    variables:
+      HTTP_PUBLIC_BIND_PORT: 80
+      HTTPS_PUBLIC_BIND_PORT: 443
     config:
       entrypoint:
-        config:
-          http:
-            port:
-              service: tailscale
-              extract:
-                svariable: HTTP_PORT
-            to:
-              service: tailscale
-              extract:
-                svariable: HTTPS_PORT
-          https:
-            port:
-              service: tailscale
-              extract:
-                svariable: HTTPS_PORT
-            http3: {}
         mapping:
-          earth: "https"
+          earth: "private-https"
     container:
       wud:

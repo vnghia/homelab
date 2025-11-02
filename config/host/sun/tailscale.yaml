@@ -1,18 +1,5 @@
 services:
   tailscale:
-    variables:
-      HTTP_INTERNAL_PORT:
-        port: http
-        info: internal
-      HTTP_EXTERNAL_PORT:
-        port: http
-        info: external
-      HTTPS_INTERNAL_PORT:
-        port: https
-        info: internal
-      HTTPS_EXTERNAL_PORT:
-        port: https
-        info: external
     container:
       hosts:
         - host: earth
@@ -32,16 +19,3 @@ services:
                 hostname: chromium
               - record: solar
                 hostname: livekit
-      ports:
-        http:
-          internal: 81
-          external: 80
-          protocol: tcp
-        https:
-          internal: &https-port 444
-          external: 443
-          protocol: tcp
-        h3:
-          internal: *https-port
-          external: 443
-          protocol: udp
