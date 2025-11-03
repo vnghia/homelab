@@ -32,9 +32,13 @@ if typing.TYPE_CHECKING:
 
 @dataclasses.dataclass
 class ContainerNetworkModelBuildArgs:
+    hosts: list[ContainerHostConfig] = dataclasses.field(default_factory=list)
     ports: ContainerPortsConfig = dataclasses.field(
         default_factory=ContainerPortsConfig
     )
+
+    def add_hosts(self, hosts: list[ContainerHostConfig]) -> None:
+        self.hosts += hosts
 
     def add_ports(self, ports: ContainerPortsConfig) -> None:
         self.ports |= ports
@@ -62,6 +66,7 @@ class ContainerModelBuildArgs:
         self.files = [*self.files, *files]
 
     def add_network(self, network: ContainerNetworkModelBuildArgs) -> None:
+        self.network.add_hosts(network.hosts)
         self.network.add_ports(network.ports)
 
 
@@ -210,6 +215,15 @@ class ContainerModel(HomelabBaseModel):
             | {file.id: file.hash for file in build_args.files}
         )
 
+    def build_hosts(
+        self, extractor_args: ExtractorArgs, build_args: ContainerModelBuildArgs
+    ) -> list[docker.ContainerHostArgs] | None:
+        network = self.network.root
+        if isinstance(network, ContainerCommonNetworkConfig):
+            hosts = self.hosts + build_args.network.hosts
+            return [host.to_args(extractor_args) for host in hosts] if hosts else None
+        return None
+
     def build_ports(
         self, extractor_args: ExtractorArgs, build_args: ContainerModelBuildArgs
     ) -> Output[list[docker.ContainerPortArgs]]:
@@ -285,9 +299,7 @@ class ContainerModel(HomelabBaseModel):
             hostname=GlobalExtractor(self.hostname).extract_str(extractor_args)
             if self.hostname
             else None,
-            hosts=[host.to_args(extractor_args) for host in self.hosts]
-            if self.hosts
-            else None,
+            hosts=self.build_hosts(extractor_args, build_args),
             init=self.init,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,

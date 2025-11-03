@@ -55,9 +55,18 @@ class HostServiceModelModel(HostNoServiceModel):
             for container_model in service_model.containers.values():
                 network_mode = container_model.network.root
                 if isinstance(network_mode, ContainerNetworkContainerConfig):
-                    networks[network_mode.service or service_name][
+                    network = networks[network_mode.service or service_name][
                         network_mode.container
-                    ].add_ports(container_model.ports.with_service(service_name, False))
+                    ]
+                    network.add_hosts(
+                        [
+                            host.with_service(service_name, False)
+                            for host in container_model.hosts
+                        ]
+                    )
+                    network.add_ports(
+                        container_model.ports.with_service(service_name, False)
+                    )
         return networks
 
 

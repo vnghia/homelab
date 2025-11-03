@@ -28,6 +28,12 @@ class ContainerHostFullConfig(HomelabBaseModel):
             ip=GlobalExtractor(self.ip).extract_str(extractor_args),
         )
 
+    def with_service(self, service: str, force: bool) -> ContainerHostFullConfig:
+        return self.__replace__(
+            host=self.host.with_service(service, force),
+            ip=self.ip.with_service(service, force),
+        )
+
 
 class ContainerHostHostConfig(HomelabBaseModel):
     host: str
@@ -49,6 +55,11 @@ class ContainerHostHostConfig(HomelabBaseModel):
             ),
         ).to_args(extractor_args)
 
+    def with_service(self, service: str, force: bool) -> ContainerHostHostConfig:
+        return self.__replace__(
+            hostname=GlobalExtract.with_service_nullable(self.hostname, service, force),
+        )
+
 
 class ContainerHostModeConfig(HomelabBaseModel):
     LOCALHOST_HOST: ClassVar[str] = "host.docker.internal"
@@ -64,6 +75,9 @@ class ContainerHostModeConfig(HomelabBaseModel):
                     ip=GlobalExtract.from_simple(self.LOCALHOST_IP),
                 ).to_args(extractor_args)
 
+    def with_service(self, service: str, force: bool) -> ContainerHostModeConfig:
+        return self
+
 
 class ContainerHostConfig(
     HomelabRootModel[
@@ -72,3 +86,6 @@ class ContainerHostConfig(
 ):
     def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHostArgs:
         return self.root.to_args(extractor_args)
+
+    def with_service(self, service: str, force: bool) -> ContainerHostConfig:
+        return ContainerHostConfig(self.root.with_service(service, force))
