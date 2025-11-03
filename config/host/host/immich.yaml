@@ -45,19 +45,20 @@ services:
   immich:
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              env: IMMICH_PORT
-          middlewares:
-            - name: limit
-              data:
-                buffering:
-                  maxRequestBodyBytes: 50000000000
-                  memRequestBodyBytes: 500000000
-                  maxResponseBodyBytes: 50000000000
-                  memResponseBodyBytes: 500000000
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                env: IMMICH_PORT
+            middlewares:
+              - name: limit
+                data:
+                  buffering:
+                    maxRequestBodyBytes: 50000000000
+                    memRequestBodyBytes: 500000000
+                    maxResponseBodyBytes: 50000000000
+                    memResponseBodyBytes: 500000000
     databases:
       postgres:
         postgres:

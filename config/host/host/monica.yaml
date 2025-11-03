@@ -56,10 +56,11 @@ services:
         volume: monica-meilisearch-data
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port: 80
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port: 80
     databases:
       postgres:
         postgres: {}

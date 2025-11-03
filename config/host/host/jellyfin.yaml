@@ -54,12 +54,13 @@ services:
   jellyfin:
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              extract:
-                svariable: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                extract:
+                  svariable: PORT
     variables:
       PORT: 8096
     keepasses:

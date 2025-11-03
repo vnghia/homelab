@@ -15,11 +15,12 @@ services:
   pdf:
     config:
       traefik:
-        traefik:
-          record: sun
-          service:
-            port:
-              env: SERVER_PORT
+        dynamic:
+          traefik:
+            record: sun
+            service:
+              port:
+                env: SERVER_PORT
     container:
       image: pdf
       tmpfs:

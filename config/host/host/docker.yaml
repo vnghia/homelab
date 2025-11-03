@@ -39,38 +39,39 @@ services:
           path: server.pem
     config:
       traefik:
-        proxy:
-          name: proxy
-          hostname: docker-proxy
-          service:
-            container: proxy
-            port:
-              svariable: PROXY_PORT
-          tls:
+        dynamic:
+          proxy:
             name: proxy
-            certs:
-              - cert:
-                  service: docker
-                  extract:
-                    container:
-                      service: traefik
+            hostname: docker-proxy
+            service:
+              container: proxy
+              port:
+                svariable: PROXY_PORT
+            tls:
+              name: proxy
+              certs:
+                - cert:
+                    service: docker
                     extract:
-                      svariable: CERT_PATH
-                key:
-                  service: docker
-                  extract:
-                    container:
-                      service: traefik
+                      container:
+                        service: traefik
+                      extract:
+                        svariable: CERT_PATH
+                  key:
+                    service: docker
                     extract:
-                      svariable: KEY_PATH
-            mtls:
-              cas:
-                - service: docker
-                  extract:
-                    container:
-                      service: traefik
+                      container:
+                        service: traefik
+                      extract:
+                        svariable: KEY_PATH
+              mtls:
+                cas:
+                  - service: docker
                     extract:
-                      svariable: CA_PATH
+                      container:
+                        service: traefik
+                      extract:
+                        svariable: CA_PATH
       dagu:
         docker:
           executor:

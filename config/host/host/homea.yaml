@@ -13,11 +13,12 @@ services:
       PORT: 8123
     config:
       traefik:
-        traefik:
-          record: earth
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: earth
+            service:
+              port:
+                svariable: PORT
     keepasses:
       keepass:
         username:

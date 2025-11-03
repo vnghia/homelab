@@ -27,14 +27,15 @@ services:
       PORT: 3000
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              svariable: PORT
-          middlewares:
-            - service: traefik
-              name: oidc
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
+            middlewares:
+              - service: traefik
+                name: oidc
     keepasses:
       keepass:
         hostname:

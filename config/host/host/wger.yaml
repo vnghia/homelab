@@ -31,58 +31,59 @@ services:
       PORT: 8000
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              svariable: PORT
-          middlewares:
-            - service: traefik
-              name: oidc
-        api:
-          name: api
-          hostname: wger
-          record: solar
-          prefix: /api
-          service: "wger@file"
-        static:
-          name: static
-          hostname: wger
-          record: solar
-          prefix: /static
-          service:
-            container: static
-            port:
-              service: nginx-static
-              extract:
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
                 svariable: PORT
-          middlewares:
-            - service: traefik
-              name: oidc
-            - name: strip-static
-              data:
-                stripPrefix:
-                  prefixes:
-                    - "/static"
-        media:
-          name: media
-          hostname: wger
-          record: solar
-          prefix: /media
-          service:
-            container: media
-            port:
-              service: nginx-static
-              extract:
-                svariable: PORT
-          middlewares:
-            - service: traefik
-              name: oidc
-            - name: strip-media
-              data:
-                stripPrefix:
-                  prefixes:
-                    - "/media"
+            middlewares:
+              - service: traefik
+                name: oidc
+          api:
+            name: api
+            hostname: wger
+            record: solar
+            prefix: /api
+            service: "wger@file"
+          static:
+            name: static
+            hostname: wger
+            record: solar
+            prefix: /static
+            service:
+              container: static
+              port:
+                service: nginx-static
+                extract:
+                  svariable: PORT
+            middlewares:
+              - service: traefik
+                name: oidc
+              - name: strip-static
+                data:
+                  stripPrefix:
+                    prefixes:
+                      - "/static"
+          media:
+            name: media
+            hostname: wger
+            record: solar
+            prefix: /media
+            service:
+              container: media
+              port:
+                service: nginx-static
+                extract:
+                  svariable: PORT
+            middlewares:
+              - service: traefik
+                name: oidc
+              - name: strip-media
+                data:
+                  stripPrefix:
+                    prefixes:
+                      - "/media"
     databases:
       postgres:
         postgres:

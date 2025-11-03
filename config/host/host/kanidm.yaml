@@ -53,12 +53,13 @@ services:
             present: true
             display-name: "Me"
       traefik:
-        traefik:
-          record: solar
-          service:
-            scheme: https
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              scheme: https
+              port:
+                svariable: PORT
       dagu:
         depends-on: [docker]
         dag:

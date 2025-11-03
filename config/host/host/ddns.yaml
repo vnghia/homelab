@@ -13,14 +13,15 @@ services:
       PORT: 8000
     config:
       traefik:
-        traefik:
-          record: sun
-          hostname: system
-          prefix:
-            env: ROOT_URL
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: sun
+            hostname: system
+            prefix:
+              env: ROOT_URL
+            service:
+              port:
+                svariable: PORT
     container:
       image: ddns
       healthcheck:

@@ -15,11 +15,12 @@ services:
   qbittorrent:
     config:
       traefik:
-        traefik:
-          record: sun
-          service:
-            port:
-              env: WEBUI_PORT
+        dynamic:
+          traefik:
+            record: sun
+            service:
+              port:
+                env: WEBUI_PORT
     keepasses:
       keepass:
         hostname:

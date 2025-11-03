@@ -20,20 +20,21 @@ services:
       PREFIX: /xana
     config:
       traefik:
-        traefik:
-          record: sun
-          hostname: system
-          prefix:
-            svariable: PREFIX
-          service:
-            port:
-              svariable: PORT
-          middlewares:
-            - name: strip-prefix
-              data:
-                stripPrefix:
-                  prefixes:
-                    - svariable: PREFIX
+        dynamic:
+          traefik:
+            record: sun
+            hostname: system
+            prefix:
+              svariable: PREFIX
+            service:
+              port:
+                svariable: PORT
+            middlewares:
+              - name: strip-prefix
+                data:
+                  stripPrefix:
+                    prefixes:
+                      - svariable: PREFIX
       dagu:
         dotenvs:
           dotenv:

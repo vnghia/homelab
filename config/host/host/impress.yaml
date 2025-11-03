@@ -46,33 +46,34 @@ services:
             template: "{value}/oauth2/openid/impress"
     config:
       traefik:
-        backend:
-          name: backend
-          hostname: impress
-          record: solar
-          rules:
-            - (PathPrefix(`/api`) || PathPrefix(`/admin`))
-          service:
-            container: backend
-            port:
-              svariable: BACKEND_PORT
-        frontend:
-          name: frontend
-          hostname: impress
-          record: solar
-          service:
-            container: frontend
-            port:
-              svariable: FRONTEND_PORT
-        collaboration:
-          name: collaboration
-          hostname: impress
-          record: solar
-          prefix: /collaboration
-          service:
-            container: collaboration
-            port:
-              svariable: COLLABORATION_PORT
+        dynamic:
+          backend:
+            name: backend
+            hostname: impress
+            record: solar
+            rules:
+              - (PathPrefix(`/api`) || PathPrefix(`/admin`))
+            service:
+              container: backend
+              port:
+                svariable: BACKEND_PORT
+          frontend:
+            name: frontend
+            hostname: impress
+            record: solar
+            service:
+              container: frontend
+              port:
+                svariable: FRONTEND_PORT
+          collaboration:
+            name: collaboration
+            hostname: impress
+            record: solar
+            prefix: /collaboration
+            service:
+              container: collaboration
+              port:
+                svariable: COLLABORATION_PORT
       s3:
         backend:
     databases:

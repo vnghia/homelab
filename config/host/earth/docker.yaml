@@ -2,8 +2,9 @@ services:
   docker:
     config:
       traefik:
-        proxy:
-          record: earth
+        dynamic:
+          proxy:
+            record: earth
     secrets:
       proxy-mtls:
         hostname:

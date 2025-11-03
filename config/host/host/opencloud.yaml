@@ -53,19 +53,20 @@ services:
       PORT: 9200
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              svariable: PORT
-          middlewares:
-            - name: limit
-              data:
-                buffering:
-                  maxRequestBodyBytes: 5000000000
-                  memRequestBodyBytes: 500000000
-                  maxResponseBodyBytes: 50000000000
-                  memResponseBodyBytes: 500000000
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
+            middlewares:
+              - name: limit
+                data:
+                  buffering:
+                    maxRequestBodyBytes: 5000000000
+                    memRequestBodyBytes: 500000000
+                    maxResponseBodyBytes: 50000000000
+                    memResponseBodyBytes: 500000000
     files:
       csp:
         path:

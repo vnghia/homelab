@@ -34,9 +34,10 @@ services:
           path: client.pem
     config:
       traefik:
-        proxy:
-          active: false
-          record: sun
+        dynamic:
+          proxy:
+            active: false
+            record: sun
     files:
       ca:
         active: false

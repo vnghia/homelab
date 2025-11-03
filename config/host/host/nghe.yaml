@@ -12,11 +12,12 @@ services:
   nghe:
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              env: NGHE_SERVER__PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                env: NGHE_SERVER__PORT
     databases:
       postgres:
         postgres: {}

@@ -38,11 +38,12 @@ services:
         volume: linkwarden-meilisearch-data
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
     databases:
       postgres:
         postgres: {}

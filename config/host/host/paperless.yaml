@@ -36,11 +36,12 @@ services:
   paperless:
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              env: PAPERLESS_PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                env: PAPERLESS_PORT
     databases:
       postgres:
         postgres: {}

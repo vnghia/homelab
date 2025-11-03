@@ -35,11 +35,12 @@ services:
   slskd:
     config:
       traefik:
-        traefik:
-          record: sun
-          service:
-            port:
-              env: SLSKD_HTTP_PORT
+        dynamic:
+          traefik:
+            record: sun
+            service:
+              port:
+                env: SLSKD_HTTP_PORT
     vpn:
       ports:
         port:

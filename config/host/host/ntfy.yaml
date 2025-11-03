@@ -26,16 +26,17 @@ services:
             template: "tk_{value}"
     config:
       traefik:
-        traefik:
-          record: solar
-          hostname: ntfy
-          service:
-            port:
-              extract:
-                env: NTFY_LISTEN_HTTP
-              transform:
-                string:
-                  capture: ":(\\d+)"
+        dynamic:
+          traefik:
+            record: solar
+            hostname: ntfy
+            service:
+              port:
+                extract:
+                  env: NTFY_LISTEN_HTTP
+                transform:
+                  string:
+                    capture: ":(\\d+)"
     keepasses:
       keepass:
         hostname:

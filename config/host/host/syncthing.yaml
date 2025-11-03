@@ -17,11 +17,12 @@ services:
       PORT: 8384
     config:
       traefik:
-        traefik:
-          record: sun
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: sun
+            service:
+              port:
+                svariable: PORT
     container:
       image: syncthing
       healthcheck:

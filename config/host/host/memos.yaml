@@ -32,11 +32,12 @@ services:
   memos:
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              env: MEMOS_PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                env: MEMOS_PORT
     databases:
       postgres:
         postgres: {}

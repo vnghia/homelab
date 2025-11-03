@@ -22,11 +22,12 @@ services:
       PORT: 8006
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
     keepasses:
       keepass:
         hostname:

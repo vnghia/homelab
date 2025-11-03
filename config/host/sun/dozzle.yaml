@@ -2,27 +2,28 @@ services:
   dozzle:
     config:
       traefik:
-        traefik:
-          record: sun
-          hostname: system
-          service:
-            port:
-              extract:
-                env: DOZZLE_ADDR
-              transform:
-                string:
-                  capture: ":(\\d+)"
-          middlewares:
-            - name: redirect
-              data:
-                redirectRegex:
-                  regex: "^https://([^/]+)/?$"
-                  replacement:
-                    extract:
-                      env: DOZZLE_BASE
-                    transform:
-                      string:
-                        template: "https://${{1}}{value}/"
+        dynamic:
+          traefik:
+            record: sun
+            hostname: system
+            service:
+              port:
+                extract:
+                  env: DOZZLE_ADDR
+                transform:
+                  string:
+                    capture: ":(\\d+)"
+            middlewares:
+              - name: redirect
+                data:
+                  redirectRegex:
+                    regex: "^https://([^/]+)/?$"
+                    replacement:
+                      extract:
+                        env: DOZZLE_BASE
+                      transform:
+                        string:
+                          template: "https://${{1}}{value}/"
     container:
       active: true
       hosts:

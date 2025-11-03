@@ -31,8 +31,13 @@ class TraefikFile(ComponentResource):
             )
             and isinstance(service, ServiceWithConfigResourceBase)
             and isinstance(service.config, TraefikServiceConfigBase)
-            and service.config.traefik
+            and service.config.traefik.dynamic
         ):
+            for depend in service.config.traefik.depends_on:
+                self.build_one(
+                    traefik_service, traefik_service.extractor_args.services[depend]
+                )
+
             service_opts = ResourceOptions(
                 parent=ComponentResource(
                     service.name(), service.name(), None, opts=self.child_opts

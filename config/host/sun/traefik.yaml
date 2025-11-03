@@ -53,77 +53,78 @@ services:
           name: github.com/sevensolutions/traefik-oidc-auth
           version: "v0.13.0"
       traefik:
-        geoblock:
-          name: geoblock
-          plugin: geoblock
-          data:
-            enabled: true
-            defaultAllow: false
-            databaseFilePath:
-              extract:
-                volume: traefik-plugin
-              transform:
-                path: sources
-            allowedCountries:
-            allowPrivate: true
-            banIfError: true
-            logLevel: "info"
-            logFormat: "json"
-            logBannedRequests: true
-            databaseAutoUpdate: true
-            databaseAutoUpdateDir:
-              extract:
-                volume: traefik-data
-              transform:
-                path: ip2database
-        crowdsec:
-          name: crowdsec
-          plugin: crowdsec
-          data:
-            enabled: true
-            crowdsecMode: stream
-            crowdseclapikey:
-              service: crowdsec
-              extract:
-                secret: traefik
-            crowdsecLapiHost: crowdsec:8080
-        oidc:
-          name: oidc
-          plugin: oidc
-          data:
-            Secret:
-              secret: oidc
-            Provider:
-              Url:
+        dynamic:
+          geoblock:
+            name: geoblock
+            plugin: geoblock
+            data:
+              enabled: true
+              defaultAllow: false
+              databaseFilePath:
                 extract:
-                  hostname: kanidm
-                  record: solar
-                  scheme: https
+                  volume: traefik-plugin
                 transform:
-                  string:
-                    template: "{value}/oauth2/openid/kanidm"
-              ClientId: kanidm
-              ClientSecret:
-                service: kanidm
+                  path: sources
+              allowedCountries:
+              allowPrivate: true
+              banIfError: true
+              logLevel: "info"
+              logFormat: "json"
+              logBannedRequests: true
+              databaseAutoUpdate: true
+              databaseAutoUpdateDir:
                 extract:
-                  export: kanidm
-              TokenValidation: IdToken
-              UsePkce: true
-            Scopes: ["openid", "profile", "email"]
-            Headers:
-              - Name: X-Remote-User
-                Value: "{{`{{ .claims.preferred_username }}`}}"
-              - Name: X-Remote-Name
-                Value: "{{`{{ .claims.name }}`}}"
-              - Name: X-Remote-Email
-                Value: "{{`{{ .claims.email }}`}}"
-        dashboard:
-          name: dashboard
-          record: sun
-          hostname: system
-          prefix:
-            svariable: API_PATH
-          service: "api@internal"
+                  volume: traefik-data
+                transform:
+                  path: ip2database
+          crowdsec:
+            name: crowdsec
+            plugin: crowdsec
+            data:
+              enabled: true
+              crowdsecMode: stream
+              crowdseclapikey:
+                service: crowdsec
+                extract:
+                  secret: traefik
+              crowdsecLapiHost: crowdsec:8080
+          oidc:
+            name: oidc
+            plugin: oidc
+            data:
+              Secret:
+                secret: oidc
+              Provider:
+                Url:
+                  extract:
+                    hostname: kanidm
+                    record: solar
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/oauth2/openid/kanidm"
+                ClientId: kanidm
+                ClientSecret:
+                  service: kanidm
+                  extract:
+                    export: kanidm
+                TokenValidation: IdToken
+                UsePkce: true
+              Scopes: ["openid", "profile", "email"]
+              Headers:
+                - Name: X-Remote-User
+                  Value: "{{`{{ .claims.preferred_username }}`}}"
+                - Name: X-Remote-Name
+                  Value: "{{`{{ .claims.name }}`}}"
+                - Name: X-Remote-Email
+                  Value: "{{`{{ .claims.email }}`}}"
+          dashboard:
+            name: dashboard
+            record: sun
+            hostname: system
+            prefix:
+              svariable: API_PATH
+            service: "api@internal"
     secrets:
       oidc:
         length: 32

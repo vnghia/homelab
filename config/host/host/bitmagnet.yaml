@@ -10,11 +10,12 @@ services:
       PORT: 3333
     config:
       traefik:
-        traefik:
-          record: sun
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: sun
+            service:
+              port:
+                svariable: PORT
     databases:
       postgres:
         postgres:

@@ -17,11 +17,12 @@ services:
       log-dir:
         env: DAGU_LOG_DIR
       traefik:
-        traefik:
-          record: sun
-          service:
-            port:
-              env: DAGU_PORT
+        dynamic:
+          traefik:
+            record: sun
+            service:
+              port:
+                env: DAGU_PORT
       dagu:
         dag:
           dag:

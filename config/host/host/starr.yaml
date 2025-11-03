@@ -94,34 +94,35 @@ services:
   starr:
     config:
       traefik:
-        radarr:
-          name: radarr
-          record: sun
-          service:
-            container: radarr
-            port:
-              svariable: RADARR_PORT
-        sonarr:
-          name: sonarr
-          record: sun
-          service:
-            container: sonarr
-            port:
-              svariable: SONARR_PORT
-        prowlarr:
-          name: prowlarr
-          record: sun
-          service:
-            container: prowlarr
-            port:
-              svariable: PROWLARR_PORT
-        bazarr:
-          name: bazarr
-          record: sun
-          service:
-            container: bazarr
-            port:
-              svariable: BAZARR_PORT
+        dynamic:
+          radarr:
+            name: radarr
+            record: sun
+            service:
+              container: radarr
+              port:
+                svariable: RADARR_PORT
+          sonarr:
+            name: sonarr
+            record: sun
+            service:
+              container: sonarr
+              port:
+                svariable: SONARR_PORT
+          prowlarr:
+            name: prowlarr
+            record: sun
+            service:
+              container: prowlarr
+              port:
+                svariable: PROWLARR_PORT
+          bazarr:
+            name: bazarr
+            record: sun
+            service:
+              container: bazarr
+              port:
+                svariable: BAZARR_PORT
     keepasses:
       radarr:
         hostname:

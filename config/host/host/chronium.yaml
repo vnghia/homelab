@@ -8,11 +8,12 @@ services:
   chromium:
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
     secrets:
       token:
         special: false

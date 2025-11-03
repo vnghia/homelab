@@ -12,11 +12,12 @@ services:
     depends-on: [ntfy]
     config:
       traefik:
-        traefik:
-          record: sun
-          service:
-            port:
-              env: WUD_SERVER_PORT
+        dynamic:
+          traefik:
+            record: sun
+            service:
+              port:
+                env: WUD_SERVER_PORT
     container:
       image: wud
       docker-socket:

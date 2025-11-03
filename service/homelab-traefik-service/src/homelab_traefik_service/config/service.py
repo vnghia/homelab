@@ -16,7 +16,7 @@ class TraefikServiceConfigBuilder(HomelabRootModel[TraefikServiceConfig]):
         traefik_service: TraefikService,
         extractor_args: ExtractorArgs,
     ) -> dict[str | None, TraefikDynamicConfigResource]:
-        root = self.root.root
+        root = self.root.dynamic.root
 
         return {
             name: TraefikDynamicModelBuilder(model).build_resource(

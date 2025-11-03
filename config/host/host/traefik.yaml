@@ -65,13 +65,14 @@ services:
               svariable: HTTPS_PORT
             http3: {}
       traefik:
-        local:
-          name: local
-          data:
-            ipAllowList:
-              sourceRange:
-                - "192.168.0.0/16"
-                - "fc00::/10"
+        dynamic:
+          local:
+            name: local
+            data:
+              ipAllowList:
+                sourceRange:
+                  - "192.168.0.0/16"
+                  - "fc00::/10"
     container:
       image: traefik
       command:

@@ -11,11 +11,12 @@ services:
   maybe:
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              env: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                env: PORT
     databases:
       postgres:
         postgres: {}

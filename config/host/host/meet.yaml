@@ -57,34 +57,35 @@ services:
             template: "{value}/oauth2/openid/meet"
     config:
       traefik:
-        backend:
-          name: backend
-          hostname: meet
-          record: solar
-          rules:
-            - (PathPrefix(`/api`) || PathPrefix(`/static`))
-          service:
-            container: backend
-            port:
-              svariable: BACKEND_PORT
-        backend-admin:
-          name: backend-admin
-          hostname: meet-admin
-          record: sun
-          rules:
-            - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
-          service:
-            container: backend
-            port:
-              svariable: BACKEND_PORT
-        frontend:
-          name: frontend
-          hostname: meet
-          record: solar
-          service:
-            container: frontend
-            port:
-              svariable: FRONTEND_PORT
+        dynamic:
+          backend:
+            name: backend
+            hostname: meet
+            record: solar
+            rules:
+              - (PathPrefix(`/api`) || PathPrefix(`/static`))
+            service:
+              container: backend
+              port:
+                svariable: BACKEND_PORT
+          backend-admin:
+            name: backend-admin
+            hostname: meet-admin
+            record: sun
+            rules:
+              - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
+            service:
+              container: backend
+              port:
+                svariable: BACKEND_PORT
+          frontend:
+            name: frontend
+            hostname: meet
+            record: solar
+            service:
+              container: frontend
+              port:
+                svariable: FRONTEND_PORT
     databases:
       postgres:
         postgres: {}

@@ -43,11 +43,12 @@ services:
             template: "{value}/oauth2/openid/donetick"
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
     databases:
       postgres:
         postgres: {}

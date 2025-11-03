@@ -16,11 +16,12 @@ services:
       PORT: 3000
     config:
       traefik:
-        traefik:
-          record: solar
-          service:
-            port:
-              svariable: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
     databases:
       postgres:
         postgres:
