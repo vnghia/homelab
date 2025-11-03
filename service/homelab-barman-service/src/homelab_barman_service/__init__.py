@@ -64,13 +64,17 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
                     )
                     self.service_maps[service_name].append(full_name)
 
-        self.options[None].files = self.configs
-        self.options[None].volumes = {
-            config.name: ContainerVolumeConfig(
-                GlobalExtract.from_simple((self.PREFIX_PATH / config.name).as_posix())
-            )
-            for config in self.configs
-        }
+        self.options[None].add_files(self.configs)
+        self.options[None].add_volumes(
+            {
+                config.name: ContainerVolumeConfig(
+                    GlobalExtract.from_simple(
+                        (self.PREFIX_PATH / config.name).as_posix()
+                    )
+                )
+                for config in self.configs
+            }
+        )
         self.build_containers()
 
         self.register_outputs({})

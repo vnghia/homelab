@@ -205,8 +205,8 @@ class ServiceResourceBase(ComponentResource):
         if self.model.vpn:
             host_vpn_config = self.extractor_args.host_model.vpn_
             vpn = self.model.vpn
-            self.options[vpn.VPN_CONTAINER].envs = VpnModelBuilder(vpn.root).build_envs(
-                self.extractor_args
+            self.options[vpn.VPN_CONTAINER].add_envs(
+                VpnModelBuilder(vpn.root).build_envs(self.extractor_args)
             )
 
             vpn_containers: dict[str | None, ContainerModel] = {

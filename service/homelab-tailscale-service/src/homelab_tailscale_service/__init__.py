@@ -1,7 +1,6 @@
 import pulumi
 import pulumi_tailscale as tailscale
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.model.docker.container import ContainerModelBuildArgs
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_network.model.ip import NetworkIpModel, NetworkIpOutputModel
@@ -20,10 +19,7 @@ class TailscaleService(ServiceResourceBase):
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
-        self.options[None] = ContainerModelBuildArgs(
-            opts=ResourceOptions(delete_before_replace=True),
-            envs={"TS_AUTHKEY": self.build_authkey().key},
-        )
+        self.options[None].add_envs({"TS_AUTHKEY": self.build_authkey().key})
         self.build_containers()
 
         self.device = TailscaleDeviceResource(

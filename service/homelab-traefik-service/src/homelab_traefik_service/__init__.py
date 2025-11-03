@@ -3,7 +3,6 @@ from pathlib import PosixPath
 
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.model.docker.container import ContainerModelBuildArgs
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
@@ -35,18 +34,17 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             opts=self.child_opts, traefik_service=self
         )
 
-        self.options[None] = ContainerModelBuildArgs(
-            opts=ResourceOptions(delete_before_replace=True),
-            envs={
+        self.options[None].add_envs(
+            {
                 "CF_ZONE_API_TOKEN": network_resource.token.amce_tokens[
                     self.extractor_args.host.name()
                 ][0].value,
                 "CF_DNS_API_TOKEN": network_resource.token.amce_tokens[
                     self.extractor_args.host.name()
                 ][1].value,
-            },
-            files=[self.static],
+            }
         )
+        self.options[None].add_files([self.static])
         self.build_containers()
 
         self.routers: dict[

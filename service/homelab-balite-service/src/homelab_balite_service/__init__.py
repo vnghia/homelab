@@ -57,11 +57,15 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
                         )
                     self.service_maps[name].append(volume_path.path.as_posix())
 
-        self.options[None].envs = {
-            "HOMELAB_{}_SQLITE".format(name.upper().replace("-", "_")): ",".join(paths)
-            for name, paths in self.service_maps.items()
-        }
-        self.options[None].volumes = self.volume_configs
+        self.options[None].add_envs(
+            {
+                "HOMELAB_{}_SQLITE".format(name.upper().replace("-", "_")): ",".join(
+                    paths
+                )
+                for name, paths in self.service_maps.items()
+            }
+        )
+        self.options[None].add_volumes(self.volume_configs)
 
         self.register_outputs({})
 

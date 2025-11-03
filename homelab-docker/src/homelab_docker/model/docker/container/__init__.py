@@ -32,7 +32,6 @@ if typing.TYPE_CHECKING:
 
 @dataclasses.dataclass
 class ContainerModelBuildArgs:
-    opts: ResourceOptions | None = None
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
     volumes: Mapping[str, ContainerVolumeConfig] = dataclasses.field(
         default_factory=dict
@@ -41,6 +40,15 @@ class ContainerModelBuildArgs:
     ports: ContainerPortsConfig = dataclasses.field(
         default_factory=ContainerPortsConfig
     )
+
+    def add_envs(self, envs: Mapping[str, Input[str]]) -> None:
+        self.envs = {**self.envs, **envs}
+
+    def add_volumes(self, volumes: Mapping[str, ContainerVolumeConfig]) -> None:
+        self.volumes = {**self.volumes, **volumes}
+
+    def add_files(self, files: Sequence[FileResource]) -> None:
+        self.files = [*self.files, *files]
 
 
 class ContainerModel(HomelabBaseModel):
@@ -233,7 +241,7 @@ class ContainerModel(HomelabBaseModel):
         return docker.Container(
             resource_name,
             opts=ResourceOptions.merge(
-                ResourceOptions.merge(opts, build_args.opts),
+                opts,
                 ResourceOptions(
                     replace_on_changes=["*"],
                     depends_on=depends_on,

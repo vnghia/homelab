@@ -33,7 +33,7 @@ class DdnsService(ExtraService[DdnsConfig]):
             for hostname in record.hostnames.values()
             for ip_version in ["ipv4", "ipv6"]
         ]
-        self.options[None].envs = {
-            "CONFIG": Output.json_dumps({"settings": self.settings})
-        }
+        self.options[None].add_envs(
+            {"CONFIG": Output.json_dumps({"settings": self.settings})}
+        )
         self.build()
