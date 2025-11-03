@@ -11,7 +11,7 @@ class TraefikDynamicMiddlewareUseModel(HomelabBaseModel):
 
 
 class TraefikDynamicMiddlewareBuildModel(HomelabBaseModel):
-    name: str
+    name: str | None = None
     data: Any
     plugin: str | None = None
 

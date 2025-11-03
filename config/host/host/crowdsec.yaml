@@ -16,7 +16,19 @@ docker:
       crowdsec-config: {}
 services:
   crowdsec:
-    config: {}
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            plugin: crowdsec
+            data:
+              enabled: true
+              crowdsecMode: stream
+              crowdseclapikey:
+                service: crowdsec
+                extract:
+                  secret: traefik
+              crowdsecLapiHost: crowdsec:8080
     files:
       docker-acquis:
         path:
@@ -65,6 +77,20 @@ services:
         crowdsec-data: /var/lib/crowdsec/data
         crowdsec-config: /etc/crowdsec
   traefik:
+    config:
+      entrypoint:
+        config:
+          public-https:
+            middlewares:
+              - service: crowdsec
+                priority: 1000
+      plugins:
+        crowdsec:
+          name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+          version: "v1.4.4"
+      traefik:
+        depends-on:
+          - crowdsec
     container:
       labels:
         crowdsec.enable: true

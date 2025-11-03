@@ -1,10 +1,12 @@
-from typing import Any
+from functools import cached_property
+from typing import Any, ClassVar
 
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Output
+from pydantic import NonNegativeInt
 
 
 class TraefikEntrypointPortModel(HomelabBaseModel):
@@ -100,13 +102,34 @@ class TraefikEntrypointProxyProtocolModel(HomelabBaseModel):
         }
 
 
+class TraefikEntrypointMiddlewareFullModel(HomelabBaseModel):
+    DEFAULT_PRIORITY: ClassVar[NonNegativeInt] = 100
+    service: str | None = None
+    middleware: str | None = None
+    priority: NonNegativeInt = DEFAULT_PRIORITY
+
+
+class TraefikEntrypointMiddlewareModel(
+    HomelabRootModel[str | TraefikEntrypointMiddlewareFullModel]
+):
+    def to_full(self) -> TraefikEntrypointMiddlewareFullModel:
+        from .. import TraefikService
+
+        root = self.root
+        if isinstance(root, TraefikEntrypointMiddlewareFullModel):
+            return root
+        return TraefikEntrypointMiddlewareFullModel(
+            service=TraefikService.name(), middleware=root
+        )
+
+
 class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
     local: bool = False
     internal: bool = False
     http3: TraefikEntrypointHttp3Model | None = None
     timeout: TraefikEntrypointTimeoutModel | None = None
     proxy_protocol: TraefikEntrypointProxyProtocolModel | None = None
-    middlewares: list[str] = []
+    middlewares: list[TraefikEntrypointMiddlewareModel] = []
 
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return (
@@ -129,11 +152,14 @@ class TraefikEntrypointModel(
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return self.root.to_entry_point(extractor_args)
 
-    @property
-    def middlewares(self) -> list[str]:
+    @cached_property
+    def middlewares(self) -> list[TraefikEntrypointMiddlewareFullModel]:
         root = self.root
         if isinstance(root, TraefikEntrypointFullModel):
-            return root.middlewares
+            return sorted(
+                map(TraefikEntrypointMiddlewareModel.to_full, root.middlewares),
+                key=lambda x: x.priority,
+            )
         return []
 
     @property

@@ -85,7 +85,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             TraefikDynamicMiddlewareModelBuilder(
                 TraefikDynamicMiddlewareModel(
                     TraefikDynamicMiddlewareUseModel(
-                        service=traefik_service.name(), name=middleware
+                        service=middleware.service, name=middleware.middleware
                     )
                 )
             ).get_name(traefik_service, extractor_args)

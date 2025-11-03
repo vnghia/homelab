@@ -36,16 +36,12 @@ services:
             timeout: *timeout
             middlewares:
               - geoblock
-              - crowdsec
         mapping:
           solar: "public-https"
           sun: "private-https"
         local-entrypoint: public-https
         internal-entrypoint: private-https
       plugins:
-        crowdsec:
-          name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
-          version: "v1.4.4"
         geoblock:
           name: github.com/david-garcia-garcia/traefik-geoblock
           version: "v1.1.0"
@@ -77,17 +73,6 @@ services:
                   volume: traefik-data
                 transform:
                   path: ip2database
-          crowdsec:
-            name: crowdsec
-            plugin: crowdsec
-            data:
-              enabled: true
-              crowdsecMode: stream
-              crowdseclapikey:
-                service: crowdsec
-                extract:
-                  secret: traefik
-              crowdsecLapiHost: crowdsec:8080
           oidc:
             name: oidc
             plugin: oidc
