@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Self
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
@@ -49,6 +51,14 @@ class GlobalExtract(
         if isinstance(full.extract, HostExtract):
             full = full.__replace__(extract=full.extract.with_service(service, force))
         return self.model_construct(full)
+
+    @classmethod
+    def with_service_nullable(
+        cls, extract: GlobalExtract | None, service: str, force: bool
+    ) -> GlobalExtract | None:
+        if isinstance(extract, GlobalExtract):
+            return extract.with_service(service, force)
+        return extract
 
 
 GlobalExtractSource.model_rebuild()

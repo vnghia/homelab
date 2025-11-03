@@ -84,9 +84,9 @@ class ContainerPortConfig(HomelabBaseModel):
     def with_port_service(
         self, port: PositiveInt | GlobalExtract, service: str, force: bool
     ) -> PositiveInt | GlobalExtract:
-        if isinstance(port, GlobalExtract):
-            return port.with_service(service, force)
-        return port
+        if isinstance(port, int):
+            return port
+        return port.with_service(service, force)
 
     def with_service(self, service: str, force: bool) -> ContainerPortConfig:
         internal = self.with_port_service(self.internal, service, force)
