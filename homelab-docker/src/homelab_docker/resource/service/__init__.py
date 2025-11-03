@@ -54,7 +54,7 @@ class ServiceResourceBase(ComponentResource):
 
         self.build_files()
         self.build_vpn_container_model()
-        self.build_options_ports()
+        self.build_options_network()
 
         self.extractor_args.services[self.name()] = self
 
@@ -218,9 +218,11 @@ class ServiceResourceBase(ComponentResource):
             }
             self.container_models = vpn_containers | self.container_models
 
-    def build_options_ports(self) -> None:
-        for name, ports in self.extractor_args.host_model.ports[self.name()].items():
-            self.options[name].ports |= ports
+    def build_options_network(self) -> None:
+        for name, network in self.extractor_args.host_model.networks[
+            self.name()
+        ].items():
+            self.options[name].add_network(network)
 
     def build_container(
         self,

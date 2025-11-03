@@ -31,14 +31,25 @@ if typing.TYPE_CHECKING:
 
 
 @dataclasses.dataclass
+class ContainerNetworkModelBuildArgs:
+    ports: ContainerPortsConfig = dataclasses.field(
+        default_factory=ContainerPortsConfig
+    )
+
+    def add_ports(self, ports: ContainerPortsConfig) -> None:
+        self.ports |= ports
+
+
+@dataclasses.dataclass
 class ContainerModelBuildArgs:
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
     volumes: Mapping[str, ContainerVolumeConfig] = dataclasses.field(
         default_factory=dict
     )
     files: Sequence[FileResource] = dataclasses.field(default_factory=list)
-    ports: ContainerPortsConfig = dataclasses.field(
-        default_factory=ContainerPortsConfig
+
+    network: ContainerNetworkModelBuildArgs = dataclasses.field(
+        default_factory=ContainerNetworkModelBuildArgs
     )
 
     def add_envs(self, envs: Mapping[str, Input[str]]) -> None:
@@ -49,6 +60,9 @@ class ContainerModelBuildArgs:
 
     def add_files(self, files: Sequence[FileResource]) -> None:
         self.files = [*self.files, *files]
+
+    def add_network(self, network: ContainerNetworkModelBuildArgs) -> None:
+        self.network.add_ports(network.ports)
 
 
 class ContainerModel(HomelabBaseModel):
@@ -247,7 +261,7 @@ class ContainerModel(HomelabBaseModel):
                     depends_on=depends_on,
                     delete_before_replace=self.delete_before_replace
                     or bool(self.ports)
-                    or bool(build_args.ports),
+                    or bool(build_args.network.ports),
                 ),
             ),
             image=self.image.to_image_name(extractor_args.host.docker.image),

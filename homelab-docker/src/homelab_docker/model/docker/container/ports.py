@@ -83,7 +83,7 @@ class ContainerPortsConfig(
         self, extractor_args: ExtractorArgs, build_args: ContainerModelBuildArgs
     ) -> Output[list[docker.ContainerPortArgs]]:
         ports: list[Output[ContainerPortConfig]] = []
-        for config in (self | build_args.ports).root.values():
+        for config in (self | build_args.network.ports).root.values():
             if isinstance(config, ContainerPortConfig):
                 ports.append(config.extract_self(extractor_args))
             else:
