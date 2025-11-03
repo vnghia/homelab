@@ -85,6 +85,8 @@ services:
         interval: 30s
         timeout: 5s
         retries: 5
+      hosts:
+        - mode: localhost
       network:
         service: tailscale
       ports:

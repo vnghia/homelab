@@ -28,8 +28,6 @@ services:
         timeout: 5s
       hostname:
         env: TS_HOSTNAME
-      hosts:
-        - mode: localhost
       network:
         bridge:
           default: {}

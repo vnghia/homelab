@@ -37,6 +37,13 @@ class ContainerNetworkModelBuildArgs:
         default_factory=ContainerPortsConfig
     )
 
+    def __iadd__(
+        self, rhs: ContainerNetworkModelBuildArgs
+    ) -> ContainerNetworkModelBuildArgs:
+        self.add_hosts(rhs.hosts)
+        self.add_ports(rhs.ports)
+        return self
+
     def add_hosts(self, hosts: list[ContainerHostConfig]) -> None:
         self.hosts += hosts
 
@@ -66,8 +73,7 @@ class ContainerModelBuildArgs:
         self.files = [*self.files, *files]
 
     def add_network(self, network: ContainerNetworkModelBuildArgs) -> None:
-        self.network.add_hosts(network.hosts)
-        self.network.add_ports(network.ports)
+        self.network += network
 
 
 class ContainerModel(HomelabBaseModel):

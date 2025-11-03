@@ -1,7 +1,4 @@
 services:
   tailscale:
     container:
-      hosts:
-        - host: sun
-          internal: true
       wud:
