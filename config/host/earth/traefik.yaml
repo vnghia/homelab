@@ -5,6 +5,10 @@ services:
       HTTPS_PUBLIC_BIND_PORT: 443
     config:
       entrypoint:
+        config:
+          private-https:
+            middlewares:
+              - local
         mapping:
           earth: "private-https"
     container:
