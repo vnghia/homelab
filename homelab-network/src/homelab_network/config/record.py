@@ -1,3 +1,5 @@
+from functools import cached_property
+
 import pulumi_cloudflare as cloudflare
 from homelab_pydantic import HomelabBaseModel
 
@@ -20,7 +22,7 @@ class RecordConfig(HomelabBaseModel):
     def __getitem__(self, hostname: str) -> str:
         return self.records[hostname].hostname(self.get_domain())
 
-    @property
+    @cached_property
     def hostnames(self) -> dict[str, Hostname]:
         return {hostname: Hostname(value=self[hostname]) for hostname in self.records}
 

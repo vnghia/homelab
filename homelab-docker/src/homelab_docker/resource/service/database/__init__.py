@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from functools import cached_property
 
 import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
@@ -54,7 +55,7 @@ class ServiceDatabaseResource(ComponentResource):
 
         self.register_outputs({})
 
-    @property
+    @cached_property
     def containers(self) -> ServiceDatabaseContainers:
         return ServiceDatabaseContainers(
             {
@@ -65,7 +66,7 @@ class ServiceDatabaseResource(ComponentResource):
             }
         )
 
-    @property
+    @cached_property
     def source_config(self) -> ServiceDatabaseSourceConfig:
         return ServiceDatabaseSourceConfig(
             {

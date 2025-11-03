@@ -1,4 +1,5 @@
 import hashlib
+from functools import cached_property
 from typing import Any
 
 import pulumi
@@ -19,7 +20,7 @@ class FileDataModel(HomelabBaseModel):
     content: str
     mode: int
 
-    @property
+    @cached_property
     def hash(self) -> str:
         return hashlib.sha256(self.content.encode()).hexdigest()
 

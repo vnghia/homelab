@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from functools import cached_property
 
 from homelab_pydantic import HomelabBaseModel
 from pydantic import ConfigDict
@@ -18,7 +19,7 @@ class ServiceConfigBase(HomelabBaseModel):
             for name, data in (self.model_extra or {}).items()
         }
 
-    @property
+    @cached_property
     def services(self) -> dict[str, ServiceModel]:
         from ...model.service import ServiceModel
 

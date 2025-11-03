@@ -35,7 +35,7 @@ class HostServiceModelModel(HostNoServiceModel):
     name: str
     services: dict[str, ServiceModel]
 
-    @property
+    @cached_property
     def databases(self) -> dict[str, ServiceDatabaseConfig]:
         return {
             name: service.databases
