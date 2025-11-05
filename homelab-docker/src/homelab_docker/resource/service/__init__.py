@@ -219,7 +219,7 @@ class ServiceResourceBase(ComponentResource):
             self.container_models = vpn_containers | self.container_models
 
     def build_options_network(self) -> None:
-        for name, network in self.extractor_args.host_model.networks[
+        for name, network in self.extractor_args.host.docker.network.options[
             self.name()
         ].items():
             self.options[name].add_network(network)

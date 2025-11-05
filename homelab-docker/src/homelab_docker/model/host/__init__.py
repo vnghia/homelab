@@ -1,4 +1,3 @@
-from collections import defaultdict
 from functools import cached_property
 
 from homelab_extract import GlobalExtract
@@ -9,8 +8,6 @@ from pydantic_extra_types.timezone_name import TimeZoneName
 from ...config.docker import DockerConfig
 from ...config.service import ServiceConfigBase
 from ...config.service.database import ServiceDatabaseConfig
-from ...model.docker.container import ContainerNetworkModelBuildArgs
-from ...model.docker.container.network import ContainerNetworkContainerConfig
 from ...model.host.ip import HostIpModel
 from ...model.service import ServiceModel
 from .access import HostAccessModel
@@ -42,32 +39,6 @@ class HostServiceModelModel(HostNoServiceModel):
             for name, service in self.services.items()
             if service.databases
         }
-
-    @cached_property
-    def networks(self) -> dict[str, dict[str | None, ContainerNetworkModelBuildArgs]]:
-        networks: defaultdict[str, dict[str | None, ContainerNetworkModelBuildArgs]] = (
-            defaultdict(lambda: defaultdict(ContainerNetworkModelBuildArgs))
-        )
-        for (
-            service_name,
-            service_model,
-        ) in self.services.items():
-            for container_model in service_model.containers.values():
-                network_mode = container_model.network.root
-                if isinstance(network_mode, ContainerNetworkContainerConfig):
-                    network = networks[network_mode.service or service_name][
-                        network_mode.container
-                    ]
-                    network.add_hosts(
-                        [
-                            host.with_service(service_name, False)
-                            for host in container_model.hosts
-                        ]
-                    )
-                    network.add_ports(
-                        container_model.ports.with_service(service_name, False)
-                    )
-        return networks
 
 
 class HostModel[T: ServiceConfigBase](HostNoServiceModel):

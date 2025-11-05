@@ -25,7 +25,7 @@ class DockerResource(ComponentResource):
         self.host = host
 
         self.network = NetworkResource(
-            config=model.docker.network,
+            config=model,
             opts=self.child_opts,
             global_args=global_args,
             host=host,
