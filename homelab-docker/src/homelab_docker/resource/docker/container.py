@@ -8,6 +8,7 @@ from ...model.docker.container import ContainerModel
 
 @dataclasses.dataclass
 class ContainerResource:
+    key: str | None
     model: ContainerModel
     resource: docker.Container
 

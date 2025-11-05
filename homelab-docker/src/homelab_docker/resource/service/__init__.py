@@ -236,7 +236,7 @@ class ServiceResourceBase(ComponentResource):
             extractor_args=self.extractor_args,
             build_args=container_model_build_args,
         )
-        return ContainerResource(model=model, resource=resource)
+        return ContainerResource(key=name, model=model, resource=resource)
 
     def build_containers(self) -> None:
         for name, model in self.container_models.items():
