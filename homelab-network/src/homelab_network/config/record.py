@@ -1,4 +1,4 @@
-from functools import cached_property
+from typing import Any
 
 import pulumi_cloudflare as cloudflare
 from homelab_pydantic import HomelabBaseModel
@@ -16,15 +16,22 @@ class RecordConfig(HomelabBaseModel):
     local_ip: NetworkIpModel | None
     records: dict[str, RecordModel]
 
-    def get_domain(self) -> str:
-        return cloudflare.get_zone(zone_id=self.zone_id).name
+    _domain: str
+    _hostnames: dict[str, Hostname]
+
+    def model_post_init(self, context: Any, /) -> None:
+        self._domain = cloudflare.get_zone(zone_id=self.zone_id).name
+        self._hostnames = {
+            hostname: Hostname(value=self.records[hostname].hostname(self._domain))
+            for hostname in self.records
+        }
 
     def __getitem__(self, hostname: str) -> str:
-        return self.records[hostname].hostname(self.get_domain())
+        return self.hostnames[hostname].value
 
-    @cached_property
+    @property
     def hostnames(self) -> dict[str, Hostname]:
-        return {hostname: Hostname(value=self[hostname]) for hostname in self.records}
+        return self._hostnames
 
     @property
     def is_ddns(self) -> bool:

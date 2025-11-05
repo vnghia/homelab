@@ -1,4 +1,3 @@
-from functools import cached_property
 from pathlib import Path
 from typing import Any, Self, Type
 
@@ -20,14 +19,19 @@ class HostConfig[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBase
     sun: HostModel[TSun]
     earth: HostModel[TEarth]
 
-    @cached_property
-    def service_model(self) -> HostServiceModelConfig:
-        return HostServiceModelConfig(
+    _service_model: HostServiceModelConfig
+
+    def model_post_init(self, context: Any, /) -> None:
+        self._service_model = HostServiceModelConfig(
             {
                 "sun": self.sun.service_model("sun"),
                 "earth": self.earth.service_model("earth"),
             }
         )
+
+    @property
+    def service_model(self) -> HostServiceModelConfig:
+        return self._service_model
 
 
 class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):

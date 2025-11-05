@@ -3,6 +3,7 @@ from functools import cached_property
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_vpn.config.host import HostVpnConfig
+from pydantic import ConfigDict
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from ...config.docker import DockerConfig
@@ -29,6 +30,8 @@ class HostNoServiceModel(HomelabBaseModel):
 
 
 class HostServiceModelModel(HostNoServiceModel):
+    model_config = ConfigDict(revalidate_instances="never")
+
     name: str
     services: dict[str, ServiceModel]
 
@@ -45,8 +48,6 @@ class HostModel[T: ServiceConfigBase](HostNoServiceModel):
     services: T
 
     def service_model(self, name: str) -> HostServiceModelModel:
-        return HostServiceModelModel(
-            name=name,
-            services=self.services.services,
-            **self.model_dump(exclude={"services"}),
-        )
+        model = dict(self)
+        model["services"] = self.services.services
+        return HostServiceModelModel.model_construct(name=name, **model)

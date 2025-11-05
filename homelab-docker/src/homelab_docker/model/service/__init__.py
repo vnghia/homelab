@@ -1,4 +1,4 @@
-from functools import cached_property
+from typing import Any
 
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
@@ -25,13 +25,20 @@ class ServiceModel(HomelabBaseModel):
     container_: ContainerModel | None = Field(None, alias="container")
     containers_: dict[str, ContainerModel] = Field({}, alias="containers")
 
+    _containers: dict[str | None, ContainerModel]
+
+    def model_post_init(self, context: Any, /) -> None:
+        self._containers = (
+            {None: self.container_} if self.container_ else {}
+        ) | self.containers_
+
     @classmethod
     def add_service_name(cls, service_name: str, name: str | None) -> str:
         return "{}-{}".format(service_name, name) if name else service_name
 
-    @cached_property
+    @property
     def containers(self) -> dict[str | None, ContainerModel]:
-        return ({None: self.container_} if self.container_ else {}) | self.containers_
+        return self._containers
 
     def __getitem__(self, key: str | None) -> ContainerModel:
         return self.containers[key]

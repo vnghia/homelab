@@ -1,4 +1,6 @@
+import dataclasses
 from collections import defaultdict
+from typing import Self
 
 import pulumi_cloudflare as cloudflare
 from homelab_global import GlobalArgs
@@ -7,8 +9,41 @@ from pulumi import ComponentResource, ResourceOptions
 from ..config import NetworkConfig
 
 
+@dataclasses.dataclass
+class PermissionGroups:
+    read: list[cloudflare.ApiTokenPolicyPermissionGroupArgs]
+    write: list[cloudflare.ApiTokenPolicyPermissionGroupArgs]
+
+    @classmethod
+    def get(cls) -> Self:
+        permission_groups = cloudflare.get_api_token_permission_groups_list().results
+
+        read_group_id = None
+        write_group_id = None
+
+        for group in permission_groups:
+            if group.name == "Zone Read":
+                read_group_id = group.id
+                if write_group_id:
+                    break
+            elif group.name == "DNS Write":
+                write_group_id = group.id
+                if read_group_id:
+                    break
+        if not read_group_id:
+            raise RuntimeError("Permission group of Zone Read not found")
+        if not write_group_id:
+            raise RuntimeError("Permission group of DNS Write not found")
+        return cls(
+            read=[cloudflare.ApiTokenPolicyPermissionGroupArgs(id=read_group_id)],
+            write=[cloudflare.ApiTokenPolicyPermissionGroupArgs(id=write_group_id)],
+        )
+
+
 class TokenResource(ComponentResource):
     RESOURCE_NAME = "token"
+
+    PERMISSION_GROUPS: PermissionGroups = PermissionGroups.get()
 
     def __init__(
         self,
@@ -19,8 +54,6 @@ class TokenResource(ComponentResource):
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
-
-        permission_groups = cloudflare.get_api_token_permission_groups_list_output()
 
         self.amce_resources: defaultdict[str, dict[str, str]] = defaultdict(dict)
         for record in config.records.values():
@@ -41,15 +74,7 @@ class TokenResource(ComponentResource):
                 policies=[
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",
-                        permission_groups=permission_groups.apply(
-                            lambda groups: [
-                                cloudflare.ApiTokenPolicyPermissionGroupArgs(
-                                    id=group.id
-                                )
-                                for group in groups.results
-                                if group.name == "Zone Read"
-                            ]
-                        ),
+                        permission_groups=self.PERMISSION_GROUPS.read,
                         resources=resources,
                     )
                 ],
@@ -63,15 +88,7 @@ class TokenResource(ComponentResource):
                 policies=[
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",
-                        permission_groups=permission_groups.apply(
-                            lambda groups: [
-                                cloudflare.ApiTokenPolicyPermissionGroupArgs(
-                                    id=group.id
-                                )
-                                for group in groups.results
-                                if group.name == "DNS Write"
-                            ]
-                        ),
+                        permission_groups=self.PERMISSION_GROUPS.write,
                         resources=resources,
                     )
                 ],
@@ -96,15 +113,7 @@ class TokenResource(ComponentResource):
                 policies=[
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",
-                        permission_groups=permission_groups.apply(
-                            lambda groups: [
-                                cloudflare.ApiTokenPolicyPermissionGroupArgs(
-                                    id=group.id
-                                )
-                                for group in groups.results
-                                if group.name == "DNS Write"
-                            ]
-                        ),
+                        permission_groups=self.PERMISSION_GROUPS.write,
                         resources=resources,
                     )
                 ],

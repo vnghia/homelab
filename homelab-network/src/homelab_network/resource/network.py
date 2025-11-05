@@ -1,5 +1,3 @@
-from functools import cached_property
-
 from homelab_global import GlobalArgs
 from pulumi import ComponentResource, ResourceOptions
 
@@ -27,10 +25,8 @@ class NetworkResource(ComponentResource):
             config, opts=self.child_opts, global_args=global_args
         )
 
-        self.register_outputs({})
-
-    @cached_property
-    def hostnames(self) -> Hostnames:
-        return Hostnames(
+        self.hostnames = Hostnames(
             {key: record.hostnames for key, record in self.config.records.items()}
         )
+
+        self.register_outputs({})
