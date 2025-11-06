@@ -34,15 +34,11 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
             opts=self.child_opts, traefik_service=self
         )
 
+        self.acme_token = network_resource.token.acme_tokens[
+            self.extractor_args.host.name()
+        ].value
         self.options[None].add_envs(
-            {
-                "CF_ZONE_API_TOKEN": network_resource.token.amce_tokens[
-                    self.extractor_args.host.name()
-                ][0].value,
-                "CF_DNS_API_TOKEN": network_resource.token.amce_tokens[
-                    self.extractor_args.host.name()
-                ][1].value,
-            }
+            {"CF_ZONE_API_TOKEN": self.acme_token, "CF_DNS_API_TOKEN": self.acme_token}
         )
         self.options[None].add_files([self.static])
         self.build_containers()

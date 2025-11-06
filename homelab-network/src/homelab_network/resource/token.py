@@ -1,42 +1,47 @@
 import dataclasses
+import urllib.parse
 from collections import defaultdict
-from typing import Self
+from typing import ClassVar, Self
 
 import pulumi_cloudflare as cloudflare
 from homelab_global import GlobalArgs
-from pulumi import ComponentResource, ResourceOptions
+from pulumi import ComponentResource, Output, ResourceOptions
 
 from ..config import NetworkConfig
 
 
 @dataclasses.dataclass
 class PermissionGroups:
-    read: list[cloudflare.ApiTokenPolicyPermissionGroupArgs]
-    write: list[cloudflare.ApiTokenPolicyPermissionGroupArgs]
+    READ_NAME: ClassVar[str] = urllib.parse.quote_plus("Zone Read")
+    WRITE_NAME: ClassVar[str] = urllib.parse.quote_plus("DNS Write")
+
+    SCOPE: ClassVar[str] = urllib.parse.quote_plus("com.cloudflare.api.account.zone")
+
+    read: Output[list[cloudflare.ApiTokenPolicyPermissionGroupArgs]]
+    write: Output[list[cloudflare.ApiTokenPolicyPermissionGroupArgs]]
+
+    @classmethod
+    def to_args(
+        cls, groups: cloudflare.GetApiTokenPermissionGroupsListResult
+    ) -> list[cloudflare.ApiTokenPolicyPermissionGroupArgs]:
+        return [
+            cloudflare.ApiTokenPolicyPermissionGroupArgs(id=group.id)
+            for group in groups.results
+        ]
+
+    @classmethod
+    def get_group(
+        cls, name: str, scope: str
+    ) -> Output[list[cloudflare.ApiTokenPolicyPermissionGroupArgs]]:
+        return cloudflare.get_api_token_permission_groups_list_output(
+            name=name, scope=scope
+        ).apply(cls.to_args)
 
     @classmethod
     def get(cls) -> Self:
-        permission_groups = cloudflare.get_api_token_permission_groups_list().results
-
-        read_group_id = None
-        write_group_id = None
-
-        for group in permission_groups:
-            if group.name == "Zone Read":
-                read_group_id = group.id
-                if write_group_id:
-                    break
-            elif group.name == "DNS Write":
-                write_group_id = group.id
-                if read_group_id:
-                    break
-        if not read_group_id:
-            raise RuntimeError("Permission group of Zone Read not found")
-        if not write_group_id:
-            raise RuntimeError("Permission group of DNS Write not found")
         return cls(
-            read=[cloudflare.ApiTokenPolicyPermissionGroupArgs(id=read_group_id)],
-            write=[cloudflare.ApiTokenPolicyPermissionGroupArgs(id=write_group_id)],
+            read=cls.get_group(cls.READ_NAME, cls.SCOPE),
+            write=cls.get_group(cls.WRITE_NAME, cls.SCOPE),
         )
 
 
@@ -61,39 +66,27 @@ class TokenResource(ComponentResource):
                 "com.cloudflare.api.account.zone.{}".format(record.zone_id)
             ] = "*"
 
-        self.amce_tokens: dict[
-            str, tuple[cloudflare.ApiToken, cloudflare.ApiToken]
-        ] = {}
+        self.acme_tokens: dict[str, cloudflare.ApiToken] = {}
+
         for host, resources in self.amce_resources.items():
-            amce_read = cloudflare.ApiToken(
-                "{}-read".format(host),
+            acme_token = cloudflare.ApiToken(
+                "{}-acme".format(host),
                 opts=ResourceOptions.merge(
                     self.child_opts, ResourceOptions(delete_before_replace=True)
                 ),
-                name="{}-{}-acme-read-token".format(global_args.project.prefix, host),
+                name="{}-{}-acme-token".format(global_args.project.prefix, host),
                 policies=[
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",
-                        permission_groups=self.PERMISSION_GROUPS.read,
+                        permission_groups=Output.all(
+                            read=self.PERMISSION_GROUPS.read,
+                            write=self.PERMISSION_GROUPS.write,
+                        ).apply(lambda kwargs: kwargs["read"] + kwargs["write"]),
                         resources=resources,
                     )
                 ],
             )
-            amce_write = cloudflare.ApiToken(
-                "{}-write".format(host),
-                opts=ResourceOptions.merge(
-                    self.child_opts, ResourceOptions(delete_before_replace=True)
-                ),
-                name="{}-{}-acme-write-token".format(global_args.project.prefix, host),
-                policies=[
-                    cloudflare.ApiTokenPolicyArgs(
-                        effect="allow",
-                        permission_groups=self.PERMISSION_GROUPS.write,
-                        resources=resources,
-                    )
-                ],
-            )
-            self.amce_tokens[host] = (amce_read, amce_write)
+            self.acme_tokens[host] = acme_token
 
         self.ddns_resources: defaultdict[str, dict[str, str]] = defaultdict(dict)
         for record in config.records.values():

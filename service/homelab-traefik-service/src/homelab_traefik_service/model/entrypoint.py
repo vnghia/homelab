@@ -1,4 +1,6 @@
-from functools import cached_property
+from __future__ import annotations
+
+import typing
 from typing import Any, ClassVar
 
 from homelab_docker.extract import ExtractorArgs
@@ -7,6 +9,9 @@ from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Output
 from pydantic import NonNegativeInt
+
+if typing.TYPE_CHECKING:
+    from .. import TraefikService
 
 
 class TraefikEntrypointPortModel(HomelabBaseModel):
@@ -149,18 +154,47 @@ class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
 class TraefikEntrypointModel(
     HomelabRootModel[TraefikEntrypointRedirectModel | TraefikEntrypointFullModel]
 ):
+    _middlewares: list[str] | None
+
+    def model_post_init(self, context: Any, /) -> None:
+        self._middlewares = None
+
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return self.root.to_entry_point(extractor_args)
 
-    @cached_property
-    def middlewares(self) -> list[TraefikEntrypointMiddlewareFullModel]:
-        root = self.root
-        if isinstance(root, TraefikEntrypointFullModel):
-            return sorted(
-                map(TraefikEntrypointMiddlewareModel.to_full, root.middlewares),
-                key=lambda x: x.priority,
-            )
-        return []
+    def build_middlewares(
+        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
+    ) -> list[str]:
+        # Since entrypoint middleware's name won't change, we only need to build once regardless of extractor_args
+
+        if self._middlewares is None:
+            root = self.root
+            if isinstance(root, TraefikEntrypointFullModel):
+                from homelab_traefik_config.model.dynamic.middleware import (
+                    TraefikDynamicMiddlewareModel,
+                    TraefikDynamicMiddlewareUseModel,
+                )
+
+                from ..model.dynamic.middleware import (
+                    TraefikDynamicMiddlewareModelBuilder,
+                )
+
+                self._middlewares = [
+                    TraefikDynamicMiddlewareModelBuilder(
+                        TraefikDynamicMiddlewareModel(
+                            TraefikDynamicMiddlewareUseModel(
+                                service=middleware.service, name=middleware.middleware
+                            )
+                        )
+                    ).get_name(traefik_service, extractor_args)
+                    for middleware in sorted(
+                        map(TraefikEntrypointMiddlewareModel.to_full, root.middlewares),
+                        key=lambda x: x.priority,
+                    )
+                ]
+            else:
+                self._middlewares = []
+        return self._middlewares
 
     @property
     def local(self) -> bool:

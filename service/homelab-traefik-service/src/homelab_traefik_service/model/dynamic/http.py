@@ -81,22 +81,17 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
 
         entrypoint = traefik_config.entrypoint.mapping[root.record]
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
-        entrypoint_middlewares = [
-            TraefikDynamicMiddlewareModelBuilder(
-                TraefikDynamicMiddlewareModel(
-                    TraefikDynamicMiddlewareUseModel(
-                        service=middleware.service, name=middleware.middleware
-                    )
-                )
-            ).get_name(traefik_service, extractor_args)
-            for middleware in entrypoint_config.middlewares
-        ]
+        entrypoint_middlewares = entrypoint_config.build_middlewares(
+            traefik_service, extractor_args
+        )
+
         service_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
                 traefik_service, extractor_args
             )
             for middleware in root.middlewares
         ]
+
         all_middlewares = entrypoint_middlewares + service_middlewares
 
         tls = None

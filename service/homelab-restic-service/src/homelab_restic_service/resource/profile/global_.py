@@ -23,8 +23,6 @@ class ResticGlobalProfileResource(
     def __init__(self, *, opts: ResourceOptions, restic_service: ResticService) -> None:
         restic_config = restic_service.config
 
-        all_profiles = restic_service.profiles + restic_service.database_profiles
-
         group_by_options = {"group-by": "tags,path"}
         snapshot_options = {"path": True, "tag": True}
         forget_options = (
@@ -36,6 +34,15 @@ class ResticGlobalProfileResource(
             }
         )
 
+        all_profiles_path = []
+        all_profiles_name = []
+        for profile in restic_service.profiles:
+            all_profiles_path.append(profile.to_path(restic_service.extractor_args))
+            all_profiles_name.append(profile.volume.name)
+        for profile in restic_service.database_profiles:
+            all_profiles_path.append(profile.to_path(restic_service.extractor_args))
+            all_profiles_name.append(profile.volume.name)
+
         super().__init__(
             "global",
             opts=opts,
@@ -46,10 +53,7 @@ class ResticGlobalProfileResource(
                     "command-output": "console",
                     "initialize": False,
                 },
-                "includes": [
-                    profile.to_path(restic_service.extractor_args)
-                    for profile in all_profiles
-                ],
+                "includes": all_profiles_path,
                 "profiles": {
                     restic_service.DEFAULT_PROFILE_NAME: {
                         "cache-dir": GlobalExtractor(
@@ -70,11 +74,7 @@ class ResticGlobalProfileResource(
                         "restore": {"verify": True} | snapshot_options,
                     }
                 },
-                "groups": {
-                    "all": {
-                        "profiles": [profile.volume.name for profile in all_profiles]
-                    }
-                }
+                "groups": {"all": {"profiles": all_profiles_name}}
                 | {
                     service: {"profiles": profiles}
                     for service, profiles in restic_service.service_groups.items()

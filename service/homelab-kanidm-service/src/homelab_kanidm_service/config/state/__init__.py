@@ -18,35 +18,23 @@ class KanidmStateConfig(HomelabBaseModel):
     def build(
         self, openid_group: str, admin_group: str, user_group: str
     ) -> KanidmStateConfig:
+        openid_members = []
+        admin_members = []
+        user_members = []
+        for member, model in self.persons.root.items():
+            member_extract = GlobalExtract.from_simple(member)
+            openid_members.append(member_extract)
+            if model.admin:
+                admin_members.append(member_extract)
+            else:
+                user_members.append(member_extract)
+
         return self.__replace__(
             groups=KanidmStateGroupConfig(
                 self.groups.root
-                | {
-                    openid_group: KanidmStateGroupModel(
-                        members=[
-                            GlobalExtract.from_simple(member)
-                            for member in self.persons.root
-                        ]
-                    )
-                }
-                | {
-                    admin_group: KanidmStateGroupModel(
-                        members=[
-                            GlobalExtract.from_simple(member)
-                            for member, model in self.persons.root.items()
-                            if model.admin
-                        ]
-                    )
-                }
-                | {
-                    user_group: KanidmStateGroupModel(
-                        members=[
-                            GlobalExtract.from_simple(member)
-                            for member, model in self.persons.root.items()
-                            if not model.admin
-                        ]
-                    )
-                }
+                | {openid_group: KanidmStateGroupModel(members=openid_members)}
+                | {admin_group: KanidmStateGroupModel(members=admin_members)}
+                | {user_group: KanidmStateGroupModel(members=user_members)}
             ),
             systems=KanidmStateSystemConfig(
                 oauth2=KanidmStateSystemOauthConfig(

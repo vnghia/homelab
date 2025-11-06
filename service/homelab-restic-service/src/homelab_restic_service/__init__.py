@@ -68,35 +68,37 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             elif volume_model.backup:
                 self.volume_configs.append(config)
 
-        self.profiles = [
-            ResticProfileModel(volume=volume).build_resource(
+        self.service_groups: defaultdict[str, list[str]] = defaultdict(list)
+        self.profiles = []
+
+        for volume in sorted(self.volume_configs, key=lambda x: x.name):
+            profile = ResticProfileModel(volume=volume).build_resource(
                 opts=self.child_opts, restic_service=self
             )
-            for volume in sorted(self.volume_configs, key=lambda x: x.name)
-        ]
-
-        self.service_groups: defaultdict[str, list[str]] = defaultdict(list)
-        for profile in self.profiles:
+            self.profiles.append(profile)
             self.service_groups[profile.volume.service].append(profile.volume.name)
-
-        self.database_profiles = [
-            ResticProfileDatabaseModel(
-                type_=DatabaseType.POSTGRES, name=name
-            ).build_resource(opts=self.child_opts, restic_service=self)
-            for names in barman_service.service_maps.values()
-            for name in names
-        ] + [
-            ResticProfileDatabaseModel(
-                type_=DatabaseType.SQLITE,
-                name="{}-{}".format(name, DatabaseType.SQLITE.value),
-            ).build_resource(opts=self.child_opts, restic_service=self)
-            for name in balite_service.service_maps
-        ]
 
         self.service_database_groups: defaultdict[
             str, defaultdict[DatabaseType, list[str]]
         ] = defaultdict(lambda: defaultdict(list))
-        for profile in self.database_profiles:
+        self.database_profiles = []
+
+        for names in barman_service.service_maps.values():
+            for name in names:
+                profile = ResticProfileDatabaseModel(
+                    type_=DatabaseType.POSTGRES, name=name
+                ).build_resource(opts=self.child_opts, restic_service=self)
+                self.database_profiles.append(profile)
+                self.service_database_groups[profile.volume.service][
+                    profile.type_
+                ].append(profile.volume.name)
+
+        for name in balite_service.service_maps:
+            profile = ResticProfileDatabaseModel(
+                type_=DatabaseType.SQLITE,
+                name="{}-{}".format(name, DatabaseType.SQLITE.value),
+            ).build_resource(opts=self.child_opts, restic_service=self)
+            self.database_profiles.append(profile)
             self.service_database_groups[profile.volume.service][profile.type_].append(
                 profile.volume.name
             )
