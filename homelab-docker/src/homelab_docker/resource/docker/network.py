@@ -99,7 +99,7 @@ class NetworkResource(ComponentResource):
     def build_ipam(
         cls, sequence: NonPositiveInt, subnet: IPNetwork
     ) -> BridgeIpamNetworkModel:
-        return BridgeIpamNetworkModel(subnet=subnet.next(sequence))
+        return BridgeIpamNetworkModel.model_construct(subnet=subnet.next(sequence))
 
     @classmethod
     def get_bridge_name(cls, name: str) -> str:
