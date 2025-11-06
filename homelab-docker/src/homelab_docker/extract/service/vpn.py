@@ -14,5 +14,9 @@ if typing.TYPE_CHECKING:
 class ServiceVpnSourceExtractor(ExtractorBase[ServiceExtractVpnSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         return Output.from_input(
-            str(extractor_args.service_model.vpn_.root.root.ports[self.root.port])
+            str(
+                extractor_args.service_model.network.vpn_.root.root.ports[
+                    self.root.port
+                ]
+            )
         )

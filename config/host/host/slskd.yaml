@@ -41,9 +41,10 @@ services:
             service:
               port:
                 env: SLSKD_HTTP_PORT
-    vpn:
-      ports:
-        port:
+    network:
+      vpn:
+        ports:
+          port:
     container:
       image: slskd
       healthcheck:

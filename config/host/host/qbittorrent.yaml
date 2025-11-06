@@ -26,9 +26,10 @@ services:
         hostname:
           hostname: qbittorrent
           record: sun
-    vpn:
-      ports:
-        port:
+    network:
+      vpn:
+        ports:
+          port:
     container:
       image: qbittorrent
       network:
