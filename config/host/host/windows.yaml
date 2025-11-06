@@ -24,7 +24,7 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: solar
+            record: sun
             service:
               port:
                 svariable: PORT
@@ -45,7 +45,7 @@ services:
         - /dev/net/tun
       network:
         bridge:
-          vpn: {}
+          default: {}
       ports:
         rdp-tcp:
           internal: 3389
