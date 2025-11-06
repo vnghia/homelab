@@ -39,6 +39,8 @@ services:
                 - restore
                 - param:
                     type: backup
+    network:
+      bridge:
     container:
       active: false
       image:

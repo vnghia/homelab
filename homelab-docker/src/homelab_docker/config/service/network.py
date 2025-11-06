@@ -2,8 +2,13 @@ from homelab_pydantic import HomelabBaseModel
 from homelab_vpn.config.service import ServiceVpnConfig
 
 
+class ServiceNetworkBridgeConfig(HomelabBaseModel):
+    pass
+
+
 class ServiceNetworkConfig(HomelabBaseModel):
     vpn: ServiceVpnConfig | None = None
+    bridge: ServiceNetworkBridgeConfig | None = ServiceNetworkBridgeConfig()
 
     @property
     def vpn_(self) -> ServiceVpnConfig:

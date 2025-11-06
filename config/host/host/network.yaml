@@ -1,13 +1,15 @@
 docker:
   network:
     bridge:
-      default:
-        icc: false
-      internal:
-        internal: true
-      vpn:
-        ipam:
-        icc: false
+      host:
+        default:
+          icc: false
+        internal:
+          internal: true
+        vpn:
+          ipam:
+          icc: false
+      service:
     default:
       bridge:
         internal: {}

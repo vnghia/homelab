@@ -9,6 +9,8 @@ services:
     variables:
       PORT: 80
     config: {}
+    network:
+      bridge:
     container:
       image: nginx-static
       active: false

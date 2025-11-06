@@ -10,6 +10,8 @@ docker:
 services:
   gluetun:
     config: {}
+    network:
+      bridge:
     container:
       active: false
       image: gluetun

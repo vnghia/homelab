@@ -15,6 +15,9 @@ docker:
       traefik-tmp:
         backup: false
 services:
+  tailscale:
+    network:
+      bridge:
   traefik:
     variables:
       HTTP_PUBLIC_BIND_PORT: 81

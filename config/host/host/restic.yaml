@@ -104,6 +104,8 @@ services:
                   dag: prune
                 depends:
                   - forget
+    network:
+      bridge:
     secrets:
       password:
         protect: true
