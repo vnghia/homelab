@@ -3,7 +3,7 @@ from typing import Self
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
 from netaddr_pydantic import IPAddress, IPNetwork
-from pulumi import ResourceOptions
+from pulumi import Output, ResourceOptions
 from pydantic import ValidationError, model_validator
 
 
@@ -49,18 +49,29 @@ class BridgeNetworkModel(HomelabBaseModel):
         *,
         opts: ResourceOptions,
         project_labels: dict[str, str],
+        ipam: list[Output[BridgeIpamNetworkModel]],
     ) -> docker.Network:
         options = self.options
         if not self.icc:
             options["enable_icc"] = "false"
 
+        has_static_ipam = bool(self.ipam) or bool(ipam)
+
         return docker.Network(
             resource_name,
-            opts=opts,
+            opts=ResourceOptions.merge(
+                opts,
+                ResourceOptions(
+                    delete_before_replace=opts.delete_before_replace or has_static_ipam
+                ),
+            ),
             driver="bridge",
             ipv6=self.ipv6,
             internal=self.internal,
-            ipam_configs=[ipam.to_args() for ipam in self.ipam] if self.ipam else None,
+            ipam_configs=[ipam.to_args() for ipam in self.ipam]
+            + [ipam.apply(BridgeIpamNetworkModel.to_args) for ipam in ipam]
+            if has_static_ipam
+            else None,
             labels=[
                 docker.NetworkLabelArgs(label=k, value=v)
                 for k, v in (project_labels | self.labels).items()

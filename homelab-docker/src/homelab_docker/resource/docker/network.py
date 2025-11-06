@@ -30,6 +30,7 @@ class NetworkResource(ComponentResource):
                 self.get_bridge_name(key),
                 opts=self.child_opts,
                 project_labels=global_args.project.labels,
+                ipam=[],
             )
             for key, model in self.config.bridge.items()
         }
