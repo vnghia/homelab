@@ -15,6 +15,8 @@ from ..resource.service import ServiceResourceBase
 
 
 class HostResourceBase(ComponentResource):
+    _host_name: str | None = None
+
     HOSTS: dict[str, HostResourceBase] = {}
 
     def __init__(
@@ -70,4 +72,8 @@ class HostResourceBase(ComponentResource):
 
     @classmethod
     def name(cls) -> str:
-        return to_snake(cls.__name__.removesuffix("Host")).replace("_", "-")
+        if cls._host_name is None:
+            cls._host_name = to_snake(cls.__name__.removesuffix("Host")).replace(
+                "_", "-"
+            )
+        return cls._host_name

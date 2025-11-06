@@ -23,6 +23,8 @@ from .secret import ServiceSecretResource
 
 
 class ServiceResourceBase(ComponentResource):
+    _service_name: str | None = None
+
     def __init__(
         self,
         model: ServiceModel,
@@ -63,7 +65,11 @@ class ServiceResourceBase(ComponentResource):
 
     @classmethod
     def name(cls) -> str:
-        return to_snake(cls.__name__.removesuffix("Service")).replace("_", "-")
+        if cls._service_name is None:
+            cls._service_name = to_snake(cls.__name__.removesuffix("Service")).replace(
+                "_", "-"
+            )
+        return cls._service_name
 
     @classmethod
     def add_service_name(cls, name: str | None, prefix: str | None = None) -> str:
