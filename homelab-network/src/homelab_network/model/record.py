@@ -1,11 +1,9 @@
 from typing import ClassVar
 
-import netaddr
 import pulumi_cloudflare as cloudflare
-from homelab_pydantic import HomelabRootModel
-from netaddr_pydantic import IPAddress
+from homelab_pydantic import HomelabRootModel, IPvAnyAddressAdapter
 from pulumi import Input, Output, ResourceOptions
-from pydantic import PositiveInt
+from pydantic import IPvAnyAddress, PositiveInt
 
 
 class RecordModel(HomelabRootModel[str]):
@@ -17,11 +15,11 @@ class RecordModel(HomelabRootModel[str]):
         *,
         opts: ResourceOptions,
         zone_id: str,
-        ip: Input[IPAddress],
+        ip: Input[IPvAnyAddress],
     ) -> cloudflare.DnsRecord:
         type_ = Output.from_input(ip).apply(
             lambda x: "A"
-            if netaddr.IPAddress(x).version == self.IPV4_VERSION
+            if IPvAnyAddressAdapter.validate_python(x).version == self.IPV4_VERSION
             else "AAAA"
         )
         return cloudflare.DnsRecord(

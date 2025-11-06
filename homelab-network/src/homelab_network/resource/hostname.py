@@ -1,8 +1,8 @@
 from collections import defaultdict
 
 import pulumi
-from netaddr_pydantic import IPAddress
 from pulumi import ComponentResource, ResourceOptions
+from pydantic import IPvAnyAddress
 
 from ..config import NetworkConfig
 from ..model.ip import NetworkIpOutputModel, NetworkIpSource
@@ -31,7 +31,7 @@ class NetworkHostnameResource(ComponentResource):
             for key, record in config.records.items()
         }
 
-        local_records: defaultdict[IPAddress, set[str]] = defaultdict(set)
+        local_records: defaultdict[IPvAnyAddress, set[str]] = defaultdict(set)
         for record in self.records.values():
             for ip, hostnames in record.local_records.items():
                 local_records[ip].update(hostnames)

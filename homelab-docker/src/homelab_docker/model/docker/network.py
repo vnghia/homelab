@@ -2,26 +2,26 @@ from typing import Any
 
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
-from netaddr_pydantic import IPAddress, IPNetwork
 from pulumi import Output, ResourceOptions
+from pydantic import IPvAnyAddress, IPvAnyNetwork
 
 
 class BridgeIpamNetworkModel(HomelabBaseModel):
-    subnet: IPNetwork
+    subnet: IPvAnyNetwork
 
-    _gateway: IPAddress
-    _ip_range: IPNetwork
+    _gateway: IPvAnyAddress
+    _ip_range: IPvAnyNetwork
 
     def model_post_init(self, context: Any, /) -> None:
-        self._gateway = self.subnet.network + 1
+        self._gateway = self.subnet.network_address + 1
         self._ip_range = self.subnet
 
     @property
-    def gateway(self) -> IPAddress:
+    def gateway(self) -> IPvAnyAddress:
         return self._gateway
 
     @property
-    def ip_range(self) -> IPNetwork:
+    def ip_range(self) -> IPvAnyNetwork:
         return self._ip_range
 
     def to_args(self) -> docker.NetworkIpamConfigArgs:

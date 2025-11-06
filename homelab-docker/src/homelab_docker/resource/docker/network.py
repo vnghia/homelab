@@ -4,10 +4,10 @@ from functools import partial
 import pulumi
 import pulumi_docker as docker
 from homelab_global import GlobalArgs
+from homelab_pydantic import IPvAnyNetworkAdapter
 from homelab_sequence import HomelabSequenceResource
-from netaddr_pydantic import IPNetwork
 from pulumi import ComponentResource, Input, ResourceOptions
-from pydantic import NonPositiveInt
+from pydantic import IPvAnyNetwork, NonPositiveInt
 
 from ...model.docker.container import ContainerNetworkModelBuildArgs
 from ...model.docker.container.network import ContainerNetworkContainerConfig
@@ -97,9 +97,16 @@ class NetworkResource(ComponentResource):
 
     @classmethod
     def build_ipam(
-        cls, sequence: NonPositiveInt, subnet: IPNetwork
+        cls, sequence: NonPositiveInt, subnet: IPvAnyNetwork
     ) -> BridgeIpamNetworkModel:
-        return BridgeIpamNetworkModel.model_construct(subnet=subnet.next(sequence))
+        return BridgeIpamNetworkModel.model_construct(
+            subnet=IPvAnyNetworkAdapter.validate_python(
+                (
+                    subnet.network_address + subnet.num_addresses * sequence,
+                    subnet.prefixlen,
+                )
+            )
+        )
 
     @classmethod
     def get_bridge_name(cls, name: str) -> str:

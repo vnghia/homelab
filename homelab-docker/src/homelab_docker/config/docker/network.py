@@ -1,6 +1,6 @@
 from homelab_pydantic import HomelabBaseModel
 from homelab_vpn.config.host import HostVpnConfig
-from netaddr_pydantic import IPNetwork
+from pydantic import IPvAnyNetwork
 
 from ...model.docker.container.network import ContainerNetworkConfig
 from ...model.docker.network import BridgeNetworkModel
@@ -8,7 +8,7 @@ from ...model.docker.network import BridgeNetworkModel
 
 class NetworkBridgeConfig(HomelabBaseModel):
     host: dict[str, BridgeNetworkModel]
-    service: list[IPNetwork]
+    service: list[IPvAnyNetwork]
 
     def __getitem__(self, key: str) -> BridgeNetworkModel:
         return self.host[key]

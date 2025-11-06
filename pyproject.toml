@@ -31,7 +31,6 @@ dependencies = [
     "pexpect>=4.9.0",
     "types-pexpect>=4.9.0.20250516",
     "loguru>=0.7.3",
-    "netaddr-pydantic>=0.2.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.13.1"
@@ -129,4 +128,3 @@ ignore = [
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "pydantic.BaseModel".msg = "Use homelab_pydantic.HomelabBaseModel instead"
 "pydantic.RootModel".msg = "Use homelab_pydantic.HomelabRootModel instead"
-"pydantic.IPvAnyAddress".msg = "Use netaddr_pydantic.IPAddress instead"

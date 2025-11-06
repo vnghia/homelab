@@ -3,14 +3,11 @@ from __future__ import annotations
 import typing
 from typing import Self
 
-import netaddr
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
-from homelab_pydantic import HomelabBaseModel
-from homelab_pydantic.model import HomelabRootModel
-from netaddr_pydantic import IPAddress
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel, IPvAnyAddressAdapter
 from pulumi import Output
-from pydantic import ConfigDict, PositiveInt
+from pydantic import ConfigDict, IPvAnyAddress, PositiveInt
 
 from .port import ContainerPortConfig, ContainerPortForwardConfig, ContainerPortProtocol
 
@@ -23,9 +20,9 @@ class ContainerPortRangeConfig(HomelabBaseModel):
     internal: PositiveInt | GlobalExtract | None = None
     external: PositiveInt | GlobalExtract | None = None
     range: tuple[PositiveInt, PositiveInt] | None = None
-    ips: dict[str, IPAddress] = {
-        "v4": netaddr.IPAddress("0.0.0.0"),
-        "v6": netaddr.IPAddress("::"),
+    ips: dict[str, IPvAnyAddress] = {
+        "v4": IPvAnyAddressAdapter.validate_python("0.0.0.0"),
+        "v6": IPvAnyAddressAdapter.validate_python("::"),
     }
     protocol: ContainerPortProtocol | None = None
     forward: ContainerPortForwardConfig | None = None

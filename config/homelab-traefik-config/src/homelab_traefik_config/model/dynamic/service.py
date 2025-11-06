@@ -2,7 +2,7 @@ from enum import StrEnum, auto
 
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
-from netaddr_pydantic import IPAddress
+from pydantic import IPvAnyAddress
 
 
 class TraefikDynamicServiceType(StrEnum):
@@ -11,7 +11,7 @@ class TraefikDynamicServiceType(StrEnum):
 
 class TraefikDynamicServiceFullModel(HomelabBaseModel):
     container: str | None = None
-    external: IPAddress | str | None = None
+    external: IPvAnyAddress | str | None = None
     port: GlobalExtract
     scheme: str | None = None
     pass_host_header: bool | None = None

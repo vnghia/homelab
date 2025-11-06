@@ -3,8 +3,8 @@ from enum import StrEnum, auto
 from typing import ClassVar, Self
 
 from homelab_pydantic.model import HomelabRootModel
-from netaddr_pydantic import IPAddress
 from pulumi import Output
+from pydantic import IPvAnyAddress
 
 
 class NetworkIpSource(StrEnum):
@@ -12,14 +12,14 @@ class NetworkIpSource(StrEnum):
     DDNS = auto()
 
 
-class NetworkIpModel(HomelabRootModel[dict[str, IPAddress]]):
+class NetworkIpModel(HomelabRootModel[dict[str, IPvAnyAddress]]):
     V4: ClassVar[str] = "v4"
     V6: ClassVar[str] = "v6"
 
 
 @dataclasses.dataclass
 class NetworkIpOutputModel:
-    data: dict[str, Output[IPAddress]]
+    data: dict[str, Output[IPvAnyAddress]]
 
     @classmethod
     def from_model(cls, model: NetworkIpModel) -> Self:

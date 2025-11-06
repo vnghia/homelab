@@ -7,9 +7,8 @@ from typing import ClassVar, Literal, Self
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
-from netaddr_pydantic import IPAddress
 from pulumi import Input, Output
-from pydantic import PositiveInt
+from pydantic import IPvAnyAddress, PositiveInt
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
@@ -29,7 +28,7 @@ class ContainerPortConfig(HomelabBaseModel):
 
     internal: PositiveInt | GlobalExtract
     external: PositiveInt | GlobalExtract
-    ip: IPAddress
+    ip: IPvAnyAddress
     protocol: ContainerPortProtocol | None = None
     forward: ContainerPortForwardConfig | None = None
 

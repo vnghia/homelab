@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import os
 import typing
+from ipaddress import IPv4Address, IPv6Address
 from typing import Any
 
 import httpx
 from homelab_pydantic import HomelabBaseModel
-from netaddr_pydantic import IPv4Address, IPv6Address
 from pulumi import Output, ResourceOptions
 from pulumi.dynamic import (
     CreateResult,
@@ -15,7 +15,7 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import ConfigDict, TypeAdapter, ValidationError
+from pydantic import ConfigDict, ValidationError
 
 if typing.TYPE_CHECKING:
     from .. import TailscaleService
@@ -64,8 +64,8 @@ class TailscaleClient:
             if device.hostname == hostname:
                 return TailscaleDeviceProviderOutput(
                     hostname=device.hostname,
-                    v4=TypeAdapter(IPv4Address).validate_python(device.addresses[0]),
-                    v6=TypeAdapter(IPv6Address).validate_python(device.addresses[1]),
+                    v4=IPv4Address(device.addresses[0]),
+                    v6=IPv6Address(device.addresses[1]),
                 )
         raise KeyError(
             "Could not found tailscale device with hostname {}".format(hostname)
