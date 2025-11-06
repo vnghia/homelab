@@ -2,7 +2,6 @@ from functools import cached_property
 
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
-from homelab_vpn.config.host import HostVpnConfig
 from pydantic import ConfigDict
 from pydantic_extra_types.timezone_name import TimeZoneName
 
@@ -18,15 +17,8 @@ class HostNoServiceModel(HomelabBaseModel):
     access: HostAccessModel
     timezone: TimeZoneName
     ip: HostIpModel = HostIpModel()
-    vpn: HostVpnConfig | None = None
     docker: DockerConfig
     variables: dict[str, GlobalExtract] = {}
-
-    @property
-    def vpn_(self) -> HostVpnConfig:
-        if not self.vpn:
-            raise ValueError("Host vpn config is not provided")
-        return self.vpn
 
 
 class HostServiceModelModel(HostNoServiceModel):

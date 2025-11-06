@@ -203,7 +203,7 @@ class ServiceResourceBase(ComponentResource):
 
     def build_vpn_container_model(self) -> None:
         if self.model.network.vpn:
-            host_vpn_config = self.extractor_args.host_model.vpn_
+            host_vpn_config = self.extractor_args.host_model.docker.network.vpn_
             vpn = self.model.network.vpn
             self.options[vpn.VPN_CONTAINER].add_envs(
                 VpnModelBuilder(vpn.root).build_envs(self.extractor_args)
