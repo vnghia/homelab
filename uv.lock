@@ -27,12 +27,12 @@ members = [
     "homelab-kanidm-service",
     "homelab-mail",
     "homelab-network",
-    "homelab-order",
     "homelab-pydantic",
     "homelab-restic-service",
     "homelab-s3",
     "homelab-s3-config",
     "homelab-secret",
+    "homelab-sequence",
     "homelab-tailscale-service",
     "homelab-traefik-config",
     "homelab-traefik-service",
@@ -983,25 +983,6 @@ requires-dist = [
 ]
 
 [[package]]
-name = "homelab-order"
-version = "0.1.0"
-source = { editable = "homelab-order" }
-dependencies = [
-    { name = "bidict" },
-    { name = "homelab-pydantic" },
-    { name = "pulumi" },
-    { name = "pydantic" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "bidict", specifier = ">=0.23.1" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "pulumi", specifier = ">=3.148.0" },
-    { name = "pydantic", specifier = ">=2.10.6" },
-]
-
-[[package]]
 name = "homelab-pydantic"
 version = "0.1.0"
 source = { editable = "homelab-pydantic" }
@@ -1100,6 +1081,25 @@ requires-dist = [
     { name = "pulumi-tls", specifier = ">=5.1.1" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pykeepass", specifier = ">=4.1.1.post1" },
+]
+
+[[package]]
+name = "homelab-sequence"
+version = "0.1.0"
+source = { editable = "homelab-sequence" }
+dependencies = [
+    { name = "bidict" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "bidict", specifier = ">=0.23.1" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]
