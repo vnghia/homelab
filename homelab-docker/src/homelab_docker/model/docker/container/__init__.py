@@ -19,7 +19,11 @@ from .host import ContainerHostConfig
 from .image import ContainerImageModelConfig
 from .inherit import ContainerInheritConfig
 from .mail import ContainerMailConfig
-from .network import ContainerCommonNetworkConfig, ContainerNetworkConfig
+from .network import (
+    ContainerBridgeNetworkConfig,
+    ContainerCommonNetworkConfig,
+    ContainerNetworkConfig,
+)
 from .ports import ContainerPortsConfig
 from .tmpfs import ContainerTmpfsConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
@@ -36,12 +40,16 @@ class ContainerNetworkModelBuildArgs:
     ports: ContainerPortsConfig = dataclasses.field(
         default_factory=ContainerPortsConfig
     )
+    bridges: dict[str, ContainerBridgeNetworkConfig] = dataclasses.field(
+        default_factory=dict
+    )
 
     def __iadd__(
         self, rhs: ContainerNetworkModelBuildArgs
     ) -> ContainerNetworkModelBuildArgs:
         self.add_hosts(rhs.hosts)
         self.add_ports(rhs.ports)
+        self.add_bridges(rhs.bridges)
         return self
 
     def add_hosts(self, hosts: list[ContainerHostConfig]) -> None:
@@ -49,6 +57,9 @@ class ContainerNetworkModelBuildArgs:
 
     def add_ports(self, ports: ContainerPortsConfig) -> None:
         self.ports |= ports
+
+    def add_bridges(self, bridges: dict[str, ContainerBridgeNetworkConfig]) -> None:
+        self.bridges |= bridges
 
 
 @dataclasses.dataclass
@@ -263,7 +274,7 @@ class ContainerModel(HomelabBaseModel):
         service = extractor_args.service
 
         build_args = self.build_args(build_args, extractor_args)
-        network_args = self.network.to_args(resource_name, extractor_args)
+        network_args = self.network.to_args(resource_name, extractor_args, build_args)
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)

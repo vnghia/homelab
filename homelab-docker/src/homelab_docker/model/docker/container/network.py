@@ -21,6 +21,7 @@ from ....model.docker.network import BridgeNetworkModel
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
+    from . import ContainerModelBuildArgs
 
 
 @dataclasses.dataclass
@@ -38,7 +39,10 @@ class ContainerNetworkContainerConfig(HomelabBaseModel):
     container: str | None = None
 
     def to_args(
-        self, _resource_name: str | None, extractor_args: ExtractorArgs
+        self,
+        _resource_name: str | None,
+        extractor_args: ExtractorArgs,
+        build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         return ContainerNetworkArgs(
             mode=Output.format(
@@ -71,7 +75,10 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
     mode: NetworkMode
 
     def to_args(
-        self, resource_name: str | None, extractor_args: ExtractorArgs
+        self,
+        resource_name: str | None,
+        extractor_args: ExtractorArgs,
+        build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         match self.mode:
             case NetworkMode.HOST:
@@ -105,10 +112,17 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
         return []
 
     def to_args(
-        self, resource_name: str | None, extractor_args: ExtractorArgs
+        self,
+        resource_name: str | None,
+        extractor_args: ExtractorArgs,
+        build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
         bridge_config = extractor_args.host.docker.network.config.bridge
+        bridges = self.bridge
+        if build_args.network.bridges:
+            bridges |= build_args.network.bridges
+
         return ContainerNetworkArgs(
             mode="bridge",
             advanced=[
@@ -118,7 +132,7 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
                         resource_name, bridge_config[name], config, extractor_args
                     ),
                 )
-                for name, config in self.bridge.items()
+                for name, config in bridges.items()
                 if config.active
             ],
         )
@@ -138,10 +152,15 @@ class ContainerNetworkConfig(
     ) = ContainerCommonNetworkConfig()
 
     def to_args(
-        self, resource_name: str | None, extractor_args: ExtractorArgs
+        self,
+        resource_name: str | None,
+        extractor_args: ExtractorArgs,
+        build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         default = extractor_args.host_model.docker.network.default.root
         root = self.root
         if type(default) is type(root):
-            return default.model_merge(root).to_args(resource_name, extractor_args)  # type: ignore
-        return root.to_args(resource_name, extractor_args)
+            return default.model_merge(root).to_args(  # type: ignore
+                resource_name, extractor_args, build_args
+            )
+        return root.to_args(resource_name, extractor_args, build_args)
