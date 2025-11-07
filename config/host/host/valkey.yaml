@@ -8,7 +8,8 @@ docker:
             tag: "8.1.1"
       version: 8
       port: 6379
-      data-dir: /bitnami/valkey/data
+      dir:
+        data: /bitnami/valkey/data
       env:
         password: VALKEY_PASSWORD
         database: VALKEY_DATABASE

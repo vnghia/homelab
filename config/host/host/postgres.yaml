@@ -8,8 +8,9 @@ docker:
             tag: "17.4-bookworm"
       version: 17
       port: 5432
-      data-dir: /var/lib/postgresql/data
-      initdb-dir: /docker-entrypoint-initdb.d
+      dir:
+        data: /var/lib/postgresql/data
+        initdb: /docker-entrypoint-initdb.d
       scripts:
         - path: replication.sh
           content: |

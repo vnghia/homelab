@@ -105,7 +105,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                         {
                             full_name: ContainerVolumeConfig(
                                 GlobalExtract.from_simple(
-                                    self.config.data_dir.as_posix()
+                                    self.config.dir.data.as_posix()
                                 )
                             )
                         }
@@ -115,11 +115,11 @@ class ServiceDatabaseTypeResource(ComponentResource):
                                     version
                                 ): ContainerVolumeConfig(
                                     GlobalExtract.from_simple(
-                                        self.config.tmp_dir.as_posix()
+                                        self.config.dir.tmp.as_posix()
                                     )
                                 )
                             }
-                            if self.config.tmp_dir
+                            if self.config.dir.tmp
                             else {}
                         )
                         | (
@@ -127,13 +127,13 @@ class ServiceDatabaseTypeResource(ComponentResource):
                                 self.full_name_initdb: ContainerVolumeConfig(
                                     ContainerVolumeFullConfig(
                                         path=GlobalExtract.from_simple(
-                                            self.config.initdb_dir.as_posix()
+                                            self.config.dir.initdb.as_posix()
                                         ),
                                         read_only=True,
                                     )
                                 )
                             }
-                            if self.config.initdb_dir
+                            if self.config.dir.initdb
                             else {}
                         )
                     ),

@@ -8,8 +8,9 @@ docker:
             tag: "7.4.2"
       version: 7
       port: 6379
-      data-dir: /bitnami/redis/data
-      tmp-dir: /opt/bitnami/redis
+      dir:
+        data: /bitnami/redis/data
+        tmp: /opt/bitnami/redis
       env:
         password: REDIS_PASSWORD
         database: REDIS_DATABASE

@@ -13,6 +13,16 @@ from ...model.service.database import (
 )
 
 
+class DatabaseRemoteImageModel(RemoteImageModel):
+    container: ContainerModel | None = None
+
+
+class DatabaseTypeDirConfig(HomelabBaseModel):
+    data: AbsolutePath
+    tmp: AbsolutePath | None = None
+    initdb: AbsolutePath | None = None
+
+
 class DatabaseTypeEnvConfig(HomelabBaseModel):
     DEFAULT_USERNAME: ClassVar[str] = "default"
 
@@ -24,18 +34,12 @@ class DatabaseTypeEnvConfig(HomelabBaseModel):
     superuser_password: str | None = None
 
 
-class DatabaseRemoteImageModel(RemoteImageModel):
-    container: ContainerModel | None = None
-
-
 class DatabaseTypeConfig(HomelabBaseModel):
     images: dict[str | None, dict[PositiveInt, DatabaseRemoteImageModel]]
     version: PositiveInt
     port: PositiveInt
 
-    data_dir: AbsolutePath
-    tmp_dir: AbsolutePath | None = None
-    initdb_dir: AbsolutePath | None = None
+    dir: DatabaseTypeDirConfig
     scripts: list[ServiceDatabaseInitScriptModel] = []
 
     env: DatabaseTypeEnvConfig

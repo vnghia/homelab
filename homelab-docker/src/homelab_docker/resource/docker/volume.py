@@ -43,7 +43,7 @@ class VolumeResource(ComponentResource):
                 for name, model in database_config.items():
                     type_config = config.docker.database.root[type_]
 
-                    if type_config.initdb_dir:
+                    if type_config.dir.initdb:
                         full_initdb_name = type_.get_full_name_initdb(
                             service_name, name
                         )
@@ -65,7 +65,7 @@ class VolumeResource(ComponentResource):
                             project_labels=global_args.project.labels,
                         )
 
-                        if type_config.tmp_dir:
+                        if type_config.dir.tmp:
                             full_tmp_name = type_.get_full_name_version_tmp(
                                 service_name, name, version
                             )

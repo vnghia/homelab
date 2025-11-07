@@ -8,8 +8,9 @@ docker:
             tag: "11.7.2-ubi9"
       version: 11
       port: 3306
-      data-dir: /var/lib/mysql
-      initdb-dir: /docker-entrypoint-initdb.d
+      dir:
+        data: /var/lib/mysql
+        initdb: /docker-entrypoint-initdb.d
       env:
         username: MARIADB_USER
         password: MARIADB_PASSWORD
