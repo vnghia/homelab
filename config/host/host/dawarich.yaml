@@ -6,10 +6,7 @@ docker:
         tag: "0.34.2"
   volumes:
     local:
-      dawarich-public:
-        backup: false
-      dawarich-storage:
-        backup: false
+      dawarich-storage: {}
 services:
   dawarich:
     variables:
@@ -65,7 +62,6 @@ services:
         - /var/app/tmp/cache
         - /var/app/tmp/sockets
       volumes:
-        dawarich-public: /var/app/public
         dawarich-storage: /var/app/storage
       wud:
         template: https://github.com/Freika/dawarich/releases/tag/${original}
