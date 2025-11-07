@@ -8,6 +8,12 @@ docker:
         args:
           BARMAN_VERSION: &barman-version "3.15.0-r0"
         version: *barman-version
+  database:
+    postgres:
+      container:
+        network:
+          bridge:
+            barman: {}
   volumes:
     local:
       barman-home: {}
