@@ -32,6 +32,7 @@ class ContainerNetworkArgs:
 
 class NetworkMode(StrEnum):
     HOST = auto()
+    NONE = auto()
 
 
 class ContainerNetworkContainerConfig(HomelabBaseModel):
@@ -81,8 +82,8 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
         build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         match self.mode:
-            case NetworkMode.HOST:
-                return ContainerNetworkArgs(mode="host", advanced=[])
+            case NetworkMode.HOST | NetworkMode.NONE:
+                return ContainerNetworkArgs(mode=self.mode, advanced=[])
 
 
 class ContainerBridgeNetworkConfig(HomelabBaseModel):
@@ -127,6 +128,11 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
         if service_network.bridge:
             bridges[extractor_args.service.name()] = service_network.bridge
         bridges |= self.bridge
+
+        if not bridges:
+            return ContainerNetworkModeConfig(mode=NetworkMode.NONE).to_args(
+                resource_name, extractor_args, build_args
+            )
 
         return ContainerNetworkArgs(
             mode="bridge",
