@@ -10,7 +10,10 @@ from pulumi import ComponentResource, Input, ResourceOptions
 from pydantic import IPvAnyNetwork, NonPositiveInt
 
 from ...model.docker.container import ContainerNetworkModelBuildArgs
-from ...model.docker.container.network import ContainerNetworkContainerConfig
+from ...model.docker.container.network import (
+    ContainerCommonNetworkConfig,
+    ContainerNetworkContainerConfig,
+)
 from ...model.docker.network import BridgeIpamNetworkModel, BridgeNetworkModel
 from ...model.host import HostServiceModelModel
 
@@ -28,7 +31,9 @@ class NetworkResource(ComponentResource):
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
-        self.config = config.docker.network
+        self.host_model = config
+        self.config = self.host_model.docker.network
+        self.bridge_config = self.config.bridge.host
 
         self.bridge = {
             key: model.build_resource(
@@ -37,22 +42,22 @@ class NetworkResource(ComponentResource):
                 project_labels=global_args.project.labels,
                 ipam=[],
             )
-            for key, model in self.config.bridge.host.items()
+            for key, model in self.bridge_config.items()
         }
 
         self.options: defaultdict[
             str, dict[str | None, ContainerNetworkModelBuildArgs]
         ] = defaultdict(lambda: defaultdict(ContainerNetworkModelBuildArgs))
 
-        service_networks = []
+        self.service_networks = []
 
         for (
             service_name,
             service_model,
-        ) in config.services.items():
+        ) in self.host_model.services.items():
             service_network = service_model.network
             if service_network.bridge:
-                service_networks.append(service_name)
+                self.service_networks.append(service_name)
 
             for container_model in service_model.containers.values():
                 network_mode = container_model.network.root
@@ -70,24 +75,7 @@ class NetworkResource(ComponentResource):
                         container_model.ports.with_service(service_name, False)
                     )
 
-        service_network_sequence = HomelabSequenceResource(
-            "service", opts=self.child_opts, names=service_networks
-        )
-        build_ipam_fns = [
-            partial(self.__class__.build_ipam, subnet=ipam)
-            for ipam in self.config.bridge.service
-        ]
-        for service in service_networks:
-            service_sequence = service_network_sequence[service]
-            self.bridge[service] = BridgeNetworkModel().build_resource(
-                self.get_bridge_name(service),
-                opts=self.child_opts,
-                project_labels=global_args.project.labels,
-                ipam=[
-                    service_sequence.apply(build_ipam_fn)
-                    for build_ipam_fn in build_ipam_fns
-                ],
-            )
+        self.build_service_networks(global_args)
 
         for value in self.bridge.values():
             pulumi.export(
@@ -108,6 +96,34 @@ class NetworkResource(ComponentResource):
             )
         )
 
+    def build_service_networks(self, global_args: GlobalArgs) -> None:
+        proxy_service, proxy_container = self.compute_proxy(
+            self.config.proxy.service, self.config.proxy.container
+        )
+        proxy_bridges = self.options[proxy_service][proxy_container].bridges
+
+        service_network_model = BridgeNetworkModel(internal=True)
+        service_network_sequence = HomelabSequenceResource(
+            "service", opts=self.child_opts, names=self.service_networks
+        )
+        build_ipam_fns = [
+            partial(self.__class__.build_ipam, subnet=ipam)
+            for ipam in self.config.bridge.service
+        ]
+        for service in self.service_networks:
+            service_sequence = service_network_sequence[service]
+            self.bridge_config[service] = service_network_model
+            self.bridge[service] = service_network_model.build_resource(
+                self.get_bridge_name(service),
+                opts=self.child_opts,
+                project_labels=global_args.project.labels,
+                ipam=[
+                    service_sequence.apply(build_ipam_fn)
+                    for build_ipam_fn in build_ipam_fns
+                ],
+            )
+            proxy_bridges[service] = self.config.proxy.bridge
+
     @classmethod
     def get_bridge_name(cls, name: str) -> str:
         return "{}-bridge".format(name)
@@ -117,4 +133,20 @@ class NetworkResource(ComponentResource):
     ) -> docker.ContainerNetworksAdvancedArgs:
         return docker.ContainerNetworksAdvancedArgs(
             name=self.bridge[name].name, aliases=aliases
+        )
+
+    def compute_proxy(
+        self, service: str, container: str | None
+    ) -> tuple[str, str | None]:
+        network_mode = (
+            self.host_model.services[service].containers[container].network.root
+        )
+        if isinstance(network_mode, ContainerCommonNetworkConfig):
+            return (service, container)
+        if isinstance(network_mode, ContainerNetworkContainerConfig):
+            return self.compute_proxy(
+                network_mode.service or service, network_mode.container
+            )
+        raise ValueError(
+            "Proxy container must have either common network or container network config"
         )

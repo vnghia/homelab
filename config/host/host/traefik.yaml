@@ -4,6 +4,9 @@ docker:
       traefik:
         repo: traefik
         tag: "v3.5.3"
+  network:
+    proxy:
+      service: traefik
   volumes:
     local:
       traefik-config:
