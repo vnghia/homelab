@@ -23,6 +23,10 @@ class DatabaseTypeDirConfig(HomelabBaseModel):
     initdb: AbsolutePath | None = None
 
 
+class DatabaseTypeBackupConfig(HomelabBaseModel):
+    pass
+
+
 class DatabaseTypeEnvConfig(HomelabBaseModel):
     DEFAULT_USERNAME: ClassVar[str] = "default"
 
@@ -40,6 +44,7 @@ class DatabaseTypeConfig(HomelabBaseModel):
     port: PositiveInt
 
     dir: DatabaseTypeDirConfig
+    backup: DatabaseTypeBackupConfig | None = None
     scripts: list[ServiceDatabaseInitScriptModel] = []
 
     env: DatabaseTypeEnvConfig

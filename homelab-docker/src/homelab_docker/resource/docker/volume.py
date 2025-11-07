@@ -18,6 +18,8 @@ if typing.TYPE_CHECKING:
 class VolumeResource(ComponentResource):
     RESOURCE_NAME = "volume"
 
+    DEFAULT_LOCAL_VOLUME_MODEL = LocalVolumeModel()
+
     def __init__(
         self,
         config: HostServiceModelModel,
@@ -48,7 +50,7 @@ class VolumeResource(ComponentResource):
                             service_name, name
                         )
                         self.volumes[full_initdb_name] = (
-                            LocalVolumeModel().build_resource(
+                            self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                 full_initdb_name,
                                 opts=self.child_opts,
                                 project_labels=global_args.project.labels,
@@ -59,10 +61,12 @@ class VolumeResource(ComponentResource):
                         full_name = type_.get_full_name_version(
                             service_name, name, version
                         )
-                        self.volumes[full_name] = LocalVolumeModel().build_resource(
-                            full_name,
-                            opts=self.child_opts,
-                            project_labels=global_args.project.labels,
+                        self.volumes[full_name] = (
+                            self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
+                                full_name,
+                                opts=self.child_opts,
+                                project_labels=global_args.project.labels,
+                            )
                         )
 
                         if type_config.dir.tmp:
@@ -70,8 +74,20 @@ class VolumeResource(ComponentResource):
                                 service_name, name, version
                             )
                             self.volumes[full_tmp_name] = (
-                                LocalVolumeModel().build_resource(
+                                self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                     full_tmp_name,
+                                    opts=self.child_opts,
+                                    project_labels=global_args.project.labels,
+                                )
+                            )
+
+                        if type_config.backup:
+                            full_backup_name = type_.get_full_name_version_backup(
+                                service_name, name, version
+                            )
+                            self.volumes[full_backup_name] = (
+                                self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
+                                    full_backup_name,
                                     opts=self.child_opts,
                                     project_labels=global_args.project.labels,
                                 )

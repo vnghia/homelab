@@ -35,3 +35,8 @@ class DatabaseType(StrEnum):
         self, service_name: str, name: str | None, version: PositiveInt
     ) -> str:
         return "{}-{}-tmp".format(self.get_full_name(service_name, name), version)
+
+    def get_full_name_version_backup(
+        self, service_name: str, name: str | None, version: PositiveInt
+    ) -> str:
+        return "{}-{}-backup".format(self.get_full_name(service_name, name), version)
