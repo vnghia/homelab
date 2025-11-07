@@ -10,6 +10,12 @@ docker:
       impress-collaboration:
         repo: lasuite/impress-y-provider
         tag: *impress-version
+  network:
+    proxy:
+      aliases:
+        impress:
+          - record: solar
+            hostname: impress
 services:
   kanidm:
     config:

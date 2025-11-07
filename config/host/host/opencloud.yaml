@@ -4,6 +4,12 @@ docker:
       opencloud:
         repo: opencloudeu/opencloud-rolling
         tag: "3.6.0"
+  network:
+    proxy:
+      aliases:
+        opencloud:
+          - record: solar
+            hostname: opencloud
   volumes:
     local:
       opencloud-config:

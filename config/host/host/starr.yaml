@@ -13,6 +13,12 @@ docker:
       bazarr:
         repo: ghcr.io/linuxserver/bazarr
         tag: "1.5.3"
+  network:
+    proxy:
+      aliases:
+        starr:
+          - record: sun
+            hostname: qbittorrent
   volumes:
     local:
       starr-data:
@@ -187,6 +193,7 @@ services:
         network:
           bridge:
             vpn: {}
+            flaresolverr: {}
         tmpfs:
           - path: /run
             exec: true

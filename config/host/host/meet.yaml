@@ -7,6 +7,12 @@ docker:
       meet-frontend:
         repo: lasuite/meet-frontend
         tag: *meet-version
+  network:
+    proxy:
+      aliases:
+        meet:
+          - record: solar
+            hostname: livekit
 services:
   kanidm:
     config:

@@ -97,8 +97,9 @@ class NetworkResource(ComponentResource):
         )
 
     def build_service_networks(self, global_args: GlobalArgs) -> None:
+        proxy_config = self.config.proxy
         proxy_service, proxy_container = self.compute_proxy(
-            self.config.proxy.service, self.config.proxy.container
+            proxy_config.service, proxy_config.container
         )
         proxy_bridges = self.options[proxy_service][proxy_container].bridges
 
@@ -122,7 +123,14 @@ class NetworkResource(ComponentResource):
                     for build_ipam_fn in build_ipam_fns
                 ],
             )
-            proxy_bridges[service] = self.config.proxy.bridge
+
+            proxy_bridge_config = proxy_config.bridge
+            proxy_bridge_aliases = proxy_config.aliases.get(service, [])
+            if proxy_bridge_aliases:
+                proxy_bridge_config = proxy_bridge_config.__replace__(
+                    aliases=proxy_bridge_config.aliases + proxy_bridge_aliases
+                )
+            proxy_bridges[service] = proxy_bridge_config
 
     @classmethod
     def get_bridge_name(cls, name: str) -> str:
