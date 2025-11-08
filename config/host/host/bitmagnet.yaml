@@ -12,7 +12,7 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: sun
+            record: earth
             service:
               port:
                 svariable: PORT
@@ -24,6 +24,12 @@ services:
               minimum-redundancy: 1
               last-backup-maximum-age: 1 DAYS
               retention-policy: REDUNDANCY 1
+    network:
+      vpn:
+        ports:
+          port:
+        envs:
+          DNS_KEEP_NAMESERVER: "on"
     container:
       image: bitmagnet
       network:
@@ -41,7 +47,7 @@ services:
         include-prefix: v
       envs:
         DHT_SERVER_PORT:
-          port: bitmagnet
+          port:
         HTTP_SERVER_LOCAL_ADDRESS:
           extract:
             svariable: PORT
