@@ -10,13 +10,15 @@ docker:
         version: *barman-version
   database:
     postgres:
+      backup: {}
       container:
         network:
           bridge:
             barman: {}
   volumes:
     local:
-      barman-home: {}
+      barman-home:
+        backup: false
       barman-config:
         backup: false
 services:

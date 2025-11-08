@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 from pathlib import PosixPath
 
-from homelab_docker.model.docker.volume import LocalVolumeModel
 from homelab_pydantic import RelativePath
 from pulumi import ResourceOptions
 
@@ -32,7 +31,7 @@ class ResticProfileDatabaseResource(
             ResticProfileModel(
                 volume=ResticVolumeConfig(
                     name=model.name,
-                    model=LocalVolumeModel(),
+                    model=ResticProfileModel.DEFAULT_VOLUME_MODEL,
                     relative=RelativePath(PosixPath(model.type_))
                     / (model.path or model.name),
                 ),

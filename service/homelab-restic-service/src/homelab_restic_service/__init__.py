@@ -52,21 +52,25 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             envs=self.config.dagu.dotenvs[None].to_envs(self.extractor_args),
         )
 
-        self.database_configs = {}
+        self.database_configs = []
         self.volume_configs = []
+
+        self.database_configs.append(
+            self.build_database_config(
+                balite_service.config.root,
+                DatabaseType.SQLITE,
+                RelativePath(PosixPath("")),
+            )
+        )
 
         for (
             name,
             volume_model,
         ) in self.extractor_args.host_model.docker.volumes.local.items():
-            config = ResticVolumeConfig(name=name, model=volume_model)
-            database_type = self.config.database.find(name)
-            if database_type:
-                self.database_configs[database_type] = config.__replace__(
-                    relative=RelativePath(PosixPath(database_type.value))
+            if volume_model.backup:
+                self.volume_configs.append(
+                    ResticVolumeConfig(name=name, model=volume_model)
                 )
-            elif volume_model.backup:
-                self.volume_configs.append(config)
 
         self.service_groups: defaultdict[str, list[str]] = defaultdict(list)
         self.profiles = []
@@ -84,14 +88,22 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self.database_profiles = []
 
         for names in barman_service.service_maps.values():
-            for name in names:
+            for map_name in names:
                 profile = ResticProfileDatabaseModel(
-                    type_=DatabaseType.POSTGRES, name=name
+                    type_=DatabaseType.POSTGRES, name=map_name.full
                 ).build_resource(opts=self.child_opts, restic_service=self)
                 self.database_profiles.append(profile)
                 self.service_database_groups[profile.volume.service][
                     profile.type_
                 ].append(profile.volume.name)
+
+                self.database_configs.append(
+                    self.build_database_config(
+                        map_name.backup,
+                        DatabaseType.POSTGRES,
+                        RelativePath(PosixPath(map_name.full)),
+                    )
+                )
 
         for name in balite_service.service_maps:
             profile = ResticProfileDatabaseModel(
@@ -115,7 +127,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             }
             | {
                 config.name: config.container_volume_config
-                for config in self.database_configs.values()
+                for config in self.database_configs
             }
         )
 
@@ -127,3 +139,14 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
     @classmethod
     def get_database_group(cls, service: str) -> str:
         return "{}-database".format(service)
+
+    def build_database_config(
+        self, name: str, type: DatabaseType, path: RelativePath
+    ) -> ResticVolumeConfig:
+        return ResticVolumeConfig(
+            name=name,
+            model=self.extractor_args.host_model.docker.volumes.local.get(
+                name, ResticProfileModel.DEFAULT_VOLUME_MODEL
+            ),
+            relative=RelativePath(PosixPath(type)) / path,
+        )

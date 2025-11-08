@@ -10,10 +10,12 @@ docker:
         version: "0.1.7"
   volumes:
     local:
-      balite-data: {}
+      balite-data:
+        backup: false
 services:
   balite:
     config:
+      root: balite-data
       source-dir:
         env: HOMELAB_SOURCE_DIR
       dagu:

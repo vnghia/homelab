@@ -1,7 +1,6 @@
 from homelab_dagu_config import DaguServiceConfigBase
 from homelab_extract import GlobalExtract
 
-from .database import ResticDatabaseConfig
 from .keep import ResticKeepConfig
 
 
@@ -13,5 +12,3 @@ class ResticConfig(DaguServiceConfigBase):
     hostname: GlobalExtract
     password: GlobalExtract
     keep: ResticKeepConfig
-
-    database: ResticDatabaseConfig

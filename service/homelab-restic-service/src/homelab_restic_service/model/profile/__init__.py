@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import typing
+from typing import ClassVar
 
+from homelab_docker.model.docker.volume import LocalVolumeModel
 from homelab_pydantic import HomelabBaseModel
 from pulumi import ResourceOptions
 
@@ -13,6 +15,8 @@ if typing.TYPE_CHECKING:
 
 
 class ResticProfileModel(HomelabBaseModel):
+    DEFAULT_VOLUME_MODEL: ClassVar[LocalVolumeModel] = LocalVolumeModel()
+
     volume: ResticVolumeConfig
     tags: list[str] = []
 

@@ -42,9 +42,8 @@ class VolumeResource(ComponentResource):
 
         for service_name, database in config.databases.items():
             for type_, database_config in database.root.items():
+                type_config = config.docker.database.root[type_]
                 for name, model in database_config.items():
-                    type_config = config.docker.database.root[type_]
-
                     if type_config.dir.initdb:
                         full_initdb_name = type_.get_full_name_initdb(
                             service_name, name

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from pathlib import PosixPath
+from typing import Self
 
 from homelab_backup.config import BackupGlobalConfig
 from homelab_docker.extract import ExtractorArgs
@@ -10,15 +11,35 @@ from homelab_docker.model.docker.container.volume_path import ContainerVolumePat
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
-from homelab_pydantic import AbsolutePath
+from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import ResourceOptions
+from pydantic import PositiveInt
 
 from .config import BarmanConfig
 from .resource import BarmanConfigFileResource
 
 
+class BarmanServiceMapNameModel(HomelabBaseModel):
+    full: str
+    backup: str
+
+    @classmethod
+    def get_version(
+        cls, service_name: str, name: str | None, version: PositiveInt
+    ) -> Self:
+        return cls(
+            full=DatabaseType.POSTGRES.get_full_name_version(
+                service_name, name, version
+            ),
+            backup=DatabaseType.POSTGRES.get_full_name_version_backup(
+                service_name, name, version
+            ),
+        )
+
+
 class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
-    PREFIX_PATH = AbsolutePath(PosixPath("/mnt/data"))
+    BARMAN_HOME_PATH = AbsolutePath(PosixPath("/var/lib/barman"))
+    BARMAN_RESTORE_PATH = AbsolutePath(PosixPath("/mnt/data"))
 
     def __init__(
         self,
@@ -37,7 +58,12 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         ).extract_volume_path(self.extractor_args)
 
         self.configs: list[BarmanConfigFileResource] = []
-        self.service_maps: defaultdict[str, list[str]] = defaultdict(list)
+        self.service_maps: defaultdict[str, list[BarmanServiceMapNameModel]] = (
+            defaultdict(list)
+        )
+
+        self.server_volumes = {}
+        self.pgdata_volumes = {}
 
         for (
             service_name,
@@ -50,31 +76,36 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
                 DatabaseType.POSTGRES, {}
             ).items():
                 for version, (source, config) in sources.items():
-                    full_name = DatabaseType.POSTGRES.get_full_name_version(
+                    map_name = BarmanServiceMapNameModel.get_version(
                         service_name, name, version
                     )
+                    self.service_maps[service_name].append(map_name)
+
                     self.configs.append(
                         BarmanConfigFileResource(
-                            resource_name=full_name,
+                            resource_name=map_name.full,
                             opts=self.child_opts,
                             database_source_model=source,
                             database_config_model=config,
                             barman_service=self,
                         )
                     )
-                    self.service_maps[service_name].append(full_name)
+
+                    self.server_volumes[map_name.backup] = ContainerVolumeConfig(
+                        GlobalExtract.from_simple(
+                            (self.BARMAN_HOME_PATH / map_name.full).as_posix()
+                        )
+                    )
+                    self.pgdata_volumes[map_name.full] = ContainerVolumeConfig(
+                        GlobalExtract.from_simple(
+                            (self.BARMAN_RESTORE_PATH / map_name.full).as_posix()
+                        )
+                    )
 
         self.options[None].add_files(self.configs)
-        self.options[None].add_volumes(
-            {
-                config.name: ContainerVolumeConfig(
-                    GlobalExtract.from_simple(
-                        (self.PREFIX_PATH / config.name).as_posix()
-                    )
-                )
-                for config in self.configs
-            }
-        )
+        self.options[None].add_volumes(self.server_volumes)
+        self.options[None].add_volumes(self.pgdata_volumes)
+
         self.build_containers()
 
         self.register_outputs({})

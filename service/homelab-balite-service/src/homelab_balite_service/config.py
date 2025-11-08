@@ -3,4 +3,5 @@ from homelab_extract.service import ServiceExtract
 
 
 class BaliteConfig(DaguServiceConfigBase):
+    root: str
     source_dir: ServiceExtract

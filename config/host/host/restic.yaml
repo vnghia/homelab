@@ -25,9 +25,6 @@ services:
       keep:
         last:
           daily: 7
-      database:
-        postgres: barman-home
-        sqlite: balite-data
       dagu:
         dotenvs:
           dotenv:
