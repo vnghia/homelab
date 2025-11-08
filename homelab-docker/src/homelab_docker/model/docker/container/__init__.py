@@ -64,6 +64,7 @@ class ContainerNetworkModelBuildArgs:
 
 @dataclasses.dataclass
 class ContainerModelBuildArgs:
+    opts: ResourceOptions | None = None
     envs: Mapping[str, Input[str]] = dataclasses.field(default_factory=dict)
     volumes: Mapping[str, ContainerVolumeConfig] = dataclasses.field(
         default_factory=dict
@@ -280,19 +281,25 @@ class ContainerModel(HomelabBaseModel):
         depends_on.extend(build_args.files)
         if self.databases:
             depends_on.extend(
-                database.to_container(service.database) for database in self.databases
+                service.containers[
+                    database.to_container_name(service.database)
+                ].resource
+                for database in self.databases
             )
 
         return docker.Container(
             resource_name,
             opts=ResourceOptions.merge(
                 opts,
-                ResourceOptions(
-                    replace_on_changes=["*"],
-                    depends_on=depends_on,
-                    delete_before_replace=self.delete_before_replace
-                    or bool(self.ports)
-                    or bool(build_args.network.ports),
+                ResourceOptions.merge(
+                    build_args.opts,
+                    ResourceOptions(
+                        replace_on_changes=["*"],
+                        depends_on=depends_on,
+                        delete_before_replace=self.delete_before_replace
+                        or bool(self.ports)
+                        or bool(build_args.network.ports),
+                    ),
                 ),
             ),
             image=self.image.to_image_name(extractor_args.host.docker.image),
