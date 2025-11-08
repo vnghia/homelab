@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import dataclasses
 import typing
 from pathlib import PosixPath
 
-import pulumi_docker as docker
 from homelab_extract import GlobalExtract
 from homelab_extract.container import ContainerExtract
 from homelab_extract.container.volume import ContainerExtractVolumeSource
@@ -31,6 +31,13 @@ from ...file import FileResource
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
+
+
+@dataclasses.dataclass
+class DatabaseContainerArgs:
+    name: str
+    model: ContainerModel
+    option: ContainerModelBuildArgs
 
 
 class ServiceDatabaseTypeResource(ComponentResource):
@@ -86,7 +93,8 @@ class ServiceDatabaseTypeResource(ComponentResource):
             for i, script in enumerate(self.config.scripts + model.scripts)
         ]
 
-        self.containers: dict[PositiveInt, docker.Container] = {}
+        self.containers: dict[PositiveInt, DatabaseContainerArgs] = {}
+
         self.versions: list[PositiveInt] = self.config.get_versions(self.model)
         for version in self.versions:
             full_name = self.get_full_name_version(version)
@@ -96,6 +104,12 @@ class ServiceDatabaseTypeResource(ComponentResource):
             ].container
             if image_container_model:
                 container_model = container_model.model_merge(image_container_model)
+
+            option = ContainerModelBuildArgs(
+                envs={self.config.env.password: self.password.result}
+                | superuser_password_env,
+                files=self.scripts,
+            )
             container = container_model.model_merge(
                 ContainerModel(
                     image=ContainerImageModelConfig(
@@ -161,17 +175,12 @@ class ServiceDatabaseTypeResource(ComponentResource):
                         else {}
                     ),
                 )
-            ).build_resource(
-                full_name,
-                opts=self.child_opts,
-                extractor_args=extractor_args,
-                build_args=ContainerModelBuildArgs(
-                    envs={self.config.env.password: self.password.result}
-                    | superuser_password_env,
-                    files=self.scripts,
-                ),
             )
-            self.containers[version] = container
+            self.containers[version] = DatabaseContainerArgs(
+                name=self.get_short_name_version(version),
+                model=container,
+                option=option,
+            )
 
         self.register_outputs({})
 

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-import pulumi_docker as docker
 from homelab_pydantic import HomelabRootModel
 from pulumi import Output
 from pydantic import PositiveInt
@@ -28,11 +27,6 @@ class ContainerDatabaseConfig(
         self, database_resource: ServiceDatabaseResource
     ) -> PositiveInt:
         return self.root.to_database_version(database_resource)
-
-    def to_container(
-        self, database_resource: ServiceDatabaseResource
-    ) -> docker.Container:
-        return self.root.to_container(database_resource)
 
     def to_container_name(self, database_resource: ServiceDatabaseResource) -> str:
         return self.root.to_container_name(database_resource)

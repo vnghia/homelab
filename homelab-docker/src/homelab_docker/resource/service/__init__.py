@@ -45,15 +45,13 @@ class ServiceResourceBase(ComponentResource):
         self.container_models: dict[str | None, ContainerModel] = model.containers
         self.containers: dict[str | None, ContainerResource] = {}
         self.extractor_args = extractor_args.from_service(self)
-
-        self.build_databases()
-        self.build_secrets()
-        self.build_keepasses()
-
         self.options: defaultdict[str | None, ContainerModelBuildArgs] = defaultdict(
             ContainerModelBuildArgs
         )
 
+        self.build_databases()
+        self.build_secrets()
+        self.build_keepasses()
         self.build_files()
         self.build_vpn_container_model()
         self.build_options_network()
@@ -108,6 +106,7 @@ class ServiceResourceBase(ComponentResource):
         return self._keepass
 
     def build_databases(self) -> None:
+        container_models: dict[str | None, ContainerModel] = {}
         if self.model.databases:
             self._database = ServiceDatabaseResource(
                 self.model.databases,
@@ -116,16 +115,12 @@ class ServiceResourceBase(ComponentResource):
                 extractor_args=self.extractor_args,
             )
 
-            for type_, containers in self._database.containers.items():
-                for name, versions in containers.items():
-                    for version, container in versions.items():
-                        pulumi.export(
-                            "{}.container.{}".format(
-                                self.extractor_args.host.name(),
-                                type_.get_full_name_version(self.name(), name, version),
-                            ),
-                            container.name,
-                        )
+            for containers in self._database.containers.values():
+                for versions in containers.values():
+                    for container in versions.values():
+                        container_models[container.name] = container.model
+                        self.options[container.name] = container.option
+        self.container_models = container_models | self.container_models
 
     def build_secrets(self) -> None:
         if self.model.secrets:

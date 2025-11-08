@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-import pulumi_docker as docker
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
@@ -10,14 +9,14 @@ from ....config.docker.database import DatabaseConfig
 from ....config.service.database import ServiceDatabaseConfig
 from ....config.service.database.source import ServiceDatabaseSourceConfig
 from ....model.database.type import DatabaseType
-from .type import ServiceDatabaseTypeResource
+from .type import DatabaseContainerArgs, ServiceDatabaseTypeResource
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
 
 
 class ServiceDatabaseContainers(
-    dict[DatabaseType, dict[str | None, dict[PositiveInt, docker.Container]]]
+    dict[DatabaseType, dict[str | None, dict[PositiveInt, DatabaseContainerArgs]]]
 ):
     pass
 

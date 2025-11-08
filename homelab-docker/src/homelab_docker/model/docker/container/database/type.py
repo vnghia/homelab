@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 from typing import ClassVar
 
-import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
 from pulumi import Output
 from pydantic import PositiveInt
@@ -34,15 +33,8 @@ class ContainerDatabaseTypeConfig[T: ContainerDatabaseSourceEnvsBase](HomelabBas
             or database_resource.resources[self.TYPE][self.name].versions[0]
         )
 
-    def to_container(
-        self, database_resource: ServiceDatabaseResource
-    ) -> docker.Container:
-        return database_resource.resources[self.TYPE][self.name].containers[
-            self.to_database_version(database_resource)
-        ]
-
     def to_container_name(self, database_resource: ServiceDatabaseResource) -> str:
-        return database_resource.resources[self.TYPE][self.name].get_full_name_version(
+        return database_resource.resources[self.TYPE][self.name].get_short_name_version(
             self.to_database_version(database_resource)
         )
 
