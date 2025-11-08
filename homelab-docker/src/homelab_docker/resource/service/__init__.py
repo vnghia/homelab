@@ -7,7 +7,7 @@ import pulumi_tls as tls
 from homelab_extract.service.mtls import MTlsInfoSourceModel
 from homelab_pydantic import HomelabBaseModel
 from homelab_secret.resource.cert.mtls import SecretMTlsResource
-from pulumi import ComponentResource, Output, ResourceOptions
+from pulumi import Alias, ComponentResource, Output, ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from ...extract import ExtractorArgs
@@ -32,8 +32,27 @@ class ServiceResourceBase(ComponentResource):
         opts: ResourceOptions,
         extractor_args: ExtractorArgs,
     ) -> None:
-        super().__init__("{}-service".format(self.name()), self.name(), None, opts)
+        self.service_resource_name = "{}-service".format(self.name())
+
+        self.aliases = []
+        if model.old:
+            from ...resource.host import HostResourceBase
+
+            host_resource = extractor_args.get_host(model.old.host)
+            if not isinstance(host_resource, HostResourceBase):
+                raise ValueError("Old host must be initialized before moving")
+            self.aliases.append(Alias(parent=host_resource))
+
+        super().__init__(
+            self.service_resource_name,
+            self.name(),
+            None,
+            ResourceOptions.merge(opts, ResourceOptions(aliases=self.aliases)),
+        )
         self.child_opts = ResourceOptions(parent=self)
+        self.child_opts_no_aliases = ResourceOptions.merge(
+            self.child_opts, ResourceOptions(aliases=[])
+        )
 
         self.model = model
 
@@ -233,7 +252,7 @@ class ServiceResourceBase(ComponentResource):
     ) -> ContainerResource:
         resource = model.build_resource(
             self.add_service_name(name),
-            opts=self.child_opts,
+            opts=self.child_opts_no_aliases,
             extractor_args=self.extractor_args,
             build_args=container_model_build_args,
         )

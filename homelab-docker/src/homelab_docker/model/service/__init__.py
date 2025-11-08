@@ -8,12 +8,14 @@ from ...config.service.database import ServiceDatabaseConfig
 from ...config.service.depend_on import ServiceDependOnConfig
 from ...config.service.file import ServiceFileConfig
 from ...config.service.keepass import ServiceKeepassConfig
+from ...config.service.move import ServiceMoveConfig
 from ...config.service.network import ServiceNetworkConfig
 from ...config.service.secret import ServiceSecretConfig
 from ..docker.container import ContainerModel
 
 
 class ServiceModel(HomelabBaseModel):
+    old: ServiceMoveConfig | None = None
     depends_on: list[ServiceDependOnConfig] | None = None
 
     variables: dict[str, GlobalExtract] = {}
