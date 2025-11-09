@@ -41,12 +41,12 @@ class TraefikDynamicTcpModelBuilder(HomelabRootModel[TraefikDynamicTcpModel]):
         service = TraefikDynamicServiceModelBuilder(root.service).to_service_name(
             router_name
         )
-        rule = "HostSNI(`{}`)".format(hostsni)
+        rule = "HostSNI(`{}`)".format(hostsni.value)
 
         entrypoint = traefik_config.entrypoint.mapping[root.record]
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
         entrypoint_middlewares = entrypoint_config.build_middlewares(
-            traefik_service, extractor_args
+            traefik_service, extractor_args, self.TYPE
         )
 
         service_middlewares = [
@@ -58,6 +58,8 @@ class TraefikDynamicTcpModelBuilder(HomelabRootModel[TraefikDynamicTcpModel]):
 
         all_middlewares = entrypoint_middlewares + service_middlewares
 
+        tls_router: dict[str, Any] = {"passthrough": True}
+
         data: dict[str, Any] = {
             self.TYPE: {
                 "routers": {
@@ -65,6 +67,7 @@ class TraefikDynamicTcpModelBuilder(HomelabRootModel[TraefikDynamicTcpModel]):
                         "service": service,
                         "entryPoints": [entrypoint],
                         "rule": rule,
+                        "tls": tls_router,
                     }
                     | ({"middlewares": all_middlewares} if all_middlewares else {})
                 }

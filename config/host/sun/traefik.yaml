@@ -35,7 +35,8 @@ services:
                 svariable: HTTPS_PORT
             timeout: *timeout
             middlewares:
-              - geoblock
+              http:
+                - geoblock
         mapping:
           solar: "public-https"
           sun: "private-https"

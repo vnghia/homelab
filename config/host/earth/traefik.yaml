@@ -8,7 +8,10 @@ services:
         config:
           private-https:
             middlewares:
-              - local
+              http:
+                - local
+              tcp:
+                - local-tcp
         mapping:
           earth: "private-https"
     container:

@@ -130,13 +130,12 @@ class TraefikEntrypointMiddlewareModel(
 
 
 class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
-    type: TraefikDynamicType = TraefikDynamicType.HTTP
     local: bool = False
     internal: bool = False
     http3: TraefikEntrypointHttp3Model | None = None
     timeout: TraefikEntrypointTimeoutModel | None = None
     proxy_protocol: TraefikEntrypointProxyProtocolModel | None = None
-    middlewares: list[TraefikEntrypointMiddlewareModel] = []
+    middlewares: dict[TraefikDynamicType, list[TraefikEntrypointMiddlewareModel]] = {}
 
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return (
@@ -156,22 +155,28 @@ class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
 class TraefikEntrypointModel(
     HomelabRootModel[TraefikEntrypointRedirectModel | TraefikEntrypointFullModel]
 ):
-    _middlewares: list[str] | None
+    _middlewares: dict[TraefikDynamicType, list[str]]
 
     def model_post_init(self, context: Any, /) -> None:
-        self._middlewares = None
+        self._middlewares = {}
 
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return self.root.to_entry_point(extractor_args)
 
     def build_middlewares(
-        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
+        self,
+        traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
+        type_: TraefikDynamicType,
     ) -> list[str]:
         # Since entrypoint middleware's name won't change, we only need to build once regardless of extractor_args
 
-        if self._middlewares is None:
+        if type_ not in self._middlewares:
             root = self.root
-            if isinstance(root, TraefikEntrypointFullModel):
+            if (
+                isinstance(root, TraefikEntrypointFullModel)
+                and type_ in root.middlewares
+            ):
                 from homelab_traefik_config.model.dynamic.middleware import (
                     TraefikDynamicMiddlewareModel,
                     TraefikDynamicMiddlewareUseModel,
@@ -181,22 +186,25 @@ class TraefikEntrypointModel(
                     TraefikDynamicMiddlewareModelBuilder,
                 )
 
-                self._middlewares = [
+                self._middlewares[type_] = [
                     TraefikDynamicMiddlewareModelBuilder(
                         TraefikDynamicMiddlewareModel(
                             TraefikDynamicMiddlewareUseModel(
                                 service=middleware.service, name=middleware.middleware
                             )
                         )
-                    ).get_name(traefik_service, extractor_args, root.type)
+                    ).get_name(traefik_service, extractor_args, type_)
                     for middleware in sorted(
-                        map(TraefikEntrypointMiddlewareModel.to_full, root.middlewares),
+                        map(
+                            TraefikEntrypointMiddlewareModel.to_full,
+                            root.middlewares[type_],
+                        ),
                         key=lambda x: x.priority,
                     )
                 ]
             else:
-                self._middlewares = []
-        return self._middlewares
+                self._middlewares[type_] = []
+        return self._middlewares[type_]
 
     @property
     def local(self) -> bool:

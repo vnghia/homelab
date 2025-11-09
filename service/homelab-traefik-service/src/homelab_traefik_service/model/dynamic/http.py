@@ -68,7 +68,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         entrypoint = traefik_config.entrypoint.mapping[root.record]
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
         entrypoint_middlewares = entrypoint_config.build_middlewares(
-            traefik_service, extractor_args
+            traefik_service, extractor_args, self.TYPE
         )
 
         service_middlewares = [

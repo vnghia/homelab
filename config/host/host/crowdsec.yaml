@@ -82,8 +82,9 @@ services:
         config:
           public-https:
             middlewares:
-              - service: crowdsec
-                priority: 1000
+              http:
+                - service: crowdsec
+                  priority: 1000
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
