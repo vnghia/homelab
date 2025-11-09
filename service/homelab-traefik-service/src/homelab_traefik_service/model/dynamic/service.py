@@ -47,6 +47,10 @@ class TraefikDynamicServiceFullModelBuilder(
             match network_config.mode:
                 case NetworkMode.HOST:
                     service_name = ContainerHostModeConfig.LOCALHOST_HOST
+                case NetworkMode.NONE:
+                    raise ValueError(
+                        "Could not route traffic to container with no network"
+                    )
         elif isinstance(network_config, ContainerNetworkContainerConfig):
             service_name = self.get_service_name(
                 network_config.container,
