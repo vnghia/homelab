@@ -1525,6 +1525,7 @@ class Tcp(HomelabBaseModel):
         None,
         description="Each of the fields of the service section represents a kind of service. Which means, that for each specified service, one of the fields, and only one, has to be enabled to define what kind of service is created. Currently, the two available kinds are LoadBalancer, and Weighted.",
     )
+    middlewares: dict[str, Any] | None = None
 
 
 class Udp(HomelabBaseModel):

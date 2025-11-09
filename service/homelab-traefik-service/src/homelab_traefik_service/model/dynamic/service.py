@@ -13,8 +13,8 @@ from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.service import (
     TraefikDynamicServiceFullModel,
     TraefikDynamicServiceModel,
-    TraefikDynamicServiceType,
 )
+from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output
 from pydantic import AnyUrl, PositiveInt, TypeAdapter
 
@@ -36,9 +36,7 @@ class TraefikDynamicServiceFullModelBuilder(
             )
         )
 
-    def to_url(
-        self, type_: TraefikDynamicServiceType, extractor_args: ExtractorArgs
-    ) -> Output[AnyUrl]:
+    def to_url(self, scheme: str, extractor_args: ExtractorArgs) -> Output[AnyUrl]:
         root = self.root
         service = extractor_args.service
 
@@ -60,8 +58,8 @@ class TraefikDynamicServiceFullModelBuilder(
             service_name = self.get_service_name(root.container, service)
 
         return Output.format(
-            "{}://{}:{}",
-            root.scheme or type_.value,
+            "{}{}:{}",
+            scheme,
             service_name,
             GlobalExtractor(root.port)
             .extract_str(extractor_args)
@@ -70,16 +68,26 @@ class TraefikDynamicServiceFullModelBuilder(
 
     def to_service(
         self,
-        type_: TraefikDynamicServiceType,
+        type_: TraefikDynamicType,
         router_name: str,
         extractor_args: ExtractorArgs,
     ) -> dict[str, Any]:
         root = self.root
 
+        match type_:
+            case TraefikDynamicType.HTTP:
+                service_key = "url"
+                scheme = (root.scheme or type_) + "://"
+            case TraefikDynamicType.TCP:
+                service_key = "address"
+                scheme = ""
+
         return {
             router_name: {
                 "loadBalancer": {
-                    "servers": [{"url": self.to_url(type_, extractor_args).apply(str)}]
+                    "servers": [
+                        {service_key: self.to_url(scheme, extractor_args).apply(str)}
+                    ]
                 }
                 | (
                     {"passHostHeader": root.pass_host_header}

@@ -9,8 +9,8 @@ from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.middleware import (
     TraefikDynamicMiddlewareBuildModel,
     TraefikDynamicMiddlewareModel,
-    TraefikDynamicMiddlewareType,
 )
+from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import ResourceOptions
 
 if typing.TYPE_CHECKING:
@@ -73,7 +73,7 @@ class TraefikDynamicMiddlewareModelBuilder(
         self,
         traefik_service: TraefikService,
         extractor_args: ExtractorArgs,
-        type: TraefikDynamicMiddlewareType,
+        type: TraefikDynamicType,
     ) -> str:
         root = self.root.root
         service = extractor_args.service

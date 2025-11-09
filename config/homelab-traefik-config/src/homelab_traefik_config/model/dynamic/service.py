@@ -1,12 +1,6 @@
-from enum import StrEnum, auto
-
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pydantic import IPvAnyAddress
-
-
-class TraefikDynamicServiceType(StrEnum):
-    HTTP = auto()
 
 
 class TraefikDynamicServiceFullModel(HomelabBaseModel):

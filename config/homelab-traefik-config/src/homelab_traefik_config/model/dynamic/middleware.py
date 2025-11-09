@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-from enum import StrEnum, auto
 from typing import Any
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
-
-class TraefikDynamicMiddlewareType(StrEnum):
-    HTTP = auto()
-    TCP = auto()
+from .type import TraefikDynamicType
 
 
 class TraefikDynamicMiddlewareUseModel(HomelabBaseModel):
@@ -17,7 +13,7 @@ class TraefikDynamicMiddlewareUseModel(HomelabBaseModel):
 
 
 class TraefikDynamicMiddlewareBuildModel(HomelabBaseModel):
-    type: TraefikDynamicMiddlewareType = TraefikDynamicMiddlewareType.HTTP
+    type: TraefikDynamicType = TraefikDynamicType.HTTP
     name: str | None = None
     data: Any
     plugin: str | None = None

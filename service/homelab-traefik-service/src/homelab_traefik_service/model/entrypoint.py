@@ -7,7 +7,7 @@ from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
-from homelab_traefik_config.model.dynamic.middleware import TraefikDynamicMiddlewareType
+from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output
 from pydantic import NonNegativeInt
 
@@ -130,7 +130,7 @@ class TraefikEntrypointMiddlewareModel(
 
 
 class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
-    type: TraefikDynamicMiddlewareType = TraefikDynamicMiddlewareType.HTTP
+    type: TraefikDynamicType = TraefikDynamicType.HTTP
     local: bool = False
     internal: bool = False
     http3: TraefikEntrypointHttp3Model | None = None

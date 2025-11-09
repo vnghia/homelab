@@ -8,6 +8,7 @@ from pulumi import ResourceOptions
 
 from ...model.dynamic.http import TraefikDynamicHttpModelBuilder
 from ...model.dynamic.middleware import TraefikDynamicMiddlewareBuildModelBuilder
+from ...model.dynamic.tcp import TraefikDynamicTcpModelBuilder
 from . import schema
 
 if typing.TYPE_CHECKING:
@@ -24,6 +25,7 @@ class TraefikDynamicConfigResource(
         self,
         resource_name: str | None,
         model: TraefikDynamicHttpModelBuilder
+        | TraefikDynamicTcpModelBuilder
         | TraefikDynamicMiddlewareBuildModelBuilder,
         *,
         opts: ResourceOptions,

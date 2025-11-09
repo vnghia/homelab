@@ -6,28 +6,26 @@ from functools import reduce
 from typing import Any, ClassVar
 
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_pydantic import HomelabRootModel
-from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel
+from homelab_traefik_config.model.dynamic.tcp import TraefikDynamicTcpModel
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
-from pulumi import Output, ResourceOptions
+from pulumi import ResourceOptions
 
 from .middleware import TraefikDynamicMiddlewareModelBuilder
 from .service import (
     TraefikDynamicServiceFullModelBuilder,
     TraefikDynamicServiceModelBuilder,
 )
-from .tls import TraefikDynamicTlsModelBuilder
 
 if typing.TYPE_CHECKING:
     from ... import TraefikService
     from ...resource.dynamic.router import TraefikDynamicRouterConfigResource
 
 
-class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
-    TYPE: ClassVar[TraefikDynamicType] = TraefikDynamicType.HTTP
+class TraefikDynamicTcpModelBuilder(HomelabRootModel[TraefikDynamicTcpModel]):
+    TYPE: ClassVar[TraefikDynamicType] = TraefikDynamicType.TCP
 
-    LOCAL_MIDDLEWARE_NAMES: ClassVar[list[str]] = ["local"]
+    LOCAL_MIDDLEWARE_NAMES: ClassVar[list[str]] = ["local-tcp"]
     LOCAL_MIDDLEWARES: ClassVar[list[str] | None] = None
 
     def to_data(
@@ -38,32 +36,12 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         main_service = extractor_args.service
 
         router_name = main_service.add_service_name(root.name)
-        hostname = traefik_service.extractor_args.hostnames[root.record][
-            root.hostname or router_name
-        ]
+        hostsni = traefik_service.extractor_args.hostnames[root.record][root.hostsni]
 
         service = TraefikDynamicServiceModelBuilder(root.service).to_service_name(
             router_name
         )
-        rule = Output.all(
-            *(
-                [Output.format("Host(`{}`)", hostname.value)]
-                + (
-                    [
-                        Output.format(
-                            "PathPrefix(`{}`)",
-                            GlobalExtractor(root.prefix).extract_str(extractor_args),
-                        ),
-                    ]
-                    if root.prefix
-                    else []
-                )
-                + [
-                    GlobalExtractor(rule).extract_str(extractor_args)
-                    for rule in root.rules
-                ]
-            )
-        ).apply(lambda extractor_args: " && ".join(extractor_args))
+        rule = "HostSNI(`{}`)".format(hostsni)
 
         entrypoint = traefik_config.entrypoint.mapping[root.record]
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
@@ -80,16 +58,6 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
 
         all_middlewares = entrypoint_middlewares + service_middlewares
 
-        tls = None
-        tls_router: dict[str, Any] = {}
-        if root.tls:
-            tls = TraefikDynamicTlsModelBuilder(root.tls).to_data(
-                traefik_service, extractor_args
-            )
-            tls_router["options"] = main_service.add_service_name(root.tls.name)
-        else:
-            tls_router["certResolver"] = traefik_service.static.CERT_RESOLVER
-
         data: dict[str, Any] = {
             self.TYPE: {
                 "routers": {
@@ -97,43 +65,9 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                         "service": service,
                         "entryPoints": [entrypoint],
                         "rule": rule,
-                        "tls": tls_router,
                     }
                     | ({"middlewares": all_middlewares} if all_middlewares else {})
                 }
-                | (
-                    {
-                        "{}-local".format(router_name): {
-                            "service": service,
-                            "entryPoints": [
-                                traefik_config.entrypoint.local_entrypoint_
-                            ],
-                            "rule": rule,
-                            "tls": tls_router,
-                            "middlewares": self.build_local_middlewares(
-                                traefik_service, extractor_args
-                            )
-                            + service_middlewares,
-                        }
-                    }
-                    if entrypoint_config.local
-                    else {}
-                )
-                | (
-                    {
-                        "{}-internal".format(router_name): {
-                            "service": service,
-                            "entryPoints": [
-                                traefik_config.entrypoint.internal_entrypoint_
-                            ],
-                            "rule": rule,
-                            "tls": tls_router,
-                            "middlewares": service_middlewares,
-                        }
-                    }
-                    if entrypoint_config.internal
-                    else {}
-                ),
             }
         }
 
@@ -155,9 +89,6 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         )
         if middlewares:
             data[self.TYPE]["middlewares"] = middlewares
-
-        if tls:
-            data |= tls
 
         return data
 

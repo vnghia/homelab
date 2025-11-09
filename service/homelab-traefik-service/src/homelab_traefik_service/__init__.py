@@ -8,7 +8,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_network.resource.network import NetworkResource
 from homelab_pydantic import RelativePath
-from homelab_traefik_config.model.dynamic.middleware import TraefikDynamicMiddlewareType
+from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import ResourceOptions
 
 from .config import TraefikConfig
@@ -50,7 +50,7 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         self.middlewares: dict[
             str,
             dict[
-                TraefikDynamicMiddlewareType,
+                TraefikDynamicType,
                 dict[str | None, TraefikDynamicMiddlwareConfigResource],
             ],
         ] = defaultdict(lambda: defaultdict(dict))

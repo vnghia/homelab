@@ -6,6 +6,7 @@ from homelab_docker.extract import ExtractorArgs
 from pulumi import ResourceOptions
 
 from ...model.dynamic.http import TraefikDynamicHttpModelBuilder
+from ...model.dynamic.tcp import TraefikDynamicTcpModelBuilder
 from . import TraefikDynamicConfigResource
 
 if typing.TYPE_CHECKING:
@@ -18,7 +19,7 @@ class TraefikDynamicRouterConfigResource(
     def __init__(
         self,
         resource_name: str | None,
-        model: TraefikDynamicHttpModelBuilder,
+        model: TraefikDynamicHttpModelBuilder | TraefikDynamicTcpModelBuilder,
         *,
         opts: ResourceOptions,
         traefik_service: TraefikService,
