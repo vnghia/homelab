@@ -1,5 +1,13 @@
 services:
   dozzle:
+    depends-on:
+      - host: sun
+        service: dozzle
+    config:
+      traefik:
+        dynamic:
+          agent:
+            record: earth
     container:
       active: false
     containers:

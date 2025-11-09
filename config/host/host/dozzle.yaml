@@ -4,11 +4,54 @@ docker:
       dozzle:
         repo: ghcr.io/amir20/dozzle
         tag: "v8.14.7"
+  volumes:
+    local:
+      dozzle-cert:
+        backup: false
 services:
   dozzle:
     variables:
-      AGENT_PORT: &agent-port 7007
-    config: {}
+      AGENT_PORT: 7007
+      DOZZLE_CERT:
+        extract:
+          volume: dozzle-cert
+        transform:
+          path: cert.pem
+      DOZZLE_KEY:
+        extract:
+          volume: dozzle-cert
+        transform:
+          path: key.pem
+    config:
+      traefik:
+        dynamic:
+          agent:
+            name: agent
+            hostsni: dozzle
+            service:
+              container: agent
+              port:
+                svariable: AGENT_PORT
+    files:
+      cert:
+        path:
+          svariable: DOZZLE_CERT
+        content:
+          host: sun
+          extract:
+            service: dozzle
+            extract:
+              cert: agent-cert
+      key:
+        path:
+          svariable: DOZZLE_KEY
+        content:
+          host: sun
+          extract:
+            service: dozzle
+            extract:
+              key: agent-key
+              info: private_pem
     container:
       image: dozzle
       docker-socket:
@@ -22,12 +65,18 @@ services:
       network:
         bridge:
           default: {}
+      volumes:
+        dozzle-cert:
+          path: /etc/dozzle/cert
+          read-only: true
       wud:
         template: https://github.com/amir20/dozzle/releases/tag/${original}
         include-prefix: v
       envs:
         DOZZLE_BASE: /log
         DOZZLE_ADDR: ":8080"
+        DOZZLE_HOSTNAME:
+          hinfo: name
         DOZZLE_FILTER:
           extract:
             project:
@@ -37,28 +86,14 @@ services:
         DOZZLE_NO_ANALYTICS: true
         DOZZLE_ENABLE_ACTIONS: true
         DOZZLE_ENABLE_SHELL: true
-        DOZZLE_REMOTE_AGENT:
-          extract:
-            kv:
-              earth:
-                host: earth
-                extract:
-                  hinfo: address
-              port:
-                svariable: AGENT_PORT
-          transform:
-            string:
-              template: "{earth}:{port}"
+        DOZZLE_CERT:
+          svariable: DOZZLE_CERT
+        DOZZLE_KEY:
+          svariable: DOZZLE_KEY
     containers:
       agent:
         inherit:
         command: ["agent"]
-        ports:
-          agent:
-            internal: *agent-port
-            ips:
-              v4: 0.0.0.0
-            protocol: tcp
         tmpfs:
           - /tmp
         wud:

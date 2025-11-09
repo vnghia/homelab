@@ -1,5 +1,9 @@
 services:
   dozzle:
+    variables:
+      EARTH_HOSTNAME:
+        record: earth
+        hostname: dozzle
     config:
       traefik:
         dynamic:
@@ -24,11 +28,39 @@ services:
                       transform:
                         string:
                           template: "https://${{1}}{value}/"
+          agent:
+            record: sun
+            active: false
+    secrets:
+      agent-key:
+        algorithm: ED25519
+      agent-cert:
+        key: agent-key
+        subject:
+          common-name:
+            record: sun
+            hostname: dozzle
+        is-ca-certificate: true
     container:
       active: true
       hosts:
-        - host: earth
+        - hostname:
+            svariable: EARTH_HOSTNAME
+          host: earth
           internal: true
+      envs:
+        DOZZLE_REMOTE_AGENT:
+          extract:
+            kv:
+              earth:
+                svariable: EARTH_HOSTNAME
+              port:
+                service: traefik
+                extract:
+                  svariable: HTTPS_PORT
+          transform:
+            string:
+              template: "{earth}:{port}"
     containers:
       agent:
         active: false

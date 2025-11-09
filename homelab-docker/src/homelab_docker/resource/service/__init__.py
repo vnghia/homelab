@@ -63,10 +63,12 @@ class ServiceResourceBase(ComponentResource):
         self.exports: dict[str, Output[str]] = {}
         self.container_models: dict[str | None, ContainerModel] = model.containers
         self.containers: dict[str | None, ContainerResource] = {}
-        self.extractor_args = extractor_args.from_service(self)
         self.options: defaultdict[str | None, ContainerModelBuildArgs] = defaultdict(
             ContainerModelBuildArgs
         )
+
+        self.extractor_args = extractor_args.from_service(self)
+        self.extractor_args.services[self.name()] = self
 
         self.build_databases()
         self.build_secrets()
@@ -74,8 +76,6 @@ class ServiceResourceBase(ComponentResource):
         self.build_files()
         self.build_vpn_container_model()
         self.build_options_network()
-
-        self.extractor_args.services[self.name()] = self
 
     def extractor_args_from_self(self, container: str | None) -> ExtractorArgs:
         return self.extractor_args.from_service(self, container)
