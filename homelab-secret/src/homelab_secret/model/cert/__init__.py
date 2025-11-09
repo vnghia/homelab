@@ -10,4 +10,6 @@ class SecretCertModel(
         SecretLocallySignedCertModel | SecretMTlsCertModel | SecretSelfSignedCertModel
     ]
 ):
-    pass
+    @property
+    def active(self) -> bool:
+        return self.root.active

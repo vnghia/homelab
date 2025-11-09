@@ -31,17 +31,20 @@ class ServiceSecretResource(ComponentResource):
 
         self.secrets = SecretResource(secrets={})
         for name, model in config.root.items():
-            if isinstance(model, SecretCertModel):
-                self.secrets.secrets[name] = SecretCertBuilder(model).build_resource(
-                    name,
-                    opts=self.child_opts,
-                    resource=self.secrets,
-                    extractor_args=main_service.extractor_args,
-                )
-            else:
-                self.secrets.secrets[name] = model.build_resource(
-                    name, opts=self.child_opts, resource=self.secrets
-                )
+            if model.active:
+                if isinstance(model, SecretCertModel):
+                    self.secrets.secrets[name] = SecretCertBuilder(
+                        model
+                    ).build_resource(
+                        name,
+                        opts=self.child_opts,
+                        resource=self.secrets,
+                        extractor_args=main_service.extractor_args,
+                    )
+                else:
+                    self.secrets.secrets[name] = model.build_resource(
+                        name, opts=self.child_opts, resource=self.secrets
+                    )
 
         self.register_outputs({})
 

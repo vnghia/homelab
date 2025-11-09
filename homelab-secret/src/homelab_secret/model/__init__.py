@@ -3,6 +3,7 @@ from pulumi import ComponentResource, ResourceOptions
 
 
 class SecretModel(HomelabBaseModel):
+    active: bool = True
     protect: bool = False
 
     def opts(self, opts: ResourceOptions) -> ResourceOptions:
