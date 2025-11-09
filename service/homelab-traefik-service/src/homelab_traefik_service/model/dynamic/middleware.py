@@ -9,6 +9,7 @@ from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.middleware import (
     TraefikDynamicMiddlewareBuildModel,
     TraefikDynamicMiddlewareModel,
+    TraefikDynamicMiddlewareType,
 )
 from pulumi import ResourceOptions
 
@@ -37,7 +38,9 @@ class TraefikDynamicMiddlewareBuildModelBuilder(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
         return {
-            "http": {"middlewares": self.to_section(traefik_service, extractor_args)}
+            self.root.type: {
+                "middlewares": self.to_section(traefik_service, extractor_args)
+            }
         }
 
     def build_resource(
@@ -57,9 +60,9 @@ class TraefikDynamicMiddlewareBuildModelBuilder(
             traefik_service=traefik_service,
             extractor_args=extractor_args,
         )
-        traefik_service.middlewares[extractor_args.service.name()][resource_name] = (
-            resource
-        )
+        traefik_service.middlewares[extractor_args.service.name()][self.root.type][
+            resource_name
+        ] = resource
         return resource
 
 
@@ -67,7 +70,10 @@ class TraefikDynamicMiddlewareModelBuilder(
     HomelabRootModel[TraefikDynamicMiddlewareModel]
 ):
     def get_name(
-        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
+        self,
+        traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
+        type: TraefikDynamicMiddlewareType,
     ) -> str:
         root = self.root.root
         service = extractor_args.service
@@ -75,7 +81,7 @@ class TraefikDynamicMiddlewareModelBuilder(
         return (
             service.add_service_name(root.name)
             if isinstance(root, TraefikDynamicMiddlewareBuildModel)
-            else traefik_service.middlewares[root.service or service.name()][
+            else traefik_service.middlewares[root.service or service.name()][type][
                 root.name
             ].name
         )

@@ -9,10 +9,7 @@ from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel
-from homelab_traefik_config.model.dynamic.middleware import (
-    TraefikDynamicMiddlewareModel,
-    TraefikDynamicMiddlewareUseModel,
-)
+from homelab_traefik_config.model.dynamic.middleware import TraefikDynamicMiddlewareType
 from homelab_traefik_config.model.dynamic.service import TraefikDynamicServiceType
 from pulumi import Output, ResourceOptions
 
@@ -29,7 +26,8 @@ if typing.TYPE_CHECKING:
 
 
 class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
-    LOCAL_MIDDLEWARE: ClassVar[str] = "local"
+    LOCAL_MIDDLEWARE_NAMES: ClassVar[list[str]] = ["local"]
+    LOCAL_MIDDLEWARES: ClassVar[list[str] | None] = None
 
     def to_data(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
@@ -66,19 +64,6 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             )
         ).apply(lambda extractor_args: " && ".join(extractor_args))
 
-        local_middlewares = [
-            TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
-                traefik_service, extractor_args
-            )
-            for middleware in [
-                TraefikDynamicMiddlewareModel(
-                    TraefikDynamicMiddlewareUseModel(
-                        service=traefik_service.name(), name=self.LOCAL_MIDDLEWARE
-                    )
-                ),
-            ]
-        ]
-
         entrypoint = traefik_config.entrypoint.mapping[root.record]
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
         entrypoint_middlewares = entrypoint_config.build_middlewares(
@@ -87,7 +72,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
 
         service_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
-                traefik_service, extractor_args
+                traefik_service, extractor_args, TraefikDynamicMiddlewareType.HTTP
             )
             for middleware in root.middlewares
         ]
@@ -124,7 +109,10 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
                             ],
                             "rule": rule,
                             "tls": tls_router,
-                            "middlewares": local_middlewares + service_middlewares,
+                            "middlewares": self.build_local_middlewares(
+                                traefik_service, extractor_args
+                            )
+                            + service_middlewares,
                         }
                     }
                     if entrypoint_config.local
@@ -171,6 +159,33 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             data |= tls
 
         return data
+
+    @classmethod
+    def build_local_middlewares(
+        cls, traefik_service: TraefikService, extractor_args: ExtractorArgs
+    ) -> list[str]:
+        # Since local middleware's name won't change, we only need to build once regardless of extractor_args
+
+        if cls.LOCAL_MIDDLEWARES is None:
+            from homelab_traefik_config.model.dynamic.middleware import (
+                TraefikDynamicMiddlewareModel,
+                TraefikDynamicMiddlewareType,
+                TraefikDynamicMiddlewareUseModel,
+            )
+
+            cls.LOCAL_MIDDLEWARES = [
+                TraefikDynamicMiddlewareModelBuilder(
+                    TraefikDynamicMiddlewareModel(
+                        TraefikDynamicMiddlewareUseModel(
+                            service=traefik_service.name(), name=middleware
+                        )
+                    ),
+                ).get_name(
+                    traefik_service, extractor_args, TraefikDynamicMiddlewareType.HTTP
+                )
+                for middleware in cls.LOCAL_MIDDLEWARE_NAMES
+            ]
+        return cls.LOCAL_MIDDLEWARES
 
     def build_resource(
         self,
