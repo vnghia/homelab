@@ -34,11 +34,12 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
         root = self.root
+        record = root.record or extractor_args.host.name()
         traefik_config = traefik_service.config
         main_service = extractor_args.service
 
         router_name = main_service.add_service_name(root.name)
-        hostname = traefik_service.extractor_args.hostnames[root.record][
+        hostname = traefik_service.extractor_args.hostnames[record][
             root.hostname or router_name
         ]
 
@@ -65,7 +66,7 @@ class TraefikDynamicHttpModelBuilder(HomelabRootModel[TraefikDynamicHttpModel]):
             )
         ).apply(lambda extractor_args: " && ".join(extractor_args))
 
-        entrypoint = traefik_config.entrypoint.mapping[root.record]
+        entrypoint = traefik_config.entrypoint.mapping[record]
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
         entrypoint_middlewares = entrypoint_config.build_middlewares(
             traefik_service, extractor_args, self.TYPE

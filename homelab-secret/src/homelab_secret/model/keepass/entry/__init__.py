@@ -23,8 +23,15 @@ class KeepassEntryModel(HomelabBaseModel):
     apps: list[str] = []
 
     def build_resource(
-        self, resource_name: str, *, opts: ResourceOptions, hostnames: Hostnames
+        self,
+        resource_name: str,
+        *,
+        opts: ResourceOptions,
+        hostnames: Hostnames,
+        host: str,
     ) -> KeepassEntryResource:
         from ....resource.keepass.entry import KeepassEntryResource
 
-        return KeepassEntryResource(resource_name, self, opts=opts, hostnames=hostnames)
+        return KeepassEntryResource(
+            resource_name, self, opts=opts, hostnames=hostnames, host=host
+        )

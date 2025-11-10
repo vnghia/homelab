@@ -29,6 +29,7 @@ class ServiceKeepassResource(ComponentResource):
                 extractor_args.service.add_service_name(name),
                 opts=self.child_opts,
                 hostnames=extractor_args.hostnames,
+                host=extractor_args.host.name(),
             )
             for name, model in config.root.items()
         }

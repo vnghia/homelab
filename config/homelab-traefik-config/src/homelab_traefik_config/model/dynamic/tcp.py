@@ -7,7 +7,7 @@ from .service import TraefikDynamicServiceModel
 class TraefikDynamicTcpModel(HomelabBaseModel):
     active: bool = True
     name: str | None = None
-    record: str
+    record: str | None = None
     hostsni: str
 
     service: TraefikDynamicServiceModel

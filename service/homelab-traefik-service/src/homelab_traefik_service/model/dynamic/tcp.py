@@ -32,18 +32,19 @@ class TraefikDynamicTcpModelBuilder(HomelabRootModel[TraefikDynamicTcpModel]):
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
         root = self.root
+        record = root.record or extractor_args.host.name()
         traefik_config = traefik_service.config
         main_service = extractor_args.service
 
         router_name = main_service.add_service_name(root.name)
-        hostsni = traefik_service.extractor_args.hostnames[root.record][root.hostsni]
+        hostsni = traefik_service.extractor_args.hostnames[record][root.hostsni]
 
         service = TraefikDynamicServiceModelBuilder(root.service).to_service_name(
             router_name
         )
         rule = "HostSNI(`{}`)".format(hostsni.value)
 
-        entrypoint = traefik_config.entrypoint.mapping[root.record]
+        entrypoint = traefik_config.entrypoint.mapping[record]
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
         entrypoint_middlewares = entrypoint_config.build_middlewares(
             traefik_service, extractor_args, self.TYPE

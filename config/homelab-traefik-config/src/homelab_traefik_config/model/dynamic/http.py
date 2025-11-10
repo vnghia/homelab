@@ -9,7 +9,7 @@ from .tls import TraefikDynamicTlsModel
 class TraefikDynamicHttpModel(HomelabBaseModel):
     active: bool = True
     name: str | None = None
-    record: str
+    record: str | None = None
     hostname: str | None = None
     prefix: GlobalExtract | None = None
 
