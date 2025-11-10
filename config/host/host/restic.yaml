@@ -46,7 +46,7 @@ services:
           dags:
             check:
               dag:
-                schedule: "0 2 * * sat" # 2am every saturday
+                schedule: "0 5 * * sat"
               command: ["check", "--read-data"]
             snapshots:
               command:

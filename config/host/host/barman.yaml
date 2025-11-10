@@ -52,7 +52,7 @@ services:
           dags:
             check:
               dag:
-                schedule: "0 2 * * *" # 2am every day
+                schedule: "0 5 */3 * *"
               command: ["check"]
             backup:
               command: ["backup", "--wait"]
