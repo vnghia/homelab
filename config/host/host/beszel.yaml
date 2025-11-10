@@ -4,6 +4,12 @@ docker:
       beszel:
         repo: ghcr.io/henrygd/beszel/beszel
         tag: "0.14.1"
+  network:
+    proxy:
+      aliases:
+        dagu:
+          - record: sun
+            hostname: beszel
   volumes:
     local:
       beszel-data:
@@ -17,24 +23,15 @@ services:
   beszel:
     variables:
       PORT: 8090
-      PREFIX: /xana
     config:
       traefik:
         dynamic:
           traefik:
             record: sun
-            hostname: system
-            prefix:
-              svariable: PREFIX
+            hostname: beszel
             service:
               port:
                 svariable: PORT
-            middlewares:
-              - name: strip-prefix
-                data:
-                  stripPrefix:
-                    prefixes:
-                      - svariable: PREFIX
       dagu:
         dotenvs:
           dotenv:
@@ -66,16 +63,11 @@ services:
                 run:
                   - "POST"
                   - extract:
-                      kv:
-                        container:
-                          cinfo: name
-                        port:
-                          svariable: PORT
-                        prefix:
-                          svariable: PREFIX
+                      record: sun
+                      hostname: beszel
                     transform:
                       string:
-                        template: "http://{container}:{port}/api/collections/_superusers/auth-with-password"
+                        template: "https://{value}/api/collections/_superusers/auth-with-password"
                 output: AUTH
               - name: delete-backup
                 executor:
@@ -84,16 +76,11 @@ services:
                 run:
                   - "DELETE"
                   - extract:
-                      kv:
-                        container:
-                          cinfo: name
-                        port:
-                          svariable: PORT
-                        prefix:
-                          svariable: PREFIX
+                      record: sun
+                      hostname: beszel
                     transform:
                       string:
-                        template: "http://{container}:{port}/api/backups/output.zip"
+                        template: "https://{value}/api/backups/output.zip"
               - name: create-backup
                 executor:
                   headers:
@@ -103,16 +90,11 @@ services:
                 run:
                   - "POST"
                   - extract:
-                      kv:
-                        container:
-                          cinfo: name
-                        port:
-                          svariable: PORT
-                        prefix:
-                          svariable: PREFIX
+                      record: sun
+                      hostname: beszel
                     transform:
                       string:
-                        template: "http://{container}:{port}/api/backups"
+                        template: "https://{value}/api/backups"
     files:
       private-key:
         path:
@@ -138,7 +120,7 @@ services:
     keepasses:
       keepass:
         hostname:
-          hostname: system
+          hostname: beszel
           record: sun
     container:
       image: beszel
@@ -152,17 +134,9 @@ services:
         template: https://github.com/henrygd/beszel/releases/tag/v${original}
       envs:
         APP_URL:
-          extract:
-            kv:
-              base:
-                hostname: system
-                record: sun
-                scheme: https
-              prefix:
-                svariable: PREFIX
-          transform:
-            string:
-              template: "{base}{prefix}"
+          hostname: beszel
+          record: sun
+          scheme: https
         AUTO_LOGIN:
           keepass:
           info: username
