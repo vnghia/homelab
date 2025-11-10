@@ -14,6 +14,7 @@ from .access import HostAccessModel
 
 
 class HostNoServiceModel(HomelabBaseModel):
+    byname: str
     access: HostAccessModel
     timezone: TimeZoneName
     ip: HostIpModel = HostIpModel()
