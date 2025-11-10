@@ -95,9 +95,3 @@ services:
             path: logs/admin
         DAGU_PERMISSIONS_WRITE_DAGS: false
         DAGU_LOG_FORMAT: json
-    containers:
-      docker:
-        active: false
-        image: docker
-        docker-socket:
-          write: false
