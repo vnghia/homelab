@@ -11,13 +11,14 @@ docker:
 services:
   dozzle:
     variables:
+      PORT: 8080
       AGENT_PORT: 7007
-      DOZZLE_CERT:
+      DOZZLE_CERT_PATH:
         extract:
           volume: dozzle-cert
         transform:
           path: cert.pem
-      DOZZLE_KEY:
+      DOZZLE_KEY_PATH:
         extract:
           volume: dozzle-cert
         transform:
@@ -25,6 +26,12 @@ services:
     config:
       traefik:
         dynamic:
+          traefik:
+            record: sun
+            hostname: dozzle
+            service:
+              port:
+                svariable: PORT
           agent:
             name: agent
             hostsni: dozzle
@@ -32,10 +39,20 @@ services:
               container: agent
               port:
                 svariable: AGENT_PORT
+    secrets:
+      agent-key:
+        algorithm: ED25519
+      agent-cert:
+        key: agent-key
+        subject:
+          common-name:
+            record: sun
+            hostname: dozzle
+        is-ca-certificate: true
     files:
       cert:
         path:
-          svariable: DOZZLE_CERT
+          svariable: DOZZLE_CERT_PATH
         content:
           host: sun
           extract:
@@ -44,7 +61,7 @@ services:
               cert: agent-cert
       key:
         path:
-          svariable: DOZZLE_KEY
+          svariable: DOZZLE_KEY_PATH
         content:
           host: sun
           extract:
@@ -73,10 +90,14 @@ services:
         template: https://github.com/amir20/dozzle/releases/tag/${original}
         include-prefix: v
       envs:
-        DOZZLE_BASE: /log
-        DOZZLE_ADDR: ":8080"
+        DOZZLE_ADDR:
+          extract:
+            svariable: PORT
+          transform:
+            string:
+              template: ":{value}"
         DOZZLE_HOSTNAME:
-          hinfo: name
+          hinfo: byname
         DOZZLE_FILTER:
           extract:
             project:
@@ -87,9 +108,9 @@ services:
         DOZZLE_ENABLE_ACTIONS: true
         DOZZLE_ENABLE_SHELL: true
         DOZZLE_CERT:
-          svariable: DOZZLE_CERT
+          svariable: DOZZLE_CERT_PATH
         DOZZLE_KEY:
-          svariable: DOZZLE_KEY
+          svariable: DOZZLE_KEY_PATH
     containers:
       agent:
         inherit:
@@ -97,3 +118,10 @@ services:
         tmpfs:
           - /tmp
         wud:
+        envs:
+          DOZZLE_AGENT_ADDR:
+            extract:
+              svariable: AGENT_PORT
+            transform:
+              string:
+                template: ":{value}"

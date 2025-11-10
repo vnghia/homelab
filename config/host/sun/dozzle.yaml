@@ -7,40 +7,9 @@ services:
     config:
       traefik:
         dynamic:
-          traefik:
-            record: sun
-            hostname: system
-            service:
-              port:
-                extract:
-                  env: DOZZLE_ADDR
-                transform:
-                  string:
-                    capture: ":(\\d+)"
-            middlewares:
-              - name: redirect
-                data:
-                  redirectRegex:
-                    regex: "^https://([^/]+)/?$"
-                    replacement:
-                      extract:
-                        env: DOZZLE_BASE
-                      transform:
-                        string:
-                          template: "https://${{1}}{value}/"
           agent:
             record: sun
             active: false
-    secrets:
-      agent-key:
-        algorithm: ED25519
-      agent-cert:
-        key: agent-key
-        subject:
-          common-name:
-            record: sun
-            hostname: dozzle
-        is-ca-certificate: true
     container:
       active: true
       hosts:

@@ -6,8 +6,15 @@ services:
     config:
       traefik:
         dynamic:
+          traefik:
+            active: false
           agent:
             record: earth
+    secrets:
+      agent-key:
+        active: false
+      agent-cert:
+        active: false
     container:
       active: false
     containers:
