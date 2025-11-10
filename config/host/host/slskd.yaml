@@ -37,7 +37,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: sun
             service:
               port:
                 env: SLSKD_HTTP_PORT

@@ -17,7 +17,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: sun
             service:
               port:
                 env: SERVER_PORT

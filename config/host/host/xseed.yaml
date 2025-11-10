@@ -8,14 +8,10 @@ docker:
     proxy:
       aliases:
         xseed:
-          - record: sun
-            hostname: qbittorrent
-          - record: sun
-            hostname: starr-radarr
-          - record: sun
-            hostname: starr-sonarr
-          - record: sun
-            hostname: starr-prowlarr
+          - hostname: qbittorrent
+          - hostname: starr-radarr
+          - hostname: starr-sonarr
+          - hostname: starr-prowlarr
   volumes:
     local:
       xseed-config:

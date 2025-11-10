@@ -37,7 +37,6 @@ services:
         dynamic:
           proxy:
             active: false
-            record: sun
     files:
       ca:
         active: false

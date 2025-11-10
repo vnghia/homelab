@@ -8,8 +8,7 @@ docker:
     proxy:
       aliases:
         dagu:
-          - record: sun
-            hostname: beszel
+          - hostname: beszel
   volumes:
     local:
       beszel-data:
@@ -27,7 +26,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: sun
             hostname: beszel
             service:
               port:
@@ -63,7 +61,6 @@ services:
                 run:
                   - "POST"
                   - extract:
-                      record: sun
                       hostname: beszel
                     transform:
                       string:
@@ -76,7 +73,6 @@ services:
                 run:
                   - "DELETE"
                   - extract:
-                      record: sun
                       hostname: beszel
                     transform:
                       string:
@@ -90,7 +86,6 @@ services:
                 run:
                   - "POST"
                   - extract:
-                      record: sun
                       hostname: beszel
                     transform:
                       string:
@@ -121,7 +116,6 @@ services:
       keepass:
         hostname:
           hostname: beszel
-          record: sun
     container:
       image: beszel
       network:
@@ -135,7 +129,6 @@ services:
       envs:
         APP_URL:
           hostname: beszel
-          record: sun
           scheme: https
         AUTO_LOGIN:
           keepass:

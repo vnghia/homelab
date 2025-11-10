@@ -77,7 +77,6 @@ services:
           backend-admin:
             name: backend-admin
             hostname: meet-admin
-            record: sun
             rules:
               - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
             service:
@@ -102,10 +101,8 @@ services:
         username:
           hostname:
             hostname: meet-admin
-            record: sun
         hostname:
           hostname: meet-admin
-          record: sun
     secrets:
       django: {}
     containers:
@@ -144,7 +141,6 @@ services:
                   record: solar
                 admin:
                   hostname: meet-admin
-                  record: sun
             transform:
               string:
                 template: "{user},{admin}"
@@ -157,7 +153,6 @@ services:
                   scheme: https
                 admin:
                   hostname: meet-admin
-                  record: sun
                   scheme: https
             transform:
               string:

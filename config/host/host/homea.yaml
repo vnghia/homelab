@@ -15,7 +15,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: earth
             service:
               port:
                 svariable: PORT
@@ -27,7 +26,6 @@ services:
           upper: false
         hostname:
           hostname: homea
-          record: earth
     container:
       image: homea
       capabilities:

@@ -24,7 +24,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: sun
             service:
               port:
                 svariable: PORT

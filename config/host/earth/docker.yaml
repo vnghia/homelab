@@ -1,14 +1,5 @@
 services:
   docker:
-    config:
-      traefik:
-        dynamic:
-          proxy:
-            record: earth
-    secrets:
-      proxy-mtls:
-        hostname:
-          record: earth
     containers:
       proxy:
         active: true

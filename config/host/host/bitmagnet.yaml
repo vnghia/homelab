@@ -12,7 +12,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: earth
             service:
               port:
                 svariable: PORT

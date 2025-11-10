@@ -17,7 +17,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            record: sun
             service:
               port:
                 env: WEBUI_PORT
@@ -25,7 +24,6 @@ services:
       keepass:
         hostname:
           hostname: qbittorrent
-          record: sun
     network:
       vpn:
         ports:

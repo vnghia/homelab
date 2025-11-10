@@ -8,7 +8,6 @@ services:
       traefik:
         dynamic:
           agent:
-            record: sun
             active: false
     container:
       active: true

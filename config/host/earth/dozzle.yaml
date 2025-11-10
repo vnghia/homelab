@@ -8,8 +8,6 @@ services:
         dynamic:
           traefik:
             active: false
-          agent:
-            record: earth
     secrets:
       agent-key:
         active: false
