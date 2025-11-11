@@ -1,15 +1,12 @@
 from homelab_backup_service import BackupService
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
-from homelab_dagu_service import DaguService
 from homelab_ddns_service import DdnsService
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global import GlobalArgs
 from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
 from homelab_restic_service import ResticService
-from homelab_tailscale_service import TailscaleService
-from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 
 from .. import HostBase
@@ -34,28 +31,10 @@ class SunHost(HostBase[SunServiceConfig]):
             config=config,
         )
 
-        self.tailscale = TailscaleService(
-            self.services_config.tailscale,
-            opts=self.child_opts,
-            extractor_args=self.extractor_args,
-        )
-
-        self.traefik = TraefikService(
-            self.services_config.traefik,
-            opts=self.child_opts,
-            network_resource=self.network,
-            extractor_args=self.extractor_args,
-        )
         self.ddns = DdnsService(
             self.services_config.ddns,
             opts=self.child_opts,
             network_resource=self.network,
-            extractor_args=self.extractor_args,
-        )
-
-        self.dagu = DaguService(
-            self.services_config.dagu,
-            opts=self.child_opts,
             extractor_args=self.extractor_args,
         )
         self.kanidm = KanidmService(
@@ -96,11 +75,3 @@ class SunHost(HostBase[SunServiceConfig]):
             restic_service=self.restic,
             extractor_args=self.extractor_args,
         )
-
-    @property
-    def traefik_service(self) -> TraefikService | None:
-        return self.traefik
-
-    @property
-    def dagu_service(self) -> DaguService | None:
-        return self.dagu

@@ -2,18 +2,19 @@ from __future__ import annotations
 
 from homelab_dagu_service import DaguService
 from homelab_docker.config.host import HostServiceModelConfig
-from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.host import HostResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_global import GlobalArgs
 from homelab_network.resource.network import NetworkResource
+from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from ..file import File
+from .config import HostServiceConfig
 
 
 class HostBaseNoConfig(HostResourceBase):
@@ -26,7 +27,7 @@ class HostBaseNoConfig(HostResourceBase):
         global_args: GlobalArgs,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
-        extra_services_config: dict[str, ServiceWithConfigModel[ExtraConfig]],
+        host_services_config: HostServiceConfig,
     ) -> None:
         super().__init__(
             opts=opts,
@@ -35,8 +36,33 @@ class HostBaseNoConfig(HostResourceBase):
             config=config,
         )
 
-        self.extra_services_config = extra_services_config
+        self.host_services_config = host_services_config
+        self.extra_services_config = host_services_config.extra(
+            ServiceWithConfigModel[ExtraConfig]
+        )
         self.HOST_BASES[self.name()] = self
+
+    def build_tailscale_service(self) -> None:
+        self.tailscale = TailscaleService(
+            self.host_services_config.tailscale,
+            opts=self.child_opts,
+            extractor_args=self.extractor_args,
+        )
+
+    def build_traefik_service(self) -> None:
+        self.traefik = TraefikService(
+            self.host_services_config.traefik,
+            opts=self.child_opts,
+            network_resource=self.network,
+            extractor_args=self.extractor_args,
+        )
+
+    def build_dagu_service(self) -> None:
+        self.dagu = DaguService(
+            self.host_services_config.dagu,
+            opts=self.child_opts,
+            extractor_args=self.extractor_args,
+        )
 
     def build_extra_service(self, service: str) -> None:
         if service in self.services:
@@ -63,15 +89,23 @@ class HostBaseNoConfig(HostResourceBase):
     def build_file(self) -> None:
         self.file = File(
             opts=self.child_opts,
-            traefik_service=self.traefik_service,
-            dagu_service=self.dagu_service,
+            traefik_service=self.traefik,
+            dagu_service=self.dagu,
         )
 
     @classmethod
     def finalize(cls) -> None:
-        for host in cls.HOST_BASES.values():
+        from .sun import SunHost
+
+        for name, host in cls.HOST_BASES.items():
+            if name != SunHost.name():
+                host.build_dagu_service()
+
             for service in host.extra_services_config:
                 host.build_extra_service(service)
+
+        # Building Dagu service on Sun host last since it depends on Dagu API tokens of other hosts.
+        cls.HOST_BASES[SunHost.name()].build_dagu_service()
 
         for host in cls.HOST_BASES.values():
             host.build_final_services_before_file()
@@ -79,16 +113,8 @@ class HostBaseNoConfig(HostResourceBase):
             host.build_final_services_after_file()
             host.register_outputs({})
 
-    @property
-    def traefik_service(self) -> TraefikService | None:
-        return None
 
-    @property
-    def dagu_service(self) -> DaguService | None:
-        return None
-
-
-class HostBase[T: ServiceConfigBase](HostBaseNoConfig):
+class HostBase[T: HostServiceConfig](HostBaseNoConfig):
     def __init__(
         self,
         service: T,
@@ -103,11 +129,14 @@ class HostBase[T: ServiceConfigBase](HostBaseNoConfig):
             global_args=global_args,
             network_resource=network_resource,
             config=config,
-            extra_services_config=service.extra(ServiceWithConfigModel[ExtraConfig]),
+            host_services_config=service,
         )
 
         self.services_config = service
         self.build_initial_extra_services()
+
+        self.build_tailscale_service()
+        self.build_traefik_service()
 
     def build_initial_extra_services(self) -> None:
         for service, model in self.services_config.services.items():
