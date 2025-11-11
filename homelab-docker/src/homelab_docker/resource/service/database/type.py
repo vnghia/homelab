@@ -110,6 +110,24 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 | superuser_password_env,
                 files=self.scripts,
             )
+
+            envs: dict[str, GlobalExtract | None] = {
+                self.config.env.database: GlobalExtract.from_simple(self.database),
+                self.config.env.data_dir: GlobalExtract(
+                    HostExtract(
+                        ServiceExtract(
+                            ContainerExtract(
+                                ContainerExtractVolumeSource(volume=full_name)
+                            )
+                        )
+                    )
+                ),
+            }
+            if self.config.env.username:
+                envs[self.config.env.username] = GlobalExtract.from_simple(
+                    self.username
+                )
+
             container = container_model.model_merge(
                 ContainerModel(
                     image=ContainerImageModelConfig(
@@ -151,29 +169,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                             else {}
                         )
                     ),
-                    envs={
-                        self.config.env.database: GlobalExtract.from_simple(
-                            self.database
-                        ),
-                        self.config.env.data_dir: GlobalExtract(
-                            HostExtract(
-                                ServiceExtract(
-                                    ContainerExtract(
-                                        ContainerExtractVolumeSource(volume=full_name)
-                                    )
-                                )
-                            )
-                        ),
-                    }
-                    | (
-                        {
-                            self.config.env.username: GlobalExtract.from_simple(
-                                self.username
-                            )
-                        }
-                        if self.config.env.username
-                        else {}
-                    ),
+                    envs=envs,
                 )
             )
             self.containers[version] = DatabaseContainerArgs(

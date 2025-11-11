@@ -18,7 +18,11 @@ class ContainerEnvSourceExtractor(ExtractorBase[ContainerExtractEnvSource]):
     def get_env(self, extractor_args: ExtractorArgs) -> GlobalExtractor:
         from ..global_ import GlobalExtractor
 
-        return GlobalExtractor(extractor_args.container_model.envs[self.root.env])
+        root = self.root
+        env = extractor_args.container_model.envs[root.env]
+        if env is None:
+            raise ValueError("Env {} is disabled".format(root.env))
+        return GlobalExtractor(env)
 
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
         return self.get_env(extractor_args).extract_str(extractor_args)

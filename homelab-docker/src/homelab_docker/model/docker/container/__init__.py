@@ -121,7 +121,7 @@ class ContainerModel(HomelabBaseModel):
     wait_timeout: PositiveInt | None = None
     wud: ContainerWudConfig | None = None
 
-    envs: dict[str, GlobalExtract] = {}
+    envs: dict[str, GlobalExtract | None] = {}
     labels: dict[str, GlobalExtract] = {}
 
     @property
@@ -198,6 +198,7 @@ class ContainerModel(HomelabBaseModel):
                             GlobalExtractor(v).extract_str(extractor_args)
                         )
                         for k, v in self.envs.items()
+                        if v is not None
                     }
                     | {
                         k: Output.from_input(v)
