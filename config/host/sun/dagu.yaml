@@ -3,6 +3,11 @@ services:
     secrets:
       token:
         active: false
+    files:
+      config:
+        content:
+          data:
+            headless: false
     container:
       envs:
         DAGU_AUTH_TOKEN:

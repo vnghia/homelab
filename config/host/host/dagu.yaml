@@ -53,6 +53,7 @@ services:
         content:
           format: yaml
           data:
+            headless: true
             paths:
               dagsDir:
                 svariable: DAGU_DAGS_DIR
