@@ -1,5 +1,3 @@
-import functools
-import operator
 from typing import Any
 
 from homelab_docker.extract import ExtractorArgs
@@ -47,14 +45,11 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         )
         container_config["env"] = model.build_envs(extractor_args, build_args) + (
             sorted(
-                functools.reduce(
-                    operator.iadd,
-                    [
-                        ["{key}=${{{key}}}".format(key=key) for key in dotenv.envs]
-                        for dotenv in dotenvs
-                    ],
-                    [],
-                )
+                [
+                    "{key}=${{{key}}}".format(key=key)
+                    for dotenv in dotenvs
+                    for key in dotenv.envs
+                ]
             )
             if dotenvs
             else []
