@@ -36,7 +36,7 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
             data=model.to_data(
                 dagu_service,
                 extractor_args,
-                dagu_service.get_log_dir_volume_path(self.path),
+                dagu_service.get_log_dir_volume_path(),
             ),
             extractor_args=dagu_service.extractor_args,
         )

@@ -44,10 +44,10 @@ class DaguService(ExtraService[DaguConfig]):
         return self.dags_dir_volume_path / name
 
     def get_dotenv_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.dags_dir_volume_path / name
+        return self.dags_dir_volume_path / ".dotenv" / name
 
-    def get_log_dir_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.log_dir_volume_path / name
+    def get_log_dir_volume_path(self) -> ContainerVolumePath:
+        return self.log_dir_volume_path
 
     def get_tmp_dir(self) -> AbsolutePath:
         tmpfs = self.model[None].tmpfs

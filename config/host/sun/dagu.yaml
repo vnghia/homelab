@@ -1,0 +1,8 @@
+services:
+  dagu:
+    secrets:
+      token:
+        active: false
+    container:
+      envs:
+        DAGU_AUTH_TOKEN:

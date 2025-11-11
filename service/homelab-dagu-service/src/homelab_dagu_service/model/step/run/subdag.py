@@ -32,7 +32,7 @@ class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagMode
         )
 
         data: dict[str, Any] = {
-            "run": dag.to_path(
+            "call": dag.to_path(
                 dagu_service.extractor_args_from_self(dagu_config.dags_dir.container)
             )
         }
