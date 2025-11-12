@@ -92,3 +92,6 @@ class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
 
     def __getitem__(self, key: str | None) -> T:
         return self.root[key]
+
+    def __or__(self, rhs: dict[str | None, T] | Self) -> Self:
+        return self.__class__(self.root | (rhs if isinstance(rhs, dict) else rhs.root))
