@@ -3,12 +3,17 @@ from functools import partial
 
 import pulumi
 import pulumi_docker as docker
+from homelab_extract import GlobalExtract
 from homelab_global import GlobalArgs
 from homelab_pydantic import IPvAnyNetworkAdapter
 from homelab_sequence import HomelabSequenceResource
 from pulumi import ComponentResource, Input, ResourceOptions
 from pydantic import IPvAnyNetwork, NonPositiveInt
 
+from ...config.service.network import (
+    ServiceNetworkBridgeConfig,
+    ServiceNetworkProxyEgressType,
+)
 from ...model.docker.container import ContainerNetworkModelBuildArgs
 from ...model.docker.container.network import (
     ContainerBridgeNetworkConfig,
@@ -51,8 +56,15 @@ class NetworkResource(ComponentResource):
         ] = defaultdict(lambda: defaultdict(ContainerNetworkModelBuildArgs))
 
         self.service_networks = []
+        self.service_egresses: dict[
+            str, dict[ServiceNetworkProxyEgressType, dict[str, GlobalExtract]]
+        ] = {}
 
-        proxy_bridges = self.get_proxy_bridges()
+        proxy_config = self.config.proxy
+        proxy_service, proxy_container = self.compute_proxy(
+            proxy_config.service, proxy_config.container
+        )
+        self.proxy_option = self.options[proxy_service][proxy_container]
 
         for (
             service_name,
@@ -60,16 +72,10 @@ class NetworkResource(ComponentResource):
         ) in self.host_model.services.items():
             service_network = service_model.network
             if service_network.bridge:
-                bridge_config = service_network.bridge
                 self.service_networks.append(service_name)
-
-                proxy_bridge_aliases = bridge_config.proxy.aliases
-                proxy_bridge_config = self.config.proxy.bridge
-                if proxy_bridge_config.aliases or proxy_bridge_aliases:
-                    proxy_bridge_config = proxy_bridge_config.__replace__(
-                        aliases=proxy_bridge_config.aliases + proxy_bridge_aliases
-                    )
-                proxy_bridges[service_name] = proxy_bridge_config
+                self.build_service_proxy_bridge_config(
+                    service_name, service_network.bridge
+                )
 
             for container_model in service_model.containers.values():
                 network_mode = container_model.network.root
@@ -87,6 +93,9 @@ class NetworkResource(ComponentResource):
                         container_model.ports.with_service(service_name, False)
                     )
 
+        self.proxy_option.bridges = dict(
+            sorted(self.proxy_option.bridges.items(), key=lambda x: x[0])
+        )
         self.build_service_networks(global_args)
 
         for value in self.bridge.values():
@@ -107,6 +116,37 @@ class NetworkResource(ComponentResource):
                 )
             )
         )
+
+    def build_service_proxy_bridge_config(
+        self, service: str, bridge_config: ServiceNetworkBridgeConfig
+    ) -> None:
+        proxy_bridge_config = self.config.proxy.bridge
+        aliases = proxy_bridge_config.aliases
+
+        proxy_config = bridge_config.proxy
+        if proxy_config.aliases:
+            aliases = aliases + [
+                alias.with_service(service, False) for alias in proxy_config.aliases
+            ]
+
+        if proxy_config.egress:
+            if aliases is proxy_bridge_config.aliases:
+                aliases = aliases.copy()
+
+            self.service_egresses[service] = {}
+            for egress_type, egress in proxy_config.egress.items():
+                self.service_egresses[service][egress_type] = {}
+                for egress_key, egress_model in egress.items():
+                    service_egress_model = egress_model.with_service(service, False)
+                    self.service_egresses[service][egress_type][egress_key] = (
+                        egress_model
+                    )
+                    aliases.append(service_egress_model)
+
+        if aliases is not proxy_bridge_config.aliases:
+            proxy_bridge_config = proxy_bridge_config.__replace__(aliases=aliases)
+
+        self.proxy_option.bridges[service] = proxy_bridge_config
 
     def build_service_networks(self, global_args: GlobalArgs) -> None:
         service_network_model = BridgeNetworkModel(internal=True)

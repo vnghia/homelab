@@ -9,7 +9,7 @@ from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output
-from pydantic import NonNegativeInt
+from pydantic import NonNegativeInt, field_validator
 
 if typing.TYPE_CHECKING:
     from .. import TraefikService
@@ -17,6 +17,12 @@ if typing.TYPE_CHECKING:
 
 class TraefikEntrypointPortModel(HomelabBaseModel):
     port: GlobalExtract
+
+    @field_validator("port", mode="after")
+    def set_service(cls, port: GlobalExtract) -> GlobalExtract:
+        from .. import TraefikService
+
+        return port.with_service(TraefikService.name(), False)
 
     def to_address(self, extractor_args: ExtractorArgs) -> Output[str]:
         return (
@@ -110,6 +116,7 @@ class TraefikEntrypointProxyProtocolModel(HomelabBaseModel):
 
 class TraefikEntrypointMiddlewareFullModel(HomelabBaseModel):
     DEFAULT_PRIORITY: ClassVar[NonNegativeInt] = 100
+
     service: str | None = None
     middleware: str | None = None
     priority: NonNegativeInt = DEFAULT_PRIORITY

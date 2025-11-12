@@ -1,8 +1,19 @@
+from homelab_docker.config.service.network import ServiceNetworkProxyEgressType
 from homelab_docker.resource.service import (
     ServiceResourceBase,
     ServiceWithConfigResourceBase,
 )
-from homelab_traefik_config import TraefikServiceConfigBase
+from homelab_traefik_config import (
+    TraefikServiceConfig,
+    TraefikServiceConfigBase,
+    TraefikServiceDynamicConfig,
+)
+from homelab_traefik_config.model.dynamic import TraefikDynamicModel
+from homelab_traefik_config.model.dynamic.service import (
+    TraefikDynamicServiceFullModel,
+    TraefikDynamicServiceModel,
+)
+from homelab_traefik_config.model.dynamic.tcp import TraefikDynamicTcpModel
 from homelab_traefik_service import TraefikService
 from homelab_traefik_service.config.service import TraefikServiceConfigBuilder
 from pulumi import ComponentResource, ResourceOptions
@@ -21,31 +32,73 @@ class TraefikFile(ComponentResource):
 
         self.register_outputs({})
 
+    def get_egress_name(self, egress: str) -> str:
+        return "egress-{}".format(egress)
+
     def build_one(
         self, traefik_service: TraefikService, service: ServiceResourceBase
     ) -> None:
         if (
-            (
-                service.name() not in traefik_service.routers
-                and service.name() not in traefik_service.middlewares
-            )
-            and isinstance(service, ServiceWithConfigResourceBase)
-            and isinstance(service.config, TraefikServiceConfigBase)
-            and service.config.traefik.dynamic
+            service.name() not in traefik_service.routers
+            and service.name() not in traefik_service.middlewares
         ):
-            for depend in service.config.traefik.depends_on:
-                self.build_one(
-                    traefik_service, traefik_service.extractor_args.services[depend]
+            service_egresses = (
+                traefik_service.extractor_args.host.docker.network.service_egresses
+            )
+            service_dynamic: dict[str | None, TraefikDynamicModel] = {}
+
+            if service.name() in service_egresses:
+                for egress_type, egress in service_egresses[service.name()].items():
+                    for egress_key, egress_model in egress.items():
+                        egress_name = self.get_egress_name(egress_key)
+                        match egress_type:
+                            case ServiceNetworkProxyEgressType.HTTPS:
+                                service_dynamic[egress_name] = TraefikDynamicModel(
+                                    TraefikDynamicTcpModel(
+                                        name=egress_name,
+                                        address=egress_model,
+                                        entrypoint=traefik_service.config.entrypoint.egress_[
+                                            egress_type
+                                        ],
+                                        service=TraefikDynamicServiceModel(
+                                            TraefikDynamicServiceFullModel(
+                                                external=egress_model, port=None
+                                            )
+                                        ),
+                                        hostsni=None,
+                                    )
+                                )
+
+            traefik_service_config = None
+            if (
+                isinstance(service, ServiceWithConfigResourceBase)
+                and isinstance(service.config, TraefikServiceConfigBase)
+                and service.config.traefik.dynamic
+            ):
+                traefik_service_config = service.config.traefik
+                if service_dynamic:
+                    traefik_service_config = service.config.traefik.__replace__(
+                        dynamic=traefik_service_config.dynamic | service_dynamic
+                    )
+            elif service_dynamic:
+                traefik_service_config = TraefikServiceConfig(
+                    dynamic=TraefikServiceDynamicConfig(service_dynamic)
                 )
 
-            service_opts = ResourceOptions(
-                parent=ComponentResource(
-                    service.name(), service.name(), None, opts=self.child_opts
-                )
-            )
+            if traefik_service_config:
+                for depend in traefik_service_config.depends_on:
+                    self.build_one(
+                        traefik_service, traefik_service.extractor_args.services[depend]
+                    )
 
-            TraefikServiceConfigBuilder(service.config.traefik).build_resources(
-                opts=service_opts,
-                traefik_service=traefik_service,
-                extractor_args=service.extractor_args,
-            )
+                service_opts = ResourceOptions(
+                    parent=ComponentResource(
+                        service.name(), service.name(), None, opts=self.child_opts
+                    )
+                )
+
+                TraefikServiceConfigBuilder(traefik_service_config).build_resources(
+                    opts=service_opts,
+                    traefik_service=traefik_service,
+                    extractor_args=service.extractor_args,
+                )

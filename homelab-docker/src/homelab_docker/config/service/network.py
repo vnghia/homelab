@@ -1,3 +1,5 @@
+from enum import StrEnum, auto
+
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_vpn.config.service import ServiceVpnConfig
@@ -5,8 +7,13 @@ from homelab_vpn.config.service import ServiceVpnConfig
 from ...model.docker.container.network import ContainerBridgeNetworkConfig
 
 
+class ServiceNetworkProxyEgressType(StrEnum):
+    HTTPS = auto()
+
+
 class ServiceNetworkProxyConfig(HomelabBaseModel):
     aliases: list[GlobalExtract] = []
+    egress: dict[ServiceNetworkProxyEgressType, dict[str, GlobalExtract]] = {}
 
 
 class ServiceNetworkBridgeConfig(ContainerBridgeNetworkConfig):
