@@ -1,0 +1,4 @@
+services:
+  dagu:
+    container:
+      wud:

@@ -3,7 +3,7 @@ docker:
     remote:
       dagu:
         repo: ghcr.io/dagu-org/dagu
-        tag: "1.24.4"
+        tag: "1.24.6-alpine"
   volumes:
     local:
       dagu-home: {}
@@ -93,21 +93,20 @@ services:
       docker-socket:
         write: true
       entrypoint: ["dagu"]
-      # TODO: Re-enable healthcheck
-      # healthcheck:
-      #   tests:
-      #     - "CMD"
-      #     - "wget"
-      #     - "-q"
-      #     - extract:
-      #         env: DAGU_PORT
-      #       transform:
-      #         string:
-      #           template: "http://localhost:{value}/api/v1/health"
-      #     - "-O"
-      #     - "/dev/null"
-      #   interval: 30s
-      #   timeout: 5s
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "-q"
+          - extract:
+              env: DAGU_PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/api/v2/health"
+          - "-O"
+          - "/dev/null"
+        interval: 30s
+        timeout: 5s
       tmpfs:
         - /tmp
       volumes:
@@ -118,7 +117,9 @@ services:
           path: /etc/dagu
           read-only: true
       wud:
-        template: https://github.com/dagu-org/dagu/releases/tag/v${original}
+        template: https://github.com/dagu-org/dagu/releases/tag/v${major}.${minor}.${patch}
+        include-suffix: -alpine
+        transform: true
       envs:
         DAGU_PORT: 8080
         DAGU_TZ:
