@@ -7,6 +7,7 @@ from functools import reduce
 from typing import Any, ClassVar
 
 from homelab_docker.extract import ExtractorArgs
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.base import TraefikDynamicBaseModel
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
@@ -27,6 +28,23 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
 
     LOCAL_MIDDLEWARE_NAMES: ClassVar[list[str]]
     LOCAL_MIDDLEWARES: ClassVar[list[str] | None]
+
+    def get_host(
+        self,
+        record: str,
+        hostname: str | None,
+        router_name: str,
+        traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
+    ) -> Output[str]:
+        root = self.root
+        return Output.from_input(
+            GlobalExtractor(root.address).extract_str(extractor_args)
+            if root.address
+            else traefik_service.extractor_args.hostnames[record][
+                hostname or router_name
+            ].value
+        )
 
     @abc.abstractmethod
     def build_rule(
@@ -57,7 +75,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
 
         rule = self.build_rule(record, router_name, traefik_service, extractor_args)
 
-        entrypoint = traefik_config.entrypoint.mapping[record]
+        entrypoint = root.entrypoint or traefik_config.entrypoint.mapping[record]
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
         entrypoint_middlewares = entrypoint_config.build_middlewares(
             traefik_service, extractor_args, self.TYPE
@@ -100,7 +118,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
                             + service_middlewares,
                         }
                     }
-                    if entrypoint_config.local
+                    if root.entrypoint is None and entrypoint_config.local
                     else {}
                 )
                 | (
@@ -115,7 +133,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
                             "middlewares": service_middlewares,
                         }
                     }
-                    if entrypoint_config.internal
+                    if root.entrypoint is None and entrypoint_config.internal
                     else {}
                 ),
             }
@@ -125,6 +143,8 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
         if service_full:
             data[self.TYPE]["services"] = TraefikDynamicServiceFullModelBuilder(
                 service_full
+                if service_full.port is not None
+                else service_full.__replace__(port=entrypoint_config.root.port)
             ).to_service(self.TYPE, router_name, extractor_args)
 
         middlewares: dict[str, Any] = reduce(

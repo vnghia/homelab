@@ -9,6 +9,7 @@ from homelab_docker.model.docker.container.network import (
     NetworkMode,
 )
 from homelab_docker.resource.service import ServiceResourceBase
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.service import (
     TraefikDynamicServiceFullModel,
@@ -42,7 +43,11 @@ class TraefikDynamicServiceFullModelBuilder(
 
         network_config = service.container_models[root.container].network.root
         if root.external is not None:
-            service_name = str(root.external)
+            service_name = (
+                GlobalExtractor(root.external).extract_str(extractor_args)
+                if isinstance(root.external, GlobalExtract)
+                else str(root.external)
+            )
         elif isinstance(network_config, ContainerNetworkModeConfig):
             match network_config.mode:
                 case NetworkMode.HOST:
@@ -65,7 +70,7 @@ class TraefikDynamicServiceFullModelBuilder(
             "{}{}:{}",
             scheme,
             service_name,
-            GlobalExtractor(root.port)
+            GlobalExtractor(root.port_)
             .extract_str(extractor_args)
             .apply(lambda x: TypeAdapter(PositiveInt).validate_python(int(x))),
         ).apply(AnyUrl)

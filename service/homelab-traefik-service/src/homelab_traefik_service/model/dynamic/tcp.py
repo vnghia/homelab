@@ -31,8 +31,10 @@ class TraefikDynamicTcpModelBuilder(
         extractor_args: ExtractorArgs,
     ) -> Output[str]:
         root = self.root
-        hostsni = traefik_service.extractor_args.hostnames[record][root.hostsni]
-        return Output.from_input("HostSNI(`{}`)".format(hostsni.value))
+        hostsni = self.get_host(
+            record, root.hostsni, router_name, traefik_service, extractor_args
+        )
+        return Output.format("HostSNI(`{}`)", hostsni)
 
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs

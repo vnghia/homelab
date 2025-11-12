@@ -33,12 +33,12 @@ class TraefikDynamicHttpModelBuilder(
         extractor_args: ExtractorArgs,
     ) -> Output[str]:
         root = self.root
-        hostname = traefik_service.extractor_args.hostnames[record][
-            root.hostname or router_name
-        ]
+        hostname = self.get_host(
+            record, root.hostname, router_name, traefik_service, extractor_args
+        )
         return Output.all(
             *(
-                [Output.format("Host(`{}`)", hostname.value)]
+                [Output.format("Host(`{}`)", hostname)]
                 + (
                     [
                         Output.format(
