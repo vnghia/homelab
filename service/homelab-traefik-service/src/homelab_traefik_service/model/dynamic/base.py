@@ -107,9 +107,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
                     {
                         "{}-local".format(router_name): {
                             "service": service,
-                            "entryPoints": [
-                                traefik_config.entrypoint.local_entrypoint_
-                            ],
+                            "entryPoints": [traefik_config.entrypoint.local_],
                             "rule": rule,
                             "tls": tls_router,
                             "middlewares": self.build_local_middlewares(
@@ -125,9 +123,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
                     {
                         "{}-internal".format(router_name): {
                             "service": service,
-                            "entryPoints": [
-                                traefik_config.entrypoint.internal_entrypoint_
-                            ],
+                            "entryPoints": [traefik_config.entrypoint.internal_],
                             "rule": rule,
                             "tls": tls_router,
                             "middlewares": service_middlewares,

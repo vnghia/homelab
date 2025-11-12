@@ -6,17 +6,17 @@ from ..model.entrypoint import TraefikEntrypointModel
 class TraefikEntrypointConfig(HomelabBaseModel):
     config: dict[str, TraefikEntrypointModel]
     mapping: dict[str, str]
-    local_entrypoint: str | None = None
-    internal_entrypoint: str | None = None
+    local: str | None = None
+    internal: str | None = None
 
     @property
-    def local_entrypoint_(self) -> str:
-        if not self.local_entrypoint:
+    def local_(self) -> str:
+        if not self.local:
             raise ValueError("Local entrypoint is not configured")
-        return self.local_entrypoint
+        return self.local
 
     @property
-    def internal_entrypoint_(self) -> str:
-        if not self.internal_entrypoint:
+    def internal_(self) -> str:
+        if not self.internal:
             raise ValueError("Internal entrypoint is not configured")
-        return self.internal_entrypoint
+        return self.internal

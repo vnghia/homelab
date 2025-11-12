@@ -40,8 +40,8 @@ services:
         mapping:
           solar: "public-https"
           sun: "private-https"
-        local-entrypoint: public-https
-        internal-entrypoint: private-https
+        local: public-https
+        internal: private-https
       plugins:
         geoblock:
           name: github.com/david-garcia-garcia/traefik-geoblock
