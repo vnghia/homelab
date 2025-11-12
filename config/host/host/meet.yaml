@@ -7,12 +7,6 @@ docker:
       meet-frontend:
         repo: lasuite/meet-frontend
         tag: *meet-version
-  network:
-    proxy:
-      aliases:
-        meet:
-          - record: solar
-            hostname: livekit
 services:
   kanidm:
     config:
@@ -103,6 +97,12 @@ services:
             hostname: meet-admin
         hostname:
           hostname: meet-admin
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - record: solar
+              hostname: livekit
     secrets:
       django: {}
     containers:

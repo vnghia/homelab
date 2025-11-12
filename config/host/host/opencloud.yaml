@@ -4,12 +4,6 @@ docker:
       opencloud:
         repo: opencloudeu/opencloud-rolling
         tag: "3.6.0"
-  network:
-    proxy:
-      aliases:
-        opencloud:
-          - record: solar
-            hostname: opencloud
   volumes:
     local:
       opencloud-config:
@@ -117,6 +111,12 @@ services:
               style-src:
                 - "'self'"
                 - "'unsafe-inline'"
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - record: solar
+              hostname: opencloud
     secrets:
       jwt-secret: {}
       transfer-secret: {}

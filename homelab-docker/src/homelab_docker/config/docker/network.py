@@ -1,4 +1,3 @@
-from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_vpn.config.host import HostVpnConfig
 from pydantic import IPvAnyNetwork
@@ -16,7 +15,6 @@ class NetworkProxyConfig(HomelabBaseModel):
     service: str
     container: str | None = None
     bridge: ContainerBridgeNetworkConfig = ContainerBridgeNetworkConfig()
-    aliases: dict[str, list[GlobalExtract]] = {}
 
 
 class NetworkConfig(HomelabBaseModel):

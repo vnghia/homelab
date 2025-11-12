@@ -4,11 +4,6 @@ docker:
       beszel:
         repo: ghcr.io/henrygd/beszel/beszel
         tag: "0.14.1"
-  network:
-    proxy:
-      aliases:
-        dagu:
-          - hostname: beszel
   volumes:
     local:
       beszel-data:
@@ -19,6 +14,12 @@ docker:
             transform:
               path: backups
 services:
+  dagu:
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - hostname: beszel
   beszel:
     variables:
       PORT: 8090

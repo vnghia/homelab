@@ -11,6 +11,7 @@ from pydantic import IPvAnyNetwork, NonPositiveInt
 
 from ...model.docker.container import ContainerNetworkModelBuildArgs
 from ...model.docker.container.network import (
+    ContainerBridgeNetworkConfig,
     ContainerCommonNetworkConfig,
     ContainerNetworkContainerConfig,
 )
@@ -51,13 +52,24 @@ class NetworkResource(ComponentResource):
 
         self.service_networks = []
 
+        proxy_bridges = self.get_proxy_bridges()
+
         for (
             service_name,
             service_model,
         ) in self.host_model.services.items():
             service_network = service_model.network
             if service_network.bridge:
+                bridge_config = service_network.bridge
                 self.service_networks.append(service_name)
+
+                proxy_bridge_aliases = bridge_config.proxy.aliases
+                proxy_bridge_config = self.config.proxy.bridge
+                if proxy_bridge_config.aliases or proxy_bridge_aliases:
+                    proxy_bridge_config = proxy_bridge_config.__replace__(
+                        aliases=proxy_bridge_config.aliases + proxy_bridge_aliases
+                    )
+                proxy_bridges[service_name] = proxy_bridge_config
 
             for container_model in service_model.containers.values():
                 network_mode = container_model.network.root
@@ -97,12 +109,6 @@ class NetworkResource(ComponentResource):
         )
 
     def build_service_networks(self, global_args: GlobalArgs) -> None:
-        proxy_config = self.config.proxy
-        proxy_service, proxy_container = self.compute_proxy(
-            proxy_config.service, proxy_config.container
-        )
-        proxy_bridges = self.options[proxy_service][proxy_container].bridges
-
         service_network_model = BridgeNetworkModel(internal=True)
         service_network_sequence = HomelabSequenceResource(
             "service", opts=self.child_opts, names=self.service_networks
@@ -123,14 +129,6 @@ class NetworkResource(ComponentResource):
                     for build_ipam_fn in build_ipam_fns
                 ],
             )
-
-            proxy_bridge_config = proxy_config.bridge
-            proxy_bridge_aliases = proxy_config.aliases.get(service, [])
-            if proxy_bridge_aliases:
-                proxy_bridge_config = proxy_bridge_config.__replace__(
-                    aliases=proxy_bridge_config.aliases + proxy_bridge_aliases
-                )
-            proxy_bridges[service] = proxy_bridge_config
 
     @classmethod
     def get_bridge_name(cls, name: str) -> str:
@@ -158,3 +156,10 @@ class NetworkResource(ComponentResource):
         raise ValueError(
             "Proxy container must have either common network or container network config"
         )
+
+    def get_proxy_bridges(self) -> dict[str, ContainerBridgeNetworkConfig]:
+        proxy_config = self.config.proxy
+        proxy_service, proxy_container = self.compute_proxy(
+            proxy_config.service, proxy_config.container
+        )
+        return self.options[proxy_service][proxy_container].bridges

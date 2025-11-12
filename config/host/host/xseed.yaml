@@ -4,14 +4,6 @@ docker:
       xseed:
         repo: ghcr.io/cross-seed/cross-seed
         tag: "6.13.5"
-  network:
-    proxy:
-      aliases:
-        xseed:
-          - hostname: qbittorrent
-          - hostname: starr-radarr
-          - hostname: starr-sonarr
-          - hostname: starr-prowlarr
   volumes:
     local:
       xseed-config:
@@ -24,6 +16,14 @@ docker:
 services:
   xseed:
     config: {}
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - hostname: qbittorrent
+            - hostname: starr-radarr
+            - hostname: starr-sonarr
+            - hostname: starr-prowlarr
     container:
       image: xseed
       command: [daemon]

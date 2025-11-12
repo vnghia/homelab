@@ -10,12 +10,6 @@ docker:
       impress-collaboration:
         repo: lasuite/impress-y-provider
         tag: *impress-version
-  network:
-    proxy:
-      aliases:
-        impress:
-          - record: solar
-            hostname: impress
 services:
   kanidm:
     config:
@@ -87,6 +81,12 @@ services:
         postgres: {}
       valkey:
         valkey: {}
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - record: solar
+              hostname: impress
     secrets:
       django: {}
       collaboration: {}
