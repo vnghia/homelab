@@ -1,0 +1,5 @@
+services:
+  restic:
+    secrets:
+      password:
+        protect: true

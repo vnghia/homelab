@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from homelab_backup_service import BackupService
+from homelab_balite_service import BaliteService
+from homelab_barman_service import BarmanService
 from homelab_dagu_service import DaguService
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -8,6 +11,7 @@ from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_global import GlobalArgs
 from homelab_network.resource.network import NetworkResource
+from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
@@ -81,10 +85,37 @@ class HostBaseNoConfig(HostResourceBase):
         ).build()
 
     def build_final_services_before_file(self) -> None:
-        return None
+        self.barman = BarmanService(
+            self.host_services_config.barman,
+            opts=self.child_opts,
+            backup_config=self.host_services_config.backup.config,
+            extractor_args=self.extractor_args,
+        )
+
+        self.balite = BaliteService(
+            self.host_services_config.balite,
+            opts=self.child_opts,
+            backup_config=self.host_services_config.backup.config,
+            extractor_args=self.extractor_args,
+        )
+
+        self.restic = ResticService(
+            self.host_services_config.restic,
+            opts=self.child_opts,
+            backup_config=self.host_services_config.backup.config,
+            barman_service=self.barman,
+            balite_service=self.balite,
+            extractor_args=self.extractor_args,
+        )
 
     def build_final_services_after_file(self) -> None:
-        return None
+        self.backup = BackupService(
+            self.host_services_config.backup,
+            opts=self.child_opts,
+            dagu_service=self.dagu,
+            restic_service=self.restic,
+            extractor_args=self.extractor_args,
+        )
 
     def build_file(self) -> None:
         self.file = File(

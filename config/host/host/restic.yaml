@@ -21,7 +21,11 @@ services:
       hostname:
         hvariable: FULL_HOSTNAME
       password:
-        secret: password
+        host: sun
+        extract:
+          service: restic
+          extract:
+            secret: password
       keep:
         last:
           daily: 7
@@ -29,8 +33,13 @@ services:
         dotenvs:
           dotenv:
             envs:
+              RESTIC_REPOSITORY:
               RESTIC_PASSWORD:
-                secret: password
+                host: sun
+                extract:
+                  service: restic
+                  extract:
+                    secret: password
         docker:
           executor:
             run:
@@ -103,9 +112,6 @@ services:
                   - forget
     network:
       bridge:
-    secrets:
-      password:
-        protect: true
     container:
       active: false
       image: resticprofile
