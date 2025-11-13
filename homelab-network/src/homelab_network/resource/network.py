@@ -1,8 +1,8 @@
 from homelab_global import GlobalArgs
+from homelab_pydantic import Hostnames
 from pulumi import ComponentResource, ResourceOptions
 
 from ..config import NetworkConfig
-from ..model.hostname import Hostnames
 from .token import TokenResource
 
 

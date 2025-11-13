@@ -6,8 +6,7 @@ from typing import Any, Protocol, Self, TypeVar
 
 import pulumi_random as random
 from homelab_global import GlobalArgs
-from homelab_network.model.hostname import Hostnames
-from homelab_pydantic import AbsolutePath
+from homelab_pydantic import AbsolutePath, Hostnames
 from pulumi import Output
 
 if typing.TYPE_CHECKING:

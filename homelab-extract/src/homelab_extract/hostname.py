@@ -1,5 +1,4 @@
-from homelab_network.model.hostname import Hostnames
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, Hostnames
 
 
 class GlobalExtractHostnameSource(HomelabBaseModel):

@@ -1,7 +1,7 @@
 from typing import Any
 
 from homelab_extract.hostname import GlobalExtractHostnameSource
-from homelab_network.model.hostname import Hostnames
+from homelab_pydantic import Hostnames
 from pulumi import ComponentResource, ResourceOptions
 
 from ...model.keepass.entry import KeepassEntryModel

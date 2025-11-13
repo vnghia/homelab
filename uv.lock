@@ -968,14 +968,12 @@ name = "homelab-extract"
 version = "0.1.0"
 source = { editable = "homelab-extract" }
 dependencies = [
-    { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1146,7 +1144,6 @@ version = "0.1.0"
 source = { editable = "homelab-secret" }
 dependencies = [
     { name = "homelab-extract" },
-    { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
     { name = "pulumi-random" },
@@ -1158,7 +1155,6 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.147.0" },
     { name = "pulumi-random", specifier = ">=4.17.0" },

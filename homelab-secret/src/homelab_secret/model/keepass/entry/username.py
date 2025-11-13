@@ -1,6 +1,5 @@
 from homelab_extract.hostname import GlobalExtractHostnameSource
-from homelab_network.model.hostname import Hostnames
-from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel, Hostnames
 from pulumi import Output, ResourceOptions
 
 from ...password import SecretPasswordModel

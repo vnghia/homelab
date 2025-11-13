@@ -1,9 +1,8 @@
 from typing import Any
 
 import pulumi_cloudflare as cloudflare
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, Hostname
 
-from ..model.hostname import Hostname
 from ..model.ip import NetworkIpModel, NetworkIpSource
 from ..model.record import RecordModel
 from .ip import NetworkIpConfig
