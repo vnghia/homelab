@@ -8,7 +8,7 @@ from homelab_extract.host.info import HostExtractInfoSource
 from homelab_extract.host.network import HostExtractNetworkSource
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
-from pydantic import IPvAnyNetwork, ValidationError
+from pydantic import ValidationError
 
 from .. import ExtractorBase
 from ..service import ServiceExtractor
@@ -40,7 +40,7 @@ class HostSourceExtractor(ExtractorBase[HostExtractSource]):
 
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | dict[str, Output[str]] | list[Output[IPvAnyNetwork]]:
+    ) -> str | Output[str] | dict[str, Output[str]] | list[Output[str]]:
         return self.extractor.extract_str(extractor_args)
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
@@ -77,7 +77,7 @@ class HostFullExtractor(ExtractorBase[HostExtractFull]):
         | Output[str]
         | random.RandomPassword
         | dict[str, Output[str]]
-        | list[Output[IPvAnyNetwork]]
+        | list[Output[str]]
     ):
         extractor = self.extractor
         transformer = self.transfomer
@@ -144,7 +144,7 @@ class HostExtractor(ExtractorBase[HostExtract]):
         | Output[str]
         | random.RandomPassword
         | dict[str, Output[str]]
-        | list[Output[IPvAnyNetwork]]
+        | list[Output[str]]
     ):
         return self.extractor.extract_str(extractor_args)
 

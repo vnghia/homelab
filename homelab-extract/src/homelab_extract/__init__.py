@@ -30,7 +30,7 @@ class GlobalExtractSource(
 class GlobalExtractFull(HomelabBaseModel):
     host: str | None = None
     extract: HostExtract | GlobalExtractSource
-    transform: ExtractTransform = ExtractTransform()
+    transform: ExtractTransform | None = ExtractTransform()
 
 
 class GlobalExtract(

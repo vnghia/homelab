@@ -56,7 +56,7 @@ class NetworkResource(ComponentResource):
         ] = defaultdict(lambda: defaultdict(ContainerNetworkModelBuildArgs))
 
         self.service_networks = []
-        self.service_subnets: dict[str, list[Output[IPvAnyNetwork]]] = {}
+        self.service_subnets: dict[str, list[Output[str]]] = {}
         self.service_egresses: dict[
             str, dict[ServiceNetworkProxyEgressType, dict[str, GlobalExtract]]
         ] = {}
@@ -168,7 +168,7 @@ class NetworkResource(ComponentResource):
             for build_ipam_fn in build_ipam_fns:
                 model = service_sequence.apply(build_ipam_fn)
                 self.service_subnets[service].append(
-                    model.apply(lambda model: model.subnet)
+                    model.apply(lambda model: str(model.subnet))
                 )
                 ipam.append(model)
 

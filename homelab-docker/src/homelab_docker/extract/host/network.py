@@ -4,7 +4,6 @@ import typing
 
 from homelab_extract.host.network import HostExtractNetworkSource, HostNetworkInfoSource
 from pulumi import Output
-from pydantic import IPvAnyNetwork
 
 from .. import ExtractorBase
 
@@ -13,7 +12,7 @@ if typing.TYPE_CHECKING:
 
 
 class HostNetworkSourceExtractor(ExtractorBase[HostExtractNetworkSource]):
-    def extract_str(self, extractor_args: ExtractorArgs) -> list[Output[IPvAnyNetwork]]:
+    def extract_str(self, extractor_args: ExtractorArgs) -> list[Output[str]]:
         info = self.root.info
         match info:
             case HostNetworkInfoSource.SUBNET:

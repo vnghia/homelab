@@ -7,7 +7,6 @@ import pulumi_random as random
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath, HomelabRootModel
 from pulumi import Input, Output
-from pydantic import IPvAnyNetwork
 
 from .path import ExtractPathTransformer
 from .secret import ExtractSecretTransformer
@@ -24,7 +23,7 @@ class ExtractTransformer(HomelabRootModel[ExtractTransform]):
         | random.RandomPassword
         | dict[str, Output[str]]
         | dict[Output[str], Any]
-        | list[Output[IPvAnyNetwork]],
+        | list[Output[str]],
     ) -> Output[str]:
         root = self.root
         if not isinstance(value, (dict, list)):
