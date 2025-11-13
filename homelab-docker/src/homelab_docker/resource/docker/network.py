@@ -7,8 +7,8 @@ from homelab_extract import GlobalExtract
 from homelab_global import GlobalArgs
 from homelab_pydantic import IPvAnyNetworkAdapter
 from homelab_sequence import HomelabSequenceResource
-from pulumi import ComponentResource, Input, ResourceOptions
-from pydantic import IPvAnyNetwork, NonPositiveInt
+from pulumi import ComponentResource, Input, Output, ResourceOptions
+from pydantic import IPvAnyNetwork, NonNegativeInt
 
 from ...config.service.network import (
     ServiceNetworkBridgeConfig,
@@ -56,6 +56,7 @@ class NetworkResource(ComponentResource):
         ] = defaultdict(lambda: defaultdict(ContainerNetworkModelBuildArgs))
 
         self.service_networks = []
+        self.service_subnets: dict[str, list[Output[IPvAnyNetwork]]] = {}
         self.service_egresses: dict[
             str, dict[ServiceNetworkProxyEgressType, dict[str, GlobalExtract]]
         ] = {}
@@ -106,7 +107,7 @@ class NetworkResource(ComponentResource):
 
     @classmethod
     def build_ipam(
-        cls, sequence: NonPositiveInt, subnet: IPvAnyNetwork
+        cls, sequence: NonNegativeInt, subnet: IPvAnyNetwork
     ) -> BridgeIpamNetworkModel:
         return BridgeIpamNetworkModel.model_construct(
             subnet=IPvAnyNetworkAdapter.validate_python(
@@ -153,6 +154,7 @@ class NetworkResource(ComponentResource):
         service_network_sequence = HomelabSequenceResource(
             "service", opts=self.child_opts, names=self.service_networks
         )
+
         build_ipam_fns = [
             partial(self.__class__.build_ipam, subnet=ipam)
             for ipam in self.config.bridge.service
@@ -160,14 +162,21 @@ class NetworkResource(ComponentResource):
         for service in self.service_networks:
             service_sequence = service_network_sequence[service]
             self.bridge_config[service] = service_network_model
+            self.service_subnets[service] = []
+
+            ipam = []
+            for build_ipam_fn in build_ipam_fns:
+                model = service_sequence.apply(build_ipam_fn)
+                self.service_subnets[service].append(
+                    model.apply(lambda model: model.subnet)
+                )
+                ipam.append(model)
+
             self.bridge[service] = service_network_model.build_resource(
                 self.get_bridge_name(service),
                 opts=self.child_opts,
                 project_labels=global_args.project.labels,
-                ipam=[
-                    service_sequence.apply(build_ipam_fn)
-                    for build_ipam_fn in build_ipam_fns
-                ],
+                ipam=ipam,
             )
 
     @classmethod

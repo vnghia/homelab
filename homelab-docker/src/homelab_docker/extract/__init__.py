@@ -9,6 +9,7 @@ from homelab_global import GlobalArgs
 from homelab_network.model.hostname import Hostnames
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
+from pydantic import IPvAnyNetwork
 
 if typing.TYPE_CHECKING:
     from ..config.host import HostServiceModelConfig
@@ -240,6 +241,7 @@ class ExtractorBase(Protocol[T]):
         | dict[str, Output[str]]
         | random.RandomPassword
         | dict[Output[str], Any]
+        | list[Output[IPvAnyNetwork]]
     ):
         raise TypeError("Could not extract str from {}".format(self.name))
 

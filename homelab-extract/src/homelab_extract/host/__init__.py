@@ -5,11 +5,14 @@ from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from ..service import ServiceExtract
 from ..transform import ExtractTransform
 from .info import HostExtractInfoSource
+from .network import HostExtractNetworkSource
 from .variable import HostExtractVariableSource
 
 
 class HostExtractSource(
-    HomelabRootModel[HostExtractInfoSource | HostExtractVariableSource]
+    HomelabRootModel[
+        HostExtractInfoSource | HostExtractNetworkSource | HostExtractVariableSource
+    ]
 ):
     pass
 

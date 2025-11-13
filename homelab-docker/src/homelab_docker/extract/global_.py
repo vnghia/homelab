@@ -12,7 +12,7 @@ from homelab_extract.project import GlobalExtractProjectSource
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
-from pydantic import ValidationError
+from pydantic import IPvAnyNetwork, ValidationError
 
 from . import ExtractorBase
 from .config import GlobalConfigSourceExtractor
@@ -150,7 +150,13 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
 
     def extract_str_explicit_transform(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | dict[str, Output[str]] | dict[Output[str], Any]:
+    ) -> (
+        str
+        | Output[str]
+        | dict[str, Output[str]]
+        | dict[Output[str], Any]
+        | list[Output[IPvAnyNetwork]]
+    ):
         root = self.root.root
 
         if isinstance(root, GlobalExtractFull):
