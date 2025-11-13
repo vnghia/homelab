@@ -97,9 +97,6 @@ class NetworkResource(ComponentResource):
                         container_model.ports.with_service(service_name, False)
                     )
 
-        self.proxy_option.bridges = dict(
-            sorted(self.proxy_option.bridges.items(), key=lambda x: x[0])
-        )
         self.build_service_networks(global_args)
 
         for value in self.bridge.values():
