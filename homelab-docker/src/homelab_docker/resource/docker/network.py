@@ -14,7 +14,9 @@ from ...config.service.network import (
     ServiceNetworkBridgeConfig,
     ServiceNetworkProxyEgressType,
 )
+from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerNetworkModelBuildArgs
+from ...model.docker.container.host import ContainerHostConfig, ContainerHostFullConfig
 from ...model.docker.container.network import (
     ContainerBridgeNetworkConfig,
     ContainerCommonNetworkConfig,
@@ -34,6 +36,7 @@ class NetworkResource(ComponentResource):
         opts: ResourceOptions,
         global_args: GlobalArgs,
         host: str,
+        extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -75,7 +78,7 @@ class NetworkResource(ComponentResource):
             if service_network.bridge:
                 self.service_networks.append(service_name)
                 self.build_service_proxy_bridge_config(
-                    service_name, service_network.bridge
+                    service_name, service_network.bridge, extractor_args
                 )
 
             for container_model in service_model.containers.values():
@@ -119,7 +122,10 @@ class NetworkResource(ComponentResource):
         )
 
     def build_service_proxy_bridge_config(
-        self, service: str, bridge_config: ServiceNetworkBridgeConfig
+        self,
+        service: str,
+        bridge_config: ServiceNetworkBridgeConfig,
+        extractor_args: ExtractorArgs,
     ) -> None:
         proxy_bridge_config = self.config.proxy.bridge
         aliases = proxy_bridge_config.aliases
@@ -137,12 +143,30 @@ class NetworkResource(ComponentResource):
             self.service_egresses[service] = {}
             for egress_type, egress in proxy_config.egress.items():
                 self.service_egresses[service][egress_type] = {}
+                proxy_hosts = []
+
                 for egress_key, egress_model in egress.items():
-                    service_egress_model = egress_model.with_service(service, False)
-                    self.service_egresses[service][egress_type][egress_key] = (
-                        egress_model
+                    service_egress_model = egress_model.with_service(service).to_full(
+                        extractor_args
                     )
-                    aliases.append(service_egress_model)
+
+                    self.service_egresses[service][egress_type][egress_key] = (
+                        service_egress_model.address
+                    )
+                    aliases.append(service_egress_model.address)
+
+                    if service_egress_model.ip:
+                        proxy_hosts.append(
+                            ContainerHostConfig(
+                                ContainerHostFullConfig(
+                                    host=service_egress_model.address,
+                                    ip=service_egress_model.ip,
+                                )
+                            )
+                        )
+
+                if proxy_hosts:
+                    self.proxy_option.add_hosts(proxy_hosts)
 
         if aliases is not proxy_bridge_config.aliases:
             proxy_bridge_config = proxy_bridge_config.__replace__(aliases=aliases)

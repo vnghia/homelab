@@ -51,17 +51,16 @@ class HostResourceBase(ComponentResource):
 
         self.network = network_resource
 
-        self.docker = DockerResource(
-            self.model,
-            opts=self.child_opts,
-            global_args=global_args,
-            host=self.name(),
-        )
-
-        self.services: dict[str, ServiceResourceBase] = {}
         self.extractor_args = ExtractorArgs.from_host(
             global_args, network_resource.hostnames, config, self
         )
+        self.docker = DockerResource(
+            self.name(),
+            opts=self.child_opts,
+            extractor_args=self.extractor_args,
+        )
+
+        self.services: dict[str, ServiceResourceBase] = {}
 
         FileVolumeProxy.pull_image(self.model.access.ssh)
 

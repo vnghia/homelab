@@ -1,7 +1,6 @@
-from homelab_global import GlobalArgs
 from pulumi import ComponentResource, ResourceOptions
 
-from ...model.host import HostServiceModelModel
+from ...extract import ExtractorArgs
 from .image import ImageResource
 from .network import NetworkResource
 from .plugin import PluginResource
@@ -13,27 +12,28 @@ class DockerResource(ComponentResource):
 
     def __init__(
         self,
-        model: HostServiceModelModel,
+        host: str,
         *,
         opts: ResourceOptions,
-        global_args: GlobalArgs,
-        host: str,
+        extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+        model = extractor_args.host_model
         self.host = host
 
         self.network = NetworkResource(
             config=model,
             opts=self.child_opts,
-            global_args=global_args,
+            global_args=extractor_args.global_args,
             host=host,
+            extractor_args=extractor_args,
         )
         self.image = ImageResource(
             config=model.docker,
             opts=self.child_opts,
-            global_args=global_args,
+            global_args=extractor_args.global_args,
             host=self.host,
         )
         self.plugin = PluginResource(
@@ -44,7 +44,7 @@ class DockerResource(ComponentResource):
         self.volume = VolumeResource(
             config=model,
             opts=self.child_opts,
-            global_args=global_args,
+            global_args=extractor_args.global_args,
             host=self.host,
         )
 

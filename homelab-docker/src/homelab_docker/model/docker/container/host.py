@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 from enum import StrEnum, auto
-from typing import ClassVar
+from typing import ClassVar, Self
 
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
@@ -19,6 +19,9 @@ class HostMode(StrEnum):
 class ContainerHostFullConfig(HomelabBaseModel):
     host: GlobalExtract
     ip: GlobalExtract
+
+    def to_full(self, extractor_args: ExtractorArgs) -> Self:
+        return self
 
     def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHostArgs:
         from ....extract.global_ import GlobalExtractor
@@ -40,7 +43,7 @@ class ContainerHostHostConfig(HomelabBaseModel):
     internal: bool
     hostname: GlobalExtract | None = None
 
-    def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHostArgs:
+    def to_full(self, extractor_args: ExtractorArgs) -> ContainerHostFullConfig:
         host_model = extractor_args.get_host_model(self.host)
         return ContainerHostFullConfig(
             host=self.hostname
@@ -53,7 +56,7 @@ class ContainerHostHostConfig(HomelabBaseModel):
                     else host_model.ip.external_
                 )
             ),
-        ).to_args(extractor_args)
+        )
 
     def with_service(self, service: str, force: bool) -> ContainerHostHostConfig:
         return self.__replace__(
@@ -67,13 +70,13 @@ class ContainerHostModeConfig(HomelabBaseModel):
 
     mode: HostMode
 
-    def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHostArgs:
+    def to_full(self, extractor_args: ExtractorArgs) -> ContainerHostFullConfig:
         match self.mode:
             case HostMode.LOCALHOST:
                 return ContainerHostFullConfig(
                     host=GlobalExtract.from_simple(self.LOCALHOST_HOST),
                     ip=GlobalExtract.from_simple(self.LOCALHOST_IP),
-                ).to_args(extractor_args)
+                )
 
     def with_service(self, service: str, force: bool) -> ContainerHostModeConfig:
         return self
@@ -85,7 +88,7 @@ class ContainerHostConfig(
     ]
 ):
     def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHostArgs:
-        return self.root.to_args(extractor_args)
+        return self.root.to_full(extractor_args).to_args(extractor_args)
 
     def with_service(self, service: str, force: bool) -> ContainerHostConfig:
         return ContainerHostConfig(self.root.with_service(service, force))
