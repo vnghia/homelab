@@ -5,6 +5,7 @@ from typing import Any
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 from ..type import TraefikDynamicType
+from .ipwhitelist import TraefikDynamicMiddlewareIpWhitelistModel
 
 
 class TraefikDynamicMiddlewareUseModel(HomelabBaseModel):
@@ -15,7 +16,7 @@ class TraefikDynamicMiddlewareUseModel(HomelabBaseModel):
 class TraefikDynamicMiddlewareBuildModel(HomelabBaseModel):
     type: TraefikDynamicType = TraefikDynamicType.HTTP
     name: str | None = None
-    data: Any
+    data: TraefikDynamicMiddlewareIpWhitelistModel | dict[str, Any]
     plugin: str | None = None
 
 

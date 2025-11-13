@@ -74,23 +74,19 @@ services:
           https: private-https
       traefik:
         dynamic:
+          local:
+            name: local
+            data: &local-middleware
+              source-range:
+                - "10.0.0.0/8"
+                - "100.64.0.0/10"
+                - "172.16.0.0/12"
+                - "192.168.0.0/16"
+                - "fc00::/7"
           local-tcp:
             name: local-tcp
             type: tcp
-            data:
-              ipAllowList: &local-middleware
-                sourceRange:
-                  - "10.0.0.0/8"
-                  - "100.64.0.0/10"
-                  - "172.16.0.0/12"
-                  - "192.168.0.0/16"
-                  - "fc00::/7"
-          local:
-            name: local
-            data:
-              ipAllowList:
-                <<: *local-middleware
-                rejectStatusCode: 404
+            data: *local-middleware
     network:
       bridge:
     container:

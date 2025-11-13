@@ -10,6 +10,9 @@ from homelab_traefik_config.model.dynamic.middleware import (
     TraefikDynamicMiddlewareBuildModel,
     TraefikDynamicMiddlewareModel,
 )
+from homelab_traefik_config.model.dynamic.middleware.ipwhitelist import (
+    TraefikDynamicMiddlewareIpWhitelistModel,
+)
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import ResourceOptions
 
@@ -27,7 +30,11 @@ class TraefikDynamicMiddlewareBuildModelBuilder(
         root = self.root
 
         name = extractor_args.service.add_service_name(root.name)
-        section = GlobalExtractor.extract_recursively(root.data, extractor_args)
+
+        if isinstance(root.data, TraefikDynamicMiddlewareIpWhitelistModel):
+            section = root.data.to_data(root.type, extractor_args)
+        else:
+            section = GlobalExtractor.extract_recursively(root.data, extractor_args)
 
         if root.plugin:
             traefik_service.config.plugins[root.plugin]
