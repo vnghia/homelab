@@ -1,13 +1,51 @@
 services:
   dagu:
+    variables:
+      EARTH_HOSTNAME:
+        record: earth
+        hostname: dagu
     secrets:
-      token:
+      username:
+        active: false
+      password:
         active: false
     files:
       config:
         content:
           data:
             headless: false
+            remoteNodes:
+              - name: earth
+                apiBaseURL:
+                  extract:
+                    svariable: EARTH_HOSTNAME
+                  transform:
+                    string:
+                      template: "https://{value}/api/v2"
+                isBasicAuth: true
+                basicAuthUsername:
+                  host: earth
+                  extract:
+                    service: dagu
+                    extract:
+                      secret: username
+                basicAuthPassword:
+                  host: earth
+                  extract:
+                    service: dagu
+                    extract:
+                      secret: password
+    network:
+      bridge:
+        proxy:
+          egress:
+            https:
+              earth:
+                hostname:
+                  svariable: EARTH_HOSTNAME
+                host: earth
+                internal: true
     container:
       envs:
-        DAGU_AUTH_TOKEN:
+        DAGU_AUTH_BASIC_USERNAME:
+        DAGU_AUTH_BASIC_PASSWORD:
