@@ -14,8 +14,8 @@ from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import ResourceOptions
 
 if typing.TYPE_CHECKING:
-    from ... import TraefikService
-    from ...resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
+    from .... import TraefikService
+    from ....resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
 
 
 class TraefikDynamicMiddlewareBuildModelBuilder(
@@ -51,7 +51,9 @@ class TraefikDynamicMiddlewareBuildModelBuilder(
         traefik_service: TraefikService,
         extractor_args: ExtractorArgs,
     ) -> TraefikDynamicMiddlwareConfigResource:
-        from ...resource.dynamic.middleware import TraefikDynamicMiddlwareConfigResource
+        from ....resource.dynamic.middleware import (
+            TraefikDynamicMiddlwareConfigResource,
+        )
 
         resource = TraefikDynamicMiddlwareConfigResource(
             resource_name,

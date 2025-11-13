@@ -4,7 +4,7 @@ from typing import Any
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
-from .type import TraefikDynamicType
+from ..type import TraefikDynamicType
 
 
 class TraefikDynamicMiddlewareUseModel(HomelabBaseModel):
