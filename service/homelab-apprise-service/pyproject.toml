@@ -6,8 +6,8 @@ requires-python = ">=3.13.1"
 dependencies = ["homelab-docker", "homelab-extra-service", "pulumi>=3.148.0"]
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build"]
+build-backend = "uv_build"
 
 [tool.ruff]
 extend = "../../pyproject.toml"

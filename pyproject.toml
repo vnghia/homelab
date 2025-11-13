@@ -35,8 +35,8 @@ requires-python = ">= 3.13.1"
 classifiers = ["Private :: Do Not Upload"]
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build"]
+build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
@@ -78,12 +78,6 @@ homelab-kanidm-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }
 homelab-traefik-service = { workspace = true }
-
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/homelab"]
 
 [tool.uv.workspace]
 members = ["homelab-*", "config/homelab-*", "service/homelab-*"]

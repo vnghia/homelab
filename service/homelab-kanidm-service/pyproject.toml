@@ -18,8 +18,8 @@ dependencies = [
 dev = ["types-pexpect>=4.9.0.20250916"]
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build"]
+build-backend = "uv_build"
 
 [tool.ruff]
 extend = "../../pyproject.toml"
