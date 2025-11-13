@@ -79,9 +79,6 @@ services:
         timeout: 30s
         retries: 5
         start-period: 30s
-      network:
-        bridge:
-          default: {}
       volumes:
         dozzle-cert:
           path: /etc/dozzle/cert

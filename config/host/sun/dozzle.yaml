@@ -9,13 +9,18 @@ services:
         dynamic:
           agent:
             active: false
+    network:
+      bridge:
+        proxy:
+          egress:
+            https:
+              earth:
+                hostname:
+                  svariable: EARTH_HOSTNAME
+                host: earth
+                internal: true
     container:
       active: true
-      hosts:
-        - hostname:
-            svariable: EARTH_HOSTNAME
-          host: earth
-          internal: true
       envs:
         DOZZLE_REMOTE_AGENT:
           extract:
