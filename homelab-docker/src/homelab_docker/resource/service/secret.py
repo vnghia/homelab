@@ -30,7 +30,8 @@ class ServiceSecretResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.secrets = SecretResource(secrets={})
-        for name, model in config.root.items():
+        for name, model_root in config.root.items():
+            model = model_root.root
             if model.active:
                 if isinstance(model, SecretCertModel):
                     self.secrets.secrets[name] = SecretCertBuilder(

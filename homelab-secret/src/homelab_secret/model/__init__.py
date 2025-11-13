@@ -1,19 +1,14 @@
-from homelab_pydantic import HomelabBaseModel
-from pulumi import ComponentResource, ResourceOptions
+from homelab_pydantic import HomelabRootModel
+
+from .cert import SecretCertModel
+from .key import SecretKeyModel
+from .password import SecretPasswordModel
+from .uuid import SecretUuidModel
 
 
-class SecretModel(HomelabBaseModel):
-    active: bool = True
-    protect: bool = False
-
-    def opts(self, opts: ResourceOptions) -> ResourceOptions:
-        return ResourceOptions.merge(
-            opts,
-            ResourceOptions(
-                protect=self.protect or opts.protect,
-                additional_secret_outputs=["result"],
-            ),
-        )
-
-    def child_opts(self, t: str, name: str, opts: ResourceOptions) -> ResourceOptions:
-        return ResourceOptions(parent=ComponentResource(t, name, None, self.opts(opts)))
+class SecretModel(
+    HomelabRootModel[
+        SecretCertModel | SecretPasswordModel | SecretUuidModel | SecretKeyModel
+    ]
+):
+    pass

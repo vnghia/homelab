@@ -6,13 +6,13 @@ import pulumi_random as random
 from pulumi import ResourceOptions
 from pydantic import PositiveInt
 
-from . import SecretModel
+from .base import SecretBaseModel
 
 if typing.TYPE_CHECKING:
     from ..resource import SecretResource
 
 
-class SecretPasswordModel(SecretModel):
+class SecretPasswordModel(SecretBaseModel):
     length: PositiveInt = 64
     special: bool | None = None
     upper: bool | None = None

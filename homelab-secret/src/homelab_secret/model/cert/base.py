@@ -4,7 +4,7 @@ from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from pydantic import PositiveInt
 
-from .. import SecretModel
+from ..base import SecretBaseModel
 
 
 class SecretCertSubjectModel(HomelabBaseModel):
@@ -12,7 +12,7 @@ class SecretCertSubjectModel(HomelabBaseModel):
     organizational_unit: GlobalExtract | None = None
 
 
-class SecretCertBaseModel(SecretModel):
+class SecretCertBaseModel(SecretBaseModel):
     allowed_uses: list[str] = ["any_extended"]
     validity_period_hours: PositiveInt = 100 * 365 * 24  # 100 years
     is_ca_certificate: bool | None = None

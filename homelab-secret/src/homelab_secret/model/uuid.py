@@ -5,13 +5,13 @@ import typing
 import pulumi_random as random
 from pulumi import ResourceOptions
 
-from . import SecretModel
+from .base import SecretBaseModel
 
 if typing.TYPE_CHECKING:
     from ..resource import SecretResource
 
 
-class SecretUuidModel(SecretModel):
+class SecretUuidModel(SecretBaseModel):
     uuid: None
 
     def build_resource(

@@ -1,8 +1,8 @@
 from homelab_extract import GlobalExtract
 
-from ...model import SecretModel
+from ...model.base import SecretBaseModel
 
 
-class SecretMTlsCertModel(SecretModel):
+class SecretMTlsCertModel(SecretBaseModel):
     algorithm: str
     hostname: GlobalExtract

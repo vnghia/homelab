@@ -6,13 +6,13 @@ import pulumi_tls as tls
 from pulumi import ResourceOptions
 from pydantic import PositiveInt
 
-from . import SecretModel
+from .base import SecretBaseModel
 
 if typing.TYPE_CHECKING:
     from ..resource import SecretResource
 
 
-class SecretKeyModel(SecretModel):
+class SecretKeyModel(SecretBaseModel):
     algorithm: str
     ecdsa_curve: str | None = None
     rsa_bits: PositiveInt | None = None
