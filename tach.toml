@@ -1,4 +1,5 @@
 interfaces = []
+
 exclude = [
     "**/*__pycache__",
     "**/*egg-info",
@@ -7,6 +8,7 @@ exclude = [
     "**/venv",
     "**/image",
 ]
+
 source_roots = [
     "service/homelab-dagu-service/src",
     "service/homelab-restic-service/src",
@@ -35,3 +37,5 @@ source_roots = [
     "homelab-s3/src",
     "homelab-mail/src",
 ]
+
+external.exclude = ["paramiko"]

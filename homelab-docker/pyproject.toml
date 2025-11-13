@@ -23,12 +23,14 @@ dependencies = [
     "pulumi-tls>=5.2.2",
     "homelab-global",
     "homelab-backup",
+    "paramiko>=4.0.0",
 ]
 
 [dependency-groups]
 dev = [
     "types-docker>=7.1.0.20241229",
     "types-jsonschema>=4.23.0.20241208",
+    "types-paramiko>=4.0.0.20250822",
     "types-pyyaml>=6.0.12.20241230",
 ]
 
