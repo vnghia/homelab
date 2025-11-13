@@ -28,8 +28,6 @@ dependencies = [
     "homelab-apprise-service",
     "pulumi>=3.148.0",
     "json-fix>=1.0.0",
-    "pexpect>=4.9.0",
-    "types-pexpect>=4.9.0.20250516",
     "loguru>=0.7.3",
 ]
 readme = "README.md"
@@ -41,7 +39,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-dev = ["mypy>=1.14.1", "datamodel-code-generator[http]>=0.28.1", "ruff>=0.9.6"]
+dev = [
+    "mypy>=1.14.1",
+    "datamodel-code-generator[http]>=0.28.1",
+    "ruff>=0.9.6",
+    "dtach>=0.31.2",
+]
 
 [tool.uv]
 managed = true

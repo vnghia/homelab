@@ -9,8 +9,13 @@ dependencies = [
     "homelab-traefik-config",
     "pydantic>=2.10.6",
     "pulumi>=3.148.0",
-    "pulumi-tls>=5.1.1",
+    "homelab-extract",
+    "homelab-dagu-config",
+    "pexpect>=4.9.0",
 ]
+
+[dependency-groups]
+dev = ["types-pexpect>=4.9.0.20250916"]
 
 [build-system]
 requires = ["hatchling"]

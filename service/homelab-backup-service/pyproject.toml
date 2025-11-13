@@ -12,6 +12,9 @@ dependencies = [
     "homelab-restic-service",
     "pulumi>=3.148.0",
     "pydantic>=2.10.6",
+    "homelab-extract",
+    "homelab-dagu-config",
+    "homelab-balite-service",
 ]
 
 [build-system]

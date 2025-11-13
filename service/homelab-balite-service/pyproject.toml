@@ -9,7 +9,7 @@ dependencies = [
     "homelab-docker",
     "homelab-dagu-config",
     "pulumi>=3.148.0",
-    "pydantic>=2.10.6",
+    "homelab-extract",
 ]
 
 [build-system]

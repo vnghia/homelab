@@ -8,6 +8,7 @@ dependencies = [
     "pydantic>=2.10.6",
     "pulumi>=3.148.0",
     "pulumi-cloudflare>=5.49.0",
+    "homelab-global",
 ]
 
 [build-system]

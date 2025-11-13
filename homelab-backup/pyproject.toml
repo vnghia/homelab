@@ -3,9 +3,7 @@ name = "homelab-backup"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = [
-    "homelab-pydantic",
-]
+dependencies = ["homelab-pydantic", "homelab-extract"]
 
 [build-system]
 requires = ["hatchling"]

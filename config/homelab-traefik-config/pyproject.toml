@@ -3,7 +3,12 @@ name = "homelab-traefik-config"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = ["homelab-pydantic", "homelab-docker", "pydantic>=2.10.6"]
+dependencies = [
+    "homelab-pydantic",
+    "homelab-docker",
+    "pydantic>=2.10.6",
+    "homelab-extract",
+]
 
 [build-system]
 requires = ["hatchling"]

@@ -10,6 +10,7 @@ dependencies = [
     "pulumi>=3.148.0",
     "pulumi-tailscale>=0.17.5",
     "pydantic>=2.10.6",
+    "httpx>=0.28.1",
 ]
 
 [build-system]

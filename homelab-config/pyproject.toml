@@ -8,9 +8,9 @@ dependencies = [
     "homelab-network",
     "homelab-pydantic",
     "pulumi>=3.147.0",
-    "pydantic>=2.10.6",
     "deepmerge>=2.0",
     "pyyaml>=6.0.2",
+    "homelab-global",
 ]
 
 [build-system]

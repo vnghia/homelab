@@ -9,19 +9,24 @@ dependencies = [
     "homelab-secret",
     "homelab-vpn",
     "homelab-network",
-    "homelab-s3",
     "homelab-extract",
     "pulumi-docker>=4.6.1",
     "pydantic>=2.10.6",
     "pydantic-extra-types>=2.10.2",
-    "tzdata>=2025.1",
     "docker>=7.1.0",
-    "paramiko>=3.5.0",
     "tomlkit>=0.13.2",
     "pulumi-random>=4.17.0",
     "pulumi-docker-build>=0.0.10",
     "pyyaml>=6.0.2",
     "jsonschema>=4.23.0",
+    "pulumi>=3.207.0",
+    "pulumi-tls>=5.2.2",
+    "homelab-global",
+    "homelab-backup",
+]
+
+[dependency-groups]
+dev = [
     "types-docker>=7.1.0.20241229",
     "types-jsonschema>=4.23.0.20241208",
     "types-pyyaml>=6.0.12.20241230",
