@@ -12,7 +12,7 @@ from ..type import TraefikDynamicType
 class TraefikDynamicMiddlewareIpWhitelistModel(HomelabBaseModel):
     DEFAULT_REJECT_STATUS_CODE: ClassVar[PositiveInt] = 404
 
-    source_range: list[GlobalExtract]
+    source_range: GlobalExtract | list[GlobalExtract]
     reject_status_code: PositiveInt = DEFAULT_REJECT_STATUS_CODE
 
     def to_data(
@@ -24,6 +24,10 @@ class TraefikDynamicMiddlewareIpWhitelistModel(HomelabBaseModel):
                     GlobalExtractor(source).extract_str(extractor_args)
                     for source in self.source_range
                 ]
+                if isinstance(self.source_range, list)
+                else GlobalExtractor(self.source_range).extract_str_explicit_transform(
+                    extractor_args
+                )
             }
             | (
                 {"rejectStatusCode": self.reject_status_code}
