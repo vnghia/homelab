@@ -3,7 +3,7 @@ docker:
     remote:
       impress-backend:
         repo: lasuite/impress-backend
-        tag: &impress-version "v3.7.0"
+        tag: &impress-version "v3.9.0"
       impress-frontend:
         repo: lasuite/impress-frontend
         tag: *impress-version
@@ -118,7 +118,6 @@ services:
           template: https://github.com/suitenumerique/docs/releases/tag/${original}
           include-prefix: v
         envs:
-          # TODO: Configure OIDC properly after https://github.com/suitenumerique/docs/issues/1186
           DJANGO_ALLOWED_HOSTS:
             hostname: impress
             record: solar
