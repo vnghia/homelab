@@ -3,7 +3,7 @@ docker:
     remote:
       dawarich:
         repo: freikin/dawarich
-        tag: "0.34.2"
+        tag: "0.35.1"
   volumes:
     local:
       dawarich-storage: {}
