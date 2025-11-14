@@ -33,7 +33,10 @@ from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
-from homelab_extract.transform.string import ExtractTransformString
+from homelab_extract.transform.string import (
+    ExtractTransformString,
+    ExtractTransformStringTemplate,
+)
 from homelab_restic_service import ResticService
 from pulumi import ResourceOptions
 
@@ -178,7 +181,9 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                                             )
                                         ),
                                         transform=ExtractTransformString(
-                                            template='".{value}"'
+                                            template=ExtractTransformStringTemplate(
+                                                '".{value}"'
+                                            )
                                         ),
                                     )
                                 ),
