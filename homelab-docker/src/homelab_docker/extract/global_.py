@@ -7,9 +7,8 @@ import pulumi_random as random
 from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
 from homelab_extract.config import GlobalExtractConfigSource
 from homelab_extract.dict_ import GlobalExtractDictSource
-from homelab_extract.hostname import GlobalExtractHostnameSource
 from homelab_extract.kv import GlobalExtractKvSource
-from homelab_extract.project import GlobalExtractProjectSource
+from homelab_extract.plain import GlobalPlainExtractSource
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
@@ -19,10 +18,9 @@ from . import ExtractorBase
 from .config import GlobalConfigSourceExtractor
 from .dict_ import GlobalDictSourceExtractor
 from .host import HostExtractor
-from .hostname import GlobalHostnameSourceExtractor
 from .kv import GlobalKvSourceExtractor
+from .plain import GlobalPlainSourceExtractor
 from .project import GlobalProjectSourceExtractor
-from .simple import GlobalSimpleSourceExtractor
 from .transform import ExtractTransformer
 
 if typing.TYPE_CHECKING:
@@ -37,23 +35,20 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
     ) -> (
         GlobalConfigSourceExtractor
         | GlobalDictSourceExtractor
-        | GlobalHostnameSourceExtractor
         | GlobalKvSourceExtractor
+        | GlobalPlainSourceExtractor
         | GlobalProjectSourceExtractor
-        | GlobalSimpleSourceExtractor
     ):
         root = self.root.root
         if isinstance(root, GlobalExtractConfigSource):
             return GlobalConfigSourceExtractor(root)
         if isinstance(root, GlobalExtractDictSource):
             return GlobalDictSourceExtractor(root)
-        if isinstance(root, GlobalExtractHostnameSource):
-            return GlobalHostnameSourceExtractor(root)
         if isinstance(root, GlobalExtractKvSource):
             return GlobalKvSourceExtractor(root)
-        if isinstance(root, GlobalExtractProjectSource):
-            return GlobalProjectSourceExtractor(root)
-        return GlobalSimpleSourceExtractor(root)
+        if isinstance(root, GlobalPlainExtractSource):
+            return GlobalPlainSourceExtractor(root)
+        return GlobalProjectSourceExtractor(root)
 
     def extract_str(
         self, extractor_args: ExtractorArgs

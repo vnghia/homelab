@@ -7,10 +7,10 @@ from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from .config import GlobalExtractConfigSource
 from .dict_ import GlobalExtractDictSource
 from .host import HostExtract
-from .hostname import GlobalExtractHostnameSource
 from .kv import GlobalExtractKvSource
+from .plain import GlobalPlainExtractSource
+from .plain.type import GlobalPlainExtractTypeSource
 from .project import GlobalExtractProjectSource
-from .simple import GlobalExtractSimpleSource
 from .transform import ExtractTransform
 
 
@@ -18,10 +18,9 @@ class GlobalExtractSource(
     HomelabRootModel[
         GlobalExtractConfigSource
         | GlobalExtractDictSource
-        | GlobalExtractHostnameSource
         | GlobalExtractKvSource
+        | GlobalPlainExtractSource
         | GlobalExtractProjectSource
-        | GlobalExtractSimpleSource
     ]
 ):
     pass
@@ -38,7 +37,11 @@ class GlobalExtract(
 ):
     @classmethod
     def from_simple(cls, value: str) -> Self:
-        return cls(GlobalExtractSource(GlobalExtractSimpleSource(value)))
+        return cls(
+            GlobalExtractSource(
+                GlobalPlainExtractSource(GlobalPlainExtractTypeSource(value))
+            )
+        )
 
     def to_full(self) -> GlobalExtractFull:
         root = self.root

@@ -5,6 +5,7 @@ import typing
 from typing import Any, Protocol, Self, TypeVar
 
 import pulumi_random as random
+from homelab_extract.plain import PlainArgs
 from homelab_global import GlobalArgs
 from homelab_pydantic import AbsolutePath, Hostnames
 from pulumi import Output
@@ -22,8 +23,8 @@ if typing.TYPE_CHECKING:
 
 @dataclasses.dataclass(frozen=True)
 class ExtractorArgs:
+    plain_args: PlainArgs
     global_args: GlobalArgs
-    hostnames: Hostnames
     config: HostServiceModelConfig
     _host: HostResourceBase | HostServiceModelModel | None
     _service: ServiceResourceBase | ServiceModel | None
@@ -38,8 +39,8 @@ class ExtractorArgs:
         host: HostResourceBase,
     ) -> Self:
         return cls(
+            plain_args=PlainArgs(hostnames, host.name()),
             global_args=global_args,
-            hostnames=hostnames,
             config=config,
             _host=host,
             _service=None,
@@ -50,8 +51,8 @@ class ExtractorArgs:
         self, service: ServiceResourceBase, container: str | None = None
     ) -> Self:
         return self.__class__(
+            plain_args=self.plain_args,
             global_args=self.global_args,
-            hostnames=self.hostnames,
             config=self.config,
             _host=self._host,
             _service=service,
@@ -59,6 +60,10 @@ class ExtractorArgs:
                 container, service.container_models.get(container)
             ),
         )
+
+    @property
+    def hostnames(self) -> Hostnames:
+        return self.plain_args.hostnames
 
     @property
     def host(self) -> HostResourceBase:
@@ -171,10 +176,16 @@ class ExtractorArgs:
             and isinstance(self._host, HostResourceBase)
             and host.name() == self._host.name()
         ) or (host is None)
+        host = host or self._host
 
         return self.__class__(
+            plain_args=self.plain_args
+            if same_host
+            else PlainArgs(
+                self.hostnames,
+                host.name() if isinstance(host, HostResourceBase) else None,
+            ),
             global_args=self.global_args,
-            hostnames=self.hostnames,
             config=self.config,
             _host=host or self._host,
             # Clear the service if the host has changed
@@ -187,8 +198,8 @@ class ExtractorArgs:
         from ..resource.service import ServiceResourceBase
 
         return self.__class__(
+            plain_args=self.plain_args,
             global_args=self.global_args,
-            hostnames=self.hostnames,
             config=self.config,
             _host=self._host,
             _service=service or self._service,
@@ -209,8 +220,8 @@ class ExtractorArgs:
         self, container: ContainerResource | ContainerModel | None
     ) -> Self:
         return self.__class__(
+            plain_args=self.plain_args,
             global_args=self.global_args,
-            hostnames=self.hostnames,
             config=self.config,
             _host=self._host,
             _service=self._service,

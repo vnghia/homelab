@@ -1,7 +1,6 @@
 from typing import Any
 
-from homelab_extract.hostname import GlobalExtractHostnameSource
-from homelab_pydantic import Hostnames
+from homelab_extract.plain import PlainArgs
 from pulumi import ComponentResource, ResourceOptions
 
 from ...model.keepass.entry import KeepassEntryModel
@@ -14,22 +13,19 @@ class KeepassEntryResource(ComponentResource):
         model: KeepassEntryModel,
         *,
         opts: ResourceOptions,
-        hostnames: Hostnames,
-        host: str,
+        plain_args: PlainArgs,
     ) -> None:
         super().__init__(resource_name, resource_name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.hostnames = hostnames
-        self.host = host
-
+        self.plain_args = plain_args
         self.model = model
         self.username = self.model.username.to_username(
-            opts=self.child_opts, hostnames=self.hostnames, host=self.host
+            opts=self.child_opts, plain_args=self.plain_args
         )
         self.password = self.model.password.to_password(opts=self.child_opts)
-        self.hostname = self.model.hostname.__replace__(scheme="https").to_hostname(
-            self.hostnames, self.host
+        self.hostname = self.model.hostname.__replace__(scheme="https").to_url(
+            self.plain_args
         )
 
         self.register_outputs({})
@@ -39,11 +35,6 @@ class KeepassEntryResource(ComponentResource):
             "username": self.username,
             "password": self.password.result,
             "hostname": self.hostname,
-            "urls": [
-                url.to_hostname(self.hostnames, self.host)
-                if isinstance(url, GlobalExtractHostnameSource)
-                else url
-                for url in self.model.urls
-            ],
+            "urls": [url.extract_str(self.plain_args) for url in self.model.urls],
             "apps": self.model.apps,
         }
