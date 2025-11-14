@@ -9,6 +9,7 @@ from homelab_extract.config import GlobalExtractConfigSource
 from homelab_extract.dict_ import GlobalExtractDictSource
 from homelab_extract.kv import GlobalExtractKvSource
 from homelab_extract.plain import GlobalPlainExtractSource
+from homelab_extract.project import GlobalExtractProjectSource
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
@@ -21,6 +22,7 @@ from .host import HostExtractor
 from .kv import GlobalKvSourceExtractor
 from .plain import GlobalPlainSourceExtractor
 from .project import GlobalProjectSourceExtractor
+from .secret import GlobalSecretSourceExtractor
 from .transform import ExtractTransformer
 
 if typing.TYPE_CHECKING:
@@ -38,6 +40,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         | GlobalKvSourceExtractor
         | GlobalPlainSourceExtractor
         | GlobalProjectSourceExtractor
+        | GlobalSecretSourceExtractor
     ):
         root = self.root.root
         if isinstance(root, GlobalExtractConfigSource):
@@ -48,11 +51,19 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalKvSourceExtractor(root)
         if isinstance(root, GlobalPlainExtractSource):
             return GlobalPlainSourceExtractor(root)
-        return GlobalProjectSourceExtractor(root)
+        if isinstance(root, GlobalExtractProjectSource):
+            return GlobalProjectSourceExtractor(root)
+        return GlobalSecretSourceExtractor(root)
 
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | dict[str, Output[str]] | dict[Output[str], Any]:
+    ) -> (
+        str
+        | Output[str]
+        | random.RandomPassword
+        | dict[str, Output[str]]
+        | dict[Output[str], Any]
+    ):
         return self.extractor.extract_str(extractor_args)
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:

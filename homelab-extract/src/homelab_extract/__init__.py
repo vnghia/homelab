@@ -10,6 +10,7 @@ from .host import HostExtract
 from .kv import GlobalExtractKvSource
 from .plain import GlobalPlainExtractSource
 from .project import GlobalExtractProjectSource
+from .secret import GlobalExtractSecretSource
 from .transform import ExtractTransform
 
 
@@ -20,6 +21,7 @@ class GlobalExtractSource(
         | GlobalExtractKvSource
         | GlobalPlainExtractSource
         | GlobalExtractProjectSource
+        | GlobalExtractSecretSource
     ]
 ):
     pass
