@@ -11,7 +11,7 @@ class KeepassEntryUsernameEmailModel(HomelabBaseModel):
     hostname: GlobalPlainExtractHostnameSource
 
     def to_email(self, opts: ResourceOptions, plain_args: PlainArgs) -> Output[str]:
-        address = self.address.build_resource("address", opts, None).result
+        address = self.address.build_resource("address", opts, None, plain_args).result
         return Output.concat(address, "@", self.hostname.to_url(plain_args))
 
 
@@ -27,5 +27,5 @@ class KeepassEntryUsernameModel(
         if isinstance(root, KeepassEntryUsernameEmailModel):
             return root.to_email(opts=opts, plain_args=plain_args)
         if isinstance(root, SecretPasswordModel):
-            return root.build_resource("username", opts, None).result
+            return root.build_resource("username", opts, None, plain_args).result
         return Output.from_input(root)

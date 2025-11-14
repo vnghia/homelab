@@ -6,6 +6,7 @@ import pulumi
 import pulumi_tls as tls
 from homelab_extract.service.mtls import MTlsInfoSourceModel
 from homelab_pydantic import HomelabBaseModel
+from homelab_secret.resource import SecretResource
 from homelab_secret.resource.cert.mtls import SecretMTlsResource
 from pulumi import Alias, ComponentResource, Output, ResourceOptions
 from pydantic.alias_generators import to_snake
@@ -19,7 +20,6 @@ from ..file import FileResource
 from ..vpn import VpnModelBuilder
 from .database import ServiceDatabaseResource
 from .keepass import ServiceKeepassResource
-from .secret import ServiceSecretResource
 
 
 class ServiceResourceBase(ComponentResource):
@@ -57,7 +57,7 @@ class ServiceResourceBase(ComponentResource):
         self.model = model
 
         self._database: ServiceDatabaseResource | None = None
-        self._secret: ServiceSecretResource | None = None
+        self._secret: SecretResource | None = None
         self._keepass: ServiceKeepassResource | None = None
 
         self.exports: dict[str, Output[str]] = {}
@@ -109,7 +109,7 @@ class ServiceResourceBase(ComponentResource):
         return self._database
 
     @property
-    def secret(self) -> ServiceSecretResource:
+    def secret(self) -> SecretResource:
         if not self._secret:
             raise ValueError(
                 "{} service is not configured with secret".format(self.name())
@@ -143,11 +143,14 @@ class ServiceResourceBase(ComponentResource):
 
     def build_secrets(self) -> None:
         if self.model.secrets:
-            self._secret = ServiceSecretResource(
-                self.model.secrets, opts=self.child_opts, main_service=self
+            self._secret = SecretResource(
+                self.model.secrets,
+                opts=self.child_opts,
+                name=self.name(),
+                plain_args=self.extractor_args.plain_args,
             )
 
-            for name, secret in self._secret.secrets.secrets.items():
+            for name, secret in self._secret.secrets.items():
                 if isinstance(secret, tls.PrivateKey):
                     pulumi.export(
                         "{}.secret.{}.private-key".format(

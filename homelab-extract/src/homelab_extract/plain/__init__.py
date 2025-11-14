@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Self
 
 from homelab_pydantic import HomelabRootModel, Hostnames
 
@@ -17,3 +18,7 @@ class GlobalPlainExtractSource(
 ):
     def extract_str(self, plain_args: PlainArgs) -> str:
         return self.root.extract_str(plain_args)
+
+    @classmethod
+    def from_simple(cls, value: str) -> Self:
+        return cls(GlobalPlainExtractTypeSource(value))

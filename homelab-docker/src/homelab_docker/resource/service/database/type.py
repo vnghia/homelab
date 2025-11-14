@@ -62,7 +62,10 @@ class ServiceDatabaseTypeResource(ComponentResource):
         self.service_name = extractor_args.service.name()
         self.username = self.service_name
         self.password = SecretPasswordModel(special=False).build_resource(
-            self.short_name, opts=self.child_opts, resource=None
+            self.short_name,
+            opts=self.child_opts,
+            resource=None,
+            plain_args=extractor_args.plain_args,
         )
         self.database = self.service_name
 
@@ -73,6 +76,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 "superuser-{}".format(self.short_name),
                 opts=self.child_opts,
                 resource=None,
+                plain_args=extractor_args.plain_args,
             )
             superuser_password_env[self.config.env.superuser_password] = (
                 self.superuser_password.result

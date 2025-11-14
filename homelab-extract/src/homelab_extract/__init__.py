@@ -9,7 +9,6 @@ from .dict_ import GlobalExtractDictSource
 from .host import HostExtract
 from .kv import GlobalExtractKvSource
 from .plain import GlobalPlainExtractSource
-from .plain.type import GlobalPlainExtractTypeSource
 from .project import GlobalExtractProjectSource
 from .transform import ExtractTransform
 
@@ -37,11 +36,7 @@ class GlobalExtract(
 ):
     @classmethod
     def from_simple(cls, value: str) -> Self:
-        return cls(
-            GlobalExtractSource(
-                GlobalPlainExtractSource(GlobalPlainExtractTypeSource(value))
-            )
-        )
+        return cls(GlobalExtractSource(GlobalPlainExtractSource.from_simple(value)))
 
     def to_full(self) -> GlobalExtractFull:
         root = self.root
