@@ -3,7 +3,7 @@ docker:
     remote:
       flaresolverr:
         repo: ghcr.io/flaresolverr/flaresolverr
-        tag: "v3.4.1"
+        tag: "v3.4.5"
 services:
   flaresolverr:
     config: {}
