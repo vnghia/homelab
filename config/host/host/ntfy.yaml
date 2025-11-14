@@ -17,13 +17,6 @@ docker:
             - env: NTFY_AUTH_FILE
 services:
   ntfy:
-    variables:
-      USER_TOKEN:
-        extract:
-          secret: user-short-token
-        transform:
-          string:
-            template: "tk_{value}"
     config:
       traefik:
         dynamic:
@@ -44,14 +37,6 @@ services:
           record: solar
         apps:
           - io.heckel.ntfy
-    secrets:
-      user-username:
-        length: 16
-        special: false
-      user-password: {}
-      user-short-token:
-        length: 29
-        special: false
     container:
       image: ntfy
       command: ["serve"]
@@ -116,39 +101,23 @@ services:
                 transform:
                   string:
                     template: "{username}:{password}:admin"
-              user:
-                extract:
-                  kv:
-                    username:
-                      secret: user-username
-                    password:
-                      extract:
-                        secret: user-password
-                      transform:
-                        secret:
-                          encode: bcrypt
-                transform:
-                  string:
-                    template: "{username}:{password}:user"
           transform:
             string:
-              template: "{admin},{user}"
+              template:
+                join: ","
         NTFY_AUTH_ACCESS:
           extract:
-            secret: user-username
-          transform:
-            string:
-              template: "{value}:*:wo"
-        NTFY_AUTH_TOKENS:
-          extract:
             kv:
-              user:
-                secret: user-username
-              token:
-                svariable: USER_TOKEN
+              everyone: "everyone:*:none"
           transform:
             string:
-              template: "{user}:{token}"
+              template:
+                join: ","
+        NTFY_AUTH_TOKENS:
+          transform:
+            string:
+              template:
+                join: ","
       volumes:
         ntfy-cache: /var/cache/ntfy
         ntfy-data: /var/lib/ntfy

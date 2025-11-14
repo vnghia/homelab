@@ -8,7 +8,73 @@ docker:
     local:
       wud-storage: {}
 services:
+  ntfy:
+    variables:
+      WUD_TOKEN:
+        service: ntfy
+        extract:
+          secret: wud-short-token
+        transform:
+          string:
+            template: "tk_{value}"
+    secrets:
+      wud-username:
+        length: 16
+        special: false
+      wud-password: {}
+      wud-short-token:
+        length: 29
+        special: false
+    container:
+      envs:
+        NTFY_AUTH_USERS:
+          extract:
+            kv:
+              wud:
+                extract:
+                  kv:
+                    username:
+                      secret: wud-username
+                    password:
+                      extract:
+                        secret: wud-password
+                      transform:
+                        secret:
+                          encode: bcrypt
+                transform:
+                  string:
+                    template: "{username}:{password}:user"
+        NTFY_AUTH_ACCESS:
+          extract:
+            kv:
+              wud:
+                extract:
+                  kv:
+                    username:
+                      secret: wud-username
+                    topic:
+                      service: wud
+                      extract:
+                        svariable: NTFY_TOPIC
+                transform:
+                  string:
+                    template: "{username}:{topic}:wo"
+        NTFY_AUTH_TOKENS:
+          extract:
+            kv:
+              wud:
+                extract:
+                  kv:
+                    username:
+                      secret: wud-username
+                    token:
+                      svariable: WUD_TOKEN
+                transform:
+                  string:
+                    template: "{username}:{token}"
   wud:
+    variables:
+      NTFY_TOPIC: docker
     depends-on: [ntfy]
     config:
       traefik:
@@ -17,6 +83,12 @@ services:
             service:
               port:
                 env: WUD_SERVER_PORT
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - record: solar
+              hostname: ntfy
     container:
       image: wud
       docker-socket:
@@ -43,23 +115,20 @@ services:
       envs:
         WUD_LOG_FORMAT: json
         WUD_SERVER_PORT: 3000
-        WUD_WATCHER_LOCAL_SOCKET: /var/run/docker.sock
-        WUD_WATCHER_LOCAL_WATCHBYDEFAULT: false
-        WUD_WATCHER_LOCAL_WATCHEVENTS: false
+        WUD_WATCHER_SUN_SOCKET: /var/run/docker.sock
+        WUD_WATCHER_SUN_WATCHBYDEFAULT: false
+        WUD_WATCHER_SUN_WATCHEVENTS: false
         WUD_SERVER_FEATURE_DELETE: false
-        WUD_TRIGGER_NTFY_all_AUTH_TOKEN:
+        WUD_TRIGGER_NTFY_ALL_AUTH_TOKEN:
           service: ntfy
           extract:
-            svariable: USER_TOKEN
-        WUD_TRIGGER_NTFY_all_TOPIC: docker
-        WUD_TRIGGER_NTFY_all_URL:
-          service: ntfy
-          extract:
-            env: NTFY_LISTEN_HTTP
-          transform:
-            string:
-              capture: ":(\\d+)"
-              template: "http://ntfy:{value}"
-        WUD_TRIGGER_PUSHOVER_all_USER:
-        WUD_TRIGGER_PUSHOVER_all_TOKEN:
-        WUD_TRIGGER_PUSHOVER_all_HTML: 1
+            svariable: WUD_TOKEN
+        WUD_TRIGGER_NTFY_ALL_TOPIC:
+          svariable: NTFY_TOPIC
+        WUD_TRIGGER_NTFY_ALL_URL:
+          record: solar
+          hostname: ntfy
+          scheme: https
+        WUD_TRIGGER_PUSHOVER_ALL_USER:
+        WUD_TRIGGER_PUSHOVER_ALL_TOKEN:
+        WUD_TRIGGER_PUSHOVER_ALL_HTML: 1

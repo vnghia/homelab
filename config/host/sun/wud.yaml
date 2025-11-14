@@ -3,13 +3,18 @@ services:
     depends-on:
       - docker
     config: {}
+    network:
+      bridge:
+        proxy:
+          egress:
+            https:
+              earth:
+                hostname:
+                  record: earth
+                  hostname: docker-proxy
+                host: earth
+                internal: true
     container:
-      hosts:
-        - host: earth
-          hostname:
-            hostname: docker-proxy
-            record: earth
-          internal: true
       volumes:
         docker-earth-mtls:
           path: /certs/earth
