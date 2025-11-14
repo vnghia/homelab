@@ -41,30 +41,31 @@ class TraefikDynamicServiceFullModelBuilder(
         root = self.root
         service = extractor_args.service
 
-        network_config = service.container_models[root.container].network.root
         if root.external is not None:
             service_name = (
                 GlobalExtractor(root.external).extract_str(extractor_args)
                 if isinstance(root.external, GlobalExtract)
                 else str(root.external)
             )
-        elif isinstance(network_config, ContainerNetworkModeConfig):
-            match network_config.mode:
-                case NetworkMode.HOST:
-                    service_name = ContainerHostModeConfig.LOCALHOST_HOST
-                case NetworkMode.NONE:
-                    raise ValueError(
-                        "Could not route traffic to container with no network"
-                    )
-        elif isinstance(network_config, ContainerNetworkContainerConfig):
-            service_name = self.get_service_name(
-                network_config.container,
-                extractor_args.services[network_config.service]
-                if network_config.service
-                else service,
-            )
         else:
-            service_name = self.get_service_name(root.container, service)
+            network_config = service.container_models[root.container].network.root
+            if isinstance(network_config, ContainerNetworkModeConfig):
+                match network_config.mode:
+                    case NetworkMode.HOST:
+                        service_name = ContainerHostModeConfig.LOCALHOST_HOST
+                    case NetworkMode.NONE:
+                        raise ValueError(
+                            "Could not route traffic to container with no network"
+                        )
+            elif isinstance(network_config, ContainerNetworkContainerConfig):
+                service_name = self.get_service_name(
+                    network_config.container,
+                    extractor_args.services[network_config.service]
+                    if network_config.service
+                    else service,
+                )
+            else:
+                service_name = self.get_service_name(root.container, service)
 
         return Output.format(
             "{}{}:{}",
