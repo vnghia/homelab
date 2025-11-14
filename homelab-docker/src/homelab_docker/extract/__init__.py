@@ -6,7 +6,7 @@ from typing import Any, Protocol, Self, TypeVar
 
 import pulumi_random as random
 from homelab_extract.plain import PlainArgs
-from homelab_global import GlobalArgs
+from homelab_global.resource import GlobalResource
 from homelab_pydantic import AbsolutePath, Hostnames
 from pulumi import Output
 
@@ -24,7 +24,7 @@ if typing.TYPE_CHECKING:
 @dataclasses.dataclass(frozen=True)
 class ExtractorArgs:
     plain_args: PlainArgs
-    global_args: GlobalArgs
+    global_resource: GlobalResource
     config: HostServiceModelConfig
     _host: HostResourceBase | HostServiceModelModel | None
     _service: ServiceResourceBase | ServiceModel | None
@@ -33,14 +33,14 @@ class ExtractorArgs:
     @classmethod
     def from_host(
         cls,
-        global_args: GlobalArgs,
+        global_resource: GlobalResource,
         hostnames: Hostnames,
         config: HostServiceModelConfig,
         host: HostResourceBase,
     ) -> Self:
         return cls(
             plain_args=PlainArgs(hostnames, host.name()),
-            global_args=global_args,
+            global_resource=global_resource,
             config=config,
             _host=host,
             _service=None,
@@ -52,7 +52,7 @@ class ExtractorArgs:
     ) -> Self:
         return self.__class__(
             plain_args=self.plain_args,
-            global_args=self.global_args,
+            global_resource=self.global_resource,
             config=self.config,
             _host=self._host,
             _service=service,
@@ -185,7 +185,7 @@ class ExtractorArgs:
                 self.hostnames,
                 host.name() if isinstance(host, HostResourceBase) else None,
             ),
-            global_args=self.global_args,
+            global_resource=self.global_resource,
             config=self.config,
             _host=host or self._host,
             # Clear the service if the host has changed
@@ -199,7 +199,7 @@ class ExtractorArgs:
 
         return self.__class__(
             plain_args=self.plain_args,
-            global_args=self.global_args,
+            global_resource=self.global_resource,
             config=self.config,
             _host=self._host,
             _service=service or self._service,
@@ -221,7 +221,7 @@ class ExtractorArgs:
     ) -> Self:
         return self.__class__(
             plain_args=self.plain_args,
-            global_args=self.global_args,
+            global_resource=self.global_resource,
             config=self.config,
             _host=self._host,
             _service=self._service,

@@ -4,7 +4,7 @@ from functools import partial
 import pulumi
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
-from homelab_global import GlobalArgs
+from homelab_global import ProjectArgs
 from homelab_pydantic import IPvAnyNetworkAdapter
 from homelab_sequence import HomelabSequenceResource
 from pulumi import ComponentResource, Input, Output, ResourceOptions
@@ -34,7 +34,7 @@ class NetworkResource(ComponentResource):
         config: HostServiceModelModel,
         *,
         opts: ResourceOptions,
-        global_args: GlobalArgs,
+        project_args: ProjectArgs,
         host: str,
         extractor_args: ExtractorArgs,
     ) -> None:
@@ -48,7 +48,7 @@ class NetworkResource(ComponentResource):
             key: model.build_resource(
                 self.get_bridge_name(key),
                 opts=self.child_opts,
-                project_labels=global_args.project.labels,
+                project_labels=project_args.labels,
                 ipam=[],
             )
             for key, model in self.bridge_config.items()
@@ -97,7 +97,7 @@ class NetworkResource(ComponentResource):
                         container_model.ports.with_service(service_name, False)
                     )
 
-        self.build_service_networks(global_args)
+        self.build_service_networks(project_args)
 
         for value in self.bridge.values():
             pulumi.export(
@@ -170,7 +170,7 @@ class NetworkResource(ComponentResource):
 
         self.proxy_option.bridges[service] = proxy_bridge_config
 
-    def build_service_networks(self, global_args: GlobalArgs) -> None:
+    def build_service_networks(self, project_args: ProjectArgs) -> None:
         service_network_model = BridgeNetworkModel(internal=True)
         service_network_sequence = HomelabSequenceResource(
             "service", opts=self.child_opts, names=self.service_networks
@@ -196,7 +196,7 @@ class NetworkResource(ComponentResource):
             self.bridge[service] = service_network_model.build_resource(
                 self.get_bridge_name(service),
                 opts=self.child_opts,
-                project_labels=global_args.project.labels,
+                project_labels=project_args.labels,
                 ipam=ipam,
             )
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pulumi_docker as docker
 import pulumi_docker_build as docker_build
-from homelab_global import GlobalArgs
+from homelab_global.resource import GlobalResource
 from homelab_network.resource.network import NetworkResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
@@ -23,7 +23,7 @@ class HostResourceBase(ComponentResource):
         self,
         *,
         opts: ResourceOptions | None,
-        global_args: GlobalArgs,
+        global_resource: GlobalResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
     ) -> None:
@@ -52,7 +52,7 @@ class HostResourceBase(ComponentResource):
         self.network = network_resource
 
         self.extractor_args = ExtractorArgs.from_host(
-            global_args, network_resource.hostnames, config, self
+            global_resource, network_resource.hostnames, config, self
         )
         self.docker = DockerResource(
             self.name(),

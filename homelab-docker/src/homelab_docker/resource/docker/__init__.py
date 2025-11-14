@@ -26,14 +26,14 @@ class DockerResource(ComponentResource):
         self.network = NetworkResource(
             config=model,
             opts=self.child_opts,
-            global_args=extractor_args.global_args,
+            project_args=extractor_args.global_resource.project_args,
             host=host,
             extractor_args=extractor_args,
         )
         self.image = ImageResource(
             config=model.docker,
             opts=self.child_opts,
-            global_args=extractor_args.global_args,
+            project_args=extractor_args.global_resource.project_args,
             host=self.host,
         )
         self.plugin = PluginResource(
@@ -44,7 +44,7 @@ class DockerResource(ComponentResource):
         self.volume = VolumeResource(
             config=model,
             opts=self.child_opts,
-            global_args=extractor_args.global_args,
+            project_args=extractor_args.global_resource.project_args,
             host=self.host,
         )
 

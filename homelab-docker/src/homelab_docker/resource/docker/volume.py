@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import pulumi
 import pulumi_docker as docker
-from homelab_global import GlobalArgs
+from homelab_global import ProjectArgs
 from pulumi import ComponentResource, ResourceOptions
 
 from ...model.docker.volume import LocalVolumeModel
@@ -25,7 +25,7 @@ class VolumeResource(ComponentResource):
         config: HostServiceModelModel,
         *,
         opts: ResourceOptions,
-        global_args: GlobalArgs,
+        project_args: ProjectArgs,
         host: str,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
@@ -33,7 +33,7 @@ class VolumeResource(ComponentResource):
 
         self.volumes = {
             name: model.build_resource(
-                name, opts=self.child_opts, project_labels=global_args.project.labels
+                name, opts=self.child_opts, project_labels=project_args.labels
             )
             for name, model in config.docker.volumes.local.items()
             if model.active
@@ -52,7 +52,7 @@ class VolumeResource(ComponentResource):
                             self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                 full_initdb_name,
                                 opts=self.child_opts,
-                                project_labels=global_args.project.labels,
+                                project_labels=project_args.labels,
                             )
                         )
 
@@ -64,7 +64,7 @@ class VolumeResource(ComponentResource):
                             self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                 full_name,
                                 opts=self.child_opts,
-                                project_labels=global_args.project.labels,
+                                project_labels=project_args.labels,
                             )
                         )
 
@@ -76,7 +76,7 @@ class VolumeResource(ComponentResource):
                                 self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                     full_tmp_name,
                                     opts=self.child_opts,
-                                    project_labels=global_args.project.labels,
+                                    project_labels=project_args.labels,
                                 )
                             )
 
@@ -88,7 +88,7 @@ class VolumeResource(ComponentResource):
                                 self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                     full_backup_name,
                                     opts=self.child_opts,
-                                    project_labels=global_args.project.labels,
+                                    project_labels=project_args.labels,
                                 )
                             )
 

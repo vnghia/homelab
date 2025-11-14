@@ -1,6 +1,6 @@
 from homelab_ddns_service import DdnsService
 from homelab_docker.config.host import HostServiceModelConfig
-from homelab_global import GlobalArgs
+from homelab_global.resource import GlobalResource
 from homelab_kanidm_service import KanidmService
 from homelab_network.resource.network import NetworkResource
 from pulumi import ResourceOptions
@@ -15,14 +15,14 @@ class SunHost(HostBase[SunServiceConfig]):
         service: SunServiceConfig,
         *,
         opts: ResourceOptions | None,
-        global_args: GlobalArgs,
+        global_resource: GlobalResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
     ) -> None:
         super().__init__(
             service,
             opts=opts,
-            global_args=global_args,
+            global_resource=global_resource,
             network_resource=network_resource,
             config=config,
         )

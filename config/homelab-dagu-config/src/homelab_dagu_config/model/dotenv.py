@@ -14,7 +14,9 @@ class DaguDagDotenvModel(HomelabBaseModel):
             **(
                 {
                     k: Output.from_input(v)
-                    for k, v in extractor_args.global_args.s3[self.s3].to_envs().items()
+                    for k, v in extractor_args.global_resource.config.s3[self.s3]
+                    .to_envs()
+                    .items()
                 }
                 if self.s3
                 else {}

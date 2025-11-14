@@ -7,7 +7,7 @@ import yaml
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.host import HostModel
-from homelab_global import GlobalArgs, ProjectArgs
+from homelab_global import ProjectArgs
 from homelab_global.config import GlobalConfig
 from homelab_network.config import NetworkConfig
 from homelab_pydantic import HomelabBaseModel
@@ -103,11 +103,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
         )
 
     @property
-    def global_args(self) -> GlobalArgs:
-        return GlobalArgs(
-            project=ProjectArgs(
-                name=PROJECT_NAME, stack=PROJECT_STACK, labels=PROJECT_LABELS
-            ),
-            s3=self.global_.s3,
-            mail=self.global_.mail,
+    def project_args(self) -> ProjectArgs:
+        return ProjectArgs(
+            name=PROJECT_NAME, stack=PROJECT_STACK, labels=PROJECT_LABELS
         )

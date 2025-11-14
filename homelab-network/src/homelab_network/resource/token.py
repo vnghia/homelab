@@ -4,7 +4,7 @@ from collections import defaultdict
 from typing import ClassVar, Self
 
 import pulumi_cloudflare as cloudflare
-from homelab_global import GlobalArgs
+from homelab_global import ProjectArgs
 from pulumi import ComponentResource, Output, ResourceOptions
 
 from ..config import NetworkConfig
@@ -55,7 +55,7 @@ class TokenResource(ComponentResource):
         config: NetworkConfig,
         *,
         opts: ResourceOptions,
-        global_args: GlobalArgs,
+        project_args: ProjectArgs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -74,7 +74,7 @@ class TokenResource(ComponentResource):
                 opts=ResourceOptions.merge(
                     self.child_opts, ResourceOptions(delete_before_replace=True)
                 ),
-                name="{}-{}-acme-token".format(global_args.project.prefix, host),
+                name="{}-{}-acme-token".format(project_args.prefix, host),
                 policies=[
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",
@@ -102,7 +102,7 @@ class TokenResource(ComponentResource):
                 opts=ResourceOptions.merge(
                     self.child_opts, ResourceOptions(delete_before_replace=True)
                 ),
-                name="{}-{}-ddns-write-token".format(global_args.project.prefix, host),
+                name="{}-{}-ddns-write-token".format(project_args.prefix, host),
                 policies=[
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",

@@ -3,6 +3,8 @@ from functools import reduce
 
 import json_fix as json_fix
 from homelab_config import Config, HostConfig
+from homelab_extract.plain import PlainArgs
+from homelab_global.resource import GlobalResource
 from homelab_network.model.ip import NetworkIpSource
 from homelab_network.resource.hostname import NetworkHostnameResource
 from homelab_network.resource.network import NetworkResource
@@ -22,10 +24,17 @@ class Homelab:
         self.config = Config[SunServiceConfig, EarthServiceConfig].build(
             HostConfig[SunServiceConfig, EarthServiceConfig]
         )
-        self.global_args = self.config.global_args
+
+        self.project_args = self.config.project_args
 
         self.network = NetworkResource(
-            self.config.network, opts=None, global_args=self.global_args
+            self.config.network, opts=None, project_args=self.project_args
+        )
+        self.global_resource = GlobalResource(
+            self.config.global_,
+            opts=None,
+            plain_args=PlainArgs(self.network.hostnames, None),
+            project_args=self.project_args,
         )
 
         self.host_config = self.config.host.service_model
@@ -33,14 +42,14 @@ class Homelab:
         self.sun = SunHost(
             self.config.host.sun.services,
             opts=None,
-            global_args=self.global_args,
+            global_resource=self.global_resource,
             network_resource=self.network,
             config=self.host_config,
         )
         self.earth = EarthHost(
             self.config.host.earth.services,
             opts=None,
-            global_args=self.global_args,
+            global_resource=self.global_resource,
             network_resource=self.network,
             config=self.host_config,
         )

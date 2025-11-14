@@ -3,7 +3,14 @@ name = "homelab-global"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = ["homelab-mail", "homelab-pydantic", "homelab-s3"]
+dependencies = [
+    "homelab-extract",
+    "homelab-mail",
+    "homelab-pydantic",
+    "homelab-s3",
+    "homelab-secret",
+    "pulumi>=3.207.0",
+]
 
 [build-system]
 requires = ["uv_build"]

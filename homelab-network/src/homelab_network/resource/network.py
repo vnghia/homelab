@@ -1,4 +1,4 @@
-from homelab_global import GlobalArgs
+from homelab_global import ProjectArgs
 from homelab_pydantic import Hostnames
 from pulumi import ComponentResource, ResourceOptions
 
@@ -14,7 +14,7 @@ class NetworkResource(ComponentResource):
         config: NetworkConfig,
         *,
         opts: ResourceOptions | None,
-        global_args: GlobalArgs,
+        project_args: ProjectArgs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -22,7 +22,7 @@ class NetworkResource(ComponentResource):
         self.config = config
 
         self.token = TokenResource(
-            config, opts=self.child_opts, global_args=global_args
+            config, opts=self.child_opts, project_args=project_args
         )
 
         self.hostnames = Hostnames(

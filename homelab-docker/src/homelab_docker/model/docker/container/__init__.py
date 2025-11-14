@@ -221,7 +221,7 @@ class ContainerModel(HomelabBaseModel):
             {
                 Output.from_input(k): Output.from_input(v)
                 for k, v in (
-                    extractor_args.global_args.project.labels
+                    extractor_args.global_resource.project_args.labels
                     | {"dev.dozzle.group": service.name()}
                     | ({"dev.dozzle.name": resource_name} if resource_name else {})
                     | (self.wud.build_labels(resource_name) if self.wud else {})

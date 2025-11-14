@@ -9,7 +9,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.host import HostResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
-from homelab_global import GlobalArgs
+from homelab_global.resource import GlobalResource
 from homelab_network.resource.network import NetworkResource
 from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
@@ -28,14 +28,14 @@ class HostBaseNoConfig(HostResourceBase):
         self,
         *,
         opts: ResourceOptions | None,
-        global_args: GlobalArgs,
+        global_resource: GlobalResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
         host_services_config: HostServiceConfig,
     ) -> None:
         super().__init__(
             opts=opts,
-            global_args=global_args,
+            global_resource=global_resource,
             network_resource=network_resource,
             config=config,
         )
@@ -151,13 +151,13 @@ class HostBase[T: HostServiceConfig](HostBaseNoConfig):
         service: T,
         *,
         opts: ResourceOptions | None,
-        global_args: GlobalArgs,
+        global_resource: GlobalResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
     ) -> None:
         super().__init__(
             opts=opts,
-            global_args=global_args,
+            global_resource=global_resource,
             network_resource=network_resource,
             config=config,
             host_services_config=service,
