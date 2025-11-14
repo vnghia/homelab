@@ -21,27 +21,28 @@ class HostResourceBase(ComponentResource):
 
     def __init__(
         self,
+        name: str,
         *,
         opts: ResourceOptions | None,
         global_resource: GlobalResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
     ) -> None:
-        self.model = config[self.name()]
+        self.model = config[name]
 
         super().__init__(
-            self.name(),
-            self.name(),
+            self.name,
+            self.name,
             None,
             ResourceOptions.merge(
                 opts,
                 ResourceOptions(
                     providers={
                         "docker": docker.Provider(
-                            self.name(), host=self.model.access.ssh
+                            self.name, host=self.model.access.ssh
                         ),
                         "docker-build": docker_build.Provider(
-                            self.name(), host=self.model.access.ssh
+                            self.name, host=self.model.access.ssh
                         ),
                     }
                 ),
@@ -55,7 +56,7 @@ class HostResourceBase(ComponentResource):
             global_resource, network_resource.hostnames, config, self
         )
         self.docker = DockerResource(
-            self.name(),
+            self.name,
             opts=self.child_opts,
             extractor_args=self.extractor_args,
         )
@@ -64,13 +65,14 @@ class HostResourceBase(ComponentResource):
 
         FileVolumeProxy.pull_image(self.model.access.ssh)
 
-        self.HOSTS[self.name()] = self
+        self.HOSTS[self.name] = self
 
-    def __str__(self) -> str:
-        return self.name()
+    @property
+    def name(self) -> str:
+        return self.model.name
 
     @classmethod
-    def name(cls) -> str:
+    def instance_name(cls) -> str:
         if cls._host_name is None:
             cls._host_name = to_snake(cls.__name__.removesuffix("Host")).replace(
                 "_", "-"

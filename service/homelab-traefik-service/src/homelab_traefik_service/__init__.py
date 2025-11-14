@@ -36,7 +36,7 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
         )
 
         self.acme_token = network_resource.token.acme_tokens[
-            self.extractor_args.host.name()
+            self.extractor_args.host.name
         ].value
         self.options[None].add_envs(
             {"CF_ZONE_API_TOKEN": self.acme_token, "CF_DNS_API_TOKEN": self.acme_token}

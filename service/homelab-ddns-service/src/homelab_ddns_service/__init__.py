@@ -24,12 +24,12 @@ class DdnsService(ExtraService[DdnsConfig]):
                 "domain": hostname.value,
                 "ttl": 1,
                 "token": network_resource.token.ddns_tokens[
-                    self.extractor_args.host.name()
+                    self.extractor_args.host.name
                 ].value,
                 "ip_version": ip_version,
             }
             for record in network_resource.config.records.values()
-            if record.is_ddns and record.host == self.extractor_args.host.name()
+            if record.is_ddns and record.host == self.extractor_args.host.name
             for hostname in record.hostnames.values()
             for ip_version in ["ipv4", "ipv6"]
         ]

@@ -64,7 +64,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
         root = self.root
-        record = root.record or extractor_args.host.name()
+        record = root.record or extractor_args.host.name
         traefik_config = traefik_service.config
         main_service = extractor_args.service
 

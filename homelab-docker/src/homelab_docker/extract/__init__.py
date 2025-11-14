@@ -39,7 +39,7 @@ class ExtractorArgs:
         host: HostResourceBase,
     ) -> Self:
         return cls(
-            plain_args=PlainArgs(hostnames, host.name()),
+            plain_args=PlainArgs(hostnames, host.name),
             global_resource=global_resource,
             config=config,
             _host=host,
@@ -174,17 +174,14 @@ class ExtractorArgs:
         same_host = (
             isinstance(host, HostResourceBase)
             and isinstance(self._host, HostResourceBase)
-            and host.name() == self._host.name()
+            and host.name == self._host.name
         ) or (host is None)
         host = host or self._host
 
         return self.__class__(
             plain_args=self.plain_args
             if same_host
-            else PlainArgs(
-                self.hostnames,
-                host.name() if isinstance(host, HostResourceBase) else None,
-            ),
+            else PlainArgs(self.hostnames, host.name if host else None),
             global_resource=self.global_resource,
             config=self.config,
             _host=host or self._host,

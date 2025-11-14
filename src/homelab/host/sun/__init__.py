@@ -20,6 +20,7 @@ class SunHost(HostBase[SunServiceConfig]):
         config: HostServiceModelConfig,
     ) -> None:
         super().__init__(
+            self.instance_name(),
             service,
             opts=opts,
             global_resource=global_resource,

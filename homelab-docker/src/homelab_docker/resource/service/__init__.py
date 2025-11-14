@@ -154,14 +154,14 @@ class ServiceResourceBase(ComponentResource):
                 if isinstance(secret, tls.PrivateKey):
                     pulumi.export(
                         "{}.secret.{}.private-key".format(
-                            self.extractor_args.host.name(),
+                            self.extractor_args.host.name,
                             self.add_service_name(name),
                         ),
                         secret.private_key_openssh,
                     )
                     pulumi.export(
                         "{}.secret.{}.public-key".format(
-                            self.extractor_args.host.name(),
+                            self.extractor_args.host.name,
                             self.add_service_name(name),
                         ),
                         secret.public_key_openssh,
@@ -169,7 +169,7 @@ class ServiceResourceBase(ComponentResource):
                 elif isinstance(secret, (tls.LocallySignedCert, tls.SelfSignedCert)):
                     pulumi.export(
                         "{}.secret.{}.cert".format(
-                            self.extractor_args.host.name(),
+                            self.extractor_args.host.name,
                             self.add_service_name(name),
                         ),
                         secret.cert_pem,
@@ -178,7 +178,7 @@ class ServiceResourceBase(ComponentResource):
                     for info in MTlsInfoSourceModel:
                         pulumi.export(
                             "{}.secret.{}.{}".format(
-                                self.extractor_args.host.name(),
+                                self.extractor_args.host.name,
                                 self.add_service_name(name),
                                 info.replace("_", "-"),
                             ),
@@ -187,7 +187,7 @@ class ServiceResourceBase(ComponentResource):
                 else:
                     pulumi.export(
                         "{}.secret.{}".format(
-                            self.extractor_args.host.name(),
+                            self.extractor_args.host.name,
                             self.add_service_name(name),
                         ),
                         secret.result,
@@ -273,7 +273,7 @@ class ServiceResourceBase(ComponentResource):
         for name, container in self.containers.items():
             pulumi.export(
                 "{}.container.{}".format(
-                    self.extractor_args.host.name(),
+                    self.extractor_args.host.name,
                     self.add_service_name(name),
                 ),
                 container.name,

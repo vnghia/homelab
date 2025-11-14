@@ -15,7 +15,6 @@ from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
 from pulumi import ResourceOptions
-from pydantic.alias_generators import to_snake
 
 from ..file import File
 from .config import HostServiceConfig
@@ -26,6 +25,7 @@ class HostBaseNoConfig(HostResourceBase):
 
     def __init__(
         self,
+        name: str,
         *,
         opts: ResourceOptions | None,
         global_resource: GlobalResource,
@@ -34,6 +34,7 @@ class HostBaseNoConfig(HostResourceBase):
         host_services_config: HostServiceConfig,
     ) -> None:
         super().__init__(
+            name=name,
             opts=opts,
             global_resource=global_resource,
             network_resource=network_resource,
@@ -44,7 +45,7 @@ class HostBaseNoConfig(HostResourceBase):
         self.extra_services_config = host_services_config.extra(
             ServiceWithConfigModel[ExtraConfig]
         )
-        self.HOST_BASES[self.name()] = self
+        self.HOST_BASES[self.name] = self
 
     def build_tailscale_service(self) -> None:
         self.tailscale = TailscaleService(
@@ -129,14 +130,14 @@ class HostBaseNoConfig(HostResourceBase):
         from .sun import SunHost
 
         for name, host in cls.HOST_BASES.items():
-            if name != SunHost.name():
+            if name != SunHost.instance_name():
                 host.build_dagu_service()
 
             for service in host.extra_services_config:
                 host.build_extra_service(service)
 
         # Building Dagu service on Sun host last since it depends on Dagu API tokens of other hosts.
-        cls.HOST_BASES[SunHost.name()].build_dagu_service()
+        cls.HOST_BASES[SunHost.instance_name()].build_dagu_service()
 
         for host in cls.HOST_BASES.values():
             host.build_final_services_before_file()
@@ -148,6 +149,7 @@ class HostBaseNoConfig(HostResourceBase):
 class HostBase[T: HostServiceConfig](HostBaseNoConfig):
     def __init__(
         self,
+        name: str,
         service: T,
         *,
         opts: ResourceOptions | None,
@@ -156,6 +158,7 @@ class HostBase[T: HostServiceConfig](HostBaseNoConfig):
         config: HostServiceModelConfig,
     ) -> None:
         super().__init__(
+            name=name,
             opts=opts,
             global_resource=global_resource,
             network_resource=network_resource,
@@ -184,7 +187,3 @@ class HostBase[T: HostServiceConfig](HostBaseNoConfig):
                         "Building initial extra services only supports extra services"
                     )
                 self.build_extra_service(depend_full.service)
-
-    @classmethod
-    def name(cls) -> str:
-        return to_snake(cls.__name__.removesuffix("Host")).replace("_", "-")

@@ -74,7 +74,7 @@ class Homelab:
             self.config.network,
             opts=None,
             source_ips={
-                SunHost.name(): {NetworkIpSource.TAILSCALE: self.sun.tailscale.ip},
-                EarthHost.name(): {NetworkIpSource.TAILSCALE: self.earth.tailscale.ip},
+                host.name: {NetworkIpSource.TAILSCALE: host.tailscale.ip}
+                for host in HostBase.HOST_BASES.values()
             },
         )
