@@ -24,7 +24,8 @@ services:
       network:
         bridge:
           vpn: {}
-      read-only: false
+      tmpfs:
+        - /tmp
       envs:
         TIMEOUT: 10000
         CONCURRENT: 5
