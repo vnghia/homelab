@@ -10,6 +10,7 @@ from homelab_extract.dict_ import GlobalExtractDictSource
 from homelab_extract.kv import GlobalExtractKvSource
 from homelab_extract.plain import GlobalPlainExtractSource
 from homelab_extract.project import GlobalExtractProjectSource
+from homelab_extract.secret import GlobalExtractSecretSource
 from homelab_extract.transform import ExtractTransform
 from homelab_pydantic import AbsolutePath
 from pulumi import Output
@@ -24,6 +25,7 @@ from .plain import GlobalPlainSourceExtractor
 from .project import GlobalProjectSourceExtractor
 from .secret import GlobalSecretSourceExtractor
 from .transform import ExtractTransformer
+from .variable import GlobalVariableSourceExtractor
 
 if typing.TYPE_CHECKING:
     from ..model.docker.container.volume_path import ContainerVolumePath
@@ -41,6 +43,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         | GlobalPlainSourceExtractor
         | GlobalProjectSourceExtractor
         | GlobalSecretSourceExtractor
+        | GlobalVariableSourceExtractor
     ):
         root = self.root.root
         if isinstance(root, GlobalExtractConfigSource):
@@ -53,7 +56,9 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalPlainSourceExtractor(root)
         if isinstance(root, GlobalExtractProjectSource):
             return GlobalProjectSourceExtractor(root)
-        return GlobalSecretSourceExtractor(root)
+        if isinstance(root, GlobalExtractSecretSource):
+            return GlobalSecretSourceExtractor(root)
+        return GlobalVariableSourceExtractor(root)
 
     def extract_str(
         self, extractor_args: ExtractorArgs

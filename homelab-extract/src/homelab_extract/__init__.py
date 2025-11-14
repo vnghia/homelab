@@ -12,6 +12,7 @@ from .plain import GlobalPlainExtractSource
 from .project import GlobalExtractProjectSource
 from .secret import GlobalExtractSecretSource
 from .transform import ExtractTransform
+from .variable import GlobalExtractVariableSource
 
 
 class GlobalExtractSource(
@@ -22,6 +23,7 @@ class GlobalExtractSource(
         | GlobalPlainExtractSource
         | GlobalExtractProjectSource
         | GlobalExtractSecretSource
+        | GlobalExtractVariableSource
     ]
 ):
     pass
