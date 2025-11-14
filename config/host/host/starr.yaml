@@ -6,7 +6,7 @@ docker:
         tag: "version-5.28.0.10274"
       sonarr:
         repo: ghcr.io/linuxserver/sonarr
-        tag: "version-4.0.15.2941"
+        tag: "version-4.0.16.2944"
       prowlarr:
         repo: ghcr.io/linuxserver/prowlarr
         tag: "version-2.1.5.5216"
