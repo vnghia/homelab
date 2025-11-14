@@ -3,7 +3,7 @@ docker:
     remote:
       airtrail:
         repo: johly/airtrail
-        tag: "v3.2.0"
+        tag: "v3.2.2"
 services:
   kanidm:
     config:
