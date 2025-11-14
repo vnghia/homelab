@@ -1,0 +1,5 @@
+variables:
+  restic-repository:
+secrets:
+  restic-password:
+    protect: true

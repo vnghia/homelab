@@ -20,26 +20,18 @@ services:
         env: RESTIC_CACHE_DIR
       hostname:
         hvariable: FULL_HOSTNAME
-      password:
-        host: sun
-        extract:
-          service: restic
-          extract:
-            secret: password
       keep:
         last:
           daily: 7
       dagu:
         dotenvs:
           dotenv:
+            s3: global
             envs:
               RESTIC_REPOSITORY:
+                gvariable: restic-repository
               RESTIC_PASSWORD:
-                host: sun
-                extract:
-                  service: restic
-                  extract:
-                    secret: password
+                gsecret: restic-password
         docker:
           executor:
             run:
