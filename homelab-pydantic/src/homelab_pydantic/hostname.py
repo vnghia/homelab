@@ -1,4 +1,4 @@
-from homelab_pydantic import HomelabBaseModel
+from .model import HomelabBaseModel
 
 
 class Hostname(HomelabBaseModel):
