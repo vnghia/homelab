@@ -109,7 +109,6 @@ class HostBaseNoConfig(HostResourceBase):
             extractor_args=self.extractor_args,
         )
 
-    def build_final_services_after_file(self) -> None:
         self.backup = BackupService(
             self.host_services_config.backup,
             opts=self.child_opts,
@@ -142,7 +141,6 @@ class HostBaseNoConfig(HostResourceBase):
         for host in cls.HOST_BASES.values():
             host.build_final_services_before_file()
             host.build_file()
-            host.build_final_services_after_file()
             host.register_outputs({})
 
 

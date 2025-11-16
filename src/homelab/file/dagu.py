@@ -1,10 +1,6 @@
-from homelab_dagu_config import DaguServiceConfigBase
 from homelab_dagu_service import DaguService
 from homelab_dagu_service.config.service import DaguServiceConfigBuilder
-from homelab_docker.resource.service import (
-    ServiceResourceBase,
-    ServiceWithConfigResourceBase,
-)
+from homelab_docker.resource.service import ServiceResourceBase
 from pulumi import ComponentResource, ResourceOptions
 
 
@@ -23,13 +19,10 @@ class DaguFile(ComponentResource):
     def build_one(
         self, dagu_service: DaguService, service: ServiceResourceBase
     ) -> None:
-        if (
-            (service.name() not in dagu_service.dags)
-            and isinstance(service, ServiceWithConfigResourceBase)
-            and isinstance(service.config, DaguServiceConfigBase)
-            and service.config.dagu
+        if (service.name() not in dagu_service.dags) and (
+            dagu_service_config := dagu_service.get_service_config(service)
         ):
-            for depend in service.config.dagu.depends_on:
+            for depend in dagu_service_config.depends_on:
                 self.build_one(
                     dagu_service, dagu_service.extractor_args.services[depend]
                 )
@@ -40,7 +33,7 @@ class DaguFile(ComponentResource):
                 )
             )
 
-            DaguServiceConfigBuilder(service.config.dagu).build_resources(
+            DaguServiceConfigBuilder(dagu_service_config).build_resources(
                 opts=service_opts,
                 dagu_service=dagu_service,
                 extractor_args=service.extractor_args,

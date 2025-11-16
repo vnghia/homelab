@@ -27,7 +27,6 @@ from homelab_dagu_config.model.step.run.subdag import (
 )
 from homelab_dagu_config.model.step.script import DaguDagStepScriptModel
 from homelab_dagu_service import DaguService
-from homelab_dagu_service.model import DaguDagModelBuilder
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
@@ -47,8 +46,11 @@ from .model.service import BackupServiceModel, BackupServiceVolumeModel
 
 class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
     DEFAULT_BACKUP_MODEL = BackupServiceModel()
+    DEFAULT_VOLUME_BACKUP_MODEL = BackupServiceVolumeModel()
 
     PRE_BACKUP_VOLUME_DAG_KEY = "pre-backup-volume"
+    BACKUP_SERVICE_DAG_KEY = "service"
+    BACKUP_ALL_DAG_KEY = "all"
 
     BACKUP_KEY = DaguDagParamsModel.PARAM_VALUE[DaguDagParamType.BACKUP][0]
     EXTRACT_CONFIG_STEP = "extract-config"
@@ -73,15 +75,21 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         pre_volume_backups = []
 
         backup_configs = {}
-        for service in self.extractor_args.services:
-            service_model = self.DEFAULT_BACKUP_MODEL.model_copy()
+        for service, resource in self.extractor_args.services.items():
+            service_model = None
             if service in restic_service.service_groups:
-                volume_model = BackupServiceVolumeModel()
+                volume_model = None
                 if (
-                    service in dagu_service.dags
-                    and self.PRE_BACKUP_VOLUME_DAG_KEY in dagu_service.dags[service]
+                    dagu_service_config := dagu_service.get_service_config(resource)
+                ) and (
+                    (self.PRE_BACKUP_VOLUME_DAG_KEY in dagu_service_config.dag.root)
+                    or (
+                        dagu_service_config.docker
+                        and self.PRE_BACKUP_VOLUME_DAG_KEY
+                        in dagu_service_config.docker.dags
+                    )
                 ):
-                    volume_model = volume_model.__replace__(pre=True)
+                    volume_model = BackupServiceVolumeModel(pre=True)
                     pre_volume_backups.append(
                         DaguDagStepModel(
                             name=service,
@@ -105,9 +113,13 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             depends=[],
                         )
                     )
-                service_model = service_model.__replace__(volume=volume_model)
+                service_model = self.DEFAULT_BACKUP_MODEL.__replace__(
+                    volume=volume_model or self.DEFAULT_VOLUME_BACKUP_MODEL
+                )
             if service in restic_service.service_database_groups:
-                service_model = service_model.__replace__(
+                service_model = (
+                    service_model or self.DEFAULT_BACKUP_MODEL
+                ).__replace__(
                     databases={
                         type_: " ".join(names)
                         for type_, names in restic_service.service_database_groups[
@@ -116,11 +128,11 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     }
                 )
 
-            if service_model != self.DEFAULT_BACKUP_MODEL:
+            if service_model:
                 backup_configs[service] = service_model
         self.backup_configs = BackupServiceConfig(backup_configs)
 
-        self.pre_volume_backup = DaguDagModel(
+        self.config.dagu.dag.root[self.PRE_BACKUP_VOLUME_DAG_KEY] = DaguDagModel(
             name=self.PRE_BACKUP_VOLUME_DAG_KEY,
             path="{}-{}".format(self.name(), self.PRE_BACKUP_VOLUME_DAG_KEY),
             steps=pre_volume_backups,
@@ -128,15 +140,8 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             params=DaguDagParamsModel(types={DaguDagParamType.BACKUP: ""}),
         )
 
-        DaguDagModelBuilder(self.pre_volume_backup).build_resource(
-            self.pre_volume_backup.name,
-            opts=self.child_opts,
-            dagu_service=dagu_service,
-            extractor_args=self.extractor_args,
-        )
-
-        self.backup_service = DaguDagModel(
-            name="service",
+        self.config.dagu.dag.root[self.BACKUP_SERVICE_DAG_KEY] = DaguDagModel(
+            name=self.BACKUP_SERVICE_DAG_KEY,
             path="{}-service".format(self.name()),
             max_active_runs=1,
             steps=[
@@ -351,15 +356,8 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             params=DaguDagParamsModel(types={DaguDagParamType.BACKUP: ""}),
         )
 
-        DaguDagModelBuilder(self.backup_service).build_resource(
-            self.backup_service.name,
-            opts=self.child_opts,
-            dagu_service=dagu_service,
-            extractor_args=self.extractor_args,
-        )
-
-        self.backup_all = DaguDagModel(
-            name="all",
+        self.config.dagu.dag.root[self.BACKUP_ALL_DAG_KEY] = DaguDagModel(
+            name=self.BACKUP_ALL_DAG_KEY,
             path="{}-all".format(self.name()),
             max_active_runs=1,
             schedule=self.config.schedule,
@@ -387,13 +385,6 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                 )
             ],
             tags=[self.name()],
-        )
-
-        DaguDagModelBuilder(self.backup_all).build_resource(
-            self.backup_all.name,
-            opts=self.child_opts,
-            dagu_service=dagu_service,
-            extractor_args=self.extractor_args,
         )
 
         self.register_outputs({})

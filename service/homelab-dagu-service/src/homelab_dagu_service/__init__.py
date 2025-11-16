@@ -1,10 +1,15 @@
 from collections import defaultdict
 
+from homelab_dagu_config import DaguServiceConfig, DaguServiceConfigBase
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.file.dotenv import DotenvFileResource
+from homelab_docker.resource.service import (
+    ServiceResourceBase,
+    ServiceWithConfigResourceBase,
+)
 from homelab_extra_service import ExtraService
 from homelab_pydantic.path import AbsolutePath
 from pulumi import ResourceOptions
@@ -54,3 +59,15 @@ class DaguService(ExtraService[DaguConfig]):
         if not tmpfs:
             raise ValueError("tmpfs is not configured for {}".format(self.name()))
         return tmpfs[0].to_path()
+
+    @classmethod
+    def get_service_config(
+        cls, service: ServiceResourceBase
+    ) -> DaguServiceConfig | None:
+        if (
+            isinstance(service, ServiceWithConfigResourceBase)
+            and isinstance(service.config, DaguServiceConfigBase)
+            and service.config.dagu
+        ):
+            return service.config.dagu
+        return None
