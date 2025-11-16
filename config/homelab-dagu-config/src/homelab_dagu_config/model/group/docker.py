@@ -5,6 +5,7 @@ import typing
 from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import HomelabBaseModel
 
+from ...model.step.continue_on import DaguDagStepContinueOnModel
 from .. import DaguDagModel
 from ..step.executor import DaguDagStepExecutorModel
 from ..step.executor.docker import DaguDagStepDockerExecutorModel
@@ -18,6 +19,7 @@ if typing.TYPE_CHECKING:
 class DaguDagDockerGroupModel(HomelabBaseModel):
     dag: DaguDagModel = DaguDagModel()
     command: DaguDagStepRunCommandModel
+    continue_on: DaguDagStepContinueOnModel | None = None
 
     def build_model(
         self,
@@ -39,6 +41,7 @@ class DaguDagDockerGroupModel(HomelabBaseModel):
                         command_config.prefix + self.command + command_config.suffix
                     ),
                     executor=DaguDagStepExecutorModel(docker_executor),
+                    continue_on=self.continue_on,
                 )
             ],
         )
