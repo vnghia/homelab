@@ -3,7 +3,7 @@ docker:
     remote:
       resticprofile:
         repo: creativeprojects/resticprofile
-        tag: "0.31.0"
+        tag: "0.32.0"
   volumes:
     local:
       restic-cache:

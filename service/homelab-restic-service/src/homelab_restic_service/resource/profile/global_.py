@@ -56,6 +56,7 @@ class ResticGlobalProfileResource(
                 "global": {
                     "command-output": "console",
                     "initialize": False,
+                    "group-continue-on-error": True,
                 },
                 "includes": all_profiles_path,
                 "profiles": {
