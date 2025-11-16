@@ -1,0 +1,9 @@
+records:
+  earth:
+    records:
+      docker-proxy:
+        routable: false
+      dozzle:
+        routable: false
+      dagu:
+        routable: false

@@ -41,6 +41,7 @@ class RecordResource(ComponentResource):
                     for key_ip, ip in source_ip.data.items()
                 ]
                 for key, record in config.records.items()
+                if record.routable
             }
         self.hostnames = config.hostnames
 
