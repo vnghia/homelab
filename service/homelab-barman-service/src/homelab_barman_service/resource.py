@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from typing import cast
 
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container.database.source import (
@@ -9,6 +10,9 @@ from homelab_docker.model.docker.container.database.source import (
 from homelab_docker.model.service.database import ServiceDatabaseConfigModel
 from homelab_docker.model.service.database.postgres import (
     ServiceDatabasePostgresConfigModel,
+)
+from homelab_docker.model.service.database.postgres.backup import (
+    ServiceDatabasePostgresBackupConfigModel,
 )
 from homelab_docker.resource.file.config import (
     ConfigFileResource,
@@ -37,11 +41,8 @@ class BarmanConfigFileResource(
         barman_service: BarmanService,
     ) -> None:
         barman_config = barman_service.config
+        backup_config = cast(ServiceDatabasePostgresBackupConfigModel, barman_config)
         self.name = resource_name
-
-        minimum_redundancy = None
-        last_backup_maximum_age = None
-        retention_policy = None
 
         if database_config_model:
             if not isinstance(
@@ -49,11 +50,10 @@ class BarmanConfigFileResource(
             ):
                 raise TypeError("Service database config model is not Postgres config")
 
-            backup_config = database_config_model.root.backup
-            if backup_config:
-                minimum_redundancy = backup_config.minimum_redundancy
-                last_backup_maximum_age = backup_config.last_backup_maximum_age
-                retention_policy = backup_config.retention_policy
+            if database_config_model.root.backup:
+                backup_config = backup_config.model_merge(
+                    database_config_model.root.backup
+                )
 
         super().__init__(
             self.name,
@@ -68,17 +68,44 @@ class BarmanConfigFileResource(
                     "streaming_archiver": "on",
                     "slot_name": barman_service.name(),
                     "create_slot": "auto",
-                    "minimum_redundancy": str(
-                        minimum_redundancy or barman_config.minimum_redundancy
-                    ),
-                    "last_backup_maximum_age": last_backup_maximum_age
-                    or barman_config.last_backup_maximum_age,
-                    "retention_policy": retention_policy
-                    or barman_config.retention_policy,
                     "local_staging_path": GlobalExtractor(
                         barman_config.staging_dir
                     ).extract_path(barman_service.extractor_args),
                 }
+                | (
+                    {"minimum_redundancy": str(backup_config.minimum_redundancy)}
+                    if backup_config.minimum_redundancy
+                    else {}
+                )
+                | (
+                    {"last_backup_maximum_age": backup_config.last_backup_maximum_age}
+                    if backup_config.last_backup_maximum_age
+                    else {}
+                )
+                | (
+                    {"retention_policy": backup_config.retention_policy}
+                    if backup_config.retention_policy
+                    else {}
+                )
+                | (
+                    {"backup_compression": backup_config.backup_compression}
+                    if backup_config.backup_compression
+                    else {}
+                )
+                | (
+                    {
+                        "backup_compression_level": str(
+                            backup_config.backup_compression_level
+                        )
+                    }
+                    if backup_config.backup_compression_level
+                    else {}
+                )
+                | (
+                    {"compression": backup_config.compression}
+                    if backup_config.compression
+                    else {}
+                )
             },
             extractor_args=barman_service.extractor_args,
         )

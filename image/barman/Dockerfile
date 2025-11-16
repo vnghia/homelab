@@ -3,8 +3,8 @@ FROM base
 ARG BARMAN_VERSION
 
 RUN apk add --update --no-cache \
-    file \
-    py3-setuptools \
+    file zstd tar \
+    py3-setuptools py3-zstandard \
     postgresql16-client \
     postgresql17-client
 

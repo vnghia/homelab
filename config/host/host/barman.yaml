@@ -34,6 +34,8 @@ services:
       minimum-redundancy: 3
       last-backup-maximum-age: 3 DAYS
       retention-policy: RECOVERY WINDOW OF 3 DAYS
+      backup-compression: zstd
+      compression: zstd
       dagu:
         docker:
           executor:
