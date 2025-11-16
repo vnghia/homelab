@@ -70,7 +70,7 @@ services:
                 svariable: BACKEND_PORT
           backend-admin:
             name: backend-admin
-            hostname: meet-admin
+            hostname: meet
             rules:
               - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
             service:
@@ -94,9 +94,9 @@ services:
       keepass:
         username:
           hostname:
-            hostname: meet-admin
+            hostname: meet
         hostname:
-          hostname: meet-admin
+          hostname: meet
     network:
       bridge:
         proxy:
@@ -140,7 +140,7 @@ services:
                   hostname: meet
                   record: solar
                 admin:
-                  hostname: meet-admin
+                  hostname: meet
             transform:
               string:
                 template: "{user},{admin}"
@@ -152,7 +152,7 @@ services:
                   record: solar
                   scheme: https
                 admin:
-                  hostname: meet-admin
+                  hostname: meet
                   scheme: https
             transform:
               string:
