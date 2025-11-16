@@ -1,29 +1,31 @@
-from homelab_dagu_service import DaguService
-from homelab_traefik_service import TraefikService
+from __future__ import annotations
+
+import typing
+
 from pulumi import ComponentResource, ResourceOptions
 
 from .dagu import DaguFile
 from .traefik import TraefikFile
 
+if typing.TYPE_CHECKING:
+    from ..host import HostBaseNoConfig
+
 
 class File(ComponentResource):
     RESOURCE_NAME = "file"
 
-    def __init__(
-        self,
-        *,
-        opts: ResourceOptions,
-        traefik_service: TraefikService | None,
-        dagu_service: DaguService | None,
-    ) -> None:
+    def __init__(self, *, opts: ResourceOptions, host: HostBaseNoConfig) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        if traefik_service:
-            self.traefik = TraefikFile(
-                opts=self.child_opts, traefik_service=traefik_service
-            )
-        if dagu_service:
-            self.dagu = DaguFile(opts=self.child_opts, dagu_service=dagu_service)
+        self.traefik = TraefikFile(opts=self.child_opts, traefik_service=host.traefik)
+        self.dagu = DaguFile(opts=self.child_opts, dagu_service=host.dagu)
 
+        self.traefik.build_one(host.traefik)
+        for service in host.extractor_args.services.values():
+            self.traefik.build_one(service)
+            self.dagu.build_one(service)
+
+        self.traefik.register_outputs({})
+        self.dagu.register_outputs({})
         self.register_outputs({})

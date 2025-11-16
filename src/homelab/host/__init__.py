@@ -118,11 +118,7 @@ class HostBaseNoConfig(HostResourceBase):
         )
 
     def build_file(self) -> None:
-        self.file = File(
-            opts=self.child_opts,
-            traefik_service=self.traefik,
-            dagu_service=self.dagu,
-        )
+        self.file = File(opts=self.child_opts, host=self)
 
     @classmethod
     def finalize(cls) -> None:

@@ -13,6 +13,9 @@ class TraefikServiceConfig(HomelabBaseModel):
     depends_on: list[str] = []
     dynamic: TraefikServiceDynamicConfig = TraefikServiceDynamicConfig({})
 
+    def __bool__(self) -> bool:
+        return bool(self.dynamic)
+
 
 class TraefikServiceConfigBase(HomelabBaseModel):
     traefik: TraefikServiceConfig = TraefikServiceConfig()

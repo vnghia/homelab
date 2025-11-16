@@ -5,9 +5,13 @@ from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource.service import ServiceWithConfigResourceBase
+from homelab_docker.resource.service import (
+    ServiceResourceBase,
+    ServiceWithConfigResourceBase,
+)
 from homelab_network.resource.network import NetworkResource
 from homelab_pydantic import RelativePath
+from homelab_traefik_config import TraefikServiceConfig, TraefikServiceConfigBase
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import ResourceOptions
 
@@ -59,3 +63,15 @@ class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
 
     def get_dynamic_config_volume_path(self, name: str) -> ContainerVolumePath:
         return self.dynamic_directory_volume_path / RelativePath(PosixPath(name))
+
+    @classmethod
+    def get_service_config(
+        cls, service: ServiceResourceBase
+    ) -> TraefikServiceConfig | None:
+        if (
+            isinstance(service, ServiceWithConfigResourceBase)
+            and isinstance(service.config, TraefikServiceConfigBase)
+            and service.config.traefik
+        ):
+            return service.config.traefik
+        return None
