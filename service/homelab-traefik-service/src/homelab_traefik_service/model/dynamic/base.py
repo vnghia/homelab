@@ -135,8 +135,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
             }
         }
 
-        service_full = TraefikDynamicServiceModelBuilder(root.service).full
-        if service_full:
+        if service_full := TraefikDynamicServiceModelBuilder(root.service).full:
             data[self.TYPE]["services"] = TraefikDynamicServiceFullModelBuilder(
                 service_full
                 if service_full.port is not None

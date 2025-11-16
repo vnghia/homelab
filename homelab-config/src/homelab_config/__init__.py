@@ -77,8 +77,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
                     open(host_service_path) as host_service_file,
                 ):
                     service_data = yaml.full_load(service_file)
-                    host_service_data = yaml.full_load(host_service_file)
-                    if host_service_data:
+                    if host_service_data := yaml.full_load(host_service_file):
                         final_data = deepmerge.always_merger.merge(
                             service_data, host_service_data
                         )
