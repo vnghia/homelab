@@ -1,7 +1,10 @@
 services:
   backup:
     config:
-      schedule: "0 3 * * *"
+      schedule:
+        daily: "0 3 * * *"
+        weekly: "0 3 * * mon"
+        monthly: "0 3 1 * *"
       max-concurent: 4
     network:
       bridge:

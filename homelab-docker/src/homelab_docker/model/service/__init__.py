@@ -5,6 +5,7 @@ from homelab_pydantic import HomelabBaseModel
 from homelab_secret.config import SecretConfig
 from pydantic import Field
 
+from ...config.service.backup import ServiceBackupConfig
 from ...config.service.database import ServiceDatabaseConfig
 from ...config.service.depend_on import ServiceDependOnConfig
 from ...config.service.file import ServiceFileConfig
@@ -19,6 +20,7 @@ class ServiceModel(HomelabBaseModel):
     depends_on: list[ServiceDependOnConfig] | None = None
 
     variables: dict[str, GlobalExtract] = {}
+    backup: ServiceBackupConfig = ServiceBackupConfig()
     databases: ServiceDatabaseConfig | None = None
     files: ServiceFileConfig | None = None
     secrets: SecretConfig | None = None

@@ -1,6 +1,8 @@
 import operator
+from collections import defaultdict
 from functools import reduce
 
+from homelab_backup.model.frequency import BackupFrequency
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_dagu_config.model import DaguDagModel
@@ -75,6 +77,10 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
         pre_volume_backups = []
 
         backup_configs = {}
+        self.frequency_configs: defaultdict[BackupFrequency, list[GlobalExtract]] = (
+            defaultdict(list)
+        )
+
         for service, resource in self.extractor_args.services.items():
             service_model = None
             if service in restic_service.service_groups:
@@ -130,6 +136,9 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
 
             if service_model:
                 backup_configs[service] = service_model
+                self.frequency_configs[resource.model.backup.frequency].append(
+                    GlobalExtract.from_simple(service)
+                )
         self.backup_configs = BackupServiceConfig(backup_configs)
 
         self.config.dagu.dag.root[self.PRE_BACKUP_VOLUME_DAG_KEY] = DaguDagModel(
@@ -142,7 +151,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
 
         self.config.dagu.dag.root[self.BACKUP_SERVICE_DAG_KEY] = DaguDagModel(
             name=self.BACKUP_SERVICE_DAG_KEY,
-            path="{}-service".format(self.name()),
+            path="{}-{}".format(self.name(), self.BACKUP_SERVICE_DAG_KEY),
             max_active_runs=1,
             steps=[
                 DaguDagStepModel(
@@ -356,36 +365,35 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             params=DaguDagParamsModel(types={DaguDagParamType.BACKUP: ""}),
         )
 
-        self.config.dagu.dag.root[self.BACKUP_ALL_DAG_KEY] = DaguDagModel(
-            name=self.BACKUP_ALL_DAG_KEY,
-            path="{}-all".format(self.name()),
-            max_active_runs=1,
-            schedule=self.config.schedule,
-            steps=[
-                DaguDagStepModel(
-                    name="all",
-                    run=DaguDagStepRunModel(
-                        DaguDagStepRunSubdagModel(
-                            service=self.name(),
-                            dag="service",
-                            params=DaguDagParamsModel(
-                                types={
-                                    DaguDagParamType.BACKUP: DaguDagStepRunSubdagParallelModel.PARAM_KEY
-                                }
-                            ),
-                            parallel=DaguDagStepRunSubdagParallelModel(
-                                items=[
-                                    GlobalExtract.from_simple(service)
-                                    for service in self.backup_configs.root
-                                ],
-                                max_concurrent=self.config.max_concurent,
-                            ),
-                        )
-                    ),
-                )
-            ],
-            tags=[self.name()],
-        )
+        for frequency, services in self.frequency_configs.items():
+            frequency_key = "{}-{}".format(self.BACKUP_ALL_DAG_KEY, frequency)
+            self.config.dagu.dag.root[frequency_key] = DaguDagModel(
+                name=frequency_key,
+                path="{}-{}".format(self.name(), frequency_key),
+                max_active_runs=1,
+                schedule=self.config.schedule[frequency],
+                steps=[
+                    DaguDagStepModel(
+                        name="all",
+                        run=DaguDagStepRunModel(
+                            DaguDagStepRunSubdagModel(
+                                service=self.name(),
+                                dag="service",
+                                params=DaguDagParamsModel(
+                                    types={
+                                        DaguDagParamType.BACKUP: DaguDagStepRunSubdagParallelModel.PARAM_KEY
+                                    }
+                                ),
+                                parallel=DaguDagStepRunSubdagParallelModel(
+                                    items=services,
+                                    max_concurrent=self.config.max_concurent,
+                                ),
+                            )
+                        ),
+                    )
+                ],
+                tags=[self.name()],
+            )
 
         self.register_outputs({})
 

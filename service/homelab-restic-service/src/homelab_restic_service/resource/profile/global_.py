@@ -32,6 +32,10 @@ class ResticGlobalProfileResource(
                 "keep-{}".format(timeframe): number
                 for timeframe, number in restic_service.config.keep.last.items()
             }
+            | {
+                "keep-within-{}".format(timeframe): duration
+                for timeframe, duration in restic_service.config.keep.within.items()
+            }
         )
 
         all_profiles_path = []

@@ -21,8 +21,11 @@ services:
       hostname:
         hvariable: FULL_HOSTNAME
       keep:
-        last:
-          daily: 7
+        within:
+          daily: 1m # Keep at least one backup per day of the last month
+          weekly: 1y # Keep at least one backup per week of the last year
+          monthly: 10y # Keep at least one backup per month of the last 10 years
+          yearly: 100y # Keep at least one backup per year of the last 100 years
       dagu:
         dotenvs:
           dotenv:
@@ -90,7 +93,7 @@ services:
             name: forget-and-prune
             path: restic-forget-and-prune
             tags: ["backup"]
-            schedule: "0 2 * * sun" # 2am every sunday
+            schedule: "0 7 * * sun" # 7am every sunday
             steps:
               - name: forget
                 run:
