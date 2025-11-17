@@ -14,3 +14,7 @@ docker:
           "17":
             repo: postgis/postgis
             tag: "17-3.5"
+        pgvector:
+          "17":
+            repo: pgvector/pgvector
+            tag: "0.8.1-pg17"

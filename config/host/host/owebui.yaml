@@ -1,0 +1,127 @@
+docker:
+  images:
+    remote:
+      owebui:
+        repo: ghcr.io/open-webui/open-webui
+        tag: "0.6.36"
+  volumes:
+    local:
+      owebui-data: {}
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            owebui:
+              public: true
+              display-name: OpenWebUI
+              origin-url:
+                - hostname: owebui
+                  record: solar
+                  scheme: https
+                - extract:
+                    hostname: owebui
+                    record: solar
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/oauth/oidc/callback"
+              origin-landing:
+                hostname: owebui
+                record: solar
+                scheme: https
+              prefer-short-username: true
+              claim-maps:
+                role:
+                  values-by-group:
+                    role_admin: [admin]
+                    role_user: [user]
+  owebui:
+    variables:
+      PORT: 8080
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
+    databases:
+      postgres:
+        postgres:
+          image: pgvector
+    secrets:
+      webui-key: {}
+      client-info: {}
+      session-token: {}
+    container:
+      image: owebui
+      databases:
+        - postgres:
+          envs:
+            env: DATABASE_URL
+      network:
+        bridge:
+          vpn: {}
+      tmpfs:
+        - /tmp
+      volumes:
+        owebui-data: /app/backend/data
+      wud:
+        template: https://github.com/open-webui/open-webui/releases/tag/v${original}
+      envs:
+        ENV: prod
+        WEBUI_URL:
+          record: solar
+          hostname: owebui
+          scheme: https
+        ENABLE_SIGNUP: false
+        ENABLE_LOGIN_FORM: false
+        DEFAULT_USER_ROLE: user
+        ENABLE_PERSISTENT_CONFIG: true
+        PORT:
+          svariable: PORT
+        BYPASS_MODEL_ACCESS_CONTROL: true
+        DATA_DIR:
+          volume: owebui-data
+        WEBUI_SECRET_KEY:
+          secret: webui-key
+        ENABLE_VERSION_UPDATE_CHECK: false
+        RESET_CONFIG_ON_START: false
+        CORS_ALLOW_ORIGIN:
+          record: solar
+          hostname: owebui
+          scheme: https
+        VECTOR_DB: pgvector
+        ENABLE_OAUTH_SIGNUP: true
+        ENABLE_OAUTH_PERSISTENT_CONFIG: false
+        ENABLE_OAUTH_ID_TOKEN_COOKIE: false
+        OAUTH_CLIENT_INFO_ENCRYPTION_KEY:
+          secret: client-info
+        OAUTH_SESSION_TOKEN_ENCRYPTION_KEY:
+          secret: session-token
+        OAUTH_CLIENT_ID: owebui
+        OAUTH_CLIENT_SECRET:
+          service: kanidm
+          extract:
+            export: owebui
+        OPENID_PROVIDER_URL:
+          extract:
+            hostname: kanidm
+            record: solar
+            scheme: https
+          transform:
+            string:
+              template: "{value}/oauth2/openid/owebui/.well-known/openid-configuration"
+        OAUTH_CODE_CHALLENGE_METHOD: S256
+        OAUTH_PROVIDER_NAME: Kanidm
+        OAUTH_USERNAME_CLAIM: name
+        OAUTH_EMAIL_CLAIM: email
+        OAUTH_PICTURE_CLAIM: ""
+        ENABLE_OAUTH_ROLE_MANAGEMENT: true
+        OAUTH_ROLES_CLAIM: role
+        OAUTH_ALLOWED_ROLES: user,admin
+        OAUTH_ADMIN_ROLES: admin
+        DATABASE_TYPE: postgres
