@@ -3,7 +3,7 @@ docker:
     remote:
       ntfy:
         repo: binwiederhier/ntfy
-        tag: "v2.14.0"
+        tag: "v2.15.0"
   volumes:
     local:
       ntfy-cache:
@@ -79,6 +79,7 @@ services:
           transform:
             path: attachment
         NTFY_ENABLE_SIGNUP: false
+        NTFY_REQUIRE_LOGIN: true
         NTFY_ENABLE_RESERVATIONS: false
         NTFY_ENABLE_METRICS: false
         NTFY_LOG_FORMAT: json
