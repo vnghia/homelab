@@ -3,7 +3,7 @@ docker:
     remote:
       radarr:
         repo: ghcr.io/linuxserver/radarr
-        tag: "version-5.28.0.10274"
+        tag: "version-6.0.4.10291"
       sonarr:
         repo: ghcr.io/linuxserver/sonarr
         tag: "version-4.0.16.2944"
