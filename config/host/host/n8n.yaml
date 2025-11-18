@@ -3,7 +3,7 @@ docker:
     remote:
       n8n:
         repo: ghcr.io/n8n-io/n8n
-        tag: "1.120.3"
+        tag: "1.121.0"
   volumes:
     local:
       n8n-data: {}
