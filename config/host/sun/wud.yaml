@@ -13,7 +13,6 @@ services:
                   record: earth
                   hostname: docker-proxy
                 host: earth
-                internal: true
     container:
       volumes:
         docker-earth-mtls:

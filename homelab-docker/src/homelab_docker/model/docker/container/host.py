@@ -40,7 +40,6 @@ class ContainerHostFullConfig(HomelabBaseModel):
 
 class ContainerHostHostConfig(HomelabBaseModel):
     host: str
-    internal: bool
     hostname: GlobalExtract | None = None
 
     def to_full(self, extractor_args: ExtractorArgs) -> ContainerHostFullConfig:
@@ -50,11 +49,7 @@ class ContainerHostHostConfig(HomelabBaseModel):
             if self.hostname
             else GlobalExtract.from_simple(host_model.access.address),
             ip=GlobalExtract.from_simple(
-                str(
-                    host_model.ip.internal_
-                    if self.internal
-                    else host_model.ip.external_
-                )
+                str(host_model.ip.get_ip(extractor_args.host.name))
             ),
         )
 

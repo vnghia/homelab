@@ -15,7 +15,4 @@ services:
         mapping:
           earth: "private-https"
     container:
-      hosts:
-        - host: sun
-          internal: true
       wud:

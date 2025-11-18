@@ -17,7 +17,7 @@ class HostNoServiceModel(HomelabBaseModel):
     byname: str
     access: HostAccessModel
     timezone: TimeZoneName
-    ip: HostIpModel = HostIpModel()
+    ip: HostIpModel
     docker: DockerConfig
     variables: dict[str, GlobalExtract] = {}
 

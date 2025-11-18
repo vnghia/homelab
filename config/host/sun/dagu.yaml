@@ -44,7 +44,6 @@ services:
                 hostname:
                   svariable: EARTH_HOSTNAME
                 host: earth
-                internal: true
     container:
       envs:
         DAGU_AUTH_BASIC_USERNAME:

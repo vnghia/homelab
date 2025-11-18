@@ -144,7 +144,6 @@ services:
                   record: earth
                   hostname: bitmagnet
                 host: earth
-                internal: true
     variables:
       RADARR_PORT: 7878
       SONARR_PORT: 8989

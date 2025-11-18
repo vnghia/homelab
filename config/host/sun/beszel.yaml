@@ -3,4 +3,3 @@ services:
     container:
       hosts:
         - host: earth
-          internal: true

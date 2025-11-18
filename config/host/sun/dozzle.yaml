@@ -18,7 +18,6 @@ services:
                 hostname:
                   svariable: EARTH_HOSTNAME
                 host: earth
-                internal: true
     container:
       active: true
       envs:
