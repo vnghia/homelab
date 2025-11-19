@@ -79,8 +79,9 @@ services:
           transform:
             path: attachment
         NTFY_ENABLE_SIGNUP: false
-        NTFY_REQUIRE_LOGIN: true
+        NTFY_ENABLE_LOGIN: true
         NTFY_ENABLE_RESERVATIONS: false
+        NTFY_REQUIRE_LOGIN: true
         NTFY_ENABLE_METRICS: false
         NTFY_LOG_FORMAT: json
         NTFY_AUTH_USERS:
