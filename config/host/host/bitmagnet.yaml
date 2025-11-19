@@ -8,6 +8,8 @@ services:
   bitmagnet:
     variables:
       PORT: 3333
+    backup:
+      frequency: monthly
     config:
       traefik:
         dynamic:
@@ -20,9 +22,10 @@ services:
         postgres:
           config:
             backup:
-              minimum-redundancy: 1
+              minimum-redundancy:
               last-backup-maximum-age: 1 DAYS
-              retention-policy: REDUNDANCY 1
+              retention-policy:
+              backup-compression-level: 10
     network:
       vpn:
         ports:
