@@ -126,8 +126,12 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
                             "entryPoints": [traefik_config.entrypoint.internal_],
                             "rule": rule,
                             "tls": tls_router,
-                            "middlewares": service_middlewares,
                         }
+                        | (
+                            {"middlewares": service_middlewares}
+                            if service_middlewares
+                            else {}
+                        )
                     }
                     if root.entrypoint is None and entrypoint_config.internal
                     else {}
