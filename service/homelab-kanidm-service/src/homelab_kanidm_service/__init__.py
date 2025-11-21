@@ -72,7 +72,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
 
         self.exports |= {
             system: Output.all(
-                self.client_data, system, self.state.hash, self.login_account
+                self.client_data, system, model.model_dump_json(), self.login_account
             ).apply(
                 lambda x: KanidmClient.model_validate_json(x[0]).extract_oauth_secret(
                     x[1]

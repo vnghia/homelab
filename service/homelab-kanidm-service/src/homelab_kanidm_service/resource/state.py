@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import shutil
 import subprocess
@@ -11,7 +10,7 @@ from typing import Any, ClassVar
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import JsonDefaultModel
 from homelab_pydantic import HomelabBaseModel
-from pulumi import Output, ResourceOptions
+from pulumi import ResourceOptions
 from pulumi.dynamic import (
     CreateResult,
     DiffResult,
@@ -19,7 +18,7 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import ValidationError, computed_field, model_validator
+from pydantic import ValidationError, model_validator
 from pydantic.alias_generators import to_camel
 
 if typing.TYPE_CHECKING:
@@ -40,11 +39,6 @@ class KanidmStateProviderProps(HomelabBaseModel):
     url: str
     password: str
     state: JsonDefaultModel
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def hash(self) -> str:
-        return hashlib.sha256(self.state.model_dump_json().encode()).hexdigest()
 
     @model_validator(mode="before")
     @classmethod
@@ -123,8 +117,6 @@ class KanidmStateProvider(ResourceProvider):
 
 
 class KanidmStateResource(Resource, module="kanidm", name="State"):
-    hash: Output[str]
-
     def __init__(self, opts: ResourceOptions, kanidm_service: KanidmService) -> None:
         state = kanidm_service.config.state.build(
             kanidm_service.OPENID_GROUP,
