@@ -171,6 +171,14 @@ services:
             scheme: https
         ACCESS_TOKEN_LIFETIME: 10
         REFRESH_TOKEN_LIFETIME: 24
+        AUTH_PROXY_TRUSTED_IPS:
+          extract:
+            network: wger
+            info: subnet
+          transform:
+            string:
+              template:
+                join: ","
         AUTH_PROXY_HEADER: HTTP_X_REMOTE_USER
         AUTH_PROXY_USER_NAME_HEADER: HTTP_X_REMOTE_NAME
         AUTH_PROXY_USER_EMAIL_HEADER: HTTP_X_REMOTE_EMAIL
