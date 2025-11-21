@@ -14,7 +14,6 @@ services:
         systems:
           oauth2:
             owebui:
-              public: true
               display-name: OpenWebUI
               origin-url:
                 - hostname: owebui
