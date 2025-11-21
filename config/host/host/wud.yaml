@@ -107,7 +107,7 @@ services:
         timeout: 5s
       network:
         bridge:
-          default: {}
+          vpn: {}
       volumes:
         wud-storage: /store
       wud:
