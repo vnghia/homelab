@@ -5,6 +5,7 @@ services:
         systems:
           oauth2:
             kanidm:
+              public: true
               display-name: Kanidm
               origin-landing:
                 hostname: kanidm
@@ -48,7 +49,7 @@ services:
           version: "v1.1.0"
         oidc:
           name: github.com/sevensolutions/traefik-oidc-auth
-          version: "v0.13.0"
+          version: "v0.17.0"
       traefik:
         dynamic:
           geoblock:
@@ -90,11 +91,6 @@ services:
                     string:
                       template: "{value}/oauth2/openid/kanidm"
                 ClientId: kanidm
-                ClientSecret:
-                  service: kanidm
-                  extract:
-                    export: kanidm
-                TokenValidation: IdToken
                 UsePkce: true
               Scopes: ["openid", "profile", "email"]
               Headers:
