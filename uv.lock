@@ -26,6 +26,7 @@ members = [
     "homelab-mail",
     "homelab-network",
     "homelab-pydantic",
+    "homelab-restic",
     "homelab-restic-service",
     "homelab-s3",
     "homelab-s3-config",
@@ -1086,6 +1087,21 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "deepmerge", specifier = ">=2.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-restic"
+version = "0.1.0"
+source = { editable = "homelab-restic" }
+dependencies = [
+    { name = "homelab-pydantic" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 

@@ -58,6 +58,7 @@ homelab-global = { workspace = true }
 homelab-pydantic = { workspace = true }
 homelab-mail = { workspace = true }
 homelab-network = { workspace = true }
+homelab-restic = { workspace = true }
 homelab-sequence = { workspace = true }
 homelab-s3 = { workspace = true }
 homelab-secret = { workspace = true }
