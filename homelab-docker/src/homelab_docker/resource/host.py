@@ -52,9 +52,7 @@ class HostResourceBase(ComponentResource):
 
         self.network = network_resource
 
-        self.extractor_args = ExtractorArgs.from_host(
-            global_resource, network_resource.hostnames, config, self
-        )
+        self.extractor_args = ExtractorArgs.from_host(global_resource, config, self)
         self.docker = DockerResource(
             self.name,
             opts=self.child_opts,

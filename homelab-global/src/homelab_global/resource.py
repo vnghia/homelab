@@ -21,6 +21,7 @@ class GlobalResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.config = config
+        self.plain_args = plain_args
         self.project_args = project_args
 
         self.secret = SecretResource(

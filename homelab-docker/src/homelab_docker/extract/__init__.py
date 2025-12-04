@@ -34,12 +34,11 @@ class ExtractorArgs:
     def from_host(
         cls,
         global_resource: GlobalResource,
-        hostnames: Hostnames,
         config: HostServiceModelConfig,
         host: HostResourceBase,
     ) -> Self:
         return cls(
-            plain_args=PlainArgs(hostnames, host.name),
+            plain_args=global_resource.plain_args.with_host(host.name),
             global_resource=global_resource,
             config=config,
             _host=host,
@@ -181,7 +180,7 @@ class ExtractorArgs:
         return self.__class__(
             plain_args=self.plain_args
             if same_host
-            else PlainArgs(self.hostnames, host.name if host else None),
+            else self.global_resource.plain_args.with_host(host.name if host else None),
             global_resource=self.global_resource,
             config=self.config,
             _host=host or self._host,

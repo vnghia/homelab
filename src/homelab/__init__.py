@@ -33,7 +33,7 @@ class Homelab:
         self.global_resource = GlobalResource(
             self.config.global_,
             opts=None,
-            plain_args=PlainArgs(self.network.hostnames, None),
+            plain_args=PlainArgs(self.config.global_.s3, self.network.hostnames, None),
             project_args=self.project_args,
         )
 
