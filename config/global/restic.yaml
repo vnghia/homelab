@@ -1,5 +1,8 @@
 variables:
   restic-repository:
-secrets:
-  restic-password:
-    protect: true
+restic:
+  main:
+    host:
+      s3:
+    password:
+      protect: true

@@ -33,6 +33,7 @@ source_roots = [
     "homelab-sequence/src",
     "homelab-docker/src",
     "homelab-backup/src",
+    "homelab-restic/src",
     "homelab-secret/src",
     "homelab-s3/src",
     "homelab-mail/src",

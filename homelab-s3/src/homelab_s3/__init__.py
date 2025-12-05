@@ -1,9 +1,13 @@
+from typing import ClassVar
+
 from homelab_pydantic import HomelabBaseModel
 from homelab_pydantic.model import HomelabRootModel
 from pydantic import HttpUrl
 
 
 class S3Credential(HomelabBaseModel):
+    DEFAULT_ENDPOINT: ClassVar[HttpUrl] = HttpUrl("https://s3.amazonaws.com/")
+
     key_id: str
     access_key: str
     region: str

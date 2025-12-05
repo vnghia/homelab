@@ -1,4 +1,5 @@
 from homelab_extract.plain import PlainArgs
+from homelab_restic.resource import ResticResource
 from homelab_secret.resource import SecretResource
 from pulumi import ComponentResource, ResourceOptions
 
@@ -30,3 +31,12 @@ class GlobalResource(ComponentResource):
             name=self.RESOURCE_NAME,
             plain_args=plain_args,
         )
+
+        self.restic = ResticResource(
+            config.restic,
+            opts=self.child_opts,
+            secret_resource=self.secret,
+            plain_args=plain_args,
+        )
+
+        self.register_outputs({})
