@@ -1,0 +1,6 @@
+restic:
+  main:
+    host:
+      s3:
+    password:
+      protect: true

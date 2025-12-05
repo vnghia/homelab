@@ -4,6 +4,7 @@ from typing import Any, Self, Type
 import deepmerge
 import pulumi
 import yaml
+from homelab_backup.config import BackupConfig
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.host import HostModel
@@ -38,6 +39,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
     host: HostConfig[TSun, TEarth]
     network: NetworkConfig
     global_: GlobalConfig
+    backup: BackupConfig
 
     @classmethod
     def get_key(cls, key: str) -> Any:
@@ -99,6 +101,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
             host=cls.get_host_config(host_type),
             network=NetworkConfig.model_validate(cls.get_key("network")),
             global_=GlobalConfig.model_validate(cls.get_key("global")),
+            backup=BackupConfig.model_validate(cls.get_key("backup")),
         )
 
     @property

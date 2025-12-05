@@ -27,21 +27,11 @@ services:
           monthly: 10y # Keep at least one backup per month of the last 10 years
           yearly: 100y # Keep at least one backup per year of the last 100 years
       dagu:
-        dotenvs:
-          dotenv:
-            s3: global
-            envs:
-              RESTIC_REPOSITORY:
-                gvariable: restic-repository
-              RESTIC_PASSWORD:
-                gsecret: restic-password
         docker:
           executor:
             run:
               model:
           dag:
-            dotenvs:
-              - null
             params:
               types:
                 backup:

@@ -3,7 +3,13 @@ name = "homelab-backup"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = ["homelab-pydantic", "homelab-extract"]
+dependencies = [
+    "homelab-pydantic",
+    "homelab-extract",
+    "homelab-restic",
+    "homelab-secret",
+    "pulumi>=3.150.0",
+]
 
 [build-system]
 requires = ["uv_build"]

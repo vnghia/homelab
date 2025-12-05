@@ -1,6 +1,11 @@
 from typing import ClassVar
 
 from homelab_pydantic import HomelabBaseModel
+from homelab_restic import ResticConfig
+
+
+class BackupConfig(HomelabBaseModel):
+    restic: ResticConfig = ResticConfig({})
 
 
 class BackupHostConfig(HomelabBaseModel):

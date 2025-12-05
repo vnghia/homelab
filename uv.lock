@@ -687,12 +687,18 @@ source = { editable = "homelab-backup" }
 dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
+    { name = "homelab-restic" },
+    { name = "homelab-secret" },
+    { name = "pulumi" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-restic", editable = "homelab-restic" },
+    { name = "homelab-secret", editable = "homelab-secret" },
+    { name = "pulumi", specifier = ">=3.150.0" },
 ]
 
 [[package]]
@@ -782,6 +788,7 @@ version = "0.1.0"
 source = { editable = "homelab-config" }
 dependencies = [
     { name = "deepmerge" },
+    { name = "homelab-backup" },
     { name = "homelab-docker" },
     { name = "homelab-global" },
     { name = "homelab-network" },
@@ -798,6 +805,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "deepmerge", specifier = ">=2.0" },
+    { name = "homelab-backup", editable = "homelab-backup" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-global", editable = "homelab-global" },
     { name = "homelab-network", editable = "homelab-network" },
@@ -1118,7 +1126,6 @@ name = "homelab-restic-service"
 version = "0.1.0"
 source = { editable = "service/homelab-restic-service" }
 dependencies = [
-    { name = "docker" },
     { name = "homelab-backup" },
     { name = "homelab-balite-service" },
     { name = "homelab-barman-service" },
@@ -1132,7 +1139,6 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "docker", specifier = ">=7.1.0" },
     { name = "homelab-backup", editable = "homelab-backup" },
     { name = "homelab-balite-service", editable = "service/homelab-balite-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },

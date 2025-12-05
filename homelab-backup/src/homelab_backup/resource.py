@@ -1,34 +1,28 @@
 from homelab_extract.plain import PlainArgs
+from homelab_restic.resource import ResticResource
 from homelab_secret.resource import SecretResource
 from pulumi import ComponentResource, ResourceOptions
 
-from homelab_global import ProjectArgs
-from homelab_global.config import GlobalConfig
+from .config import BackupConfig
 
 
-class GlobalResource(ComponentResource):
-    RESOURCE_NAME = "global"
+class BackupResource(ComponentResource):
+    RESOURCE_NAME = "backup"
 
     def __init__(
         self,
-        config: GlobalConfig,
+        config: BackupConfig,
         *,
         opts: ResourceOptions | None,
+        secret_resource: SecretResource,
         plain_args: PlainArgs,
-        project_args: ProjectArgs,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.config = config
-        self.plain_args = plain_args
-        self.project_args = project_args
-
-        self.secret = SecretResource(
-            config.secrets,
+        self.restic = ResticResource(
+            config.restic,
             opts=self.child_opts,
-            name=self.RESOURCE_NAME,
+            secret_resource=secret_resource,
             plain_args=plain_args,
         )
-
-        self.register_outputs({})

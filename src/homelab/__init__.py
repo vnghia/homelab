@@ -2,6 +2,7 @@ import operator
 from functools import reduce
 
 import json_fix as json_fix
+from homelab_backup.resource import BackupResource
 from homelab_config import Config, HostConfig
 from homelab_extract.plain import PlainArgs
 from homelab_global.resource import GlobalResource
@@ -35,6 +36,12 @@ class Homelab:
             opts=None,
             plain_args=PlainArgs(self.config.global_.s3, self.network.hostnames, None),
             project_args=self.project_args,
+        )
+        self.backup_resource = BackupResource(
+            self.config.backup,
+            opts=None,
+            secret_resource=self.global_resource.secret,
+            plain_args=self.global_resource.plain_args,
         )
 
         self.host_config = self.config.host.service_model
