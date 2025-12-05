@@ -4,7 +4,7 @@ import typing
 from enum import StrEnum, auto
 from typing import ClassVar
 
-from homelab_backup.config import BackupGlobalConfig
+from homelab_backup.config import BackupHostConfig
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
@@ -21,12 +21,12 @@ class DaguDagParamType(StrEnum):
 class DaguDagParamsModel(HomelabBaseModel):
     PARAM_VALUE: ClassVar[dict[DaguDagParamType, tuple[str, str]]] = {
         DaguDagParamType.BACKUP: (
-            BackupGlobalConfig.BACKUP_KEY,
-            BackupGlobalConfig.BACKUP_KEY_VALUE,
+            BackupHostConfig.BACKUP_KEY,
+            BackupHostConfig.BACKUP_KEY_VALUE,
         ),
         DaguDagParamType.SNAPSHOT: (
-            BackupGlobalConfig.SNAPSHOT_KEY,
-            BackupGlobalConfig.SNAPSHOT_KEY_VALUE,
+            BackupHostConfig.SNAPSHOT_KEY,
+            BackupHostConfig.SNAPSHOT_KEY_VALUE,
         ),
         DaguDagParamType.DEBUG: ("SLEEP_DURATION", "30m"),
     }

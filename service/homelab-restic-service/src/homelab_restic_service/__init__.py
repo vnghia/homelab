@@ -1,7 +1,7 @@
 from collections import defaultdict
 from pathlib import PosixPath
 
-from homelab_backup.config import BackupGlobalConfig
+from homelab_backup.config import BackupHostConfig
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_docker.extract import ExtractorArgs
@@ -28,14 +28,14 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         model: ServiceWithConfigModel[ResticConfig],
         *,
         opts: ResourceOptions,
-        backup_config: BackupGlobalConfig,
+        backup_host_config: BackupHostConfig,
         barman_service: BarmanService,
         balite_service: BaliteService,
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
-        self.backup_config = backup_config
+        self.backup_host_config = backup_host_config
 
         self.configuration_dir_volume_path = GlobalExtractor(
             self.config.configuration_dir

@@ -89,21 +89,21 @@ class HostBaseNoConfig(HostResourceBase):
         self.barman = BarmanService(
             self.host_services_config.barman,
             opts=self.child_opts,
-            backup_config=self.host_services_config.backup.config,
+            backup_host_config=self.host_services_config.backup.config,
             extractor_args=self.extractor_args,
         )
 
         self.balite = BaliteService(
             self.host_services_config.balite,
             opts=self.child_opts,
-            backup_config=self.host_services_config.backup.config,
+            backup_host_config=self.host_services_config.backup.config,
             extractor_args=self.extractor_args,
         )
 
         self.restic = ResticService(
             self.host_services_config.restic,
             opts=self.child_opts,
-            backup_config=self.host_services_config.backup.config,
+            backup_host_config=self.host_services_config.backup.config,
             barman_service=self.barman,
             balite_service=self.balite,
             extractor_args=self.extractor_args,

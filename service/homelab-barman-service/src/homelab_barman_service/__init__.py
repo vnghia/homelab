@@ -2,7 +2,7 @@ from collections import defaultdict
 from pathlib import PosixPath
 from typing import Self
 
-from homelab_backup.config import BackupGlobalConfig
+from homelab_backup.config import BackupHostConfig
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.database.type import DatabaseType
@@ -46,12 +46,12 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         model: ServiceWithConfigModel[BarmanConfig],
         *,
         opts: ResourceOptions,
-        backup_config: BackupGlobalConfig,
+        backup_host_config: BackupHostConfig,
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
-        self.backup_config = backup_config
+        self.backup_host_config = backup_host_config
 
         self.config_dir_volume_path = GlobalExtractor(
             self.config.config_dir
