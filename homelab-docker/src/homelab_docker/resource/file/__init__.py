@@ -22,6 +22,7 @@ from pulumi.dynamic import (
     UpdateResult,
 )
 from pydantic import (
+    PositiveInt,
     ValidationInfo,
     ValidatorFunctionWrapHandler,
     computed_field,
@@ -62,7 +63,7 @@ class FileProviderProps(HomelabBaseModel):
                     data, info.data
                 )
             )
-            return FileDataModel(content="", mode=0o444)
+            return FileDataModel(content="")
         return handler(data)  # type: ignore[no-any-return]
 
     @model_validator(mode="before")
@@ -206,7 +207,7 @@ class FileResource(Resource, module="docker", name="File"):
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         content: Input[str],
-        mode: int,
+        mode: PositiveInt | None,
         extractor_args: ExtractorArgs,
     ) -> None:
         self.volume_path = volume_path
@@ -220,7 +221,10 @@ class FileResource(Resource, module="docker", name="File"):
                     "volume": volume.name,
                     "path": volume_path.path.as_posix(),
                 },
-                "data": {"content": content, "mode": mode},
+                "data": {
+                    "content": content,
+                    "mode": mode or FileDataModel.DEFAULT_MODE,
+                },
                 "hash": None,
             },
             ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),

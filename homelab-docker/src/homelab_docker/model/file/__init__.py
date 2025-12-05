@@ -1,10 +1,15 @@
 import hashlib
 from functools import cached_property
-from typing import Any
+from typing import Any, ClassVar
 
 import pulumi
 from homelab_pydantic import HomelabBaseModel, RelativePath
-from pydantic import ValidationInfo, ValidatorFunctionWrapHandler, field_validator
+from pydantic import (
+    PositiveInt,
+    ValidationInfo,
+    ValidatorFunctionWrapHandler,
+    field_validator,
+)
 
 
 class FileLocationModel(HomelabBaseModel):
@@ -17,8 +22,10 @@ class FileLocationModel(HomelabBaseModel):
 
 
 class FileDataModel(HomelabBaseModel):
+    DEFAULT_MODE: ClassVar[PositiveInt] = 0o444
+
     content: str
-    mode: int
+    mode: PositiveInt = DEFAULT_MODE
 
     @cached_property
     def hash(self) -> str:

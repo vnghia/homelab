@@ -7,5 +7,5 @@ class ServiceFileModel(HomelabBaseModel):
     active: bool = True
     bind: bool = True
     path: GlobalExtract
-    mode: PositiveInt = 0o444
+    mode: PositiveInt | None = None
     content: GlobalExtract
