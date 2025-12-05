@@ -8,14 +8,14 @@ docker:
     local:
       restic-cache:
         backup: false
-      restic-profile:
+      restic-configuration:
         backup: false
 services:
   restic:
     config:
       image: resticprofile
-      profile-dir:
-        volume: restic-profile
+      configuration-dir:
+        volume: restic-configuration
       cache-dir:
         env: RESTIC_CACHE_DIR
       hostname:
@@ -117,7 +117,7 @@ services:
         - /tmp
       volumes:
         restic-cache: /cache
-        restic-profile:
+        restic-configuration:
           path: /etc/resticprofile
           read-only: true
       envs:

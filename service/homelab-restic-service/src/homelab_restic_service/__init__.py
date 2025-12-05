@@ -18,7 +18,6 @@ from .config.volume import ResticVolumeConfig
 from .model.profile import ResticProfileModel
 from .model.profile.database import ResticProfileDatabaseModel
 from .resource.profile.global_ import ResticGlobalProfileResource
-from .resource.repo import ResticRepoResource
 
 
 class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
@@ -38,19 +37,9 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.backup_config = backup_config
 
-        self.profile_dir_volume_path = GlobalExtractor(
-            self.config.profile_dir
+        self.configuration_dir_volume_path = GlobalExtractor(
+            self.config.configuration_dir
         ).extract_volume_path(self.extractor_args)
-
-        self.repo = ResticRepoResource(
-            "repo",
-            opts=self.child_opts,
-            docker_host=self.extractor_args.host_model.access.ssh,
-            image=self.extractor_args.host.docker.image.remotes[
-                self.config.image
-            ].image_id,
-            envs=self.config.dagu.dotenvs[None].to_envs(self.extractor_args),
-        )
 
         self.database_configs = []
         self.volume_configs = []
@@ -133,8 +122,11 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.register_outputs({})
 
+    def get_global_profile_volume_path(self) -> ContainerVolumePath:
+        return self.configuration_dir_volume_path / "profiles"
+
     def get_profile_volume_path(self, name: str) -> ContainerVolumePath:
-        return self.profile_dir_volume_path / name
+        return self.configuration_dir_volume_path / "profiles.d" / name
 
     @classmethod
     def get_database_group(cls, service: str) -> str:

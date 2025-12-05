@@ -6,7 +6,7 @@ from .keep import ResticKeepConfig
 
 class ResticConfig(DaguServiceConfigBase):
     image: str
-    profile_dir: GlobalExtract
+    configuration_dir: GlobalExtract
     cache_dir: GlobalExtract
 
     hostname: GlobalExtract
