@@ -50,6 +50,7 @@ class Homelab:
             self.config.host.sun.services,
             opts=None,
             global_resource=self.global_resource,
+            backup_resource=self.backup_resource,
             network_resource=self.network,
             config=self.host_config,
         )
@@ -57,6 +58,7 @@ class Homelab:
             self.config.host.earth.services,
             opts=None,
             global_resource=self.global_resource,
+            backup_resource=self.backup_resource,
             network_resource=self.network,
             config=self.host_config,
         )

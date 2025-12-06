@@ -10,6 +10,7 @@ from homelab_pydantic import AbsolutePath, HomelabBaseModel, RelativePath
 class ResticVolumeConfig(HomelabBaseModel):
     MOUNT_PATH: ClassVar[AbsolutePath] = AbsolutePath(PosixPath("/mnt"))
 
+    repository: str
     name: str
     model: LocalVolumeModel
     relative: RelativePath | None = None

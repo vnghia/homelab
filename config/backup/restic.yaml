@@ -1,6 +1,8 @@
 restic:
-  main:
-    host:
-      s3:
-    password:
-      protect: true
+  default: main
+  repositories:
+    main:
+      host:
+        s3:
+      password:
+        protect: true

@@ -78,7 +78,8 @@ class ResticGlobalProfileResource(
                         "ls": {"human-readable": True, "long": True} | snapshot_options,
                         "restore": {"verify": True} | snapshot_options,
                     }
-                },
+                }
+                | restic_service.repositores,
                 "groups": {"all": {"profiles": all_profiles_name}}
                 | {
                     service: {"profiles": profiles}

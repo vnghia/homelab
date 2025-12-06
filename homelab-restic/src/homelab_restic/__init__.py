@@ -1,5 +1,5 @@
 from homelab_extract.plain import PlainArgs
-from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from homelab_pydantic import HomelabBaseModel
 from homelab_secret.model.password import SecretPasswordModel
 
 from .host import ResticHost
@@ -16,8 +16,9 @@ class ResticRepositoryModel(HomelabBaseModel):
         return self.host.root.build_envs(plain_args)
 
 
-class ResticConfig(HomelabRootModel[dict[str, ResticRepositoryModel]]):
-    root: dict[str, ResticRepositoryModel] = {}
+class ResticConfig(HomelabBaseModel):
+    default: str
+    repositories: dict[str, ResticRepositoryModel] = {}
 
     def __getitem__(self, key: str) -> ResticRepositoryModel:
-        return self.root[key]
+        return self.repositories[key]

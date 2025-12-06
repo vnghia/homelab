@@ -30,6 +30,7 @@ class ResticProfileDatabaseResource(
         super().__init__(
             ResticProfileModel(
                 volume=ResticVolumeConfig(
+                    repository=restic_service.default_repository,
                     name=model.name,
                     model=ResticProfileModel.DEFAULT_VOLUME_MODEL,
                     relative=RelativePath(PosixPath(model.type_))

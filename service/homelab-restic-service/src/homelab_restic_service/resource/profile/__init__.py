@@ -87,7 +87,9 @@ class ResticProfileResource(
                 "profiles": {
                     self.volume.name: {
                         "base-dir": self.volume.path,
-                        "inherit": restic_service.DEFAULT_PROFILE_NAME,
+                        "inherit": restic_service.get_repository_profile_name(
+                            model.volume.repository
+                        ),
                         "backup": ({"source": [source]} if source else {})
                         | ({"exclude": exclude} if exclude else {})
                         | {

@@ -5,7 +5,7 @@ from homelab_restic import ResticConfig
 
 
 class BackupConfig(HomelabBaseModel):
-    restic: ResticConfig = ResticConfig({})
+    restic: ResticConfig
 
 
 class BackupHostConfig(HomelabBaseModel):

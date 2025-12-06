@@ -1,3 +1,4 @@
+from homelab_backup.resource import BackupResource
 from homelab_ddns_service import DdnsService
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global.resource import GlobalResource
@@ -16,6 +17,7 @@ class SunHost(HostBase[SunServiceConfig]):
         *,
         opts: ResourceOptions | None,
         global_resource: GlobalResource,
+        backup_resource: BackupResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
     ) -> None:
@@ -24,6 +26,7 @@ class SunHost(HostBase[SunServiceConfig]):
             service,
             opts=opts,
             global_resource=global_resource,
+            backup_resource=backup_resource,
             network_resource=network_resource,
             config=config,
         )

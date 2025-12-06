@@ -52,6 +52,7 @@ class ResticResource(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+        self.config = config
         self.restic = {
             name: ResticRepository(
                 name,
@@ -60,7 +61,7 @@ class ResticResource(ComponentResource):
                 secret_resource=secret_resource,
                 plain_args=plain_args,
             )
-            for name, model in config.root.items()
+            for name, model in config.repositories.items()
         }
 
         self.register_outputs({})

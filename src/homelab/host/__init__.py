@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from homelab_backup.resource import BackupResource
 from homelab_backup_service import BackupService
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
@@ -29,6 +30,7 @@ class HostBaseNoConfig(HostResourceBase):
         *,
         opts: ResourceOptions | None,
         global_resource: GlobalResource,
+        backup_resource: BackupResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
         host_services_config: HostServiceConfig,
@@ -41,6 +43,7 @@ class HostBaseNoConfig(HostResourceBase):
             config=config,
         )
 
+        self.backup_resource = backup_resource
         self.host_services_config = host_services_config
         self.extra_services_config = host_services_config.extra(
             ServiceWithConfigModel[ExtraConfig]
@@ -103,6 +106,7 @@ class HostBaseNoConfig(HostResourceBase):
         self.restic = ResticService(
             self.host_services_config.restic,
             opts=self.child_opts,
+            backup_resource=self.backup_resource,
             backup_host_config=self.host_services_config.backup.config,
             barman_service=self.barman,
             balite_service=self.balite,
@@ -147,6 +151,7 @@ class HostBase[T: HostServiceConfig](HostBaseNoConfig):
         service: T,
         *,
         opts: ResourceOptions | None,
+        backup_resource: BackupResource,
         global_resource: GlobalResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
@@ -154,6 +159,7 @@ class HostBase[T: HostServiceConfig](HostBaseNoConfig):
         super().__init__(
             name=name,
             opts=opts,
+            backup_resource=backup_resource,
             global_resource=global_resource,
             network_resource=network_resource,
             config=config,

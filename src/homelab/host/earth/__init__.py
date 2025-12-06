@@ -1,3 +1,4 @@
+from homelab_backup.resource import BackupResource
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global.resource import GlobalResource
 from homelab_network.resource.network import NetworkResource
@@ -15,6 +16,7 @@ class EarthHost(HostBase[EarthServiceConfig]):
         *,
         opts: ResourceOptions | None,
         global_resource: GlobalResource,
+        backup_resource: BackupResource,
         network_resource: NetworkResource,
         config: HostServiceModelConfig,
     ) -> None:
@@ -23,6 +25,7 @@ class EarthHost(HostBase[EarthServiceConfig]):
             service,
             opts=opts,
             global_resource=global_resource,
+            backup_resource=backup_resource,
             network_resource=network_resource,
             config=config,
         )

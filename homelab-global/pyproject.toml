@@ -9,7 +9,6 @@ dependencies = [
     "homelab-pydantic",
     "homelab-s3",
     "homelab-secret",
-    "homelab-restic",
     "pulumi>=3.207.0",
 ]
 

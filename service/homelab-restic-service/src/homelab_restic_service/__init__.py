@@ -2,6 +2,7 @@ from collections import defaultdict
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupHostConfig
+from homelab_backup.resource import BackupResource
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_docker.extract import ExtractorArgs
@@ -9,9 +10,11 @@ from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
+from homelab_docker.resource.file import FileResource
+from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_pydantic import RelativePath
-from pulumi import ResourceOptions
+from pulumi import ComponentResource, ResourceOptions
 
 from .config import ResticConfig
 from .config.volume import ResticVolumeConfig
@@ -28,6 +31,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         model: ServiceWithConfigModel[ResticConfig],
         *,
         opts: ResourceOptions,
+        backup_resource: BackupResource,
         backup_host_config: BackupHostConfig,
         barman_service: BarmanService,
         balite_service: BaliteService,
@@ -35,11 +39,52 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
+        self.backup_resource = backup_resource
         self.backup_host_config = backup_host_config
 
         self.configuration_dir_volume_path = GlobalExtractor(
             self.config.configuration_dir
         ).extract_volume_path(self.extractor_args)
+
+        self.repositores = {}
+        for name, resource in self.backup_resource.restic.restic.items():
+            repository_opts = ResourceOptions(
+                parent=ComponentResource(name, name, None, opts=self.child_opts)
+            )
+            repository_volume_path = self.get_repository_volume_path(name)
+
+            repository_file = FileResource(
+                "repository",
+                opts=repository_opts,
+                volume_path=repository_volume_path / "repository",
+                content=resource.repository,
+                mode=None,
+                extractor_args=self.extractor_args,
+            )
+
+            password_file = FileResource(
+                "password",
+                opts=repository_opts,
+                volume_path=repository_volume_path / "password",
+                content=resource.password.result,
+                mode=None,
+                extractor_args=self.extractor_args,
+            )
+
+            env_file = DotenvFileResource(
+                "env",
+                opts=repository_opts,
+                volume_path=repository_volume_path / "env",
+                envs=resource.envs,
+                extractor_args=self.extractor_args,
+            )
+
+            self.repositores[self.get_repository_profile_name(name)] = {
+                "inherit": self.DEFAULT_PROFILE_NAME,
+                "repository-file": repository_file.to_path(self.extractor_args),
+                "password-file": password_file.to_path(self.extractor_args),
+                "env-file": [env_file.to_path(self.extractor_args)],
+            }
 
         self.database_configs = []
         self.volume_configs = []
@@ -58,7 +103,12 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         ) in self.extractor_args.host_model.docker.volumes.local.items():
             if volume_model.backup:
                 self.volume_configs.append(
-                    ResticVolumeConfig(name=name, model=volume_model)
+                    ResticVolumeConfig(
+                        repository=volume_model.backup.repository
+                        or self.default_repository,
+                        name=name,
+                        model=volume_model,
+                    )
                 )
 
         self.service_groups: defaultdict[str, list[str]] = defaultdict(list)
@@ -125,8 +175,18 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
     def get_global_profile_volume_path(self) -> ContainerVolumePath:
         return self.configuration_dir_volume_path / "profiles"
 
+    def get_repository_volume_path(self, name: str) -> ContainerVolumePath:
+        return self.configuration_dir_volume_path / "repositories.d" / name
+
+    def get_repository_profile_name(self, name: str) -> str:
+        return "repository-{}".format(name)
+
     def get_profile_volume_path(self, name: str) -> ContainerVolumePath:
         return self.configuration_dir_volume_path / "profiles.d" / name
+
+    @property
+    def default_repository(self) -> str:
+        return self.backup_resource.restic.config.default
 
     @classmethod
     def get_database_group(cls, service: str) -> str:
@@ -136,6 +196,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self, name: str, type: DatabaseType, path: RelativePath
     ) -> ResticVolumeConfig:
         return ResticVolumeConfig(
+            repository=self.default_repository,
             name=name,
             model=self.extractor_args.host_model.docker.volumes.local.get(
                 name, ResticProfileModel.DEFAULT_VOLUME_MODEL
