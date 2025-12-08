@@ -379,12 +379,8 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             DaguDagStepRunSubdagModel(
                                 service=self.name(),
                                 dag="service",
-                                params=DaguDagParamsModel(
-                                    types={
-                                        DaguDagParamType.BACKUP: DaguDagStepRunSubdagParallelModel.PARAM_KEY
-                                    }
-                                ),
                                 parallel=DaguDagStepRunSubdagParallelModel(
+                                    param=DaguDagParamType.BACKUP,
                                     items=services,
                                     max_concurrent=self.config.max_concurent,
                                 ),

@@ -37,6 +37,14 @@ class DaguDagParamsModel(HomelabBaseModel):
     def __bool__(self) -> bool:
         return bool(self.main) or bool(self.types)
 
+    @classmethod
+    def to_key(cls, key: DaguDagParamType | str) -> str:
+        return (
+            DaguDagParamsModel.PARAM_VALUE[DaguDagParamType(key)][0]
+            if isinstance(key, DaguDagParamType) or key in DaguDagParamType
+            else key
+        )
+
     def to_key_command_unchecked(self, key: DaguDagStepRunCommandParamTypeModel) -> str:
         from ..model.step.run.command import DaguDagStepRunCommandParamTypeFullModel
 

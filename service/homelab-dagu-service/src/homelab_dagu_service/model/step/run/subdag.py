@@ -38,11 +38,22 @@ class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagMode
         }
 
         if root.parallel:
+            parallel = root.parallel
+
+            params = params or {}
+            params[DaguDagParamsModel.to_key(parallel.param)] = Output.from_input(
+                parallel.PARAM_KEY
+            )
+
             data["parallel"] = {
                 "items": [
                     GlobalExtractor(item).extract_str(extractor_args)
-                    for item in root.parallel.items
+                    for item in parallel.items
                 ]
+                if isinstance(parallel.items, list)
+                else GlobalExtractor(parallel.items).extract_str_explicit_transform(
+                    extractor_args
+                )
             } | (
                 {"maxConcurrent": root.parallel.max_concurrent}
                 if root.parallel.max_concurrent
