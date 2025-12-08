@@ -14,7 +14,7 @@ from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_pydantic import RelativePath
-from pulumi import ComponentResource, ResourceOptions
+from pulumi import ComponentResource, Output, ResourceOptions
 
 from .config import ResticConfig
 from .config.volume import ResticVolumeConfig
@@ -25,6 +25,7 @@ from .resource.profile.global_ import ResticGlobalProfileResource
 
 class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
     DEFAULT_PROFILE_NAME = "default"
+    REPOSITORY_PROFILE_EXPORT_KEY = "repository-profiles"
 
     def __init__(
         self,
@@ -47,6 +48,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         ).extract_volume_path(self.extractor_args)
 
         self.repositores = {}
+        self.export_repositories = []
         for name, resource in self.backup_resource.restic.restic.items():
             repository_opts = ResourceOptions(
                 parent=ComponentResource(name, name, None, opts=self.child_opts)
@@ -79,12 +81,14 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 extractor_args=self.extractor_args,
             )
 
-            self.repositores[self.get_repository_profile_name(name)] = {
+            repository_profile = self.get_repository_profile_name(name)
+            self.repositores[repository_profile] = {
                 "inherit": self.DEFAULT_PROFILE_NAME,
                 "repository-file": repository_file.to_path(self.extractor_args),
                 "password-file": password_file.to_path(self.extractor_args),
                 "env-file": [env_file.to_path(self.extractor_args)],
             }
+            self.export_repositories.append(Output.from_input(repository_profile))
 
         self.database_configs = []
         self.volume_configs = []
@@ -169,6 +173,8 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 for config in self.database_configs
             }
         )
+
+        self.exports[self.REPOSITORY_PROFILE_EXPORT_KEY] = self.export_repositories
 
         self.register_outputs({})
 

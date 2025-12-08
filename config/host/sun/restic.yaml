@@ -33,6 +33,20 @@ services:
                     backup: ""
               command: ["prune"]
         dag:
+          check-all:
+            name: check-all
+            path: restic-check-all
+            tags: ["backup"]
+            schedule: "0 5 * * sat" # 5am every saturday
+            steps:
+              - name: check
+                run:
+                  service: restic
+                  dag: check
+                  parallel:
+                    param: backup
+                    items:
+                      export: repository-profiles
           forget-and-prune:
             name: forget-and-prune
             path: restic-forget-and-prune
@@ -47,5 +61,9 @@ services:
                 run:
                   service: restic
                   dag: prune
+                  parallel:
+                    param: backup
+                    items:
+                      export: repository-profiles
                 depends:
                   - forget
