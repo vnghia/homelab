@@ -60,7 +60,7 @@ class ServiceResourceBase(ComponentResource):
         self._secret: SecretResource | None = None
         self._keepass: ServiceKeepassResource | None = None
 
-        self.exports: dict[str, Output[str]] = {}
+        self.exports: dict[str, Output[str] | list[Output[str]]] = {}
         self.container_models: dict[str | None, ContainerModel] = model.containers
         self.containers: dict[str | None, ContainerResource] = {}
         self.options: defaultdict[str | None, ContainerModelBuildArgs] = defaultdict(

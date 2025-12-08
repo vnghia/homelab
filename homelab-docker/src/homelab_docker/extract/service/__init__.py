@@ -80,7 +80,13 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
 
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | random.RandomPassword | dict[str, Output[str]]:
+    ) -> (
+        str
+        | Output[str]
+        | random.RandomPassword
+        | dict[str, Output[str]]
+        | list[Output[str]]
+    ):
         return self.extractor.extract_str(extractor_args)
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
@@ -123,7 +129,13 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
 
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | random.RandomPassword | dict[str, Output[str]]:
+    ) -> (
+        str
+        | Output[str]
+        | random.RandomPassword
+        | dict[str, Output[str]]
+        | list[Output[str]]
+    ):
         extractor = self.extractor
         transformer = self.transfomer
         extractor_args = self.extractor_args(extractor_args)
@@ -184,7 +196,13 @@ class ServiceExtractor(ExtractorBase[ServiceExtract]):
 
     def extract_str(
         self, extractor_args: ExtractorArgs
-    ) -> str | Output[str] | random.RandomPassword | dict[str, Output[str]]:
+    ) -> (
+        str
+        | Output[str]
+        | random.RandomPassword
+        | dict[str, Output[str]]
+        | list[Output[str]]
+    ):
         return self.extractor.extract_str(extractor_args)
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
