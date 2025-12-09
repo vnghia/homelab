@@ -7,7 +7,7 @@ from homelab_pydantic import HomelabBaseModel
 class ResticHostBase(HomelabBaseModel):
     SCHEME: ClassVar[str]
 
-    path: str
+    path: str = "backup/restic"
 
     def build_prefix(self, plain_args: PlainArgs) -> str:
         return ""
