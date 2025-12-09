@@ -22,7 +22,6 @@ from pulumi.dynamic import (
     UpdateResult,
 )
 from pydantic import (
-    PositiveInt,
     ValidationInfo,
     ValidatorFunctionWrapHandler,
     computed_field,
@@ -32,7 +31,7 @@ from pydantic import (
 
 from ...client import DockerClient
 from ...model.docker.container.volume_path import ContainerVolumePath
-from ...model.file import FileDataModel, FileLocationModel
+from ...model.file import FileDataModel, FileLocationModel, FilePermissionModel
 
 if typing.TYPE_CHECKING:
     from ...extract import ExtractorArgs
@@ -42,6 +41,7 @@ class FileProviderProps(HomelabBaseModel):
     docker_host: str
     location: FileLocationModel
     data: FileDataModel
+    permission: FilePermissionModel = FilePermissionModel()
 
     @property
     def id_(self) -> str:
@@ -98,6 +98,14 @@ class FileVolumeProxy:
         DockerClient(docker_host).images.pull(repository=cls.IMAGE)
 
     @classmethod
+    def update_tarinfo_permission(
+        cls, tarinfo: tarfile.TarInfo, permission: FilePermissionModel
+    ) -> tarfile.TarInfo:
+        return tarinfo.replace(
+            mode=permission.mode, uid=permission.uid, gid=permission.gid, deep=False
+        )
+
+    @classmethod
     def create_file(cls, props: FileProviderProps) -> None:
         def compress_tar() -> io.BytesIO:
             tar_file = io.BytesIO()
@@ -110,7 +118,7 @@ class FileVolumeProxy:
                 tar.add(
                     file.name,
                     arcname=props.location.path.root,
-                    filter=lambda x: x.replace(mode=props.data.mode, deep=False),
+                    filter=lambda x: cls.update_tarinfo_permission(x, props.permission),
                 )
             tar_file.seek(0)
             return tar_file
@@ -136,10 +144,10 @@ class FileVolumeProxy:
                     name = stat["name"]
                     tar.extract(name, path=tmpdir, set_attrs=False)
                     return props.__replace__(
-                        data=FileDataModel(
-                            content=(Path(tmpdir) / name).read_text(),
-                            mode=stat["mode"],
-                        )
+                        data=FileDataModel(content=(Path(tmpdir) / name).read_text()),
+                        permission=FilePermissionModel(
+                            mode=stat["mode"], uid=stat["uid"], gid=stat["gid"]
+                        ),
                     )
             except NotFound:
                 return None
@@ -207,7 +215,7 @@ class FileResource(Resource, module="docker", name="File"):
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         content: Input[str],
-        mode: PositiveInt | None,
+        permission: FilePermissionModel | None,
         extractor_args: ExtractorArgs,
     ) -> None:
         self.volume_path = volume_path
@@ -221,10 +229,8 @@ class FileResource(Resource, module="docker", name="File"):
                     "volume": volume.name,
                     "path": volume_path.path.as_posix(),
                 },
-                "data": {
-                    "content": content,
-                    "mode": mode or FileDataModel.DEFAULT_MODE,
-                },
+                "data": {"content": content},
+                "permission": (permission or FilePermissionModel()).model_dump(),
                 "hash": None,
             },
             ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),

@@ -218,7 +218,7 @@ class ServiceResourceBase(ComponentResource):
                         content=GlobalExtractor(file_model.content).extract_str(
                             self.extractor_args
                         ),
-                        mode=file_model.mode,
+                        permission=file_model.permission,
                         extractor_args=self.extractor_args,
                     )
                     if file_model.bind:

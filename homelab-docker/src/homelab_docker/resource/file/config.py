@@ -111,7 +111,7 @@ class ConfigFileResource(Generic[T], FileResource):
             opts=opts,
             volume_path=volume_path.with_suffix(self.suffix or self.dumper.suffix()),
             content=Output.json_dumps(data).apply(self.dumps),
-            mode=None,
+            permission=None,
             extractor_args=extractor_args,
         )
 

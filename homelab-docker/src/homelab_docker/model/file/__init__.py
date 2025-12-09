@@ -5,6 +5,7 @@ from typing import Any, ClassVar
 import pulumi
 from homelab_pydantic import HomelabBaseModel, RelativePath
 from pydantic import (
+    NonNegativeInt,
     PositiveInt,
     ValidationInfo,
     ValidatorFunctionWrapHandler,
@@ -21,11 +22,18 @@ class FileLocationModel(HomelabBaseModel):
         return "{}:{}".format(self.volume, self.path.as_posix())
 
 
-class FileDataModel(HomelabBaseModel):
+class FilePermissionModel(HomelabBaseModel):
     DEFAULT_MODE: ClassVar[PositiveInt] = 0o444
+    DEFAULT_UID: ClassVar[NonNegativeInt] = 1000
+    DEFAULT_GID: ClassVar[NonNegativeInt] = 1000
 
-    content: str
     mode: PositiveInt = DEFAULT_MODE
+    uid: NonNegativeInt = DEFAULT_UID
+    gid: NonNegativeInt = DEFAULT_GID
+
+
+class FileDataModel(HomelabBaseModel):
+    content: str
 
     @cached_property
     def hash(self) -> str:
