@@ -2,7 +2,8 @@ restic:
   default: main
   repositories:
     main:
-      host:
-        s3:
+      password:
+        protect: true
+    iso:
       password:
         protect: true

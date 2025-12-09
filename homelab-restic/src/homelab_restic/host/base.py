@@ -14,3 +14,6 @@ class ResticHostBase(HomelabBaseModel):
 
     def build_repository(self, plain_args: PlainArgs) -> str:
         return self.SCHEME + ":" + self.build_prefix(plain_args) + self.path
+
+    def build_envs(self, plain_args: PlainArgs) -> dict[str, str]:
+        return {}

@@ -1,3 +1,4 @@
+import os
 import shutil
 import subprocess
 from typing import Any, ClassVar
@@ -25,15 +26,24 @@ class ResticRepositoryProviderProps(HomelabBaseModel):
             raise ValueError("{} is not installed".format(self.BINARY))
         return binary
 
-    def run(self, command: list[str]) -> subprocess.CompletedProcess[bytes]:
-        return subprocess.run([self.binary, *command], check=False, env=self.envs)
+    def run(
+        self, command: list[str], check: bool
+    ) -> subprocess.CompletedProcess[bytes]:
+        return subprocess.run(
+            [self.binary, *command],
+            check=check,
+            env=self.envs | {"PATH": os.environ["PATH"]},
+        )
 
     def exist(self) -> bool:
         # https://restic.readthedocs.io/en/stable/075_scripting.html#check-if-a-repository-is-already-initialized
-        return self.run(["cat", "config"]).returncode == self.NOT_INITIALIZED_YET
+        return (
+            self.run(["cat", "config"], check=False).returncode
+            == self.NOT_INITIALIZED_YET
+        )
 
     def init(self) -> None:
-        self.run(["init"])
+        self.run(["init"], check=True)
 
 
 class ResticRepositoryProvider(ResourceProvider):
