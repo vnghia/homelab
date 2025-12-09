@@ -8,7 +8,8 @@ docker:
     local:
       qbittorrent-config: {}
       qbittorrent-downloads:
-        backup: false
+        backup:
+          repository: iso
       qbittorrent-starr:
         backup: false
 services:
