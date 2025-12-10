@@ -3,14 +3,47 @@ docker:
     remote:
       dawarich:
         repo: freikin/dawarich
-        tag: "0.35.1"
+        tag: "0.36.2"
   volumes:
     local:
       dawarich-storage: {}
 services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            dawarich:
+              display-name: Dawarich
+              origin-url:
+                - service: dawarich
+                  extract:
+                    svariable: REDIRECT_URL
+              origin-landing:
+                hostname: dawarich
+                record: solar
+                scheme: https
+              prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
   dawarich:
     variables:
       PORT: 3000
+      REDIRECT_URL:
+        extract:
+          hostname: dawarich
+          record: solar
+          scheme: https
+        transform:
+          string:
+            template: "{value}/users/auth/openid_connect/callback"
+      OAUTH_URL:
+        extract:
+          hostname: kanidm
+          record: solar
+          scheme: https
+        transform:
+          string:
+            template: "{value}/oauth2/openid/dawarich"
     config:
       traefik:
         dynamic:
@@ -81,6 +114,18 @@ services:
           secret: key
         RAILS_LOG_TO_STDOUT: true
         PIDFILE: /var/app/tmp/cache/server.pid
+        OIDC_CLIENT_ID: dawarich
+        OIDC_CLIENT_SECRET:
+          service: kanidm
+          extract:
+            export: dawarich
+        OIDC_ISSUER:
+          svariable: OAUTH_URL
+        OIDC_REDIRECT_URI:
+          svariable: REDIRECT_URL
+        OIDC_PROVIDER_NAME: Kanidm
+        OIDC_AUTO_REGISTER: true
+        ALLOW_EMAIL_PASSWORD_REGISTRATION: false
     containers:
       worker:
         inherit:
