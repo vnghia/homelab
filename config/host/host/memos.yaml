@@ -3,7 +3,10 @@ docker:
     remote:
       memos:
         repo: ghcr.io/usememos/memos
-        tag: "0.25.1"
+        tag: &memos-tag "0.25.1"
+      mortis:
+        repo: ghcr.io/mudkipme/mortis
+        tag: *memos-tag
   volumes:
     local:
       memos-data: {}
@@ -30,6 +33,9 @@ services:
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
   memos:
+    variables:
+      MEMOS_PORT: 5230
+      MORTIS_PORT: 5231
     config:
       traefik:
         dynamic:
@@ -37,7 +43,17 @@ services:
             record: solar
             service:
               port:
-                env: MEMOS_PORT
+                svariable: MEMOS_PORT
+          mortis:
+            name: mortis
+            hostname: memos
+            record: solar
+            rules:
+              - (PathPrefix(`/api/v1/`) || PathPrefix(`/o/r/`))
+            service:
+              container: mortis
+              port:
+                svariable: MORTIS_PORT
     databases:
       postgres:
         postgres: {}
@@ -69,10 +85,27 @@ services:
         timeout: 5s
       volumes:
         memos-data: /var/opt/memos
-      wud:
-        template: https://github.com/usememos/memos/releases/tag/v${original}
+
       envs:
-        MEMOS_PORT: 5230
+        MEMOS_PORT:
+          svariable: MEMOS_PORT
         MEMOS_DATA:
           volume: memos-data
         MEMOS_DRIVER: postgres
+    containers:
+      mortis:
+        image: mortis
+        entrypoint: ["/app/mortis"]
+        command:
+          - extract:
+              svariable: MORTIS_PORT
+            transform:
+              string:
+                template: "-port={value}"
+          - extract:
+              svariable: MEMOS_PORT
+            transform:
+              string:
+                template: "-grpc-addr=memos:{value}"
+        wud:
+          template: https://github.com/usememos/memos/releases/tag/v${original}
