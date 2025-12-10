@@ -1,5 +1,5 @@
-from homelab_backup.model.frequency import BackupFrequency
 from homelab_pydantic import HomelabBaseModel
+from homelab_restic.model.frequency import BackupFrequency
 
 
 class ServiceBackupConfig(HomelabBaseModel):

@@ -2,7 +2,8 @@ from homelab_extract.plain import PlainArgs
 from homelab_secret.resource import SecretResource
 from pulumi import ComponentResource, Output, ResourceOptions
 
-from .. import ResticConfig, ResticRepositoryModel
+from .. import ResticConfig
+from ..model import ResticRepositoryModel
 from .repository import ResticRepositoryResource
 
 
@@ -19,6 +20,7 @@ class ResticRepository(ComponentResource):
         super().__init__(name, name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+        self.keep = repository.keep
         self.repository = repository.build_repository(plain_args)
         self.password = repository.password.build_resource(
             "password", self.child_opts, secret_resource, plain_args

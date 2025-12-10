@@ -22,12 +22,6 @@ services:
         env: RESTIC_CACHE_DIR
       hostname:
         hvariable: FULL_HOSTNAME
-      keep:
-        within:
-          daily: 1m # Keep at least one backup per day of the last month
-          weekly: 1y # Keep at least one backup per week of the last year
-          monthly: 10y # Keep at least one backup per month of the last 10 years
-          yearly: 100y # Keep at least one backup per year of the last 100 years
       dagu:
         docker:
           executor:

@@ -1,19 +1,6 @@
-from homelab_extract.plain import PlainArgs
 from homelab_pydantic import HomelabBaseModel
-from homelab_secret.model.password import SecretPasswordModel
 
-from .host import ResticHost
-
-
-class ResticRepositoryModel(HomelabBaseModel):
-    host: ResticHost
-    password: SecretPasswordModel
-
-    def build_repository(self, plain_args: PlainArgs) -> str:
-        return self.host.root.build_repository(plain_args)
-
-    def build_envs(self, plain_args: PlainArgs) -> dict[str, str]:
-        return self.host.root.build_envs(plain_args)
+from .model import ResticRepositoryModel
 
 
 class ResticConfig(HomelabBaseModel):

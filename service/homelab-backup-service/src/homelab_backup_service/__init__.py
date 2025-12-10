@@ -2,7 +2,6 @@ import operator
 from collections import defaultdict
 from functools import reduce
 
-from homelab_backup.model.frequency import BackupFrequency
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_dagu_config.model import DaguDagModel
@@ -38,6 +37,7 @@ from homelab_extract.transform.string import (
     ExtractTransformString,
     ExtractTransformStringTemplate,
 )
+from homelab_restic.model.frequency import BackupFrequency
 from homelab_restic_service import ResticService
 from pulumi import ResourceOptions
 

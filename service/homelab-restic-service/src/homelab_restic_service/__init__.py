@@ -92,6 +92,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 "inherit": self.DEFAULT_PROFILE_NAME,
                 "repository-file": repository_file.to_path(self.extractor_args),
                 "password-file": password_file.to_path(self.extractor_args),
+                "forget": resource.keep.to_forget_options(),
             } | ({"env-file": env_file} if env_file else {})
             self.export_repositories.append(Output.from_input(repository_profile))
 

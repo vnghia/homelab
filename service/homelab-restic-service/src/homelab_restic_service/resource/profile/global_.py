@@ -25,18 +25,6 @@ class ResticGlobalProfileResource(
 
         group_by_options = {"group-by": "tags,path"}
         snapshot_options = {"path": True, "tag": True}
-        forget_options = (
-            group_by_options
-            | snapshot_options
-            | {
-                "keep-{}".format(timeframe): number
-                for timeframe, number in restic_service.config.keep.last.items()
-            }
-            | {
-                "keep-within-{}".format(timeframe): duration
-                for timeframe, duration in restic_service.config.keep.within.items()
-            }
-        )
 
         all_profiles_path = []
         all_profiles_name = []
@@ -74,7 +62,7 @@ class ResticGlobalProfileResource(
                         }
                         | group_by_options,
                         "snapshots": group_by_options | snapshot_options,
-                        "forget": forget_options,
+                        "forget": group_by_options | snapshot_options,
                         "ls": {"human-readable": True, "long": True} | snapshot_options,
                         "restore": {"verify": True} | snapshot_options,
                     }
