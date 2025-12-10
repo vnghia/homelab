@@ -3,7 +3,7 @@ docker:
     remote:
       docker-proxy:
         repo: ghcr.io/wollomatic/socket-proxy
-        tag: "1.10.0"
+        tag: "1.10.1"
       docker-cli:
         repo: docker
         tag: "28.5.1-cli"
