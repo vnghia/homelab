@@ -16,7 +16,8 @@ docker:
   volumes:
     local:
       starr-data:
-        backup: false
+        backup:
+          repository: iso
       starr-radarr-config:
         backup:
           sqlites:
