@@ -27,7 +27,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            hostname: beszel
             service:
               port:
                 svariable: PORT

@@ -42,13 +42,11 @@ services:
                 name: oidc
           api:
             name: api
-            hostname: wger
             record: solar
             prefix: /api
             service: "wger@file"
           static:
             name: static
-            hostname: wger
             record: solar
             prefix: /static
             service:
@@ -67,7 +65,6 @@ services:
                       - "/static"
           media:
             name: media
-            hostname: wger
             record: solar
             prefix: /media
             service:

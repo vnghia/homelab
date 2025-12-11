@@ -22,7 +22,6 @@ services:
         dynamic:
           traefik:
             record: solar
-            hostname: ntfy
             service:
               port:
                 extract:

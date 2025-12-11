@@ -38,12 +38,20 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
         extractor_args: ExtractorArgs,
     ) -> Output[str]:
         root = self.root
+
+        if root.address:
+            return Output.from_input(
+                GlobalExtractor(root.address).extract_str(extractor_args)
+            )
+
+        hostnames = traefik_service.extractor_args.hostnames[record]
+        if hostname:
+            return Output.from_input(hostnames[hostname].value)
+
         return Output.from_input(
-            GlobalExtractor(root.address).extract_str(extractor_args)
-            if root.address
-            else traefik_service.extractor_args.hostnames[record][
-                hostname or router_name
-            ].value
+            (
+                hostnames.get(extractor_args.service.name()) or hostnames[router_name]
+            ).value
         )
 
     @abc.abstractmethod

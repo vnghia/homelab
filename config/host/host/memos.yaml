@@ -46,7 +46,6 @@ services:
                 svariable: MEMOS_PORT
           mortis:
             name: mortis
-            hostname: memos
             record: solar
             rules:
               - (PathPrefix(`/api/v1/`) || PathPrefix(`/o/r/`))

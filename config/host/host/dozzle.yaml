@@ -28,13 +28,12 @@ services:
         dynamic:
           traefik:
             record: sun
-            hostname: dozzle
             service:
               port:
                 svariable: PORT
           agent:
             name: agent
-            hostsni: dozzle
+            hostsni:
             service:
               container: agent
               port:

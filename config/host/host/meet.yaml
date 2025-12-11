@@ -60,7 +60,6 @@ services:
         dynamic:
           backend:
             name: backend
-            hostname: meet
             record: solar
             rules:
               - (PathPrefix(`/api`) || PathPrefix(`/static`))
@@ -70,7 +69,6 @@ services:
                 svariable: BACKEND_PORT
           backend-admin:
             name: backend-admin
-            hostname: meet
             rules:
               - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
             service:
@@ -79,7 +77,6 @@ services:
                 svariable: BACKEND_PORT
           frontend:
             name: frontend
-            hostname: meet
             record: solar
             service:
               container: frontend
