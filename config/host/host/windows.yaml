@@ -3,7 +3,7 @@ docker:
     remote:
       windows:
         repo: ghcr.io/dockur/windows
-        tag: "5.12"
+        tag: "5.14"
     build:
       wintele:
         context:
@@ -55,6 +55,8 @@ services:
       read-only: false
       volumes:
         windows-storage: /storage
+      wud:
+        semver-count: 2
       envs:
         VERSION: tiny11
         RAM_SIZE: "6G"
