@@ -16,7 +16,10 @@ services:
       active: false
       image: gluetun
       capabilities:
+        - DAC_OVERRIDE
+        - MKNOD
         - NET_ADMIN
+        - NET_RAW
       healthcheck:
         tests: ["CMD", "/gluetun-entrypoint", "healthcheck"]
         interval: 30s
