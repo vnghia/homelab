@@ -29,18 +29,21 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
     def to_args(
         self, volume: AbsolutePath | str, extractor_args: ExtractorArgs
     ) -> docker.ContainerMountArgs:
-        target = self.to_path(extractor_args).as_posix()
-
         if isinstance(volume, AbsolutePath):
             return docker.ContainerMountArgs(
                 type="bind",
-                target=target,
+                target=self.to_path(extractor_args).as_posix(),
                 read_only=self.read_only,
                 source=volume.as_posix(),
             )
+
+        model = extractor_args.host.docker.volume.models.get(volume)
+        if model and model.bind:
+            return self.to_args(model.bind, extractor_args)
+
         return docker.ContainerMountArgs(
             type="volume",
-            target=target,
+            target=self.to_path(extractor_args).as_posix(),
             read_only=self.read_only,
             source=extractor_args.host.docker.volume.volumes[volume].name,
             volume_options=docker.ContainerMountVolumeOptionsArgs(no_copy=True),

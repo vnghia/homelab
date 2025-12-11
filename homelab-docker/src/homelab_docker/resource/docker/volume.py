@@ -31,11 +31,12 @@ class VolumeResource(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
+        self.models = config.docker.volumes.local
         self.volumes = {
             name: model.build_resource(
                 name, opts=self.child_opts, project_labels=project_args.labels
             )
-            for name, model in config.docker.volumes.local.items()
+            for name, model in self.models.items()
             if model.active
         }
         self.files: defaultdict[str, list[FileResource]] = defaultdict(list)
