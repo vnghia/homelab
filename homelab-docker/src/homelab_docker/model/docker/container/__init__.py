@@ -303,7 +303,9 @@ class ContainerModel(HomelabBaseModel):
                 ),
             ),
             image=self.image.to_image_name(extractor_args.host.docker.image),
-            capabilities=docker.ContainerCapabilitiesArgs(adds=self.capabilities)
+            capabilities=docker.ContainerCapabilitiesArgs(
+                adds=self.capabilities, drops=["ALL"]
+            )
             if self.capabilities
             else None,
             command=self.build_command(extractor_args),
@@ -333,6 +335,7 @@ class ContainerModel(HomelabBaseModel):
             read_only=self.read_only,
             rm=self.remove,
             restart=self.restart,
+            security_opts=["no-new-privileges"],
             sysctls=self.sysctls,
             tmpfs=self.build_tmpfs(),
             user=self.user,
