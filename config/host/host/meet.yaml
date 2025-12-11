@@ -3,7 +3,7 @@ docker:
     remote:
       meet-backend:
         repo: lasuite/meet-backend
-        tag: &meet-version "v0.1.42"
+        tag: &meet-version "v1.0.0"
       meet-frontend:
         repo: lasuite/meet-frontend
         tag: *meet-version
