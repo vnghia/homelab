@@ -295,7 +295,6 @@ class ContainerModel(HomelabBaseModel):
                 ResourceOptions.merge(
                     build_args.opts,
                     ResourceOptions(
-                        replace_on_changes=["*"],
                         depends_on=depends_on,
                         delete_before_replace=self.delete_before_replace
                         or bool(self.ports)
@@ -346,11 +345,6 @@ class ContainerModel(HomelabBaseModel):
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
                     self.build_labels(resource_name, extractor_args, build_args)
-                    | {
-                        "pulumi.image.id": self.image.to_image_id(
-                            extractor_args.host.docker.image
-                        )
-                    }
                 ).items()
             ],
         )
