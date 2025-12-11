@@ -28,20 +28,22 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
 
     def to_args(
         self, volume: AbsolutePath | str, extractor_args: ExtractorArgs
-    ) -> docker.ContainerVolumeArgs:
-        host_path = None
-        volume_name = None
-        if isinstance(volume, AbsolutePath):
-            host_path = volume.as_posix()
-        else:
-            volume_resource = extractor_args.host.docker.volume
-            volume_name = volume_resource.volumes[volume].name
+    ) -> docker.ContainerMountArgs:
+        target = self.to_path(extractor_args).as_posix()
 
-        return docker.ContainerVolumeArgs(
-            container_path=self.to_path(extractor_args).as_posix(),
-            host_path=host_path,
+        if isinstance(volume, AbsolutePath):
+            return docker.ContainerMountArgs(
+                type="bind",
+                target=target,
+                read_only=self.read_only,
+                source=volume.as_posix(),
+            )
+        return docker.ContainerMountArgs(
+            type="volume",
+            target=target,
             read_only=self.read_only,
-            volume_name=volume_name,
+            source=extractor_args.host.docker.volume.volumes[volume].name,
+            volume_options=docker.ContainerMountVolumeOptionsArgs(no_copy=True),
         )
 
 
@@ -63,7 +65,7 @@ class ContainerVolumeConfig(
 
     def to_args(
         self, volume: AbsolutePath | str, extractor_args: ExtractorArgs
-    ) -> docker.ContainerVolumeArgs:
+    ) -> docker.ContainerMountArgs:
         root = self.root
         if isinstance(root, GlobalExtract):
             root = ContainerVolumeFullConfig(path=root)
@@ -94,7 +96,7 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
         docker_socket_config: ContainerDockerSocketConfig | None,
         extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs,
-    ) -> list[docker.ContainerVolumeArgs]:
+    ) -> list[docker.ContainerMountArgs]:
         volumes = self.volumes
         return (
             (
@@ -105,11 +107,12 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
             )
             + (
                 [
-                    docker.ContainerVolumeArgs(
-                        container_path="/var/run/docker.sock",
-                        host_path="/var/run/docker.sock",
+                    ContainerVolumeFullConfig(
+                        path=GlobalExtract.from_simple("/var/run/docker.sock"),
                         read_only=not docker_socket_config.write,
-                    )
+                    ).to_args(
+                        AbsolutePath(PosixPath("/var/run/docker.sock")), extractor_args
+                    ),
                 ]
                 if docker_socket_config
                 else []
@@ -123,16 +126,11 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
                 ]
             )
             + [
-                docker.ContainerVolumeArgs(
-                    container_path="/etc/localtime",
-                    host_path="/etc/localtime",
+                ContainerVolumeFullConfig(
+                    path=GlobalExtract.from_simple(path),
                     read_only=True,
-                ),
-                docker.ContainerVolumeArgs(
-                    container_path="/usr/share/zoneinfo",
-                    host_path="/usr/share/zoneinfo",
-                    read_only=True,
-                ),
+                ).to_args(AbsolutePath(PosixPath(path)), extractor_args)
+                for path in ["/etc/localtime", "/usr/share/zoneinfo"]
             ]
         )
 
@@ -142,11 +140,11 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
         extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs,
     ) -> list[Output[str]]:
-        def to_bind(arg: docker.ContainerVolumeArgs) -> Output[str]:
+        def to_bind(arg: docker.ContainerMountArgs) -> Output[str]:
             return Output.format(
-                "{volume_or_path}:{container_path}:{read_write}",
-                volume_or_path=arg.volume_name if arg.volume_name else arg.host_path,
-                container_path=arg.container_path,
+                "{source}:{target}:{read_write}",
+                source=arg.source,
+                target=arg.target,
                 read_write=(
                     Output.from_input(arg.read_only).apply(
                         lambda x: "ro" if x else "rw"

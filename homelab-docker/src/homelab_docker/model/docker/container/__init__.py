@@ -325,6 +325,7 @@ class ContainerModel(HomelabBaseModel):
             else None,
             hosts=self.build_hosts(extractor_args, build_args),
             init=self.init,
+            mounts=self.volumes.to_args(self.docker_socket, extractor_args, build_args),
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
             ports=self.build_ports(extractor_args, build_args),
@@ -335,9 +336,6 @@ class ContainerModel(HomelabBaseModel):
             sysctls=self.sysctls,
             tmpfs=self.build_tmpfs(),
             user=self.user,
-            volumes=self.volumes.to_args(
-                self.docker_socket, extractor_args, build_args
-            ),
             wait=self.wait if self.healthcheck else False,
             wait_timeout=self.wait_timeout,
             envs=self.build_envs(extractor_args, build_args),
