@@ -134,6 +134,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
 
             container = container_model.model_merge(
                 ContainerModel(
+                    delete_before_replace=True,
                     image=ContainerImageModelConfig(
                         self.type.get_short_name_version(self.model.image, version)
                     ),
