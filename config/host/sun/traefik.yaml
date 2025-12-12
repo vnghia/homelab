@@ -106,6 +106,12 @@ services:
             prefix:
               svariable: API_PATH
             service: "api@internal"
+          redirect-admin:
+            name: redirect-admin
+            data:
+              redirectRegex:
+                regex: "^https://([^/]+)/?$"
+                replacement: "https://${{1}}/admin/"
     secrets:
       oidc:
         length: 32

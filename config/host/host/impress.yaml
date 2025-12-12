@@ -58,12 +58,13 @@ services:
                 svariable: BACKEND_PORT
           backend-admin:
             name: backend-admin
-            rules:
-              - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
             service:
               container: backend
               port:
                 svariable: BACKEND_PORT
+            middlewares:
+              - service: traefik
+                name: redirect-admin
           frontend:
             name: frontend
             record: solar
