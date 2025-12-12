@@ -28,9 +28,10 @@ services:
           hostname: homea
     container:
       image: homea
-      capabilities:
-        - NET_ADMIN
-        - NET_RAW
+      cap:
+        add:
+          - NET_ADMIN
+          - NET_RAW
       network:
         bridge:
           vpn: {}

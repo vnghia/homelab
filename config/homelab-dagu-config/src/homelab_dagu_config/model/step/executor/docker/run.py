@@ -33,16 +33,20 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
 
         if model.user:
             container_config["user"] = model.user
+
         entrypoint = (
             self.entrypoint
             if self.entrypoint is not None
             else model.build_entrypoint(extractor_args)
         )
+
         if entrypoint is not None:
             container_config["entrypoint"] = entrypoint
+
         container_config["labels"] = model.build_labels(
             None, extractor_args, build_args
         )
+
         container_config["env"] = model.build_envs(extractor_args, build_args) + (
             sorted(
                 [
@@ -67,9 +71,14 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
             }
         elif network_args.mode:
             host_config["networkMode"] = network_args.mode
-        if model.capabilities:
-            host_config["capAdd"] = model.capabilities
+
+        if model.cap.add:
+            host_config["capAdd"] = model.cap.add
+        if model.cap.drop:
+            host_config["capDrop"] = model.cap.drop
+
         host_config["readonlyRootfs"] = model.read_only
+        host_config["securityOpt"] = model.security_opts
 
         tmpfses = model.build_tmpfs()
         if tmpfses:

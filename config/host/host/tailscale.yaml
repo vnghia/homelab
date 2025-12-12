@@ -15,12 +15,13 @@ services:
         info: internal
     container:
       image: tailscale
-      capabilities:
-        - FOWNER
-        - MKNOD
-        - NET_ADMIN
-        - NET_RAW
-        - NET_BIND_SERVICE
+      cap:
+        add:
+          - FOWNER
+          - MKNOD
+          - NET_ADMIN
+          - NET_RAW
+          - NET_BIND_SERVICE
       healthcheck:
         tests:
           - "CMD"

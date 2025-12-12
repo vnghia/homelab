@@ -12,6 +12,7 @@ from pulumi import Input, Output, Resource, ResourceOptions
 from pydantic import Field, PositiveInt
 
 from ....extract.global_ import GlobalExtractor
+from .cap import ContainerCapConfig
 from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
 from .healthcheck import ContainerHealthCheckConfig
@@ -95,7 +96,7 @@ class ContainerModel(HomelabBaseModel):
 
     raw_image: ContainerImageModelConfig | None = Field(None, alias="image")
 
-    capabilities: list[str] | None = None
+    cap: ContainerCapConfig = ContainerCapConfig()
     command: list[GlobalExtract] | None = None
     databases: list[ContainerDatabaseConfig] | None = None
     devices: list[AbsolutePath] | None = None
@@ -113,6 +114,7 @@ class ContainerModel(HomelabBaseModel):
     read_only: bool = True
     remove: bool = False
     restart: Literal["unless-stopped"] = "unless-stopped"
+    security_opts: list[str] = ["no-new-privileges"]
     sysctls: dict[str, str] | None = None
     tmpfs: list[ContainerTmpfsConfig] | None = None
     user: str | None = None
@@ -304,9 +306,9 @@ class ContainerModel(HomelabBaseModel):
             ),
             image=self.image.to_image_name(extractor_args.host.docker.image),
             capabilities=docker.ContainerCapabilitiesArgs(
-                adds=self.capabilities, drops=["ALL"]
+                adds=self.cap.add, drops=self.cap.drop
             )
-            if self.capabilities
+            if self.cap
             else None,
             command=self.build_command(extractor_args),
             devices=[
@@ -335,7 +337,7 @@ class ContainerModel(HomelabBaseModel):
             read_only=self.read_only,
             rm=self.remove,
             restart=self.restart,
-            security_opts=["no-new-privileges"],
+            security_opts=self.security_opts,
             sysctls=self.sysctls,
             tmpfs=self.build_tmpfs(),
             user=self.user,
