@@ -39,9 +39,19 @@ services:
         dynamic:
           traefik:
             record: solar
+            rules:
+              - (!PathPrefix(`/admin`))
             service:
               port:
                 env: PAPERLESS_PORT
+          admin:
+            name: admin
+            service:
+              port:
+                env: PAPERLESS_PORT
+            middlewares:
+              - service: traefik
+                name: redirect-admin
     databases:
       postgres:
         postgres: {}
@@ -51,7 +61,6 @@ services:
       keepass:
         hostname:
           hostname: paperless
-          record: solar
     secrets:
       key: {}
     container:
@@ -103,10 +112,32 @@ services:
         PAPERLESS_ADMIN_PASSWORD:
           keepass:
           info: password
-        PAPERLESS_URL:
-          hostname: paperless
-          record: solar
-          scheme: https
+        PAPERLESS_ALLOWED_HOSTS:
+          extract:
+            kv:
+              user:
+                hostname: paperless
+                record: solar
+              admin:
+                hostname: paperless
+          transform:
+            string:
+              template: "{user},{admin}"
+        PAPERLESS_CSRF_TRUSTED_ORIGINS:
+          extract:
+            kv:
+              user:
+                hostname: paperless
+                record: solar
+                scheme: https
+              admin:
+                hostname: paperless
+                scheme: https
+          transform:
+            string:
+              template: "{user},{admin}"
+        PAPERLESS_CORS_ALLOWED_HOSTS:
+          env: PAPERLESS_CSRF_TRUSTED_ORIGINS
         PAPERLESS_TIME_ZONE:
           hinfo: timezone
         PAPERLESS_EMAIL_TASK_CRON: disable
