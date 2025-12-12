@@ -51,7 +51,15 @@ services:
             name: backend
             record: solar
             rules:
-              - (PathPrefix(`/api`) || PathPrefix(`/admin`))
+              - (PathPrefix(`/api`) || PathPrefix(`/static`))
+            service:
+              container: backend
+              port:
+                svariable: BACKEND_PORT
+          backend-admin:
+            name: backend-admin
+            rules:
+              - (PathPrefix(`/api`) || PathPrefix(`/static`) || PathPrefix(`/admin`))
             service:
               container: backend
               port:
@@ -84,6 +92,13 @@ services:
           aliases:
             - record: solar
               hostname: impress
+    keepasses:
+      keepass:
+        username:
+          hostname:
+            hostname: impress
+        hostname:
+          hostname: impress
     secrets:
       django: {}
       collaboration: {}
@@ -116,12 +131,29 @@ services:
           include-prefix: v
         envs:
           DJANGO_ALLOWED_HOSTS:
-            hostname: impress
-            record: solar
+            extract:
+              kv:
+                user:
+                  hostname: impress
+                  record: solar
+                admin:
+                  hostname: impress
+            transform:
+              string:
+                template: "{user},{admin}"
           DJANGO_CSRF_TRUSTED_ORIGINS:
-            hostname: impress
-            record: solar
-            scheme: https
+            extract:
+              kv:
+                user:
+                  hostname: impress
+                  record: solar
+                  scheme: https
+                admin:
+                  hostname: impress
+                  scheme: https
+            transform:
+              string:
+                template: "{user},{admin}"
           DJANGO_SECRET_KEY:
             secret: django
           DJANGO_SETTINGS_MODULE: impress.settings
