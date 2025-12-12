@@ -31,7 +31,7 @@ dependencies = [
     "loguru>=0.7.3",
 ]
 readme = "README.md"
-requires-python = ">= 3.13.1"
+requires-python = ">= 3.14.0"
 classifiers = ["Private :: Do Not Upload"]
 
 [build-system]
