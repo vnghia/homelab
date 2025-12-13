@@ -19,3 +19,11 @@ class ContainerImageModelConfig(HomelabRootModel[str | ContainerImageBuildModelC
         if isinstance(root, str):
             return image_resource.remotes[root].name
         return Output.from_input(image_resource.builds[root.build].ref)
+
+    def to_build_image_digest(
+        self, image_resource: ImageResource
+    ) -> Output[str] | None:
+        root = self.root
+        if isinstance(root, ContainerImageBuildModelConfig):
+            return image_resource.builds[root.build].digest
+        return None

@@ -290,6 +290,12 @@ class ContainerModel(HomelabBaseModel):
                 for database in self.databases
             )
 
+        resource_labels = {}
+        if (
+            digest := self.image.to_build_image_digest(extractor_args.host.docker.image)
+        ) is not None:
+            resource_labels["image.build.digest"] = digest
+
         return docker.Container(
             resource_name,
             opts=ResourceOptions.merge(
@@ -348,6 +354,7 @@ class ContainerModel(HomelabBaseModel):
                 docker.ContainerLabelArgs(label=k, value=v)
                 for k, v in (
                     self.build_labels(resource_name, extractor_args, build_args)
+                    | resource_labels
                 ).items()
             ],
         )
