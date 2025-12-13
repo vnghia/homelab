@@ -6,7 +6,7 @@ docker:
           location: image/barman
           base: alpine
         args:
-          BARMAN_VERSION: &barman-version "3.15.0-r0"
+          BARMAN_VERSION: &barman-version "3.16.2-r0"
         version: *barman-version
   database:
     postgres:
