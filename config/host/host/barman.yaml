@@ -92,4 +92,4 @@ services:
           path: /etc/barman.d
           read-only: true
         barman-home: /var/lib/barman
-      user: 999:999
+      user: 1000:1000

@@ -23,9 +23,8 @@ RUN apk add --update --no-cache \
 
 # postgres uid:gid
 RUN deluser --remove-home barman \
-    && delgroup ping \
-    && addgroup -S barman -g 999 \
-    && adduser -S -G barman -u 999 barman
+    && addgroup -S barman -g 1000 \
+    && adduser -S -G barman -u 1000 barman
 
 COPY --from=supercronic-downloader /usr/bin/supercronic /usr/bin/supercronic
 COPY ./barman.conf /etc/barman.conf
