@@ -3,7 +3,7 @@ from functools import cached_property
 from typing import Any, ClassVar
 
 import pulumi
-from homelab_pydantic import HomelabBaseModel, RelativePath
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel, RelativePath
 from pydantic import (
     NonNegativeInt,
     PositiveInt,
@@ -30,6 +30,17 @@ class FilePermissionModel(HomelabBaseModel):
     mode: PositiveInt = DEFAULT_MODE
     uid: NonNegativeInt = DEFAULT_UID
     gid: NonNegativeInt = DEFAULT_GID
+
+
+class FilePermissionUserModel(HomelabRootModel[str | FilePermissionModel]):
+    root: str | FilePermissionModel = FilePermissionModel()
+
+    def to_permission(self) -> FilePermissionModel:
+        root = self.root
+        if isinstance(root, FilePermissionModel):
+            return root
+        uid, gid = root.split(":", maxsplit=1)
+        return FilePermissionModel(uid=int(uid), gid=int(gid))
 
 
 class FileDataModel(HomelabBaseModel):

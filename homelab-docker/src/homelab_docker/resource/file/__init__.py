@@ -31,7 +31,12 @@ from pydantic import (
 
 from ...client import DockerClient
 from ...model.docker.container.volume_path import ContainerVolumePath
-from ...model.file import FileDataModel, FileLocationModel, FilePermissionModel
+from ...model.file import (
+    FileDataModel,
+    FileLocationModel,
+    FilePermissionModel,
+    FilePermissionUserModel,
+)
 
 if typing.TYPE_CHECKING:
     from ...extract import ExtractorArgs
@@ -215,7 +220,7 @@ class FileResource(Resource, module="docker", name="File"):
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         content: Input[str],
-        permission: FilePermissionModel | None,
+        permission: FilePermissionUserModel | None,
         extractor_args: ExtractorArgs,
     ) -> None:
         self.volume_path = volume_path
@@ -230,7 +235,9 @@ class FileResource(Resource, module="docker", name="File"):
                     "path": volume_path.path.as_posix(),
                 },
                 "data": {"content": content},
-                "permission": (permission or FilePermissionModel()).model_dump(),
+                "permission": (permission or FilePermissionUserModel())
+                .to_permission()
+                .model_dump(),
                 "hash": None,
             },
             ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),

@@ -12,6 +12,7 @@ from pydantic import TypeAdapter, model_validator
 
 from ...extract import ExtractorArgs
 from ...model.docker.container.volume_path import ContainerVolumePath
+from ...model.file import FilePermissionUserModel
 from . import FileResource
 
 T = TypeVar("T", bound=BaseModel)
@@ -104,6 +105,7 @@ class ConfigFileResource(Generic[T], FileResource):
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         data: Mapping[str, Any],
+        permission: FilePermissionUserModel | None,
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(
@@ -111,7 +113,7 @@ class ConfigFileResource(Generic[T], FileResource):
             opts=opts,
             volume_path=volume_path.with_suffix(self.suffix or self.dumper.suffix()),
             content=Output.json_dumps(data).apply(self.dumps),
-            permission=None,
+            permission=permission,
             extractor_args=extractor_args,
         )
 

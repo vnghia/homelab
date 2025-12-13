@@ -107,5 +107,6 @@ class BarmanConfigFileResource(
                     else {}
                 )
             },
+            permission=None,
             extractor_args=barman_service.extractor_args,
         )

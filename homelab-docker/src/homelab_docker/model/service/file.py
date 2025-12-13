@@ -1,7 +1,7 @@
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
-from ...model.file import FilePermissionModel
+from ...model.file import FilePermissionUserModel
 
 
 class ServiceFileModel(HomelabBaseModel):
@@ -9,4 +9,4 @@ class ServiceFileModel(HomelabBaseModel):
     bind: bool = True
     path: GlobalExtract
     content: GlobalExtract
-    permission: FilePermissionModel = FilePermissionModel()
+    permission: FilePermissionUserModel = FilePermissionUserModel()

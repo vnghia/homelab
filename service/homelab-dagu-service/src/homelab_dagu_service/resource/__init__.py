@@ -38,5 +38,6 @@ class DaguDagResource(ConfigFileResource[schema.Model], module="dagu", name="Dag
                 extractor_args,
                 dagu_service.get_log_dir_volume_path(),
             ),
+            permission=None,
             extractor_args=dagu_service.extractor_args,
         )

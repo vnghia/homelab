@@ -80,6 +80,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                         opts=repository_opts,
                         volume_path=repository_volume_path / "env",
                         envs=resource.envs,
+                        permission=None,
                         extractor_args=self.extractor_args,
                     ).to_path(self.extractor_args)
                 ]
