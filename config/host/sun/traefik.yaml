@@ -1,3 +1,7 @@
+docker:
+  volumes:
+    local:
+      traefik-data: {}
 services:
   kanidm:
     config:
@@ -115,3 +119,6 @@ services:
     secrets:
       oidc:
         length: 32
+    container:
+      volumes:
+        traefik-data: /data

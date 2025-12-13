@@ -14,7 +14,6 @@ docker:
       traefik-cert: {}
       traefik-plugin:
         backup: false
-      traefik-data: {}
       traefik-tmp:
         backup: false
 services:
@@ -132,5 +131,4 @@ services:
           read-only: true
         traefik-cert: /etc/traefik/cert
         traefik-plugin: /plugins-storage
-        traefik-data: /data
         traefik-tmp: /tmp
