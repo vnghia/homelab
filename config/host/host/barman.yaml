@@ -6,6 +6,7 @@ docker:
           location: image/barman
           base: alpine
         args:
+          SUPERCRONIC_VERSION: "0.2.41"
           BARMAN_VERSION: &barman-version "3.16.2-r0"
         version: *barman-version
   database:
@@ -91,3 +92,4 @@ services:
           path: /etc/barman.d
           read-only: true
         barman-home: /var/lib/barman
+      user: 999:999

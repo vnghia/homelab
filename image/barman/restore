@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 set -eux
 
-barman restore --recovery-staging-path /tmp/$1/staging $1 $2 /tmp/$1/data
-rm -rf /tmp/$1/staging
 rm -rf /mnt/data/$1/*
-mv -r /tmp/$1/data/* /mnt/data/$1/
-chown -R 999:ping /mnt/data/$1/
+barman restore --staging-path /tmp/$1/staging $1 $2 /mnt/data/$1
+rm -rf /tmp/$1/staging
