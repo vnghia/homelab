@@ -90,6 +90,10 @@ services:
       bridge:
     container:
       image: traefik
+      cap:
+        add:
+          - NET_RAW
+          - NET_BIND_SERVICE
       command:
         - "traefik"
         - "--configFile"
@@ -122,6 +126,7 @@ services:
           external:
             svariable: HTTPS_PORT
           protocol: udp
+      user: 1000:1000
       wud:
         template: https://github.com/traefik/traefik/releases/tag/${original}
         include-prefix: v
