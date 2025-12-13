@@ -83,6 +83,12 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 self.superuser_password.result
             )
 
+        permission = (
+            (self.config.container.user, FilePermissionModel.EXECUTABLE_MODE)
+            if self.config.container.user
+            else FilePermissionModel(mode=FilePermissionModel.EXECUTABLE_MODE)
+        )
+
         self.scripts = [
             FileResource(
                 self.prefix + script.path,
@@ -92,7 +98,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                     path=RelativePath(PosixPath("{:02}-{}".format(i, script.path))),
                 ),
                 content=script.content,
-                permission=FilePermissionUserModel(FilePermissionModel(mode=0o777)),
+                permission=FilePermissionUserModel(permission),
                 extractor_args=extractor_args,
             )
             for i, script in enumerate(self.config.scripts + model.scripts)

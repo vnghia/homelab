@@ -24,6 +24,8 @@ class FileLocationModel(HomelabBaseModel):
 
 class FilePermissionModel(HomelabBaseModel):
     DEFAULT_MODE: ClassVar[PositiveInt] = 0o444
+    EXECUTABLE_MODE: ClassVar[PositiveInt] = 0o744
+
     DEFAULT_UID: ClassVar[NonNegativeInt] = 1000
     DEFAULT_GID: ClassVar[NonNegativeInt] = 1000
 
@@ -32,15 +34,29 @@ class FilePermissionModel(HomelabBaseModel):
     gid: NonNegativeInt = DEFAULT_GID
 
 
-class FilePermissionUserModel(HomelabRootModel[str | FilePermissionModel]):
-    root: str | FilePermissionModel = FilePermissionModel()
+class FilePermissionUserModel(
+    HomelabRootModel[str | tuple[str, int] | FilePermissionModel]
+):
+    root: str | tuple[str, int] | FilePermissionModel = FilePermissionModel()
+
+    @classmethod
+    def split_id(cls, user: str) -> tuple[int, int]:
+        uid, gid = user.split(":", maxsplit=1)
+        return int(uid), int(gid)
 
     def to_permission(self) -> FilePermissionModel:
         root = self.root
         if isinstance(root, FilePermissionModel):
             return root
-        uid, gid = root.split(":", maxsplit=1)
-        return FilePermissionModel(uid=int(uid), gid=int(gid))
+
+        if isinstance(root, str):
+            user = root
+            mode = FilePermissionModel.DEFAULT_MODE
+        else:
+            user, mode = root
+
+        uid, gid = self.split_id(user)
+        return FilePermissionModel(mode=mode, uid=uid, gid=gid)
 
 
 class FileDataModel(HomelabBaseModel):
