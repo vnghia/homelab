@@ -27,6 +27,7 @@ from .network import (
 )
 from .ports import ContainerPortsConfig
 from .tmpfs import ContainerTmpfsConfig
+from .user import ContainerUserConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
 from .wud import ContainerWudConfig
 
@@ -117,7 +118,7 @@ class ContainerModel(HomelabBaseModel):
     security_opts: list[str] = ["no-new-privileges"]
     sysctls: dict[str, str] | None = None
     tmpfs: list[ContainerTmpfsConfig] | None = None
-    user: str | None = None
+    user: ContainerUserConfig = ContainerUserConfig()
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
     wait_timeout: PositiveInt | None = None
@@ -346,7 +347,7 @@ class ContainerModel(HomelabBaseModel):
             security_opts=self.security_opts,
             sysctls=self.sysctls,
             tmpfs=self.build_tmpfs(),
-            user=self.user,
+            user=self.user.user,
             wait=self.wait if self.healthcheck else False,
             wait_timeout=self.wait_timeout,
             envs=self.build_envs(extractor_args, build_args),

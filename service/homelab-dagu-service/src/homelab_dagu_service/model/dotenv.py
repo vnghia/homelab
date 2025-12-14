@@ -29,7 +29,7 @@ class DaguDagDotenvModelBuilder(HomelabRootModel[DaguDagDotenvModel]):
                 extractor_args.service.add_service_name(resource_name)
             ),
             envs=self.root.to_envs(extractor_args),
-            permission=None,
+            permission=dagu_service.permission(),
             extractor_args=extractor_args,
         )
         dagu_service.dotenvs[service.name()][resource_name] = resource

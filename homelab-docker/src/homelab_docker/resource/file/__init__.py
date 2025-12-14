@@ -31,12 +31,8 @@ from pydantic import (
 
 from ...client import DockerClient
 from ...model.docker.container.volume_path import ContainerVolumePath
-from ...model.file import (
-    FileDataModel,
-    FileLocationModel,
-    FilePermissionModel,
-    FilePermissionUserModel,
-)
+from ...model.file import FileDataModel, FileLocationModel, FilePermissionModel
+from ...model.uid import UidGidModel
 
 if typing.TYPE_CHECKING:
     from ...extract import ExtractorArgs
@@ -107,7 +103,10 @@ class FileVolumeProxy:
         cls, tarinfo: tarfile.TarInfo, permission: FilePermissionModel
     ) -> tarfile.TarInfo:
         return tarinfo.replace(
-            mode=permission.mode, uid=permission.uid, gid=permission.gid, deep=False
+            mode=permission.mode,
+            uid=permission.ownership.uid,
+            gid=permission.ownership.gid,
+            deep=False,
         )
 
     @classmethod
@@ -131,6 +130,7 @@ class FileVolumeProxy:
         with cls.container(props.docker_host, props.location.volume) as container:
             container.put_archive(cls.WORKING_DIR.as_posix(), compress_tar())
 
+    # TODO: review implementation and optimize by using getmember/extractfile
     @classmethod
     def read_file(cls, props: FileProviderProps) -> FileProviderProps | None:
         with cls.container(props.docker_host, props.location.volume) as container:
@@ -151,7 +151,8 @@ class FileVolumeProxy:
                     return props.__replace__(
                         data=FileDataModel(content=(Path(tmpdir) / name).read_text()),
                         permission=FilePermissionModel(
-                            mode=stat["mode"], uid=stat["uid"], gid=stat["gid"]
+                            mode=stat["mode"],
+                            ownership=UidGidModel(uid=stat["uid"], gid=stat["gid"]),
                         ),
                     )
             except NotFound:
@@ -220,7 +221,7 @@ class FileResource(Resource, module="docker", name="File"):
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         content: Input[str],
-        permission: FilePermissionUserModel | None,
+        permission: UidGidModel | FilePermissionModel,
         extractor_args: ExtractorArgs,
     ) -> None:
         self.volume_path = volume_path
@@ -235,9 +236,12 @@ class FileResource(Resource, module="docker", name="File"):
                     "path": volume_path.path.as_posix(),
                 },
                 "data": {"content": content},
-                "permission": (permission or FilePermissionUserModel())
-                .to_permission()
-                .model_dump(),
+                "permission": permission.model_dump()
+                | (
+                    {"mode": FilePermissionModel.DEFAULT_MODE}
+                    if isinstance(permission, UidGidModel)
+                    else {}
+                ),
                 "hash": None,
             },
             ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),

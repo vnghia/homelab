@@ -26,7 +26,6 @@ from ....model.docker.container.volume import (
     ContainerVolumesConfig,
 )
 from ....model.docker.container.volume_path import ContainerVolumePath
-from ....model.file import FilePermissionModel, FilePermissionUserModel
 from ....model.service.database import ServiceDatabaseConfigModel, ServiceDatabaseModel
 from ...file import FileResource
 
@@ -83,12 +82,6 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 self.superuser_password.result
             )
 
-        permission = (
-            (self.config.container.user, FilePermissionModel.EXECUTABLE_MODE)
-            if self.config.container.user
-            else FilePermissionModel(mode=FilePermissionModel.EXECUTABLE_MODE)
-        )
-
         self.scripts = [
             FileResource(
                 self.prefix + script.path,
@@ -98,7 +91,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                     path=RelativePath(PosixPath("{:02}-{}".format(i, script.path))),
                 ),
                 content=script.content,
-                permission=FilePermissionUserModel(permission),
+                permission=self.config.container.user,
                 extractor_args=extractor_args,
             )
             for i, script in enumerate(self.config.scripts + model.scripts)

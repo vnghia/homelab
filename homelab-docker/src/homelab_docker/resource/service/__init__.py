@@ -15,6 +15,7 @@ from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ...model.docker.container.ports import ContainerPortsConfig
 from ...model.service import ServiceModel, ServiceWithConfigModel
+from ...model.uid import UidGidModel
 from ..docker.container import ContainerResource
 from ..file import FileResource
 from ..vpn import VpnModelBuilder
@@ -123,6 +124,9 @@ class ServiceResourceBase(ComponentResource):
                 "{} service is not configured with keepass".format(self.name())
             )
         return self._keepass
+
+    def permission(self, container: str | None = None) -> UidGidModel:
+        return self.container_models[container].user
 
     def build_databases(self) -> None:
         container_models: dict[str | None, ContainerModel] = {}

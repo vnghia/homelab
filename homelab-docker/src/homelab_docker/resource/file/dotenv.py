@@ -5,7 +5,8 @@ from pulumi import Input, ResourceOptions
 
 from ...extract import ExtractorArgs
 from ...model.docker.container.volume_path import ContainerVolumePath
-from ...model.file import FilePermissionUserModel
+from ...model.file import FilePermissionModel
+from ...model.uid import UidGidModel
 from .config import ConfigDumper, ConfigFileResource
 
 
@@ -38,7 +39,7 @@ class DotenvFileResource(
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         envs: Mapping[str, Input[str]],
-        permission: FilePermissionUserModel | None,
+        permission: UidGidModel | FilePermissionModel,
         extractor_args: ExtractorArgs,
     ) -> None:
         self.envs = envs

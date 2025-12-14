@@ -3,7 +3,7 @@ from functools import cached_property
 from typing import Any, ClassVar
 
 import pulumi
-from homelab_pydantic import HomelabBaseModel, HomelabRootModel, RelativePath
+from homelab_pydantic import HomelabBaseModel, RelativePath
 from pydantic import (
     NonNegativeInt,
     PositiveInt,
@@ -11,6 +11,8 @@ from pydantic import (
     ValidatorFunctionWrapHandler,
     field_validator,
 )
+
+from ..uid import UidGidModel
 
 
 class FileLocationModel(HomelabBaseModel):
@@ -30,33 +32,7 @@ class FilePermissionModel(HomelabBaseModel):
     DEFAULT_GID: ClassVar[NonNegativeInt] = 1000
 
     mode: PositiveInt = DEFAULT_MODE
-    uid: NonNegativeInt = DEFAULT_UID
-    gid: NonNegativeInt = DEFAULT_GID
-
-
-class FilePermissionUserModel(
-    HomelabRootModel[str | tuple[str, int] | FilePermissionModel]
-):
-    root: str | tuple[str, int] | FilePermissionModel = FilePermissionModel()
-
-    @classmethod
-    def split_id(cls, user: str) -> tuple[int, int]:
-        uid, gid = user.split(":", maxsplit=1)
-        return int(uid), int(gid)
-
-    def to_permission(self) -> FilePermissionModel:
-        root = self.root
-        if isinstance(root, FilePermissionModel):
-            return root
-
-        if isinstance(root, str):
-            user = root
-            mode = FilePermissionModel.DEFAULT_MODE
-        else:
-            user, mode = root
-
-        uid, gid = self.split_id(user)
-        return FilePermissionModel(mode=mode, uid=uid, gid=gid)
+    ownership: UidGidModel = UidGidModel()
 
 
 class FileDataModel(HomelabBaseModel):

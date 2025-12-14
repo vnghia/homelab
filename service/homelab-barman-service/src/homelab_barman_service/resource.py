@@ -7,7 +7,6 @@ from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container.database.source import (
     ContainerDatabaseSourceModel,
 )
-from homelab_docker.model.file import FilePermissionUserModel
 from homelab_docker.model.service.database import ServiceDatabaseConfigModel
 from homelab_docker.model.service.database.postgres import (
     ServiceDatabasePostgresConfigModel,
@@ -55,9 +54,6 @@ class BarmanConfigFileResource(
                 backup_config = backup_config.model_merge(
                     database_config_model.root.backup
                 )
-
-        user = barman_service.container_models[None].user
-        permission = FilePermissionUserModel(user) if user else None
 
         super().__init__(
             self.name,
@@ -111,6 +107,6 @@ class BarmanConfigFileResource(
                     else {}
                 )
             },
-            permission=permission,
+            permission=barman_service.permission(),
             extractor_args=barman_service.extractor_args,
         )
