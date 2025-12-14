@@ -89,6 +89,7 @@ services:
     network:
       bridge:
     container:
+      experimental: true
       image: traefik
       cap:
         add:
@@ -126,7 +127,6 @@ services:
           external:
             svariable: HTTPS_PORT
           protocol: udp
-      user: 1000:1000
       wud:
         template: https://github.com/traefik/traefik/releases/tag/${original}
         include-prefix: v

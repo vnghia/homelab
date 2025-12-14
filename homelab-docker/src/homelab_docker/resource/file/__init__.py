@@ -104,8 +104,8 @@ class FileVolumeProxy:
     ) -> tarfile.TarInfo:
         return tarinfo.replace(
             mode=permission.mode,
-            uid=permission.ownership.uid,
-            gid=permission.ownership.gid,
+            uid=permission.owner.uid,
+            gid=permission.owner.gid,
             deep=False,
         )
 
@@ -152,7 +152,7 @@ class FileVolumeProxy:
                         data=FileDataModel(content=(Path(tmpdir) / name).read_text()),
                         permission=FilePermissionModel(
                             mode=stat["mode"],
-                            ownership=UidGidModel(uid=stat["uid"], gid=stat["gid"]),
+                            owner=UidGidModel(uid=stat["uid"], gid=stat["gid"]),
                         ),
                     )
             except NotFound:
@@ -237,11 +237,11 @@ class FileResource(Resource, module="docker", name="File"):
                 },
                 "data": {"content": content},
                 "permission": permission.model_dump()
-                | (
-                    {"mode": FilePermissionModel.DEFAULT_MODE}
-                    if isinstance(permission, UidGidModel)
-                    else {}
-                ),
+                if isinstance(permission, FilePermissionModel)
+                else {
+                    "mode": FilePermissionModel.DEFAULT_MODE,
+                    "owner": permission.model_dump(),
+                },
                 "hash": None,
             },
             ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),

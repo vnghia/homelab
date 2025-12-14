@@ -81,6 +81,7 @@ services:
                   - param:
                       type: snapshot
     container:
+      experimental: true
       image:
         build: barman
       init: true
@@ -92,4 +93,3 @@ services:
           path: /etc/barman.d
           read-only: true
         barman-home: /var/lib/barman
-      user: 1000:1000

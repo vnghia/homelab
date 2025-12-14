@@ -26,6 +26,7 @@ from ....model.docker.container.volume import (
     ContainerVolumesConfig,
 )
 from ....model.docker.container.volume_path import ContainerVolumePath
+from ....model.file import FilePermissionModel
 from ....model.service.database import ServiceDatabaseConfigModel, ServiceDatabaseModel
 from ...file import FileResource
 
@@ -91,7 +92,10 @@ class ServiceDatabaseTypeResource(ComponentResource):
                     path=RelativePath(PosixPath("{:02}-{}".format(i, script.path))),
                 ),
                 content=script.content,
-                permission=self.config.container.user,
+                permission=FilePermissionModel(
+                    mode=FilePermissionModel.EXECUTABLE_MODE,
+                    owner=self.config.container.user,
+                ),
                 extractor_args=extractor_args,
             )
             for i, script in enumerate(self.config.scripts + model.scripts)

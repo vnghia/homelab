@@ -36,6 +36,7 @@ services:
       totp:
         special: false
     container:
+      experimental: true
       image: windows
       cap:
         add:
@@ -62,6 +63,9 @@ services:
       read-only: false
       volumes:
         windows-storage: /storage
+      user:
+        uid: 0
+        gid: 0
       wud:
         template: https://github.com/dockur/windows/releases/tag/v${original}
         semver-count: 2

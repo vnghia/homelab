@@ -122,6 +122,7 @@ services:
           hostname: docker-proxy
     containers:
       proxy:
+        experimental: true
         active: false
         image: docker-proxy
         docker-socket:

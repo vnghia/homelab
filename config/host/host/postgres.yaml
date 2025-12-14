@@ -23,6 +23,7 @@ docker:
         database: POSTGRES_DB
         data-dir: PGDATA
       container:
+        experimental: true
         healthcheck:
           tests:
             - "CMD"
@@ -34,4 +35,3 @@ docker:
           timeout: 5s
         tmpfs:
           - /var/run/postgresql
-        user: 1000:1000

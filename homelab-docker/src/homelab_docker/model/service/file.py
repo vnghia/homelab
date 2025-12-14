@@ -9,4 +9,6 @@ class ServiceFileModel(HomelabBaseModel):
     bind: bool = True
     path: GlobalExtract
     content: GlobalExtract
+
+    # TODO: Set owner based on container user
     permission: FilePermissionModel = FilePermissionModel()

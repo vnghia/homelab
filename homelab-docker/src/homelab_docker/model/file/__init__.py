@@ -32,7 +32,7 @@ class FilePermissionModel(HomelabBaseModel):
     DEFAULT_GID: ClassVar[NonNegativeInt] = 1000
 
     mode: PositiveInt = DEFAULT_MODE
-    ownership: UidGidModel = UidGidModel()
+    owner: UidGidModel = UidGidModel()
 
 
 class FileDataModel(HomelabBaseModel):

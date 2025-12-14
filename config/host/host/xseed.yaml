@@ -27,7 +27,9 @@ services:
     container:
       image: xseed
       command: [daemon]
-      user: "911:1001"
+      user:
+        uid: 911
+        gid: 1001
       wud:
         template: https://github.com/cross-seed/cross-seed/releases/tag/v${original}
       volumes:

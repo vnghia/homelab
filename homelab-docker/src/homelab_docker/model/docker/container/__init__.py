@@ -92,6 +92,7 @@ class ContainerModelBuildArgs:
 
 class ContainerModel(HomelabBaseModel):
     active: bool = True
+    experimental: bool = False
     delete_before_replace: bool = False
     inherit: ContainerInheritConfig = ContainerInheritConfig()
 
@@ -144,6 +145,13 @@ class ContainerModel(HomelabBaseModel):
             return models[inherit.container].model_merge(self, override=True)
         return self
 
+    def build_cap(self) -> docker.ContainerCapabilitiesArgs | None:
+        if self.experimental and self.cap:
+            return docker.ContainerCapabilitiesArgs(
+                adds=self.cap.add, drops=self.cap.drop
+            )
+        return None
+
     def build_command(self, extractor_args: ExtractorArgs) -> list[Output[str]] | None:
         return (
             [
@@ -175,6 +183,13 @@ class ContainerModel(HomelabBaseModel):
             if self.tmpfs
             else None
         )
+
+    def build_user(self) -> str | None:
+        if (self.experimental and not self.user.is_root) or (
+            not self.experimental and not self.user.is_default
+        ):
+            return self.user.user
+        return None
 
     def build_envs(
         self,
@@ -312,11 +327,7 @@ class ContainerModel(HomelabBaseModel):
                 ),
             ),
             image=self.image.to_image_name(extractor_args.host.docker.image),
-            capabilities=docker.ContainerCapabilitiesArgs(
-                adds=self.cap.add, drops=self.cap.drop
-            )
-            if self.cap
-            else None,
+            capabilities=self.build_cap(),
             command=self.build_command(extractor_args),
             devices=[
                 docker.ContainerDeviceArgs(
@@ -347,7 +358,7 @@ class ContainerModel(HomelabBaseModel):
             security_opts=self.security_opts,
             sysctls=self.sysctls,
             tmpfs=self.build_tmpfs(),
-            user=self.user.user,
+            user=self.build_user(),
             wait=self.wait if self.healthcheck else False,
             wait_timeout=self.wait_timeout,
             envs=self.build_envs(extractor_args, build_args),

@@ -31,8 +31,8 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         config["image"] = model.image.to_image_name(extractor_args.host.docker.image)
         config["pull"] = self.pull
 
-        if model.user:
-            container_config["user"] = model.user
+        if user := model.build_user():
+            container_config["user"] = user
 
         entrypoint = (
             self.entrypoint
@@ -72,16 +72,16 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         elif network_args.mode:
             host_config["networkMode"] = network_args.mode
 
-        if model.cap.add:
-            host_config["capAdd"] = model.cap.add
-        if model.cap.drop:
-            host_config["capDrop"] = model.cap.drop
+        if cap := model.build_cap():
+            if cap.adds:
+                host_config["capAdd"] = cap.adds
+            if cap.drops:
+                host_config["capDrop"] = cap.drops
 
         host_config["readonlyRootfs"] = model.read_only
         host_config["securityOpt"] = model.security_opts
 
-        tmpfses = model.build_tmpfs()
-        if tmpfses:
+        if tmpfses := model.build_tmpfs():
             host_config["tmpfs"] = tmpfses
         if model.init:
             host_config["init"] = model.init

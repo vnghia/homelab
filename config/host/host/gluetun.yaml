@@ -13,6 +13,7 @@ services:
     network:
       bridge:
     container:
+      experimental: true
       active: false
       image: gluetun
       cap:
@@ -31,6 +32,9 @@ services:
         bridge:
           default: {}
       read-only: false
+      user:
+        uid: 0
+        gid: 0
       wud:
         template: https://github.com/qdm12/gluetun/releases/tag/${original}
         include-prefix: v

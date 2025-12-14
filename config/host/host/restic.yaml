@@ -67,8 +67,9 @@ services:
             StrictHostKeyChecking no
         permission: &ssh-permission
           mode: 0400
-          uid: 0
-          gid: 0
+          owner:
+            uid: 0
+            gid: 0
       private-key:
         path:
           extract:
