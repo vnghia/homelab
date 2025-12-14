@@ -29,6 +29,7 @@ services:
       key: {}
       jwt: {}
     container:
+      experimental: true
       image: n8n
       databases:
         - postgres:
@@ -42,9 +43,7 @@ services:
         bridge:
           vpn: {}
       tmpfs:
-        - path: /home/node/.cache/n8n/public
-          uid: 1000
-          gid: 1000
+        - /home/node/.cache/n8n/public
       volumes:
         n8n-data: /home/node/.n8n
       wud:

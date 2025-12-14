@@ -178,7 +178,15 @@ class ContainerModel(HomelabBaseModel):
         return (
             {
                 tmpfs[0].as_posix(): tmpfs[1]
-                for tmpfs in [tmpfs.to_args() for tmpfs in self.tmpfs]
+                for tmpfs in [
+                    tmpfs.to_args(
+                        self.user
+                        if (self.experimental and not self.user.is_root)
+                        or (not self.experimental and not self.user.is_default)
+                        else None
+                    )
+                    for tmpfs in self.tmpfs
+                ]
             }
             if self.tmpfs
             else None
