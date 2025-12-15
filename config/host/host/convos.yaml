@@ -44,6 +44,7 @@ services:
     secrets:
       local: {}
     container:
+      experimental: true
       image: convos
       network:
         bridge:
