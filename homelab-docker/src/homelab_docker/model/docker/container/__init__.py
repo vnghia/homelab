@@ -193,9 +193,7 @@ class ContainerModel(HomelabBaseModel):
         )
 
     def build_user(self) -> str | None:
-        if (self.experimental and not self.user.is_root) or (
-            not self.experimental and not self.user.is_default
-        ):
+        if self.experimental or (not self.experimental and not self.user.is_default):
             return self.user.user
         return None
 
