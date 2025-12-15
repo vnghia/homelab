@@ -46,6 +46,7 @@ services:
         length: 32
         special: false
     container:
+      experimental: true
       image: crowdsec
       docker-socket:
         write: false
@@ -70,6 +71,9 @@ services:
           default: {}
       tmpfs:
         - /tmp
+      user:
+        uid: 0
+        gid: 0
       wud:
         template: https://github.com/crowdsecurity/crowdsec/releases/tag/${original}
         include-prefix: v
