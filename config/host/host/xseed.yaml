@@ -25,11 +25,9 @@ services:
             - hostname: starr-sonarr
             - hostname: starr-prowlarr
     container:
+      experimental: true
       image: xseed
       command: [daemon]
-      user:
-        uid: 911
-        gid: 1001
       wud:
         template: https://github.com/cross-seed/cross-seed/releases/tag/v${original}
       volumes:
