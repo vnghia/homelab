@@ -30,6 +30,7 @@ services:
         ports:
           port:
     container:
+      experimental: true
       image: qbittorrent
       network:
         container: vpn

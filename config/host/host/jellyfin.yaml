@@ -69,6 +69,7 @@ services:
           hostname: jellyfin
           record: solar
     container:
+      experimental: true
       image: jellyfin
       devices:
         - /dev/dri/renderD128
