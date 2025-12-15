@@ -20,12 +20,17 @@ services:
     variables:
       PORT: 3000
     container:
+      experimental: true
       image: chromium
       network:
         bridge:
           vpn: {}
       tmpfs:
         - /tmp
+      user:
+        # BLESS_USER_ID defined in https://github.com/browserless/browserless/blob/main/docker/base/Dockerfile
+        uid: 999
+        gid: 999
       envs:
         TIMEOUT: 10000
         CONCURRENT: 5
