@@ -73,6 +73,8 @@ services:
       image: jellyfin
       devices:
         - /dev/dri/renderD128
+      group-adds:
+        - render
       network:
         bridge:
           vpn: {}

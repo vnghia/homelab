@@ -105,7 +105,7 @@ class ContainerModel(HomelabBaseModel):
     devices: list[AbsolutePath] | None = None
     docker_socket: ContainerDockerSocketConfig | None = None
     entrypoint: list[GlobalExtract] | None = None
-    group_adds: list[str] | None = None
+    group_adds: list[str | None] | None = None
     healthcheck: ContainerHealthCheckConfig | None = None
     hostname: GlobalExtract | None = None
     hosts: list[ContainerHostConfig] = []
@@ -174,6 +174,26 @@ class ContainerModel(HomelabBaseModel):
             if self.entrypoint is not None
             else None
         )
+
+    def build_group_adds(
+        self, extractor_args: ExtractorArgs, user: UidGidModel
+    ) -> list[str] | None:
+        from ....config.user import UidGidConfig
+
+        group_adds = []
+        if self.group_adds:
+            group_adds = self.group_adds
+        if self.docker_socket and not user.is_root:
+            group_adds.append(UidGidConfig.DOCKER_KEY)
+
+        group_ids = [
+            str(gid)
+            for group in group_adds
+            if (gid := extractor_args.host_model.users[group].gid) != user.gid
+        ]
+        if group_ids:
+            return group_ids
+        return None
 
     def build_tmpfs(self, user: UidGidModel) -> dict[str, str] | None:
         return (
@@ -347,7 +367,7 @@ class ContainerModel(HomelabBaseModel):
             ]
             if self.devices
             else None,
-            group_adds=self.group_adds,
+            group_adds=self.build_group_adds(extractor_args, user),
             entrypoints=self.build_entrypoint(extractor_args),
             healthcheck=self.healthcheck.to_args(extractor_args)
             if self.healthcheck

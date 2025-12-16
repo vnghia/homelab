@@ -13,3 +13,7 @@ class UidGidModel(HomelabBaseModel):
 
     def container(self) -> str:
         return "{}:{}".format(self.uid, self.gid)
+
+    @property
+    def is_root(self) -> bool:
+        return self.uid == 0 and self.gid == 0
