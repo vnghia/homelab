@@ -1,6 +1,6 @@
 from functools import cached_property
 
-from ...uid import UidGidModel
+from ...user import UidGidModel
 
 
 class ContainerUserConfig(UidGidModel):

@@ -12,7 +12,7 @@ from pydantic import (
     field_validator,
 )
 
-from ..uid import UidGidModel
+from ..user import UidGidModel
 
 
 class FileLocationModel(HomelabBaseModel):

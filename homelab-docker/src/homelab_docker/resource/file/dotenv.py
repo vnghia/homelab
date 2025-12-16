@@ -6,7 +6,7 @@ from pulumi import Input, ResourceOptions
 from ...extract import ExtractorArgs
 from ...model.docker.container.volume_path import ContainerVolumePath
 from ...model.file import FilePermissionModel
-from ...model.uid import UidGidModel
+from ...model.user import UidGidModel
 from .config import ConfigDumper, ConfigFileResource
 
 

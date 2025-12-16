@@ -15,7 +15,7 @@ from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ...model.docker.container.ports import ContainerPortsConfig
 from ...model.service import ServiceModel, ServiceWithConfigModel
-from ...model.uid import UidGidModel
+from ...model.user import UidGidModel
 from ..docker.container import ContainerResource
 from ..file import FileResource
 from ..vpn import VpnModelBuilder

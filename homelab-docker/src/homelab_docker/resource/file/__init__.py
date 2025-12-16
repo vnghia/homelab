@@ -32,7 +32,7 @@ from pydantic import (
 from ...client import DockerClient
 from ...model.docker.container.volume_path import ContainerVolumePath
 from ...model.file import FileDataModel, FileLocationModel, FilePermissionModel
-from ...model.uid import UidGidModel
+from ...model.user import UidGidModel
 
 if typing.TYPE_CHECKING:
     from ...extract import ExtractorArgs
