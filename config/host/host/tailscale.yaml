@@ -13,6 +13,7 @@ services:
       PORT:
         port: udp
         info: internal
+    user: root
     container:
       experimental: true
       image: tailscale
@@ -45,7 +46,6 @@ services:
         - /run
       volumes:
         tailscale-data: /var/lib/tailscale
-      user: root
       wud:
         template: https://tailscale.com/changelog
         include-prefix: v

@@ -17,6 +17,10 @@ services:
     secrets:
       token:
         special: false
+    user:
+      # BLESS_USER_ID defined in https://github.com/browserless/browserless/blob/main/docker/base/Dockerfile
+      uid: 999
+      gid: 999
     variables:
       PORT: 3000
     container:
@@ -27,10 +31,6 @@ services:
           vpn: {}
       tmpfs:
         - /tmp
-      user:
-        # BLESS_USER_ID defined in https://github.com/browserless/browserless/blob/main/docker/base/Dockerfile
-        uid: 999
-        gid: 999
       envs:
         TIMEOUT: 10000
         CONCURRENT: 5

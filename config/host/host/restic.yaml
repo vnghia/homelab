@@ -65,11 +65,7 @@ services:
             ServerAliveInterval 60
             ServerAliveCountMax 240
             StrictHostKeyChecking no
-        permission: &ssh-permission
-          mode: 0400
-          owner:
-            uid: 0
-            gid: 0
+        mode: 0400
       private-key:
         path:
           extract:
@@ -79,7 +75,7 @@ services:
         content:
           key: ssh
           info: private_openssh
-        permission: *ssh-permission
+        mode: 0400
       public-key:
         path:
           extract:
@@ -89,13 +85,15 @@ services:
         content:
           key: ssh
           info: public_openssh
-        permission: *ssh-permission
+        mode: 0400
     secrets:
       ssh:
         algorithm: ED25519
     network:
       bridge:
+    user: root
     container:
+      experimental: true
       active: false
       image: resticprofile
       network:

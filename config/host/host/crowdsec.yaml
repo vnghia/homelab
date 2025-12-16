@@ -45,6 +45,7 @@ services:
       traefik:
         length: 32
         special: false
+    user: root
     container:
       experimental: true
       image: crowdsec
@@ -71,7 +72,6 @@ services:
           default: {}
       tmpfs:
         - /tmp
-      user: root
       wud:
         template: https://github.com/crowdsecurity/crowdsec/releases/tag/${original}
         include-prefix: v

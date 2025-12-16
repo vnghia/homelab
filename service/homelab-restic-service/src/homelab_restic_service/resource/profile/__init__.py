@@ -101,6 +101,6 @@ class ResticProfileResource(
                     }
                 },
             },
-            permission=restic_service.permission(),
+            permission=restic_service.user,
             extractor_args=restic_service.extractor_args,
         )

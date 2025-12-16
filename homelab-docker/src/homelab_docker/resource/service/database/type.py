@@ -83,6 +83,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 self.superuser_password.result
             )
 
+        type_container = self.config.container
         self.scripts = [
             FileResource(
                 self.prefix + script.path,
@@ -94,7 +95,9 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 content=script.content,
                 permission=FilePermissionModel(
                     mode=FilePermissionModel.EXECUTABLE_MODE,
-                    owner=self.config.container.user.model(extractor_args),
+                    owner=type_container.build_user(extractor_args)
+                    if type_container.user
+                    else extractor_args.host_model.users[None],
                 ),
                 extractor_args=extractor_args,
             )

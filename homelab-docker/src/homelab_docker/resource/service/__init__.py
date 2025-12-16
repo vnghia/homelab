@@ -14,8 +14,8 @@ from pydantic.alias_generators import to_snake
 from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ...model.docker.container.ports import ContainerPortsConfig
+from ...model.file import FilePermissionModel
 from ...model.service import ServiceModel, ServiceWithConfigModel
-from ...model.user import UidGidModel
 from ..docker.container import ContainerResource
 from ..file import FileResource
 from ..vpn import VpnModelBuilder
@@ -56,6 +56,7 @@ class ServiceResourceBase(ComponentResource):
         )
 
         self.model = model
+        self.user = self.model.user.model(extractor_args)
 
         self._database: ServiceDatabaseResource | None = None
         self._secret: SecretResource | None = None
@@ -124,9 +125,6 @@ class ServiceResourceBase(ComponentResource):
                 "{} service is not configured with keepass".format(self.name())
             )
         return self._keepass
-
-    def permission(self, container: str | None = None) -> UidGidModel:
-        return self.container_models[container].user.model(self.extractor_args)
 
     def build_databases(self) -> None:
         container_models: dict[str | None, ContainerModel] = {}
@@ -222,7 +220,9 @@ class ServiceResourceBase(ComponentResource):
                         content=GlobalExtractor(file_model.content).extract_str(
                             self.extractor_args
                         ),
-                        permission=file_model.permission,
+                        permission=FilePermissionModel(
+                            mode=file_model.mode, owner=self.user
+                        ),
                         extractor_args=self.extractor_args,
                     )
                     if file_model.bind:

@@ -1,5 +1,6 @@
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
+from pydantic import PositiveInt
 
 from ..file import FilePermissionModel
 
@@ -9,6 +10,4 @@ class ServiceFileModel(HomelabBaseModel):
     bind: bool = True
     path: GlobalExtract
     content: GlobalExtract
-
-    # TODO: Set owner based on container user
-    permission: FilePermissionModel = FilePermissionModel()
+    mode: PositiveInt = FilePermissionModel.DEFAULT_MODE

@@ -60,7 +60,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 opts=repository_opts,
                 volume_path=repository_volume_path / "repository",
                 content=resource.repository,
-                permission=self.permission(),
+                permission=self.user,
                 extractor_args=self.extractor_args,
             )
 
@@ -69,7 +69,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 opts=repository_opts,
                 volume_path=repository_volume_path / "password",
                 content=resource.password.result,
-                permission=self.permission(),
+                permission=self.user,
                 extractor_args=self.extractor_args,
             )
 
@@ -80,7 +80,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                         opts=repository_opts,
                         volume_path=repository_volume_path / "env",
                         envs=resource.envs,
-                        permission=self.permission(),
+                        permission=self.user,
                         extractor_args=self.extractor_args,
                     ).to_path(self.extractor_args)
                 ]

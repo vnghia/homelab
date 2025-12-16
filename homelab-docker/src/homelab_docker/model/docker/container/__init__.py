@@ -120,7 +120,7 @@ class ContainerModel(HomelabBaseModel):
     security_opts: list[str] = ["no-new-privileges"]
     sysctls: dict[str, str] | None = None
     tmpfs: list[ContainerTmpfsConfig] | None = None
-    user: ContainerUserConfig = ContainerUserConfig()
+    user: ContainerUserConfig | None = None
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
     wait_timeout: PositiveInt | None = None
@@ -188,7 +188,14 @@ class ContainerModel(HomelabBaseModel):
             else None
         )
 
-    def build_user(self, user: UidGidModel) -> str | None:
+    def build_user(self, extractor_args: ExtractorArgs) -> UidGidModel:
+        return (
+            self.user.model(extractor_args)
+            if self.user
+            else extractor_args.service.user
+        )
+
+    def build_container_user(self, user: UidGidModel) -> str | None:
         if self.experimental:
             return user.container()
         return None
@@ -297,7 +304,7 @@ class ContainerModel(HomelabBaseModel):
 
         build_args = self.build_args(build_args, extractor_args)
         network_args = self.network.to_args(resource_name, extractor_args, build_args)
-        user = self.user.model(extractor_args)
+        user = self.build_user(extractor_args)
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
@@ -361,7 +368,7 @@ class ContainerModel(HomelabBaseModel):
             security_opts=self.security_opts,
             sysctls=self.sysctls,
             tmpfs=self.build_tmpfs(user),
-            user=self.build_user(user),
+            user=self.build_container_user(user),
             wait=self.wait if self.healthcheck else False,
             wait_timeout=self.wait_timeout,
             envs=self.build_envs(extractor_args, build_args),

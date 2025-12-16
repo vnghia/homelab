@@ -12,6 +12,7 @@ from ...config.service.file import ServiceFileConfig
 from ...config.service.keepass import ServiceKeepassConfig
 from ...config.service.move import ServiceMoveConfig
 from ...config.service.network import ServiceNetworkConfig
+from ...config.service.user import ServiceUserConfig
 from ..docker.container import ContainerModel
 
 
@@ -26,6 +27,7 @@ class ServiceModel(HomelabBaseModel):
     secrets: SecretConfig | None = None
     keepasses: ServiceKeepassConfig | None = None
     network: ServiceNetworkConfig = ServiceNetworkConfig()
+    user: ServiceUserConfig = ServiceUserConfig()
     container_: ContainerModel | None = Field(None, alias="container")
     containers_: dict[str, ContainerModel] = Field({}, alias="containers")
 

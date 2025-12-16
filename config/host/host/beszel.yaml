@@ -116,6 +116,9 @@ services:
       keepass:
         hostname:
           hostname: beszel
+    # Need root user because it can not read/write to the agent unix socket.
+    # To be changed after switching agent to WebSocket.
+    user: root
     container:
       experimental: true
       image: beszel
@@ -130,9 +133,6 @@ services:
         "/var/lib/beszel-agent": /var/lib/beszel-agent
       wud:
         template: https://github.com/henrygd/beszel/releases/tag/v${original}
-      # Need root user because it can not read/write to the agent unix socket.
-      # To be changed after switching agent to WebSocket.
-      user: root
       envs:
         APP_URL:
           hostname: beszel

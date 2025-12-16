@@ -22,7 +22,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         model = service.model[self.model].to_full(extractor_args)
 
         build_args = model.build_args(service.options[self.model], extractor_args)
-        user = model.user.model(extractor_args)
+        user = model.build_user(extractor_args)
 
         config: dict[str, Any] = {}
         container_config: dict[str, Any] = {}
@@ -33,7 +33,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         config["image"] = model.image.to_image_name(extractor_args.host.docker.image)
         config["pull"] = self.pull
 
-        if container_user := model.build_user(user):
+        if container_user := model.build_container_user(user):
             container_config["user"] = container_user
 
         entrypoint = (

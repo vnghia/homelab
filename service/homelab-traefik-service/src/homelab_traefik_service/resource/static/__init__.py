@@ -97,6 +97,6 @@ class TraefikStaticConfigResource(
                 if traefik_config.plugins
                 else {}
             ),
-            permission=traefik_service.permission(),
+            permission=traefik_service.user,
             extractor_args=traefik_service.extractor_args,
         )

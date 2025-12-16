@@ -82,6 +82,6 @@ class ResticGlobalProfileResource(
                     for service, profiles in restic_service.service_database_groups.items()
                 },
             },
-            permission=restic_service.permission(),
+            permission=restic_service.user,
             extractor_args=restic_service.extractor_args,
         )

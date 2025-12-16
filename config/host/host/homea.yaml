@@ -26,6 +26,7 @@ services:
           upper: false
         hostname:
           hostname: homea
+    user: root
     container:
       experimental: true
       image: homea
@@ -46,6 +47,5 @@ services:
         "/run/dbus":
           path: /run/dbus
           read-only: true
-      user: root
       wud:
         template: https://www.home-assistant.io/changelogs/core-${major}.${minor}

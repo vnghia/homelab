@@ -35,6 +35,7 @@ services:
     secrets:
       totp:
         special: false
+    user: root
     container:
       experimental: true
       image: windows
@@ -63,7 +64,6 @@ services:
       read-only: false
       volumes:
         windows-storage: /storage
-      user: root
       wud:
         template: https://github.com/dockur/windows/releases/tag/v${original}
         semver-count: 2

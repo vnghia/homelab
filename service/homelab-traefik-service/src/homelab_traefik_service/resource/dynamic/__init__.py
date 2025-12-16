@@ -38,6 +38,6 @@ class TraefikDynamicConfigResource(
             opts=opts,
             volume_path=traefik_service.get_dynamic_config_volume_path(self.name),
             data=model.to_data(traefik_service, extractor_args),
-            permission=traefik_service.permission(),
+            permission=traefik_service.user,
             extractor_args=extractor_args,
         )
