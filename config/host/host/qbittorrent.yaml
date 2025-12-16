@@ -29,6 +29,10 @@ services:
       vpn:
         ports:
           port:
+      bridge:
+        proxy:
+          aliases:
+            - hostname: xseed
     container:
       experimental: true
       image: qbittorrent

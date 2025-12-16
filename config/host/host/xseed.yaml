@@ -15,7 +15,15 @@ docker:
                 path: cross-seed.db
 services:
   xseed:
-    config: {}
+    variables:
+      XSEED_PORT: 2468
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            service:
+              port:
+                svariable: XSEED_PORT
     network:
       bridge:
         proxy:
@@ -27,7 +35,10 @@ services:
     container:
       experimental: true
       image: xseed
-      command: [daemon]
+      command:
+        - daemon
+        - --port
+        - svariable: XSEED_PORT
       wud:
         template: https://github.com/cross-seed/cross-seed/releases/tag/v${original}
       volumes:

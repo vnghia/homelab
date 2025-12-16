@@ -1,4 +1,8 @@
 records:
+  sun:
+    records:
+      xseed:
+        routable: false
   earth:
     records:
       docker-proxy:
