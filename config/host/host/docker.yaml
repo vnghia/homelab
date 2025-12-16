@@ -127,6 +127,7 @@ services:
         image: docker-proxy
         docker-socket:
           write: false
+        user: docker
         wud:
           template: https://github.com/wollomatic/socket-proxy/releases/tag/${original}
         envs:

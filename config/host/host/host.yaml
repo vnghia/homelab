@@ -5,6 +5,7 @@ users:
   user:
     uid: 1000
     gid: 1000
+  docker:
 variables:
   FULL_HOSTNAME:
     extract:
