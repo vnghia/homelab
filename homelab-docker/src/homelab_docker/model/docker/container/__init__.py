@@ -12,6 +12,7 @@ from pulumi import Input, Output, Resource, ResourceOptions
 from pydantic import Field, PositiveInt
 
 from ....extract.global_ import GlobalExtractor
+from ...user import UidGidModel
 from .cap import ContainerCapConfig
 from .database import ContainerDatabaseConfig
 from .docker_socket import ContainerDockerSocketConfig
@@ -174,17 +175,12 @@ class ContainerModel(HomelabBaseModel):
             else None
         )
 
-    def build_tmpfs(self) -> dict[str, str] | None:
+    def build_tmpfs(self, user: UidGidModel) -> dict[str, str] | None:
         return (
             {
                 tmpfs[0].as_posix(): tmpfs[1]
                 for tmpfs in [
-                    tmpfs.to_args(
-                        self.user
-                        if (self.experimental and not self.user.is_root)
-                        or (not self.experimental and not self.user.is_default)
-                        else None
-                    )
+                    tmpfs.to_args(user if self.experimental else None)
                     for tmpfs in self.tmpfs
                 ]
             }
@@ -192,9 +188,9 @@ class ContainerModel(HomelabBaseModel):
             else None
         )
 
-    def build_user(self) -> str | None:
-        if self.experimental or (not self.experimental and not self.user.is_default):
-            return self.user.user
+    def build_user(self, user: UidGidModel) -> str | None:
+        if self.experimental:
+            return user.container()
         return None
 
     def build_envs(
@@ -301,6 +297,7 @@ class ContainerModel(HomelabBaseModel):
 
         build_args = self.build_args(build_args, extractor_args)
         network_args = self.network.to_args(resource_name, extractor_args, build_args)
+        user = self.user.model(extractor_args)
 
         depends_on: list[Resource] = []
         depends_on.extend(build_args.files)
@@ -363,8 +360,8 @@ class ContainerModel(HomelabBaseModel):
             restart=self.restart,
             security_opts=self.security_opts,
             sysctls=self.sysctls,
-            tmpfs=self.build_tmpfs(),
-            user=self.build_user(),
+            tmpfs=self.build_tmpfs(user),
+            user=self.build_user(user),
             wait=self.wait if self.healthcheck else False,
             wait_timeout=self.wait_timeout,
             envs=self.build_envs(extractor_args, build_args),

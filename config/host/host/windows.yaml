@@ -63,9 +63,7 @@ services:
       read-only: false
       volumes:
         windows-storage: /storage
-      user:
-        uid: 0
-        gid: 0
+      user: root
       wud:
         template: https://github.com/dockur/windows/releases/tag/v${original}
         semver-count: 2

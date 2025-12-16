@@ -132,9 +132,7 @@ services:
         template: https://github.com/henrygd/beszel/releases/tag/v${original}
       # Need root user because it can not read/write to the agent unix socket.
       # To be changed after switching agent to WebSocket.
-      user:
-        uid: 0
-        gid: 0
+      user: root
       envs:
         APP_URL:
           hostname: beszel

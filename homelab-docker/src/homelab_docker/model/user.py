@@ -5,8 +5,11 @@ from pydantic import NonNegativeInt
 
 
 class UidGidModel(HomelabBaseModel):
-    DEFAULT_UID: ClassVar[NonNegativeInt] = 1000
-    DEFAULT_GID: ClassVar[NonNegativeInt] = 1000
+    NOBODY_UID: ClassVar[NonNegativeInt] = 65534
+    NOGROUP_GID: ClassVar[NonNegativeInt] = 65534
 
-    uid: NonNegativeInt = DEFAULT_UID
-    gid: NonNegativeInt = DEFAULT_GID
+    uid: NonNegativeInt = NOBODY_UID
+    gid: NonNegativeInt = NOGROUP_GID
+
+    def container(self) -> str:
+        return "{}:{}".format(self.uid, self.gid)

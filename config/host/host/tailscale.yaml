@@ -45,9 +45,7 @@ services:
         - /run
       volumes:
         tailscale-data: /var/lib/tailscale
-      user:
-        uid: 0
-        gid: 0
+      user: root
       wud:
         template: https://tailscale.com/changelog
         include-prefix: v

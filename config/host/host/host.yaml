@@ -1,3 +1,10 @@
+users:
+  root:
+    uid: 0
+    gid: 0
+  user:
+    uid: 1000
+    gid: 1000
 variables:
   FULL_HOSTNAME:
     extract:

@@ -22,6 +22,8 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         model = service.model[self.model].to_full(extractor_args)
 
         build_args = model.build_args(service.options[self.model], extractor_args)
+        user = model.user.model(extractor_args)
+
         config: dict[str, Any] = {}
         container_config: dict[str, Any] = {}
         host_config: dict[str, Any] = {}
@@ -31,8 +33,8 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         config["image"] = model.image.to_image_name(extractor_args.host.docker.image)
         config["pull"] = self.pull
 
-        if user := model.build_user():
-            container_config["user"] = user
+        if container_user := model.build_user(user):
+            container_config["user"] = container_user
 
         entrypoint = (
             self.entrypoint
@@ -81,7 +83,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         host_config["readonlyRootfs"] = model.read_only
         host_config["securityOpt"] = model.security_opts
 
-        if tmpfses := model.build_tmpfs():
+        if tmpfses := model.build_tmpfs(user):
             host_config["tmpfs"] = tmpfses
         if model.init:
             host_config["init"] = model.init

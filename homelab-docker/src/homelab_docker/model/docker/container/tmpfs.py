@@ -1,11 +1,6 @@
-from __future__ import annotations
-
-import typing
-
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, HomelabRootModel
 
-if typing.TYPE_CHECKING:
-    from .user import ContainerUserConfig
+from ...user import UidGidModel
 
 
 class ContainerTmpfsFullConfig(HomelabBaseModel):
@@ -18,7 +13,7 @@ class ContainerTmpfsConfig(HomelabRootModel[AbsolutePath | ContainerTmpfsFullCon
         root = self.root
         return root.path if isinstance(root, ContainerTmpfsFullConfig) else root
 
-    def to_args(self, user: ContainerUserConfig | None) -> tuple[AbsolutePath, str]:
+    def to_args(self, user: UidGidModel | None) -> tuple[AbsolutePath, str]:
         root = (
             self.root
             if isinstance(self.root, ContainerTmpfsFullConfig)

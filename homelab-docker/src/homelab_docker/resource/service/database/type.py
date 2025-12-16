@@ -94,7 +94,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 content=script.content,
                 permission=FilePermissionModel(
                     mode=FilePermissionModel.EXECUTABLE_MODE,
-                    owner=self.config.container.user,
+                    owner=self.config.container.user.model(extractor_args),
                 ),
                 extractor_args=extractor_args,
             )

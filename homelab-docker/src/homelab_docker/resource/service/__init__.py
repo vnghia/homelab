@@ -126,7 +126,7 @@ class ServiceResourceBase(ComponentResource):
         return self._keepass
 
     def permission(self, container: str | None = None) -> UidGidModel:
-        return self.container_models[container].user
+        return self.container_models[container].user.model(self.extractor_args)
 
     def build_databases(self) -> None:
         container_models: dict[str | None, ContainerModel] = {}

@@ -71,9 +71,7 @@ services:
           default: {}
       tmpfs:
         - /tmp
-      user:
-        uid: 0
-        gid: 0
+      user: root
       wud:
         template: https://github.com/crowdsecurity/crowdsec/releases/tag/${original}
         include-prefix: v
