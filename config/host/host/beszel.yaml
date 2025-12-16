@@ -116,15 +116,9 @@ services:
       keepass:
         hostname:
           hostname: beszel
-    # Need root user because it can not read/write to the agent unix socket.
-    # To be changed after switching agent to WebSocket.
-    user: root
     container:
       experimental: true
       image: beszel
-      cap:
-        add:
-          - DAC_OVERRIDE
       network:
         bridge:
           default: {}
