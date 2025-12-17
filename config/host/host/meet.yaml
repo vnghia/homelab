@@ -105,6 +105,7 @@ services:
       django: {}
     containers:
       backend:
+        experimental: true
         image: meet-backend
         databases:
           - postgres:
@@ -247,6 +248,7 @@ services:
           SIGNUP_NEW_USER_TO_MARKETING_EMAIL: false
           ROOM_TELEPHONY_ENABLED: false
       frontend:
+        experimental: true
         image: meet-frontend
         tmpfs:
           - /tmp
