@@ -20,6 +20,7 @@ from ....model.database.type import DatabaseType
 from ....model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ....model.docker.container.database.source import ContainerDatabaseSourceModel
 from ....model.docker.container.image import ContainerImageModelConfig
+from ....model.docker.container.user import ContainerUserConfig
 from ....model.docker.container.volume import (
     ContainerVolumeConfig,
     ContainerVolumeFullConfig,
@@ -84,6 +85,12 @@ class ServiceDatabaseTypeResource(ComponentResource):
             )
 
         type_container = self.config.container
+        type_user = (
+            type_container.build_user(extractor_args)
+            if type_container.user
+            else extractor_args.host_model.users[None]
+        )
+
         self.scripts = [
             FileResource(
                 self.prefix + script.path,
@@ -95,9 +102,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 content=script.content,
                 permission=FilePermissionModel(
                     mode=FilePermissionModel.EXECUTABLE_MODE,
-                    owner=type_container.build_user(extractor_args)
-                    if type_container.user
-                    else extractor_args.host_model.users[None],
+                    owner=type_user,
                 ),
                 extractor_args=extractor_args,
             )
@@ -180,6 +185,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                             else {}
                         )
                     ),
+                    user=ContainerUserConfig(type_user),
                     envs=envs,
                 )
             )
