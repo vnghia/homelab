@@ -136,6 +136,7 @@ services:
       idp-service-user-password: {}
       ldap-bind-password: {}
     container:
+      experimental: true
       image: opencloud
       tmpfs:
         - /tmp
