@@ -69,6 +69,7 @@ services:
               key: agent-key
               info: private_pem
     container:
+      experimental: true
       image: dozzle
       docker-socket:
         write: false
