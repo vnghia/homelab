@@ -71,7 +71,7 @@ class KanidmPasswordResource(Resource, module="kanidm", name="Password"):
             KanidmPasswordProvider(),
             account,
             {
-                "docker_host": extractor_args.host_model.access.ssh,
+                "docker_host": extractor_args.host.docker_host,
                 "container": container,
                 "account": account,
                 "config_path": config_path.as_posix(),

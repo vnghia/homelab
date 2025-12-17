@@ -76,14 +76,13 @@ class FileProviderProps(HomelabBaseModel):
 
 
 class FileVolumeProxy:
-    IMAGE = "busybox"
     WORKING_DIR = AbsolutePath(PosixPath("/mnt/volume"))
 
     @classmethod
     @contextmanager
     def container(cls, docker_host: str, volume: str) -> Iterator[Container]:
         container = DockerClient(docker_host).containers.create(
-            image=cls.IMAGE,
+            image=DockerClient.UTILITY_IMAGE,
             detach=True,
             network_mode="none",
             volumes={volume: {"bind": cls.WORKING_DIR.as_posix(), "mode": "rw"}},
@@ -93,10 +92,6 @@ class FileVolumeProxy:
             yield container
         finally:
             container.remove(force=True)
-
-    @classmethod
-    def pull_image(cls, docker_host: str) -> None:
-        DockerClient(docker_host).images.pull(repository=cls.IMAGE)
 
     @classmethod
     def update_tarinfo_permission(
@@ -161,7 +156,7 @@ class FileVolumeProxy:
     @classmethod
     def delete_file(cls, props: FileProviderProps) -> None:
         DockerClient(props.docker_host).containers.run(
-            image=cls.IMAGE,
+            image=DockerClient.UTILITY_IMAGE,
             command=["rm", "-rf", props.location.path.as_posix()],
             detach=False,
             network_mode="none",

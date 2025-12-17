@@ -7,10 +7,10 @@ from homelab_network.resource.network import NetworkResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
+from ..client import DockerClient
 from ..config.host import HostServiceModelConfig
 from ..extract import ExtractorArgs
 from ..resource.docker import DockerResource
-from ..resource.file import FileVolumeProxy
 from ..resource.service import ServiceResourceBase
 
 
@@ -30,6 +30,10 @@ class HostResourceBase(ComponentResource):
     ) -> None:
         self.model = config[name]
 
+        self.docker_host = self.model.access.ssh
+        self.docker_client = DockerClient(self.docker_host)
+        self.docker_client.pull_utility_image()
+
         super().__init__(
             self.name,
             self.name,
@@ -38,11 +42,9 @@ class HostResourceBase(ComponentResource):
                 opts,
                 ResourceOptions(
                     providers={
-                        "docker": docker.Provider(
-                            self.name, host=self.model.access.ssh
-                        ),
+                        "docker": docker.Provider(self.name, host=self.docker_host),
                         "docker-build": docker_build.Provider(
-                            self.name, host=self.model.access.ssh
+                            self.name, host=self.docker_host
                         ),
                     }
                 ),
@@ -60,8 +62,6 @@ class HostResourceBase(ComponentResource):
         )
 
         self.services: dict[str, ServiceResourceBase] = {}
-
-        FileVolumeProxy.pull_image(self.model.access.ssh)
 
         self.HOSTS[self.name] = self
 
