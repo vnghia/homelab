@@ -23,6 +23,7 @@ services:
       valkey:
         valkey: {}
     container:
+      experimental: true
       image: livekit
       network:
         bridge:
