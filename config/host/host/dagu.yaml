@@ -86,6 +86,7 @@ services:
       username: {}
       password: {}
     container:
+      experimental: true
       image: dagu
       command:
         - "start-all"
