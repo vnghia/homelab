@@ -96,6 +96,10 @@ services:
       experimental: true
       active: false
       image: resticprofile
+      cap:
+        add:
+          - CHOWN
+          - DAC_READ_SEARCH
       network:
         bridge:
           default: {}
