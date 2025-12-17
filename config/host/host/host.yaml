@@ -17,7 +17,8 @@ users:
   root:
     uid: 0
     gid: 0
-  user:
+  user: &default
     uid: 1000
     gid: 1000
+  default: *default
   docker:

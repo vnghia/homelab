@@ -8,10 +8,12 @@ services:
   meilisearch:
     config: {}
     container:
+      experimental: true
       active: false
       image: meilisearch
       tmpfs:
         - /tmp
+      user: default
       envs:
         MEILI_DB_PATH:
           extract:
