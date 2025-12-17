@@ -89,12 +89,21 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             )
 
             repository_profile = self.get_repository_profile_name(name)
-            self.repositores[repository_profile] = {
-                "inherit": self.DEFAULT_PROFILE_NAME,
-                "repository-file": repository_file.to_path(self.extractor_args),
-                "password-file": password_file.to_path(self.extractor_args),
-                "forget": resource.keep.to_forget_options(),
-            } | ({"env-file": env_file} if env_file else {})
+            self.repositores[repository_profile] = (
+                {
+                    "inherit": self.DEFAULT_PROFILE_NAME,
+                    "repository-file": repository_file.to_path(self.extractor_args),
+                    "password-file": password_file.to_path(self.extractor_args),
+                    "forget": resource.keep.to_forget_options(),
+                }
+                | ({"env-file": env_file} if env_file else {})
+                | (
+                    {"compression": resource.compression}
+                    if resource.compression
+                    else {}
+                )
+                | ({"pack-size": resource.pack_size} if resource.pack_size else {})
+            )
             self.export_repositories.append(Output.from_input(repository_profile))
 
         self.database_configs = []

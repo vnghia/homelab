@@ -21,6 +21,9 @@ class ResticRepository(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.keep = repository.keep
+        self.compression = repository.compression
+        self.pack_size = repository.pack_size
+
         self.repository = repository.build_repository(plain_args)
         self.password = repository.password.build_resource(
             "password", self.child_opts, secret_resource, plain_args
