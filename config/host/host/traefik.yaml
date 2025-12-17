@@ -89,7 +89,6 @@ services:
     network:
       bridge:
     container:
-      experimental: true
       image: traefik
       cap:
         add:

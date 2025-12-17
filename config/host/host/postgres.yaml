@@ -23,7 +23,6 @@ docker:
         database: POSTGRES_DB
         data-dir: PGDATA
       container:
-        experimental: true
         healthcheck:
           tests:
             - "CMD"

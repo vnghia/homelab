@@ -37,7 +37,6 @@ services:
         apps:
           - io.heckel.ntfy
     container:
-      experimental: true
       image: ntfy
       command: ["serve"]
       healthcheck:

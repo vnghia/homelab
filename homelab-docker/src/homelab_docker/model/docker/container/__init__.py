@@ -93,7 +93,6 @@ class ContainerModelBuildArgs:
 
 class ContainerModel(HomelabBaseModel):
     active: bool = True
-    experimental: bool = False
     delete_before_replace: bool = False
     inherit: ContainerInheritConfig = ContainerInheritConfig()
 
@@ -147,11 +146,11 @@ class ContainerModel(HomelabBaseModel):
         return self
 
     def build_cap(self) -> docker.ContainerCapabilitiesArgs | None:
-        if self.experimental and self.cap:
-            return docker.ContainerCapabilitiesArgs(
-                adds=self.cap.add, drops=self.cap.drop
-            )
-        return None
+        return (
+            docker.ContainerCapabilitiesArgs(adds=self.cap.add, drops=self.cap.drop)
+            if self.cap
+            else None
+        )
 
     def build_command(self, extractor_args: ExtractorArgs) -> list[Output[str]] | None:
         return (
@@ -199,10 +198,7 @@ class ContainerModel(HomelabBaseModel):
         return (
             {
                 tmpfs[0].as_posix(): tmpfs[1]
-                for tmpfs in [
-                    tmpfs.to_args(user if self.experimental else None)
-                    for tmpfs in self.tmpfs
-                ]
+                for tmpfs in [tmpfs.to_args(user) for tmpfs in self.tmpfs]
             }
             if self.tmpfs
             else None
@@ -216,9 +212,7 @@ class ContainerModel(HomelabBaseModel):
         )
 
     def build_container_user(self, user: UidGidModel) -> str | None:
-        if self.experimental:
-            return user.container()
-        return None
+        return user.container()
 
     def build_envs(
         self,

@@ -21,7 +21,6 @@ services:
               port:
                 env: SERVER_PORT
     container:
-      experimental: true
       image: pdf
       tmpfs:
         - /tmp

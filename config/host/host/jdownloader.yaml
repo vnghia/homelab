@@ -18,7 +18,6 @@ services:
     network:
       bridge:
     container:
-      experimental: true
       image: jdownloader
       network:
         bridge:

@@ -153,7 +153,6 @@ services:
           hostname: kanidm
           record: solar
     container:
-      experimental: true
       image: kanidm-server
       command:
         - "/sbin/kanidmd"

@@ -24,7 +24,6 @@ services:
     variables:
       PORT: 3000
     container:
-      experimental: true
       image: chromium
       network:
         bridge:

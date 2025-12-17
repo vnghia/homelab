@@ -93,7 +93,6 @@ services:
       bridge:
     user: root
     container:
-      experimental: true
       active: false
       image: resticprofile
       cap:

@@ -33,7 +33,6 @@ services:
             - hostname: starr-sonarr
             - hostname: starr-prowlarr
     container:
-      experimental: true
       image: xseed
       command:
         - daemon

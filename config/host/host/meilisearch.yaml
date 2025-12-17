@@ -8,7 +8,6 @@ services:
   meilisearch:
     config: {}
     container:
-      experimental: true
       active: false
       image: meilisearch
       tmpfs:

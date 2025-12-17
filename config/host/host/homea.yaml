@@ -28,7 +28,6 @@ services:
           hostname: homea
     user: root
     container:
-      experimental: true
       image: homea
       cap:
         add:

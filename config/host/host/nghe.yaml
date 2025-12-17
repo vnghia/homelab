@@ -25,7 +25,6 @@ services:
       key:
         length: 16
     container:
-      experimental: true
       image: nghe
       databases:
         - postgres:

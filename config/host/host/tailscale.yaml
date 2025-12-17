@@ -15,7 +15,6 @@ services:
         info: internal
     user: root
     container:
-      experimental: true
       image: tailscale
       cap:
         add:

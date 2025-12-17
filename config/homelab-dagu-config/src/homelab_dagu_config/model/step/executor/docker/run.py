@@ -33,8 +33,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         config["image"] = model.image.to_image_name(extractor_args.host.docker.image)
         config["pull"] = self.pull
 
-        if container_user := model.build_container_user(user):
-            container_config["user"] = container_user
+        container_config["user"] = model.build_container_user(user)
 
         entrypoint = (
             self.entrypoint

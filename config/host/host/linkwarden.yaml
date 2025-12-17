@@ -53,7 +53,6 @@ services:
       nextauth: {}
       meilisearch-key: {}
     container:
-      experimental: true
       image: linkwarden
       databases:
         - postgres:

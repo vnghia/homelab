@@ -45,7 +45,6 @@ services:
         ports:
           port:
     container:
-      experimental: true
       delete-before-replace: true
       image: slskd
       healthcheck:

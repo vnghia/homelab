@@ -15,7 +15,6 @@ docker:
         database: VALKEY_DATABASE
         data-dir: VALKEY_DATA_DIR
       container:
-        experimental: true
         healthcheck:
           tests:
             - "CMD"

@@ -46,7 +46,6 @@ services:
           hostname: airtrail
           record: solar
     container:
-      experimental: true
       image: airtrail
       databases:
         - postgres:

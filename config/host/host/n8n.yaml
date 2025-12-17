@@ -29,7 +29,6 @@ services:
       key: {}
       jwt: {}
     container:
-      experimental: true
       image: n8n
       databases:
         - postgres:

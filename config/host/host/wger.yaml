@@ -102,7 +102,6 @@ services:
       jwt: {}
       celery: {}
     container:
-      experimental: true
       image: wger
       databases:
         - postgres:

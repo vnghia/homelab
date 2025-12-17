@@ -13,7 +13,7 @@ class ContainerTmpfsConfig(HomelabRootModel[AbsolutePath | ContainerTmpfsFullCon
         root = self.root
         return root.path if isinstance(root, ContainerTmpfsFullConfig) else root
 
-    def to_args(self, user: UidGidModel | None) -> tuple[AbsolutePath, str]:
+    def to_args(self, user: UidGidModel) -> tuple[AbsolutePath, str]:
         root = (
             self.root
             if isinstance(self.root, ContainerTmpfsFullConfig)
@@ -26,8 +26,8 @@ class ContainerTmpfsConfig(HomelabRootModel[AbsolutePath | ContainerTmpfsFullCon
                     bool,
                     [
                         ("exec" if root.exec else "noexec"),
-                        ("uid={}".format(user.uid) if user else ""),
-                        ("gid={}".format(user.gid) if user else ""),
+                        ("uid={}".format(user.uid)),
+                        ("gid={}".format(user.gid)),
                     ],
                 )
             )

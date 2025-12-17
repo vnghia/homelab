@@ -152,7 +152,6 @@ services:
       BAZARR_PORT: 6767
     containers:
       radarr:
-        experimental: true
         image: radarr
         network:
           bridge:
@@ -171,7 +170,6 @@ services:
         envs:
           S6_READ_ONLY_ROOT: 1
       sonarr:
-        experimental: true
         image: sonarr
         network:
           bridge:
@@ -190,7 +188,6 @@ services:
         envs:
           S6_READ_ONLY_ROOT: 1
       prowlarr:
-        experimental: true
         image: prowlarr
         network:
           bridge:
@@ -209,7 +206,6 @@ services:
         envs:
           S6_READ_ONLY_ROOT: 1
       bazarr:
-        experimental: true
         image: bazarr
         network:
           bridge:

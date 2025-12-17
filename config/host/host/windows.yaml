@@ -37,7 +37,6 @@ services:
         special: false
     user: root
     container:
-      experimental: true
       image: windows
       cap:
         add:
