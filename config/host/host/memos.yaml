@@ -64,6 +64,7 @@ services:
         apps:
           - me.mudkip.moememos
     container:
+      experimental: true
       image: memos
       databases:
         - postgres:
@@ -93,6 +94,7 @@ services:
         MEMOS_DRIVER: postgres
     containers:
       mortis:
+        experimental: true
         image: mortis
         entrypoint: ["/app/mortis"]
         command:
