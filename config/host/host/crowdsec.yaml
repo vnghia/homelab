@@ -45,7 +45,6 @@ services:
       traefik:
         length: 32
         special: false
-    user: root
     container:
       experimental: true
       image: crowdsec
