@@ -73,6 +73,7 @@ services:
         apps:
           - app.alextran.immich
     container:
+      experimental: true
       image: immich-server
       databases:
         - postgres:
@@ -107,6 +108,7 @@ services:
         include-prefix: v
     containers:
       machine-learning:
+        experimental: true
         image: immich-machine-learning
         devices:
           - /dev/dri
