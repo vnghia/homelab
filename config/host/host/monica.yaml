@@ -77,8 +77,13 @@ services:
       key:
         length: 32
       meilisearch-key: {}
+    # TODO: Make this container work with non-root user and no cap
+    user: root
     container:
+      experimental: true
       image: monica
+      cap:
+        drop: null
       databases:
         - postgres:
           envs:
