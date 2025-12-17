@@ -7,14 +7,14 @@ from homelab_pydantic import HomelabRootModel
 from ...model.user import UidGidModel
 
 if typing.TYPE_CHECKING:
-    from ...extract import ExtractorArgs
+    from ..user import UidGidConfig
 
 
 class ServiceUserConfig(HomelabRootModel[str | None | UidGidModel]):
     root: str | UidGidModel | None = None
 
-    def model(self, extractor_args: ExtractorArgs) -> UidGidModel:
+    def model(self, users: UidGidConfig) -> UidGidModel:
         root = self.root
         if isinstance(root, UidGidModel):
             return root
-        return extractor_args.host_model.users[root]
+        return users[root]

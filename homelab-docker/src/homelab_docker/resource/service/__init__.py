@@ -56,7 +56,7 @@ class ServiceResourceBase(ComponentResource):
         )
 
         self.model = model
-        self.user = self.model.user.model(extractor_args)
+        self.user = extractor_args.host.service_users[self.name()]
 
         self._database: ServiceDatabaseResource | None = None
         self._secret: SecretResource | None = None

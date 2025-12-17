@@ -34,6 +34,11 @@ class HostResourceBase(ComponentResource):
         self.docker_client = DockerClient(self.docker_host)
         self.docker_client.pull_utility_image()
 
+        self.service_users = {
+            service_name: service_model.user.model(self.model.users)
+            for service_name, service_model in self.model.services.items()
+        }
+
         super().__init__(
             self.name,
             self.name,
