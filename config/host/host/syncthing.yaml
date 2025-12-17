@@ -23,6 +23,7 @@ services:
               port:
                 svariable: PORT
     container:
+      experimental: true
       image: syncthing
       healthcheck:
         tests:
