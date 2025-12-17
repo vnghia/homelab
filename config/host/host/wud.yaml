@@ -90,6 +90,7 @@ services:
             - record: solar
               hostname: ntfy
     container:
+      experimental: true
       image: wud
       docker-socket:
         write: false
