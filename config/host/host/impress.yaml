@@ -105,6 +105,7 @@ services:
       collaboration: {}
     containers:
       backend:
+        experimental: true
         image: impress-backend
         databases:
           - postgres:
@@ -254,6 +255,7 @@ services:
           Y_PROVIDER_API_KEY:
             secret: collaboration
       frontend:
+        experimental: true
         image: impress-frontend
         tmpfs:
           - /tmp
