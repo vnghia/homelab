@@ -13,6 +13,7 @@ from ...model.host import HostServiceModelModel
 
 if typing.TYPE_CHECKING:
     from ...resource.file import FileResource
+    from ...resource.host import HostResourceBase
 
 
 class VolumeResource(ComponentResource):
@@ -27,6 +28,7 @@ class VolumeResource(ComponentResource):
         opts: ResourceOptions,
         project_args: ProjectArgs,
         host: str,
+        host_resource: HostResourceBase,
     ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -34,7 +36,11 @@ class VolumeResource(ComponentResource):
         self.models = config.docker.volumes.local
         self.volumes = {
             name: model.build_resource(
-                name, opts=self.child_opts, project_labels=project_args.labels
+                name,
+                opts=self.child_opts,
+                host_resource=host_resource,
+                user=host_resource.service_users[LocalVolumeModel.get_service(name)],
+                project_labels=project_args.labels,
             )
             for name, model in self.models.items()
             if model.active
@@ -44,6 +50,7 @@ class VolumeResource(ComponentResource):
         for service_name, database in config.databases.items():
             for type_, database_config in database.root.items():
                 type_config = config.docker.database.root[type_]
+                type_user = type_config.get_user(config.users)
                 for name, model in database_config.items():
                     if type_config.dir.initdb:
                         full_initdb_name = type_.get_full_name_initdb(
@@ -53,6 +60,8 @@ class VolumeResource(ComponentResource):
                             self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                 full_initdb_name,
                                 opts=self.child_opts,
+                                host_resource=host_resource,
+                                user=type_user,
                                 project_labels=project_args.labels,
                             )
                         )
@@ -65,6 +74,8 @@ class VolumeResource(ComponentResource):
                             self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                 full_name,
                                 opts=self.child_opts,
+                                host_resource=host_resource,
+                                user=type_user,
                                 project_labels=project_args.labels,
                             )
                         )
@@ -77,6 +88,8 @@ class VolumeResource(ComponentResource):
                                 self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                     full_tmp_name,
                                     opts=self.child_opts,
+                                    host_resource=host_resource,
+                                    user=type_user,
                                     project_labels=project_args.labels,
                                 )
                             )
@@ -89,6 +102,8 @@ class VolumeResource(ComponentResource):
                                 self.DEFAULT_LOCAL_VOLUME_MODEL.build_resource(
                                     full_backup_name,
                                     opts=self.child_opts,
+                                    host_resource=host_resource,
+                                    user=type_user,
                                     project_labels=project_args.labels,
                                 )
                             )

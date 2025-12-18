@@ -84,12 +84,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 self.superuser_password.result
             )
 
-        type_container = self.config.container
-        type_user = (
-            type_container.build_user(extractor_args)
-            if type_container.user
-            else extractor_args.host_model.users[None]
-        )
+        type_user = self.config.get_user(extractor_args.host_model.users)
 
         self.scripts = [
             FileResource(

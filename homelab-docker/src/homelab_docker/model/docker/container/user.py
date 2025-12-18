@@ -7,12 +7,12 @@ from homelab_pydantic import HomelabRootModel
 from ...user import UidGidModel
 
 if typing.TYPE_CHECKING:
-    from ....extract import ExtractorArgs
+    from ....config.user import UidGidConfig
 
 
 class ContainerUserConfig(HomelabRootModel[str | UidGidModel]):
-    def model(self, extractor_args: ExtractorArgs) -> UidGidModel:
+    def model(self, users: UidGidConfig) -> UidGidModel:
         root = self.root
         if isinstance(root, UidGidModel):
             return root
-        return extractor_args.host_model.users[root]
+        return users[root]

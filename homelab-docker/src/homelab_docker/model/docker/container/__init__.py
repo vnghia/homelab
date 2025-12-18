@@ -206,7 +206,7 @@ class ContainerModel(HomelabBaseModel):
 
     def build_user(self, extractor_args: ExtractorArgs) -> UidGidModel:
         return (
-            self.user.model(extractor_args)
+            self.user.model(extractor_args.host_model.users)
             if self.user
             else extractor_args.service.user
         )

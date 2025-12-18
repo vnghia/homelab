@@ -11,6 +11,8 @@ from ...model.service.database import (
     ServiceDatabaseInitScriptModel,
     ServiceDatabaseModel,
 )
+from ...model.user import UidGidModel
+from ..user import UidGidConfig
 
 
 class DatabaseRemoteImageModel(RemoteImageModel):
@@ -52,6 +54,10 @@ class DatabaseTypeConfig(HomelabBaseModel):
 
     def get_versions(self, model: ServiceDatabaseModel) -> list[PositiveInt]:
         return model.versions or [self.version]
+
+    def get_user(self, users: UidGidConfig) -> UidGidModel:
+        user = self.container.user
+        return user.model(users) if user else users[None]
 
 
 class DatabaseConfig(HomelabRootModel[dict[DatabaseType, DatabaseTypeConfig]]):

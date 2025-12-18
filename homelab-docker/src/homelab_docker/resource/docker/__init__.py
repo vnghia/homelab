@@ -22,6 +22,7 @@ class DockerResource(ComponentResource):
 
         model = extractor_args.host_model
         self.host = host
+        self.host_resource = extractor_args.host
 
         self.network = NetworkResource(
             config=model,
@@ -46,6 +47,7 @@ class DockerResource(ComponentResource):
             opts=self.child_opts,
             project_args=extractor_args.global_resource.project_args,
             host=self.host,
+            host_resource=self.host_resource,
         )
 
         self.register_outputs({})
