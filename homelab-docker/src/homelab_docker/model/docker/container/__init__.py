@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import typing
-from typing import Literal, Mapping, Sequence
+from typing import Any, Literal, Mapping, Sequence
 
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
@@ -394,3 +394,62 @@ class ContainerModel(HomelabBaseModel):
                 ).items()
             ],
         )
+
+    def build_docker_py_args(
+        self,
+        extractor_args: ExtractorArgs,
+        build_args: ContainerModelBuildArgs | None,
+    ) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {"detach": False, "stream": False}
+        extractor_args = extractor_args.with_container(self)
+
+        build_args = self.build_args(build_args, extractor_args)
+        user = self.build_user(extractor_args)
+
+        kwargs["image"] = self.image.to_image_name(extractor_args.host.docker.image)
+
+        kwargs["user"] = self.build_container_user(user)
+
+        if (entrypoint := self.build_entrypoint(extractor_args)) is not None:
+            kwargs["entrypoint"] = entrypoint
+
+        kwargs["labels"] = self.build_labels(None, extractor_args, build_args)
+
+        kwargs["environment"] = self.build_envs(extractor_args, build_args)
+
+        kwargs["mounts"] = [
+            {
+                "type": arg.type,
+                "target": arg.target,
+                "read_only": arg.read_only,
+                "source": arg.source,
+            }
+            for arg in self.volumes.to_args(
+                self.docker_socket, extractor_args, build_args
+            )
+        ]
+
+        network_args = self.network.to_args(None, extractor_args, build_args)
+        if network_args.advanced:
+            kwargs["networking_config"] = {
+                network.name: {"aliases": network.aliases}
+                for network in network_args.advanced
+            }
+        elif network_args.mode:
+            kwargs["network_mode"] = network_args.mode
+
+        if cap := self.build_cap():
+            if cap.adds:
+                kwargs["cap_add"] = cap.adds
+            if cap.drops:
+                kwargs["cap_drop"] = cap.drops
+
+        kwargs["read_only"] = self.read_only
+        kwargs["security_opt"] = self.security_opts
+
+        if tmpfses := self.build_tmpfs(user):
+            kwargs["tmpfs"] = tmpfses
+        if self.init:
+            kwargs["init"] = self.init
+
+        return kwargs
