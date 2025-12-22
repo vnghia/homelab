@@ -246,6 +246,23 @@ services:
           RESOURCE_DEFAULT_ACCESS_LEVEL: restricted
           SIGNUP_NEW_USER_TO_MARKETING_EMAIL: false
           ROOM_TELEPHONY_ENABLED: false
+      migrate:
+        oneshot: true
+        inherit: backend
+        command: ["python3", "manage.py", "migrate"]
+      createsuperuser:
+        oneshot: true
+        inherit: backend
+        command:
+          - "python3"
+          - "manage.py"
+          - "createsuperuser"
+          - "--email"
+          - keepass:
+            info: username
+          - "--password"
+          - keepass:
+            info: password
       frontend:
         image: meet-frontend
         tmpfs:
