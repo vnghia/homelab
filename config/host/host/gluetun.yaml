@@ -35,5 +35,3 @@ services:
       wud:
         template: https://github.com/qdm12/gluetun/releases/tag/${original}
         include-prefix: v
-      envs:
-        DOT: "off"
