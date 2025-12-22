@@ -36,13 +36,10 @@ class LocalVolumeModel(HomelabBaseModel):
     ) -> None:
         outputs = args.new_outputs
         if not outputs:
-            raise ValueError(
-                "Set permission hook must be used after a volume is created"
-            )
+            raise RuntimeError("This hook can only be called after resource creation")
+
         volume = outputs["name"]
-
         pulumi.info("Changing ownership of volume {} to {}".format(volume, user))
-
         host_resource.docker_client.containers.run(
             image=DockerClient.UTILITY_IMAGE,
             command=["chown", "-R", user.container(), "."],

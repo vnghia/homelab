@@ -2,13 +2,23 @@ from __future__ import annotations
 
 import dataclasses
 import typing
+import uuid
 from typing import Any, Literal, Mapping, Sequence
 
+import pulumi
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_pydantic.path import AbsolutePath
-from pulumi import Input, Output, Resource, ResourceOptions
+from pulumi import (
+    Input,
+    Output,
+    Resource,
+    ResourceHook,
+    ResourceHookArgs,
+    ResourceHookBinding,
+    ResourceOptions,
+)
 from pydantic import Field, PositiveInt
 
 from ....extract.global_ import GlobalExtractor
@@ -35,6 +45,7 @@ from .wud import ContainerWudConfig
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
     from ....resource.file import FileResource
+    from ....resource.host import HostResourceBase
 
 
 @dataclasses.dataclass
@@ -93,6 +104,7 @@ class ContainerModelBuildArgs:
 
 class ContainerModel(HomelabBaseModel):
     active: bool = True
+    oneshot: bool = False
     delete_before_replace: bool = False
     inherit: ContainerInheritConfig = ContainerInheritConfig()
 
@@ -265,7 +277,11 @@ class ContainerModel(HomelabBaseModel):
                     extractor_args.global_resource.project_args.labels
                     | {"dev.dozzle.group": service.name()}
                     | ({"dev.dozzle.name": resource_name} if resource_name else {})
-                    | (self.wud.build_labels(resource_name) if self.wud else {})
+                    | (
+                        self.wud.build_labels(resource_name)
+                        if self.wud and not self.oneshot
+                        else {}
+                    )
                 ).items()
             }
             | {
@@ -305,6 +321,25 @@ class ContainerModel(HomelabBaseModel):
         build_args.files = files
         return build_args
 
+    @classmethod
+    def remove_oneshot_hook(
+        cls, args: ResourceHookArgs, host_resource: HostResourceBase
+    ) -> None:
+        outputs = args.new_outputs
+        if not outputs:
+            raise RuntimeError("This hook can only be called after resource creation")
+
+        container = outputs["name"]
+        if exit_code := int(outputs["exitCode"]):
+            raise RuntimeError(
+                "Oneshot container {} exists with non-zero status {}. Please manually remove it after investigation".format(
+                    container, exit_code
+                )
+            )
+
+        pulumi.info("Removing oneshot container {}".format(container))
+        host_resource.docker_client.containers.get(container).remove(v=True, force=True)
+
     def build_resource(
         self,
         resource_name: str,
@@ -336,6 +371,15 @@ class ContainerModel(HomelabBaseModel):
         ) is not None:
             resource_labels["image.build.digest"] = digest
 
+        remove_oneshot_hook = (
+            ResourceHook(
+                name=uuid.uuid4().hex,
+                func=lambda args: self.remove_oneshot_hook(args, extractor_args.host),
+            )
+            if self.oneshot
+            else None
+        )
+
         return docker.Container(
             resource_name,
             opts=ResourceOptions.merge(
@@ -347,9 +391,16 @@ class ContainerModel(HomelabBaseModel):
                         delete_before_replace=self.delete_before_replace
                         or bool(self.ports)
                         or bool(build_args.network.ports),
+                        hooks=ResourceHookBinding(
+                            after_create=[remove_oneshot_hook]
+                            if remove_oneshot_hook
+                            else None
+                        ),
+                        retain_on_delete=self.oneshot,
                     ),
                 ),
             ),
+            attach=self.oneshot,
             image=self.image.to_image_name(extractor_args.host.docker.image),
             capabilities=self.build_cap(),
             command=self.build_command(extractor_args),
@@ -364,21 +415,23 @@ class ContainerModel(HomelabBaseModel):
             group_adds=self.build_group_adds(extractor_args, user),
             entrypoints=self.build_entrypoint(extractor_args),
             healthcheck=self.healthcheck.to_args(extractor_args)
-            if self.healthcheck
+            if self.healthcheck and not self.oneshot
             else None,
             hostname=GlobalExtractor(self.hostname).extract_str(extractor_args)
             if self.hostname
             else None,
             hosts=self.build_hosts(extractor_args, build_args),
             init=self.init,
+            logs=self.oneshot,
             mounts=self.volumes.to_args(self.docker_socket, extractor_args, build_args),
+            must_run=not self.oneshot,
             network_mode=network_args.mode,
             networks_advanced=network_args.advanced,
             ports=self.build_ports(extractor_args, build_args),
             privileged=self.privileged,
             read_only=self.read_only,
             rm=self.remove,
-            restart=self.restart,
+            restart="no" if self.oneshot else self.restart,
             security_opts=self.security_opts,
             sysctls=self.sysctls,
             tmpfs=self.build_tmpfs(user),

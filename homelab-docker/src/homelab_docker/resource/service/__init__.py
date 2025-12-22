@@ -268,11 +268,14 @@ class ServiceResourceBase(ComponentResource):
     def build_containers(self) -> None:
         for name, model in self.container_models.items():
             if model.active:
-                self.containers[name] = self.build_container(
+                container = self.build_container(
                     name, model.to_full(self.extractor_args), self.options.get(name)
                 )
-                if name is None:
-                    self.extractor_args = self.extractor_args.from_service(self)
+
+                if not model.oneshot:
+                    self.containers[name] = container
+                    if name is None:
+                        self.extractor_args = self.extractor_args.from_service(self)
 
         for name, container in self.containers.items():
             pulumi.export(
