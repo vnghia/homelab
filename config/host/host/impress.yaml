@@ -253,6 +253,23 @@ services:
                 template: "http://impress-collaboration:{value}/api"
           Y_PROVIDER_API_KEY:
             secret: collaboration
+      migrate:
+        oneshot: true
+        inherit: backend
+        command: ["python3", "manage.py", "migrate"]
+      createsuperuser:
+        oneshot: true
+        inherit: backend
+        command:
+          - "python3"
+          - "manage.py"
+          - "createsuperuser"
+          - "--email"
+          - keepass:
+            info: username
+          - "--password"
+          - keepass:
+            info: password
       frontend:
         image: impress-frontend
         tmpfs:
