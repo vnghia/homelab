@@ -118,6 +118,11 @@ services:
         IGNORE_UNAUTHORIZED_CA: true
         IGNORE_HTTPS_ERRORS: true
     containers:
+      # TODO: remove this after https://github.com/linkwarden/linkwarden/issues/799
+      install-dotenv:
+        inherit:
+        oneshot: true
+        command: ["yarn", "playwright", "install"]
       meilisearch:
         inherit:
           service: meilisearch
