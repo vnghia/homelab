@@ -4,6 +4,7 @@ import typing
 
 import pulumi_random as random
 from homelab_extract.service.secret import ServiceExtractSecretSource
+from homelab_secret.model.uuid import SensitiveUuid
 from pulumi import Output
 
 from .. import ExtractorBase
@@ -19,6 +20,6 @@ class ServiceSecretSourceExtractor(ExtractorBase[ServiceExtractSecretSource]):
         root = self.root
         secret = extractor_args.service.secret.get_secret(root.secret)
 
-        if isinstance(secret, random.RandomUuid):
+        if isinstance(secret, SensitiveUuid):
             return secret.result
         return secret

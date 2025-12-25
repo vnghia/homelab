@@ -4,6 +4,7 @@ from homelab_extract.plain import PlainArgs
 from pulumi import ComponentResource, ResourceOptions
 
 from ..config import SecretConfig
+from ..model.uuid import SensitiveUuid
 from .cert.mtls import SecretMTlsResource
 
 
@@ -23,7 +24,7 @@ class SecretResource(ComponentResource):
 
         self.secrets: dict[
             str,
-            random.RandomUuid
+            SensitiveUuid
             | random.RandomPassword
             | tls.PrivateKey
             | tls.LocallySignedCert
@@ -43,9 +44,9 @@ class SecretResource(ComponentResource):
 
         self.register_outputs({})
 
-    def get_secret(self, key: str) -> random.RandomUuid | random.RandomPassword:
+    def get_secret(self, key: str) -> SensitiveUuid | random.RandomPassword:
         secret = self.secrets[key]
-        if isinstance(secret, (random.RandomUuid, random.RandomPassword)):
+        if isinstance(secret, (SensitiveUuid, random.RandomPassword)):
             return secret
         raise TypeError("Secret {} is not a valid uuid or password".format(key))
 
