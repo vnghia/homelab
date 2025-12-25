@@ -155,7 +155,7 @@ services:
         image: radarr
         network:
           bridge:
-            default: {}
+            vpn: {}
         tmpfs:
           - path: /run
             exec: true
@@ -173,7 +173,7 @@ services:
         image: sonarr
         network:
           bridge:
-            default: {}
+            vpn: {}
         tmpfs:
           - path: /run
             exec: true
@@ -209,7 +209,7 @@ services:
         image: bazarr
         network:
           bridge:
-            default: {}
+            vpn: {}
         tmpfs:
           - path: /run
             exec: true
