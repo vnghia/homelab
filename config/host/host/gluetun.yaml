@@ -6,7 +6,7 @@ docker:
     remote:
       gluetun:
         repo: ghcr.io/qdm12/gluetun
-        tag: "v3.40.3"
+        tag: "v3.41.0"
 services:
   gluetun:
     config: {}
@@ -35,3 +35,6 @@ services:
       wud:
         template: https://github.com/qdm12/gluetun/releases/tag/${original}
         include-prefix: v
+      envs:
+        DNS_UPSTREAM_RESOLVERS: cloudflare,libredns,opendns,quad9
+        DNS_UPSTREAM_IPV6: "on"

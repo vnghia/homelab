@@ -30,8 +30,6 @@ services:
       vpn:
         ports:
           port:
-        envs:
-          DNS_KEEP_NAMESERVER: "on"
     container:
       image: bitmagnet
       network:
