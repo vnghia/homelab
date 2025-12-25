@@ -65,7 +65,6 @@ services:
             ServerAliveInterval 60
             ServerAliveCountMax 240
             StrictHostKeyChecking no
-        mode: 0400
       private-key:
         path:
           extract:
@@ -75,7 +74,6 @@ services:
         content:
           key: ssh
           info: private_openssh
-        mode: 0400
       public-key:
         path:
           extract:
@@ -85,7 +83,6 @@ services:
         content:
           key: ssh
           info: public_openssh
-        mode: 0400
     secrets:
       ssh:
         algorithm: ED25519

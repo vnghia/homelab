@@ -25,8 +25,8 @@ class FileLocationModel(HomelabBaseModel):
 
 
 class FilePermissionModel(HomelabBaseModel):
-    DEFAULT_MODE: ClassVar[PositiveInt] = 0o444
-    EXECUTABLE_MODE: ClassVar[PositiveInt] = 0o744
+    DEFAULT_MODE: ClassVar[PositiveInt] = 0o400
+    EXECUTABLE_MODE: ClassVar[PositiveInt] = 0o500
 
     DEFAULT_UID: ClassVar[NonNegativeInt] = 1000
     DEFAULT_GID: ClassVar[NonNegativeInt] = 1000
