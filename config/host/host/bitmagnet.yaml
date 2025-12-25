@@ -23,9 +23,9 @@ services:
           config:
             backup:
               minimum-redundancy:
-              last-backup-maximum-age: 1 DAYS
-              retention-policy:
-              backup-compression-level: 10
+              last-backup-maximum-age:
+              retention-policy: REDUNDANCY 1
+              backup-compression-level: 22
     network:
       vpn:
         ports:
