@@ -101,11 +101,17 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
         build_args: ContainerModelBuildArgs,
     ) -> list[docker.ContainerMountArgs]:
         volumes = self.volumes
+        models = extractor_args.host_model.docker.volumes.local
         return (
             (
                 [
                     volume.to_args(volume=name, extractor_args=extractor_args)
                     for name, volume in volumes.items()
+                    if (
+                        not isinstance(name, str)
+                        or name not in models
+                        or models[name].active
+                    )
                 ]
             )
             + (
