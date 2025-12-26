@@ -11,6 +11,7 @@ from homelab_docker.resource.host import HostResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_global.resource import GlobalResource
+from homelab_litestream_service import LitestreamService
 from homelab_network.resource.network import NetworkResource
 from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
@@ -98,6 +99,13 @@ class HostBaseNoConfig(HostResourceBase):
 
         self.balite = BaliteService(
             self.host_services_config.balite,
+            opts=self.child_opts,
+            backup_host_config=self.host_services_config.backup.config,
+            extractor_args=self.extractor_args,
+        )
+
+        self.litestream = LitestreamService(
+            self.host_services_config.litestream,
             opts=self.child_opts,
             backup_host_config=self.host_services_config.backup.config,
             extractor_args=self.extractor_args,

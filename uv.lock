@@ -19,6 +19,7 @@ members = [
     "homelab-extract",
     "homelab-global",
     "homelab-kanidm-service",
+    "homelab-litestream-service",
     "homelab-mail",
     "homelab-network",
     "homelab-pydantic",
@@ -539,6 +540,7 @@ dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-global" },
     { name = "homelab-kanidm-service" },
+    { name = "homelab-litestream-service" },
     { name = "homelab-mail" },
     { name = "homelab-network" },
     { name = "homelab-restic-service" },
@@ -576,6 +578,7 @@ requires-dist = [
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-global", editable = "homelab-global" },
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
+    { name = "homelab-litestream-service", editable = "service/homelab-litestream-service" },
     { name = "homelab-mail", editable = "homelab-mail" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
@@ -981,6 +984,31 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [{ name = "types-pexpect", specifier = ">=4.9.0.20250916" }]
+
+[[package]]
+name = "homelab-litestream-service"
+version = "0.1.0"
+source = { editable = "service/homelab-litestream-service" }
+dependencies = [
+    { name = "homelab-backup" },
+    { name = "homelab-dagu-config" },
+    { name = "homelab-docker" },
+    { name = "homelab-extract" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
 
 [[package]]
 name = "homelab-mail"

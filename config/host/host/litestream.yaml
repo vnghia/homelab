@@ -1,0 +1,13 @@
+docker:
+  images:
+    remote:
+      litestream:
+        repo: litestream/litestream
+        tag: "0.5.5"
+services:
+  litestream:
+    config: {}
+    network:
+      bridge:
+    container:
+      image: litestream

@@ -25,6 +25,7 @@ dependencies = [
     "homelab-kanidm-service",
     "homelab-restic-service",
     "homelab-balite-service",
+    "homelab-litestream-service",
     "homelab-apprise-service",
     "pulumi>=3.148.0",
     "json-fix>=1.0.0",
@@ -71,6 +72,7 @@ homelab-traefik-config = { workspace = true }
 homelab-apprise-service = { workspace = true }
 homelab-backup-service = { workspace = true }
 homelab-balite-service = { workspace = true }
+homelab-litestream-service = { workspace = true }
 homelab-barman-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-ddns-service = { workspace = true }
