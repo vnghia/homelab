@@ -38,10 +38,6 @@ class ServiceModel(HomelabBaseModel):
             {None: self.container_} if self.container_ else {}
         ) | self.containers_
 
-    @classmethod
-    def add_service_name(cls, service_name: str, name: str | None) -> str:
-        return "{}-{}".format(service_name, name) if name else service_name
-
     @property
     def containers(self) -> dict[str | None, ContainerModel]:
         return self._containers

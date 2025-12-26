@@ -29,14 +29,14 @@ class ContainerInfoSourceExtractor(ExtractorBase[ContainerExtractInfoSource]):
                     ContainerNetworkModeConfig,
                     NetworkMode,
                 )
-                from ...model.service import ServiceModel
+                from ...model.host import HostNoServiceModel
 
                 network = extractor_args.container_model.network.root
                 if isinstance(network, ContainerNetworkContainerConfig):
                     extractor_args.get_service(network.service).containers[
                         network.container
                     ]
-                    return ServiceModel.add_service_name(
+                    return HostNoServiceModel.add_prefix(
                         network.service or extractor_args.service.name(),
                         network.container,
                     )

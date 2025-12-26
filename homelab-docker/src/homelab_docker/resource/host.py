@@ -10,6 +10,7 @@ from pydantic.alias_generators import to_snake
 from ..client import DockerClient
 from ..config.host import HostServiceModelConfig
 from ..extract import ExtractorArgs
+from ..model.host import HostNoServiceModel
 from ..resource.docker import DockerResource
 from ..resource.service import ServiceResourceBase
 
@@ -81,3 +82,6 @@ class HostResourceBase(ComponentResource):
                 "_", "-"
             )
         return cls._host_name
+
+    def add_host_name(self, name: str | None, prefix: str | None = None) -> str:
+        return HostNoServiceModel.add_prefix(prefix or self.name, name)

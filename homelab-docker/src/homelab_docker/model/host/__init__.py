@@ -23,6 +23,10 @@ class HostNoServiceModel(HomelabBaseModel):
     users: UidGidConfig
     variables: dict[str, GlobalExtract] = {}
 
+    @classmethod
+    def add_prefix(cls, prefix: str, name: str | None) -> str:
+        return "{}-{}".format(prefix, name) if name else prefix
+
 
 class HostServiceModelModel(HostNoServiceModel):
     model_config = ConfigDict(revalidate_instances="never")
