@@ -1,6 +1,3 @@
-import operator
-from functools import reduce
-
 import json_fix as json_fix
 from homelab_backup.resource import BackupResource
 from homelab_config import Config, HostConfig
@@ -68,12 +65,8 @@ class Homelab:
         self.keepass = KeepassResource(
             {
                 service.add_service_name(name): resource
-                for service in (
-                    reduce(
-                        operator.or_,
-                        [host.services for host in HostBase.HOSTS.values()],
-                    )
-                ).values()
+                for host in HostBase.HOSTS.values()
+                for service in host.services.values()
                 if service._keepass
                 for name, resource in service._keepass.keepasses.items()
             }
