@@ -1,5 +1,168 @@
+docker:
+  volumes:
+    local:
+      beszel-data:
+        backup:
+          source:
+            extract:
+              volume: beszel-data
+            transform:
+              path: backups
+      beszel-agent-data:
+        # TODO: Remove this after https://github.com/henrygd/beszel/issues/1569
+        active: false
 services:
+  dagu:
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - hostname: beszel
   beszel:
+    variables:
+      PORT: 8090
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            service:
+              port:
+                svariable: PORT
+      dagu:
+        dotenvs:
+          dotenv:
+            envs:
+              BESZEL_USERNAME:
+                keepass:
+                info: username
+              BESZEL_PASSWORD:
+                keepass:
+                info: password
+        dag:
+          pre-backup-volume:
+            name: pre-backup-volume
+            path: beszel-pre-backup-volume
+            dotenvs:
+              - null
+            tags: ["backup"]
+            steps:
+              - name: auth-with-password
+                executor:
+                  headers:
+                    Content-Type: application/json
+                  body:
+                    format: json
+                    data:
+                      identity: ${BESZEL_USERNAME}
+                      password: ${BESZEL_PASSWORD}
+                  silent: true
+                run:
+                  - "POST"
+                  - extract:
+                      hostname: beszel
+                    transform:
+                      string:
+                        template: "https://{value}/api/collections/_superusers/auth-with-password"
+                output: AUTH
+              - name: delete-backup
+                executor:
+                  headers:
+                    Authorization: ${AUTH.token}
+                run:
+                  - "DELETE"
+                  - extract:
+                      hostname: beszel
+                    transform:
+                      string:
+                        template: "https://{value}/api/backups/output.zip"
+              - name: create-backup
+                executor:
+                  headers:
+                    Content-Type: application/json
+                    Authorization: ${AUTH.token}
+                  body: '{"name": "output.zip"}'
+                run:
+                  - "POST"
+                  - extract:
+                      hostname: beszel
+                    transform:
+                      string:
+                        template: "https://{value}/api/backups"
+    files:
+      private-key:
+        path:
+          extract:
+            volume: beszel-data
+          transform:
+            path: id_ed25519
+        content:
+          key: ssh
+          info: private_openssh
+      public-key:
+        path:
+          extract:
+            volume: beszel-data
+          transform:
+            path: id_ed25519.pub
+        content:
+          key: ssh
+          info: public_openssh
+      config:
+        path:
+          extract:
+            volume: beszel-data
+          transform:
+            path: config.yml
+        content:
+          format: yaml
+          data:
+            systems:
+              - name: sun
+                host:
+                  host: sun
+                  extract:
+                    hinfo: address
+                token:
+                  secret: sun-token
+              - name: earth
+                host:
+                  host: earth
+                  extract:
+                    hinfo: address
+                token:
+                  secret: earth-token
+    secrets:
+      ssh:
+        algorithm: ED25519
+      sun-token:
+        uuid:
+      earth-token:
+        uuid:
+    keepasses:
+      keepass:
+        hostname:
+          hostname: beszel
     container:
-      hosts:
-        - host: earth
+      image: beszel
+      volumes:
+        beszel-data: /beszel_data
+      wud:
+        template: https://github.com/henrygd/beszel/releases/tag/v${original}
+      envs:
+        APP_URL:
+          hostname: beszel
+          scheme: https
+        AUTO_LOGIN:
+          keepass:
+          info: username
+    containers:
+      agent:
+        # TODO: Remove this after https://github.com/henrygd/beszel/issues/1569
+        active: false
+        envs:
+          TOKEN:
+            host: sun
+            extract:
+              service: beszel
+              extract:
+                secret: sun-token

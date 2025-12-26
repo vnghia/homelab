@@ -1,0 +1,14 @@
+services:
+  beszel:
+    depends-on:
+      - host: sun
+        service: beszel
+    containers:
+      agent:
+        envs:
+          TOKEN:
+            host: sun
+            extract:
+              service: beszel
+              extract:
+                secret: earth-token
