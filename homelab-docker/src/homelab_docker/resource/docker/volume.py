@@ -39,7 +39,8 @@ class VolumeResource(ComponentResource):
                 name,
                 opts=self.child_opts,
                 host_resource=host_resource,
-                user=host_resource.service_users[LocalVolumeModel.get_service(name)],
+                owner=model.build_owner(host_resource)
+                or host_resource.service_users[LocalVolumeModel.get_service(name)],
                 project_labels=project_args.labels,
             )
             for name, model in self.models.items()
@@ -61,7 +62,7 @@ class VolumeResource(ComponentResource):
                                 full_initdb_name,
                                 opts=self.child_opts,
                                 host_resource=host_resource,
-                                user=type_user,
+                                owner=type_user,
                                 project_labels=project_args.labels,
                             )
                         )
@@ -75,7 +76,7 @@ class VolumeResource(ComponentResource):
                                 full_name,
                                 opts=self.child_opts,
                                 host_resource=host_resource,
-                                user=type_user,
+                                owner=type_user,
                                 project_labels=project_args.labels,
                             )
                         )
@@ -89,7 +90,7 @@ class VolumeResource(ComponentResource):
                                     full_tmp_name,
                                     opts=self.child_opts,
                                     host_resource=host_resource,
-                                    user=type_user,
+                                    owner=type_user,
                                     project_labels=project_args.labels,
                                 )
                             )
@@ -103,7 +104,7 @@ class VolumeResource(ComponentResource):
                                     full_backup_name,
                                     opts=self.child_opts,
                                     host_resource=host_resource,
-                                    user=type_user,
+                                    owner=type_user,
                                     project_labels=project_args.labels,
                                 )
                             )
