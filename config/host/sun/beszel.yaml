@@ -155,6 +155,7 @@ services:
         AUTO_LOGIN:
           keepass:
           info: username
+        CONTAINER_DETAILS: false
     containers:
       agent:
         # TODO: Remove this after https://github.com/henrygd/beszel/issues/1569

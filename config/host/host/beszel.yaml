@@ -52,5 +52,4 @@ services:
               service: beszel
               extract:
                 secret:
-          CONTAINER_DETAILS: false
           SKIP_SYSTEMD: true
