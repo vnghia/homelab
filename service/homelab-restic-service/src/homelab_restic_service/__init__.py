@@ -121,7 +121,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             name,
             volume_model,
         ) in self.extractor_args.host_model.docker.volumes.local.items():
-            if volume_model.backup:
+            if volume_model.active and volume_model.backup:
                 self.volume_configs.append(
                     ResticVolumeConfig(
                         repository=volume_model.backup.repository
