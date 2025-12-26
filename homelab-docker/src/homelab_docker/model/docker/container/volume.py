@@ -45,7 +45,7 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
             type="volume",
             target=self.to_path(extractor_args).as_posix(),
             read_only=self.read_only,
-            source=extractor_args.host.docker.volume.volumes[volume].name,
+            source=extractor_args.host.docker.volume.volumes[volume].resource.name,
             volume_options=docker.ContainerMountVolumeOptionsArgs(no_copy=True),
         )
 

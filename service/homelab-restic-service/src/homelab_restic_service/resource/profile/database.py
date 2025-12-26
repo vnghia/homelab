@@ -32,6 +32,7 @@ class ResticProfileDatabaseResource(
                 volume=ResticVolumeConfig(
                     repository=restic_service.default_repository,
                     name=model.name,
+                    service=model.service,
                     model=ResticProfileModel.DEFAULT_VOLUME_MODEL,
                     relative=RelativePath(PosixPath(model.type_))
                     / (model.path or model.name),

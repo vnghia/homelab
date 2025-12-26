@@ -227,7 +227,7 @@ class FileResource(Resource, module="docker", name="File"):
             {
                 "docker-host": extractor_args.host_model.access.ssh,
                 "location": {
-                    "volume": volume.name,
+                    "volume": volume.resource.name,
                     "path": volume_path.path.as_posix(),
                 },
                 "data": {"content": content},
@@ -239,7 +239,7 @@ class FileResource(Resource, module="docker", name="File"):
                 },
                 "hash": None,
             },
-            ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume)),
+            ResourceOptions.merge(opts, ResourceOptions(deleted_with=volume.resource)),
         )
 
     def to_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:

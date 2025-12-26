@@ -4,11 +4,10 @@ import typing
 from collections import defaultdict
 
 import pulumi
-import pulumi_docker as docker
 from homelab_global import ProjectArgs
 from pulumi import ComponentResource, ResourceOptions
 
-from ...model.docker.volume import LocalVolumeModel
+from ...model.docker.volume import LocalVolumeModel, LocalVolumeResource
 from ...model.host import HostServiceModelModel
 
 if typing.TYPE_CHECKING:
@@ -34,22 +33,15 @@ class VolumeResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.models = config.docker.volumes.local
-        self.volumes: dict[str, docker.Volume] = {}
+        self.volumes: dict[str, LocalVolumeResource] = {}
 
         for volume_name, volume_model in self.models.items():
             if volume_model.active:
-                volume_owner = (
-                    volume_model.build_owner(host_resource)
-                    or host_resource.service_users[
-                        LocalVolumeModel.get_service(volume_name)
-                    ]
-                )
-
                 self.volumes[volume_name] = volume_model.build_resource(
                     volume_name,
                     opts=self.child_opts,
                     host_resource=host_resource,
-                    owner=volume_owner,
+                    owner=None,
                     project_labels=project_args.labels,
                 )
 
@@ -62,7 +54,7 @@ class VolumeResource(ComponentResource):
                             sqlite_backup_volume_name,
                             opts=self.child_opts,
                             host_resource=host_resource,
-                            owner=volume_owner,
+                            owner=None,
                             project_labels=project_args.labels,
                         )
                     )
@@ -130,10 +122,13 @@ class VolumeResource(ComponentResource):
                                 )
                             )
 
-        export = {name: volume.name for name, volume in self.volumes.items()}
-        for name, value in export.items():
-            pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
-        self.register_outputs(export)
+        for name, volume in self.volumes.items():
+            pulumi.export(
+                "{}.{}.{}".format(host, self.RESOURCE_NAME, name),
+                volume.resource.name,
+            )
+
+        self.register_outputs({})
 
     def add_file(self, file: FileResource) -> None:
         self.files[file.volume_path.volume].append(file)
@@ -141,5 +136,5 @@ class VolumeResource(ComponentResource):
     def get_sqlite_backup_volume_name(self, volume_name: str) -> str:
         return "{}-sqlite-backup".format(volume_name)
 
-    def __getitem__(self, key: str) -> docker.Volume:
+    def __getitem__(self, key: str) -> LocalVolumeResource:
         return self.volumes[key]

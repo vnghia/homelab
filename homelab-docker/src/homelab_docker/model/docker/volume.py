@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import typing
 import uuid
 from typing import ClassVar, Literal
@@ -15,6 +16,13 @@ from ..user import UidGidModel
 
 if typing.TYPE_CHECKING:
     from ...resource.host import HostResourceBase
+
+
+@dataclasses.dataclass
+class LocalVolumeResource:
+    service: str
+    model: LocalVolumeModel
+    resource: docker.Volume
 
 
 class LocalVolumeModel(HomelabBaseModel):
@@ -65,9 +73,16 @@ class LocalVolumeModel(HomelabBaseModel):
         *,
         opts: ResourceOptions,
         host_resource: HostResourceBase,
-        owner: UidGidModel,
+        owner: UidGidModel | None,
         project_labels: dict[str, str],
-    ) -> docker.Volume:
+    ) -> LocalVolumeResource:
+        service = self.get_service(resource_name)
+        owner = (
+            owner
+            or self.build_owner(host_resource)
+            or host_resource.service_users[service]
+        )
+
         change_ownership_hook = (
             ResourceHook(
                 name=uuid.uuid4().hex,
@@ -79,28 +94,32 @@ class LocalVolumeModel(HomelabBaseModel):
             else None
         )
 
-        return docker.Volume(
-            resource_name,
-            opts=ResourceOptions.merge(
-                opts,
-                ResourceOptions(
-                    hooks=ResourceHookBinding(
-                        after_create=[change_ownership_hook]
-                        if change_ownership_hook
-                        else None
-                    )
+        return LocalVolumeResource(
+            service=service,
+            model=self,
+            resource=docker.Volume(
+                resource_name,
+                opts=ResourceOptions.merge(
+                    opts,
+                    ResourceOptions(
+                        hooks=ResourceHookBinding(
+                            after_create=[change_ownership_hook]
+                            if change_ownership_hook
+                            else None
+                        )
+                    ),
                 ),
+                driver="local",
+                driver_opts={
+                    "type": "none",
+                    "o": "bind",
+                    "device": self.bind.as_posix(),
+                }
+                if self.bind
+                else None,
+                labels=[
+                    docker.VolumeLabelArgs(label=k, value=v)
+                    for k, v in (project_labels | self.labels).items()
+                ],
             ),
-            driver="local",
-            driver_opts={
-                "type": "none",
-                "o": "bind",
-                "device": self.bind.as_posix(),
-            }
-            if self.bind
-            else None,
-            labels=[
-                docker.VolumeLabelArgs(label=k, value=v)
-                for k, v in (project_labels | self.labels).items()
-            ],
         )

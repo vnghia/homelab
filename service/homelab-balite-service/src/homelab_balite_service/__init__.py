@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from homelab_backup.config import BackupHostConfig
 from homelab_backup.config.volume import BackupVolumeConfig
 from homelab_docker.extract import ExtractorArgs
@@ -27,7 +29,7 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
         self.source_dir = ServiceExtractor(self.config.source_dir).extract_path(
             self.extractor_args
         )
-        self.service_maps: dict[str, list[str]] = {}
+        self.service_maps: defaultdict[str, dict[str, list[str]]] = defaultdict(dict)
         self.volume_configs = {}
 
         for (
@@ -38,9 +40,10 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
                 isinstance(volume_model.backup, BackupVolumeConfig)
                 and len(volume_model.backup.sqlites) > 0
             ):
-                service = volume_model.get_service(name)
+                service = self.extractor_args.host.docker.volume.volumes[name].service
+                service_map = self.service_maps[service]
 
-                self.service_maps[name] = []
+                service_map[name] = []
                 self.volume_configs[name] = ContainerVolumeConfig(
                     GlobalExtract.from_simple(self.get_source_path(name).as_posix())
                 )
@@ -55,14 +58,15 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
                                 volume_path.volume, name
                             )
                         )
-                    self.service_maps[name].append(volume_path.path.as_posix())
+                    service_map[name].append(volume_path.path.as_posix())
 
         self.options[None].add_envs(
             {
                 "HOMELAB_{}_SQLITE".format(name.upper().replace("-", "_")): ",".join(
                     paths
                 )
-                for name, paths in self.service_maps.items()
+                for service_map in self.service_maps.values()
+                for name, paths in service_map.items()
             }
         )
         self.options[None].add_volumes(self.volume_configs)

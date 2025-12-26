@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
 class ResticProfileDatabaseModel(HomelabBaseModel):
     type_: DatabaseType
     name: str
+    service: str
     path: RelativePath | None = None
 
     def build_resource(

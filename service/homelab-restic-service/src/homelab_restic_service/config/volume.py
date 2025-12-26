@@ -12,12 +12,9 @@ class ResticVolumeConfig(HomelabBaseModel):
 
     repository: str
     name: str
+    service: str
     model: LocalVolumeModel
     relative: RelativePath | None = None
-
-    @property
-    def service(self) -> str:
-        return self.model.get_service(self.name)
 
     @property
     def path(self) -> AbsolutePath:
