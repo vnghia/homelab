@@ -34,18 +34,39 @@ class VolumeResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.models = config.docker.volumes.local
-        self.volumes = {
-            name: model.build_resource(
-                name,
-                opts=self.child_opts,
-                host_resource=host_resource,
-                owner=model.build_owner(host_resource)
-                or host_resource.service_users[LocalVolumeModel.get_service(name)],
-                project_labels=project_args.labels,
-            )
-            for name, model in self.models.items()
-            if model.active
-        }
+        self.volumes: dict[str, docker.Volume] = {}
+
+        for volume_name, volume_model in self.models.items():
+            if volume_model.active:
+                volume_owner = (
+                    volume_model.build_owner(host_resource)
+                    or host_resource.service_users[
+                        LocalVolumeModel.get_service(volume_name)
+                    ]
+                )
+
+                self.volumes[volume_name] = volume_model.build_resource(
+                    volume_name,
+                    opts=self.child_opts,
+                    host_resource=host_resource,
+                    owner=volume_owner,
+                    project_labels=project_args.labels,
+                )
+
+                if (volume_backup := volume_model.backup) and volume_backup.sqlite:
+                    sqlite_backup_volume_name = self.get_sqlite_backup_volume_name(
+                        volume_name
+                    )
+                    self.volumes[sqlite_backup_volume_name] = (
+                        volume_model.build_resource(
+                            sqlite_backup_volume_name,
+                            opts=self.child_opts,
+                            host_resource=host_resource,
+                            owner=volume_owner,
+                            project_labels=project_args.labels,
+                        )
+                    )
+
         self.files: defaultdict[str, list[FileResource]] = defaultdict(list)
 
         for service_name, database in config.databases.items():
@@ -116,6 +137,9 @@ class VolumeResource(ComponentResource):
 
     def add_file(self, file: FileResource) -> None:
         self.files[file.volume_path.volume].append(file)
+
+    def get_sqlite_backup_volume_name(self, volume_name: str) -> str:
+        return "{}-sqlite-backup".format(volume_name)
 
     def __getitem__(self, key: str) -> docker.Volume:
         return self.volumes[key]
