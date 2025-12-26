@@ -4,6 +4,7 @@ import typing
 from collections import defaultdict
 
 import pulumi
+from homelab_backup.model.sqlite import BackupSqliteModel
 from homelab_global import ProjectArgs
 from pulumi import ComponentResource, ResourceOptions
 
@@ -34,6 +35,9 @@ class VolumeResource(ComponentResource):
 
         self.models = config.docker.volumes.local
         self.volumes: dict[str, LocalVolumeResource] = {}
+        self.sqlite_backup_volumes: dict[
+            str, tuple[LocalVolumeResource, BackupSqliteModel]
+        ] = {}
 
         for volume_name, volume_model in self.models.items():
             if volume_model.active:
@@ -49,14 +53,19 @@ class VolumeResource(ComponentResource):
                     sqlite_backup_volume_name = self.get_sqlite_backup_volume_name(
                         volume_name
                     )
-                    self.volumes[sqlite_backup_volume_name] = (
-                        volume_model.build_resource(
-                            sqlite_backup_volume_name,
-                            opts=self.child_opts,
-                            host_resource=host_resource,
-                            owner=None,
-                            project_labels=project_args.labels,
-                        )
+
+                    volume_resource = volume_model.build_resource(
+                        sqlite_backup_volume_name,
+                        opts=self.child_opts,
+                        host_resource=host_resource,
+                        owner=None,
+                        project_labels=project_args.labels,
+                    )
+                    self.volumes[sqlite_backup_volume_name] = volume_resource
+
+                    self.sqlite_backup_volumes[volume_name] = (
+                        volume_resource,
+                        volume_backup.sqlite,
                     )
 
         self.files: defaultdict[str, list[FileResource]] = defaultdict(list)

@@ -4,10 +4,39 @@ docker:
       litestream:
         repo: litestream/litestream
         tag: "0.5.5"
+  volumes:
+    local:
+      litestream-config:
+        backup: false
 services:
   litestream:
-    config: {}
+    variables:
+      CONFIG_PATH:
+        extract:
+          volume: litestream-config
+        transform:
+          path: "config.yaml"
+    config:
+      path:
+        svariable: CONFIG_PATH
+      global_:
+        logging:
+          level: info
+          type: json
+          stderr: false
+        sync-interval: 1s
+        validation-interval: 6h
+        snapshot:
+          interval: 30m
+          retention: 48h
     network:
       bridge:
     container:
+      delete-before-replace: true
       image: litestream
+      command:
+        - "replicate"
+        - "--config"
+        - svariable: CONFIG_PATH
+      volumes:
+        litestream-config: /etc/litestream/

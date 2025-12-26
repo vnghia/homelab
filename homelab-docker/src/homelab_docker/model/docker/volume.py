@@ -20,6 +20,7 @@ if typing.TYPE_CHECKING:
 
 @dataclasses.dataclass
 class LocalVolumeResource:
+    name: str
     service: str
     model: LocalVolumeModel
     resource: docker.Volume
@@ -95,6 +96,7 @@ class LocalVolumeModel(HomelabBaseModel):
         )
 
         return LocalVolumeResource(
+            name=resource_name,
             service=service,
             model=self,
             resource=docker.Volume(
