@@ -81,6 +81,7 @@ services:
                   - param:
                       type: snapshot
     container:
+      delete-before-replace: true
       image:
         build: barman
       init: true
