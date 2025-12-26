@@ -95,7 +95,11 @@ services:
       cap:
         add:
           - CHOWN
-          - DAC_READ_SEARCH
+          - DAC_OVERRIDE
+          - FSETID
+          - FOWNER
+          - SETGID
+          - SETUID
       network:
         bridge:
           default: {}
