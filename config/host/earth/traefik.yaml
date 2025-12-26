@@ -1,3 +1,8 @@
+docker:
+  volumes:
+    local:
+      traefik-data:
+        active: false
 services:
   traefik:
     variables:

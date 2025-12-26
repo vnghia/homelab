@@ -16,6 +16,7 @@ docker:
         backup: false
       traefik-tmp:
         backup: false
+      traefik-data: {}
 services:
   tailscale:
     network:
@@ -136,3 +137,4 @@ services:
         traefik-cert: /etc/traefik/cert
         traefik-plugin: /plugins-storage
         traefik-tmp: /tmp
+        traefik-data: /data
