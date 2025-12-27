@@ -25,6 +25,12 @@ docker:
                 volume: slskd-data
               transform:
                 path: data/transfers.db
+          sqlite:
+            dbs:
+              - data/events.db
+              - data/messaging.db
+              - data/search.db
+              - data/transfers.db
       slskd-download:
         backup: false
       slskd-incomplete:

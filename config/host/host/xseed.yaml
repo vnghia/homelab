@@ -13,6 +13,9 @@ docker:
                 volume: xseed-config
               transform:
                 path: cross-seed.db
+          sqlite:
+            dbs:
+              - cross-seed.db
 services:
   xseed:
     variables:

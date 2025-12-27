@@ -12,11 +12,10 @@ docker:
             - extract:
                 volume: jellyfin-data
               transform:
-                path: data/library.db
-            - extract:
-                volume: jellyfin-data
-              transform:
                 path: data/jellyfin.db
+          sqlite:
+            dbs:
+              - data/jellyfin.db
       jellyfin-config: {}
       jellyfin-cache: {}
       jellyfin-log: {}

@@ -35,6 +35,10 @@ docker:
                   volume: starr-radarr-config
                 transform:
                   path: radarr.db
+          sqlite:
+            dbs:
+              - logs.db
+              - radarr.db
           excludes:
             - Backups
             - radarr.pid
@@ -55,6 +59,10 @@ docker:
                   volume: starr-sonarr-config
                 transform:
                   path: sonarr.db
+          sqlite:
+            dbs:
+              - logs.db
+              - sonarr.db
           excludes:
             - Backups
             - sonarr.pid
@@ -75,6 +83,10 @@ docker:
                   volume: starr-prowlarr-config
                 transform:
                   path: prowlarr.db
+          sqlite:
+            dbs:
+              - logs.db
+              - prowlarr.db
           excludes:
             - Backups
             - prowlarr.pid
@@ -88,6 +100,9 @@ docker:
                   volume: starr-bazarr-config
                 transform:
                   path: db/bazarr.db
+          sqlite:
+            dbs:
+              - db/bazarr.db
           excludes:
             - backup
             - restore

@@ -13,6 +13,9 @@ docker:
                 volume: crowdsec-data
               transform:
                 path: crowdsec.db
+          sqlite:
+            dbs:
+              - crowdsec.db
       crowdsec-config: {}
 services:
   crowdsec:
