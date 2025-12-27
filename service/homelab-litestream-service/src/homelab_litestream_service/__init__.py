@@ -64,9 +64,9 @@ class LitestreamConfigResource(
                 if isinstance(db, str):
                     db_path = RelativePath(PosixPath(db))
                 else:
-                    db_volume_path = GlobalExtractor(db).extract_volume_path(
-                        extractor_args
-                    )
+                    db_volume_path = GlobalExtractor(
+                        db.with_service(service, False)
+                    ).extract_volume_path(extractor_args)
                     if db_volume_path.volume != volume_name:
                         raise ValueError(
                             "Sqlite volume ({}) must be the same as current volume ({})".format(
