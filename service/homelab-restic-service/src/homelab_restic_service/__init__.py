@@ -2,6 +2,7 @@ from collections import defaultdict
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupHostConfig
+from homelab_backup.model.database import ServiceDatabaseBackupProfileModel
 from homelab_backup.resource import BackupResource
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
@@ -139,7 +140,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             self.service_groups[profile.volume.service].append(profile.volume.name)
 
         self.service_database_groups: defaultdict[
-            str, defaultdict[DatabaseType, list[str]]
+            str, defaultdict[DatabaseType, list[ServiceDatabaseBackupProfileModel]]
         ] = defaultdict(lambda: defaultdict(list))
         self.database_profiles = []
 
@@ -151,7 +152,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 self.database_profiles.append(profile)
                 self.service_database_groups[profile.volume.service][
                     profile.type_
-                ].append(profile.volume.name)
+                ].append(ServiceDatabaseBackupProfileModel(profile.volume.name))
 
                 self.database_configs.append(
                     self.build_database_config(
@@ -172,10 +173,11 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 type_=DatabaseType.SQLITE,
                 name="{}-{}".format(name, DatabaseType.SQLITE),
                 service=service,
+                path=name,
             ).build_resource(opts=self.child_opts, restic_service=self)
             self.database_profiles.append(profile)
             self.service_database_groups[profile.volume.service][profile.type_].append(
-                profile.volume.name
+                ServiceDatabaseBackupProfileModel(profile.volume.name, name)
             )
 
             self.database_configs.append(

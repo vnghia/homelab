@@ -1,10 +1,9 @@
+import json
 from collections import defaultdict
+from pathlib import PosixPath
 
 from homelab_backup.config import BackupHostConfig
-from homelab_backup.config.volume import BackupVolumeConfig
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.extract.service import ServiceExtractor
 from homelab_docker.model.docker.container.volume import ContainerVolumeConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
@@ -16,6 +15,9 @@ from .config import BaliteConfig
 
 
 class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
+    BALITE_DATA_PATH = AbsolutePath(PosixPath("/mnt/data"))
+    BALITE_BACKUP_PATH = AbsolutePath(PosixPath("/mnt/backup"))
+
     def __init__(
         self,
         model: ServiceWithConfigModel[BaliteConfig],
@@ -26,52 +28,42 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
-        self.source_dir = ServiceExtractor(self.config.source_dir).extract_path(
-            self.extractor_args
-        )
-        self.service_maps: defaultdict[str, dict[str, list[str]]] = defaultdict(dict)
-        self.volume_configs = {}
+        groups: defaultdict[str, list[str]] = defaultdict(list)
+        group_all: set[str] = set()
+        profiles = {}
 
         for (
-            name,
-            volume_model,
-        ) in self.extractor_args.host_model.docker.volumes.local.items():
-            if (
-                isinstance(volume_model.backup, BackupVolumeConfig)
-                and len(volume_model.backup.sqlites) > 0
-            ):
-                service = self.extractor_args.host.docker.volume.volumes[name].service
-                service_map = self.service_maps[service]
+            volume_name,
+            sqlite_backup_args,
+        ) in extractor_args.host.docker.volume.sqlite_backup_volumes.items():
+            service = sqlite_backup_args.volume.service
+            data_path = self.BALITE_DATA_PATH / volume_name
+            backup_path = self.BALITE_BACKUP_PATH / volume_name
 
-                service_map[name] = []
-                self.volume_configs[name] = ContainerVolumeConfig(
-                    GlobalExtract.from_simple(self.get_source_path(name).as_posix())
-                )
+            self.options[None].add_volumes(
+                {
+                    volume_name: ContainerVolumeConfig(
+                        GlobalExtract.from_simple(data_path.as_posix())
+                    ),
+                    sqlite_backup_args.volume.name: ContainerVolumeConfig(
+                        GlobalExtract.from_simple(backup_path.as_posix())
+                    ),
+                }
+            )
 
-                for sqlite in volume_model.backup.sqlites:
-                    volume_path = GlobalExtractor(sqlite).extract_volume_path(
-                        self.extractor_args.services[service].extractor_args
-                    )
-                    if volume_path.volume != name:
-                        raise ValueError(
-                            "Got different name for volume ({} vs {})".format(
-                                volume_path.volume, name
-                            )
-                        )
-                    service_map[name].append(volume_path.path.as_posix())
+            groups[service].append(volume_name)
+            group_all.add(service)
+            profiles[volume_name] = sqlite_backup_args.dbs
+
+        groups[backup_host_config.BACKUP_KEY_VALUE] = sorted(group_all)
 
         self.options[None].add_envs(
             {
-                "HOMELAB_{}_SQLITE".format(name.upper().replace("-", "_")): ",".join(
-                    paths
-                )
-                for service_map in self.service_maps.values()
-                for name, paths in service_map.items()
+                "BALITE_SOURCE_DIR": self.BALITE_DATA_PATH.as_posix(),
+                "BALITE_DESTINATION_DIR": self.BALITE_BACKUP_PATH.as_posix(),
+                "BALITE_GROUPS": json.dumps(groups),
+                "BALITE_PROFILES": json.dumps(profiles),
             }
         )
-        self.options[None].add_volumes(self.volume_configs)
 
         self.register_outputs({})
-
-    def get_source_path(self, name: str) -> AbsolutePath:
-        return self.source_dir / "{}-sqlite".format(name)

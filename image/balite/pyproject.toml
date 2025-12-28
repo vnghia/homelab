@@ -2,7 +2,12 @@
 name = "homelab-balite"
 version = "0.1.0"
 requires-python = ">=3.13.1"
-dependencies = ["loguru>=0.7.3", "sqlite-backup>=0.1.7", "typer>=0.15.3"]
+dependencies = [
+    "loguru>=0.7.3",
+    "pydantic-settings>=2.12.0",
+    "sqlite-backup>=0.1.7",
+    "typer>=0.15.3",
+]
 
 [project.scripts]
 homelab-balite = "main:main"

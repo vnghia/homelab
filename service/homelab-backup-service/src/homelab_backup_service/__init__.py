@@ -127,8 +127,8 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     service_model or self.DEFAULT_BACKUP_MODEL
                 ).__replace__(
                     databases={
-                        type_: " ".join(names)
-                        for type_, names in restic_service.service_database_groups[
+                        type_: " ".join([profile.backup for profile in profiles])
+                        for type_, profiles in restic_service.service_database_groups[
                             service
                         ].items()
                     }

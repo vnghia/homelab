@@ -76,10 +76,15 @@ class ResticGlobalProfileResource(
                 | {
                     restic_service.get_database_group(service): {
                         "profiles": functools.reduce(
-                            operator.iadd, profiles.values(), []
+                            operator.iadd,
+                            [
+                                [profile.name for profile in profiles]
+                                for profiles in service_database_args.values()
+                            ],
+                            [],
                         )
                     }
-                    for service, profiles in restic_service.service_database_groups.items()
+                    for service, service_database_args in restic_service.service_database_groups.items()
                 },
             },
             permission=restic_service.user,

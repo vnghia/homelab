@@ -15,9 +15,6 @@ docker:
 services:
   balite:
     config:
-      root: balite-data
-      source-dir:
-        env: HOMELAB_SOURCE_DIR
       dagu:
         docker:
           executor:
@@ -51,7 +48,3 @@ services:
         - /tmp
       volumes:
         balite-data: /data
-      envs:
-        HOMELAB_SOURCE_DIR: /mnt
-        HOMELAB_DESTINATION_DIR:
-          volume: balite-data
