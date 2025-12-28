@@ -13,6 +13,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
+from homelab_litestream_service import LitestreamService
 from homelab_pydantic import RelativePath
 from pulumi import ComponentResource, Output, ResourceOptions
 
@@ -36,6 +37,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         backup_host_config: BackupHostConfig,
         barman_service: BarmanService,
         balite_service: BaliteService,
+        litestream_service: LitestreamService,
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
@@ -109,15 +111,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self.database_configs = []
         self.volume_configs = []
 
-        self.database_configs.append(
-            self.build_database_config(
-                balite_service.config.root,
-                balite_service.name(),
-                DatabaseType.SQLITE,
-                RelativePath(PosixPath("")),
-            )
-        )
-
         for (
             name,
             volume_model,
@@ -169,17 +162,30 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                     )
                 )
 
-        for service, balite_service_map in balite_service.service_maps.items():
-            for name in balite_service_map:
-                profile = ResticProfileDatabaseModel(
-                    type_=DatabaseType.SQLITE,
-                    name="{}-{}".format(name, DatabaseType.SQLITE.value),
-                    service=service,
-                ).build_resource(opts=self.child_opts, restic_service=self)
-                self.database_profiles.append(profile)
-                self.service_database_groups[profile.volume.service][
-                    profile.type_
-                ].append(profile.volume.name)
+        for name, (
+            sqlite_backup_volume_resource,
+            _,
+        ) in self.extractor_args.host.docker.volume.sqlite_backup_volumes.items():
+            service = sqlite_backup_volume_resource.service
+
+            profile = ResticProfileDatabaseModel(
+                type_=DatabaseType.SQLITE,
+                name="{}-{}".format(name, DatabaseType.SQLITE),
+                service=service,
+            ).build_resource(opts=self.child_opts, restic_service=self)
+            self.database_profiles.append(profile)
+            self.service_database_groups[profile.volume.service][profile.type_].append(
+                profile.volume.name
+            )
+
+            self.database_configs.append(
+                self.build_database_config(
+                    sqlite_backup_volume_resource.name,
+                    service,
+                    DatabaseType.SQLITE,
+                    RelativePath(PosixPath(name)),
+                )
+            )
 
         self.global_ = ResticGlobalProfileResource(
             opts=self.child_opts, restic_service=self

@@ -118,6 +118,7 @@ class HostBaseNoConfig(HostResourceBase):
             backup_host_config=self.host_services_config.backup.config,
             barman_service=self.barman,
             balite_service=self.balite,
+            litestream_service=self.litestream,
             extractor_args=self.extractor_args,
         )
 

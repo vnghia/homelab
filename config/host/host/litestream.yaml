@@ -24,10 +24,10 @@ services:
           level: info
           type: json
           stderr: false
-        sync-interval: 1s
+        sync-interval: 20s
         validation-interval: 6h
         snapshot:
-          interval: 30m
+          interval: 24h
           retention: 48h
     network:
       bridge:

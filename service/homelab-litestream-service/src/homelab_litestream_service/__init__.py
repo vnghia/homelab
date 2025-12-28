@@ -38,18 +38,41 @@ class LitestreamConfigResource(
         extractor_args = litestream_service.extractor_args
         self.path = path.extract_path(extractor_args)
 
-        dbs = []
+        super().__init__(
+            resource_name,
+            opts=opts,
+            volume_path=path.extract_volume_path(extractor_args),
+            data=GlobalExtractor.extract_recursively(config.global_, extractor_args)
+            | {"dbs": litestream_service.dbs},
+            permission=litestream_service.user,
+            extractor_args=extractor_args,
+        )
+
+
+class LitestreamService(ServiceWithConfigResourceBase[LitestreamConfig]):
+    LITESTREAM_DATA_PATH = AbsolutePath(PosixPath("/mnt/data"))
+    LITESTREAM_BACKUP_PATH = AbsolutePath(PosixPath("/mnt/backup"))
+
+    def __init__(
+        self,
+        model: ServiceWithConfigModel[LitestreamConfig],
+        *,
+        opts: ResourceOptions,
+        backup_host_config: BackupHostConfig,
+        extractor_args: ExtractorArgs,
+    ) -> None:
+        super().__init__(model, opts=opts, extractor_args=extractor_args)
+
+        self.dbs = []
         for volume_name, (
             sqlite_backup_volume_resource,
             sqlite_backup_model,
         ) in extractor_args.host.docker.volume.sqlite_backup_volumes.items():
             service = sqlite_backup_volume_resource.service
-            data_path = litestream_service.LITESTREAM_DATA_PATH / service / volume_name
-            backup_path = (
-                litestream_service.LITESTREAM_BACKUP_PATH / service / volume_name
-            )
+            data_path = self.LITESTREAM_DATA_PATH / service / volume_name
+            backup_path = self.LITESTREAM_BACKUP_PATH / service / volume_name
 
-            litestream_service.options[None].add_volumes(
+            self.options[None].add_volumes(
                 {
                     volume_name: ContainerVolumeConfig(
                         GlobalExtract.from_simple(data_path.as_posix())
@@ -75,37 +98,17 @@ class LitestreamConfigResource(
                         )
                     db_path = db_volume_path.path
 
-                dbs.append(
+                self.dbs.append(
                     {
                         "path": (data_path / db_path).as_posix(),
-                        "replica": {"path": (backup_path / db_path).as_posix()},
+                        "meta-path": (
+                            backup_path / self.name() / "metadata" / db_path
+                        ).as_posix(),
+                        "replica": {
+                            "path": (backup_path / self.name() / db_path).as_posix()
+                        },
                     }
                 )
-
-        super().__init__(
-            resource_name,
-            opts=opts,
-            volume_path=path.extract_volume_path(extractor_args),
-            data=GlobalExtractor.extract_recursively(config.global_, extractor_args)
-            | {"dbs": dbs},
-            permission=litestream_service.user,
-            extractor_args=extractor_args,
-        )
-
-
-class LitestreamService(ServiceWithConfigResourceBase[LitestreamConfig]):
-    LITESTREAM_DATA_PATH = AbsolutePath(PosixPath("/mnt/data"))
-    LITESTREAM_BACKUP_PATH = AbsolutePath(PosixPath("/mnt/backup"))
-
-    def __init__(
-        self,
-        model: ServiceWithConfigModel[LitestreamConfig],
-        *,
-        opts: ResourceOptions,
-        backup_host_config: BackupHostConfig,
-        extractor_args: ExtractorArgs,
-    ) -> None:
-        super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.config_file = LitestreamConfigResource(
             "config", opts=self.child_opts, litestream_service=self
