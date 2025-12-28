@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from pathlib import PosixPath
 from typing import Any
 
 import pulumi_random as random
@@ -12,7 +13,7 @@ from homelab_extract.plain import GlobalPlainExtractSource
 from homelab_extract.project import GlobalExtractProjectSource
 from homelab_extract.secret import GlobalExtractSecretSource
 from homelab_extract.transform import ExtractTransform
-from homelab_pydantic import AbsolutePath
+from homelab_pydantic import AbsolutePath, RelativePath
 from pulumi import Output
 from pydantic import ValidationError
 
@@ -198,3 +199,25 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
             return [cls.extract_recursively(value, extractor_args) for value in data]
         else:
             return data
+
+    @classmethod
+    def extract_relative_path(
+        cls,
+        path: str | GlobalExtract,
+        service: str,
+        extractor_args: ExtractorArgs,
+        current_volume: str | None,
+    ) -> RelativePath:
+        if isinstance(path, str):
+            return RelativePath(PosixPath(path))
+
+        volume_path = cls(path.with_service(service, False)).extract_volume_path(
+            extractor_args
+        )
+        if volume_path.volume != current_volume:
+            raise ValueError(
+                "Volume ({}) must be the same as current volume ({})".format(
+                    volume_path.volume, current_volume
+                )
+            )
+        return volume_path.path

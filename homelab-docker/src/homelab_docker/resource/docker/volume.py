@@ -4,11 +4,15 @@ import typing
 from collections import defaultdict
 
 import pulumi
-from homelab_backup.model.sqlite import BackupSqliteModel
 from homelab_global import ProjectArgs
 from pulumi import ComponentResource, ResourceOptions
 
-from ...model.docker.volume import LocalVolumeModel, LocalVolumeResource
+from ...extract.global_ import GlobalExtractor
+from ...model.docker.volume import (
+    LocalSqliteBackupVolumeArgs,
+    LocalVolumeModel,
+    LocalVolumeResource,
+)
 from ...model.host import HostServiceModelModel
 
 if typing.TYPE_CHECKING:
@@ -35,9 +39,7 @@ class VolumeResource(ComponentResource):
 
         self.models = config.docker.volumes.local
         self.volumes: dict[str, LocalVolumeResource] = {}
-        self.sqlite_backup_volumes: dict[
-            str, tuple[LocalVolumeResource, BackupSqliteModel]
-        ] = {}
+        self.sqlite_backup_volumes: dict[str, LocalSqliteBackupVolumeArgs] = {}
 
         for volume_name, volume_model in self.models.items():
             if volume_model.active:
@@ -49,24 +51,36 @@ class VolumeResource(ComponentResource):
                     project_labels=project_args.labels,
                 )
 
-                if (volume_backup := volume_model.backup) and volume_backup.sqlite:
-                    sqlite_backup_volume_name = self.get_sqlite_backup_volume_name(
-                        volume_name
-                    )
+                if not volume_model.backup or not volume_model.backup.sqlite:
+                    continue
 
-                    volume_resource = volume_model.build_resource(
-                        sqlite_backup_volume_name,
-                        opts=self.child_opts,
-                        host_resource=host_resource,
-                        owner=None,
-                        project_labels=project_args.labels,
-                    )
-                    self.volumes[sqlite_backup_volume_name] = volume_resource
+                sqlite_backup = volume_model.backup.sqlite
+                sqlite_backup_volume_name = self.get_sqlite_backup_volume_name(
+                    volume_name
+                )
 
-                    self.sqlite_backup_volumes[volume_name] = (
-                        volume_resource,
-                        volume_backup.sqlite,
-                    )
+                volume_resource = volume_model.build_resource(
+                    sqlite_backup_volume_name,
+                    opts=self.child_opts,
+                    host_resource=host_resource,
+                    owner=None,
+                    project_labels=project_args.labels,
+                )
+                self.volumes[sqlite_backup_volume_name] = volume_resource
+
+                self.sqlite_backup_volumes[volume_name] = LocalSqliteBackupVolumeArgs(
+                    volume=volume_resource,
+                    backup=sqlite_backup,
+                    dbs=[
+                        GlobalExtractor.extract_relative_path(
+                            db,
+                            volume_resource.service,
+                            host_resource.extractor_args,
+                            volume_name,
+                        )
+                        for db in sqlite_backup.dbs
+                    ],
+                )
 
         self.files: defaultdict[str, list[FileResource]] = defaultdict(list)
 

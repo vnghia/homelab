@@ -35,18 +35,16 @@ class ResticProfileResource(
 
         self.main_service = restic_service.extractor_args.services[self.volume.service]
 
-        source = None
-        if self.backup_config.source:
-            volume_source = GlobalExtractor(
-                self.backup_config.source
-            ).extract_volume_path(self.main_service.extractor_args)
-            if volume_source.volume != self.volume.name:
-                raise ValueError(
-                    "Source volume ({}) must be the same as current volume ({})".format(
-                        volume_source.volume, self.volume.name
-                    )
-                )
-            source = volume_source.path
+        source = (
+            GlobalExtractor.extract_relative_path(
+                self.backup_config.source,
+                self.volume.service,
+                self.main_service.extractor_args,
+                self.volume.name,
+            )
+            if self.backup_config.source
+            else None
+        )
         target = (
             (
                 self.volume.path

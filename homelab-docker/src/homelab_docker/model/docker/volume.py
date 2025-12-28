@@ -8,7 +8,8 @@ from typing import ClassVar, Literal
 import pulumi
 import pulumi_docker as docker
 from homelab_backup.config.volume import BackupVolumeConfig
-from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from homelab_backup.model.sqlite import BackupSqliteModel
+from homelab_pydantic import AbsolutePath, HomelabBaseModel, RelativePath
 from pulumi import ResourceHook, ResourceHookArgs, ResourceHookBinding, ResourceOptions
 
 from ...client import DockerClient
@@ -24,6 +25,13 @@ class LocalVolumeResource:
     service: str
     model: LocalVolumeModel
     resource: docker.Volume
+
+
+@dataclasses.dataclass
+class LocalSqliteBackupVolumeArgs:
+    volume: LocalVolumeResource
+    backup: BackupSqliteModel
+    dbs: list[RelativePath]
 
 
 class LocalVolumeModel(HomelabBaseModel):

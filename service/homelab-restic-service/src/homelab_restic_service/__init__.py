@@ -162,11 +162,11 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                     )
                 )
 
-        for name, (
-            sqlite_backup_volume_resource,
-            _,
+        for (
+            name,
+            sqlite_backup_args,
         ) in self.extractor_args.host.docker.volume.sqlite_backup_volumes.items():
-            service = sqlite_backup_volume_resource.service
+            service = sqlite_backup_args.volume.service
 
             profile = ResticProfileDatabaseModel(
                 type_=DatabaseType.SQLITE,
@@ -180,7 +180,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
             self.database_configs.append(
                 self.build_database_config(
-                    sqlite_backup_volume_resource.name,
+                    sqlite_backup_args.volume.name,
                     service,
                     DatabaseType.SQLITE,
                     RelativePath(PosixPath(name)),

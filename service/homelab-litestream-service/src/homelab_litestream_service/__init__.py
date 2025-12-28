@@ -14,7 +14,7 @@ from homelab_docker.resource.file.config import (
 )
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
-from homelab_pydantic import AbsolutePath, RelativePath
+from homelab_pydantic import AbsolutePath
 from pulumi import ResourceOptions
 
 from .config import LitestreamConfig
@@ -64,11 +64,11 @@ class LitestreamService(ServiceWithConfigResourceBase[LitestreamConfig]):
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.dbs = []
-        for volume_name, (
-            sqlite_backup_volume_resource,
-            sqlite_backup_model,
+        for (
+            volume_name,
+            sqlite_backup_args,
         ) in extractor_args.host.docker.volume.sqlite_backup_volumes.items():
-            service = sqlite_backup_volume_resource.service
+            service = sqlite_backup_args.volume.service
             data_path = self.LITESTREAM_DATA_PATH / service / volume_name
             backup_path = self.LITESTREAM_BACKUP_PATH / service / volume_name
 
@@ -77,38 +77,24 @@ class LitestreamService(ServiceWithConfigResourceBase[LitestreamConfig]):
                     volume_name: ContainerVolumeConfig(
                         GlobalExtract.from_simple(data_path.as_posix())
                     ),
-                    sqlite_backup_volume_resource.name: ContainerVolumeConfig(
+                    sqlite_backup_args.volume.name: ContainerVolumeConfig(
                         GlobalExtract.from_simple(backup_path.as_posix())
                     ),
                 }
             )
 
-            for db in sqlite_backup_model.dbs:
-                if isinstance(db, str):
-                    db_path = RelativePath(PosixPath(db))
-                else:
-                    db_volume_path = GlobalExtractor(
-                        db.with_service(service, False)
-                    ).extract_volume_path(extractor_args)
-                    if db_volume_path.volume != volume_name:
-                        raise ValueError(
-                            "Sqlite volume ({}) must be the same as current volume ({})".format(
-                                db_volume_path.volume, volume_name
-                            )
-                        )
-                    db_path = db_volume_path.path
-
-                self.dbs.append(
-                    {
-                        "path": (data_path / db_path).as_posix(),
-                        "meta-path": (
-                            backup_path / self.name() / "metadata" / db_path
-                        ).as_posix(),
-                        "replica": {
-                            "path": (backup_path / self.name() / db_path).as_posix()
-                        },
-                    }
-                )
+            self.dbs += [
+                {
+                    "path": (data_path / db_path).as_posix(),
+                    "meta-path": (
+                        backup_path / self.name() / "metadata" / db_path
+                    ).as_posix(),
+                    "replica": {
+                        "path": (backup_path / self.name() / db_path).as_posix()
+                    },
+                }
+                for db_path in sqlite_backup_args.dbs
+            ]
 
         self.config_file = LitestreamConfigResource(
             "config", opts=self.child_opts, litestream_service=self
