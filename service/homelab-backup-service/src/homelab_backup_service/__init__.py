@@ -123,7 +123,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                     service_model or self.DEFAULT_BACKUP_MODEL
                 ).__replace__(
                     databases={
-                        type_: " ".join([profile.backup for profile in profiles])
+                        type_: ",".join([profile.backup for profile in profiles])
                         for type_, profiles in restic_service.service_database_groups[
                             service
                         ].items()
@@ -264,8 +264,9 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             DaguDagStepRunSubdagModel(
                                 service=service,
                                 dag=self.name(),
-                                params=DaguDagParamsModel(
-                                    types={DaguDagParamType.BACKUP: type_output_param}
+                                parallel=DaguDagStepRunSubdagParallelModel(
+                                    param=DaguDagParamType.BACKUP,
+                                    items=type_output_param,
                                 ),
                             )
                         ),

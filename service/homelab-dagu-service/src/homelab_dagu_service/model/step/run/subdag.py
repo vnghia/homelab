@@ -51,6 +51,8 @@ class DaguDagStepRunSubdagModelBuilder(HomelabRootModel[DaguDagStepRunSubdagMode
                     for item in parallel.items
                 ]
                 if isinstance(parallel.items, list)
+                else parallel.items
+                if isinstance(parallel.items, str)
                 else GlobalExtractor(parallel.items).extract_str_explicit_transform(
                     extractor_args
                 )

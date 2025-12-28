@@ -13,7 +13,7 @@ class DaguDagStepRunSubdagParallelModel(HomelabBaseModel):
     PARAM_KEY: ClassVar[str] = "${ITEM}"
 
     param: DaguDagParamType | str
-    items: list[GlobalExtract] | GlobalExtract
+    items: list[GlobalExtract] | str | GlobalExtract
     max_concurrent: PositiveInt | None = None
 
 
