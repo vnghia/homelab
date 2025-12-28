@@ -67,8 +67,8 @@ services:
             path: barman-restore
             params:
               types:
-                backup:
-                snapshot:
+                backup: null
+                snapshot: null
             tags: ["backup"]
             steps:
               - name: restore

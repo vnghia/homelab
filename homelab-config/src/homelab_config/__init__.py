@@ -3,7 +3,7 @@ from typing import Any, Self, Type
 
 import deepmerge
 import pulumi
-import yaml
+import yaml_rs
 from homelab_backup.config import BackupConfig
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.config.service import ServiceConfigBase
@@ -50,8 +50,10 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
             .resolve(True)
             .glob("*.yaml")
         ):
-            with open(path) as file:
-                data = deepmerge.always_merger.merge(data, yaml.full_load(file))
+            with open(path, "rb") as file:
+                data = deepmerge.always_merger.merge(
+                    data, yaml_rs.load(file, parse_datetime=False)
+                )
 
         return deepmerge.always_merger.merge(
             data, pulumi.Config().get_object("stack-{}".format(key), {})
@@ -69,17 +71,19 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
         ).resolve(True)
 
         for host in HostConfig.model_fields:
-            host_data: dict[str, Any] = {}
+            host_data: dict[str, Any] | list[dict[str, Any]] = {}
             host_dir = config_dir / host
 
             for host_service_path in host_dir.glob("*.yaml"):
                 service_path = config_dir / key / host_service_path.name
                 with (
-                    open(service_path) as service_file,
-                    open(host_service_path) as host_service_file,
+                    open(service_path, "rb") as service_file,
+                    open(host_service_path, "rb") as host_service_file,
                 ):
-                    service_data = yaml.full_load(service_file)
-                    if host_service_data := yaml.full_load(host_service_file):
+                    service_data = yaml_rs.load(service_file, parse_datetime=False)
+                    if host_service_data := yaml_rs.load(
+                        host_service_file, parse_datetime=False
+                    ):
                         final_data = deepmerge.always_merger.merge(
                             service_data, host_service_data
                         )

@@ -46,5 +46,5 @@ services:
                 host: earth
     container:
       envs:
-        DAGU_AUTH_BASIC_USERNAME:
-        DAGU_AUTH_BASIC_PASSWORD:
+        DAGU_AUTH_BASIC_USERNAME: null
+        DAGU_AUTH_BASIC_PASSWORD: null

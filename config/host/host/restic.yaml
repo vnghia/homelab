@@ -30,8 +30,8 @@ services:
           dag:
             params:
               types:
-                backup:
-                snapshot:
+                backup: null
+                snapshot: null
             tags: ["backup"]
           command:
             prefix:
