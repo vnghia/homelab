@@ -9,8 +9,8 @@ dependencies = [
     "homelab-docker",
     "homelab-barman-service",
     "homelab-balite-service",
+    "homelab-litestream-service",
     "pulumi>=3.150.0",
-    "pydantic>=2.10.6",
     "homelab-extract",
     "homelab-dagu-config",
 ]

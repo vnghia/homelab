@@ -652,6 +652,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
+    { name = "homelab-restic" },
     { name = "homelab-restic-service" },
     { name = "pulumi" },
     { name = "pydantic" },
@@ -667,6 +668,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-restic", editable = "homelab-restic" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -833,6 +835,7 @@ dependencies = [
     { name = "homelab-global" },
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
+    { name = "homelab-restic" },
     { name = "homelab-secret" },
     { name = "homelab-sequence" },
     { name = "homelab-vpn" },
@@ -865,6 +868,7 @@ requires-dist = [
     { name = "homelab-global", editable = "homelab-global" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-restic", editable = "homelab-restic" },
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "homelab-sequence", editable = "homelab-sequence" },
     { name = "homelab-vpn", editable = "homelab-vpn" },
@@ -1093,9 +1097,9 @@ dependencies = [
     { name = "homelab-dagu-config" },
     { name = "homelab-docker" },
     { name = "homelab-extract" },
+    { name = "homelab-litestream-service" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
-    { name = "pydantic" },
 ]
 
 [package.metadata]
@@ -1106,9 +1110,9 @@ requires-dist = [
     { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "homelab-litestream-service", editable = "service/homelab-litestream-service" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.150.0" },
-    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]

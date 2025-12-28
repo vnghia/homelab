@@ -22,6 +22,7 @@ dependencies = [
     "pulumi>=3.207.0",
     "pulumi-tls>=5.2.2",
     "homelab-global",
+    "homelab-restic",
     "homelab-backup",
     "paramiko>=4.0.0",
 ]
