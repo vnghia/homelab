@@ -4,11 +4,6 @@ services:
       EARTH_HOSTNAME:
         record: earth
         hostname: dagu
-    secrets:
-      username:
-        active: false
-      password:
-        active: false
     files:
       config:
         content:
@@ -22,19 +17,13 @@ services:
                   transform:
                     string:
                       template: "https://{value}/api/v2"
-                isBasicAuth: true
-                basicAuthUsername:
+                isAuthToken: true
+                authToken:
                   host: earth
                   extract:
                     service: dagu
                     extract:
-                      secret: username
-                basicAuthPassword:
-                  host: earth
-                  extract:
-                    service: dagu
-                    extract:
-                      secret: password
+                      secret: token
     network:
       bridge:
         proxy:
@@ -44,7 +33,20 @@ services:
                 hostname:
                   svariable: EARTH_HOSTNAME
                 host: earth
+    keepasses:
+      keepass:
+        hostname:
+          hostname: dagu
+    secrets:
+      jwt: {}
     container:
       envs:
-        DAGU_AUTH_BASIC_USERNAME: null
-        DAGU_AUTH_BASIC_PASSWORD: null
+        DAGU_AUTH_MODE: builtin
+        DAGU_AUTH_ADMIN_USERNAME:
+          keepass:
+          info: username
+        DAGU_AUTH_ADMIN_PASSWORD:
+          keepass:
+          info: password
+        DAGU_AUTH_TOKEN_SECRET:
+          secret: jwt

@@ -83,8 +83,7 @@ services:
               writeDAGs: false
               runDAGs: true
     secrets:
-      username: {}
-      password: {}
+      token: {}
     container:
       image: dagu
       command:
@@ -126,7 +125,5 @@ services:
         DAGU_TZ:
           hinfo: timezone
         DAGU_LOG_FORMAT: json
-        DAGU_AUTH_BASIC_USERNAME:
-          secret: username
-        DAGU_AUTH_BASIC_PASSWORD:
-          secret: password
+        DAGU_AUTH_TOKEN:
+          secret: token
