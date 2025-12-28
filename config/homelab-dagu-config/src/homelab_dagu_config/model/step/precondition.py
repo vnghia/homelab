@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
 class DaguDagStepPreConditionFullModel(HomelabBaseModel):
     condition: DaguDagStepRunCommandParamTypeModel
     expected: str
+    negate: bool | None = None
 
     def to_step(self, params: DaguDagParamsModel) -> dict[str, Any]:
         return {
@@ -21,7 +22,7 @@ class DaguDagStepPreConditionFullModel(HomelabBaseModel):
             if isinstance(self.condition.root, str)
             else params.to_key_command(self.condition),
             "expected": self.expected,
-        }
+        } | ({"negate": self.negate} if self.negate else {})
 
 
 class DaguDagStepPreConditionModel(
