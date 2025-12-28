@@ -44,7 +44,8 @@ class ResticGlobalProfileResource(
                 "global": {
                     "command-output": "console",
                     "initialize": False,
-                    "group-continue-on-error": True,
+                    # TODO: enable this after https://github.com/creativeprojects/resticprofile/discussions/585
+                    "group-continue-on-error": False,
                 },
                 "includes": all_profiles_path,
                 "profiles": {
