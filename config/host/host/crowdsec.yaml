@@ -8,11 +8,6 @@ docker:
     local:
       crowdsec-data:
         backup:
-          sqlites:
-            - extract:
-                volume: crowdsec-data
-              transform:
-                path: crowdsec.db
           sqlite:
             dbs:
               - crowdsec.db

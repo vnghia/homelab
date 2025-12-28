@@ -20,92 +20,27 @@ docker:
           repository: iso
       starr-radarr-config:
         backup:
-          sqlites:
-            - service:
-              extract:
-                container: radarr
-                extract:
-                  volume: starr-radarr-config
-                transform:
-                  path: logs.db
-            - service:
-              extract:
-                container: radarr
-                extract:
-                  volume: starr-radarr-config
-                transform:
-                  path: radarr.db
           sqlite:
             dbs:
               - logs.db
               - radarr.db
-          excludes:
-            - Backups
-            - radarr.pid
       starr-sonarr-config:
         backup:
-          sqlites:
-            - service:
-              extract:
-                container: sonarr
-                extract:
-                  volume: starr-sonarr-config
-                transform:
-                  path: logs.db
-            - service:
-              extract:
-                container: sonarr
-                extract:
-                  volume: starr-sonarr-config
-                transform:
-                  path: sonarr.db
           sqlite:
             dbs:
               - logs.db
               - sonarr.db
-          excludes:
-            - Backups
-            - sonarr.pid
       starr-prowlarr-config:
         backup:
-          sqlites:
-            - service:
-              extract:
-                container: prowlarr
-                extract:
-                  volume: starr-prowlarr-config
-                transform:
-                  path: logs.db
-            - service:
-              extract:
-                container: prowlarr
-                extract:
-                  volume: starr-prowlarr-config
-                transform:
-                  path: prowlarr.db
           sqlite:
             dbs:
               - logs.db
               - prowlarr.db
-          excludes:
-            - Backups
-            - prowlarr.pid
       starr-bazarr-config:
         backup:
-          sqlites:
-            - service:
-              extract:
-                container: bazarr
-                extract:
-                  volume: starr-bazarr-config
-                transform:
-                  path: db/bazarr.db
           sqlite:
             dbs:
               - db/bazarr.db
-          excludes:
-            - backup
-            - restore
 services:
   starr:
     config:

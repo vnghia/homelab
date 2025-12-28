@@ -9,5 +9,4 @@ class BackupVolumeConfig(HomelabBaseModel):
     source: GlobalExtract | None = None
     file: bool = False
     excludes: list[RelativePath] = []
-    sqlites: list[GlobalExtract] = []
     sqlite: BackupSqliteModel | None = None

@@ -8,15 +8,11 @@ docker:
     local:
       ntfy-cache:
         backup:
-          sqlites:
-            - env: NTFY_CACHE_FILE
           sqlite:
             dbs:
               - env: NTFY_CACHE_FILE
       ntfy-data:
         backup:
-          sqlites:
-            - env: NTFY_AUTH_FILE
           sqlite:
             dbs:
               - env: NTFY_AUTH_FILE

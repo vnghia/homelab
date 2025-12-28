@@ -8,11 +8,6 @@ docker:
     local:
       jellyfin-data:
         backup:
-          sqlites:
-            - extract:
-                volume: jellyfin-data
-              transform:
-                path: data/jellyfin.db
           sqlite:
             dbs:
               - data/jellyfin.db

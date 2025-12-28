@@ -8,11 +8,6 @@ docker:
     local:
       xseed-config:
         backup:
-          sqlites:
-            - extract:
-                volume: xseed-config
-              transform:
-                path: cross-seed.db
           sqlite:
             dbs:
               - cross-seed.db

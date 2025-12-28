@@ -42,7 +42,7 @@ class ResticProfileResource(
             ).extract_volume_path(self.main_service.extractor_args)
             if volume_source.volume != self.volume.name:
                 raise ValueError(
-                    "Got different name for volume ({} vs {})".format(
+                    "Source volume ({}) must be the same as current volume ({})".format(
                         volume_source.volume, self.volume.name
                     )
                 )
@@ -57,26 +57,6 @@ class ResticProfileResource(
         )
 
         exclude = self.backup_config.excludes
-        if len(self.backup_config.sqlites) > 0:
-            for path in self.backup_config.sqlites:
-                volume_path = GlobalExtractor(path).extract_volume_path(
-                    self.main_service.extractor_args
-                )
-                if volume_path.volume != self.volume.name:
-                    raise ValueError(
-                        "Got different name for volume ({} vs {})".format(
-                            volume_path.volume, self.volume.name
-                        )
-                    )
-                exclude += [
-                    volume_path.path,
-                    volume_path.path.with_suffix(
-                        "{}-shm".format(volume_path.path.suffix)
-                    ),
-                    volume_path.path.with_suffix(
-                        "{}-wal".format(volume_path.path.suffix)
-                    ),
-                ]
 
         super().__init__(
             self.volume.name,
