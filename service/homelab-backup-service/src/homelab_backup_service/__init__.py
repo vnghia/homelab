@@ -1,6 +1,4 @@
-import operator
 from collections import defaultdict
-from functools import reduce
 
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
@@ -8,8 +6,6 @@ from homelab_dagu_config.model import DaguDagModel
 from homelab_dagu_config.model.params import DaguDagParamsModel, DaguDagParamType
 from homelab_dagu_config.model.step import DaguDagStepModel
 from homelab_dagu_config.model.step.continue_on import DaguDagStepContinueOnModel
-from homelab_dagu_config.model.step.executor import DaguDagStepExecutorModel
-from homelab_dagu_config.model.step.executor.jq import DaguDagStepJqExecutorModel
 from homelab_dagu_config.model.step.precondition import (
     DaguDagStepPreConditionFullModel,
     DaguDagStepPreConditionModel,
@@ -261,75 +257,39 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                         )
                     ],
                 ),
-                *reduce(
-                    operator.iadd,
-                    [
-                        # TODO: Remove this after precondition and output json issues are fixed
-                        [
-                            DaguDagStepModel(
-                                name=self.get_extract_database_step(type_),
-                                run=DaguDagStepRunModel(
-                                    DaguDagStepRunCommandModel(
-                                        [
-                                            DaguDagStepRunCommandFullModel(
-                                                GlobalExtract.from_simple(
-                                                    ".databases.{} | select(.!=null)".format(
-                                                        type_.value
-                                                    )
-                                                )
-                                            )
-                                        ]
-                                    )
+                *[
+                    DaguDagStepModel(
+                        name=self.get_backup_database_step(type_),
+                        run=DaguDagStepRunModel(
+                            DaguDagStepRunSubdagModel(
+                                service=service,
+                                dag=self.name(),
+                                params=DaguDagParamsModel(
+                                    types={DaguDagParamType.BACKUP: type_output_param}
                                 ),
-                                script=DaguDagStepScriptModel(
-                                    GlobalExtract.from_simple(
-                                        "${{{}}}".format(self.BACKUP_CONFIG_OUTPUT)
-                                    )
-                                ),
-                                executor=DaguDagStepExecutorModel(
-                                    DaguDagStepJqExecutorModel()
-                                ),
-                                depends=[self.EXTRACT_CONFIG_STEP],
-                                output=self.get_extract_database_step_output(type_),
-                            ),
-                            DaguDagStepModel(
-                                name=self.get_backup_database_step(type_),
-                                run=DaguDagStepRunModel(
-                                    DaguDagStepRunSubdagModel(
-                                        service=service,
-                                        dag=self.name(),
-                                        params=DaguDagParamsModel(
-                                            types={
-                                                DaguDagParamType.BACKUP: "${{{}}}".format(
-                                                    self.get_extract_database_step_output(
-                                                        type_
-                                                    )
-                                                )
-                                            }
-                                        ),
-                                    )
-                                ),
-                                depends=[self.get_extract_database_step(type_)],
-                                continue_on=DaguDagStepContinueOnModel(skipped=True),
-                                preconditions=[
-                                    DaguDagStepPreConditionModel(
-                                        DaguDagStepPreConditionFullModel(
-                                            condition=DaguDagStepRunCommandParamTypeModel(
-                                                "${{{}}}".format(
-                                                    self.get_extract_database_step_output(
-                                                        type_
-                                                    )
-                                                )
-                                            ),
-                                            expected="re:.+",
-                                        )
-                                    )
-                                ],
-                            ),
-                        ]
-                        for type_, service in self.BACKUP_DATABASE_SUBDAGS.items()
-                    ],
-                ),
+                            )
+                        ),
+                        depends=[self.EXTRACT_CONFIG_STEP],
+                        continue_on=DaguDagStepContinueOnModel(skipped=True),
+                        preconditions=[
+                            DaguDagStepPreConditionModel(
+                                DaguDagStepPreConditionFullModel(
+                                    condition=DaguDagStepRunCommandParamTypeModel(
+                                        type_output_param
+                                    ),
+                                    expected="<nil>",
+                                    negate=True,
+                                )
+                            )
+                        ],
+                    )
+                    for type_, service in self.BACKUP_DATABASE_SUBDAGS.items()
+                    if (
+                        type_output_param := "${{{}.databases.{}}}".format(
+                            self.BACKUP_CONFIG_OUTPUT, type_
+                        )
+                    )
+                ],
                 DaguDagStepModel(
                     name="backup-database",
                     run=DaguDagStepRunModel(
