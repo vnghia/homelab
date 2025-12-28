@@ -15,7 +15,6 @@ docker:
               - env: NTFY_CACHE_FILE
       ntfy-data:
         backup:
-          enabled: false
           sqlites:
             - env: NTFY_AUTH_FILE
           sqlite:
