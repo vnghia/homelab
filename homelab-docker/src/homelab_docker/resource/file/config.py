@@ -6,9 +6,9 @@ from typing import Any, ClassVar, Generic, Mapping, TypeVar
 import jsonschema
 import tomlkit
 import yaml
-from homelab_pydantic import BaseModel, HomelabRootModel
+from homelab_pydantic import BaseModel, DictAdapter, HomelabRootModel
 from pulumi import Output, ResourceOptions
-from pydantic import TypeAdapter, model_validator
+from pydantic import model_validator
 
 from ...extract import ExtractorArgs
 from ...model.docker.container.volume_path import ContainerVolumePath
@@ -63,9 +63,7 @@ class IniDumper(ConfigDumper[T]):
         parser = configparser.ConfigParser()
         for name, section in data.model_dump(by_alias=True).items():
             parser.add_section(name)
-            for option, value in (
-                TypeAdapter(dict[str, str]).validate_python(section).items()
-            ):
+            for option, value in DictAdapter.validate_python(section).items():
                 parser.set(name, option, value)
         config_content = io.StringIO()
         parser.write(config_content)

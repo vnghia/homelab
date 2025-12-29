@@ -2,7 +2,7 @@ from typing import Any, ClassVar, Self
 
 import deepmerge
 from deepmerge.merger import Merger
-from pydantic import BaseModel, ConfigDict, RootModel, model_validator
+from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, model_validator
 
 OVERWRITE_TYPE_SPECIFIC_MERGE_STRATEGIES: list[tuple[type, str]] = [
     (list, "override"),
@@ -95,3 +95,6 @@ class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
 
     def __or__(self, rhs: dict[str | None, T] | Self) -> Self:
         return self.__class__(self.root | (rhs if isinstance(rhs, dict) else rhs.root))
+
+
+DictAdapter: TypeAdapter[dict[str, str]] = TypeAdapter(dict[str, str])
