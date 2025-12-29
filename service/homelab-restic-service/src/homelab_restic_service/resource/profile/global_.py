@@ -15,10 +15,10 @@ if typing.TYPE_CHECKING:
 
 
 class ResticGlobalProfileResource(
-    ConfigFileResource[schema.ResticProfileModel], module="restic", name="Profile"
+    ConfigFileResource[schema.Model], module="restic", name="Profile"
 ):
-    validator = schema.ResticProfileModel
-    dumper = YamlDumper[schema.ResticProfileModel]
+    validator = schema.Model
+    dumper = YamlDumper[schema.Model]
 
     def __init__(self, *, opts: ResourceOptions, restic_service: ResticService) -> None:
         restic_config = restic_service.config

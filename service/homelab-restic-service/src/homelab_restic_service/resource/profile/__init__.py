@@ -14,10 +14,10 @@ if typing.TYPE_CHECKING:
 
 
 class ResticProfileResource(
-    ConfigFileResource[schema.ResticProfileModel], module="restic", name="Profile"
+    ConfigFileResource[schema.Model], module="restic", name="Profile"
 ):
-    validator = schema.ResticProfileModel
-    dumper = YamlDumper[schema.ResticProfileModel]
+    validator = schema.Model
+    dumper = YamlDumper[schema.Model]
 
     DOCKER_TAG = "docker"
 
