@@ -31,9 +31,11 @@ services:
             port:
               svariable: HTTPS_PUBLIC_BIND_PORT
             internal: true
-            http3:
-              port:
+            http:
+              http3:
                 svariable: HTTPS_PORT
+              encoded:
+                allowEncodedHash: true
             timeout: *timeout
             middlewares:
               http:

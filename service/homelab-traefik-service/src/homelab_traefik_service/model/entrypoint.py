@@ -11,6 +11,8 @@ from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output
 from pydantic import NonNegativeInt, field_validator
 
+from ..resource.static import schema
+
 if typing.TYPE_CHECKING:
     from .. import TraefikService
 
@@ -51,21 +53,26 @@ class TraefikEntrypointRedirectModel(TraefikEntrypointPortModel):
         }
 
 
-class TraefikEntrypointHttp3Model(HomelabBaseModel):
-    port: GlobalExtract | None = None
+class TraefikEntrypointHttpModel(HomelabBaseModel):
+    http3: GlobalExtract | None = None
+    encoded: schema.TraefikV3StaticConfigurationStaticEncodedCharacters | None = None
 
     def to_config(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
+        http = {}
+        if self.encoded:
+            http["encodedCharacters"] = self.encoded.model_dump(exclude_unset=True)
+
         return {
             "http3": (
                 {
-                    "advertisedPort": GlobalExtractor(self.port)
+                    "advertisedPort": GlobalExtractor(self.http3)
                     .extract_str(extractor_args)
                     .apply(int)
                 }
-                if self.port
+                if self.http3
                 else {}
             )
-        }
+        } | ({"http": http} if http else {})
 
 
 class TraefikEntrypointTimeoutModel(HomelabBaseModel):
@@ -139,7 +146,7 @@ class TraefikEntrypointMiddlewareModel(
 class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
     local: bool = False
     internal: bool = False
-    http3: TraefikEntrypointHttp3Model | None = None
+    http: TraefikEntrypointHttpModel | None = None
     timeout: TraefikEntrypointTimeoutModel | None = None
     proxy_protocol: TraefikEntrypointProxyProtocolModel | None = None
     middlewares: dict[TraefikDynamicType, list[TraefikEntrypointMiddlewareModel]] = {}
@@ -150,7 +157,7 @@ class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
                 "address": self.to_address(extractor_args),
             }
             | (self.timeout.to_config() if self.timeout else {})
-            | (self.http3.to_config(extractor_args) if self.http3 else {})
+            | (self.http.to_config(extractor_args) if self.http else {})
             | (
                 self.proxy_protocol.to_config(extractor_args)
                 if self.proxy_protocol

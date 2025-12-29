@@ -69,7 +69,9 @@ services:
           private-https:
             port:
               svariable: HTTPS_PORT
-            http3: {}
+            http:
+              encoded:
+                allowEncodedHash: true
         egress:
           https: private-https
       traefik:
