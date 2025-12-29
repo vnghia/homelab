@@ -4,13 +4,11 @@ import io
 import tarfile
 import tempfile
 import typing
-from contextlib import contextmanager
 from pathlib import PosixPath
-from typing import Any, Iterator
+from typing import Any
 
 import pulumi
 from docker.errors import NotFound
-from docker.models.containers import Container
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
 from pulumi.dynamic import (
@@ -79,21 +77,6 @@ class FileVolumeProxy:
     WORKING_DIR = AbsolutePath(PosixPath("/mnt/volume"))
 
     @classmethod
-    @contextmanager
-    def container(cls, docker_host: str, volume: str) -> Iterator[Container]:
-        container = DockerClient(docker_host).containers.create(
-            image=DockerClient.UTILITY_IMAGE,
-            detach=True,
-            network_mode="none",
-            volumes={volume: {"bind": cls.WORKING_DIR.as_posix(), "mode": "rw"}},
-            working_dir=cls.WORKING_DIR.as_posix(),
-        )
-        try:
-            yield container
-        finally:
-            container.remove(force=True)
-
-    @classmethod
     def update_tarinfo_permission(
         cls, tarinfo: tarfile.TarInfo, permission: FilePermissionModel
     ) -> tarfile.TarInfo:
@@ -122,12 +105,16 @@ class FileVolumeProxy:
             tar_file.seek(0)
             return tar_file
 
-        with cls.container(props.docker_host, props.location.volume) as container:
+        with DockerClient(props.docker_host).volume_container(
+            props.location.volume
+        ) as container:
             container.put_archive(cls.WORKING_DIR.as_posix(), compress_tar())
 
     @classmethod
     def read_file(cls, props: FileProviderProps) -> FileProviderProps | None:
-        with cls.container(props.docker_host, props.location.volume) as container:
+        with DockerClient(props.docker_host).volume_container(
+            props.location.volume
+        ) as container:
             try:
                 tar_file = io.BytesIO()
                 (stream, stat) = container.get_archive(

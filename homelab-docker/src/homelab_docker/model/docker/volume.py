@@ -3,7 +3,7 @@ from __future__ import annotations
 import dataclasses
 import typing
 import uuid
-from typing import ClassVar, Literal
+from typing import Literal
 
 import pulumi
 import pulumi_docker as docker
@@ -12,7 +12,6 @@ from homelab_backup.model.sqlite import BackupSqliteModel
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, RelativePath
 from pulumi import ResourceHook, ResourceHookArgs, ResourceHookBinding, ResourceOptions
 
-from ...client import DockerClient
 from ..user import UidGidModel
 
 if typing.TYPE_CHECKING:
@@ -35,8 +34,6 @@ class LocalSqliteBackupVolumeArgs:
 
 
 class LocalVolumeModel(HomelabBaseModel):
-    VOLUME_MOUNT: ClassVar[str] = "/mnt/volume"
-
     active: bool = True
     backup: Literal[False] | BackupVolumeConfig = BackupVolumeConfig()
 
@@ -59,15 +56,10 @@ class LocalVolumeModel(HomelabBaseModel):
 
         volume = outputs["name"]
         pulumi.info("Changing ownership of volume {} to {}".format(volume, owner))
-        host_resource.docker_client.containers.run(
-            image=DockerClient.UTILITY_IMAGE,
-            command=["chown", "-R", owner.container(), "."],
-            detach=False,
-            network_mode="none",
-            remove=True,
-            volumes={volume: {"bind": cls.VOLUME_MOUNT, "mode": "rw"}},
-            working_dir=cls.VOLUME_MOUNT,
-        )
+        with host_resource.docker_client.volume_container(
+            volume, command=["chown", "-R", owner.container(), "."]
+        ) as container:
+            container.wait()
 
     def build_owner(self, host_resource: HostResourceBase) -> UidGidModel | None:
         if isinstance(self.owner, UidGidModel):
