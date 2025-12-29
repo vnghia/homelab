@@ -5,7 +5,7 @@ import tarfile
 import tempfile
 import typing
 from contextlib import contextmanager
-from pathlib import Path, PosixPath
+from pathlib import PosixPath
 from typing import Any, Iterator
 
 import pulumi
@@ -125,7 +125,6 @@ class FileVolumeProxy:
         with cls.container(props.docker_host, props.location.volume) as container:
             container.put_archive(cls.WORKING_DIR.as_posix(), compress_tar())
 
-    # TODO: review implementation and optimize by using getmember/extractfile
     @classmethod
     def read_file(cls, props: FileProviderProps) -> FileProviderProps | None:
         with cls.container(props.docker_host, props.location.volume) as container:
@@ -137,17 +136,17 @@ class FileVolumeProxy:
                 for chunk in stream:
                     tar_file.write(chunk)
                 tar_file.seek(0)
-                with (
-                    tarfile.open(mode="r", fileobj=tar_file) as tar,
-                    tempfile.TemporaryDirectory() as tmpdir,
-                ):
+                with tarfile.open(mode="r", fileobj=tar_file) as tar:
                     name = stat["name"]
-                    tar.extract(name, path=tmpdir, set_attrs=False)
+                    member = tar.getmember(name)
+                    file = tar.extractfile(member)
+                    if not file:
+                        raise KeyError("tar member {} not found".format(name))
                     return props.__replace__(
-                        data=FileDataModel(content=(Path(tmpdir) / name).read_text()),
+                        data=FileDataModel(content=file.read().decode()),
                         permission=FilePermissionModel(
-                            mode=stat["mode"],
-                            owner=UidGidModel(uid=stat["uid"], gid=stat["gid"]),
+                            mode=member.mode,
+                            owner=UidGidModel(uid=member.uid, gid=member.gid),
                         ),
                     )
             except NotFound:
