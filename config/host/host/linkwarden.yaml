@@ -3,7 +3,7 @@ docker:
     remote:
       linkwarden:
         repo: ghcr.io/linkwarden/linkwarden
-        tag: "v2.13.2"
+        tag: "v2.13.5"
   volumes:
     local:
       linkwarden-data: {}
@@ -67,7 +67,8 @@ services:
             env: DATABASE_URL
       healthcheck: {}
       tmpfs:
-        - /tmp
+        - path: /tmp
+          exec: true
       volumes:
         linkwarden-data: /data/data
         linkwarden-home-cache: /home/node/.cache
