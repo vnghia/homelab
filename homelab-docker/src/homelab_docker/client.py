@@ -35,6 +35,7 @@ class DockerClient:
             command=command,
             detach=True,
             network_mode="none",
+            read_only=True,
             volumes={
                 volume: {
                     "bind": self.VOLUME_CONTAINER_WORKING_DIR.as_posix(),
@@ -44,6 +45,9 @@ class DockerClient:
             working_dir=self.VOLUME_CONTAINER_WORKING_DIR.as_posix(),
         )
         try:
+            if command:
+                container.start()
             yield container
         finally:
+            container.wait()
             container.remove(force=True)

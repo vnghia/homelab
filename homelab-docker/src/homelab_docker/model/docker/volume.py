@@ -58,8 +58,8 @@ class LocalVolumeModel(HomelabBaseModel):
         pulumi.info("Changing ownership of volume {} to {}".format(volume, owner))
         with host_resource.docker_client.volume_container(
             volume, command=["chown", "-R", owner.container(), "."]
-        ) as container:
-            container.wait()
+        ) as _container:
+            pass
 
     def build_owner(self, host_resource: HostResourceBase) -> UidGidModel | None:
         if isinstance(self.owner, UidGidModel):
