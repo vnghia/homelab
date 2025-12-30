@@ -33,6 +33,7 @@ services:
               prefer-short-username: true
               enable-legacy-crypto: true
   linkwarden:
+    depends-on: ["browser"]
     variables:
       PORT: 3000
       MELISEARCH_PORT: 7700
@@ -46,6 +47,12 @@ services:
             service:
               port:
                 svariable: PORT
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - hostname: browser
+              record: solar
     databases:
       postgres:
         postgres: {}
@@ -59,14 +66,8 @@ services:
           envs:
             env: DATABASE_URL
       healthcheck: {}
-      network:
-        bridge:
-          vpn: {}
       tmpfs:
         - /tmp
-        - /usr/local/share/.cache/yarn
-        - /usr/local/share/.yarn
-        - /data/apps/web/.next/cache/images
       volumes:
         linkwarden-data: /data/data
         linkwarden-home-cache: /home/node/.cache
@@ -74,8 +75,6 @@ services:
         template: https://github.com/linkwarden/linkwarden/releases/tag/${original}
         include-prefix: v
       envs:
-        HOME:
-          volume: linkwarden-home-cache
         NEXTAUTH_URL:
           extract:
             hostname: linkwarden
@@ -118,12 +117,21 @@ services:
         PREVIEW_MAX_BUFFER: 50
         IGNORE_UNAUTHORIZED_CA: true
         IGNORE_HTTPS_ERRORS: true
+        PLAYWRIGHT_WS_URL:
+          extract:
+            kv:
+              url:
+                hostname: browser
+                record: solar
+                scheme: wss
+              token:
+                service: browser
+                extract:
+                  secret: token
+          transform:
+            string:
+              template: "{url}?token={token}"
     containers:
-      # TODO: remove this after https://github.com/linkwarden/linkwarden/issues/799
-      install-dotenv:
-        inherit:
-        oneshot: true
-        command: ["yarn", "playwright", "install"]
       meilisearch:
         inherit:
           service: meilisearch
