@@ -103,8 +103,6 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/health"
-        interval: 30s
-        timeout: 5s
       network:
         bridge:
           vpn: {}

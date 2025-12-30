@@ -437,7 +437,9 @@ class ContainerModel(HomelabBaseModel):
             tmpfs=self.build_tmpfs(user),
             user=self.build_container_user(user),
             wait=self.wait if self.healthcheck else False,
-            wait_timeout=self.wait_timeout,
+            wait_timeout=self.healthcheck.start_period
+            if self.healthcheck
+            else self.wait_timeout,
             envs=self.build_envs(extractor_args, build_args),
             labels=[
                 docker.ContainerLabelArgs(label=k, value=v)

@@ -76,6 +76,7 @@ services:
         - valkey:
           envs:
             env: PAPERLESS_REDIS
+      healthcheck: {}
       tmpfs:
         - path: /run
           exec: true

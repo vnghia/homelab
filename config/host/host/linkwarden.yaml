@@ -58,6 +58,7 @@ services:
         - postgres:
           envs:
             env: DATABASE_URL
+      healthcheck: {}
       network:
         bridge:
           vpn: {}

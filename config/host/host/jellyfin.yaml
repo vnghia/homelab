@@ -68,6 +68,7 @@ services:
         - /dev/dri/renderD128
       group-adds:
         - render
+      healthcheck: {}
       network:
         bridge:
           vpn: {}

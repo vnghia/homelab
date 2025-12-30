@@ -23,6 +23,3 @@ docker:
             - "--raw"
             - "incr"
             - "ping"
-          interval: 30s
-          retries: 5
-          timeout: 5s

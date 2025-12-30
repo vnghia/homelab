@@ -9,6 +9,16 @@ services:
     config: {}
     container:
       image: flaresolverr
+      healthcheck:
+        tests:
+          - "CMD"
+          - "curl"
+          - "--fail"
+          - extract:
+              env: PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/health"
       network:
         bridge:
           vpn: {}

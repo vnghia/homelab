@@ -22,9 +22,6 @@ docker:
             - "--raw"
             - "incr"
             - "ping"
-          interval: 30s
-          retries: 5
-          timeout: 5s
         envs:
           VALKEY_AOF_ENABLED: "yes"
           VALKEY_RDB_POLICY_DISABLED: "no"

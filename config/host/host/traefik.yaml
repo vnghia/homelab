@@ -103,9 +103,6 @@ services:
         - svariable: STATIC_PATH
       healthcheck:
         tests: ["CMD", "traefik", "healthcheck", "--ping"]
-        interval: 30s
-        timeout: 5s
-        retries: 5
       hosts:
         - mode: localhost
       network:

@@ -23,12 +23,7 @@ services:
                 svariable: PORT
     container:
       image: ddns
-      healthcheck:
-        tests: ["CMD", "/updater/ddns-updater", "healthcheck"]
-        interval: 30s
-        timeout: 30s
-        retries: 5
-        start-period: 10s
+      healthcheck: {}
       network:
         bridge:
           default: {}

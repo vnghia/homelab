@@ -24,6 +24,17 @@ services:
         valkey: {}
     container:
       image: livekit
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              svariable: PORT
+            transform:
+              string:
+                template: "http://localhost:{value}"
       network:
         bridge:
           default: {}

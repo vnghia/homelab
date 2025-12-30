@@ -25,9 +25,6 @@ docker:
           ]
         healthcheck:
           tests: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-          interval: 10s
-          retries: 5
-          timeout: 5s
         tmpfs:
           - /tmp
           - /run/mariadb

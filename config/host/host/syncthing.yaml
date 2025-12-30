@@ -35,8 +35,6 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/rest/noauth/health"
-        interval: 5s
-        timeout: 5s
       hostname:
         hvariable: FULL_HOSTNAME
       network:

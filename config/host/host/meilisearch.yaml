@@ -10,6 +10,17 @@ services:
     container:
       active: false
       image: meilisearch
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              svariable: MELISEARCH_PORT
+            transform:
+              string:
+                template: "http://0.0.0.0:{value}/health"
       tmpfs:
         - /tmp
       user: default

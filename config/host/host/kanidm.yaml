@@ -166,11 +166,6 @@ services:
           - "healthcheck"
           - "-c"
           - svariable: CONFIG
-        interval: 30s
-        timeout: 5s
-        retries: 5
-        start-interval: 5s
-        start-period: 10s
       network:
         bridge:
           default: {}

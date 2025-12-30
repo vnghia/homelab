@@ -80,11 +80,8 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/healthz"
-        interval: 30s
-        timeout: 5s
       volumes:
         memos-data: /var/opt/memos
-
       envs:
         MEMOS_PORT:
           svariable: MEMOS_PORT

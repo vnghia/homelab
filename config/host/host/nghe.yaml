@@ -41,8 +41,6 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/rest/health"
-        interval: 30s
-        timeout: 5s
       network:
         bridge:
           default: {}

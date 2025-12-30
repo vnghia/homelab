@@ -29,8 +29,5 @@ docker:
             - "pg_isready"
             - "-U"
             - env: POSTGRES_DB
-          interval: 30s
-          retries: 5
-          timeout: 5s
         tmpfs:
           - /var/run/postgresql

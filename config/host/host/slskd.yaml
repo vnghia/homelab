@@ -47,10 +47,6 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/health"
-        interval: 30s
-        timeout: 5s
-        retries: 1
-        start-period: 10s
       network:
         container: vpn
       volumes:

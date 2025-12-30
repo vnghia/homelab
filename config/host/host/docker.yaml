@@ -126,11 +126,14 @@ services:
         image: docker-proxy
         docker-socket:
           write: false
+        healthcheck:
+          tests: ["CMD", "./healthcheck"]
         user: docker
         wud:
           template: https://github.com/wollomatic/socket-proxy/releases/tag/${original}
         envs:
           SP_LISTENIP: 0.0.0.0
+          SP_ALLOWHEALTHCHECK: true
           SP_ALLOWFROM: tailscale
           SP_LOGJSON: true
           SP_LOGLEVEL: INFO

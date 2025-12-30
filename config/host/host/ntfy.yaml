@@ -52,8 +52,6 @@ services:
               string:
                 capture: ":(\\d+)"
                 template: "http://localhost:{value}/v1/health"
-        interval: 30s
-        timeout: 5s
       envs:
         NTFY_BASE_URL:
           extract:

@@ -86,6 +86,17 @@ services:
         - svariable: PORT
         - "-b"
         - "::"
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              svariable: PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/api/v1/health"
       entrypoint: ["web-entrypoint.sh"]
       network:
         bridge:
@@ -131,4 +142,6 @@ services:
         inherit:
         command: ["bundle", "exec", "sidekiq"]
         entrypoint: ["sidekiq-entrypoint.sh"]
+        healthcheck:
+          tests: ["CMD", "pgrep", "-f", "sidekiq"]
         wud:

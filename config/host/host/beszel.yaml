@@ -25,6 +25,8 @@ services:
             - SYS_ADMIN
         docker-socket:
           write: false
+        healthcheck:
+          tests: ["CMD", "/agent", "health"]
         network:
           mode: host
         user: *beszel-agent-user

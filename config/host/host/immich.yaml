@@ -89,19 +89,13 @@ services:
       group-adds:
         - render
         - video
-      healthcheck:
-        tests:
-          - "CMD"
-          - "immich-healthcheck"
-        interval: 30s
-        timeout: 5s
+      healthcheck: {}
       envs:
         IMMICH_PORT: 2283
         IMMICH_MEDIA_LOCATION:
           volume: immich-data
       volumes:
         immich-data: /usr/src/app/data
-      wait-timeout: 120
       wud:
         template: https://github.com/immich-app/immich/releases/tag/${original}
         include-prefix: v
@@ -114,13 +108,7 @@ services:
         group-adds:
           - render
           - video
-        healthcheck:
-          tests:
-            - "CMD"
-            - "python3"
-            - "healthcheck.py"
-          interval: 30s
-          timeout: 5s
+        healthcheck: {}
         network:
           bridge:
             default: {}

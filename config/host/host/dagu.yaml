@@ -97,16 +97,13 @@ services:
         tests:
           - "CMD"
           - "wget"
+          - "--spider"
           - "-q"
           - extract:
               env: DAGU_PORT
             transform:
               string:
                 template: "http://localhost:{value}/api/v2/health"
-          - "-O"
-          - "/dev/null"
-        interval: 30s
-        timeout: 5s
       tmpfs:
         - /tmp
       volumes:

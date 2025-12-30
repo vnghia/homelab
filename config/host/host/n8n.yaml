@@ -38,6 +38,17 @@ services:
             database: DB_POSTGRESDB_DATABASE
             host: DB_POSTGRESDB_HOST
             port: DB_POSTGRESDB_PORT
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              env: N8N_PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/healthz"
       network:
         bridge:
           vpn: {}

@@ -29,8 +29,6 @@ services:
           - "--spider"
           - "-q"
           - "http://localhost:9002/healthz"
-        interval: 30s
-        timeout: 5s
       hostname:
         env: TS_HOSTNAME
       network:

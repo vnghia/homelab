@@ -147,6 +147,17 @@ services:
       network:
         bridge:
           vpn: {}
+      healthcheck:
+        tests:
+          - "CMD"
+          - "/beszel"
+          - "health"
+          - "--url"
+          - extract:
+              svariable: PORT
+            transform:
+              string:
+                template: "http://localhost:{value}"
       volumes:
         beszel-data: /beszel_data
       wud:
