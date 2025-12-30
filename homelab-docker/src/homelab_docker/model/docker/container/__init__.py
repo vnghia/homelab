@@ -396,6 +396,12 @@ class ContainerModel(HomelabBaseModel):
                             if remove_oneshot_hook
                             else None
                         ),
+                        replace_on_changes=[
+                            "healthcheck",
+                            "mounts",
+                            "tmpfs",
+                            "volumes",
+                        ],
                         retain_on_delete=self.oneshot,
                     ),
                 ),
