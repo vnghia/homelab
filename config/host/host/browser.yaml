@@ -1,11 +1,11 @@
 docker:
   images:
     remote:
-      chromium:
+      browser:
         repo: ghcr.io/browserless/chromium
         tag: "v2.38.2"
 services:
-  chromium:
+  browser:
     config:
       traefik:
         dynamic:
@@ -24,12 +24,15 @@ services:
     variables:
       PORT: 3000
     container:
-      image: chromium
+      image: browser
       network:
         bridge:
           vpn: {}
       tmpfs:
         - /tmp
+      wud:
+        template: https://github.com/browserless/browserless/releases/tag/${original}
+        include-prefix: v
       envs:
         TIMEOUT: 10000
         CONCURRENT: 5
@@ -37,7 +40,9 @@ services:
           secret: token
         HEALTH: true
         PROXY_HOST:
-          hostname: chromium
+          hostname: browser
           record: solar
         PROXY_PORT: 443
         PROXY_SSL: true
+        XDG_CONFIG_HOME: /tmp/.chromium
+        XDG_CACHE_HOME: /tmp/.chromium
