@@ -12,6 +12,8 @@ docker:
             dbs:
               - crowdsec.db
       crowdsec-config: {}
+      crowdsec-acquis:
+        backup: false
 services:
   crowdsec:
     config:
@@ -28,25 +30,29 @@ services:
                   secret: traefik
               crowdsecLapiHost: crowdsec:8080
     files:
-      docker-acquis:
+      traefik-acquis:
         path:
           extract:
-            volume: crowdsec-config
+            volume: crowdsec-acquis
           transform:
-            path: acquis.d/docker.yaml
+            path: traefik.yaml
         content:
           format: yaml
           data:
-            source: docker
-            use_container_labels: true
+            source: file
+            filename:
+              service: traefik
+              extract:
+                svariable: ACCESS_LOG_PATH
+            force_inotify: true
+            labels:
+              type: traefik
     secrets:
       traefik:
         length: 32
         special: false
     container:
       image: crowdsec
-      docker-socket:
-        write: false
       healthcheck:
         tests:
           - "CMD"
@@ -61,9 +67,10 @@ services:
         ENROLL_INSTANCE_NAME:
           hvariable: FULL_HOSTNAME
         COLLECTIONS: crowdsecurity/traefik
+        USE_WAL: true
       network:
         bridge:
-          default: {}
+          vpn: {}
       tmpfs:
         - /tmp
       wud:
@@ -72,6 +79,12 @@ services:
       volumes:
         crowdsec-data: /var/lib/crowdsec/data
         crowdsec-config: /etc/crowdsec
+        crowdsec-acquis:
+          path: /etc/crowdsec/acquis.d
+          read-only: true
+        traefik-log:
+          path: /var/log/traefik
+          read-only: true
   traefik:
     config:
       entrypoint:
@@ -88,7 +101,3 @@ services:
       traefik:
         depends-on:
           - crowdsec
-    container:
-      labels:
-        crowdsec.enable: true
-        crowdsec.labels.type: traefik

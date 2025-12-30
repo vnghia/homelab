@@ -17,6 +17,8 @@ docker:
       traefik-tmp:
         backup: false
       traefik-data: {}
+      traefik-log:
+        backup: false
 services:
   tailscale:
     network:
@@ -40,6 +42,11 @@ services:
         transform:
           path: static.toml
       API_PATH: /proxy
+      ACCESS_LOG_PATH:
+        extract:
+          volume: traefik-log
+        transform:
+          path: access.log
     config:
       path:
         static:
@@ -59,6 +66,16 @@ services:
         require-all-rns: false
         disable-ans-checks: true
         delay-before-checks: 60s
+      log:
+        access:
+          path:
+            svariable: ACCESS_LOG_PATH
+          config:
+            fields:
+              headers:
+                defaultMode: drop
+                names:
+                  User-Agent: keep
       entrypoint:
         config:
           private-http:
@@ -137,3 +154,4 @@ services:
         traefik-plugin: /plugins-storage
         traefik-tmp: /tmp
         traefik-data: /data
+        traefik-log: /var/log/traefik

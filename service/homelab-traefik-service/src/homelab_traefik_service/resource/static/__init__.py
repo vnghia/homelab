@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from typing import Any
 
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import ConfigFileResource, TomlDumper
@@ -31,13 +32,26 @@ class TraefikStaticConfigResource(
             traefik_service.config.path.static
         ).extract_volume_path(traefik_service.extractor_args)
 
+        access_log: dict[str, Any] = {"format": "json"}
+        if traefik_access_log_config := traefik_config.log.access:
+            if traefik_access_log_config.path:
+                access_log["filePath"] = (
+                    GlobalExtractor(traefik_access_log_config.path)
+                    .extract_path(traefik_service.extractor_args)
+                    .as_posix()
+                )
+            if traefik_access_log_config.config:
+                access_log |= traefik_access_log_config.config.model_dump(
+                    exclude_unset=True
+                )
+
         super().__init__(
             "static",
             opts=opts,
             volume_path=static_volume_path,
             data={
                 "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
-                "accessLog": {"format": "json"},
+                "accessLog": access_log,
                 "api": {
                     "basePath": GlobalExtractor(traefik_config.path.api).extract_str(
                         traefik_service.extractor_args

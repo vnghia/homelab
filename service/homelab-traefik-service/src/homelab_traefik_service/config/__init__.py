@@ -4,6 +4,7 @@ from homelab_traefik_config import TraefikServiceConfigBase
 from pydantic import HttpUrl, IPvAnyAddress
 
 from .entrypoint import TraefikEntrypointConfig
+from .log import TraefikLogConfig
 
 
 class TraefikPathConfig(HomelabBaseModel):
@@ -41,5 +42,6 @@ class TraefikPluginConfig(HomelabBaseModel):
 class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):
     path: TraefikPathConfig
     acme: TraefikAcmeConfig
+    log: TraefikLogConfig
     entrypoint: TraefikEntrypointConfig
     plugins: dict[str, TraefikPluginConfig] = {}
