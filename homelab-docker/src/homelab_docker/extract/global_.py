@@ -190,7 +190,7 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
             try:
                 extract = GlobalExtract(**data)
                 return cls(extract).extract_str_explicit_transform(extractor_args)
-            except ValidationError:
+            except (ValidationError, ValueError):
                 return {
                     key: cls.extract_recursively(value, extractor_args)
                     for key, value in data.items()
