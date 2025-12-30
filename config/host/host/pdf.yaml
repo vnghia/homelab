@@ -2,45 +2,36 @@ docker:
   images:
     remote:
       pdf:
-        repo: ghcr.io/stirling-tools/stirling-pdf
-        tag: "1.3.2"
-  volumes:
-    local:
-      pdf-configs: {}
-      pdf-logs: {}
-      pdf-customfiles: {}
-      pdf-tessdata: {}
-      pdf-pipeline: {}
+        repo: ghcr.io/alam00000/bentopdf-simple
+        tag: "v1.15.3"
 services:
   pdf:
+    variables:
+      PORT: 8080
     config:
       traefik:
         dynamic:
           traefik:
+            record: solar
             service:
               port:
-                env: SERVER_PORT
+                svariable: PORT
     container:
       image: pdf
+      healthcheck:
+        tests:
+          - "CMD"
+          - "wget"
+          - "--spider"
+          - "-q"
+          - extract:
+              svariable: PORT
+            transform:
+              string:
+                template: "http://localhost:{value}"
       tmpfs:
-        - /tmp
-        - /home/stirlingpdfuser
-      volumes:
-        pdf-configs: /configs
-        pdf-logs: /logs
-        pdf-customfiles: /customFiles
-        pdf-tessdata: /usr/share/tessdata
-        pdf-pipeline: /pipeline
+        - /var/cache/nginx
+        - /etc/nginx/tmp
       wud:
-        template: https://github.com/Stirling-Tools/Stirling-PDF/releases/tag/v${original}
-      envs:
-        DISABLE_ADDITIONAL_FEATURES: true
-        SECURITY_ENABLELOGIN: false
-        SECURITY_CSRFDISABLED: true
-        UI_APPNAME:
-        UI_APPNAVBARNAME:
-          env: UI_APPNAME
-        SYSTEM_SHOWUPDATE: false
-        SYSTEM_ENABLEANALYTICS: false
-        SERVER_PORT: 8080
-        LOGGING_LEVEL_ROOT: INFO
+        template: https://github.com/alam00000/bentopdf/releases/tag/${original}
+        include-prefix: v
