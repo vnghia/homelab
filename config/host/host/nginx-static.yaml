@@ -2,8 +2,9 @@ docker:
   images:
     remote:
       nginx-static:
-        repo: registry.gitlab.com/txlab/docker/nginx-static
+        repo: ghcr.io/docker-nginx-static/nginx-static
         tag: "latest"
+        delete-before-replace: true
 services:
   nginx-static:
     variables:
