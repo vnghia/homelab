@@ -87,6 +87,9 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
         if model.init:
             host_config["init"] = model.init
 
+        if group_adds := model.build_group_adds(extractor_args, user):
+            host_config["groupAdd"] = group_adds
+
         return config | {
             "container": container_config,
             "host": host_config,
