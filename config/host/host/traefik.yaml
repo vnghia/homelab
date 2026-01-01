@@ -191,8 +191,7 @@ services:
                   compress
                   create {mode} logrotate logrotate
                   dateext
-                  dateformat -%Y%m%d
-                  dateyesterday
+                  dateformat -%Y%m%d%H
                   delaycompress
                   missingok
                   notifempty
