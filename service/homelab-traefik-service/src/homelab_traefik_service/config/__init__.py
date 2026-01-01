@@ -10,7 +10,7 @@ from .log import TraefikLogConfig
 class TraefikPathConfig(HomelabBaseModel):
     static: GlobalExtract
     dynamic: GlobalExtract
-    api: GlobalExtract
+    api: GlobalExtract | None = None
 
 
 class TraefikAcmeConfig(HomelabBaseModel):

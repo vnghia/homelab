@@ -102,12 +102,6 @@ services:
                   Value: "{{`{{ .claims.name }}`}}"
                 - Name: X-Remote-Email
                   Value: "{{`{{ .claims.email }}`}}"
-          dashboard:
-            name: dashboard
-            hostname: system
-            prefix:
-              svariable: API_PATH
-            service: "api@internal"
           redirect-admin:
             name: redirect-admin
             data:

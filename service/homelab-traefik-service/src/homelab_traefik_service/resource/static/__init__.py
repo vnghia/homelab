@@ -53,12 +53,18 @@ class TraefikStaticConfigResource(
                 "global": {"checkNewVersion": False, "sendAnonymousUsage": False},
                 "accessLog": access_log,
                 "api": {
-                    "basePath": GlobalExtractor(traefik_config.path.api).extract_str(
-                        traefik_service.extractor_args
-                    ),
                     "dashboard": True,
                     "disableDashboardAd": True,
-                },
+                }
+                | (
+                    {
+                        "basePath": GlobalExtractor(
+                            traefik_config.path.api
+                        ).extract_str(traefik_service.extractor_args)
+                    }
+                    if traefik_config.path.api
+                    else {}
+                ),
                 "log": {"level": "INFO", "format": "json"},
                 "ping": {},
                 "entryPoints": {
