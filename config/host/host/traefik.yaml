@@ -155,3 +155,55 @@ services:
         traefik-tmp: /tmp
         traefik-data: /data
         traefik-log: /var/log/traefik
+  logrotate:
+    variables:
+      LOG_ROTATE_TRAEFIK_CONFIG_PATH:
+        extract:
+          volume: logrotate-config
+        transform:
+          path: traefik.conf
+      LOG_ROTATE_CONFIG_PATH:
+        extract:
+          kv:
+            traefik:
+              svariable: LOG_ROTATE_TRAEFIK_CONFIG_PATH
+    files:
+      traefik:
+        path:
+          svariable: LOG_ROTATE_TRAEFIK_CONFIG_PATH
+        content:
+          extract:
+            kv:
+              log:
+                service: traefik
+                extract:
+                  container:
+                    service: logrotate
+                  extract:
+                    svariable: ACCESS_LOG_PATH
+              mode: "0644"
+              rotate: 5
+              sizekey: size
+              sizevalue: 15M
+          transform:
+            string:
+              template: |
+                {log} {{
+                  compress
+                  create {mode} logrotate logrotate
+                  dateext
+                  dateformat -%Y%m%d
+                  dateyesterday
+                  delaycompress
+                  missingok
+                  notifempty
+                  postrotate
+                    docker kill --signal=USR1 $(docker ps --no-trunc --quiet --filter='label=dev.dozzle.name=traefik')
+                  endscript
+                  rotate {rotate}
+                  {sizekey} {sizevalue}
+                  sharedscripts
+                }}
+    container:
+      volumes:
+        traefik-log: /var/log/traefik

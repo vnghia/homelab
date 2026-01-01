@@ -1,0 +1,53 @@
+docker:
+  images:
+    build:
+      logrotate:
+        context:
+          location: image/logrotate
+          base: docker-cli
+        version: latest
+  volumes:
+    local:
+      logrotate-config:
+        backup: false
+      logrotate-state:
+        backup: false
+services:
+  logrotate:
+    variables:
+      LOG_ROTATE_CONFIG_PATH:
+        transform:
+          string:
+            template:
+              join: " "
+    config:
+      dagu:
+        dag:
+          dag:
+            schedule: "0 * * * *"
+            steps:
+              - name: logrotate
+                executor:
+                  model:
+                run:
+                  - logrotate
+                  - --verbose
+                  - --state
+                  - extract:
+                      volume: logrotate-state
+                    transform:
+                      path: logrotate.state
+                  - svariable: LOG_ROTATE_CONFIG_PATH
+    network:
+      bridge:
+    container:
+      active: false
+      image:
+        build: logrotate
+      docker-socket:
+        write: false
+      volumes:
+        logrotate-config:
+          path: /etc/logrotate.d
+          read-only: true
+        logrotate-state: /var/lib/logrotate
