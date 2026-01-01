@@ -15,9 +15,6 @@ services:
       traefik:
         dynamic:
           traefik:
-            hostname: system
-            prefix:
-              env: ROOT_URL
             service:
               port:
                 svariable: PORT
@@ -40,7 +37,6 @@ services:
           transform:
             string:
               template: ":{value}"
-        ROOT_URL: /ip
         DATADIR:
           volume: ddns-data
         RESOLVER_ADDRESS: "1.1.1.1:53"
