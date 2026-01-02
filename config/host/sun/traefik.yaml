@@ -1,3 +1,12 @@
+docker:
+  volumes:
+    local:
+      traefik-log-dashboard-data:
+        backup:
+          sqlite:
+            dbs:
+              - svariable: LOG_DASHBOARD_AGENTS_DATABASE_PATH
+              - svariable: LOG_DASHBOARD_HISTORICAL_DATABASE_PATH
 services:
   kanidm:
     config:
@@ -13,6 +22,18 @@ services:
                 scheme: https
               prefer-short-username: true
   traefik:
+    variables:
+      LOG_DASHBOARD_PORT: 3000
+      LOG_DASHBOARD_AGENTS_DATABASE_PATH:
+        extract:
+          volume: traefik-log-dashboard-data
+        transform:
+          path: agents.db
+      LOG_DASHBOARD_HISTORICAL_DATABASE_PATH:
+        extract:
+          volume: traefik-log-dashboard-data
+        transform:
+          path: historical.db
     config:
       entrypoint:
         config:
@@ -108,6 +129,63 @@ services:
               redirectRegex:
                 regex: "^https://([^/]+)/?$"
                 replacement: "https://${{1}}/admin/"
+          log-dashboard:
+            name: log-dashboard
+            hostname: traefik-log-dashboard
+            service:
+              container: log-dashboard
+              port:
+                svariable: LOG_DASHBOARD_PORT
     secrets:
       oidc:
         length: 32
+    containers:
+      log-dashboard:
+        image: traefik-log-dashboard
+        volumes:
+          traefik-log-dashboard-data: /app/data
+        wud:
+          template: https://github.com/hhftechnology/traefik-log-dashboard/releases/tag/v${original}
+        envs:
+          NODE_ENV: production
+          AGENT_API_URL:
+            extract:
+              kv:
+                sun:
+                  extract:
+                    svariable: AGENT_PORT
+                  transform:
+                    string:
+                      template: "http://traefik-log-agent:{value}"
+            transform:
+              string:
+                template:
+                  join: ","
+          AGENT_API_TOKEN:
+            extract:
+              kv:
+                sun:
+                  host: sun
+                  extract:
+                    service: traefik
+                    extract:
+                      secret: log-agent
+            transform:
+              string:
+                template:
+                  join: ","
+          AGENT_NAME:
+            extract:
+              kv:
+                sun: sun
+            transform:
+              string:
+                template:
+                  join: ","
+          PORT:
+            svariable: LOG_DASHBOARD_PORT
+          NEXT_PUBLIC_SHOW_DEMO_PAGE: "false"
+          DATABASE_PATH:
+            svariable: LOG_DASHBOARD_AGENTS_DATABASE_PATH
+          HISTORICAL_DB_PATH:
+            svariable: LOG_DASHBOARD_HISTORICAL_DATABASE_PATH
