@@ -37,6 +37,7 @@ from .network import (
     ContainerNetworkConfig,
 )
 from .ports import ContainerPortsConfig
+from .s3 import ContainerS3Config
 from .tmpfs import ContainerTmpfsConfig
 from .user import ContainerUserConfig
 from .volume import ContainerVolumeConfig, ContainerVolumesConfig
@@ -128,6 +129,7 @@ class ContainerModel(HomelabBaseModel):
     read_only: bool = True
     remove: bool = False
     restart: Literal["unless-stopped"] = "unless-stopped"
+    s3: ContainerS3Config | None = None
     security_opts: list[str] = ["no-new-privileges"]
     sysctls: dict[str, str] | None = None
     tmpfs: list[ContainerTmpfsConfig] | None = None
@@ -233,7 +235,9 @@ class ContainerModel(HomelabBaseModel):
     ) -> list[Output[str]]:
         service = extractor_args.service
 
-        additional_envs: dict[str, Output[str]] = {}
+        additional_envs: dict[str, Input[str]] = {}
+        if self.s3:
+            additional_envs |= self.s3.build_envs(extractor_args)
         if self.databases:
             for database in self.databases:
                 additional_envs |= database.build_envs(service.database)

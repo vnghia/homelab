@@ -16,4 +16,4 @@ class ResticS3Host(ResticHostBase):
         return (s3.endpoint or s3.DEFAULT_ENDPOINT).encoded_string() + self.bucket + "/"
 
     def build_envs(self, plain_args: PlainArgs) -> dict[str, str]:
-        return plain_args.s3[self.s3].to_envs()
+        return plain_args.s3[self.s3].to_envs(None)

@@ -125,6 +125,8 @@ services:
         network:
           bridge:
             default: {}
+        s3:
+          config:
         tmpfs:
           - /tmp
         wud:
@@ -250,6 +252,7 @@ services:
         oneshot: true
         inherit: backend
         command: ["python3", "manage.py", "migrate"]
+        s3:
       createsuperuser:
         oneshot: true
         inherit: backend
@@ -263,6 +266,7 @@ services:
           - "--password"
           - keepass:
             info: password
+        s3:
       frontend:
         image: meet-frontend
         tmpfs:
@@ -270,4 +274,5 @@ services:
       worker:
         inherit: backend
         command: ["celery", "-A", "meet.celery_app", "worker", "-l", "INFO"]
+        s3:
         wud:

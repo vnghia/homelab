@@ -80,8 +80,6 @@ services:
               container: collaboration
               port:
                 svariable: COLLABORATION_PORT
-      s3:
-        backend:
     databases:
       postgres:
         postgres: {}
@@ -125,6 +123,8 @@ services:
         network:
           bridge:
             default: {}
+        s3:
+          config:
         tmpfs:
           - /tmp
         wud:
@@ -257,6 +257,7 @@ services:
         oneshot: true
         inherit: backend
         command: ["python3", "manage.py", "migrate"]
+        s3:
       createsuperuser:
         oneshot: true
         inherit: backend
@@ -270,8 +271,10 @@ services:
           - "--password"
           - keepass:
             info: password
+        s3:
       frontend:
         image: impress-frontend
+        s3:
         tmpfs:
           - /tmp
       collaboration:
