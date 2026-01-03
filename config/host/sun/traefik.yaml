@@ -144,6 +144,9 @@ services:
         image: traefik-log-dashboard
         volumes:
           traefik-log-dashboard-data: /app/data
+          geoip-download:
+            path: /app/node_modules/geolite2-redist/dist
+            read-only: true
         wud:
           template: https://github.com/hhftechnology/traefik-log-dashboard/releases/tag/v${original}
         envs:

@@ -1,0 +1,52 @@
+docker:
+  images:
+    remote:
+      geoip-updater:
+        repo: ghcr.io/crazy-max/geoip-updater
+        tag: "1.12.0"
+  volumes:
+    local:
+      geoip-download: {}
+      geoip-data: {}
+services:
+  geoip:
+    variables:
+      LICENSE_KEY:
+    config:
+      dagu:
+        dotenvs:
+          dotenv:
+            envs:
+              LICENSE_KEY:
+                svariable: LICENSE_KEY
+        dag:
+          dag:
+            schedule: "0 0 * * *"
+            dotenvs:
+              - null
+            steps:
+              - name: geoip
+                executor:
+                  model:
+                run:
+                  - --license-key
+                  - "${LICENSE_KEY}"
+    network:
+      bridge: {}
+    container:
+      oneshot: true
+      image: geoip-updater
+      command:
+        - --license-key
+        - svariable: LICENSE_KEY
+      network:
+        bridge:
+          vpn: {}
+      volumes:
+        geoip-download: /download
+        geoip-data: /.geoip-updater
+      envs:
+        EDITION_IDS: GeoLite2-City,GeoLite2-Country
+        DOWNLOAD_PATH:
+          volume: geoip-download
+        LOG_LEVEL: info
