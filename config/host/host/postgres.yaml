@@ -30,4 +30,5 @@ docker:
             - "-U"
             - env: POSTGRES_DB
         tmpfs:
+          - /tmp
           - /var/run/postgresql
