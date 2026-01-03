@@ -1,0 +1,96 @@
+docker:
+  images:
+    remote:
+      openobserve:
+        repo: public.ecr.aws/zinclabs/openobserve
+        tag: v0.40.0
+  volumes:
+    local:
+      openobserve-data: {}
+services:
+  openobserve:
+    variables:
+      HTTP_PORT: 5080
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            service:
+              port:
+                svariable: HTTP_PORT
+    databases:
+      postgres:
+        postgres: {}
+    secrets:
+      encryption: {}
+      token: {}
+      salt:
+        length: 16
+    keepasses:
+      keepass:
+        username:
+          hostname:
+            hostname: openobserve
+          force-lower: true
+        hostname:
+          hostname: openobserve
+    container:
+      image: openobserve
+      databases:
+        - postgres:
+          envs:
+            env: ZO_META_POSTGRES_DSN
+      network:
+        bridge:
+          default: {}
+      s3:
+        config:
+        env:
+          key-id: ZO_S3_ACCESS_KEY
+          access-key: ZO_S3_SECRET_KEY
+          region: ZO_S3_REGION_NAME
+          endpoint: ZO_S3_SERVER_URL
+      volumes:
+        openobserve-data: /data/openobserve
+        geoip-download:
+          path: /data/geoip
+          read-only: true
+      wud:
+        template: https://github.com/openobserve/openobserve/releases/tag/${original}
+      envs:
+        ZO_ROOT_USER_EMAIL:
+          keepass:
+          info: username
+        ZO_ROOT_USER_PASSWORD:
+          keepass:
+          info: password
+        ZO_ROOT_USER_TOKEN:
+          secret: token
+        ZO_EXT_AUTH_SALT:
+          secret: salt
+        ZO_DATA_DIR:
+          volume: openobserve-data
+        ZO_LOCAL_MODE: true
+        ZO_LOCAL_MODE_STORAGE: s3
+        ZO_COMPACT_FAST_MODE: false
+        ZO_HTTP_PORT:
+          svariable: HTTP_PORT
+        ZO_HTTP_IPV6_ENABLED: true
+        ZO_WEB_URL:
+          hostname: openobserve
+          scheme: https
+        ZO_COOKIE_SAME_SITE_LAX: false
+        ZO_COOKIE_SECURE_ONLY: true
+        ZO_TELEMETRY: false
+        ZO_LOG_JSON_FORMAT: true
+        ZO_MASTER_ENCRYPTION_ALGORITHM: aes-256-siv
+        ZO_MASTER_ENCRYPTION_KEY:
+          extract:
+            secret: encryption
+          transform:
+            secret:
+              encode: base64
+        ZO_MMDB_DISABLE_DOWNLOAD: false
+        ZO_MMDB_DATA_DIR:
+          volume: geoip-download
+        ZO_META_STORE: postgres
