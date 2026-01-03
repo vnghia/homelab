@@ -23,6 +23,10 @@ class ExtractSecretTransformer(HomelabRootModel[ExtractTransformSecret]):
                 return Output.from_input(value_str).apply(
                     lambda x: base64.b32encode(x.encode()).decode()
                 )
+            case ExtractTransformSecretEncode.BASE64:
+                return Output.from_input(value_str).apply(
+                    lambda x: base64.b64encode(x.encode()).decode()
+                )
             case ExtractTransformSecretEncode.BCRYPT:
                 if not isinstance(value, random.RandomPassword):
                     raise ValueError("Bcrypt transfomer requires password")
