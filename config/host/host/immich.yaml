@@ -118,6 +118,7 @@ services:
         tmpfs:
           - /tmp
           - /root
+          - /home/ubuntu
         envs:
           MACHINE_LEARNING_MODEL_TTL: 300
           MACHINE_LEARNING_CACHE_FOLDER:
