@@ -46,7 +46,7 @@ services:
         geoip-download: /download
         geoip-data: /.geoip-updater
       envs:
-        EDITION_IDS: GeoLite2-City,GeoLite2-Country
+        EDITION_IDS: GeoLite2-City,GeoLite2-Country,GeoLite2-ASN
         DOWNLOAD_PATH:
           volume: geoip-download
         LOG_LEVEL: info
