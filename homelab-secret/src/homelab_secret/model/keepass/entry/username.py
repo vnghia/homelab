@@ -9,9 +9,12 @@ from ...password import SecretPasswordModel
 class KeepassEntryUsernameEmailModel(HomelabBaseModel):
     address: SecretPasswordModel = SecretPasswordModel(length=8, special=False)
     hostname: GlobalPlainExtractHostnameSource
+    force_lower: bool = False
 
     def to_email(self, opts: ResourceOptions, plain_args: PlainArgs) -> Output[str]:
-        address = self.address.build_resource("address", opts, None, plain_args).result
+        address = self.address.build_resource(
+            "address", opts, None, plain_args
+        ).result.apply(lambda address: address.lower() if self.force_lower else address)
         return Output.concat(address, "@", self.hostname.to_url(plain_args))
 
 
