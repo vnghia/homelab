@@ -4,12 +4,6 @@ docker:
       traefik:
         repo: traefik
         tag: "v3.6.6"
-      traefik-log-dashboard:
-        repo: ghcr.io/hhftechnology/traefik-log-dashboard
-        tag: &log-dashboard-version "2.3.0"
-      traefik-log-agent:
-        repo: ghcr.io/hhftechnology/traefik-log-dashboard-agent
-        tag: *log-dashboard-version
   network:
     proxy:
       service: traefik
@@ -24,8 +18,6 @@ docker:
         backup: false
       traefik-data: {}
       traefik-log:
-        backup: false
-      traefik-log-agent-data:
         backup: false
 services:
   tailscale:
@@ -54,7 +46,6 @@ services:
           volume: traefik-log
         transform:
           path: access.log
-      AGENT_PORT: 5000
     config:
       path:
         static:
@@ -117,8 +108,8 @@ services:
             data: *local-middleware
           traefik:
             service: "api@internal"
-    secrets:
-      log-agent: {}
+    network:
+      bridge:
     container:
       image: traefik
       cap:
@@ -166,36 +157,6 @@ services:
         traefik-tmp: /tmp
         traefik-data: /data
         traefik-log: /var/log/traefik
-    containers:
-      log-agent:
-        image: traefik-log-agent
-        healthcheck:
-          tests:
-            - "CMD"
-            - "wget"
-            - "--spider"
-            - "-q"
-            - extract:
-                svariable: AGENT_PORT
-              transform:
-                string:
-                  template: "http://localhost:{value}/api/logs/status"
-        # TODO: remove user root after https://github.com/hhftechnology/traefik-log-dashboard/pull/158
-        user: root
-        volumes:
-          traefik-log:
-            path: /log
-            read-only: true
-          traefik-log-agent-data: /data
-        envs:
-          TRAEFIK_LOG_DASHBOARD_ACCESS_PATH:
-            svariable: ACCESS_LOG_PATH
-          TRAEFIK_LOG_DASHBOARD_ERROR_PATH:
-            svariable: ACCESS_LOG_PATH
-          TRAEFIK_LOG_DASHBOARD_AUTH_TOKEN:
-            secret: log-agent
-          TRAEFIK_LOG_DASHBOARD_LOG_FORMAT: json
-          TRAEFIK_LOG_DASHBOARD_SYSTEM_MONITORING: false
   logrotate:
     variables:
       LOG_ROTATE_TRAEFIK_CONFIG_PATH:
