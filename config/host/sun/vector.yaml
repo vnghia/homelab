@@ -1,0 +1,7 @@
+services:
+  vector:
+    network:
+      bridge:
+        proxy:
+          aliases:
+            - hostname: openobserve

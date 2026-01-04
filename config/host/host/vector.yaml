@@ -1,0 +1,91 @@
+docker:
+  images:
+    remote:
+      vector:
+        repo: timberio/vector
+        tag: "0.52.0-debian"
+  volumes:
+    local:
+      vector-config:
+        backup: false
+      vector-data: {}
+services:
+  vector:
+    depends-on:
+      - host: sun
+        service: openobserve
+    config: {}
+    files:
+      config:
+        path:
+          extract:
+            volume: vector-config
+          transform:
+            path: config.toml
+        content:
+          format: toml
+          data:
+            data_dir:
+              volume: vector-data
+      openobserve:
+        path:
+          extract:
+            volume: vector-config
+          transform:
+            path: openobserve.toml
+        content:
+          format: toml
+          data:
+            sinks:
+              openobserve:
+                type: http
+                uri:
+                  extract:
+                    hostname: openobserve
+                    record: sun
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/api/default/default/_json"
+                method: post
+                auth:
+                  strategy: basic
+                  user:
+                    host: sun
+                    extract:
+                      service: openobserve
+                      extract:
+                        keepass:
+                        info: username
+                  password:
+                    host: sun
+                    extract:
+                      service: openobserve
+                      extract:
+                        secret: token
+                compression: gzip
+                encoding:
+                  codec: json
+                  timestamp_format: rfc3339
+                healthcheck:
+                  enabled: true
+                  uri:
+                    extract:
+                      hostname: openobserve
+                      record: sun
+                      scheme: https
+                    transform:
+                      string:
+                        template: "{value}/healthz"
+    container:
+      image: vector
+      command:
+        - "--config-dir"
+        - volume: vector-config
+      hostname:
+        hinfo: name
+      volumes:
+        vector-config:
+          path: /etc/vector
+          read-only: true
+        vector-data: /var/lib/vector

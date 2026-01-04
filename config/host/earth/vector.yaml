@@ -1,0 +1,12 @@
+services:
+  vector:
+    network:
+      bridge:
+        proxy:
+          egress:
+            https:
+              sun:
+                hostname:
+                  hostname: openobserve
+                  record: sun
+                host: sun
