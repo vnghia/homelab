@@ -70,6 +70,7 @@ services:
           secret: salt
         ZO_DATA_DIR:
           volume: openobserve-data
+        ZO_WIDENING_SCHEMA_EVOLUTION: false
         ZO_LOCAL_MODE: true
         ZO_LOCAL_MODE_STORAGE: s3
         ZO_COMPACT_FAST_MODE: false
