@@ -46,7 +46,7 @@ services:
                     scheme: https
                   transform:
                     string:
-                      template: "{value}/api/default/default/_json"
+                      template: "{value}/api/default/{{{{ schema }}}}/_json"
                 method: post
                 auth:
                   strategy: basic
