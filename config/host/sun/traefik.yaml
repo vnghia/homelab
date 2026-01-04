@@ -111,3 +111,25 @@ services:
     secrets:
       oidc:
         length: 32
+  vector:
+    files:
+      traefik-access-log:
+        content:
+          data:
+            transforms:
+              traefik-access-log:
+                source:
+                  extract:
+                    kv:
+                      geolite: |
+                        .entry_point_name = string!(.entry_point_name)
+                        .router_name = string!(.router_name)
+                        if (
+                          starts_with(.entry_point_name, "public") &&
+                          !(ends_with(.router_name, "-local@file") || ends_with(.router_name, "-internal@file"))
+                        ) {
+                          .geoip = merge(
+                            get_enrichment_table_record!("geolite-asn", {"ip": .client_host }),
+                            get_enrichment_table_record!("geolite-city", {"ip": .client_host }),
+                          )
+                        }

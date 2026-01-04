@@ -52,9 +52,6 @@ services:
           endpoint: ZO_S3_SERVER_URL
       volumes:
         openobserve-data: /data/openobserve
-        geoip-download:
-          path: /data/geoip
-          read-only: true
       wud:
         template: https://github.com/openobserve/openobserve/releases/tag/${original}
       envs:
@@ -91,7 +88,5 @@ services:
           transform:
             secret:
               encode: base64
-        ZO_MMDB_DISABLE_DOWNLOAD: false
-        ZO_MMDB_DATA_DIR:
-          volume: geoip-download
+        ZO_MMDB_DISABLE_DOWNLOAD: true
         ZO_META_STORE: postgres

@@ -5,3 +5,27 @@ services:
         proxy:
           aliases:
             - hostname: openobserve
+    files:
+      config:
+        content:
+          data:
+            enrichment_tables:
+              geolite-asn:
+                type: mmdb
+                path:
+                  extract:
+                    volume: geoip-download
+                  transform:
+                    path: GeoLite2-ASN.mmdb
+              geolite-city:
+                type: mmdb
+                path:
+                  extract:
+                    volume: geoip-download
+                  transform:
+                    path: GeoLite2-City.mmdb
+    container:
+      volumes:
+        geoip-download:
+          path: /data/geoip
+          read-only: true

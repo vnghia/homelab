@@ -236,19 +236,26 @@ services:
                 type: remap
                 inputs:
                   - traefik-access-log-file
-                source: |
-                  . = merge(
-                    object({"host": .host, "schema": "traefik", "source_type": "access-log"}),
-                    map_keys(object!(parse_json!(.message, lossy: false))) -> |key| { replace(snakecase(key, "PascalCase"), "-", "_") }
-                  )
-                  .timestamp = del(.start_utc)
+                source:
+                  extract:
+                    kv:
+                      common: |
+                        . = merge(
+                          object({"host": .host, "schema": "traefik", "source_type": "access-log"}),
+                          map_keys(object!(parse_json!(.message, lossy: false))) -> |key| { replace(snakecase(key, "PascalCase"), "-", "_") },
+                        )
+                        .timestamp = del(.start_utc)
 
-                  del(.msg)
-                  del(.time)
+                        del(.msg)
+                        del(.time)
 
-                  if (.request_user_agent != null) {
-                    .user_agent = parse_user_agent(string!(.request_user_agent), mode: "reliable")
-                  }
+                        if (.request_user_agent != null) {
+                          .user_agent = parse_user_agent(string!(.request_user_agent), mode: "reliable")
+                        }
+                  transform:
+                    string:
+                      template:
+                        join: "\n"
       openobserve:
         content:
           data:
