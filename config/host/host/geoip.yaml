@@ -50,3 +50,4 @@ services:
         DOWNLOAD_PATH:
           volume: geoip-download
         LOG_LEVEL: info
+        LOG_JSON: true
