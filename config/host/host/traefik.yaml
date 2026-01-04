@@ -238,9 +238,10 @@ services:
                   - traefik-access-log-file
                 source: |
                   . = merge(
-                    object({"host": .host, "schema": "traefik", "source_type": "access-log", "timestamp": .timestamp}),
+                    object({"host": .host, "schema": "traefik", "source_type": "access-log"}),
                     map_keys(object!(parse_json!(.message, lossy: false))) -> |key| { replace(snakecase(key, "PascalCase"), "-", "_") }
                   )
+                  .timestamp = del(.start_utc)
 
                   del(.msg)
                   del(.time)
