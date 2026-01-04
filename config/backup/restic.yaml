@@ -15,7 +15,7 @@ restic:
         protect: true
       keep:
         within:
-          daily: 1w # Keep at least one backup per day of the last week
+          daily: 7d # Keep at least one backup per day of the last week
           monthly: 1y # Keep at least one backup per month of the last year
       compression: "off"
       pack-size: 128
