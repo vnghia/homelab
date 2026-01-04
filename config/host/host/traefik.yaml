@@ -78,6 +78,9 @@ services:
             svariable: ACCESS_LOG_PATH
           config:
             fields:
+              defaultMode: keep
+              names:
+                StartLocal: drop
               headers:
                 defaultMode: drop
                 names:
@@ -244,3 +247,55 @@ services:
     container:
       volumes:
         traefik-log: /var/log/traefik
+  vector:
+    files:
+      traefik-access-log:
+        path:
+          extract:
+            volume: vector-config
+          transform:
+            path: traefik-access-log.toml
+        content:
+          format: toml
+          data:
+            sources:
+              traefik-access-log-file:
+                type: file
+                include:
+                  - service: traefik
+                    extract:
+                      container:
+                        service: vector
+                      extract:
+                        svariable: ACCESS_LOG_PATH
+                fingerprint:
+                  strategy: checksum
+            transforms:
+              traefik-access-log:
+                type: remap
+                inputs:
+                  - traefik-access-log-file
+                source: |
+                  . = merge(
+                    object({"host": .host, "schema": "traefik", "source_type": "access-log", "timestamp": .timestamp}),
+                    map_keys(object!(parse_json!(.message, lossy: false))) -> |key| { replace(snakecase(key, "PascalCase"), "-", "_") }
+                  )
+
+                  del(.msg)
+                  del(.time)
+
+                  if (.request_user_agent != null) {
+                    .user_agent = parse_user_agent(string!(.request_user_agent), mode: "reliable")
+                  }
+      openobserve:
+        content:
+          data:
+            sinks:
+              openobserve:
+                inputs:
+                  - traefik-access-log
+    container:
+      volumes:
+        traefik-log:
+          path: /var/log/traefik
+          read-only: true
