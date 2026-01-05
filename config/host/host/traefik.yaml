@@ -240,14 +240,16 @@ services:
                   extract:
                     kv:
                       common: |
+                        message = object!(parse_json!(.message, lossy: false))
+                        del(message.level)
+                        del(message.msg)
+                        del(message.time)
+
                         . = merge(
                           object({"host": .host, "schema": "traefik", "source_type": "access-log"}),
-                          map_keys(object!(parse_json!(.message, lossy: false))) -> |key| { replace(snakecase(key, "PascalCase"), "-", "_") },
+                          map_keys(message) -> |key| { replace(snakecase(key, "PascalCase"), "-", "_") },
                         )
                         .timestamp = del(.start_utc)
-
-                        del(.msg)
-                        del(.time)
 
                         if (.request_user_agent != null) {
                           .user_agent = parse_user_agent(string!(.request_user_agent), mode: "reliable")
