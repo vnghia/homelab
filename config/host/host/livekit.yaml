@@ -3,7 +3,7 @@ docker:
     remote:
       livekit:
         repo: livekit/livekit-server
-        tag: "v1.9.10"
+        tag: "v1.9.9"
 services:
   livekit:
     variables:
