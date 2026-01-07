@@ -41,9 +41,7 @@ services:
                 type: http
                 uri:
                   extract:
-                    hostname: openobserve
-                    record: sun
-                    scheme: https
+                    hvariable: OPENOBSERVE_URI
                   transform:
                     string:
                       template: "{value}/api/default/{{{{ schema }}}}/_json"
@@ -71,9 +69,7 @@ services:
                   enabled: true
                   uri:
                     extract:
-                      hostname: openobserve
-                      record: sun
-                      scheme: https
+                      hvariable: OPENOBSERVE_URI
                     transform:
                       string:
                         template: "{value}/healthz"

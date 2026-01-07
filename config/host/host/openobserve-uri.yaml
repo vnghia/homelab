@@ -1,0 +1,11 @@
+variables:
+  OPENOBSERVE_URI:
+    extract:
+      kv:
+        default:
+          hostname: openobserve
+          record: sun
+          scheme: https
+    transform:
+      string:
+        template: "{default}"

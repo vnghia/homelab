@@ -1,0 +1,14 @@
+variables:
+  OPENOBSERVE_URI:
+    extract:
+      kv:
+        local:
+          service: openobserve
+          extract:
+            svariable: HTTP_PORT
+          transform:
+            string:
+              template: "http://openobserve:{value}"
+    transform:
+      string:
+        template: "{local}"
