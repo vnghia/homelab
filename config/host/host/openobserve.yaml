@@ -11,6 +11,7 @@ services:
   openobserve:
     variables:
       HTTP_PORT: 5080
+      GRPC_PORT: 5081
     config:
       traefik:
         dynamic:
@@ -18,6 +19,13 @@ services:
             service:
               port:
                 svariable: HTTP_PORT
+          grpc:
+            name: grpc
+            hostname: openobserve-grpc
+            service:
+              scheme: h2c
+              port:
+                svariable: GRPC_PORT
     databases:
       postgres:
         postgres: {}
@@ -74,6 +82,10 @@ services:
         ZO_HTTP_PORT:
           svariable: HTTP_PORT
         ZO_HTTP_IPV6_ENABLED: true
+        ZO_GRPC_PORT:
+          svariable: GRPC_PORT
+        ZO_GRPC_ORG_HEADER_KEY: Organization
+        ZO_GRPC_STREAM_HEADER_KEY: Stream-Name
         ZO_WEB_URL:
           hostname: openobserve
           scheme: https
