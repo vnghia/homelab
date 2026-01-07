@@ -9,3 +9,43 @@ variables:
     transform:
       string:
         template: "{default}"
+  OPENOBSERVE_GRPC_URI:
+    extract:
+      kv:
+        default:
+          hostname: openobserve-grpc
+          record: sun
+        port:
+          service: traefik
+          extract:
+            svariable: HTTPS_PORT
+    transform:
+      string:
+        template: "{default}:{port}"
+  OPENOBSERVE_AUTHORIZATION:
+    extract:
+      kv:
+        username:
+          host: sun
+          extract:
+            service: openobserve
+            extract:
+              keepass:
+              info: username
+        token:
+          host: sun
+          extract:
+            service: openobserve
+            extract:
+              secret: token
+    transform:
+      string:
+        template: "{username}:{token}"
+  OPENOBSERVE_AUTHORIZATION_HEADER:
+    extract:
+      hvariable: OPENOBSERVE_AUTHORIZATION
+    transform:
+      secret:
+        encode: base64
+      string:
+        template: "Basic {value}"

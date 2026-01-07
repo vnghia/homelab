@@ -45,6 +45,40 @@ class TraefikStaticConfigResource(
                     exclude_unset=True
                 )
 
+        metrics: dict[str, Any] = {}
+        if traefik_metrics_config := traefik_config.metrics:
+            if traefik_metrics_otlp_config := traefik_metrics_config.otlp:
+                otlp: dict[str, Any] = traefik_metrics_otlp_config.model_dump(
+                    exclude_unset=True
+                )
+            else:
+                otlp = {"grpc": {}}
+
+            otlp["serviceName"] = GlobalExtractor(
+                traefik_metrics_config.service_name
+            ).extract_str(traefik_service.extractor_args)
+            otlp["grpc"]["endpoint"] = GlobalExtractor(
+                traefik_config.metrics.endpoint
+            ).extract_str(traefik_service.extractor_args)
+
+            if traefik_metrics_config.headers:
+                otlp["grpc"]["headers"] = {
+                    key: GlobalExtractor(value).extract_str(
+                        traefik_service.extractor_args
+                    )
+                    for key, value in traefik_config.metrics.headers.items()
+                }
+
+            if traefik_metrics_config.resource_attributes:
+                otlp["resourceAttributes"] = {
+                    key: GlobalExtractor(value).extract_str(
+                        traefik_service.extractor_args
+                    )
+                    for key, value in traefik_config.metrics.resource_attributes.items()
+                }
+
+            metrics["otlp"] = otlp
+
         super().__init__(
             "static",
             opts=opts,
@@ -66,6 +100,7 @@ class TraefikStaticConfigResource(
                     else {}
                 ),
                 "log": {"level": "INFO", "format": "json"},
+                "metrics": metrics,
                 "ping": {},
                 "entryPoints": {
                     key: entrypoint.to_entry_point(traefik_service.extractor_args)

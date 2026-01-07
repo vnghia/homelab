@@ -76,6 +76,17 @@ services:
                 defaultMode: drop
                 names:
                   User-Agent: keep
+      metrics:
+        service-name: traefik
+        endpoint:
+          hvariable: OPENOBSERVE_GRPC_URI
+        headers:
+          Organization: default
+          Authorization:
+            hvariable: OPENOBSERVE_AUTHORIZATION_HEADER
+        resource-attributes:
+          service.namespace:
+            hinfo: name
       entrypoint:
         config:
           private-http:
@@ -157,6 +168,8 @@ services:
         traefik-tmp: /tmp
         traefik-data: /data
         traefik-log: /var/log/traefik
+      envs:
+        USER: nobody
   logrotate:
     variables:
       LOG_ROTATE_TRAEFIK_CONFIG_PATH:

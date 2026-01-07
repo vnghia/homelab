@@ -1,6 +1,7 @@
 import pulumi
 import pulumi_tailscale as tailscale
 from homelab_docker.extract import ExtractorArgs
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.service import ServiceModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_network.model.ip import NetworkIpModel, NetworkIpOutputModel
@@ -20,6 +21,12 @@ class TailscaleService(ServiceResourceBase):
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
         self.options[None].add_envs({"TS_AUTHKEY": self.build_authkey().key})
+        if hostname_env := self.model.containers[None].envs["TS_HOSTNAME"]:
+            self.hostname = GlobalExtractor(hostname_env).extract_str(extractor_args)
+        else:
+            raise RuntimeError(
+                "Tailscale container must supply a `TS_HOSTNAME` environment variable"
+            )
         self.build_containers()
 
         self.device = TailscaleDeviceResource(

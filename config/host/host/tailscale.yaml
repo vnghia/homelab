@@ -30,7 +30,7 @@ services:
           - "-q"
           - "http://localhost:9002/healthz"
       hostname:
-        env: TS_HOSTNAME
+        hinfo: name
       network:
         bridge:
           default: {}

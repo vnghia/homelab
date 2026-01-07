@@ -842,6 +842,7 @@ class TypesOTLP(HomelabBaseModel):
     explicit_boundaries: list[float] | None = Field(None, alias="explicitBoundaries")
     grpc: TypesOTelGRPC | None = None
     http: TypesOTelHTTP | None = None
+    resource_attributes: dict[str, str] | None = Field(None, alias="resourceAttributes")
     push_interval: str | None = Field(None, alias="pushInterval")
     service_name: str | None = Field(None, alias="serviceName")
 

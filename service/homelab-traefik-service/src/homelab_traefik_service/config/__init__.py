@@ -1,8 +1,9 @@
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_traefik_config import TraefikServiceConfigBase
-from pydantic import HttpUrl, IPvAnyAddress
+from pydantic import HttpUrl
 
+from ..resource.static.schema import TypesOTLP
 from .entrypoint import TraefikEntrypointConfig
 from .log import TraefikLogConfig
 
@@ -23,15 +24,12 @@ class TraefikAcmeConfig(HomelabBaseModel):
     delay_before_checks: str
 
 
-class TraefikTimeoutConfig(HomelabBaseModel):
-    read: str
-    write: str
-    idle: str
-
-
-class TraefikProxyProtocolConfig(HomelabBaseModel):
-    enabled: bool = False
-    ips: list[IPvAnyAddress] = []
+class TraefikMetricsConfig(HomelabBaseModel):
+    endpoint: GlobalExtract
+    service_name: GlobalExtract
+    otlp: TypesOTLP | None = None
+    headers: dict[str, GlobalExtract] = {}
+    resource_attributes: dict[str, GlobalExtract] = {}
 
 
 class TraefikPluginConfig(HomelabBaseModel):
@@ -43,5 +41,6 @@ class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):
     path: TraefikPathConfig
     acme: TraefikAcmeConfig
     log: TraefikLogConfig
+    metrics: TraefikMetricsConfig | None
     entrypoint: TraefikEntrypointConfig
     plugins: dict[str, TraefikPluginConfig] = {}

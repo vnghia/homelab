@@ -116,7 +116,7 @@ class TailscaleDeviceResource(Resource, module="tailscale", name="Device"):
         super().__init__(
             TailscaleDeviceResourceProvider(),
             TailscaleDeviceResourceProvider.RESOURCE_ID,
-            {"hostname": tailscale_container.resource.hostname, "v4": None, "v6": None},
+            {"hostname": tailscale_service.hostname, "v4": None, "v6": None},
             ResourceOptions.merge(
                 opts, ResourceOptions(depends_on=tailscale_container.resource)
             ),

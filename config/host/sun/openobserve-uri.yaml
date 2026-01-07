@@ -12,3 +12,16 @@ variables:
     transform:
       string:
         template: "{local}"
+  OPENOBSERVE_GRPC_URI:
+    extract:
+      kv:
+        local:
+          service: openobserve
+          extract:
+            svariable: GRPC_PORT
+          transform:
+            string:
+              template: "openobserve:{value}"
+    transform:
+      string:
+        template: "{local}"

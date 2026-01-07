@@ -20,4 +20,9 @@ services:
         mapping:
           earth: "private-https"
     container:
+      hosts:
+        - hostname:
+            hostname: openobserve-grpc
+            record: sun
+          host: sun
       wud:

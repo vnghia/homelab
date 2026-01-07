@@ -13,6 +13,7 @@ services:
                 scheme: https
               prefer-short-username: true
   traefik:
+    depends-on: ["openobserve"]
     config:
       entrypoint:
         config:
@@ -45,6 +46,10 @@ services:
           sun: "private-https"
         local: public-https
         internal: private-https
+      metrics:
+        otlp:
+          grpc:
+            insecure: true
       plugins:
         geoblock:
           name: github.com/david-garcia-garcia/traefik-geoblock
