@@ -127,11 +127,6 @@ class NetworkResource(ComponentResource):
         aliases = proxy_bridge_config.aliases
 
         proxy_config = bridge_config.proxy
-        if proxy_config.aliases:
-            aliases = aliases + [
-                alias.with_service(service, False) for alias in proxy_config.aliases
-            ]
-
         if proxy_config.egress:
             if aliases is proxy_bridge_config.aliases:
                 aliases = aliases.copy()

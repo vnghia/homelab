@@ -51,6 +51,9 @@ services:
         - postgres:
           envs:
             env: DB_URL
+      hosts:
+        - record: solar
+          hostname: kanidm
       network:
         bridge:
           vpn: {}

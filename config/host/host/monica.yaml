@@ -96,6 +96,9 @@ services:
             password: REDIS_PASSWORD
             host: REDIS_HOST
             port: REDIS_PORT
+      hosts:
+        - record: solar
+          hostname: kanidm
       mails:
         - mail: no-reply
           host: MAIL_HOST

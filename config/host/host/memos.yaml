@@ -80,6 +80,9 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/healthz"
+      hosts:
+        - record: solar
+          hostname: kanidm
       volumes:
         memos-data: /var/opt/memos
       envs:

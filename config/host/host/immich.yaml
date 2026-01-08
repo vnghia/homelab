@@ -91,6 +91,9 @@ services:
         - render
         - video
       healthcheck: {}
+      hosts:
+        - record: solar
+          hostname: kanidm
       envs:
         IMMICH_PORT: 2283
         IMMICH_MEDIA_LOCATION:

@@ -97,6 +97,9 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/api/v1/health"
+      hosts:
+        - record: solar
+          hostname: kanidm
       entrypoint: ["web-entrypoint.sh"]
       network:
         bridge:

@@ -95,12 +95,6 @@ services:
             hostname: meet
         hostname:
           hostname: meet
-    network:
-      bridge:
-        proxy:
-          aliases:
-            - record: solar
-              hostname: livekit
     secrets:
       django: {}
     containers:
@@ -122,6 +116,11 @@ services:
             envs:
               env: DJANGO_CELERY_BROKER_URL
               database: 0
+        hosts:
+          - record: solar
+            hostname: livekit
+          - hostname: kanidm
+            record: solar
         network:
           bridge:
             default: {}

@@ -86,8 +86,6 @@ services:
     network:
       bridge:
         proxy:
-          aliases:
-            - hostname: qbittorrent
           egress:
             https:
               earth:
@@ -103,6 +101,8 @@ services:
     containers:
       radarr:
         image: radarr
+        hosts:
+          - hostname: qbittorrent
         network:
           bridge:
             vpn: {}
@@ -121,6 +121,8 @@ services:
           S6_READ_ONLY_ROOT: 1
       sonarr:
         image: sonarr
+        hosts:
+          - hostname: qbittorrent
         network:
           bridge:
             vpn: {}
@@ -139,6 +141,8 @@ services:
           S6_READ_ONLY_ROOT: 1
       prowlarr:
         image: prowlarr
+        hosts:
+          - hostname: qbittorrent
         network:
           bridge:
             vpn: {}

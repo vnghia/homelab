@@ -65,6 +65,9 @@ services:
             database: DT_DATABASE_NAME
             host: DT_DATABASE_HOST
             port: DT_DATABASE_PORT
+      hosts:
+        - record: solar
+          hostname: kanidm
       wud:
         template: https://github.com/donetick/donetick/releases/tag/${original}
         include-prefix: v

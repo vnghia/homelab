@@ -83,12 +83,6 @@ services:
             service:
               port:
                 env: WUD_SERVER_PORT
-    network:
-      bridge:
-        proxy:
-          aliases:
-            - record: solar
-              hostname: ntfy
     container:
       image: wud
       docker-socket:
@@ -103,6 +97,9 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/health"
+      hosts:
+        - record: solar
+          hostname: ntfy
       network:
         bridge:
           vpn: {}

@@ -111,12 +111,6 @@ services:
               style-src:
                 - "'self'"
                 - "'unsafe-inline'"
-    network:
-      bridge:
-        proxy:
-          aliases:
-            - record: solar
-              hostname: opencloud
     secrets:
       jwt-secret: {}
       transfer-secret: {}
@@ -137,6 +131,11 @@ services:
       ldap-bind-password: {}
     container:
       image: opencloud
+      hosts:
+        - record: solar
+          hostname: opencloud
+        - record: solar
+          hostname: kanidm
       tmpfs:
         - /tmp
       volumes:

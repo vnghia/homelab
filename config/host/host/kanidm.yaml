@@ -4,12 +4,6 @@ docker:
       kanidm-server:
         repo: kanidm/server
         tag: "1.8.5"
-  network:
-    proxy:
-      bridge:
-        aliases:
-          - record: solar
-            hostname: kanidm
   volumes:
     local:
       kanidm-config:

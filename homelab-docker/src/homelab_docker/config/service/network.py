@@ -47,7 +47,6 @@ class ServiceNetworkProxyEgressConfig(
 
 
 class ServiceNetworkProxyConfig(HomelabBaseModel):
-    aliases: list[GlobalExtract] = []
     egress: dict[
         ServiceNetworkProxyEgressType, dict[str, ServiceNetworkProxyEgressConfig]
     ] = {}

@@ -13,11 +13,9 @@ docker:
         active: false
 services:
   dagu:
-    network:
-      bridge:
-        proxy:
-          aliases:
-            - hostname: beszel
+    container:
+      hosts:
+        - hostname: beszel
   beszel:
     variables:
       PORT: 8090

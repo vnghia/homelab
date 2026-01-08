@@ -85,12 +85,6 @@ services:
         postgres: {}
       valkey:
         valkey: {}
-    network:
-      bridge:
-        proxy:
-          aliases:
-            - record: solar
-              hostname: impress
     keepasses:
       keepass:
         username:
@@ -120,6 +114,9 @@ services:
             envs:
               env: DJANGO_CELERY_BROKER_URL
               database: 0
+        hosts:
+          - record: solar
+            hostname: kanidm
         network:
           bridge:
             default: {}
@@ -279,6 +276,9 @@ services:
           - /tmp
       collaboration:
         image: impress-collaboration
+        hosts:
+          - record: solar
+            hostname: impress
         tmpfs:
           - /tmp
           - /.yarn

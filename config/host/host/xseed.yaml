@@ -22,20 +22,17 @@ services:
             service:
               port:
                 svariable: XSEED_PORT
-    network:
-      bridge:
-        proxy:
-          aliases:
-            - hostname: qbittorrent
-            - hostname: starr-radarr
-            - hostname: starr-sonarr
-            - hostname: starr-prowlarr
     container:
       image: xseed
       command:
         - daemon
         - --port
         - svariable: XSEED_PORT
+      hosts:
+        - hostname: qbittorrent
+        - hostname: starr-radarr
+        - hostname: starr-sonarr
+        - hostname: starr-prowlarr
       wud:
         template: https://github.com/cross-seed/cross-seed/releases/tag/v${original}
       volumes:
