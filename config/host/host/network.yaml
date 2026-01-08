@@ -8,3 +8,6 @@ docker:
           ipam:
           icc: false
       service:
+    proxy:
+      bridge:
+        offset: -1

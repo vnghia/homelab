@@ -1,5 +1,6 @@
 from collections import defaultdict
 from functools import partial
+from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_docker as docker
@@ -18,7 +19,7 @@ from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerNetworkModelBuildArgs
 from ...model.docker.container.host import ContainerHostConfig, ContainerHostFullConfig
 from ...model.docker.container.network import (
-    ContainerBridgeNetworkConfig,
+    ContainerBridgeNetworkArgs,
     ContainerCommonNetworkConfig,
     ContainerNetworkContainerConfig,
 )
@@ -58,7 +59,7 @@ class NetworkResource(ComponentResource):
             str, dict[str | None, ContainerNetworkModelBuildArgs]
         ] = defaultdict(lambda: defaultdict(ContainerNetworkModelBuildArgs))
 
-        self.service_networks = []
+        self.service_networks: dict[str, ServiceNetworkBridgeConfig] = {}
         self.service_subnets: dict[str, list[Output[str]]] = {}
         self.service_egresses: dict[
             str, dict[ServiceNetworkProxyEgressType, dict[str, GlobalExtract]]
@@ -76,10 +77,7 @@ class NetworkResource(ComponentResource):
         ) in self.host_model.services.items():
             service_network = service_model.network
             if service_network.bridge:
-                self.service_networks.append(service_name)
-                self.build_service_proxy_bridge_config(
-                    service_name, service_network.bridge, extractor_args
-                )
+                self.service_networks[service_name] = service_network.bridge
 
             for container_model in service_model.containers.values():
                 network_mode = container_model.network.root
@@ -97,7 +95,7 @@ class NetworkResource(ComponentResource):
                         container_model.ports.with_service(service_name, False)
                     )
 
-        self.build_service_networks(project_args)
+        self.build_service_networks(extractor_args)
 
         for value in self.bridge.values():
             pulumi.export(
@@ -118,11 +116,12 @@ class NetworkResource(ComponentResource):
             )
         )
 
-    def build_service_proxy_bridge_config(
+    def build_service_proxy_bridge_args(
         self,
         service: str,
         bridge_config: ServiceNetworkBridgeConfig,
         extractor_args: ExtractorArgs,
+        ipams: list[Output[BridgeIpamNetworkModel]],
     ) -> None:
         proxy_bridge_config = self.config.proxy.bridge
         aliases = proxy_bridge_config.aliases
@@ -168,36 +167,52 @@ class NetworkResource(ComponentResource):
         if aliases is not proxy_bridge_config.aliases:
             proxy_bridge_config = proxy_bridge_config.__replace__(aliases=aliases)
 
-        self.proxy_option.bridges[service] = proxy_bridge_config
+        if proxy_bridge_config.offset:
+            ipv4 = ipams[0].apply(
+                lambda x: x.ip(proxy_bridge_config.offset, IPv4Address)
+            )
+            ipv6 = ipams[1].apply(
+                lambda x: x.ip(proxy_bridge_config.offset, IPv6Address)
+            )
+            proxy_bridge_args = ContainerBridgeNetworkArgs(
+                proxy_bridge_config, ipv4, ipv6
+            )
+        else:
+            proxy_bridge_args = ContainerBridgeNetworkArgs(proxy_bridge_config)
 
-    def build_service_networks(self, project_args: ProjectArgs) -> None:
+        self.proxy_option.bridges[service] = proxy_bridge_args
+
+    def build_service_networks(self, extractor_args: ExtractorArgs) -> None:
         service_network_model = BridgeNetworkModel(internal=True)
         service_network_sequence = HomelabSequenceResource(
-            "service", opts=self.child_opts, names=self.service_networks
+            "service", opts=self.child_opts, names=list(self.service_networks.keys())
         )
 
         build_ipam_fns = [
             partial(self.__class__.build_ipam, subnet=ipam)
             for ipam in self.config.bridge.service
         ]
-        for service in self.service_networks:
-            service_sequence = service_network_sequence[service]
-            self.bridge_config[service] = service_network_model
-            self.service_subnets[service] = []
+        for service_name, service_bridge in self.service_networks.items():
+            service_sequence = service_network_sequence[service_name]
+            self.bridge_config[service_name] = service_network_model
+            self.service_subnets[service_name] = []
 
             ipam = []
             for build_ipam_fn in build_ipam_fns:
                 model = service_sequence.apply(build_ipam_fn)
-                self.service_subnets[service].append(
+                self.service_subnets[service_name].append(
                     model.apply(lambda model: str(model.subnet))
                 )
                 ipam.append(model)
 
-            self.bridge[service] = service_network_model.build_resource(
-                self.get_bridge_name(service),
+            self.bridge[service_name] = service_network_model.build_resource(
+                self.get_bridge_name(service_name),
                 opts=self.child_opts,
-                project_labels=project_args.labels,
+                project_labels=extractor_args.global_resource.project_args.labels,
                 ipam=ipam,
+            )
+            self.build_service_proxy_bridge_args(
+                service_name, service_bridge, extractor_args, ipam
             )
 
     @classmethod
@@ -205,10 +220,17 @@ class NetworkResource(ComponentResource):
         return "{}-bridge".format(name)
 
     def get_bridge_args(
-        self, name: str, aliases: list[Input[str]]
+        self,
+        name: str,
+        aliases: list[Input[str]],
+        ipv4: Output[IPv4Address] | None,
+        ipv6: Output[IPv6Address] | None,
     ) -> docker.ContainerNetworksAdvancedArgs:
         return docker.ContainerNetworksAdvancedArgs(
-            name=self.bridge[name].name, aliases=aliases
+            name=self.bridge[name].name,
+            aliases=aliases,
+            ipv4_address=ipv4.apply(str) if ipv4 else None,
+            ipv6_address=ipv6.apply(str) if ipv6 else None,
         )
 
     def compute_proxy(
@@ -227,7 +249,7 @@ class NetworkResource(ComponentResource):
             "Proxy container must have either common network or container network config"
         )
 
-    def get_proxy_bridges(self) -> dict[str, ContainerBridgeNetworkConfig]:
+    def get_proxy_bridges(self) -> dict[str, ContainerBridgeNetworkArgs]:
         proxy_config = self.config.proxy
         proxy_service, proxy_container = self.compute_proxy(
             proxy_config.service, proxy_config.container

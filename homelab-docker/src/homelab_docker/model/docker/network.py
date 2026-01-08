@@ -1,4 +1,5 @@
-from typing import Any
+from ipaddress import IPv4Address, IPv6Address
+from typing import Any, overload
 
 import pulumi_docker as docker
 from homelab_pydantic import HomelabBaseModel
@@ -30,6 +31,21 @@ class BridgeIpamNetworkModel(HomelabBaseModel):
             gateway=str(self.gateway),
             ip_range=str(self.ip_range),
         )
+
+    @overload
+    def ip(self, offset: int, ip_type: type[IPv4Address]) -> IPv4Address: ...
+
+    @overload
+    def ip(self, offset: int, ip_type: type[IPv6Address]) -> IPv6Address: ...
+
+    def ip(
+        self, offset: int, ip_type: type[IPv4Address] | type[IPv6Address]
+    ) -> IPv4Address | IPv6Address:
+        if offset > 0:
+            return ip_type(self.gateway + offset)
+        if offset < 0:
+            return ip_type(self.subnet.broadcast_address + offset)
+        raise ValueError("Offset must be a non-zero integer")
 
 
 class BridgeNetworkModel(HomelabBaseModel):

@@ -32,7 +32,7 @@ from .image import ContainerImageModelConfig
 from .inherit import ContainerInheritConfig
 from .mail import ContainerMailConfig
 from .network import (
-    ContainerBridgeNetworkConfig,
+    ContainerBridgeNetworkArgs,
     ContainerCommonNetworkConfig,
     ContainerNetworkConfig,
 )
@@ -55,7 +55,7 @@ class ContainerNetworkModelBuildArgs:
     ports: ContainerPortsConfig = dataclasses.field(
         default_factory=ContainerPortsConfig
     )
-    bridges: dict[str, ContainerBridgeNetworkConfig] = dataclasses.field(
+    bridges: dict[str, ContainerBridgeNetworkArgs] = dataclasses.field(
         default_factory=dict
     )
 
@@ -73,7 +73,7 @@ class ContainerNetworkModelBuildArgs:
     def add_ports(self, ports: ContainerPortsConfig) -> None:
         self.ports |= ports
 
-    def add_bridges(self, bridges: dict[str, ContainerBridgeNetworkConfig]) -> None:
+    def add_bridges(self, bridges: dict[str, ContainerBridgeNetworkArgs]) -> None:
         self.bridges |= bridges
 
 

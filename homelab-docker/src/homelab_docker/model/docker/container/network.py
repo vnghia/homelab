@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import typing
 from enum import StrEnum, auto
+from ipaddress import IPv4Address, IPv6Address
 
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
@@ -89,6 +90,14 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
 class ContainerBridgeNetworkConfig(HomelabBaseModel):
     active: bool = True
     aliases: list[GlobalExtract] = []
+    offset: int = 0
+
+
+@dataclasses.dataclass
+class ContainerBridgeNetworkArgs:
+    config: ContainerBridgeNetworkConfig
+    ipv4: Output[IPv4Address] | None = None
+    ipv6: Output[IPv6Address] | None = None
 
 
 class ContainerCommonNetworkConfig(HomelabBaseModel):
@@ -122,12 +131,16 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
         bridge_config = extractor_args.host.docker.network.bridge_config
         service_network = extractor_args.service_model.network
 
-        bridges: dict[str, ContainerBridgeNetworkConfig] = {}
+        bridges: dict[str, ContainerBridgeNetworkArgs] = {}
         if build_args.network.bridges:
             bridges |= build_args.network.bridges
         if service_network.bridge:
-            bridges[extractor_args.service.name()] = service_network.bridge
-        bridges |= self.bridge
+            bridges[extractor_args.service.name()] = ContainerBridgeNetworkArgs(
+                service_network.bridge
+            )
+        bridges |= {
+            key: ContainerBridgeNetworkArgs(value) for key, value in self.bridge.items()
+        }
 
         if not bridges:
             return ContainerNetworkModeConfig(mode=NetworkMode.NONE).to_args(
@@ -140,11 +153,13 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
                 extractor_args.host.docker.network.get_bridge_args(
                     name,
                     self.build_resource_aliases(
-                        resource_name, bridge_config[name], config, extractor_args
+                        resource_name, bridge_config[name], args.config, extractor_args
                     ),
+                    args.ipv4,
+                    args.ipv6,
                 )
-                for name, config in bridges.items()
-                if config.active
+                for name, args in bridges.items()
+                if args.config.active
             ],
         )
 
