@@ -37,7 +37,7 @@ class ServiceNetworkProxyEgressConfig(
         if isinstance(root, GlobalExtract):
             return ServiceNetworkProxyEgressFullConfig(address=root, ip=None)
         if isinstance(root, ContainerHostConfig):
-            full = root.root.to_full(extractor_args)
+            full = root.to_full(extractor_args)
             return ServiceNetworkProxyEgressFullConfig(address=full.host, ip=full.ip)
         return root
 
