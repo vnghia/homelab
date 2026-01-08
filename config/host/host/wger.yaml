@@ -169,13 +169,9 @@ services:
         ACCESS_TOKEN_LIFETIME: 10
         REFRESH_TOKEN_LIFETIME: 24
         AUTH_PROXY_TRUSTED_IPS:
-          extract:
-            network: wger
-            info: subnet
-          transform:
-            string:
-              template:
-                join: ","
+          # TODO: change to subnet after https://github.com/wger-project/wger/issues/1989
+          network: wger
+          info: proxy4
         AUTH_PROXY_HEADER: HTTP_X_REMOTE_USER
         AUTH_PROXY_USER_NAME_HEADER: HTTP_X_REMOTE_NAME
         AUTH_PROXY_USER_EMAIL_HEADER: HTTP_X_REMOTE_EMAIL
