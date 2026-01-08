@@ -96,8 +96,8 @@ class ContainerBridgeNetworkConfig(HomelabBaseModel):
 @dataclasses.dataclass
 class ContainerBridgeNetworkArgs:
     config: ContainerBridgeNetworkConfig
-    ipv4: Output[IPv4Address] | None = None
-    ipv6: Output[IPv6Address] | None = None
+    ipv4: Output[str] | None = None
+    ipv6: Output[str] | None = None
 
 
 class ContainerCommonNetworkConfig(HomelabBaseModel):

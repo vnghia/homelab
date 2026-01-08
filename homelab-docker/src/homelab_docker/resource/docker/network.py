@@ -169,10 +169,10 @@ class NetworkResource(ComponentResource):
 
         if proxy_bridge_config.offset:
             ipv4 = ipams[0].apply(
-                lambda x: x.ip(proxy_bridge_config.offset, IPv4Address)
+                lambda x: str(x.ip(proxy_bridge_config.offset, IPv4Address))
             )
             ipv6 = ipams[1].apply(
-                lambda x: x.ip(proxy_bridge_config.offset, IPv6Address)
+                lambda x: str(x.ip(proxy_bridge_config.offset, IPv6Address))
             )
             proxy_bridge_args = ContainerBridgeNetworkArgs(
                 proxy_bridge_config, ipv4, ipv6
@@ -223,14 +223,14 @@ class NetworkResource(ComponentResource):
         self,
         name: str,
         aliases: list[Input[str]],
-        ipv4: Output[IPv4Address] | None,
-        ipv6: Output[IPv6Address] | None,
+        ipv4: Output[str] | None,
+        ipv6: Output[str] | None,
     ) -> docker.ContainerNetworksAdvancedArgs:
         return docker.ContainerNetworksAdvancedArgs(
             name=self.bridge[name].name,
             aliases=aliases,
-            ipv4_address=ipv4.apply(str) if ipv4 else None,
-            ipv6_address=ipv6.apply(str) if ipv6 else None,
+            ipv4_address=ipv4,
+            ipv6_address=ipv6,
         )
 
     def compute_proxy(
