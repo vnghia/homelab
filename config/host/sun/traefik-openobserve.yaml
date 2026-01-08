@@ -1,0 +1,8 @@
+services:
+  traefik:
+    depends-on: ["openobserve"]
+    config:
+      metrics:
+        otlp:
+          grpc:
+            insecure: true

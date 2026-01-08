@@ -1,0 +1,14 @@
+services:
+  traefik:
+    config:
+      metrics:
+        service-name: traefik
+        endpoint:
+          hvariable: OPENOBSERVE_GRPC_URI
+        headers:
+          Organization: default
+          Authorization:
+            hvariable: OPENOBSERVE_AUTHORIZATION_HEADER
+        resource-attributes:
+          service.namespace:
+            hinfo: name
