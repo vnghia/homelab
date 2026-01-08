@@ -3,7 +3,7 @@ docker:
     remote:
       n8n:
         repo: ghcr.io/n8n-io/n8n
-        tag: "1.123.9"
+        tag: "2.3.1"
   volumes:
     local:
       n8n-data: {}
@@ -54,6 +54,7 @@ services:
           vpn: {}
       tmpfs:
         - /home/node/.cache/n8n/public
+        - /tmp/n8nDataTableUploads
       volumes:
         n8n-data: /home/node/.n8n
       wud:
@@ -73,7 +74,6 @@ services:
         N8N_PROXY_HOPS: 1
         N8N_USER_MANAGEMENT_JWT_SECRET:
           secret: jwt
-        N8N_RUNNERS_ENABLED: true
         N8N_LICENSE_ACTIVATION_KEY:
         N8N_EDITOR_BASE_URL:
           hostname: n8n
