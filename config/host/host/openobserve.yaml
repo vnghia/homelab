@@ -3,7 +3,7 @@ docker:
     remote:
       openobserve:
         repo: public.ecr.aws/zinclabs/openobserve
-        tag: v0.40.0
+        tag: v0.40.3
   volumes:
     local:
       openobserve-data: {}
