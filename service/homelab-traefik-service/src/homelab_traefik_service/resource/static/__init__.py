@@ -51,6 +51,8 @@ class TraefikStaticConfigResource(
                 otlp: dict[str, Any] = traefik_metrics_otlp_config.model_dump(
                     exclude_unset=True
                 )
+                if "grpc" not in otlp:
+                    otlp["grpc"] = {}
             else:
                 otlp = {"grpc": {}}
 
