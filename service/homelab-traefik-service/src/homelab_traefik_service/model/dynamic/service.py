@@ -17,7 +17,7 @@ from homelab_traefik_config.model.dynamic.service import (
 )
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output
-from pydantic import AnyUrl, PositiveInt, TypeAdapter
+from pydantic import PositiveInt, TypeAdapter
 
 
 class TraefikDynamicServiceFullModelBuilder(
@@ -37,7 +37,7 @@ class TraefikDynamicServiceFullModelBuilder(
             )
         )
 
-    def to_url(self, scheme: str, extractor_args: ExtractorArgs) -> Output[AnyUrl]:
+    def to_url(self, scheme: str, extractor_args: ExtractorArgs) -> Output[str]:
         root = self.root
         service = extractor_args.service
 
@@ -74,7 +74,7 @@ class TraefikDynamicServiceFullModelBuilder(
             GlobalExtractor(root.port_)
             .extract_str(extractor_args)
             .apply(lambda x: TypeAdapter(PositiveInt).validate_python(int(x))),
-        ).apply(AnyUrl)
+        )
 
     def to_service(
         self,
@@ -95,9 +95,7 @@ class TraefikDynamicServiceFullModelBuilder(
         return {
             router_name: {
                 "loadBalancer": {
-                    "servers": [
-                        {service_key: self.to_url(scheme, extractor_args).apply(str)}
-                    ]
+                    "servers": [{service_key: self.to_url(scheme, extractor_args)}]
                 }
                 | (
                     {"passHostHeader": root.pass_host_header}

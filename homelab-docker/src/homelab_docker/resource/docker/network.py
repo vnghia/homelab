@@ -4,7 +4,6 @@ from ipaddress import IPv4Address, IPv6Address
 
 import pulumi
 import pulumi_docker as docker
-from homelab_extract import GlobalExtract
 from homelab_global import ProjectArgs
 from homelab_pydantic import IPvAnyNetworkAdapter
 from homelab_sequence import HomelabSequenceResource
@@ -13,15 +12,12 @@ from pydantic import IPvAnyNetwork, NonNegativeInt
 
 from ...config.service.network import (
     ServiceNetworkBridgeConfig,
+    ServiceNetworkProxyEgressFullConfig,
     ServiceNetworkProxyEgressType,
 )
 from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerNetworkModelBuildArgs
-from ...model.docker.container.host import (
-    ContainerHostConfig,
-    ContainerHostFullConfig,
-    ContainerHostHostConfig,
-)
+from ...model.docker.container.host import ContainerHostConfig, ContainerHostHostConfig
 from ...model.docker.container.network import (
     ContainerBridgeNetworkArgs,
     ContainerCommonNetworkConfig,
@@ -66,7 +62,11 @@ class NetworkResource(ComponentResource):
         self.service_networks: dict[str, ServiceNetworkBridgeConfig] = {}
         self.service_subnets: dict[str, list[Output[str]]] = {}
         self.service_egresses: dict[
-            str, dict[ServiceNetworkProxyEgressType, dict[str, GlobalExtract]]
+            str,
+            dict[
+                ServiceNetworkProxyEgressType,
+                dict[str, ServiceNetworkProxyEgressFullConfig],
+            ],
         ] = {}
 
         proxy_config = self.config.proxy
@@ -134,7 +134,6 @@ class NetworkResource(ComponentResource):
             self.service_egresses[service] = {}
             for egress_type, egress in proxy_config.egress.items():
                 self.service_egresses[service][egress_type] = {}
-                proxy_hosts = []
 
                 for egress_key, egress_model in egress.items():
                     service_egress_model = egress_model.with_service(service).to_full(
@@ -142,7 +141,7 @@ class NetworkResource(ComponentResource):
                     )
 
                     self.service_egresses[service][egress_type][egress_key] = (
-                        service_egress_model.address
+                        service_egress_model
                     )
                     for container_name in self.host_model.services[service].containers:
                         self.options[service][container_name].add_hosts(
@@ -154,19 +153,6 @@ class NetworkResource(ComponentResource):
                                 )
                             ]
                         )
-
-                    if service_egress_model.ip:
-                        proxy_hosts.append(
-                            ContainerHostConfig(
-                                ContainerHostFullConfig(
-                                    host=service_egress_model.address,
-                                    ip=service_egress_model.ip,
-                                )
-                            )
-                        )
-
-                if proxy_hosts:
-                    self.proxy_option.add_hosts(proxy_hosts)
 
         if proxy_bridge_config.offset:
             ipv4 = ipams[0].apply(

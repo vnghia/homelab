@@ -55,13 +55,15 @@ class TraefikFile(ComponentResource):
                             dynamic[egress_name] = TraefikDynamicModel(
                                 TraefikDynamicTcpModel(
                                     name=egress_name,
-                                    address=egress_model,
+                                    address=egress_model.address,
                                     entrypoint=self.traefik_service.config.entrypoint.egress_[
                                         egress_type
                                     ],
                                     service=TraefikDynamicServiceModel(
                                         TraefikDynamicServiceFullModel(
-                                            external=egress_model, port=None
+                                            external=egress_model.ip
+                                            or egress_model.address,
+                                            port=None,
                                         )
                                     ),
                                     hostsni=None,
