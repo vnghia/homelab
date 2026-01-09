@@ -4,6 +4,7 @@ import typing
 from typing import Any, ClassVar
 
 from homelab_docker.extract import ExtractorArgs
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_traefik_config.model.dynamic.tcp import TraefikDynamicTcpModel
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output, ResourceOptions
@@ -30,11 +31,19 @@ class TraefikDynamicTcpModelBuilder(
         traefik_service: TraefikService,
         extractor_args: ExtractorArgs,
     ) -> Output[str]:
-        root = self.root
-        hostsni = self.get_host(
-            record, root.hostsni, router_name, traefik_service, extractor_args
+        hostsni = self.root.hostsni
+        if hostsni is None or isinstance(hostsni, str):
+            return Output.format(
+                "HostSNI(`{}`)",
+                self.get_host(
+                    record, hostsni, router_name, traefik_service, extractor_args
+                ),
+            )
+        return Output.all(
+            *[GlobalExtractor(value).extract_str(extractor_args) for value in hostsni]
+        ).apply(
+            lambda hosts: " || ".join(["HostSNI(`{}`)".format(host) for host in hosts])
         )
-        return Output.format("HostSNI(`{}`)", hostsni)
 
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs

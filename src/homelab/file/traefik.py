@@ -55,7 +55,6 @@ class TraefikFile(ComponentResource):
                             dynamic[egress_name] = TraefikDynamicModel(
                                 TraefikDynamicTcpModel(
                                     name=egress_name,
-                                    address=egress_model.address,
                                     entrypoint=self.traefik_service.config.entrypoint.egress_[
                                         egress_type
                                     ],
@@ -66,7 +65,7 @@ class TraefikFile(ComponentResource):
                                             port=None,
                                         )
                                     ),
-                                    hostsni=None,
+                                    hostsni=[egress_model.address],
                                     middlewares=[
                                         TraefikDynamicMiddlewareModel(
                                             TraefikDynamicMiddlewareBuildModel(

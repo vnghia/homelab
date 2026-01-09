@@ -1,5 +1,7 @@
+from homelab_extract import GlobalExtract
+
 from .base import TraefikDynamicBaseModel
 
 
 class TraefikDynamicTcpModel(TraefikDynamicBaseModel):
-    hostsni: str | None
+    hostsni: str | list[GlobalExtract] | None

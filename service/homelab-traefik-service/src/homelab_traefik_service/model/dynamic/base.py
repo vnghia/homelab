@@ -7,7 +7,6 @@ from functools import reduce
 from typing import Any, ClassVar
 
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.base import TraefikDynamicBaseModel
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
@@ -37,13 +36,6 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
         traefik_service: TraefikService,
         extractor_args: ExtractorArgs,
     ) -> Output[str]:
-        root = self.root
-
-        if root.address:
-            return Output.from_input(
-                GlobalExtractor(root.address).extract_str(extractor_args)
-            )
-
         hostnames = traefik_service.extractor_args.hostnames[record]
         if hostname:
             return Output.from_input(hostnames[hostname].value)
