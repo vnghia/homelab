@@ -147,10 +147,9 @@ class NetworkResource(ComponentResource):
                         self.options[service][container_name].add_hosts(
                             [
                                 ContainerHostConfig(
-                                    ContainerHostHostConfig(
-                                        hostname=service_egress_model.address
-                                    )
+                                    ContainerHostHostConfig(hostname=address)
                                 )
+                                for address in service_egress_model.addresses
                             ]
                         )
 

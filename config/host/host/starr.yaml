@@ -89,10 +89,10 @@ services:
           egress:
             https:
               earth:
-                hostname:
-                  record: earth
-                  hostname: bitmagnet
                 host: earth
+                hostnames:
+                  - record: earth
+                    hostname: bitmagnet
     variables:
       RADARR_PORT: 7878
       SONARR_PORT: 8989

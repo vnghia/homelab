@@ -9,10 +9,10 @@ services:
           egress:
             https:
               earth:
-                hostname:
-                  record: earth
-                  hostname: docker-proxy
                 host: earth
+                hostnames:
+                  - record: earth
+                    hostname: docker-proxy
     container:
       volumes:
         docker-earth-mtls:

@@ -30,9 +30,9 @@ services:
           egress:
             https:
               earth:
-                hostname:
-                  svariable: EARTH_HOSTNAME
                 host: earth
+                hostnames:
+                  - svariable: EARTH_HOSTNAME
     keepasses:
       keepass:
         hostname:

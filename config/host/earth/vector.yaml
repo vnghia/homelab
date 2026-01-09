@@ -6,7 +6,7 @@ services:
           egress:
             https:
               sun:
-                hostname:
-                  hostname: openobserve
-                  record: sun
                 host: sun
+                hostnames:
+                  - hostname: openobserve
+                    record: sun

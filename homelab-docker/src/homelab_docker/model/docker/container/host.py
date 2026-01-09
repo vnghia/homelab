@@ -44,12 +44,19 @@ class ContainerHostHostConfig(HomelabBaseModel):
     host: str | None = None
     hostname: GlobalExtract | None = None
 
+    @classmethod
+    def get_host_ip(
+        cls, host: str | None, extractor_args: ExtractorArgs
+    ) -> GlobalExtract:
+        host_model = extractor_args.get_host_model(host)
+        return GlobalExtract.from_simple(
+            str(host_model.ip.get_ip(extractor_args.host.name))
+        )
+
     def to_full(self, extractor_args: ExtractorArgs) -> ContainerHostFullConfig:
         host_model = extractor_args.get_host_model(self.host)
         if self.host:
-            ip = GlobalExtract.from_simple(
-                str(host_model.ip.get_ip(extractor_args.host.name))
-            )
+            ip = self.get_host_ip(self.host, extractor_args)
         else:
             ip = GlobalExtract(
                 HostExtract(

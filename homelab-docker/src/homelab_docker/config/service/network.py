@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import StrEnum, auto
 from typing import Self
 
@@ -6,7 +8,7 @@ from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from homelab_vpn.config.service import ServiceVpnConfig
 
 from ...extract import ExtractorArgs
-from ...model.docker.container.host import ContainerHostConfig
+from ...model.docker.container.host import ContainerHostHostConfig
 from ...model.docker.container.network import ContainerBridgeNetworkConfig
 
 
@@ -14,20 +16,38 @@ class ServiceNetworkProxyEgressType(StrEnum):
     HTTPS = auto()
 
 
+class ServiceNetworkProxyEgressHostConfig(HomelabBaseModel):
+    host: str
+    hostnames: list[GlobalExtract]
+
+    def with_service(
+        self, service: str, force: bool
+    ) -> ServiceNetworkProxyEgressHostConfig:
+        return self.__replace__(
+            hostnames=[
+                hostname.with_service(service, force) for hostname in self.hostnames
+            ],
+        )
+
+
 class ServiceNetworkProxyEgressFullConfig(HomelabBaseModel):
-    address: GlobalExtract
+    addresses: list[GlobalExtract]
     ip: GlobalExtract | None
 
     def with_service(self, service: str, force: bool) -> Self:
         return self.model_construct(
-            address=self.address.with_service(service, force),
+            address=[
+                address.with_service(service, force) for address in self.addresses
+            ],
             ip=GlobalExtract.with_service_nullable(self.ip, service, force),
         )
 
 
 class ServiceNetworkProxyEgressConfig(
     HomelabRootModel[
-        GlobalExtract | ContainerHostConfig | ServiceNetworkProxyEgressFullConfig
+        GlobalExtract
+        | ServiceNetworkProxyEgressHostConfig
+        | ServiceNetworkProxyEgressFullConfig
     ]
 ):
     def to_full(
@@ -35,10 +55,10 @@ class ServiceNetworkProxyEgressConfig(
     ) -> ServiceNetworkProxyEgressFullConfig:
         root = self.root
         if isinstance(root, GlobalExtract):
-            return ServiceNetworkProxyEgressFullConfig(address=root, ip=None)
-        if isinstance(root, ContainerHostConfig):
-            full = root.to_full(extractor_args)
-            return ServiceNetworkProxyEgressFullConfig(address=full.host, ip=full.ip)
+            return ServiceNetworkProxyEgressFullConfig(addresses=[root], ip=None)
+        if isinstance(root, ServiceNetworkProxyEgressHostConfig):
+            ip = ContainerHostHostConfig.get_host_ip(root.host, extractor_args)
+            return ServiceNetworkProxyEgressFullConfig(addresses=root.hostnames, ip=ip)
         return root
 
     def with_service(self, service: str) -> Self:

@@ -61,11 +61,11 @@ class TraefikFile(ComponentResource):
                                     service=TraefikDynamicServiceModel(
                                         TraefikDynamicServiceFullModel(
                                             external=egress_model.ip
-                                            or egress_model.address,
+                                            or egress_model.addresses[0],
                                             port=None,
                                         )
                                     ),
-                                    hostsni=[egress_model.address],
+                                    hostsni=egress_model.addresses,
                                     middlewares=[
                                         TraefikDynamicMiddlewareModel(
                                             TraefikDynamicMiddlewareBuildModel(
