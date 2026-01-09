@@ -17,7 +17,11 @@ from ...config.service.network import (
 )
 from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerNetworkModelBuildArgs
-from ...model.docker.container.host import ContainerHostConfig, ContainerHostFullConfig
+from ...model.docker.container.host import (
+    ContainerHostConfig,
+    ContainerHostFullConfig,
+    ContainerHostHostConfig,
+)
 from ...model.docker.container.network import (
     ContainerBridgeNetworkArgs,
     ContainerCommonNetworkConfig,
@@ -124,13 +128,9 @@ class NetworkResource(ComponentResource):
         ipams: list[Output[BridgeIpamNetworkModel]],
     ) -> None:
         proxy_bridge_config = self.config.proxy.bridge
-        aliases = proxy_bridge_config.aliases
 
         proxy_config = bridge_config.proxy
         if proxy_config.egress:
-            if aliases is proxy_bridge_config.aliases:
-                aliases = aliases.copy()
-
             self.service_egresses[service] = {}
             for egress_type, egress in proxy_config.egress.items():
                 self.service_egresses[service][egress_type] = {}
@@ -144,7 +144,16 @@ class NetworkResource(ComponentResource):
                     self.service_egresses[service][egress_type][egress_key] = (
                         service_egress_model.address
                     )
-                    aliases.append(service_egress_model.address)
+                    for container_name in self.host_model.services[service].containers:
+                        self.options[service][container_name].add_hosts(
+                            [
+                                ContainerHostConfig(
+                                    ContainerHostHostConfig(
+                                        hostname=service_egress_model.address
+                                    )
+                                )
+                            ]
+                        )
 
                     if service_egress_model.ip:
                         proxy_hosts.append(
@@ -158,9 +167,6 @@ class NetworkResource(ComponentResource):
 
                 if proxy_hosts:
                     self.proxy_option.add_hosts(proxy_hosts)
-
-        if aliases is not proxy_bridge_config.aliases:
-            proxy_bridge_config = proxy_bridge_config.__replace__(aliases=aliases)
 
         if proxy_bridge_config.offset:
             ipv4 = ipams[0].apply(
