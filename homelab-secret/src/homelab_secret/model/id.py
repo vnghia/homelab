@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import typing
-from uuid import UUID
 
 import pulumi_random as random
 from homelab_extract.plain import PlainArgs
 from pulumi import ResourceOptions
+from pydantic import PositiveInt
 
 from .base import SecretBaseModel, SecretOutput
 
@@ -13,8 +13,10 @@ if typing.TYPE_CHECKING:
     from ..resource import SecretResource
 
 
-class SecretUuidModel(SecretBaseModel):
-    uuid: None
+class SecretIdModel(SecretBaseModel):
+    id: None
+    length: PositiveInt = 4
+    secure: bool = False
 
     def build_resource(
         self,
@@ -24,8 +26,8 @@ class SecretUuidModel(SecretBaseModel):
         plain_args: PlainArgs,
     ) -> SecretOutput:
         opts = self.opts(opts)
-        return SecretOutput(
-            random.RandomBytes(resource_name, length=16).hex.apply(
-                lambda x: str(UUID(x))
+        if self.secure:
+            return SecretOutput(
+                random.RandomBytes(resource_name, length=self.length).hex
             )
-        )
+        return SecretOutput(random.RandomId(resource_name, byte_length=self.length).hex)

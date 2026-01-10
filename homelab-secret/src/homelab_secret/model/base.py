@@ -1,5 +1,7 @@
+import dataclasses
+
 from homelab_pydantic import HomelabBaseModel
-from pulumi import ComponentResource, ResourceOptions
+from pulumi import ComponentResource, Output, ResourceOptions
 
 
 class SecretBaseModel(HomelabBaseModel):
@@ -17,3 +19,8 @@ class SecretBaseModel(HomelabBaseModel):
 
     def child_opts(self, t: str, name: str, opts: ResourceOptions) -> ResourceOptions:
         return ResourceOptions(parent=ComponentResource(t, name, None, self.opts(opts)))
+
+
+@dataclasses.dataclass
+class SecretOutput:
+    result: Output[str]
