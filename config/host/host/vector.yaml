@@ -49,18 +49,9 @@ services:
                 auth:
                   strategy: basic
                   user:
-                    host: sun
-                    extract:
-                      service: openobserve
-                      extract:
-                        keepass:
-                        info: username
+                    hvariable: OPENOBSERVE_USERNAME
                   password:
-                    host: sun
-                    extract:
-                      service: openobserve
-                      extract:
-                        secret: token
+                    hvariable: OPENOBSERVE_TOKEN
                 compression: gzip
                 encoding:
                   codec: json

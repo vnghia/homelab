@@ -22,22 +22,26 @@ variables:
     transform:
       string:
         template: "{default}:{port}"
+  OPENOBSERVE_USERNAME:
+    host: sun
+    extract:
+      service: openobserve
+      extract:
+        keepass:
+        info: username
+  OPENOBSERVE_TOKEN:
+    host: sun
+    extract:
+      service: openobserve
+      extract:
+        secret: token
   OPENOBSERVE_AUTHORIZATION:
     extract:
       kv:
         username:
-          host: sun
-          extract:
-            service: openobserve
-            extract:
-              keepass:
-              info: username
+          hvariable: OPENOBSERVE_USERNAME
         token:
-          host: sun
-          extract:
-            service: openobserve
-            extract:
-              secret: token
+          hvariable: OPENOBSERVE_TOKEN
     transform:
       string:
         template: "{username}:{token}"
