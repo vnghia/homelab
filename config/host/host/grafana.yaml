@@ -1,0 +1,108 @@
+docker:
+  images:
+    remote:
+      grafana:
+        repo: grafana/grafana
+        tag: "12.3.1"
+  volumes:
+    local:
+      grafana-data:
+        backup:
+          sqlite:
+            dbs:
+              - svariable: DATABASE_PATH
+      grafana-provision:
+        backup: false
+services:
+  grafana:
+    variables:
+      PORT: 3000
+      DATABASE_PATH:
+        extract:
+          volume: grafana-data
+        transform:
+          path: grafana.db
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            service:
+              port:
+                env: GF_SERVER_HTTP_PORT
+    keepasses:
+      keepass:
+        hostname:
+          hostname: grafana
+    files:
+      openobserve:
+        path:
+          extract:
+            volume: grafana-provision
+          transform:
+            path: datasources/openobserve.yaml
+        content:
+          format: yaml
+          data:
+            apiVersion: 1
+            prune: true
+            datasources:
+              - name: Huginn
+                uid:
+                  secret: openobserve-prometheus-datasource-uid
+                type: prometheus
+                access: proxy
+                editable: false
+                url:
+                  extract:
+                    hvariable: OPENOBSERVE_URI
+                  transform:
+                    string:
+                      template: "{value}/api/default/prometheus"
+                basicAuth: true
+                basicAuthUser: $OPENOBSERVE_USERNAME
+                jsonData:
+                  httpMethod: POST
+                  manageAlerts: false
+                  prometheusType: Prometheus
+                  timeInterval: 10s
+                  disableRecordingRules: true
+                secureJsonData:
+                  basicAuthPassword: $OPENOBSERVE_PASSWORD
+    secrets:
+      key: {}
+      openobserve-prometheus-datasource-uid:
+        id:
+    container:
+      image: grafana
+      volumes:
+        grafana-data: /var/lib/grafana
+        grafana-provision:
+          path: /etc/grafana/provision
+          read-only: true
+      envs:
+        GF_PATHS_PROVISIONING:
+          volume: grafana-provision
+        GF_SERVER_HTTP_PORT: 3000
+        GF_SERVER_ENABLE_GZIP: true
+        GF_DATABASE_PATH:
+          svariable: DATABASE_PATH
+        GF_DATABASE_WAL: true
+        GF_ANALYTICS_ENABLED: false
+        GF_SECURITY_ADMIN_USER:
+          keepass:
+          info: username
+        GF_SECURITY_ADMIN_PASSWORD:
+          keepass:
+          info: password
+        GF_SECURITY_SECRET_KEY:
+          secret: key
+        GF_SECURITY_DISABLE_GRAVATAR: true
+        OPENOBSERVE_USERNAME:
+          hvariable: OPENOBSERVE_USERNAME
+        OPENOBSERVE_PASSWORD:
+          hvariable: OPENOBSERVE_PASSWORD
+  openobserve:
+    container:
+      network:
+        bridge:
+          grafana: {}
