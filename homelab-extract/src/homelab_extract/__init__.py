@@ -7,6 +7,7 @@ from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from .config import GlobalExtractConfigSource
 from .dict_ import GlobalExtractDictSource
 from .host import HostExtract
+from .include import GlobalExtractIncludeSource
 from .kv import GlobalExtractKvSource
 from .plain import GlobalPlainExtractSource
 from .project import GlobalExtractProjectSource
@@ -19,6 +20,7 @@ class GlobalExtractSource(
     HomelabRootModel[
         GlobalExtractConfigSource
         | GlobalExtractDictSource
+        | GlobalExtractIncludeSource
         | GlobalExtractKvSource
         | GlobalPlainExtractSource
         | GlobalExtractProjectSource

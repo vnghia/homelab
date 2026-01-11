@@ -8,6 +8,7 @@ import pulumi_random as random
 from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
 from homelab_extract.config import GlobalExtractConfigSource
 from homelab_extract.dict_ import GlobalExtractDictSource
+from homelab_extract.include import GlobalExtractIncludeSource
 from homelab_extract.kv import GlobalExtractKvSource
 from homelab_extract.plain import GlobalPlainExtractSource
 from homelab_extract.project import GlobalExtractProjectSource
@@ -21,6 +22,7 @@ from . import ExtractorBase
 from .config import GlobalConfigSourceExtractor
 from .dict_ import GlobalDictSourceExtractor
 from .host import HostExtractor
+from .include import GlobalIncludeSourceExtractor
 from .kv import GlobalKvSourceExtractor
 from .plain import GlobalPlainSourceExtractor
 from .project import GlobalProjectSourceExtractor
@@ -40,6 +42,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
     ) -> (
         GlobalConfigSourceExtractor
         | GlobalDictSourceExtractor
+        | GlobalIncludeSourceExtractor
         | GlobalKvSourceExtractor
         | GlobalPlainSourceExtractor
         | GlobalProjectSourceExtractor
@@ -51,6 +54,8 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalConfigSourceExtractor(root)
         if isinstance(root, GlobalExtractDictSource):
             return GlobalDictSourceExtractor(root)
+        if isinstance(root, GlobalExtractIncludeSource):
+            return GlobalIncludeSourceExtractor(root)
         if isinstance(root, GlobalExtractKvSource):
             return GlobalKvSourceExtractor(root)
         if isinstance(root, GlobalPlainExtractSource):
