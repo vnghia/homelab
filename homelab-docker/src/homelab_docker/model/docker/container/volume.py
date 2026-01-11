@@ -22,6 +22,7 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
     active: bool = True
     path: GlobalExtract
     read_only: bool = False
+    bind_file: bool = True
 
     def to_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return GlobalExtractor(self.path).extract_path(extractor_args)

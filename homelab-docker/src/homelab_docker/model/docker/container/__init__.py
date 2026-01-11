@@ -40,7 +40,11 @@ from .ports import ContainerPortsConfig
 from .s3 import ContainerS3Config
 from .tmpfs import ContainerTmpfsConfig
 from .user import ContainerUserConfig
-from .volume import ContainerVolumeConfig, ContainerVolumesConfig
+from .volume import (
+    ContainerVolumeConfig,
+    ContainerVolumeFullConfig,
+    ContainerVolumesConfig,
+)
 from .wud import ContainerWudConfig
 
 if typing.TYPE_CHECKING:
@@ -320,8 +324,11 @@ class ContainerModel(HomelabBaseModel):
     ) -> ContainerModelBuildArgs:
         build_args = build_args or ContainerModelBuildArgs()
         files = list(build_args.files)
-        for volume in self.volumes.volumes:
-            if isinstance(volume, str):
+        for volume, model in self.volumes.volumes.items():
+            if isinstance(volume, str) and (
+                not isinstance(model.root, ContainerVolumeFullConfig)
+                or model.root.bind_file
+            ):
                 files += extractor_args.host.docker.volume.files[volume]
         build_args.files = files
         return build_args
