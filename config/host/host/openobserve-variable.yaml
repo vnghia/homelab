@@ -29,6 +29,13 @@ variables:
       extract:
         keepass:
         info: username
+  OPENOBSERVE_PASSWORD:
+    host: sun
+    extract:
+      service: openobserve
+      extract:
+        keepass:
+        info: password
   OPENOBSERVE_TOKEN:
     host: sun
     extract:
