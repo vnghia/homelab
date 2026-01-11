@@ -75,4 +75,23 @@ services:
         vector-config:
           path: /etc/vector
           read-only: true
+          bind-file: false
         vector-data: /var/lib/vector
+    containers:
+      reload:
+        depends-on: [null]
+        oneshot: true
+        image: docker-cli
+        docker-socket:
+          write: false
+        command:
+          - "kill"
+          - "--signal"
+          - "SIGHUP"
+          - container:
+            extract:
+              cinfo: id
+        volumes:
+          vector-config:
+            path: /etc/vector
+            read-only: true
