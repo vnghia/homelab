@@ -146,6 +146,7 @@ class TraefikStaticConfigResource(
                             name: {
                                 "moduleName": model.name,
                                 "version": model.version,
+                                "settings": {"useUnsafe": model.unsafe},
                             }
                             for name, model in traefik_config.plugins.items()
                         }

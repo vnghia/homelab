@@ -35,6 +35,7 @@ class TraefikMetricsConfig(HomelabBaseModel):
 class TraefikPluginConfig(HomelabBaseModel):
     name: str
     version: str
+    unsafe: bool = False
 
 
 class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):

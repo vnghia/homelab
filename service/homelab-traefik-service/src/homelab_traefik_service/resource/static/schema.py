@@ -171,6 +171,7 @@ class PluginsSettings(HomelabBaseModel):
     )
     envs: list[str] | None = None
     mounts: list[str] | None = None
+    use_unsafe: bool | None = Field(None, alias="useUnsafe")
 
 
 class RedisSentinel(HomelabBaseModel):
