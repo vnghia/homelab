@@ -11,6 +11,8 @@ docker:
           sqlite:
             dbs:
               - svariable: DATABASE_PATH
+      grafana-plugins:
+        backup: false
       grafana-provision:
         backup: false
 services:
@@ -48,6 +50,18 @@ services:
             datasources:
               - name: Huginn
                 uid:
+                  secret: openobserve-datasource-uid
+                type: openobserve
+                access: proxy
+                editable: false
+                url:
+                  hvariable: OPENOBSERVE_URI
+                basicAuth: true
+                basicAuthUser: $OPENOBSERVE_USERNAME
+                secureJsonData:
+                  basicAuthPassword: $OPENOBSERVE_PASSWORD
+              - name: Huginn Metrics
+                uid:
                   secret: openobserve-prometheus-datasource-uid
                 type: prometheus
                 access: proxy
@@ -70,12 +84,18 @@ services:
                   basicAuthPassword: $OPENOBSERVE_PASSWORD
     secrets:
       key: {}
+      openobserve-datasource-uid:
+        id:
       openobserve-prometheus-datasource-uid:
         id:
     container:
+      depends-on: [install-openobserve-plugin]
       image: grafana
       volumes:
         grafana-data: /var/lib/grafana
+        grafana-plugins:
+          path: /var/lib/grafana/plugins
+          read-only: true
         grafana-provision:
           path: /etc/grafana/provision
           read-only: true
@@ -83,10 +103,15 @@ services:
         GF_PATHS_PROVISIONING:
           volume: grafana-provision
         GF_SERVER_HTTP_PORT: 3000
+        GF_SERVER_ROOT_URL:
+          hostname: grafana
+          scheme: https
         GF_SERVER_ENABLE_GZIP: true
         GF_DATABASE_PATH:
           svariable: DATABASE_PATH
         GF_DATABASE_WAL: true
+        GF_PATHS_PLUGINS:
+          volume: grafana-plugins
         GF_ANALYTICS_ENABLED: false
         GF_SECURITY_ADMIN_USER:
           keepass:
@@ -97,10 +122,29 @@ services:
         GF_SECURITY_SECRET_KEY:
           secret: key
         GF_SECURITY_DISABLE_GRAVATAR: true
+        GF_PLUGINS_ENABLE_ALPHA: true
+        GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: openobserve
         OPENOBSERVE_USERNAME:
           hvariable: OPENOBSERVE_USERNAME
         OPENOBSERVE_PASSWORD:
           hvariable: OPENOBSERVE_PASSWORD
+    containers:
+      install-openobserve-plugin:
+        oneshot: true
+        inherit:
+        command:
+          - "-c"
+          - "curl -o /tmp/zo_gp.tar.gz https://zincsearch-releases.s3.us-west-2.amazonaws.com/zo_gp/zo_gp.tar.gz && tar -zxvf /tmp/zo_gp.tar.gz --directory $GF_PATHS_PLUGINS"
+        entrypoint: ["/bin/bash"]
+        network:
+          bridge:
+            vpn: {}
+        volumes:
+          grafana-plugins:
+            path: /var/lib/grafana/plugins
+            read-only: false
+        tmpfs:
+          - /tmp
   openobserve:
     container:
       network:
