@@ -252,11 +252,13 @@ services:
             secret: collaboration
       migrate:
         oneshot: true
+        depends-on: [backend]
         inherit: backend
         command: ["python3", "manage.py", "migrate"]
         s3:
       createsuperuser:
         oneshot: true
+        depends-on: [backend]
         inherit: backend
         command:
           - "python3"

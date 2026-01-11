@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import cast
 
 import pulumi
 import pulumi_tls as tls
@@ -8,7 +9,7 @@ from homelab_extract.service.mtls import MTlsInfoSourceModel
 from homelab_pydantic import HomelabBaseModel
 from homelab_secret.resource import SecretResource
 from homelab_secret.resource.cert.mtls import SecretMTlsResource
-from pulumi import Alias, ComponentResource, Output, ResourceOptions
+from pulumi import Alias, ComponentResource, Output, Resource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from ...extract import ExtractorArgs
@@ -65,6 +66,7 @@ class ServiceResourceBase(ComponentResource):
         self.exports: dict[str, Output[str] | list[Output[str]]] = {}
         self.container_models: dict[str | None, ContainerModel] = model.containers
         self.containers: dict[str | None, ContainerResource] = {}
+        self.raw_containers: dict[str | None, ContainerResource] = {}
         self.options: defaultdict[str | None, ContainerModelBuildArgs] = defaultdict(
             ContainerModelBuildArgs
         )
@@ -253,7 +255,7 @@ class ServiceResourceBase(ComponentResource):
         ].items():
             self.options[name].add_network(network)
 
-    def build_container(
+    def build_container_model(
         self,
         name: str | None,
         model: ContainerModel,
@@ -267,17 +269,41 @@ class ServiceResourceBase(ComponentResource):
         )
         return ContainerResource(key=name, model=model, resource=resource)
 
-    def build_containers(self) -> None:
-        for name, model in self.container_models.items():
-            if model.active:
-                container = self.build_container(
-                    name, model.to_full(self.extractor_args), self.options.get(name)
-                )
+    def build_container(self, name: str | None) -> ContainerResource | None:
+        if name in self.raw_containers:
+            return self.raw_containers[name]
 
-                if not model.oneshot:
-                    self.containers[name] = container
-                    if name is None:
-                        self.extractor_args = self.extractor_args.from_service(self)
+        model = self.container_models[name]
+        if not model.active:
+            return None
+
+        depends_on = []
+        for depend_on in model.depends_on:
+            container = self.build_container(depend_on)
+            if container:
+                depends_on.append(cast(Resource, container.resource))
+        if depends_on:
+            self.options[name].opts = ResourceOptions.merge(
+                self.options[name].opts,
+                ResourceOptions(depends_on=depends_on, replace_with=depends_on),
+            )
+
+        container = self.build_container_model(
+            name, model.to_full(self.extractor_args), self.options.get(name)
+        )
+
+        if not model.oneshot:
+            self.containers[name] = container
+            if name is None:
+                self.extractor_args = self.extractor_args.from_service(self)
+
+        self.raw_containers[name] = container
+        return container
+
+    def build_containers(self) -> None:
+        for name in self.container_models:
+            if name not in self.raw_containers:
+                self.build_container(name)
 
         for name, container in self.containers.items():
             pulumi.export(

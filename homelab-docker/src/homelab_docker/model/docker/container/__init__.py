@@ -106,6 +106,7 @@ class ContainerModelBuildArgs:
 class ContainerModel(HomelabBaseModel):
     active: bool = True
     oneshot: bool = False
+    depends_on: list[str | None] = []
     delete_before_replace: bool = False
     inherit: ContainerInheritConfig = ContainerInheritConfig()
 
