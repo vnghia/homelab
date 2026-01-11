@@ -89,7 +89,7 @@ services:
       openobserve-prometheus-datasource-uid:
         id:
     container:
-      depends-on: [install-plugin, install-openobserve-plugin]
+      depends-on: [install-openobserve-plugin]
       image: grafana
       volumes:
         grafana-data: /var/lib/grafana
@@ -129,27 +129,6 @@ services:
         OPENOBSERVE_PASSWORD:
           hvariable: OPENOBSERVE_PASSWORD
     containers:
-      install-plugin:
-        oneshot: true
-        inherit:
-        network:
-          bridge:
-            vpn: {}
-        volumes:
-          grafana-plugins:
-            path: /var/lib/grafana/plugins
-            read-only: false
-        tmpfs:
-          - /tmp
-        envs:
-          GF_PLUGINS_PREINSTALL_SYNC:
-            extract:
-              kv:
-                echarts: volkovlabs-echarts-panel@7.2.2
-            transform:
-              string:
-                template:
-                  join: ","
       install-openobserve-plugin:
         oneshot: true
         inherit:
