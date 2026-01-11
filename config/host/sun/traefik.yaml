@@ -14,6 +14,13 @@ services:
               prefer-short-username: true
   traefik:
     config:
+      log:
+        access:
+          config:
+            fields:
+              headers:
+                names:
+                  X-Geoblock-Remediation: keep
       entrypoint:
         config:
           public-http:
@@ -48,7 +55,8 @@ services:
       plugins:
         geoblock:
           name: github.com/david-garcia-garcia/traefik-geoblock
-          version: "v1.1.0"
+          version: "v1.1.3"
+          unsafe: true
         oidc:
           name: github.com/sevensolutions/traefik-oidc-auth
           version: "v0.17.0"
@@ -70,13 +78,14 @@ services:
               banIfError: true
               logLevel: "info"
               logFormat: "json"
-              logBannedRequests: true
+              logBannedRequests: false
               databaseAutoUpdate: true
               databaseAutoUpdateDir:
                 extract:
                   volume: traefik-data
                 transform:
                   path: ip2database
+              remediationHeadersCustomName: X-Geoblock-Remediation
           oidc:
             name: oidc
             plugin: oidc

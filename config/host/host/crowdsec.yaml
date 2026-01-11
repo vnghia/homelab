@@ -29,6 +29,7 @@ services:
                 extract:
                   secret: traefik
               crowdsecLapiHost: crowdsec:8080
+              remediationHeadersCustomName: X-Crowdsec-Remediation
     files:
       traefik-acquis:
         path:
@@ -87,6 +88,13 @@ services:
           read-only: true
   traefik:
     config:
+      log:
+        access:
+          config:
+            fields:
+              headers:
+                names:
+                  X-Crowdsec-Remediation: keep
       entrypoint:
         config:
           public-https:
@@ -97,7 +105,7 @@ services:
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
-          version: "v1.4.4"
+          version: "v1.4.6"
       traefik:
         depends-on:
           - crowdsec
