@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from typing import Any
 
 import pulumi_random as random
 from homelab_extract.service import (
@@ -85,6 +86,7 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
         | Output[str]
         | random.RandomPassword
         | dict[str, Output[str]]
+        | dict[Output[str], Any]
         | list[Output[str]]
     ):
         return self.extractor.extract_str(extractor_args)
@@ -134,6 +136,7 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
         | Output[str]
         | random.RandomPassword
         | dict[str, Output[str]]
+        | dict[Output[str], Any]
         | list[Output[str]]
     ):
         extractor = self.extractor
@@ -201,6 +204,7 @@ class ServiceExtractor(ExtractorBase[ServiceExtract]):
         | Output[str]
         | random.RandomPassword
         | dict[str, Output[str]]
+        | dict[Output[str], Any]
         | list[Output[str]]
     ):
         return self.extractor.extract_str(extractor_args)

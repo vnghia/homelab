@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from typing import Any
 
 from homelab_extract.service.variable import ServiceExtractVariableSource
 from homelab_pydantic import AbsolutePath
@@ -22,8 +23,18 @@ class ServiceVariableSourceExtractor(ExtractorBase[ServiceExtractVariableSource]
             extractor_args.service_model.variables[self.root.svariable]
         )
 
-    def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
-        return self.get_variable(extractor_args).extract_str(extractor_args)
+    def extract_str(
+        self, extractor_args: ExtractorArgs
+    ) -> (
+        str
+        | Output[str]
+        | dict[str, Output[str]]
+        | dict[Output[str], Any]
+        | list[Output[str]]
+    ):
+        return self.get_variable(extractor_args).extract_str_explicit_transform(
+            extractor_args
+        )
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.get_variable(extractor_args).extract_path(extractor_args)
