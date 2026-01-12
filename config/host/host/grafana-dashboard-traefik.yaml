@@ -1,0 +1,16 @@
+services:
+  grafana:
+    files:
+      traefik-dashboard:
+        path:
+          extract:
+            volume: grafana-dashboard
+          transform:
+            path: traefik.json
+        content:
+          format: json
+          data:
+            include: config/dashboard/traefik.yaml
+    secrets:
+      traefik-dashboard-uid:
+        id:
