@@ -13,15 +13,19 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalIncludeSourceExtractor(ExtractorBase[GlobalExtractIncludeSource]):
-    def extract_str(self, extractor_args: ExtractorArgs) -> Any | str:
+    def extract_str(self, extractor_args: ExtractorArgs) -> str | dict[str, Any]:
         from .global_ import GlobalExtractor
 
         path = self.root.include.root
         with open(path, "rb") as file:
             match path.suffix:
                 case ".yaml":
-                    return GlobalExtractor.extract_recursively(
+                    result = GlobalExtractor.extract_recursively(
                         yaml_rs.load(file), extractor_args
                     )
                 case _:
                     return file.read().decode()
+
+        if not isinstance(result, dict):
+            raise ValueError("Include extract must return a dictionary")
+        return result

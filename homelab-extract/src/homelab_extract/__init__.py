@@ -9,6 +9,7 @@ from .dict_ import GlobalExtractDictSource
 from .host import HostExtract
 from .include import GlobalExtractIncludeSource
 from .kv import GlobalExtractKvSource
+from .list_ import GlobalExtractListSource
 from .plain import GlobalPlainExtractSource
 from .project import GlobalExtractProjectSource
 from .secret import GlobalExtractSecretSource
@@ -22,6 +23,7 @@ class GlobalExtractSource(
         | GlobalExtractDictSource
         | GlobalExtractIncludeSource
         | GlobalExtractKvSource
+        | GlobalExtractListSource
         | GlobalPlainExtractSource
         | GlobalExtractProjectSource
         | GlobalExtractSecretSource

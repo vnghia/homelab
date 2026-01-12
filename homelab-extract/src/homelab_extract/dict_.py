@@ -10,4 +10,4 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalExtractDictSource(HomelabBaseModel):
-    dict_: list[tuple["GlobalExtract", Any]]
+    dict_: list[tuple[GlobalExtract, Any]]

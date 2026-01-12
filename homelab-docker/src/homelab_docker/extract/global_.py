@@ -10,6 +10,7 @@ from homelab_extract.config import GlobalExtractConfigSource
 from homelab_extract.dict_ import GlobalExtractDictSource
 from homelab_extract.include import GlobalExtractIncludeSource
 from homelab_extract.kv import GlobalExtractKvSource
+from homelab_extract.list_ import GlobalExtractListSource
 from homelab_extract.plain import GlobalPlainExtractSource
 from homelab_extract.project import GlobalExtractProjectSource
 from homelab_extract.secret import GlobalExtractSecretSource
@@ -24,6 +25,7 @@ from .dict_ import GlobalDictSourceExtractor
 from .host import HostExtractor
 from .include import GlobalIncludeSourceExtractor
 from .kv import GlobalKvSourceExtractor
+from .list import GlobalListSourceExtractor
 from .plain import GlobalPlainSourceExtractor
 from .project import GlobalProjectSourceExtractor
 from .secret import GlobalSecretSourceExtractor
@@ -44,6 +46,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         | GlobalDictSourceExtractor
         | GlobalIncludeSourceExtractor
         | GlobalKvSourceExtractor
+        | GlobalListSourceExtractor
         | GlobalPlainSourceExtractor
         | GlobalProjectSourceExtractor
         | GlobalSecretSourceExtractor
@@ -58,6 +61,8 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalIncludeSourceExtractor(root)
         if isinstance(root, GlobalExtractKvSource):
             return GlobalKvSourceExtractor(root)
+        if isinstance(root, GlobalExtractListSource):
+            return GlobalListSourceExtractor(root)
         if isinstance(root, GlobalPlainExtractSource):
             return GlobalPlainSourceExtractor(root)
         if isinstance(root, GlobalExtractProjectSource):
@@ -74,6 +79,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         | random.RandomPassword
         | dict[str, Output[str]]
         | dict[Output[str], Any]
+        | list[Output[str]]
     ):
         return self.extractor.extract_str(extractor_args)
 
