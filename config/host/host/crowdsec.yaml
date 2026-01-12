@@ -71,7 +71,7 @@ services:
         USE_WAL: true
       network:
         bridge:
-          vpn: {}
+          default: {}
       tmpfs:
         - /tmp
       wud:
