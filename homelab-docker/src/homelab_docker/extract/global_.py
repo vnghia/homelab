@@ -25,7 +25,7 @@ from .dict_ import GlobalDictSourceExtractor
 from .host import HostExtractor
 from .include import GlobalIncludeSourceExtractor
 from .kv import GlobalKvSourceExtractor
-from .list import GlobalListSourceExtractor
+from .list_ import GlobalListSourceExtractor
 from .plain import GlobalPlainSourceExtractor
 from .project import GlobalProjectSourceExtractor
 from .secret import GlobalSecretSourceExtractor
