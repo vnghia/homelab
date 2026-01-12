@@ -46,6 +46,13 @@ services:
           volume: traefik-log
         transform:
           path: access.log
+      LOCAL_IPS:
+        list_:
+          - "10.0.0.0/8"
+          - "100.64.0.0/10"
+          - "172.16.0.0/12"
+          - "192.168.0.0/16"
+          - "fc00::/7"
     config:
       path:
         static:
@@ -97,11 +104,7 @@ services:
             name: local
             data: &local-middleware
               source-range:
-                - "10.0.0.0/8"
-                - "100.64.0.0/10"
-                - "172.16.0.0/12"
-                - "192.168.0.0/16"
-                - "fc00::/7"
+                svariable: LOCAL_IPS
           local-tcp:
             name: local-tcp
             type: tcp

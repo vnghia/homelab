@@ -31,6 +31,25 @@ services:
               crowdsecLapiHost: crowdsec:8080
               remediationHeadersCustomName: X-Crowdsec-Remediation
     files:
+      whitelists:
+        path:
+          extract:
+            volume: crowdsec-config
+          transform:
+            path: parsers/s02-enrich/whitelists.yaml
+        content:
+          format: yaml
+          data:
+            name: whitelists
+            description: "Whitelist events from private ipv4/ipv6 addresses"
+            whitelist:
+              reason: "private ipv4/ipv6 ip/ranges"
+              ip:
+                - "::1"
+              cidr:
+                service: traefik
+                extract:
+                  svariable: LOCAL_IPS
       traefik-acquis:
         path:
           extract:
