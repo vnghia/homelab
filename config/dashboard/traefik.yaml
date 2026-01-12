@@ -106,9 +106,9 @@ panels:
             secret: openobserve-datasource-uid
         displayMode: auto
         organization: default
-        query: |
+        query: >-
           SELECT geoip_location_latitude as latitude, geoip_location_longitude as longitude, count(*) as request_count
-          FROM traefik WHERE geoip_location_latitude IS NOT NULL AND geoip_location_longitude IS NOT NULL 
+          FROM traefik WHERE geoip_location_latitude IS NOT NULL AND geoip_location_longitude IS NOT NULL
           GROUP BY geoip_location_latitude, geoip_location_longitude
         refId: geolocation
         sqlMode: true
