@@ -1,16 +1,7 @@
-import hashlib
-from functools import cached_property
-from typing import Any, ClassVar
+from typing import ClassVar
 
-import pulumi
 from homelab_pydantic import HomelabBaseModel, RelativePath
-from pydantic import (
-    NonNegativeInt,
-    PositiveInt,
-    ValidationInfo,
-    ValidatorFunctionWrapHandler,
-    field_validator,
-)
+from pydantic import NonNegativeInt, PositiveInt
 
 from ..user import UidGidModel
 
@@ -33,25 +24,3 @@ class FilePermissionModel(HomelabBaseModel):
 
     mode: PositiveInt = DEFAULT_MODE
     owner: UidGidModel = UidGidModel()
-
-
-class FileDataModel(HomelabBaseModel):
-    content: str
-
-    @cached_property
-    def hash(self) -> str:
-        return hashlib.sha256(self.content.encode()).hexdigest()
-
-    @field_validator("content", mode="wrap")
-    @classmethod
-    def ignore_pulumi_unknown(
-        cls, data: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo
-    ) -> str:
-        if isinstance(data, pulumi.output.Unknown):
-            pulumi.log.warn(
-                "Pulumi unknown output encountered: {}. Validated data: {}".format(
-                    data, info.data
-                )
-            )
-            return ""
-        return handler(data)  # type: ignore[no-any-return]

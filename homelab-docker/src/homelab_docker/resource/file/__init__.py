@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import io
 import tarfile
 import tempfile
@@ -7,7 +8,6 @@ import typing
 from pathlib import PosixPath
 from typing import Any
 
-import pulumi
 from docker.errors import NotFound
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
@@ -19,17 +19,11 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import (
-    ValidationInfo,
-    ValidatorFunctionWrapHandler,
-    computed_field,
-    field_validator,
-    model_validator,
-)
+from pydantic import computed_field, model_validator
 
 from ...client import DockerClient
 from ...model.docker.container.volume_path import ContainerVolumePath
-from ...model.file import FileDataModel, FileLocationModel, FilePermissionModel
+from ...model.file import FileLocationModel, FilePermissionModel
 from ...model.user import UidGidModel
 
 if typing.TYPE_CHECKING:
@@ -39,7 +33,7 @@ if typing.TYPE_CHECKING:
 class FileProviderProps(HomelabBaseModel):
     docker_host: str
     location: FileLocationModel
-    data: FileDataModel
+    data: str
     permission: FilePermissionModel = FilePermissionModel()
 
     @property
@@ -49,21 +43,7 @@ class FileProviderProps(HomelabBaseModel):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def hash(self) -> str:
-        return self.data.hash
-
-    @field_validator("data", mode="wrap")
-    @classmethod
-    def ignore_pulumi_unknown(
-        cls, data: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo
-    ) -> FileDataModel:
-        if isinstance(data, pulumi.output.Unknown):
-            pulumi.log.warn(
-                "Pulumi unknown output encountered: {}. Validated data: {}".format(
-                    data, info.data
-                )
-            )
-            return FileDataModel(content="")
-        return handler(data)  # type: ignore[no-any-return]
+        return hashlib.sha256(self.data.encode()).hexdigest()
 
     @model_validator(mode="before")
     @classmethod
@@ -95,7 +75,7 @@ class FileVolumeProxy:
                 tarfile.open(mode="w|", fileobj=tar_file) as tar,
                 tempfile.NamedTemporaryFile() as file,
             ):
-                file.write(props.data.content.encode())
+                file.write(props.data.encode())
                 file.flush()
                 tar.add(
                     file.name,
@@ -130,7 +110,7 @@ class FileVolumeProxy:
                     if not file:
                         raise KeyError("tar member {} not found".format(name))
                     return props.__replace__(
-                        data=FileDataModel(content=file.read().decode()),
+                        data=file.read().decode(),
                         permission=FilePermissionModel(
                             mode=member.mode,
                             owner=UidGidModel(uid=member.uid, gid=member.gid),
@@ -216,7 +196,7 @@ class FileResource(Resource, module="docker", name="File"):
                     "volume": volume.resource.name,
                     "path": volume_path.path.as_posix(),
                 },
-                "data": {"content": content},
+                "data": content,
                 "permission": permission.model_dump()
                 if isinstance(permission, FilePermissionModel)
                 else {
