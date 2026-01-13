@@ -12,7 +12,6 @@ annotations:
 editable: false
 fiscalYearStartMonth: 0
 graphTooltip: 0
-id: 1
 links: []
 panels:
   - collapsed: false
@@ -21,10 +20,9 @@ panels:
       w: 24
       x: 0
       y: 0
-    id: 1
     panels: []
-    title: "Requests Detail"
-    type: "row"
+    title: Geography
+    type: row
   - datasource:
       type: openobserve
       uid:
@@ -46,11 +44,10 @@ panels:
               value: 0
       overrides: []
     gridPos:
-      h: 10
-      w: 10
+      h: 8
+      w: 12
       x: 0
       y: 1
-    id: 2
     options:
       basemap:
         config:
@@ -90,15 +87,15 @@ panels:
         mode: details
       view:
         allLayers: true
-        id: fit
+        id: coords
         lastOnly: false
-        lat: 0
+        lat: 27
         layer: coordinates
         lon: 0
         noRepeat: true
         padding: 5
         shared: false
-        zoom: 15
+        zoom: 0
     targets:
       - datasource:
           type: openobserve
@@ -107,15 +104,134 @@ panels:
         displayMode: auto
         organization: default
         query: >-
-          SELECT geoip_location_latitude as latitude, geoip_location_longitude as longitude, count(*) as request_count
-          FROM traefik WHERE geoip_location_latitude IS NOT NULL AND geoip_location_longitude IS NOT NULL
-          GROUP BY geoip_location_latitude, geoip_location_longitude
+          select geoip_location_latitude as latitude, geoip_location_longitude as longitude, count(*) as request_count
+          from traefik where geoip_location_latitude is not null and geoip_location_longitude is not null
+          group by geoip_location_latitude, geoip_location_longitude
         refId: geolocation
         sqlMode: true
         stream: traefik
-    title: Geolocation
-    transparent: true
+    title: Geographic Distribution
     type: geomap
+  - datasource:
+      type: openobserve
+      uid:
+        secret: openobserve-datasource-uid
+    fieldConfig:
+      defaults:
+        color:
+          mode: thresholds
+        fieldMinMax: false
+        mappings: []
+        thresholds:
+          mode: percentage
+          steps:
+            - color: green
+              value: 0
+      overrides: []
+    gridPos:
+      h: 8
+      w: 12
+      x: 12
+      y: 1
+    options:
+      displayMode: basic
+      legend:
+        calcs: []
+        displayMode: list
+        placement: bottom
+        showLegend: false
+      maxVizHeight: 30
+      minVizHeight: 30
+      minVizWidth: 8
+      namePlacement: top
+      orientation: horizontal
+      reduceOptions:
+        calcs:
+          - lastNotNull
+        fields: ""
+        limit: 500
+        values: true
+      showUnfilled: false
+      sizing: manual
+      text:
+        titleSize: 13
+        valueSize: 13
+      valueMode: text
+    targets:
+      - datasource:
+          type: openobserve
+          uid:
+            secret: openobserve-datasource-uid
+        displayMode: auto
+        organization: default
+        query: >-
+          select coalesce(geoip_country_name, geoip_registered_country_name) as country_name, count(*) as request_count
+          from traefik group by country_name having country_name is not null order by request_count desc
+        refId: A
+        sqlMode: true
+        stream: traefik
+    title: Top Countries
+    type: bargauge
+  - datasource:
+      type: openobserve
+      uid:
+        secret: openobserve-datasource-uid
+    fieldConfig:
+      defaults:
+        color:
+          mode: thresholds
+        fieldMinMax: false
+        mappings: []
+        thresholds:
+          mode: percentage
+          steps:
+            - color: red
+              value: 0
+      overrides: []
+    gridPos:
+      h: 6
+      w: 8
+      x: 0
+      y: 9
+    options:
+      displayMode: basic
+      legend:
+        calcs: []
+        displayMode: list
+        placement: bottom
+        showLegend: false
+      maxVizHeight: 30
+      minVizHeight: 30
+      minVizWidth: 8
+      namePlacement: top
+      orientation: horizontal
+      reduceOptions:
+        calcs:
+          - lastNotNull
+        fields: ""
+        limit: 500
+        values: true
+      showUnfilled: false
+      sizing: manual
+      text:
+        titleSize: 13
+        valueSize: 13
+      valueMode: text
+    targets:
+      - datasource:
+          type: openobserve
+          uid:
+            secret: openobserve-datasource-uid
+        displayMode: auto
+        organization: default
+        query: >-
+          select coalesce(geoip_country_name, geoip_registered_country_name) as country_name, count(*) as request_count
+          from traefik where downstream_x_geoblock_remediation is not null group by country_name order by request_count desc
+        refId: A
+        sqlMode: true
+        stream: traefik
+    title: Top Geoblocked Countries
+    type: bargauge
 preload: false
 schemaVersion: 42
 tags: []
