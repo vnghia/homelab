@@ -14,6 +14,52 @@ fiscalYearStartMonth: 0
 graphTooltip: 0
 links: []
 panels:
+  - collapsed: true
+    gridPos:
+      h: 1
+      w: 24
+      x: 0
+      y: 15
+    panels:
+      - datasource:
+          type: openobserve
+          uid:
+            secret: openobserve-datasource-uid
+        fieldConfig:
+          defaults: {}
+          overrides: []
+        gridPos:
+          h: 1
+          w: 24
+          x: 0
+          y: 16
+        id: 1
+        options:
+          dedupStrategy: none
+          enableInfiniteScrolling: false
+          enableLogDetails: true
+          prettifyLogMessage: true
+          showControls: false
+          showLabels: false
+          showTime: false
+          sortOrder: Descending
+          syntaxHighlighting: false
+          wrapLogMessage: false
+        targets:
+          - datasource:
+              type: openobserve
+              uid:
+                secret: openobserve-datasource-uid
+            displayMode: logs
+            organization: default
+            query: select * from traefik
+            refId: access-logs
+            sqlMode: true
+            stream: traefik
+        title: Access Logs
+        type: logs
+    title: Raw Data
+    type: row
   - collapsed: false
     gridPos:
       h: 1
