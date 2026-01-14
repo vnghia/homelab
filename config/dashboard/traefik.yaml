@@ -26,25 +26,37 @@ panels:
           uid:
             secret: openobserve-datasource-uid
         fieldConfig:
-          defaults: {}
+          defaults:
+            color:
+              mode: thresholds
+            custom:
+              align: auto
+              cellOptions:
+                type: auto
+              filterable: true
+              footer:
+                reducers: []
+              inspect: false
+            mappings: []
+            thresholds:
+              mode: percentage
+              steps:
+                - color: green
+                  value: 0
           overrides: []
         gridPos:
-          h: 1
+          h: 20
           w: 24
           x: 0
           y: 16
         id: 1
         options:
-          dedupStrategy: none
-          enableInfiniteScrolling: false
-          enableLogDetails: true
-          prettifyLogMessage: true
-          showControls: false
-          showLabels: false
-          showTime: false
-          sortOrder: Descending
-          syntaxHighlighting: false
-          wrapLogMessage: false
+          cellHeight: sm
+          enablePagination: true
+          showHeader: true
+          sortBy:
+            - desc: true
+              displayName: Time
         targets:
           - datasource:
               type: openobserve
@@ -57,7 +69,7 @@ panels:
             sqlMode: true
             stream: traefik
         title: Access Logs
-        type: logs
+        type: table
     title: Raw Data
     type: row
   - collapsed: false
@@ -226,6 +238,87 @@ panels:
       defaults:
         color:
           mode: thresholds
+        custom:
+          align: auto
+          cellOptions:
+            type: auto
+          filterable: true
+          footer:
+            reducers: []
+          inspect: false
+          wrapText: false
+        mappings: []
+        thresholds:
+          mode: percentage
+          steps:
+            - color: green
+              value: 0
+      overrides:
+        - matcher:
+            id: byName
+            options: geoip_autonomous_system_organization
+          properties:
+            - id: displayName
+              value: ASN
+        - matcher:
+            id: byName
+            options: geoip_city_name
+          properties:
+            - id: displayName
+              value: City
+        - matcher:
+            id: byName
+            options: geoip_country_name
+          properties:
+            - id: displayName
+              value: Country
+        - matcher:
+            id: byName
+            options: geoip_registered_country_name
+          properties:
+            - id: displayName
+              value: Registered Country
+        - matcher:
+            id: byName
+            options: request_count
+          properties:
+            - id: displayName
+              value: Request Count
+    gridPos:
+      h: 6
+      w: 16
+      x: 0
+      y: 9
+    options:
+      cellHeight: sm
+      showHeader: true
+      sortBy:
+        - desc: true
+          displayName: Request Count
+    targets:
+      - datasource:
+          type: openobserve
+          uid:
+            secret: openobserve-datasource-uid
+        displayMode: auto
+        organization: default
+        query: >-
+          select geoip_autonomous_system_organization, geoip_city_name, geoip_country_name, geoip_registered_country_name, count(*) as request_count
+          from traefik where downstream_x_geoblock_remediation is not null or downstream_x_crowdsec_remediation = 'ban'
+          group by geoip_autonomous_system_organization, geoip_city_name, geoip_country_name, geoip_registered_country_name
+        refId: A
+        sqlMode: true
+        stream: traefik
+    title: Top Blocked ASNs
+    type: table
+  - datasource:
+      type: openobserve
+      uid:
+        secret: openobserve-datasource-uid
+    fieldConfig:
+      defaults:
+        color:
+          mode: thresholds
         fieldMinMax: false
         mappings: []
         thresholds:
@@ -237,7 +330,7 @@ panels:
     gridPos:
       h: 6
       w: 8
-      x: 0
+      x: 16
       y: 9
     options:
       displayMode: basic
@@ -272,11 +365,12 @@ panels:
         organization: default
         query: >-
           select coalesce(geoip_country_name, geoip_registered_country_name) as country_name, count(*) as request_count
-          from traefik where downstream_x_geoblock_remediation is not null group by country_name order by request_count desc
+          from traefik where downstream_x_geoblock_remediation is not null or downstream_x_crowdsec_remediation = 'ban'
+          group by country_name order by request_count desc
         refId: A
         sqlMode: true
         stream: traefik
-    title: Top Geoblocked Countries
+    title: Top Blocked Countries
     type: bargauge
 preload: false
 schemaVersion: 42
