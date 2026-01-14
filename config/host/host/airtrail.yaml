@@ -3,7 +3,10 @@ docker:
     remote:
       airtrail:
         repo: johly/airtrail
-        tag: "v3.3.0"
+        tag: "v3.4.1"
+  volumes:
+    local:
+      airtrail-uploads: {}
 services:
   kanidm:
     config:
@@ -60,6 +63,8 @@ services:
       tmpfs:
         - path: /tmp
           exec: true
+      volumes:
+        airtrail-uploads: /app/uploads
       wud:
         template: https://github.com/johanohly/AirTrail/releases/tag/${original}
         include-prefix: v
@@ -86,3 +91,5 @@ services:
         OAUTH_AUTO_REGISTER: true
         OAUTH_AUTO_LOGIN: true
         OAUTH_HIDE_PASSWORD_FORM: true
+        UPLOAD_LOCATION:
+          volume: airtrail-uploads
