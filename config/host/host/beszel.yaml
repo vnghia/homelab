@@ -3,7 +3,7 @@ docker:
     remote:
       beszel:
         repo: ghcr.io/henrygd/beszel/beszel
-        tag: &beszel-version "0.17.0"
+        tag: &beszel-version "0.18.2"
       beszel-agent:
         repo: ghcr.io/henrygd/beszel/beszel-agent
         tag: *beszel-version
