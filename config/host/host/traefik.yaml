@@ -83,6 +83,7 @@ services:
                 defaultMode: drop
                 names:
                   User-Agent: keep
+                  Grpc-Status: keep
       entrypoint:
         config:
           private-http:
