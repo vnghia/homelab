@@ -142,9 +142,9 @@ panels:
             secret: openobserve-prometheus-datasource-uid
         editorMode: code
         expr: >-
-          sum(traefik_service_request_duration_seconds_sum{service_namespace=~"$namespace", service=~"$service", protocol=~"http|grpc|grpc-web"})
+          sum(traefik_service_request_duration_seconds_sum{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"})
           /
-          sum(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service", protocol=~"http|grpc|grpc-web"})
+          sum(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"})
         format: time_series
         interval: ""
         intervalFactor: 2
@@ -214,7 +214,7 @@ panels:
         editorMode: code
         exemplar: false
         expr: >-
-          sum(increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service", protocol="http", code=~"^[45]\\d{2}"}[$__interval] offset
+          sum(increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service", code=~"^[45]\\d{2}"}[$__interval] offset
           -$__interval))
         format: time_series
         instant: false
@@ -228,7 +228,7 @@ panels:
         editorMode: code
         exemplar: false
         expr: >-
-          sum(increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service"}[$__interval] offset -$__interval))
+          sum(increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$__interval] offset -$__interval))
         format: time_series
         instant: false
         legendFormat: Total
@@ -351,7 +351,7 @@ panels:
         editorMode: code
         expr: >-
           sum by (service)
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service"}[$__interval] offset -$__interval))> 0
+          (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$__interval] offset -$__interval))> 0
         format: time_series
         interval: ""
         intervalFactor: 1
@@ -365,7 +365,7 @@ panels:
         editorMode: code
         expr: >-
           sum by ()
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service"}[$__interval] offset -$__interval)) > 0
+          (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$__interval] offset -$__interval)) > 0
         interval: ""
         legendFormat: Total
         range: true
@@ -454,9 +454,9 @@ panels:
         editorMode: code
         expr: >-
           sum by(service)
-          (traefik_service_request_duration_seconds_sum{service_namespace=~"$namespace", service=~"$service", protocol=~"http|grpc|grpc-web"})
+          (traefik_service_request_duration_seconds_sum{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"})
           /
-          sum by(service)(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service", protocol=~"http|grpc|grpc-web"})
+          sum by(service)(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"})
         legendFormat: __auto
         range: true
         refId: A
@@ -540,11 +540,11 @@ panels:
         editorMode: code
         expr: >-
           sum by (service)
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service", code=~"^[45]\\d{2}"}[$__interval] offset
+          (increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service", code=~"^[45]\\d{2}"}[$__interval] offset
           -$__interval))/
 
           sum by (service)
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service"}[$__interval] offset -$__interval)>0)*100
+          (increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$__interval] offset -$__interval)>0)*100
         format: time_series
         interval: ""
         intervalFactor: 1
@@ -689,7 +689,7 @@ panels:
         expr: >-
           sum by (code) (
           label_replace(
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service", protocol="http"}[$__interval] offset -$__interval )) >
+          (increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service"}[$__interval] offset -$__interval )) >
           0,
             "code", "HTTP ${1}00-${1}99", "code", "^([0-9]).+"
           ))
@@ -706,7 +706,7 @@ panels:
         editorMode: code
         expr: >-
           sum by ()
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service", protocol="http"}[$__interval] offset -$__interval)) > 0
+          (increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service"}[$__interval] offset -$__interval)) > 0
         interval: ""
         legendFormat: Total
         range: true
@@ -808,7 +808,7 @@ panels:
         editorMode: code
         expr: >-
           sum by (method)
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service", code!=""}[$__interval] offset -$__interval)) >
+          (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service", code!=""}[$__interval] offset -$__interval)) >
           0
         format: time_series
         interval: ""
@@ -823,7 +823,7 @@ panels:
         editorMode: code
         expr: >-
           sum by ()
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service"}[$__interval] offset -$__interval)) > 0
+          (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$__interval] offset -$__interval)) > 0
         interval: ""
         legendFormat: Total
         range: true
@@ -917,7 +917,7 @@ panels:
         editorMode: code
         expr: >-
           sum by (method, code)
-          (increase(traefik_entrypoint_requests_total{service_namespace=~"$namespace", entrypoint=~"$entrypoint", code=~"^2\\d{2}"}[$__interval] offset
+          (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint", protocol="http", code=~"^2\\d{2}"}[$__interval] offset
           -$__interval)) > 0
         format: time_series
         intervalFactor: 1
@@ -1004,7 +1004,7 @@ panels:
         editorMode: code
         expr: >-
           sum by (method, code)
-          (increase(traefik_entrypoint_requests_total{service_namespace=~"$namespace", entrypoint=~"$entrypoint", code!~"^2\\d{2}"}[$__interval] offset
+          (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint", protocol=~"$protocol", code!~"^2\\d{2}"}[$__interval] offset
           -$__interval)) > 0
         format: time_series
         intervalFactor: 1
@@ -1061,7 +1061,7 @@ panels:
         editorMode: code
         expr: >-
           sum by (service)
-          (increase(traefik_service_requests_total{service_namespace=~"$namespace", service=~"$service"}[$__interval] offset -$__interval)) > 0
+          (increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$__interval] offset -$__interval)) > 0
         format: time_series
         interval: ""
         intervalFactor: 2
@@ -1118,7 +1118,7 @@ panels:
         editorMode: code
         expr: >-
           sum by (protocol, entrypoint)
-          (increase(traefik_entrypoint_requests_total{service_namespace=~"$namespace", entrypoint=~"$entrypoint"}[$__interval] offset -$__interval)) > 0
+          (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint"}[$__interval] offset -$__interval)) > 0
         format: time_series
         interval: ""
         intervalFactor: 2
@@ -1531,7 +1531,29 @@ templating:
       refresh: 1
       regex: ""
       type: query
-    - current:
+    - allValue: .+
+      current:
+        text: All
+        value: $__all
+      datasource:
+        type: prometheus
+        uid:
+          secret: openobserve-prometheus-datasource-uid
+      definition: label_values(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint"}, protocol)
+      includeAll: true
+      label: Protocol
+      multi: true
+      name: protocol
+      options: []
+      query:
+        qryType: 1
+        query: label_values(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint"}, protocol)
+        refId: PrometheusVariableQueryEditor-VariableQuery
+      refresh: 2
+      regex: ""
+      type: query
+    - allValue: .+
+      current:
         text: All
         value: $__all
       datasource:
