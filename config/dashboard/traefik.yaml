@@ -1132,7 +1132,7 @@ panels:
       h: 1
       w: 24
       x: 0
-      y: 48
+      y: 50
     panels:
       - datasource:
           type: openobserve
@@ -1161,7 +1161,7 @@ panels:
           h: 20
           w: 24
           x: 0
-          y: 49
+          y: 51
         id: 2
         options:
           cellHeight: sm
@@ -1281,7 +1281,7 @@ panels:
         refId: geolocation
         sqlMode: true
         stream: traefik
-    title: Geographic Distribution
+    title: Geographic distribution
     type: geomap
   - datasource:
       type: openobserve
@@ -1290,44 +1290,66 @@ panels:
     fieldConfig:
       defaults:
         color:
-          mode: thresholds
-        fieldMinMax: false
+          mode: palette-classic
+        custom:
+          axisBorderShow: false
+          axisCenteredZero: false
+          axisColorMode: text
+          axisLabel: ""
+          axisPlacement: auto
+          barAlignment: 1
+          barWidthFactor: 0.6
+          drawStyle: bars
+          fillOpacity: 100
+          gradientMode: none
+          hideFrom:
+            legend: false
+            tooltip: false
+            viz: false
+          insertNulls: false
+          lineInterpolation: linear
+          lineWidth: 1
+          pointSize: 5
+          scaleDistribution:
+            type: linear
+          showPoints: never
+          showValues: false
+          spanNulls: false
+          stacking:
+            group: A
+            mode: normal
+          thresholdsStyle:
+            mode: "off"
+        decimals: 0
+        links: []
         mappings: []
         thresholds:
           mode: percentage
           steps:
             - color: green
               value: 0
-      overrides: []
+        unit: short
     gridPos:
       h: 8
       w: 12
       x: 12
       y: 34
+    interval: $agg_interval
     options:
-      displayMode: basic
       legend:
-        calcs: []
-        displayMode: list
-        placement: bottom
-        showLegend: false
-      maxVizHeight: 30
-      minVizHeight: 30
-      minVizWidth: 8
-      namePlacement: top
-      orientation: horizontal
-      reduceOptions:
         calcs:
-          - lastNotNull
-        fields: ""
-        limit: 500
-        values: true
-      showUnfilled: false
-      sizing: manual
-      text:
-        titleSize: 13
-        valueSize: 13
-      valueMode: text
+          - mean
+          - max
+          - sum
+        displayMode: table
+        placement: right
+        showLegend: true
+        sortBy: Total
+        sortDesc: true
+      tooltip:
+        hideZeros: false
+        mode: multi
+        sort: desc
     targets:
       - datasource:
           type: openobserve
@@ -1336,13 +1358,27 @@ panels:
         displayMode: auto
         organization: default
         query: >-
-          select coalesce(geoip_country_name, geoip_registered_country_name) as country_name, count(*) as request_count
-          from traefik group by country_name having country_name is not null order by request_count desc
+          select histogram(_timestamp, '$__interval') as ts, coalesce(geoip_country_name, geoip_registered_country_name) as country_name,
+          count(*) as count from traefik where geoip_registered_country_name is not null and _timestamp >= $__from * 1000 and _timestamp <= $__to * 1000
+          and (('$service' = 'null' and service_name is null) or re_match(service_name, '$service'))
+          group by ts, country_name order by ts
         refId: A
         sqlMode: true
         stream: traefik
-    title: Top Countries
-    type: bargauge
+    title: Top countries/$__interval
+    transformations:
+      - id: partitionByValues
+        options:
+          fields:
+            - country_name
+          keepFields: false
+          naming:
+            asLabels: true
+      - id: renameByRegex
+        options:
+          regex: ^count (.*)
+          renamePattern: $1
+    type: timeseries
   - datasource:
       type: openobserve
       uid:
@@ -1398,8 +1434,8 @@ panels:
             - id: displayName
               value: Request Count
     gridPos:
-      h: 6
-      w: 16
+      h: 8
+      w: 12
       x: 0
       y: 42
     options:
@@ -1422,7 +1458,7 @@ panels:
         refId: A
         sqlMode: true
         stream: traefik
-    title: Top Blocked ASNs
+    title: Top blocked ASNs
     type: table
   - datasource:
       type: openobserve
@@ -1431,44 +1467,66 @@ panels:
     fieldConfig:
       defaults:
         color:
-          mode: thresholds
-        fieldMinMax: false
+          mode: palette-classic
+        custom:
+          axisBorderShow: false
+          axisCenteredZero: false
+          axisColorMode: text
+          axisLabel: ""
+          axisPlacement: auto
+          barAlignment: 1
+          barWidthFactor: 0.6
+          drawStyle: bars
+          fillOpacity: 100
+          gradientMode: none
+          hideFrom:
+            legend: false
+            tooltip: false
+            viz: false
+          insertNulls: false
+          lineInterpolation: linear
+          lineWidth: 1
+          pointSize: 5
+          scaleDistribution:
+            type: linear
+          showPoints: never
+          showValues: false
+          spanNulls: false
+          stacking:
+            group: A
+            mode: normal
+          thresholdsStyle:
+            mode: "off"
+        decimals: 0
+        links: []
         mappings: []
         thresholds:
           mode: percentage
           steps:
-            - color: red
+            - color: green
               value: 0
-      overrides: []
+        unit: short
     gridPos:
-      h: 6
-      w: 8
+      h: 8
+      w: 12
       x: 16
       y: 42
+    interval: $agg_interval
     options:
-      displayMode: basic
       legend:
-        calcs: []
-        displayMode: list
-        placement: bottom
-        showLegend: false
-      maxVizHeight: 30
-      minVizHeight: 30
-      minVizWidth: 8
-      namePlacement: top
-      orientation: horizontal
-      reduceOptions:
         calcs:
-          - lastNotNull
-        fields: ""
-        limit: 500
-        values: true
-      showUnfilled: false
-      sizing: manual
-      text:
-        titleSize: 13
-        valueSize: 13
-      valueMode: text
+          - mean
+          - max
+          - sum
+        displayMode: table
+        placement: right
+        showLegend: true
+        sortBy: Total
+        sortDesc: true
+      tooltip:
+        hideZeros: false
+        mode: multi
+        sort: desc
     targets:
       - datasource:
           type: openobserve
@@ -1477,14 +1535,27 @@ panels:
         displayMode: auto
         organization: default
         query: >-
-          select coalesce(geoip_country_name, geoip_registered_country_name) as country_name, count(*) as request_count
-          from traefik where downstream_x_geoblock_remediation is not null or downstream_x_crowdsec_remediation = 'ban'
-          group by country_name order by request_count desc
+          select histogram(_timestamp, '$__interval') as ts, coalesce(geoip_country_name, geoip_registered_country_name) as country_name,
+          count(*) as count from traefik where geoip_registered_country_name is not null and _timestamp >= $__from * 1000 and _timestamp <= $__to * 1000
+          and downstream_x_geoblock_remediation is not null or downstream_x_crowdsec_remediation = 'ban'
+          group by ts, country_name order by ts
         refId: A
         sqlMode: true
         stream: traefik
-    title: Top Blocked Countries
-    type: bargauge
+    title: Top blocked countries/$__interval
+    transformations:
+      - id: partitionByValues
+        options:
+          fields:
+            - country_name
+          keepFields: false
+          naming:
+            asLabels: true
+      - id: renameByRegex
+        options:
+          regex: ^count (.*)
+          renamePattern: $1
+    type: timeseries
 preload: false
 schemaVersion: 42
 tags: []
@@ -1560,7 +1631,7 @@ templating:
         type: prometheus
         uid:
           secret: openobserve-prometheus-datasource-uid
-      definition: label_values(traefik_service_requests_total{service_namespace="$namespace"}, service)
+      definition: label_values(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol"}, service)
       includeAll: true
       label: Service
       multi: true
@@ -1568,10 +1639,14 @@ templating:
       options: []
       query:
         qryType: 1
-        query: label_values(traefik_service_requests_total{service_namespace="$namespace"}, service)
+        query: label_values(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol"}, service)
         refId: PrometheusVariableQueryEditor-VariableQuery
       refresh: 2
       regex: ""
+      staticOptions:
+        - text: "null"
+          value: "null"
+      staticOptionsOrder: after
       type: query
     - auto: true
       auto_count: 100
