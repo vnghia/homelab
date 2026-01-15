@@ -102,3 +102,4 @@ services:
               encode: base64
         ZO_MMDB_DISABLE_DOWNLOAD: true
         ZO_META_STORE: postgres
+        ZO_QUERY_DEFAULT_LIMIT: 10000000000
