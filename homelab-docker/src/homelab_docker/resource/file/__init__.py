@@ -8,6 +8,7 @@ import typing
 from pathlib import PosixPath
 from typing import Any
 
+import pulumi
 from docker.errors import NotFound
 from homelab_pydantic import AbsolutePath, HomelabBaseModel
 from pulumi import Input, Output, ResourceOptions
@@ -19,7 +20,12 @@ from pulumi.dynamic import (
     ResourceProvider,
     UpdateResult,
 )
-from pydantic import computed_field, model_validator
+from pydantic import (
+    ValidatorFunctionWrapHandler,
+    computed_field,
+    field_validator,
+    model_validator,
+)
 
 from ...client import DockerClient
 from ...model.docker.container.volume_path import ContainerVolumePath
@@ -51,6 +57,18 @@ class FileProviderProps(HomelabBaseModel):
         if isinstance(data, dict):
             data.pop("hash", None)
         return data
+
+    @field_validator("data", mode="wrap")
+    @classmethod
+    def ignore_pulumi_unknown(
+        cls, data: Any, handler: ValidatorFunctionWrapHandler
+    ) -> Any:
+        if isinstance(data, pulumi.output.Unknown):
+            pulumi.log.warn(
+                "Pulumi unknown output encountered with {}.".format(cls.__name__)
+            )
+            return ""
+        return handler(data)
 
 
 class FileVolumeProxy:
