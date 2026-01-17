@@ -10,12 +10,16 @@ services:
                   types:
                     backup: ""
                   main:
-                    READ_DATA: true
+                    READ_DATA: false
+                    READ_DATA_SUBSET: 2T
               command:
                 - "check"
                 - param: READ_DATA
                   transform:
                     template: "--read-data={value}"
+                - param: READ_DATA_SUBSET
+                  transform:
+                    template: "--read-data-subset={value}"
             forget:
               dag:
                 params:
