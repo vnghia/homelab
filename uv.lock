@@ -684,6 +684,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
+    { name = "orjson" },
     { name = "pulumi" },
 ]
 
@@ -694,6 +695,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "orjson", specifier = ">=3.11.5" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
 
@@ -828,10 +830,12 @@ dependencies = [
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "homelab-restic" },
+    { name = "homelab-s3" },
     { name = "homelab-secret" },
     { name = "homelab-sequence" },
     { name = "homelab-vpn" },
     { name = "jsonschema" },
+    { name = "orjson" },
     { name = "paramiko" },
     { name = "pulumi" },
     { name = "pulumi-docker" },
@@ -840,8 +844,8 @@ dependencies = [
     { name = "pulumi-tls" },
     { name = "pydantic" },
     { name = "pydantic-extra-types" },
-    { name = "pyyaml" },
-    { name = "tomlkit" },
+    { name = "rtoml" },
+    { name = "yaml-rs" },
 ]
 
 [package.dev-dependencies]
@@ -849,7 +853,6 @@ dev = [
     { name = "types-docker" },
     { name = "types-jsonschema" },
     { name = "types-paramiko" },
-    { name = "types-pyyaml" },
 ]
 
 [package.metadata]
@@ -861,10 +864,12 @@ requires-dist = [
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-restic", editable = "homelab-restic" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "homelab-sequence", editable = "homelab-sequence" },
     { name = "homelab-vpn", editable = "homelab-vpn" },
     { name = "jsonschema", specifier = ">=4.23.0" },
+    { name = "orjson", specifier = ">=3.11.5" },
     { name = "paramiko", specifier = ">=4.0.0" },
     { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pulumi-docker", specifier = ">=4.6.1" },
@@ -873,8 +878,8 @@ requires-dist = [
     { name = "pulumi-tls", specifier = ">=5.2.2" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pydantic-extra-types", specifier = ">=2.10.2" },
-    { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "tomlkit", specifier = ">=0.13.2" },
+    { name = "rtoml", specifier = ">=0.13.0" },
+    { name = "yaml-rs", specifier = ">=0.0.9" },
 ]
 
 [package.metadata.requires-dev]
@@ -882,7 +887,6 @@ dev = [
     { name = "types-docker", specifier = ">=7.1.0.20241229" },
     { name = "types-jsonschema", specifier = ">=4.23.0.20241208" },
     { name = "types-paramiko", specifier = ">=4.0.0.20250822" },
-    { name = "types-pyyaml", specifier = ">=6.0.12.20241230" },
 ]
 
 [[package]]
@@ -892,7 +896,6 @@ source = { editable = "service/homelab-extra-service" }
 dependencies = [
     { name = "homelab-dagu-config" },
     { name = "homelab-docker" },
-    { name = "homelab-s3-config" },
     { name = "homelab-traefik-config" },
     { name = "pulumi" },
 ]
@@ -901,7 +904,6 @@ dependencies = [
 requires-dist = [
     { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
     { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
@@ -956,6 +958,7 @@ dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
     { name = "homelab-traefik-config" },
+    { name = "orjson" },
     { name = "pexpect" },
     { name = "pulumi" },
     { name = "pydantic" },
@@ -973,6 +976,7 @@ requires-dist = [
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
+    { name = "orjson", specifier = ">=3.11.5" },
     { name = "pexpect", specifier = ">=4.9.0" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -1092,6 +1096,7 @@ dependencies = [
     { name = "homelab-litestream-service" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
+    { name = "pydantic" },
 ]
 
 [package.metadata]
@@ -1105,6 +1110,7 @@ requires-dist = [
     { name = "homelab-litestream-service", editable = "service/homelab-litestream-service" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.150.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]
@@ -1563,6 +1569,29 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6a/51/63fe664f3908c97be9d2e4f1158eb633317598cfa6e1fc14af5383f17512/networkx-3.6.1.tar.gz", hash = "sha256:26b7c357accc0c8cde558ad486283728b65b6a95d85ee1cd66bafab4c8168509", size = 2517025, upload-time = "2025-12-08T17:02:39.908Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9e/c9/b2622292ea83fbb4ec318f5b9ab867d0a28ab43c5717bb85b0a5f6b3b0a4/networkx-3.6.1-py3-none-any.whl", hash = "sha256:d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f3762", size = 2068504, upload-time = "2025-12-08T17:02:38.159Z" },
+]
+
+[[package]]
+name = "orjson"
+version = "3.11.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/04/b8/333fdb27840f3bf04022d21b654a35f58e15407183aeb16f3b41aa053446/orjson-3.11.5.tar.gz", hash = "sha256:82393ab47b4fe44ffd0a7659fa9cfaacc717eb617c93cde83795f14af5c2e9d5", size = 5972347, upload-time = "2025-12-06T15:55:39.458Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c2/60/77d7b839e317ead7bb225d55bb50f7ea75f47afc489c81199befc5435b50/orjson-3.11.5-cp314-cp314-macosx_10_15_x86_64.macosx_11_0_arm64.macosx_10_15_universal2.whl", hash = "sha256:e446a8ea0a4c366ceafc7d97067bfd55292969143b57e3c846d87fc701e797a0", size = 245252, upload-time = "2025-12-06T15:55:01.127Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/aa/d4639163b400f8044cef0fb9aa51b0337be0da3a27187a20d1166e742370/orjson-3.11.5-cp314-cp314-macosx_15_0_arm64.whl", hash = "sha256:53deb5addae9c22bbe3739298f5f2196afa881ea75944e7720681c7080909a81", size = 129419, upload-time = "2025-12-06T15:55:02.723Z" },
+    { url = "https://files.pythonhosted.org/packages/30/94/9eabf94f2e11c671111139edf5ec410d2f21e6feee717804f7e8872d883f/orjson-3.11.5-cp314-cp314-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:82cd00d49d6063d2b8791da5d4f9d20539c5951f965e45ccf4e96d33505ce68f", size = 132050, upload-time = "2025-12-06T15:55:03.918Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/c8/ca10f5c5322f341ea9a9f1097e140be17a88f88d1cfdd29df522970d9744/orjson-3.11.5-cp314-cp314-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:3fd15f9fc8c203aeceff4fda211157fad114dde66e92e24097b3647a08f4ee9e", size = 130370, upload-time = "2025-12-06T15:55:05.173Z" },
+    { url = "https://files.pythonhosted.org/packages/25/d4/e96824476d361ee2edd5c6290ceb8d7edf88d81148a6ce172fc00278ca7f/orjson-3.11.5-cp314-cp314-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:9df95000fbe6777bf9820ae82ab7578e8662051bb5f83d71a28992f539d2cda7", size = 136012, upload-time = "2025-12-06T15:55:06.402Z" },
+    { url = "https://files.pythonhosted.org/packages/85/8e/9bc3423308c425c588903f2d103cfcfe2539e07a25d6522900645a6f257f/orjson-3.11.5-cp314-cp314-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:92a8d676748fca47ade5bc3da7430ed7767afe51b2f8100e3cd65e151c0eaceb", size = 139809, upload-time = "2025-12-06T15:55:07.656Z" },
+    { url = "https://files.pythonhosted.org/packages/e9/3c/b404e94e0b02a232b957c54643ce68d0268dacb67ac33ffdee24008c8b27/orjson-3.11.5-cp314-cp314-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:aa0f513be38b40234c77975e68805506cad5d57b3dfd8fe3baa7f4f4051e15b4", size = 137332, upload-time = "2025-12-06T15:55:08.961Z" },
+    { url = "https://files.pythonhosted.org/packages/51/30/cc2d69d5ce0ad9b84811cdf4a0cd5362ac27205a921da524ff42f26d65e0/orjson-3.11.5-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fa1863e75b92891f553b7922ce4ee10ed06db061e104f2b7815de80cdcb135ad", size = 138983, upload-time = "2025-12-06T15:55:10.595Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/87/de3223944a3e297d4707d2fe3b1ffb71437550e165eaf0ca8bbe43ccbcb1/orjson-3.11.5-cp314-cp314-musllinux_1_2_aarch64.whl", hash = "sha256:d4be86b58e9ea262617b8ca6251a2f0d63cc132a6da4b5fcc8e0a4128782c829", size = 141069, upload-time = "2025-12-06T15:55:11.832Z" },
+    { url = "https://files.pythonhosted.org/packages/65/30/81d5087ae74be33bcae3ff2d80f5ccaa4a8fedc6d39bf65a427a95b8977f/orjson-3.11.5-cp314-cp314-musllinux_1_2_armv7l.whl", hash = "sha256:b923c1c13fa02084eb38c9c065afd860a5cff58026813319a06949c3af5732ac", size = 413491, upload-time = "2025-12-06T15:55:13.314Z" },
+    { url = "https://files.pythonhosted.org/packages/d0/6f/f6058c21e2fc1efaf918986dbc2da5cd38044f1a2d4b7b91ad17c4acf786/orjson-3.11.5-cp314-cp314-musllinux_1_2_i686.whl", hash = "sha256:1b6bd351202b2cd987f35a13b5e16471cf4d952b42a73c391cc537974c43ef6d", size = 151375, upload-time = "2025-12-06T15:55:14.715Z" },
+    { url = "https://files.pythonhosted.org/packages/54/92/c6921f17d45e110892899a7a563a925b2273d929959ce2ad89e2525b885b/orjson-3.11.5-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:bb150d529637d541e6af06bbe3d02f5498d628b7f98267ff87647584293ab439", size = 141850, upload-time = "2025-12-06T15:55:15.94Z" },
+    { url = "https://files.pythonhosted.org/packages/88/86/cdecb0140a05e1a477b81f24739da93b25070ee01ce7f7242f44a6437594/orjson-3.11.5-cp314-cp314-win32.whl", hash = "sha256:9cc1e55c884921434a84a0c3dd2699eb9f92e7b441d7f53f3941079ec6ce7499", size = 135278, upload-time = "2025-12-06T15:55:17.202Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/97/b638d69b1e947d24f6109216997e38922d54dcdcdb1b11c18d7efd2d3c59/orjson-3.11.5-cp314-cp314-win_amd64.whl", hash = "sha256:a4f3cb2d874e03bc7767c8f88adaa1a9a05cecea3712649c3b58589ec7317310", size = 133170, upload-time = "2025-12-06T15:55:18.468Z" },
+    { url = "https://files.pythonhosted.org/packages/8f/dd/f4fff4a6fe601b4f8f3ba3aa6da8ac33d17d124491a3b804c662a70e1636/orjson-3.11.5-cp314-cp314-win_arm64.whl", hash = "sha256:38b22f476c351f9a1c43e5b07d8b5a02eb24a6ab8e75f700f7d479d4568346a5", size = 126713, upload-time = "2025-12-06T15:55:19.738Z" },
 ]
 
 [[package]]
@@ -2088,6 +2117,27 @@ wheels = [
 ]
 
 [[package]]
+name = "rtoml"
+version = "0.13.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e9/11/2655729f675411fc82588d6cf598758a2339d56c5a2fa6eb89f3302ec484/rtoml-0.13.0.tar.gz", hash = "sha256:974522c887b47abc0bb62ee8ae9e44d3a0c2cdac9d60ba0ed01c5a40df0ea424", size = 43171, upload-time = "2025-10-19T04:59:00.262Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/28/51/07a144e0fd7fa0f2273a8a65e7ede19aa59ffac13b15c8344c462eaa0689/rtoml-0.13.0-cp314-cp314-macosx_10_12_x86_64.whl", hash = "sha256:566f8f8e6dc2e965972b0d8f7c856e4920c443815e9d29a895ae04d588d9b48f", size = 329514, upload-time = "2025-10-19T04:58:46.796Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/b1/0205f688f83051457c1553fc152dc0617fe39acb2377cb0a657ff467a825/rtoml-0.13.0-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:e5634d2079c8912958791973e0a4cfed311660286bfb6b14698294735ede7b7d", size = 312328, upload-time = "2025-10-19T04:58:47.857Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/11/1b5205c03e7644b39112231a905691c9c24caab8bbeb08507e8e43a064c5/rtoml-0.13.0-cp314-cp314-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:18a141e0ea5ec8e0be88726d768956affe4a937b109421567cbd4dfdc5016d0c", size = 338687, upload-time = "2025-10-19T04:58:49.028Z" },
+    { url = "https://files.pythonhosted.org/packages/38/56/5709af9938727211b5883ad66b03a86b19b3d6544388115e4e39d506afc8/rtoml-0.13.0-cp314-cp314-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:55b003f31a87f49dd941d02aac84b7c4d8cfbd1dfcc80d7a6a71835c72ddd74f", size = 365670, upload-time = "2025-10-19T04:58:49.988Z" },
+    { url = "https://files.pythonhosted.org/packages/0d/a6/99fa1618beca99f62b5a156874eb5752fe51eb78e3f0363c9533d34fd9dc/rtoml-0.13.0-cp314-cp314-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:9c7ade406218833fbbc97ceca92050c02f4d724045770eb9020be1b3d97df455", size = 382240, upload-time = "2025-10-19T04:58:50.954Z" },
+    { url = "https://files.pythonhosted.org/packages/88/0e/23f7719656bdabeee1731b46443ea1d3aaecdde702142bcd7757a4ab75b2/rtoml-0.13.0-cp314-cp314-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:c84d8b77cd0dbb5cf1da33846d5c5fd02536c06ab5ab560e90e4ca2920942b58", size = 406158, upload-time = "2025-10-19T04:58:51.925Z" },
+    { url = "https://files.pythonhosted.org/packages/60/66/07df2e5f99f17696a46fd6cbc5c9d279422b1652f0d130a122418ee077ea/rtoml-0.13.0-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:95a229595254449cbf0b2e396f1b444ed8a0c259f78bab505326bb2a1e4239ff", size = 345644, upload-time = "2025-10-19T04:58:52.839Z" },
+    { url = "https://files.pythonhosted.org/packages/83/fc/32efd575a5b1f6674675dd8ed181c7cca81fa315b8411df23f91251b2fd6/rtoml-0.13.0-cp314-cp314-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:a3bf2a94df8bb22642fbd263b17aa6b7822384a756204c1da9ae05c4c5c749f9", size = 372629, upload-time = "2025-10-19T04:58:53.846Z" },
+    { url = "https://files.pythonhosted.org/packages/77/ca/e70ee8457ea07885b885848e07ac07590f9e70e8a57b564e2cb23583dcca/rtoml-0.13.0-cp314-cp314-musllinux_1_1_aarch64.whl", hash = "sha256:8377affbcf36c4fc8360778015c82972b4d0134faacee426ec37e8e7afcf3855", size = 519169, upload-time = "2025-10-19T04:58:54.754Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/20/2eb6fab37a545902fe634318e33c1d2199ae4f3be3b522da1dc5f7563a74/rtoml-0.13.0-cp314-cp314-musllinux_1_1_x86_64.whl", hash = "sha256:b844b95939cc4f7b88d99fc874a191957d218ecf057bdc381745ad58e953361b", size = 518186, upload-time = "2025-10-19T04:58:55.705Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/1c/f1251b42591aaab0feb2d9a4ab8c9c6f49511f2bae6fea175d7db4111f13/rtoml-0.13.0-cp314-cp314-win32.whl", hash = "sha256:cadb00e9a4d09832d2842ae18638d27103c992ccfbc5a702eb14b6b40e4e0ed9", size = 217475, upload-time = "2025-10-19T04:58:57.211Z" },
+    { url = "https://files.pythonhosted.org/packages/fc/e5/db02ccd1aea7b17645b785b55c605c655959655f320f4fadfa1d293c914e/rtoml-0.13.0-cp314-cp314-win_amd64.whl", hash = "sha256:4f1c6fa1c31f2baabc1436e8b87997da2b960e61a5a4dac52f7f4e4ef7b6810c", size = 221608, upload-time = "2025-10-19T04:58:58.07Z" },
+    { url = "https://files.pythonhosted.org/packages/7a/63/48fd3207eb8f50566d871d86ea25cd86e4f2de2459229907e271272f58ac/rtoml-0.13.0-cp314-cp314-win_arm64.whl", hash = "sha256:f513e54f6788038bb6473564544b27cecd48dc2666fc066eb09f3759df4e3b42", size = 211938, upload-time = "2025-10-19T04:58:58.963Z" },
+]
+
+[[package]]
 name = "ruff"
 version = "0.14.9"
 source = { registry = "https://pypi.org/simple" }
@@ -2166,15 +2216,6 @@ wheels = [
 ]
 
 [[package]]
-name = "tomlkit"
-version = "0.13.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cc/18/0bbf3884e9eaa38819ebe46a7bd25dcd56b67434402b66a58c4b8e552575/tomlkit-0.13.3.tar.gz", hash = "sha256:430cf247ee57df2b94ee3fbe588e71d362a941ebb545dec29b53961d61add2a1", size = 185207, upload-time = "2025-06-05T07:13:44.947Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bd/75/8539d011f6be8e29f339c42e633aae3cb73bffa95dd0f9adec09b9c58e85/tomlkit-0.13.3-py3-none-any.whl", hash = "sha256:c89c649d79ee40629a9fda55f8ace8c6a1b42deb912b2a8fd8d942ddadb606b0", size = 38901, upload-time = "2025-06-05T07:13:43.546Z" },
-]
-
-[[package]]
 name = "typeguard"
 version = "4.4.4"
 source = { registry = "https://pypi.org/simple" }
@@ -2231,15 +2272,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/0c/e6/cc43e306dc7de14ec7861c24ac4957f688741ae39ae685049695d796b587/types_pexpect-4.9.0.20250916.tar.gz", hash = "sha256:69e5fed6199687a730a572de780a5749248a4c5df2ff1521e194563475c9928d", size = 13322, upload-time = "2025-09-16T02:49:25.61Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/aa/6d/7740e235a9fb2570968da7d386d7feb511ce68cd23472402ff8cdf7fc78f/types_pexpect-4.9.0.20250916-py3-none-any.whl", hash = "sha256:7fa43cb96042ac58bc74f7c28e5d85782be0ee01344149886849e9d90936fe8a", size = 17057, upload-time = "2025-09-16T02:49:24.546Z" },
-]
-
-[[package]]
-name = "types-pyyaml"
-version = "6.0.12.20250915"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7e/69/3c51b36d04da19b92f9e815be12753125bd8bc247ba0470a982e6979e71c/types_pyyaml-6.0.12.20250915.tar.gz", hash = "sha256:0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3", size = 17522, upload-time = "2025-09-15T03:01:00.728Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bd/e0/1eed384f02555dde685fff1a1ac805c1c7dcb6dd019c916fe659b1c1f9ec/types_pyyaml-6.0.12.20250915-py3-none-any.whl", hash = "sha256:e7d4d9e064e89a3b3cae120b4990cd370874d2bf12fa5f46c97018dd5d3c9ab6", size = 20338, upload-time = "2025-09-15T03:00:59.218Z" },
 ]
 
 [[package]]

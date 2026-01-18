@@ -4,8 +4,8 @@ import io
 from typing import Any, ClassVar, Generic, Mapping, TypeVar
 
 import jsonschema
-import tomlkit
-import yaml
+import rtoml
+import yaml_rs
 from homelab_pydantic import BaseModel, DictAdapter, HomelabRootModel
 from pulumi import Output, ResourceOptions
 from pydantic import model_validator
@@ -33,9 +33,17 @@ class JsonDefaultModel(HomelabRootModel[dict[str, Any]]):
 
 
 class ConfigDumper(Generic[T]):
-    @staticmethod
+    @classmethod
     @abc.abstractmethod
-    def dumps(data: T) -> str: ...
+    def dumps_any(cls, data: Any) -> str: ...
+
+    @classmethod
+    def dumps(cls, data: T) -> str:
+        return cls.dumps_any(
+            data.model_dump(
+                mode="json", by_alias=True, exclude_unset=True, exclude_none=True
+            )
+        )
 
     @staticmethod
     @abc.abstractmethod
@@ -43,14 +51,9 @@ class ConfigDumper(Generic[T]):
 
 
 class TomlDumper(ConfigDumper[T]):
-    @staticmethod
-    def dumps(data: T) -> str:
-        return tomlkit.dumps(
-            data.model_dump(
-                mode="json", by_alias=True, exclude_unset=True, exclude_none=True
-            ),
-            sort_keys=True,
-        )
+    @classmethod
+    def dumps_any(cls, data: Any) -> str:
+        return rtoml.dumps(data, none_value=None)
 
     @staticmethod
     def suffix() -> str:
@@ -58,10 +61,10 @@ class TomlDumper(ConfigDumper[T]):
 
 
 class IniDumper(ConfigDumper[T]):
-    @staticmethod
-    def dumps(data: T) -> str:
+    @classmethod
+    def dumps_any(cls, data: Any) -> str:
         parser = configparser.ConfigParser()
-        for name, section in data.model_dump(by_alias=True).items():
+        for name, section in data.items():
             parser.add_section(name)
             for option, value in DictAdapter.validate_python(section).items():
                 parser.set(name, option, value)
@@ -77,15 +80,9 @@ class IniDumper(ConfigDumper[T]):
 
 
 class YamlDumper(ConfigDumper[T]):
-    @staticmethod
-    def dumps(data: T) -> str:
-        return yaml.dump(
-            data.model_dump(
-                mode="json", by_alias=True, exclude_unset=True, exclude_none=True
-            ),
-            default_flow_style=False,
-            sort_keys=True,
-        )
+    @classmethod
+    def dumps_any(cls, data: Any) -> str:
+        return yaml_rs.dumps(data)
 
     @staticmethod
     def suffix() -> str:

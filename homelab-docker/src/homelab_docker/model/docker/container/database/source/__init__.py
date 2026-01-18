@@ -1,8 +1,8 @@
 import dataclasses
-import json
 import urllib.parse
 from abc import abstractmethod
 
+import orjson
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Input, Output
 from pydantic import PositiveInt
@@ -59,7 +59,7 @@ class ContainerDatabaseSourceModel:
             }
         ).apply(
             lambda x: " ".join(
-                "{}={}".format(k, v) for k, v in (json.loads(x) | query).items()
+                "{}={}".format(k, v) for k, v in (orjson.loads(x) | query).items()
             )
         )
 

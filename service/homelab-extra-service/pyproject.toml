@@ -8,7 +8,6 @@ dependencies = [
     "homelab-dagu-config",
     "homelab-traefik-config",
     "pulumi>=3.148.0",
-    "homelab-s3-config",
 ]
 
 [build-system]

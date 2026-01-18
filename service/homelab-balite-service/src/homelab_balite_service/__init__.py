@@ -1,7 +1,7 @@
-import json
 from collections import defaultdict
 from pathlib import PosixPath
 
+import orjson
 from homelab_backup.config import BackupHostConfig
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.model.docker.container.volume import ContainerVolumeConfig
@@ -53,7 +53,7 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
 
             groups[service].append(volume_name)
             group_all.add(service)
-            profiles[volume_name] = sqlite_backup_args.dbs
+            profiles[volume_name] = [db.as_posix() for db in sqlite_backup_args.dbs]
 
         groups[backup_host_config.BACKUP_KEY_VALUE] = sorted(group_all)
 
@@ -61,8 +61,8 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
             {
                 "BALITE_SOURCE_DIR": self.BALITE_DATA_PATH.as_posix(),
                 "BALITE_DESTINATION_DIR": self.BALITE_BACKUP_PATH.as_posix(),
-                "BALITE_GROUPS": json.dumps(groups),
-                "BALITE_PROFILES": json.dumps(profiles),
+                "BALITE_GROUPS": orjson.dumps(groups).decode(),
+                "BALITE_PROFILES": orjson.dumps(profiles).decode(),
             }
         )
 

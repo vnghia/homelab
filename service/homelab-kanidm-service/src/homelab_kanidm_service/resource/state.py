@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import json
 import shutil
 import subprocess
 import tempfile
 import typing
 from typing import Any, ClassVar
 
+import orjson
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file.config import JsonDefaultModel
 from homelab_pydantic import HomelabBaseModel
@@ -52,9 +52,9 @@ class KanidmStateProviderProps(HomelabBaseModel):
         if not binary:
             raise ValueError("{} is not installed".format(self.BINARY))
 
-        with tempfile.NamedTemporaryFile(mode="w") as file:
+        with tempfile.NamedTemporaryFile(mode="w+b") as file:
             state = self.rename_key(self.state.model_dump(mode="json"), True)
-            json.dump(state, file)
+            file.write(orjson.dumps(state))
             file.flush()
 
             subprocess.check_call(

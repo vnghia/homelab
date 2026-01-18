@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+import orjson
 from homelab_extract.config import GlobalExtractConfigFormat, GlobalExtractConfigSource
 from pulumi import Output
 
@@ -13,7 +14,7 @@ if typing.TYPE_CHECKING:
 
 class GlobalConfigSourceExtractor(ExtractorBase[GlobalExtractConfigSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
-        from ..resource.file.config import JsonDefaultModel, TomlDumper, YamlDumper
+        from ..resource.file.config import TomlDumper, YamlDumper
         from .global_ import GlobalExtractor
 
         json_data = Output.json_dumps(
@@ -24,10 +25,6 @@ class GlobalConfigSourceExtractor(ExtractorBase[GlobalExtractConfigSource]):
             case GlobalExtractConfigFormat.JSON:
                 return json_data
             case GlobalExtractConfigFormat.YAML:
-                return json_data.apply(JsonDefaultModel.model_validate_json).apply(
-                    YamlDumper.dumps
-                )
+                return json_data.apply(orjson.loads).apply(YamlDumper.dumps_any)
             case GlobalExtractConfigFormat.TOML:
-                return json_data.apply(JsonDefaultModel.model_validate_json).apply(
-                    TomlDumper.dumps
-                )
+                return json_data.apply(orjson.loads).apply(TomlDumper.dumps_any)

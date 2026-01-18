@@ -13,6 +13,7 @@ dependencies = [
     "pulumi>=3.150.0",
     "homelab-extract",
     "homelab-dagu-config",
+    "pydantic>=2.10.6",
 ]
 
 [build-system]
