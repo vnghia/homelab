@@ -84,13 +84,15 @@ services:
         image: docker-cli
         docker-socket:
           write: false
+        # TODO: use `docker kill` after https://github.com/moby/moby/issues/41302
         command:
-          - "kill"
-          - "--signal"
-          - "SIGHUP"
+          - "exec"
           - container:
             extract:
               cinfo: id
+          - "/bin/sh"
+          - "-c"
+          - "kill -s HUP 1"
         volumes:
           vector-config:
             path: /etc/vector

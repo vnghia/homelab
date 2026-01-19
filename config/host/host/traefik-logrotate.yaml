@@ -41,7 +41,7 @@ services:
                   missingok
                   notifempty
                   postrotate
-                    docker kill --signal=USR1 $(docker ps --no-trunc --quiet --filter='label=dev.dozzle.name=traefik')
+                    docker exec $(docker ps --no-trunc --quiet --filter='label=dev.dozzle.name=traefik') /bin/sh -c "kill -s USR1 1"
                   endscript
                   rotate {rotate}
                   {sizekey} {sizevalue}
