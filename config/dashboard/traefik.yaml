@@ -1359,8 +1359,8 @@ panels:
         organization: default
         query: >-
           select histogram(_timestamp, '$__interval') as ts, coalesce(geoip_country_name, geoip_registered_country_name) as country_name,
-          count(*) as count from traefik where _timestamp >= $__from * 1000 and _timestamp <= $__to * 1000 and re_match(host, '$namespace')
-          and geoip_registered_country_name is not null and (('$service' = 'no-service' and service_name is null) or re_match(service_name, '$service'))
+          count(*) as count from traefik where re_match(host, '$namespace') and geoip_registered_country_name is not null
+          and (('$service' = 'no-service' and service_name is null) or re_match(service_name, '$service'))
           group by ts, country_name order by ts
         refId: A
         sqlMode: true
@@ -1536,8 +1536,8 @@ panels:
         organization: default
         query: >-
           select histogram(_timestamp, '$__interval') as ts, coalesce(geoip_country_name, geoip_registered_country_name) as country_name,
-          count(*) as count from traefik where _timestamp >= $__from * 1000 and _timestamp <= $__to * 1000 and re_match(host, '$namespace')
-          and geoip_registered_country_name is not null and (downstream_x_geoblock_remediation is not null or downstream_x_crowdsec_remediation = 'ban')
+          count(*) as count from traefik where re_match(host, '$namespace') and geoip_registered_country_name is not null
+          and (downstream_x_geoblock_remediation is not null or downstream_x_crowdsec_remediation = 'ban')
           group by ts, country_name order by ts
         refId: A
         sqlMode: true
