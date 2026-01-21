@@ -3,7 +3,7 @@ docker:
     remote:
       openobserve:
         repo: public.ecr.aws/zinclabs/openobserve
-        tag: v0.40.3
+        tag: v0.50.1
   volumes:
     local:
       openobserve-data: {}
@@ -102,4 +102,5 @@ services:
               encode: base64
         ZO_MMDB_DISABLE_DOWNLOAD: true
         ZO_META_STORE: postgres
+        # TODO: remove this after https://github.com/openobserve/openobserve/issues/10129
         ZO_QUERY_DEFAULT_LIMIT: 10000000000
