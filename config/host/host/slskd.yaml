@@ -3,7 +3,7 @@ docker:
     remote:
       slskd:
         repo: ghcr.io/slskd/slskd
-        tag: "0.24.2"
+        tag: "0.24.3"
   volumes:
     local:
       slskd-data:
