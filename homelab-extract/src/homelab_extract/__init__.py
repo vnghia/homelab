@@ -5,6 +5,7 @@ from typing import Self
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 from .config import GlobalExtractConfigSource
+from .context import GlobalExtractContextSource
 from .dict_ import GlobalExtractDictSource
 from .host import HostExtract
 from .include import GlobalExtractIncludeSource
@@ -20,6 +21,7 @@ from .variable import GlobalExtractVariableSource
 class GlobalExtractSource(
     HomelabRootModel[
         GlobalExtractConfigSource
+        | GlobalExtractContextSource
         | GlobalExtractDictSource
         | GlobalExtractIncludeSource
         | GlobalExtractKvSource

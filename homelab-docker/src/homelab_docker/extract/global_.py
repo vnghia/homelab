@@ -7,6 +7,7 @@ from typing import Any
 import pulumi_random as random
 from homelab_extract import GlobalExtract, GlobalExtractFull, GlobalExtractSource
 from homelab_extract.config import GlobalExtractConfigSource
+from homelab_extract.context import GlobalExtractContextSource
 from homelab_extract.dict_ import GlobalExtractDictSource
 from homelab_extract.include import GlobalExtractIncludeSource
 from homelab_extract.kv import GlobalExtractKvSource
@@ -21,6 +22,7 @@ from pydantic import ValidationError
 
 from . import ExtractorBase
 from .config import GlobalConfigSourceExtractor
+from .context import GlobalContextSourceExtractor
 from .dict_ import GlobalDictSourceExtractor
 from .host import HostExtractor
 from .include import GlobalIncludeSourceExtractor
@@ -43,6 +45,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         self,
     ) -> (
         GlobalConfigSourceExtractor
+        | GlobalContextSourceExtractor
         | GlobalDictSourceExtractor
         | GlobalIncludeSourceExtractor
         | GlobalKvSourceExtractor
@@ -55,6 +58,8 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
         root = self.root.root
         if isinstance(root, GlobalExtractConfigSource):
             return GlobalConfigSourceExtractor(root)
+        if isinstance(root, GlobalExtractContextSource):
+            return GlobalContextSourceExtractor(root)
         if isinstance(root, GlobalExtractDictSource):
             return GlobalDictSourceExtractor(root)
         if isinstance(root, GlobalExtractIncludeSource):

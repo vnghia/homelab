@@ -5,6 +5,7 @@ import typing
 from typing import Any, Protocol, Self, TypeVar
 
 import pulumi_random as random
+from homelab_extract import GlobalExtract
 from homelab_extract.plain import PlainArgs
 from homelab_global.resource import GlobalResource
 from homelab_pydantic import AbsolutePath, Hostnames
@@ -29,6 +30,7 @@ class ExtractorArgs:
     _host: HostResourceBase | HostServiceModelModel | None
     _service: ServiceResourceBase | ServiceModel | None
     _container: ContainerResource | ContainerModel | None
+    context: dict[str, GlobalExtract]
 
     @classmethod
     def from_host(
@@ -44,6 +46,7 @@ class ExtractorArgs:
             _host=host,
             _service=None,
             _container=None,
+            context={},
         )
 
     def from_service(
@@ -58,6 +61,7 @@ class ExtractorArgs:
             _container=service.containers.get(
                 container, service.container_models.get(container)
             ),
+            context=self.context,
         )
 
     @property
@@ -188,6 +192,7 @@ class ExtractorArgs:
             _service=self._service if same_host else None,
             # Clear the container if the host has changed
             _container=self._container if same_host else None,
+            context=self.context,
         )
 
     def with_service(self, service: ServiceResourceBase | ServiceModel | None) -> Self:
@@ -210,6 +215,7 @@ class ExtractorArgs:
                 or (service is None)
             )
             else None,
+            context=self.context,
         )
 
     def with_container(
@@ -222,6 +228,18 @@ class ExtractorArgs:
             _host=self._host,
             _service=self._service,
             _container=container or self._container,
+            context=self.context,
+        )
+
+    def with_context(self, context: dict[str, GlobalExtract]) -> Self:
+        return self.__class__(
+            plain_args=self.plain_args,
+            global_resource=self.global_resource,
+            config=self.config,
+            _host=self._host,
+            _service=self._service,
+            _container=self._container,
+            context=self.context | context,
         )
 
 
