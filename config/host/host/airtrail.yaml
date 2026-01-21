@@ -3,7 +3,7 @@ docker:
     remote:
       airtrail:
         repo: johly/airtrail
-        tag: "v3.4.1"
+        tag: "v3.4.2"
   volumes:
     local:
       airtrail-uploads: {}
