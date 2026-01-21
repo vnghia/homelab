@@ -3,7 +3,7 @@ docker:
     remote:
       paperless:
         repo: ghcr.io/paperless-ngx/paperless-ngx
-        tag: "2.20.4"
+        tag: "2.20.5"
   volumes:
     local:
       paperless-data: {}
