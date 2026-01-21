@@ -3,7 +3,7 @@ docker:
     remote:
       ntfy:
         repo: binwiederhier/ntfy
-        tag: "v2.15.0"
+        tag: "v2.16.0"
   volumes:
     local:
       ntfy-cache:
