@@ -11,6 +11,24 @@ docker:
 services:
   sniproxy:
     variables:
+      HTTP_PORT: 82
+      HTTP_BIND:
+        extract:
+          svariable: HTTP_PORT
+        transform:
+          string:
+            template: "[::]:{value}"
+      HTTPS_PORT: 445
+      HTTPS_BIND:
+        extract:
+          svariable: HTTPS_PORT
+        transform:
+          string:
+            template: "[::]:{value}"
+      HTTPS_EGRESS_PORT:
+        service: traefik
+        extract:
+          svariable: HTTPS_PORT
       CONFIG_PATH:
         extract:
           volume: sniproxy-config

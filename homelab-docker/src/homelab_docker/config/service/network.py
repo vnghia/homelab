@@ -33,6 +33,7 @@ class ServiceNetworkProxyEgressHostConfig(HomelabBaseModel):
 class ServiceNetworkProxyEgressFullConfig(HomelabBaseModel):
     addresses: list[GlobalExtract]
     ip: GlobalExtract | None
+    external: bool
 
     def with_service(self, service: str, force: bool) -> Self:
         return self.model_construct(
@@ -55,10 +56,14 @@ class ServiceNetworkProxyEgressConfig(
     ) -> ServiceNetworkProxyEgressFullConfig:
         root = self.root
         if isinstance(root, GlobalExtract):
-            return ServiceNetworkProxyEgressFullConfig(addresses=[root], ip=None)
+            return ServiceNetworkProxyEgressFullConfig(
+                addresses=[root], ip=None, external=True
+            )
         if isinstance(root, ServiceNetworkProxyEgressHostConfig):
             ip = ContainerHostHostConfig.get_host_ip(root.host, extractor_args)
-            return ServiceNetworkProxyEgressFullConfig(addresses=root.hostnames, ip=ip)
+            return ServiceNetworkProxyEgressFullConfig(
+                addresses=root.hostnames, ip=ip, external=False
+            )
         return root
 
     def with_service(self, service: str) -> Self:
