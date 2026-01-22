@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import importlib
+from pathlib import Path
+
 from homelab_backup.resource import BackupResource
 from homelab_backup_service import BackupService
 from homelab_balite_service import BaliteService
@@ -24,6 +27,8 @@ from .config import HostServiceConfig
 
 class HostBaseNoConfig(HostResourceBase):
     HOST_BASES: dict[str, HostBaseNoConfig] = {}
+    HOOK_MODULE: str = "hook"
+    HOOK_DIR: Path = Path(__file__).parent.parent / HOOK_MODULE
 
     def __init__(
         self,
@@ -85,9 +90,16 @@ class HostBaseNoConfig(HostResourceBase):
                     self.HOST_BASES[depend_full.host] if depend_full.host else self
                 ).build_extra_service(depend_full.service)
 
+        if (self.HOOK_DIR / service).with_suffix(".py").exists():
+            hook_module = importlib.import_module(
+                "homelab.{}.{}".format(self.HOOK_MODULE, service)
+            )
+        else:
+            hook_module = None
+
         type("{}Service".format(service.capitalize()), (ExtraService,), {})(
             model, opts=self.child_opts, extractor_args=self.extractor_args
-        ).build()
+        ).build(hook_module)
 
     def build_final_services_before_file(self) -> None:
         self.barman = BarmanService(

@@ -1,3 +1,4 @@
+import types
 from typing import Self
 
 from homelab_docker.extract import ExtractorArgs
@@ -20,8 +21,12 @@ class ExtraService[T: ExtraConfig](ServiceWithConfigResourceBase[T]):
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
-    def build(self) -> Self:
+    def build(self, hook_module: types.ModuleType | None) -> Self:
+        if hook_module:
+            hook_module.pre_build(self)
         self.build_containers()
+        if hook_module:
+            hook_module.post_build(self)
 
         if self.REGISTER_OUTPUT:
             self.register_outputs({})

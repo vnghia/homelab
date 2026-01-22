@@ -36,4 +36,4 @@ class DdnsService(ExtraService[DdnsConfig]):
         self.options[None].add_envs(
             {"CONFIG": Output.json_dumps({"settings": self.settings})}
         )
-        self.build()
+        self.build(None)

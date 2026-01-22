@@ -29,7 +29,7 @@ class DaguService(ExtraService[DaguConfig]):
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
-        self.build()
+        self.build(None)
 
         self.dags_dir_volume_path = ServiceExtractor(
             self.config.dags_dir
