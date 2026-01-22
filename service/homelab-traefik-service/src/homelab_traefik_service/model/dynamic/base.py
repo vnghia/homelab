@@ -88,7 +88,10 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
             for middleware in root.middlewares
         ]
 
-        all_middlewares = entrypoint_middlewares + service_middlewares
+        if root.entrypoint:
+            all_middlewares = service_middlewares
+        else:
+            all_middlewares = entrypoint_middlewares + service_middlewares
 
         tls, tls_router = self.build_tls(traefik_service, extractor_args)
 

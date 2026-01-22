@@ -8,6 +8,7 @@ from homelab_traefik_config.model.dynamic import TraefikDynamicModel
 from homelab_traefik_config.model.dynamic.middleware import (
     TraefikDynamicMiddlewareBuildModel,
     TraefikDynamicMiddlewareModel,
+    TraefikDynamicMiddlewareUseModel,
 )
 from homelab_traefik_config.model.dynamic.middleware.ipwhitelist import (
     TraefikDynamicMiddlewareIpWhitelistModel,
@@ -25,6 +26,7 @@ from pulumi import ComponentResource, ResourceOptions
 
 class TraefikFile(ComponentResource):
     RESOURCE_NAME = TraefikService.name()
+    EGRESS_LOCAL_MIDDLEWARE_NAME = "egress-local"
 
     def __init__(self, opts: ResourceOptions, traefik_service: TraefikService) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts=opts)
@@ -33,9 +35,6 @@ class TraefikFile(ComponentResource):
 
     def get_egress_name(self, egress: str) -> str:
         return "egress-{}".format(egress)
-
-    def get_egress_local_name(self, egress: str) -> str:
-        return "{}-local".format(egress)
 
     def build_service_dynamic(
         self, service: ServiceResourceBase
@@ -47,6 +46,25 @@ class TraefikFile(ComponentResource):
 
         service_name = service.name()
         if service_name in egresses:
+            dynamic[self.EGRESS_LOCAL_MIDDLEWARE_NAME] = TraefikDynamicModel(
+                TraefikDynamicMiddlewareBuildModel(
+                    type=TraefikDynamicType.TCP,
+                    name=self.EGRESS_LOCAL_MIDDLEWARE_NAME,
+                    data=TraefikDynamicMiddlewareIpWhitelistModel(
+                        source_range=GlobalExtract(
+                            HostExtract(
+                                HostExtractSource(
+                                    HostExtractNetworkSource(
+                                        network=service_name,
+                                        info=HostNetworkInfoSource.SUBNET,
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                )
+            )
+
             for egress_type, egress in egresses[service_name].items():
                 egress_proxy = self.traefik_service.extractor_args.host.docker.network.config.egress.get(
                     egress_type
@@ -87,23 +105,8 @@ class TraefikFile(ComponentResource):
                                     hostsni=egress_model.addresses,
                                     middlewares=[
                                         TraefikDynamicMiddlewareModel(
-                                            TraefikDynamicMiddlewareBuildModel(
-                                                type=TraefikDynamicType.TCP,
-                                                name=self.get_egress_local_name(
-                                                    egress_name
-                                                ),
-                                                data=TraefikDynamicMiddlewareIpWhitelistModel(
-                                                    source_range=GlobalExtract(
-                                                        HostExtract(
-                                                            HostExtractSource(
-                                                                HostExtractNetworkSource(
-                                                                    network=service_name,
-                                                                    info=HostNetworkInfoSource.SUBNET,
-                                                                )
-                                                            )
-                                                        )
-                                                    )
-                                                ),
+                                            TraefikDynamicMiddlewareUseModel(
+                                                name=self.EGRESS_LOCAL_MIDDLEWARE_NAME,
                                             )
                                         )
                                     ],
