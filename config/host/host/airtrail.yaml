@@ -48,6 +48,15 @@ services:
         hostname:
           hostname: airtrail
           record: solar
+    network:
+      bridge:
+        egress:
+          https:
+            api.adsbdb.com: null
+            api.github.com: null
+            raw.githubusercontent.com: null
+            davidmegginson.github.io: null
+            aerodatabox.p.rapidapi.com: null
     container:
       image: airtrail
       databases:
@@ -57,9 +66,6 @@ services:
       hosts:
         - record: solar
           hostname: kanidm
-      network:
-        bridge:
-          vpn: {}
       tmpfs:
         - path: /tmp
           exec: true
