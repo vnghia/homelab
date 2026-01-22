@@ -40,11 +40,20 @@ class ServiceNetworkEgressFullConfig(HomelabBaseModel):
 
 class ServiceNetworkEgressDomainConfig(
     HomelabRootModel[
-        GlobalExtract | ServiceNetworkEgressHostConfig | ServiceNetworkEgressFullConfig
+        None
+        | GlobalExtract
+        | ServiceNetworkEgressHostConfig
+        | ServiceNetworkEgressFullConfig
     ]
 ):
-    def to_full(self, extractor_args: ExtractorArgs) -> ServiceNetworkEgressFullConfig:
+    def to_full(
+        self, key: str, extractor_args: ExtractorArgs
+    ) -> ServiceNetworkEgressFullConfig:
         root = self.root
+        if not root:
+            return ServiceNetworkEgressFullConfig(
+                addresses=[GlobalExtract.from_simple(key)], ip=None, proxied=True
+            )
         if isinstance(root, GlobalExtract):
             return ServiceNetworkEgressFullConfig(
                 addresses=[root], ip=None, proxied=True
@@ -58,7 +67,7 @@ class ServiceNetworkEgressDomainConfig(
 
     def with_service(self, service: str) -> Self:
         root = self.root
-        return self.model_construct(root.with_service(service, False))
+        return self.model_construct(root.with_service(service, False) if root else root)
 
 
 class ServiceNetworkBridgeConfig(ContainerBridgeNetworkConfig):

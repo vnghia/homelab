@@ -137,7 +137,7 @@ class NetworkResource(ComponentResource):
 
                 for egress_key, egress_model in egress.items():
                     service_egress_model = egress_model.with_service(service).to_full(
-                        extractor_args
+                        egress_key, extractor_args
                     )
 
                     self.service_egresses[service][egress_type][egress_key] = (
