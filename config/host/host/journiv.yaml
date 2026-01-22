@@ -3,7 +3,7 @@ docker:
     remote:
       journiv:
         repo: swalabtech/journiv-app
-        tag: "0.1.0-beta.12"
+        tag: "0.1.0-beta.14"
   volumes:
     local:
       journiv-data: {}
@@ -121,11 +121,7 @@ services:
           - "app.core.celery_app"
           - "worker"
           - "--loglevel=info"
-        healthcheck:
-          tests:
-            - "CMD-SHELL"
-            - "celery -A app.core.celery_app inspect ping --timeout=5 | grep -q pong"
-          timeout: 10
+        healthcheck: {}
         wud:
         envs:
           SERVICE_ROLE: celery-worker
@@ -155,8 +151,7 @@ services:
             envs:
               env: REDBEAT_REDIS_URL
               database: 2
-        healthcheck:
-          tests: ["CMD-SHELL", "true"]
+        healthcheck: {}
         wud:
         envs:
           SERVICE_ROLE: celery-beat
