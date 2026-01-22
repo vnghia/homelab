@@ -36,6 +36,9 @@ class TraefikFile(ComponentResource):
     def get_egress_name(self, egress: str) -> str:
         return "egress-{}".format(egress)
 
+    def get_egress_proxy(self, type: NetworkEgressType) -> str:
+        return "egress-{}-proxy".format(type)
+
     def build_service_dynamic(
         self, service: ServiceResourceBase
     ) -> dict[str | None, TraefikDynamicModel]:
@@ -64,52 +67,63 @@ class TraefikFile(ComponentResource):
                     ),
                 )
             )
+            egress_middlewares = [
+                TraefikDynamicMiddlewareModel(
+                    TraefikDynamicMiddlewareUseModel(
+                        name=self.EGRESS_LOCAL_MIDDLEWARE_NAME,
+                    )
+                )
+            ]
 
             for egress_type, egress in egresses[service_name].items():
-                egress_proxy = self.traefik_service.extractor_args.host.docker.network.config.egress.get(
+                egress_entrypoint = self.traefik_service.config.entrypoint.egress_[
                     egress_type
-                )
+                ]
 
-                for egress_key, egress_model in egress.items():
-                    egress_name = self.get_egress_name(egress_key)
+                match egress_type:
+                    case NetworkEgressType.HTTPS:
+                        proxies = []
+                        for egress_key, egress_model in egress.items():
+                            if egress_model.proxied:
+                                proxies.extend(egress_model.addresses)
+                                continue
 
-                    if egress_model.proxied:
-                        if not egress_proxy:
-                            raise ValueError(
-                                "Egress proxy is not configued for this type: {}".format(
-                                    egress_type
-                                )
-                            )
-                        service_full = TraefikDynamicServiceFullModel(
-                            service=egress_proxy.service,
-                            container=egress_proxy.container,
-                            port=egress_proxy.port.with_service(
-                                egress_proxy.service, False
-                            ),
-                        )
-                    else:
-                        service_full = TraefikDynamicServiceFullModel(
-                            external=egress_model.ip or egress_model.addresses[0],
-                            port=None,
-                        )
-
-                    match egress_type:
-                        case NetworkEgressType.HTTPS:
+                            egress_name = self.get_egress_name(egress_key)
                             dynamic[egress_name] = TraefikDynamicModel(
                                 TraefikDynamicTcpModel(
                                     name=egress_name,
-                                    entrypoint=self.traefik_service.config.entrypoint.egress_[
-                                        egress_type
-                                    ],
-                                    service=TraefikDynamicServiceModel(service_full),
-                                    hostsni=egress_model.addresses,
-                                    middlewares=[
-                                        TraefikDynamicMiddlewareModel(
-                                            TraefikDynamicMiddlewareUseModel(
-                                                name=self.EGRESS_LOCAL_MIDDLEWARE_NAME,
-                                            )
+                                    entrypoint=egress_entrypoint,
+                                    service=TraefikDynamicServiceModel(
+                                        TraefikDynamicServiceFullModel(
+                                            external=egress_model.ip
+                                            or egress_model.addresses[0],
+                                            port=None,
                                         )
-                                    ],
+                                    ),
+                                    hostsni=egress_model.addresses,
+                                    middlewares=egress_middlewares,
+                                )
+                            )
+                        if proxies:
+                            egress_proxy = self.traefik_service.extractor_args.host.docker.network.config.egress[
+                                egress_type
+                            ]
+                            egress_name = self.get_egress_proxy(egress_type)
+                            dynamic[egress_name] = TraefikDynamicModel(
+                                TraefikDynamicTcpModel(
+                                    name=egress_name,
+                                    entrypoint=egress_entrypoint,
+                                    service=TraefikDynamicServiceModel(
+                                        TraefikDynamicServiceFullModel(
+                                            service=egress_proxy.service,
+                                            container=egress_proxy.container,
+                                            port=egress_proxy.port.with_service(
+                                                egress_proxy.service, False
+                                            ),
+                                        )
+                                    ),
+                                    hostsni=proxies,
+                                    middlewares=egress_middlewares,
                                 )
                             )
 
