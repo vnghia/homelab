@@ -14,7 +14,6 @@ source_roots = [
     "service/homelab-restic-service/src",
     "service/homelab-barman-service/src",
     "service/homelab-extra-service/src",
-    "service/homelab-apprise-service/src",
     "service/homelab-balite-service/src",
     "service/homelab-tailscale-service/src",
     "service/homelab-ddns-service/src",
