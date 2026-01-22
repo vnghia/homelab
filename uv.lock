@@ -976,7 +976,6 @@ dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
-    { name = "pydantic" },
 ]
 
 [package.metadata]
@@ -987,7 +986,6 @@ requires-dist = [
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
-    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]
