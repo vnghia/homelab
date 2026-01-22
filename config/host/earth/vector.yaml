@@ -2,11 +2,10 @@ services:
   vector:
     network:
       bridge:
-        proxy:
-          egress:
-            https:
-              sun:
-                host: sun
-                hostnames:
-                  - hostname: openobserve
-                    record: sun
+        egress:
+          https:
+            sun:
+              host: sun
+              hostnames:
+                - hostname: openobserve
+                  record: sun

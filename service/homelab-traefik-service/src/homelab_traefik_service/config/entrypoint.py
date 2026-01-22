@@ -1,4 +1,4 @@
-from homelab_docker.config.service.network import ServiceNetworkProxyEgressType
+from homelab_docker.config.service.network import ServiceNetworkEgressType
 from homelab_pydantic import HomelabBaseModel
 
 from ..model.entrypoint import TraefikEntrypointModel
@@ -9,7 +9,7 @@ class TraefikEntrypointConfig(HomelabBaseModel):
     mapping: dict[str, str]
     local: str | None = None
     internal: str | None = None
-    egress: dict[ServiceNetworkProxyEgressType, str] | None = None
+    egress: dict[ServiceNetworkEgressType, str] | None = None
 
     @property
     def local_(self) -> str:
@@ -24,7 +24,7 @@ class TraefikEntrypointConfig(HomelabBaseModel):
         return self.internal
 
     @property
-    def egress_(self) -> dict[ServiceNetworkProxyEgressType, str]:
+    def egress_(self) -> dict[ServiceNetworkEgressType, str]:
         if not self.egress:
             raise ValueError("Egress entrypoint is not configured")
         return self.egress

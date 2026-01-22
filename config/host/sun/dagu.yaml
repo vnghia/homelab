@@ -26,13 +26,12 @@ services:
                       secret: token
     network:
       bridge:
-        proxy:
-          egress:
-            https:
-              earth:
-                host: earth
-                hostnames:
-                  - svariable: EARTH_HOSTNAME
+        egress:
+          https:
+            earth:
+              host: earth
+              hostnames:
+                - svariable: EARTH_HOSTNAME
     keepasses:
       keepass:
         hostname:

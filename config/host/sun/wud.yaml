@@ -5,14 +5,13 @@ services:
     config: {}
     network:
       bridge:
-        proxy:
-          egress:
-            https:
-              earth:
-                host: earth
-                hostnames:
-                  - record: earth
-                    hostname: docker-proxy
+        egress:
+          https:
+            earth:
+              host: earth
+              hostnames:
+                - record: earth
+                  hostname: docker-proxy
     container:
       volumes:
         docker-earth-mtls:

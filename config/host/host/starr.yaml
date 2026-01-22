@@ -85,14 +85,13 @@ services:
           hostname: starr-bazarr
     network:
       bridge:
-        proxy:
-          egress:
-            https:
-              earth:
-                host: earth
-                hostnames:
-                  - record: earth
-                    hostname: bitmagnet
+        egress:
+          https:
+            earth:
+              host: earth
+              hostnames:
+                - record: earth
+                  hostname: bitmagnet
     variables:
       RADARR_PORT: 7878
       SONARR_PORT: 8989

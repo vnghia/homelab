@@ -1,4 +1,4 @@
-from homelab_docker.config.service.network import ServiceNetworkProxyEgressType
+from homelab_docker.config.service.network import ServiceNetworkEgressType
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_extract import GlobalExtract
 from homelab_extract.host import HostExtract, HostExtractSource
@@ -51,7 +51,7 @@ class TraefikFile(ComponentResource):
                 for egress_key, egress_model in egress.items():
                     egress_name = self.get_egress_name(egress_key)
                     match egress_type:
-                        case ServiceNetworkProxyEgressType.HTTPS:
+                        case ServiceNetworkEgressType.HTTPS:
                             dynamic[egress_name] = TraefikDynamicModel(
                                 TraefikDynamicTcpModel(
                                     name=egress_name,

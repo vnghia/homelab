@@ -12,8 +12,8 @@ from pydantic import IPvAnyNetwork, NonNegativeInt
 
 from ...config.service.network import (
     ServiceNetworkBridgeConfig,
-    ServiceNetworkProxyEgressFullConfig,
-    ServiceNetworkProxyEgressType,
+    ServiceNetworkEgressFullConfig,
+    ServiceNetworkEgressType,
 )
 from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerNetworkModelBuildArgs
@@ -64,8 +64,8 @@ class NetworkResource(ComponentResource):
         self.service_egresses: dict[
             str,
             dict[
-                ServiceNetworkProxyEgressType,
-                dict[str, ServiceNetworkProxyEgressFullConfig],
+                ServiceNetworkEgressType,
+                dict[str, ServiceNetworkEgressFullConfig],
             ],
         ] = {}
 
@@ -129,10 +129,10 @@ class NetworkResource(ComponentResource):
     ) -> None:
         proxy_bridge_config = self.config.proxy.bridge
 
-        proxy_config = bridge_config.proxy
-        if proxy_config.egress:
+        egress_config = bridge_config.egress
+        if egress_config:
             self.service_egresses[service] = {}
-            for egress_type, egress in proxy_config.egress.items():
+            for egress_type, egress in egress_config.items():
                 self.service_egresses[service][egress_type] = {}
 
                 for egress_key, egress_model in egress.items():

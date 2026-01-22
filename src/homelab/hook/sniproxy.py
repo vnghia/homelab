@@ -1,7 +1,7 @@
 from typing import Any
 
 import orjson
-from homelab_docker.config.service.network import ServiceNetworkProxyEgressType
+from homelab_docker.config.service.network import ServiceNetworkEgressType
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.file.config import YamlDumper
@@ -21,7 +21,7 @@ def pre_build(service: ExtraService[ExtraConfig]) -> None:
     for service_egress in service_egresses.values():
         for egress_type, egresses in service_egress.items():
             match egress_type:
-                case ServiceNetworkProxyEgressType.HTTPS:
+                case ServiceNetworkEgressType.HTTPS:
                     routes.extend(
                         {
                             "domains": domains,
@@ -32,7 +32,7 @@ def pre_build(service: ExtraService[ExtraConfig]) -> None:
                             },
                         }
                         for egress in egresses.values()
-                        if egress.external
+                        if egress.proxied
                         and (
                             domains := [
                                 GlobalExtractor(address).extract_str(
