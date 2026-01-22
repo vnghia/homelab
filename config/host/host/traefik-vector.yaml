@@ -53,7 +53,7 @@ services:
         content:
           data:
             sinks:
-              openobserve:
+              openobserve-log:
                 inputs:
                   - traefik-access-log
     container:

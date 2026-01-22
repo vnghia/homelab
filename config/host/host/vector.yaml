@@ -25,6 +25,8 @@ services:
         content:
           format: toml
           data:
+            acknowledgements:
+              enabled: true
             data_dir:
               volume: vector-data
       openobserve:
@@ -37,7 +39,7 @@ services:
           format: toml
           data:
             sinks:
-              openobserve:
+              openobserve-log:
                 type: http
                 uri:
                   extract:

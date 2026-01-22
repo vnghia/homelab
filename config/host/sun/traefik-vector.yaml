@@ -23,13 +23,11 @@ services:
                         if is_public_entrypoint && not_local_or_internal_router {
                           geoip_asn, geoip_err = get_enrichment_table_record("geolite-asn", {"ip": .client_host })
                           if geoip_err != null {
-                            log({"error": geoip_err, "ip": .client_host}, level: "error")
                             geoip_asn = {}
                           }
 
                           geoip_city, geoip_err = get_enrichment_table_record("geolite-city", {"ip": .client_host })
                           if geoip_err != null {
-                            log({"error": geoip_err, "ip": .client_host}, level: "error")
                             geoip_city = {}
                           } else {
                             if geoip_city.city.names != null {
