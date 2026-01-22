@@ -4,6 +4,12 @@ docker:
       sniproxy:
         repo: ghcr.io/atenart/sniproxy
         tag: "latest"
+  network:
+    egress:
+      https:
+        service: sniproxy
+        port:
+          svariable: HTTPS_PORT
   volumes:
     local:
       sniproxy-config:

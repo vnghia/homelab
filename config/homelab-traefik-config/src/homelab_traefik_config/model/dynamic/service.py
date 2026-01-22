@@ -4,6 +4,7 @@ from pydantic import IPvAnyAddress
 
 
 class TraefikDynamicServiceFullModel(HomelabBaseModel):
+    service: str | None = None
     container: str | None = None
     external: IPvAnyAddress | GlobalExtract | None = None
     port: GlobalExtract | None

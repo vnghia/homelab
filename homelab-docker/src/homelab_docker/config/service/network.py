@@ -1,19 +1,15 @@
 from __future__ import annotations
 
-from enum import StrEnum, auto
 from typing import Self
 
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from homelab_vpn.config.service import ServiceVpnConfig
 
+from ...config.docker.network import NetworkEgressType
 from ...extract import ExtractorArgs
 from ...model.docker.container.host import ContainerHostHostConfig
 from ...model.docker.container.network import ContainerBridgeNetworkConfig
-
-
-class ServiceNetworkEgressType(StrEnum):
-    HTTPS = auto()
 
 
 class ServiceNetworkEgressHostConfig(HomelabBaseModel):
@@ -66,9 +62,7 @@ class ServiceNetworkEgressDomainConfig(
 
 
 class ServiceNetworkBridgeConfig(ContainerBridgeNetworkConfig):
-    egress: dict[
-        ServiceNetworkEgressType, dict[str, ServiceNetworkEgressDomainConfig]
-    ] = {}
+    egress: dict[NetworkEgressType, dict[str, ServiceNetworkEgressDomainConfig]] = {}
 
 
 class ServiceNetworkConfig(HomelabBaseModel):

@@ -10,10 +10,10 @@ from homelab_sequence import HomelabSequenceResource
 from pulumi import ComponentResource, Input, Output, ResourceOptions
 from pydantic import IPvAnyNetwork, NonNegativeInt
 
+from ...config.docker.network import NetworkEgressType
 from ...config.service.network import (
     ServiceNetworkBridgeConfig,
     ServiceNetworkEgressFullConfig,
-    ServiceNetworkEgressType,
 )
 from ...extract import ExtractorArgs
 from ...model.docker.container import ContainerNetworkModelBuildArgs
@@ -64,7 +64,7 @@ class NetworkResource(ComponentResource):
         self.service_egresses: dict[
             str,
             dict[
-                ServiceNetworkEgressType,
+                NetworkEgressType,
                 dict[str, ServiceNetworkEgressFullConfig],
             ],
         ] = {}

@@ -39,7 +39,11 @@ class TraefikDynamicServiceFullModelBuilder(
 
     def to_url(self, scheme: str, extractor_args: ExtractorArgs) -> Output[str]:
         root = self.root
-        service = extractor_args.service
+        service = (
+            extractor_args.host.services[root.service]
+            if root.service
+            else extractor_args.service
+        )
 
         if root.external is not None:
             service_name = (

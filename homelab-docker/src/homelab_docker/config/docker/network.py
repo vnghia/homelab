@@ -1,3 +1,6 @@
+from enum import StrEnum, auto
+
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_vpn.config.host import HostVpnConfig
 from pydantic import IPvAnyNetwork
@@ -17,10 +20,21 @@ class NetworkProxyConfig(HomelabBaseModel):
     bridge: ContainerBridgeNetworkConfig = ContainerBridgeNetworkConfig()
 
 
+class NetworkEgressType(StrEnum):
+    HTTPS = auto()
+
+
+class NetworkEgressConfig(HomelabBaseModel):
+    service: str
+    container: str | None = None
+    port: GlobalExtract
+
+
 class NetworkConfig(HomelabBaseModel):
     vpn: HostVpnConfig | None = None
     bridge: NetworkBridgeConfig
     proxy: NetworkProxyConfig
+    egress: dict[NetworkEgressType, NetworkEgressConfig] = {}
 
     @property
     def vpn_(self) -> HostVpnConfig:
