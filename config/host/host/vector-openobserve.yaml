@@ -1,0 +1,56 @@
+services:
+  vector:
+    files:
+      openobserve:
+        path:
+          extract:
+            volume: vector-config
+          transform:
+            path: openobserve.toml
+        content:
+          format: toml
+          data:
+            sinks:
+              openobserve-log:
+                type: http
+                uri:
+                  extract:
+                    hvariable: OPENOBSERVE_URI
+                  transform:
+                    string:
+                      template: "{value}/api/default/{{{{ schema }}}}/_json"
+                method: post
+                auth:
+                  strategy: basic
+                  user:
+                    hvariable: OPENOBSERVE_USERNAME
+                  password:
+                    hvariable: OPENOBSERVE_TOKEN
+                compression: gzip
+                encoding:
+                  codec: json
+                  timestamp_format: rfc3339
+                healthcheck:
+                  enabled: true
+                  uri:
+                    extract:
+                      hvariable: OPENOBSERVE_URI
+                    transform:
+                      string:
+                        template: "{value}/healthz"
+              openobserve-prometheus:
+                type: prometheus_remote_write
+                auth:
+                  strategy: basic
+                  user:
+                    hvariable: OPENOBSERVE_USERNAME
+                  password:
+                    hvariable: OPENOBSERVE_TOKEN
+                endpoint:
+                  extract:
+                    hvariable: OPENOBSERVE_URI
+                  transform:
+                    string:
+                      template: "{value}/api/default/prometheus/api/v1/write"
+                healthcheck:
+                  enabled: false

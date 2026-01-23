@@ -29,43 +29,6 @@ services:
               enabled: true
             data_dir:
               volume: vector-data
-      openobserve:
-        path:
-          extract:
-            volume: vector-config
-          transform:
-            path: openobserve.toml
-        content:
-          format: toml
-          data:
-            sinks:
-              openobserve-log:
-                type: http
-                uri:
-                  extract:
-                    hvariable: OPENOBSERVE_URI
-                  transform:
-                    string:
-                      template: "{value}/api/default/{{{{ schema }}}}/_json"
-                method: post
-                auth:
-                  strategy: basic
-                  user:
-                    hvariable: OPENOBSERVE_USERNAME
-                  password:
-                    hvariable: OPENOBSERVE_TOKEN
-                compression: gzip
-                encoding:
-                  codec: json
-                  timestamp_format: rfc3339
-                healthcheck:
-                  enabled: true
-                  uri:
-                    extract:
-                      hvariable: OPENOBSERVE_URI
-                    transform:
-                      string:
-                        template: "{value}/healthz"
     container:
       image: vector
       command:
