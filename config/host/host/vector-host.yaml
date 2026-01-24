@@ -1,0 +1,37 @@
+services:
+  vector:
+    user: root
+    files:
+      host:
+        path:
+          extract:
+            volume: vector-config
+          transform:
+            path: host.toml
+        content:
+          format: toml
+          data:
+            sources:
+              host-metrics:
+                type: host_metrics
+                scrape_interval_secs: 10
+      openobserve:
+        content:
+          data:
+            sinks:
+              openobserve-prometheus:
+                inputs:
+                  - host-metrics
+    container:
+      volumes:
+        "/proc":
+          path:
+            env: PROCFS_ROOT
+          read-only: true
+        "/sys":
+          path:
+            env: SYSFS_ROOT
+          read-only: true
+      envs:
+        PROCFS_ROOT: /host/proc
+        SYSFS_ROOT: /host/sys
