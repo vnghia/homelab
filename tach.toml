@@ -30,7 +30,6 @@ source_roots = [
     "service/homelab-balite-service/src",
     "service/homelab-barman-service/src",
     "service/homelab-dagu-service/src",
-    "service/homelab-ddns-service/src",
     "service/homelab-extra-service/src",
     "service/homelab-kanidm-service/src",
     "service/homelab-litestream-service/src",

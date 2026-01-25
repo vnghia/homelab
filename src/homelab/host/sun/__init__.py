@@ -1,5 +1,4 @@
 from homelab_backup.resource import BackupResource
-from homelab_ddns_service import DdnsService
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global.resource import GlobalResource
 from homelab_kanidm_service import KanidmService
@@ -31,12 +30,6 @@ class SunHost(HostBase[SunServiceConfig]):
             config=config,
         )
 
-        self.ddns = DdnsService(
-            self.services_config.ddns,
-            opts=self.child_opts,
-            network_resource=self.network,
-            extractor_args=self.extractor_args,
-        )
         self.kanidm = KanidmService(
             self.services_config.kanidm,
             opts=self.child_opts,

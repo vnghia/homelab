@@ -17,7 +17,6 @@ dependencies = [
     "homelab-traefik-config",
     "homelab-dagu-config",
     "homelab-tailscale-service",
-    "homelab-ddns-service",
     "homelab-traefik-service",
     "homelab-dagu-service",
     "homelab-backup-service",
@@ -73,7 +72,6 @@ homelab-balite-service = { workspace = true }
 homelab-litestream-service = { workspace = true }
 homelab-barman-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
-homelab-ddns-service = { workspace = true }
 homelab-extra-service = { workspace = true }
 homelab-kanidm-service = { workspace = true }
 homelab-restic-service = { workspace = true }
