@@ -31,9 +31,6 @@ services:
               volume: vector-data
     container:
       image: vector
-      command:
-        - "--config-dir"
-        - volume: vector-config
       hostname:
         hinfo: name
       volumes:
@@ -42,23 +39,9 @@ services:
           read-only: true
           bind-file: false
         vector-data: /var/lib/vector
-    containers:
-      reload:
-        depends-on: [null]
-        oneshot: true
-        image: docker-cli
-        docker-socket:
-          write: false
-        # TODO: use `docker kill` after https://github.com/moby/moby/issues/41302
-        command:
-          - "exec"
-          - container:
-            extract:
-              cinfo: id
-          - "/bin/sh"
-          - "-c"
-          - "kill -s HUP 1"
-        volumes:
-          vector-config:
-            path: /etc/vector
-            read-only: true
+      envs:
+        VECTOR_CONFIG_DIR:
+          volume: vector-config
+        VECTOR_WATCH_CONFIG: true
+        VECTOR_ALLOW_EMPTY_CONFIG: true
+        VECTOR_LOG_FORMAT: json
