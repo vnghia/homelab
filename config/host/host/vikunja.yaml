@@ -1,0 +1,145 @@
+docker:
+  images:
+    remote:
+      vikunja:
+        repo: vikunja/vikunja
+        tag: "unstable"
+        delete-before-replace: true
+  volumes:
+    local:
+      vikunja-config:
+        backup: false
+      vikunja-files: {}
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            vikunja:
+              display-name: Vikunja
+              origin-url:
+                - extract:
+                    hostname: vikunja
+                    record: solar
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/auth/openid/kanidm"
+              origin-landing:
+                hostname: vikunja
+                record: solar
+                scheme: https
+              prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
+  vikunja:
+    variables:
+      PORT: 3456
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
+    databases:
+      postgres:
+        postgres: {}
+    files:
+      config:
+        path:
+          extract:
+            volume: vikunja-config
+          transform:
+            path: config.toml
+        content:
+          format: toml
+          data:
+            auth:
+              openid:
+                providers:
+                  kanidm:
+                    name: Kanidm
+                    scope: openid profile email
+                    usernamefallback: true
+                    emailfallback: true
+                    forceuserinfo: false
+                    requireavailability: true
+    network:
+      bridge:
+        egress:
+          https:
+            api.unsplash.com: null
+            views.unsplash.com: null
+            images.unsplash.com: null
+    secrets:
+      jwt-secret: {}
+    container:
+      image: vikunja
+      databases:
+        - postgres:
+          envs:
+            username: VIKUNJA_DATABASE_USER
+            password: VIKUNJA_DATABASE_PASSWORD
+            database: VIKUNJA_DATABASE_DATABASE
+            host: VIKUNJA_DATABASE_HOST
+      hosts:
+        - record: solar
+          hostname: kanidm
+      tmpfs:
+        - /.cache
+      volumes:
+        vikunja-config:
+          path: /etc/vikunja
+          read-only: true
+        vikunja-files: /app/vikunja/files
+      envs:
+        VIKUNJA_SERVICE_ROOTPATH:
+          volume: vikunja-config
+        VIKUNJA_SERVICE_JWTSECRET:
+          secret: jwt-secret
+        VIKUNJA_SERVICE_INTERFACE:
+          extract:
+            svariable: PORT
+          transform:
+            string:
+              template: ":{value}"
+        VIKUNJA_SERVICE_PUBLICURL:
+          record: solar
+          hostname: vikunja
+          scheme: https
+        VIKUNJA_SERVICE_ENABLEREGISTRATION: false
+        VIKUNJA_DATABASE_TYPE: postgres
+        VIKUNJA_CORS_ENABLE: true
+        VIKUNJA_LOG_FORMAT: structured
+        VIKUNJA_FILES_BASEPATH:
+          volume: vikunja-files
+        VIKUNJA_FILES_TYPE: local
+        VIKUNJA_BACKGROUNDS_PROVIDERS_UNSPLASH_ENABLED: true
+        VIKUNJA_BACKGROUNDS_PROVIDERS_UNSPLASH_ACCESSTOKEN:
+        VIKUNJA_BACKGROUNDS_PROVIDERS_UNSPLASH_APPLICATIONID:
+        VIKUNJA_SERVICE_ENABLEOPENIDTEAMUSERSEARCH: false
+        VIKUNJA_AUTH_LOCAL_ENABLED: false
+        VIKUNJA_AUTH_OPENID_ENABLED: true
+        VIKUNJA_AUTH_OPENID_PROVIDERS_KANIDM_AUTHURL:
+          extract:
+            hostname: kanidm
+            record: solar
+            scheme: https
+          transform:
+            string:
+              template: "{value}/oauth2/openid/vikunja"
+        VIKUNJA_AUTH_OPENID_PROVIDERS_KANIDM_CLIENTID: vikunja
+        VIKUNJA_AUTH_OPENID_PROVIDERS_KANIDM_CLIENTSECRET:
+          service: kanidm
+          extract:
+            export: vikunja
+        VIKUNJA_AUTH_LDAP_ENABLED: false
+        VIKUNJA_DEFAULTSETTINGS_AVATAR_PROVIDER: marble
+        VIKUNJA_DEFAULTSETTINGS_DISCOVERABLE_BY_NAME: false
+        VIKUNJA_DEFAULTSETTINGS_DISCOVERABLE_BY_EMAIL: false
+        VIKUNJA_DEFAULTSETTINGS_WEEK_START: 1
+        VIKUNJA_DEFAULTSETTINGS_LANGUAGE: en
+        VIKUNJA_DEFAULTSETTINGS_TIMEZONE:
+          hinfo: timezone
