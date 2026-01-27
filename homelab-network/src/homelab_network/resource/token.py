@@ -3,6 +3,7 @@ import urllib.parse
 from collections import defaultdict
 from typing import ClassVar, Self
 
+import orjson
 import pulumi_cloudflare as cloudflare
 from homelab_global import ProjectArgs
 from pulumi import ComponentResource, Output, ResourceOptions
@@ -82,7 +83,7 @@ class TokenResource(ComponentResource):
                             read=self.PERMISSION_GROUPS.read,
                             write=self.PERMISSION_GROUPS.write,
                         ).apply(lambda kwargs: kwargs["read"] + kwargs["write"]),
-                        resources=resources,
+                        resources=orjson.dumps(resources).decode(),
                     )
                 ],
             )
@@ -107,7 +108,7 @@ class TokenResource(ComponentResource):
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",
                         permission_groups=self.PERMISSION_GROUPS.write,
-                        resources=resources,
+                        resources=orjson.dumps(resources).decode(),
                     )
                 ],
             )
