@@ -273,7 +273,7 @@ class ContainerModel(HomelabBaseModel):
 
     def build_labels(
         self,
-        resource_name: str | None,
+        resource_name: str,
         extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs,
     ) -> dict[Output[str], Output[str]]:
@@ -284,8 +284,13 @@ class ContainerModel(HomelabBaseModel):
                 Output.from_input(k): Output.from_input(v)
                 for k, v in (
                     extractor_args.global_resource.project_args.labels
-                    | {"dev.dozzle.group": service.name()}
-                    | ({"dev.dozzle.name": resource_name} if resource_name else {})
+                    | {
+                        "dev.dozzle.group": service.name(),
+                        "dev.dozzle.name": resource_name,
+                        "homelab.host": extractor_args.host.name,
+                        "homelab.service": service.name(),
+                        "homelab.container": resource_name,
+                    }
                     | (
                         self.wud.build_labels(resource_name)
                         if self.wud and not self.oneshot
@@ -465,6 +470,7 @@ class ContainerModel(HomelabBaseModel):
 
     def build_docker_py_args(
         self,
+        resource_name: str,
         extractor_args: ExtractorArgs,
         build_args: ContainerModelBuildArgs | None,
     ) -> dict[str, Any]:
@@ -481,7 +487,7 @@ class ContainerModel(HomelabBaseModel):
         if (entrypoint := self.build_entrypoint(extractor_args)) is not None:
             kwargs["entrypoint"] = entrypoint
 
-        kwargs["labels"] = self.build_labels(None, extractor_args, build_args)
+        kwargs["labels"] = self.build_labels(resource_name, extractor_args, build_args)
 
         kwargs["environment"] = self.build_envs(extractor_args, build_args)
 

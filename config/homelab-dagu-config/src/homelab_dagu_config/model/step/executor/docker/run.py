@@ -45,7 +45,7 @@ class DaguDagStepDockerRunExecutorModel(HomelabBaseModel):
             container_config["entrypoint"] = entrypoint
 
         container_config["labels"] = model.build_labels(
-            None, extractor_args, build_args
+            service.add_service_name(self.model), extractor_args, build_args
         )
 
         container_config["env"] = model.build_envs(extractor_args, build_args) + (
