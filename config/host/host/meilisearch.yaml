@@ -9,6 +9,7 @@ services:
     config: {}
     container:
       active: false
+      delete-before-replace: true
       image: meilisearch
       healthcheck:
         tests:
