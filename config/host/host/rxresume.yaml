@@ -1,8 +1,12 @@
-images:
-  remote:
-    rxresume:
-      repo: ghcr.io/amruthpillai/reactive-resume
-      tag: "v4.4.5"
+docker:
+  images:
+    remote:
+      rxresume:
+        repo: ghcr.io/amruthpillai/reactive-resume
+        tag: "v5.0.3"
+  volumes:
+    local:
+      rxresume-data: {}
 services:
   kanidm:
     config:
@@ -14,42 +18,38 @@ services:
               origin-url:
                 - extract:
                     hostname: rxresume
-                    public: true
+                    record: solar
                     scheme: https
                   transform:
                     string:
-                      template: "{value}/api/auth/openid/callback"
+                      template: "{value}/api/auth/oauth2/callback/custom"
               origin-landing:
                 hostname: rxresume
-                public: true
+                record: solar
                 scheme: https
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
+  browser:
+    container:
+      hosts:
+        - record: solar
+          hostname: rxresume
   rxresume:
     variables:
-      OAUTH_URL:
-        extract:
-          hostname: kanidm
-          public: true
-          scheme: https
-        transform:
-          string:
-            template: "{value}/oauth2/openid/rxresume"
+      PORT: 3000
     config:
       traefik:
-        traefik:
-          public: true
-          service:
-            port:
-              env: PORT
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: PORT
     databases:
       postgres:
         postgres: {}
-      redis:
-        redis: {}
     secrets:
-      access: {}
-      refresh: {}
+      auth: {}
     container:
       image: rxresume
       databases:
@@ -57,68 +57,61 @@ services:
           envs:
             env: DATABASE_URL
             scheme: postgresql
-        - redis:
-          envs:
-            env: REDIS_URL
-      network:
-        default-bridge: true
+      healthcheck:
+        tests:
+          - "CMD"
+          - "curl"
+          - "--fail"
+          - extract:
+              svariable: PORT
+            transform:
+              string:
+                template: "http://localhost:{value}/api/health"
+      hosts:
+        - record: solar
+          hostname: browser
+        - record: solar
+          hostname: kanidm
+      volumes:
+        rxresume-data: /app/data
+      wud:
+        template: https://github.com/amruthpillai/reactive-resume/releases/tag/${original}
+        include-prefix: v
       envs:
-        PORT: 3000
-        NODE_ENV: production
-        PUBLIC_URL:
+        APP_URL:
           hostname: rxresume
-          public: true
+          record: solar
           scheme: https
-        CHROME_TOKEN:
-          service: chromium
+        PRINTER_ENDPOINT:
           extract:
-            secret: token
-        CHROME_URL:
-          hostname: chromium
-          public: true
-          scheme: wss
-        ACCESS_TOKEN_SECRET:
-          secret: access
-        REFRESH_TOKEN_SECRET:
-          secret: refresh
-        # TODO: Enable this after https://github.com/AmruthPillai/Reactive-Resume/issues/2153
-        DISABLE_SIGNUPS: true
-        DISABLE_EMAIL_AUTH: false
-        VITE_OPENID_NAME: Kanidm
-        OPENID_AUTHORIZATION_URL:
-          extract:
-            hostname: kanidm
-            public: true
-            scheme: https
+            kv:
+              url:
+                hostname: browser
+                record: solar
+                scheme: wss
+              token:
+                service: browser
+                extract:
+                  secret: token
           transform:
             string:
-              template: "{value}/ui/oauth2"
-        OPENID_CALLBACK_URL:
-          extract:
-            hostname: rxresume
-            public: true
-            scheme: https
-          transform:
-            string:
-              template: "{value}/api/auth/openid/callback"
-        OPENID_CLIENT_ID: rxresume
-        OPENID_CLIENT_SECRET:
+              template: "{url}?token={token}"
+        AUTH_SECRET:
+          secret: auth
+        OAUTH_PROVIDER_NAME: Kanidm
+        OAUTH_CLIENT_ID: rxresume
+        OAUTH_CLIENT_SECRET:
           service: kanidm
           extract:
             export: rxresume
-        OPENID_ISSUER: kanidm
-        OPENID_SCOPE: openid profile email
-        OPENID_TOKEN_URL:
+        OAUTH_DISCOVERY_URL:
           extract:
             hostname: kanidm
-            public: true
+            record: solar
             scheme: https
           transform:
             string:
-              template: "{value}/oauth2/token"
-        OPENID_USER_INFO_URL:
-          extract:
-            variable: OAUTH_URL
-          transform:
-            string:
-              template: "{value}/userinfo"
+              template: "{value}/oauth2/openid/rxresume/.well-known/openid-configuration"
+        OAUTH_SCOPES: openid profile email
+        FLAG_DISABLE_SIGNUPS: false
+        FLAG_DISABLE_EMAIL_AUTH: true
