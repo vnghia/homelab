@@ -24,8 +24,3 @@ services:
         geoip-download:
           path: /data/geoip
           read-only: true
-  openobserve:
-    container:
-      network:
-        bridge:
-          vector: {}
