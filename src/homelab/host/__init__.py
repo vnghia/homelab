@@ -90,7 +90,9 @@ class HostBaseNoConfig(HostResourceBase):
                     self.HOST_BASES[depend_full.host] if depend_full.host else self
                 ).build_extra_service(depend_full.service)
 
-        if (self.HOOK_DIR / service).with_suffix(".py").exists():
+        if (self.HOOK_DIR / service).with_suffix(".py").exists() or (
+            self.HOOK_DIR / service / "__init__"
+        ).with_suffix(".py").exists():
             hook_module = importlib.import_module(
                 "homelab.{}.{}".format(self.HOOK_MODULE, service)
             )
