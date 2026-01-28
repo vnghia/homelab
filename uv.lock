@@ -856,6 +856,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-traefik-config" },
     { name = "pulumi" },
+    { name = "pydantic" },
 ]
 
 [package.metadata]
@@ -864,6 +865,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]
@@ -988,6 +990,7 @@ source = { editable = "homelab-network" }
 dependencies = [
     { name = "homelab-global" },
     { name = "homelab-pydantic" },
+    { name = "orjson" },
     { name = "pulumi" },
     { name = "pulumi-cloudflare" },
     { name = "pydantic" },
@@ -997,6 +1000,7 @@ dependencies = [
 requires-dist = [
     { name = "homelab-global", editable = "homelab-global" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "orjson", specifier = ">=3.11.5" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-cloudflare", specifier = ">=5.49.0" },
     { name = "pydantic", specifier = ">=2.10.6" },

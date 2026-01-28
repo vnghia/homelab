@@ -8,6 +8,7 @@ dependencies = [
     "homelab-dagu-config",
     "homelab-traefik-config",
     "pulumi>=3.148.0",
+    "pydantic>=2.10.6",
 ]
 
 [build-system]

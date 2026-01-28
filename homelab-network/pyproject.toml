@@ -9,6 +9,7 @@ dependencies = [
     "pulumi>=3.148.0",
     "pulumi-cloudflare>=5.49.0",
     "homelab-global",
+    "orjson>=3.11.5",
 ]
 
 [build-system]
