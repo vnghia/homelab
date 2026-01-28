@@ -1,6 +1,5 @@
 from typing import Any
 
-import orjson
 from homelab_docker.config.docker.network import NetworkEgressType
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file import FileResource
@@ -56,11 +55,9 @@ def pre_build(service: ExtraService[ExtraConfig]) -> None:
                 "config",
                 opts=service.child_opts,
                 volume_path=service.extract_variable_volume_path("CONFIG_PATH"),
-                content=Output.json_dumps(
+                content=YamlDumper.dumps_output(
                     {"bind_http": http_bind, "bind_https": https_bind, "routes": routes}
-                )
-                .apply(orjson.loads)
-                .apply(YamlDumper.dumps_any),
+                ),
                 permission=service.user,
                 extractor_args=service.extractor_args,
             )

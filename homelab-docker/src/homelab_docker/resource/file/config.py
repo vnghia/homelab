@@ -4,6 +4,7 @@ import io
 from typing import Any, ClassVar, Generic, Mapping, TypeVar
 
 import jsonschema
+import orjson
 import rtoml
 import yaml_rs
 from homelab_pydantic import BaseModel, DictAdapter, HomelabRootModel
@@ -36,6 +37,11 @@ class ConfigDumper(Generic[T]):
     @classmethod
     @abc.abstractmethod
     def dumps_any(cls, data: Any) -> str: ...
+
+    @classmethod
+    @abc.abstractmethod
+    def dumps_output(cls, data: Any) -> Output[str]:
+        return Output.json_dumps(data).apply(orjson.loads).apply(cls.dumps_any)
 
     @classmethod
     def dumps(cls, data: T) -> str:
