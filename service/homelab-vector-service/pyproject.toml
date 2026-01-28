@@ -1,0 +1,20 @@
+[project]
+name = "homelab-vector-service"
+version = "0.1.0"
+authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
+requires-python = ">=3.14.0"
+dependencies = [
+    "homelab-pydantic",
+    "homelab-docker",
+    "homelab-extra-service",
+    "pydantic>=2.10.6",
+    "pulumi>=3.148.0",
+    "homelab-extract",
+]
+
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+[tool.ruff]
+extend = "../../pyproject.toml"

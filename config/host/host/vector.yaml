@@ -11,9 +11,6 @@ docker:
       vector-data: {}
 services:
   vector:
-    depends-on:
-      - host: sun
-        service: openobserve
     config: {}
     files:
       config:

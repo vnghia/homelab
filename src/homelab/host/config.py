@@ -7,11 +7,13 @@ from homelab_docker.model.service import ServiceModel, ServiceWithConfigModel
 from homelab_litestream_service.config import LitestreamConfig
 from homelab_restic_service.config import ResticConfig
 from homelab_traefik_service.config import TraefikConfig
+from homelab_vector_service.config import VectorConfig
 
 
 class HostServiceConfig(ServiceConfigBase):
     tailscale: ServiceModel
     traefik: ServiceWithConfigModel[TraefikConfig]
+    vector: ServiceWithConfigModel[VectorConfig]
     dagu: ServiceWithConfigModel[DaguConfig]
     backup: ServiceWithConfigModel[BackupConfig]
     barman: ServiceWithConfigModel[BarmanConfig]

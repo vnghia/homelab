@@ -36,6 +36,7 @@ source_roots = [
     "service/homelab-restic-service/src",
     "service/homelab-tailscale-service/src",
     "service/homelab-traefik-service/src",
+    "service/homelab-vector-service/src",
 ]
 
 external.exclude = ["paramiko"]

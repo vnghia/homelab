@@ -30,6 +30,7 @@ members = [
     "homelab-tailscale-service",
     "homelab-traefik-config",
     "homelab-traefik-service",
+    "homelab-vector-service",
     "homelab-vpn",
 ]
 
@@ -546,6 +547,7 @@ dependencies = [
     { name = "homelab-tailscale-service" },
     { name = "homelab-traefik-config" },
     { name = "homelab-traefik-service" },
+    { name = "homelab-vector-service" },
     { name = "json-fix" },
     { name = "loguru" },
     { name = "pulumi" },
@@ -582,6 +584,7 @@ requires-dist = [
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
+    { name = "homelab-vector-service", editable = "service/homelab-vector-service" },
     { name = "json-fix", specifier = ">=1.0.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pulumi", specifier = ">=3.148.0" },
@@ -1208,6 +1211,29 @@ requires-dist = [
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-vector-service"
+version = "0.1.0"
+source = { editable = "service/homelab-vector-service" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-extra-service" },
+    { name = "homelab-extract" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
+    { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]

@@ -19,6 +19,7 @@ dependencies = [
     "homelab-tailscale-service",
     "homelab-traefik-service",
     "homelab-dagu-service",
+    "homelab-vector-service",
     "homelab-backup-service",
     "homelab-barman-service",
     "homelab-kanidm-service",
@@ -77,6 +78,7 @@ homelab-kanidm-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }
 homelab-traefik-service = { workspace = true }
+homelab-vector-service = { workspace = true }
 
 [tool.uv.workspace]
 members = ["homelab-*", "config/homelab-*", "service/homelab-*"]

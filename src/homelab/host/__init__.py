@@ -19,6 +19,7 @@ from homelab_network.resource.network import NetworkResource
 from homelab_restic_service import ResticService
 from homelab_tailscale_service import TailscaleService
 from homelab_traefik_service import TraefikService
+from homelab_vector_service import VectorService
 from pulumi import ResourceOptions
 
 from ..file import File
@@ -68,6 +69,13 @@ class HostBaseNoConfig(HostResourceBase):
             self.host_services_config.traefik,
             opts=self.child_opts,
             network_resource=self.network,
+            extractor_args=self.extractor_args,
+        )
+
+    def build_vector_service(self) -> None:
+        self.vector = VectorService(
+            self.host_services_config.vector,
+            opts=self.child_opts,
             extractor_args=self.extractor_args,
         )
 
@@ -194,6 +202,7 @@ class HostBase[T: HostServiceConfig](HostBaseNoConfig):
 
         self.build_tailscale_service()
         self.build_traefik_service()
+        self.build_vector_service()
 
     def build_initial_extra_services(self) -> None:
         for service, model in self.services_config.services.items():
