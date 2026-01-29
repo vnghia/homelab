@@ -17,6 +17,7 @@ services:
         transforms:
           access-log:
             type: remap
+            drop_on_error: true
             inputs:
               - input: access-log-file
             source:
