@@ -1,56 +1,54 @@
 services:
-  vector:
-    files:
-      traefik-access-log:
-        content:
-          data:
-            transforms:
-              traefik-access-log:
-                source:
-                  extract:
-                    kv:
-                      geolite: |
-                        .entry_point_name = string!(.entry_point_name)
-                        is_public_entrypoint = starts_with(.entry_point_name, "public")
+  traefik:
+    container:
+      observability:
+        transforms:
+          access-log:
+            source:
+              extract:
+                kv:
+                  geolite: |
+                    .entry_point_name = string!(.entry_point_name)
+                    is_public_entrypoint = starts_with(.entry_point_name, "public")
 
-                        not_local_or_internal_router = if .router_name == null {
-                          true
-                        } else {
-                          .router_name = string!(.router_name)
-                          !(ends_with(.router_name, "-local@file") || ends_with(.router_name, "-internal@file"))
+                    not_local_or_internal_router = if .router_name == null {
+                      true
+                    } else {
+                      .router_name = string!(.router_name)
+                      !(ends_with(.router_name, "-local@file") || ends_with(.router_name, "-internal@file"))
+                    }
+
+                    if is_public_entrypoint && not_local_or_internal_router {
+                      geoip_asn, geoip_err = get_enrichment_table_record("geolite-asn", {"ip": .client_host })
+                      if geoip_err != null {
+                        geoip_asn = {}
+                      }
+
+                      geoip_city, geoip_err = get_enrichment_table_record("geolite-city", {"ip": .client_host })
+                      if geoip_err != null {
+                        geoip_city = {}
+                      } else {
+                        if geoip_city.city.names != null {
+                          geoip_city.city.name = del(geoip_city.city.names).en
                         }
-
-                        if is_public_entrypoint && not_local_or_internal_router {
-                          geoip_asn, geoip_err = get_enrichment_table_record("geolite-asn", {"ip": .client_host })
-                          if geoip_err != null {
-                            geoip_asn = {}
-                          }
-
-                          geoip_city, geoip_err = get_enrichment_table_record("geolite-city", {"ip": .client_host })
-                          if geoip_err != null {
-                            geoip_city = {}
-                          } else {
-                            if geoip_city.city.names != null {
-                              geoip_city.city.name = del(geoip_city.city.names).en
-                            }
-                            if geoip_city.continent.names != null {
-                              geoip_city.continent.name = del(geoip_city.continent.names).en
-                            }
-                            if geoip_city.country.names != null {
-                              geoip_city.country.name = del(geoip_city.country.names).en
-                            }
-                            if geoip_city.registered_country.names != null {
-                              geoip_city.registered_country.name = del(geoip_city.registered_country.names).en
-                            }
-                            if geoip_city.subdivisions != null {
-                              geoip_city.subdivisions = map_values(array!(geoip_city.subdivisions)) -> |value| {
-                                if value.names != null {
-                                  value.name = del(value.names).en
-                                }
-                                value
-                              }
-                            }
-                          }
-
-                          .geoip = merge(geoip_asn, geoip_city)
+                        if geoip_city.continent.names != null {
+                          geoip_city.continent.name = del(geoip_city.continent.names).en
                         }
+                        if geoip_city.country.names != null {
+                          geoip_city.country.name = del(geoip_city.country.names).en
+                        }
+                        if geoip_city.registered_country.names != null {
+                          geoip_city.registered_country.name = del(geoip_city.registered_country.names).en
+                        }
+                        if geoip_city.subdivisions != null {
+                          geoip_city.subdivisions = map_values(array!(geoip_city.subdivisions)) -> |value| {
+                            if value.names != null {
+                              value.name = del(value.names).en
+                            }
+                            value
+                          }
+                        }
+                      }
+
+                      .geoip = merge(geoip_asn, geoip_city)
+                    }

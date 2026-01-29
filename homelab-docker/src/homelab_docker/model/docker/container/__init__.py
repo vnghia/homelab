@@ -36,6 +36,7 @@ from .network import (
     ContainerCommonNetworkConfig,
     ContainerNetworkConfig,
 )
+from .observability import ContainerObservabilityConfig
 from .ports import ContainerPortsConfig
 from .s3 import ContainerS3Config
 from .tmpfs import ContainerTmpfsConfig
@@ -129,6 +130,7 @@ class ContainerModel(HomelabBaseModel):
     init: bool | None = None
     mails: list[ContainerMailConfig] | None = None
     network: ContainerNetworkConfig = ContainerNetworkConfig()
+    observability: ContainerObservabilityConfig | None = None
     ports: ContainerPortsConfig = ContainerPortsConfig()
     privileged: bool | None = None
     read_only: bool = True

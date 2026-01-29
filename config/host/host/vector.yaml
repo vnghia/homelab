@@ -11,7 +11,9 @@ docker:
       vector-data: {}
 services:
   vector:
-    config: {}
+    config:
+      dir:
+        env: VECTOR_CONFIG_DIR
     files:
       config:
         path:
