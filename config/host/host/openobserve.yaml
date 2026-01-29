@@ -2,7 +2,7 @@ docker:
   images:
     remote:
       openobserve:
-        repo: public.ecr.aws/zinclabs/openobserve
+        repo: openobserve/openobserve
         tag: v0.50.1
   volumes:
     local:
