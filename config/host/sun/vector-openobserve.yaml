@@ -1,6 +1,6 @@
 services:
-  openobserve:
+  vector:
     container:
       network:
         bridge:
-          vector: {}
+          openobserve: {}
