@@ -3,6 +3,8 @@ services:
     config:
       metrics:
         service-name: traefik
+        otlp:
+          pushInterval: 15s
         endpoint:
           hvariable: OPENOBSERVE_GRPC_URI
         headers:

@@ -82,7 +82,7 @@ services:
                   prometheusType: Prometheus
                   # TODO: remove this after https://github.com/openobserve/openobserve/issues/10043
                   prometheusVersion: 2.23.0
-                  timeInterval: 10s
+                  timeInterval: 15s
                   disableRecordingRules: true
                 secureJsonData:
                   basicAuthPassword: $OPENOBSERVE_PASSWORD
