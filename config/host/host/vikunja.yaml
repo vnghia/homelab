@@ -3,8 +3,7 @@ docker:
     remote:
       vikunja:
         repo: vikunja/vikunja
-        tag: "unstable"
-        delete-before-replace: true
+        tag: "1.0.0"
   volumes:
     local:
       vikunja-config:
@@ -94,6 +93,8 @@ services:
           path: /etc/vikunja
           read-only: true
         vikunja-files: /app/vikunja/files
+      wud:
+        template: https://github.com/go-vikunja/vikunja/releases/tag/v${original}
       envs:
         VIKUNJA_SERVICE_ROOTPATH:
           volume: vikunja-config
