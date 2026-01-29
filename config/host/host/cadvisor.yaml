@@ -1,0 +1,74 @@
+docker:
+  images:
+    remote:
+      cadvisor:
+        repo: ghcr.io/google/cadvisor
+        tag: "0.56.2"
+services:
+  cadvisor:
+    variables:
+      PORT: 8080
+      PATH: /metrics
+    config: {}
+    user: root
+    container:
+      image: cadvisor
+      command:
+        - --store_container_labels=false
+        - --whitelisted_container_labels=homelab.host,homelab.service,homelab.container
+        - --docker_only=true
+        - extract:
+            svariable: PORT
+          transform:
+            string:
+              template: "--port={value}"
+        - extract:
+            svariable: PATH
+          transform:
+            string:
+              template: "--prometheus_endpoint={value}"
+      cap:
+        add:
+          - DAC_OVERRIDE
+          - FOWNER
+      observability:
+        sources:
+          metrics:
+            type: prometheus_scrape
+            endpoints:
+              - extract:
+                  kv:
+                    port:
+                      svariable: PORT
+                    path:
+                      svariable: PATH
+                transform:
+                  string:
+                    template: "http://cadvisor:{port}{path}"
+      volumes:
+        "/":
+          path: "/rootfs"
+          read-only: true
+        "/var/run":
+          path: "/var/run"
+          read-only: true
+        "/sys":
+          path: "/sys"
+          read-only: true
+        "/mnt/data/docker":
+          path: "/mnt/data/docker"
+          read-only: true
+        "/dev/disk":
+          path: "/dev/disk"
+          read-only: true
+  vector:
+    container:
+      network:
+        bridge:
+          cadvisor: {}
+      observability:
+        sinks:
+          openobserve-prometheus:
+            inputs:
+              - service: cadvisor
+                input: metrics
