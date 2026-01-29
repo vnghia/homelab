@@ -15,8 +15,9 @@ services:
       image: cadvisor
       command:
         - --store_container_labels=false
-        - --whitelisted_container_labels=homelab.host,homelab.service,homelab.container
+        - --whitelisted_container_labels=homelab.service,homelab.container
         - --docker_only=true
+        - --allow_dynamic_housekeeping=false
         - extract:
             svariable: PORT
           transform:
@@ -33,7 +34,7 @@ services:
           - FOWNER
       observability:
         sources:
-          metrics:
+          raw-metrics:
             type: prometheus_scrape
             endpoints:
               - extract:
@@ -45,6 +46,24 @@ services:
                 transform:
                   string:
                     template: "http://cadvisor:{port}{path}"
+        transforms:
+          metrics:
+            type: remap
+            drop_on_abort: true
+            drop_on_error: true
+            inputs:
+              - input: raw-metrics
+            source:
+              extract:
+                hinfo: name
+              transform:
+                string:
+                  template: |
+                    .name = to_string!(.name)
+                    if (!match(.name, r'container.*')) {{ abort }}
+                    .tags.namespace = "{value}"
+                    .tags.service = del(.tags.container_label_homelab_service)
+                    .tags.alias = del(.tags.container_label_homelab_container)
       volumes:
         "/":
           path: "/rootfs"
