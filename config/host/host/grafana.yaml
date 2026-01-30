@@ -75,6 +75,8 @@ services:
           path: /var/lib/grafana/dashboards
           read-only: true
           bind-file: false
+      wud:
+        template: https://github.com/grafana/grafana/releases/tag/v${original}
       envs:
         GF_PATHS_PROVISIONING:
           volume: grafana-provision
