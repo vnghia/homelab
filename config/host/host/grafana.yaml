@@ -6,11 +6,6 @@ docker:
         tag: "12.3.1"
   volumes:
     local:
-      grafana-data:
-        backup:
-          sqlite:
-            dbs:
-              - svariable: DATABASE_PATH
       grafana-plugins:
         backup: false
       grafana-provision:
@@ -21,11 +16,6 @@ services:
   grafana:
     variables:
       PORT: 3000
-      DATABASE_PATH:
-        extract:
-          volume: grafana-data
-        transform:
-          path: grafana.db
     config:
       traefik:
         dynamic:
@@ -62,8 +52,9 @@ services:
       key: {}
     container:
       image: grafana
+      tmpfs:
+        - /var/lib/grafana
       volumes:
-        grafana-data: /var/lib/grafana
         grafana-plugins:
           path: /var/lib/grafana/plugins
           read-only: true
@@ -86,8 +77,6 @@ services:
           hostname: grafana
           scheme: https
         GF_SERVER_ENABLE_GZIP: true
-        GF_DATABASE_PATH:
-          svariable: DATABASE_PATH
         GF_DATABASE_WAL: true
         GF_PATHS_PLUGINS:
           volume: grafana-plugins
