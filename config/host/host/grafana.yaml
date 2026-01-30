@@ -38,54 +38,6 @@ services:
         hostname:
           hostname: grafana
     files:
-      openobserve:
-        path:
-          extract:
-            volume: grafana-provision
-          transform:
-            path: datasources/openobserve.yaml
-        content:
-          format: yaml
-          data:
-            apiVersion: 1
-            prune: true
-            datasources:
-              - name: Huginn
-                uid:
-                  secret: openobserve-datasource-uid
-                type: openobserve
-                access: proxy
-                editable: false
-                url:
-                  hvariable: OPENOBSERVE_URI
-                basicAuth: true
-                basicAuthUser: $OPENOBSERVE_USERNAME
-                secureJsonData:
-                  basicAuthPassword: $OPENOBSERVE_PASSWORD
-              - name: Huginn Metrics
-                uid:
-                  secret: openobserve-prometheus-datasource-uid
-                type: prometheus
-                access: proxy
-                editable: false
-                url:
-                  extract:
-                    hvariable: OPENOBSERVE_URI
-                  transform:
-                    string:
-                      template: "{value}/api/default/prometheus"
-                basicAuth: true
-                basicAuthUser: $OPENOBSERVE_USERNAME
-                jsonData:
-                  httpMethod: POST
-                  manageAlerts: false
-                  prometheusType: Prometheus
-                  # TODO: remove this after https://github.com/openobserve/openobserve/issues/10043
-                  prometheusVersion: 2.23.0
-                  timeInterval: 15s
-                  disableRecordingRules: true
-                secureJsonData:
-                  basicAuthPassword: $OPENOBSERVE_PASSWORD
       dashboard:
         path:
           extract:
@@ -100,7 +52,7 @@ services:
               - name: "file"
                 type: file
                 disableDeletion: false
-                updateIntervalSeconds: 300
+                updateIntervalSeconds: 86400 # 1 day
                 allowUiUpdates: false
                 options:
                   path:
@@ -108,12 +60,7 @@ services:
                   foldersFromFilesStructure: true
     secrets:
       key: {}
-      openobserve-datasource-uid:
-        id:
-      openobserve-prometheus-datasource-uid:
-        id:
     container:
-      depends-on: [install-openobserve-plugin]
       image: grafana
       volumes:
         grafana-data: /var/lib/grafana
@@ -123,6 +70,7 @@ services:
         grafana-provision:
           path: /etc/grafana/provision
           read-only: true
+          bind-file: false
         grafana-dashboard:
           path: /var/lib/grafana/dashboards
           read-only: true
@@ -130,7 +78,8 @@ services:
       envs:
         GF_PATHS_PROVISIONING:
           volume: grafana-provision
-        GF_SERVER_HTTP_PORT: 3000
+        GF_SERVER_HTTP_PORT:
+          svariable: PORT
         GF_SERVER_ROOT_URL:
           hostname: grafana
           scheme: https
@@ -151,31 +100,62 @@ services:
           secret: key
         GF_SECURITY_DISABLE_GRAVATAR: true
         GF_PLUGINS_ENABLE_ALPHA: true
-        GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: openobserve
         GF_FEATURE_TOGGLES_ENABLE: sqlExpressions
-        OPENOBSERVE_USERNAME:
-          hvariable: OPENOBSERVE_USERNAME
-        OPENOBSERVE_PASSWORD:
-          hvariable: OPENOBSERVE_PASSWORD
     containers:
-      install-openobserve-plugin:
+      reload-dashboards:
         oneshot: true
-        inherit:
+        image: curl
         command:
-          - "-c"
-          - "curl -o /tmp/zo_gp.tar.gz https://zincsearch-releases.s3.us-west-2.amazonaws.com/zo_gp/zo_gp.tar.gz && tar -zxvf /tmp/zo_gp.tar.gz --directory $GF_PATHS_PLUGINS"
-        entrypoint: ["/bin/bash"]
-        network:
-          bridge:
-            vpn: {}
+          - --json
+          - "{}"
+          - -u
+          - extract:
+              kv:
+                username:
+                  keepass:
+                  info: username
+                password:
+                  keepass:
+                  info: password
+            transform:
+              string:
+                template: "{username}:{password}"
+          - extract:
+              svariable: PORT
+            transform:
+              string:
+                template: "http://grafana:{value}/api/admin/provisioning/dashboards/reload"
         volumes:
-          grafana-plugins:
-            path: /var/lib/grafana/plugins
-            read-only: false
-        tmpfs:
-          - /tmp
-  openobserve:
-    container:
-      network:
-        bridge:
-          grafana: {}
+          grafana-provision:
+            path: /etc/grafana/provision
+            read-only: true
+          grafana-dashboard:
+            path: /var/lib/grafana/dashboards
+            read-only: true
+      reload-datasources:
+        oneshot: true
+        image: curl
+        command:
+          - --json
+          - "{}"
+          - -u
+          - extract:
+              kv:
+                username:
+                  keepass:
+                  info: username
+                password:
+                  keepass:
+                  info: password
+            transform:
+              string:
+                template: "{username}:{password}"
+          - extract:
+              svariable: PORT
+            transform:
+              string:
+                template: "http://grafana:{value}/api/admin/provisioning/datasources/reload"
+        volumes:
+          grafana-provision:
+            path: /etc/grafana/provision
+            read-only: true

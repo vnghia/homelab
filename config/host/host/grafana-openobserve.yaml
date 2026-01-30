@@ -1,0 +1,86 @@
+services:
+  grafana:
+    files:
+      openobserve:
+        path:
+          extract:
+            volume: grafana-provision
+          transform:
+            path: datasources/openobserve.yaml
+        content:
+          format: yaml
+          data:
+            apiVersion: 1
+            prune: true
+            datasources:
+              - name: Huginn
+                uid:
+                  secret: openobserve-datasource-uid
+                type: openobserve
+                access: proxy
+                editable: false
+                url:
+                  hvariable: OPENOBSERVE_URI
+                basicAuth: true
+                basicAuthUser: $OPENOBSERVE_USERNAME
+                secureJsonData:
+                  basicAuthPassword: $OPENOBSERVE_PASSWORD
+              - name: Huginn Metrics
+                uid:
+                  secret: openobserve-prometheus-datasource-uid
+                type: prometheus
+                access: proxy
+                editable: false
+                url:
+                  extract:
+                    hvariable: OPENOBSERVE_URI
+                  transform:
+                    string:
+                      template: "{value}/api/default/prometheus"
+                basicAuth: true
+                basicAuthUser: $OPENOBSERVE_USERNAME
+                jsonData:
+                  httpMethod: POST
+                  manageAlerts: false
+                  prometheusType: Prometheus
+                  # TODO: remove this after https://github.com/openobserve/openobserve/issues/10043
+                  prometheusVersion: 2.23.0
+                  timeInterval: 15s
+                  disableRecordingRules: true
+                secureJsonData:
+                  basicAuthPassword: $OPENOBSERVE_PASSWORD
+    secrets:
+      openobserve-datasource-uid:
+        id:
+      openobserve-prometheus-datasource-uid:
+        id:
+    container:
+      depends-on: [install-openobserve-plugin]
+      envs:
+        GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: openobserve
+        OPENOBSERVE_USERNAME:
+          hvariable: OPENOBSERVE_USERNAME
+        OPENOBSERVE_PASSWORD:
+          hvariable: OPENOBSERVE_PASSWORD
+    containers:
+      install-openobserve-plugin:
+        oneshot: true
+        inherit:
+        command:
+          - "-c"
+          - "curl -o /tmp/zo_gp.tar.gz https://zincsearch-releases.s3.us-west-2.amazonaws.com/zo_gp/zo_gp.tar.gz && tar -zxvf /tmp/zo_gp.tar.gz --directory $GF_PATHS_PLUGINS"
+        entrypoint: ["/bin/bash"]
+        network:
+          bridge:
+            vpn: {}
+        volumes:
+          grafana-plugins:
+            path: /var/lib/grafana/plugins
+            read-only: false
+        tmpfs:
+          - /tmp
+  openobserve:
+    container:
+      network:
+        bridge:
+          grafana: {}
