@@ -1,0 +1,57 @@
+docker:
+  images:
+    remote:
+      macos:
+        repo: ghcr.io/dockur/macos
+        tag: "2.29"
+  volumes:
+    local:
+      macos-storage:
+        backup: false
+services:
+  macos:
+    variables:
+      PORT: 8006
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            service:
+              port:
+                svariable: PORT
+    user: root
+    container:
+      image: macos
+      cap:
+        add:
+          - CHOWN
+          - DAC_OVERRIDE
+          - NET_ADMIN
+          - NET_BIND_SERVICE
+          - NET_RAW
+          - SETGID
+          - SETUID
+      devices:
+        - /dev/kvm
+        - /dev/net/tun
+      network:
+        bridge:
+          default: {}
+      ports:
+        macos-tcp:
+          internal: 5009
+          protocol: tcp
+        macos-udp:
+          internal: 5009
+          protocol: udp
+      read-only: false
+      volumes:
+        macos-storage: /storage
+      wud:
+        template: https://github.com/dockur/macos/releases/tag/v${original}
+        semver-count: 2
+      envs:
+        VERSION: 14
+        RAM_SIZE: "6G"
+        CPU_CORES: 4
+        RAM_CHECK: "N"
