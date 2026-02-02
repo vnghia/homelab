@@ -1,0 +1,13 @@
+services:
+  grafana:
+    files:
+      docker-dashboard:
+        path:
+          extract:
+            volume: grafana-dashboard
+          transform:
+            path: docker.json
+        content:
+          format: json
+          data:
+            include: config/dashboard/docker.yaml
