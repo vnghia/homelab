@@ -132,6 +132,7 @@ class ContainerModel(HomelabBaseModel):
     network: ContainerNetworkConfig = ContainerNetworkConfig()
     observability: ContainerObservabilityConfig | None = None
     ports: ContainerPortsConfig = ContainerPortsConfig()
+    pid: str | None = None
     privileged: bool | None = None
     read_only: bool = True
     remove: bool = False
