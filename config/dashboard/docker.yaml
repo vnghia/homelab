@@ -154,9 +154,9 @@ spec:
                     kind: DataQuery
                     spec:
                       expr: >-
-                        avg by (name) (rate(container_cpu_usage_seconds_total{host="$host", name!=""}[$__rate_interval])
-                        / on(host)
-                        count (node_cpu_frequency_max_hertz{host="$host"})) * 100
+                        avg by (name) (rate(container_cpu_usage_seconds_total{host="$host", name!=""}[$__rate_interval])) * 100
+                        / on() group_left()
+                        count (node_cpu_frequency_max_hertz{host="$host"})
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}"
