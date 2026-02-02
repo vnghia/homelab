@@ -42,7 +42,7 @@ services:
               - name: "file"
                 type: file
                 disableDeletion: false
-                updateIntervalSeconds: 86400 # 1 day
+                updateIntervalSeconds: 0
                 allowUiUpdates: false
                 options:
                   path:
@@ -119,9 +119,6 @@ services:
         volumes:
           grafana-provision:
             path: /etc/grafana/provision
-            read-only: true
-          grafana-dashboard:
-            path: /var/lib/grafana/dashboards
             read-only: true
       reload-datasources:
         oneshot: true
