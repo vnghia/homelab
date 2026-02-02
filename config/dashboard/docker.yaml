@@ -64,7 +64,7 @@ spec:
         refresh: onDashboardLoad
         options: []
         query:
-          datasource:
+          datasource: &datasource
             name:
               secret: openobserve-prometheus-datasource-uid
           group: prometheus
@@ -77,5 +77,77 @@ spec:
         sort: alphabeticalAsc
         multi: false
         includeAll: false
+        allowCustomValue: false
+    - kind: QueryVariable
+      spec:
+        name: service
+        current:
+          text: All
+          value: $__all
+        label: Service
+        hide: dontHide
+        refresh: onTimeChanged
+        options: []
+        query:
+          datasource: *datasource
+          group: prometheus
+          kind: DataQuery
+          spec:
+            __legacyStringValue: label_values(container_last_seen{namespace="$namespace"}, service)
+          version: v0
+        regex: ""
+        regexApplyTo: value
+        sort: alphabeticalAsc
+        multi: true
+        includeAll: true
+        allValue: .+
+        allowCustomValue: false
+    - kind: QueryVariable
+      spec:
+        name: alias
+        current:
+          text: All
+          value: $__all
+        label: Alias
+        hide: dontHide
+        refresh: onTimeChanged
+        options: []
+        query:
+          datasource: *datasource
+          group: prometheus
+          kind: DataQuery
+          spec:
+            __legacyStringValue: label_values(container_last_seen{namespace="$namespace", service=~"$service"}, alias)
+          version: v0
+        regex: ""
+        regexApplyTo: value
+        sort: alphabeticalAsc
+        multi: true
+        includeAll: true
+        allValue: .+
+        allowCustomValue: false
+    - kind: QueryVariable
+      spec:
+        name: name
+        current:
+          text: Name
+          value: $__all
+        label: Name
+        hide: dontHide
+        refresh: onTimeChanged
+        options: []
+        query:
+          datasource: *datasource
+          group: prometheus
+          kind: DataQuery
+          spec:
+            __legacyStringValue: label_values(container_last_seen{namespace="$namespace", service=~"$service", alias=~"$alias"}, name)
+          version: v0
+        regex: ""
+        regexApplyTo: value
+        sort: alphabeticalAsc
+        multi: true
+        includeAll: true
+        allValue: .+
         allowCustomValue: false
 status: {}
