@@ -1,0 +1,90 @@
+docker:
+  images:
+    remote:
+      node-exporter:
+        repo: prom/node-exporter
+        tag: "v1.10.2"
+services:
+  node-exporter:
+    variables:
+      PORT: 6793
+      PATH: /metrics
+      ROOTFS: /host
+    config: {}
+    network:
+      bridge:
+    container:
+      delete-before-replace: true
+      image: node-exporter
+      command:
+        - extract:
+            svariable: PORT
+          transform:
+            string:
+              template: --web.listen-address=0.0.0.0:{value}
+        - extract:
+            svariable: PATH
+          transform:
+            string:
+              template: --web.telemetry-path={value}
+        - extract:
+            svariable: ROOTFS
+          transform:
+            string:
+              template: --path.rootfs={value}
+        - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|mnt/data/docker/.+)($|/)
+        - --web.disable-exporter-metrics
+        - --log.format=json
+      hostname:
+        hinfo: name
+      observability:
+        sources:
+          raw-metrics:
+            type: prometheus_scrape
+            endpoints:
+              - extract:
+                  kv:
+                    port:
+                      svariable: PORT
+                    path:
+                      svariable: PATH
+                transform:
+                  string:
+                    template: "http://host.docker.internal:{port}{path}"
+        transforms:
+          metrics:
+            type: remap
+            drop_on_error: true
+            inputs:
+              - input: raw-metrics
+            source:
+              extract:
+                hinfo: name
+              transform:
+                string:
+                  template: |
+                    .tags.host = "{value}"
+      network:
+        mode: host
+      pid: host
+      wud:
+        template: https://github.com/prometheus/node_exporter/releases/tag/${original}
+      volumes:
+        "/":
+          path:
+            svariable: ROOTFS
+          read-only: true
+          bind-propagation: rslave
+  vector:
+    container:
+      hosts:
+        - mode: localhost
+      network:
+        bridge:
+          default: {} # To be able to connect to the localhost
+      observability:
+        sinks:
+          openobserve-prometheus:
+            inputs:
+              - service: node-exporter
+                input: metrics
