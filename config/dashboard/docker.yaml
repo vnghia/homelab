@@ -19,8 +19,318 @@ spec:
           spec: {}
           version: v0
   cursorSync: "Off"
-  editable: true
-  elements: {}
+  editable: false
+  elements:
+    container-count:
+      kind: Panel
+      spec:
+        id: 0
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: &datasource
+                      name:
+                        secret: openobserve-prometheus-datasource-uid
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: count(container_last_seen{namespace="$namespace", name!=""})
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{namespace}}: Containers"
+                    version: v0
+                  refId: Containers
+            queryOptions: {}
+            transformations: []
+        description: Total number of running containers last seen by the exporter.
+        links: []
+        title: Containers
+        vizConfig:
+          group: stat
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  fixedColor: text
+                  mode: fixed
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+            options:
+              colorMode: value
+              graphMode: area
+              justifyMode: auto
+              orientation: auto
+              percentChangeColorMode: standard
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: ""
+                values: false
+              showPercentChange: false
+              textMode: auto
+              wideLayout: true
+    image-count:
+      kind: Panel
+      spec:
+        id: 1
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: count (sum by (image) (container_last_seen{namespace="$namespace", name!=""}))
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{namespace}}: Images"
+                    version: v0
+                  refId: Images
+            queryOptions: {}
+            transformations: []
+        description: Total number of distinct images found across running containers.
+        links: []
+        title: Images
+        vizConfig:
+          group: stat
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  fixedColor: text
+                  mode: fixed
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+            options:
+              colorMode: value
+              graphMode: area
+              justifyMode: auto
+              orientation: auto
+              percentChangeColorMode: standard
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: ""
+                values: false
+              showPercentChange: false
+              textMode: auto
+              wideLayout: true
+    total-cpu-usage:
+      kind: Panel
+      spec:
+        id: 2
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: avg by (name) (rate(container_cpu_usage_seconds_total{namespace="$namespace", name!=""}[$__rate_interval])) * 100
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{namespace}}"
+                    version: v0
+                  refId: CPU usage
+            queryOptions: {}
+            transformations:
+              - kind: calculateField
+                spec:
+                  id: calculateField
+                  options:
+                    mode: reduceRow
+                    reduce:
+                      reducer: sum
+                    replaceFields: true
+        description: >
+          Total CPU utilization percent is a metric that indicates the overall
+          level of central processing unit (CPU) usage in a computer system.
+
+          It represents the combined load placed on all CPU cores or processors.
+
+
+          For instance, if the total CPU utilization percent is 50%, it means
+          that,
+
+          on average, half of the CPU's processing capacity is being used to
+          execute tasks. A higher percentage indicates that the CPU is working
+          more intensively, potentially leading to system slowdowns if it
+          remains consistently high.
+        links: []
+        title: CPU usage
+        vizConfig:
+          group: stat
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  fixedColor: text
+                  mode: continuous-BlYlRd
+                decimals: 1
+                max: 100
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: percent
+            options:
+              colorMode: value
+              graphMode: area
+              justifyMode: auto
+              orientation: auto
+              percentChangeColorMode: standard
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: ""
+                values: false
+              showPercentChange: false
+              textMode: auto
+              wideLayout: true
+    total-memory-reserved:
+      kind: Panel
+      spec:
+        id: 3
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: sum(container_spec_memory_reservation_limit_bytes{namespace="$namespace", name!=""})
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{namespace}}: Memory reserved"
+                    version: v0
+                  refId: Memory reserved
+            queryOptions: {}
+            transformations: []
+        description: Memory reserved by the containers on the machine.
+        links: []
+        title: Memory reserved
+        vizConfig:
+          group: stat
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  fixedColor: text
+                  mode: continuous-BlYlRd
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                unit: bytes
+            options:
+              colorMode: value
+              graphMode: area
+              justifyMode: auto
+              orientation: auto
+              percentChangeColorMode: standard
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: ""
+                values: false
+              showPercentChange: false
+              textMode: auto
+              wideLayout: true
+    total-memory-usage:
+      kind: Panel
+      spec:
+        id: 4
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: sum(container_memory_usage_bytes{namespace="$namespace", name!=""})
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{namespace}}: Memory used"
+                    version: v0
+                  refId: Memory used
+            queryOptions: {}
+            transformations: []
+        description: Memory used by all containers.
+        links: []
+        title: Memory used
+        vizConfig:
+          group: stat
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  fixedColor: text
+                  mode: continuous-BlYlRd
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                unit: bytes
+            options:
+              colorMode: value
+              graphMode: area
+              justifyMode: auto
+              orientation: auto
+              percentChangeColorMode: standard
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: ""
+                values: false
+              showPercentChange: false
+              textMode: auto
+              wideLayout: true
   layout:
     kind: RowsLayout
     spec:
@@ -31,14 +341,69 @@ spec:
             layout:
               kind: GridLayout
               spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: container-count
+                      height: 4
+                      width: 4
+                      x: 0
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: image-count
+                      height: 4
+                      width: 4
+                      x: 4
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: total-cpu-usage
+                      height: 4
+                      width: 4
+                      x: 8
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: total-memory-reserved
+                      height: 4
+                      width: 4
+                      x: 12
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: total-memory-usage
+                      height: 4
+                      width: 4
+                      x: 16
+                      y: 0
+            title: Overview
+        - kind: RowsLayoutRow
+          spec:
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
                 items: []
-            title: Integration Status
+            title: Compute
   links: []
   liveNow: false
   preload: false
   timeSettings:
-    autoRefresh: 5m
+    autoRefresh: ""
     autoRefreshIntervals:
+      - 15s
+      - 30s
       - 1m
       - 5m
       - 15m
@@ -64,9 +429,7 @@ spec:
         refresh: onDashboardLoad
         options: []
         query:
-          datasource: &datasource
-            name:
-              secret: openobserve-prometheus-datasource-uid
+          datasource: *datasource
           group: prometheus
           kind: DataQuery
           spec:
@@ -81,6 +444,8 @@ spec:
     - kind: QueryVariable
       spec:
         name: service
+        includeAll: true
+        allValue: .+
         current:
           text: All
           value: $__all
@@ -99,12 +464,12 @@ spec:
         regexApplyTo: value
         sort: alphabeticalAsc
         multi: true
-        includeAll: true
-        allValue: .+
         allowCustomValue: false
     - kind: QueryVariable
       spec:
         name: alias
+        includeAll: true
+        allValue: .+
         current:
           text: All
           value: $__all
@@ -123,12 +488,12 @@ spec:
         regexApplyTo: value
         sort: alphabeticalAsc
         multi: true
-        includeAll: true
-        allValue: .+
         allowCustomValue: false
     - kind: QueryVariable
       spec:
         name: name
+        includeAll: true
+        allValue: .+
         current:
           text: Name
           value: $__all
@@ -147,7 +512,5 @@ spec:
         regexApplyTo: value
         sort: alphabeticalAsc
         multi: true
-        includeAll: true
-        allValue: .+
         allowCustomValue: false
 status: {}
