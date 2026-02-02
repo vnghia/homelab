@@ -39,10 +39,10 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: count(container_last_seen{namespace="$namespace", name!=""})
+                      expr: count(container_last_seen{host="$host", name!=""})
                       format: time_series
                       instant: false
-                      legendFormat: "{{namespace}}: Containers"
+                      legendFormat: "{{host}}: Containers"
                     version: v0
                   refId: Containers
             queryOptions: {}
@@ -96,10 +96,10 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: count (sum by (image) (container_last_seen{namespace="$namespace", name!=""}))
+                      expr: count (sum by (image) (container_last_seen{host="$host", name!=""}))
                       format: time_series
                       instant: false
-                      legendFormat: "{{namespace}}: Images"
+                      legendFormat: "{{host}}: Images"
                     version: v0
                   refId: Images
             queryOptions: {}
@@ -153,10 +153,10 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: avg by (name) (rate(container_cpu_usage_seconds_total{namespace="$namespace", name!=""}[$__rate_interval])) * 100
+                      expr: avg by (name) (rate(container_cpu_usage_seconds_total{host="$host", name!=""}[$__rate_interval])) * 100
                       format: time_series
                       instant: false
-                      legendFormat: "{{namespace}}"
+                      legendFormat: "{{host}}"
                     version: v0
                   refId: CPU usage
             queryOptions: {}
@@ -235,10 +235,10 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: sum(container_spec_memory_reservation_limit_bytes{namespace="$namespace", name!=""})
+                      expr: sum (container_spec_memory_reservation_limit_bytes{host="$host", name!=""})
                       format: time_series
                       instant: false
-                      legendFormat: "{{namespace}}: Memory reserved"
+                      legendFormat: "{{host}}: Memory reserved"
                     version: v0
                   refId: Memory reserved
             queryOptions: {}
@@ -291,10 +291,10 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: sum(container_memory_usage_bytes{namespace="$namespace", name!=""})
+                      expr: sum (container_memory_usage_bytes{host="$host", name!=""})
                       format: time_series
                       instant: false
-                      legendFormat: "{{namespace}}: Memory used"
+                      legendFormat: "{{host}}: Memory used"
                     version: v0
                   refId: Memory used
             queryOptions: {}
@@ -420,11 +420,11 @@ spec:
   variables:
     - kind: QueryVariable
       spec:
-        name: namespace
+        name: host
         current:
           text: sun
           value: sun
-        label: Namespace
+        label: Host
         hide: dontHide
         refresh: onDashboardLoad
         options: []
@@ -433,7 +433,7 @@ spec:
           group: prometheus
           kind: DataQuery
           spec:
-            __legacyStringValue: label_values(container_last_seen, namespace)
+            __legacyStringValue: label_values(container_last_seen, host)
           version: v0
         regex: ""
         regexApplyTo: value
@@ -458,7 +458,7 @@ spec:
           group: prometheus
           kind: DataQuery
           spec:
-            __legacyStringValue: label_values(container_last_seen{namespace="$namespace"}, service)
+            __legacyStringValue: label_values(container_last_seen{host="$host"}, service)
           version: v0
         regex: ""
         regexApplyTo: value
@@ -482,7 +482,7 @@ spec:
           group: prometheus
           kind: DataQuery
           spec:
-            __legacyStringValue: label_values(container_last_seen{namespace="$namespace", service=~"$service"}, alias)
+            __legacyStringValue: label_values(container_last_seen{host="$host", service=~"$service"}, alias)
           version: v0
         regex: ""
         regexApplyTo: value
@@ -506,7 +506,7 @@ spec:
           group: prometheus
           kind: DataQuery
           spec:
-            __legacyStringValue: label_values(container_last_seen{namespace="$namespace", service=~"$service", alias=~"$alias"}, name)
+            __legacyStringValue: label_values(container_last_seen{host="$host", service=~"$service", alias=~"$alias"}, name)
           version: v0
         regex: ""
         regexApplyTo: value

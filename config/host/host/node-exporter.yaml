@@ -39,7 +39,7 @@ services:
         hinfo: name
       observability:
         sources:
-          raw-metrics:
+          metrics:
             type: prometheus_scrape
             endpoints:
               - extract:
@@ -51,19 +51,6 @@ services:
                 transform:
                   string:
                     template: "http://host.docker.internal:{port}{path}"
-        transforms:
-          metrics:
-            type: remap
-            drop_on_error: true
-            inputs:
-              - input: raw-metrics
-            source:
-              extract:
-                hinfo: name
-              transform:
-                string:
-                  template: |
-                    .tags.host = "{value}"
       network:
         mode: host
       pid: host
@@ -83,8 +70,8 @@ services:
         bridge:
           default: {} # To be able to connect to the localhost
       observability:
-        sinks:
-          openobserve-prometheus:
+        transforms:
+          add-host-label:
             inputs:
               - service: node-exporter
                 input: metrics

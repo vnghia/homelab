@@ -32,6 +32,17 @@ services:
       image: vector
       hostname:
         hinfo: name
+      observability:
+        transforms:
+          add-host-label:
+            type: remap
+            drop_on_error: true
+            source:
+              extract:
+                hinfo: name
+              transform:
+                string:
+                  template: .tags.host = "{value}"
       volumes:
         vector-config:
           path: /etc/vector

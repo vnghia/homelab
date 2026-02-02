@@ -53,17 +53,11 @@ services:
             drop_on_error: true
             inputs:
               - input: raw-metrics
-            source:
-              extract:
-                hinfo: name
-              transform:
-                string:
-                  template: |
-                    .name = to_string!(.name)
-                    if (!match(.name, r'container.*')) {{ abort }}
-                    .tags.namespace = "{value}"
-                    .tags.service = del(.tags.container_label_homelab_service)
-                    .tags.alias = del(.tags.container_label_homelab_container)
+            source: |
+              .name = to_string!(.name)
+              if (!match(.name, r'container.*')) {{ abort }}
+              .tags.service = del(.tags.container_label_homelab_service)
+              .tags.alias = del(.tags.container_label_homelab_container)
       volumes:
         "/":
           path: "/rootfs"
@@ -86,8 +80,8 @@ services:
         bridge:
           cadvisor: {}
       observability:
-        sinks:
-          openobserve-prometheus:
+        transforms:
+          add-host-label:
             inputs:
               - service: cadvisor
                 input: metrics

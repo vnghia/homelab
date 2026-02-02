@@ -46,3 +46,5 @@ services:
                   template: "{value}/api/default/prometheus/api/v1/write"
             healthcheck:
               enabled: false
+            inputs:
+              - input: add-host-label
