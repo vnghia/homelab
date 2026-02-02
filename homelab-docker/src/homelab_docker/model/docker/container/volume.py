@@ -23,6 +23,7 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
     path: GlobalExtract
     read_only: bool = False
     bind_file: bool = True
+    bind_propagation: str | None = None
 
     def to_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return GlobalExtractor(self.path).extract_path(extractor_args)
@@ -36,6 +37,11 @@ class ContainerVolumeFullConfig(HomelabBaseModel):
                 target=self.to_path(extractor_args).as_posix(),
                 read_only=self.read_only,
                 source=volume.as_posix(),
+                bind_options=docker.ContainerMountBindOptionsArgs(
+                    propagation=self.bind_propagation
+                )
+                if self.bind_propagation
+                else None,
             )
 
         model = extractor_args.host.docker.volume.models.get(volume)
