@@ -153,7 +153,10 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: avg by (name) (rate(container_cpu_usage_seconds_total{host="$host", name!=""}[$__rate_interval])) * 100
+                      expr: >-
+                        avg by (name) (rate(container_cpu_usage_seconds_total{host="$host", name!=""}[$__rate_interval])
+                        / on(host)
+                        count (node_cpu_frequency_max_hertz{host="$host"})) * 100
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}"
@@ -235,7 +238,10 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: sum (container_spec_memory_reservation_limit_bytes{host="$host", name!=""})
+                      expr: >-
+                        (sum (container_spec_memory_reservation_limit_bytes{host="$host", name!=""})
+                        /
+                        sum (node_memory_memtotal_bytes{host="$host"})) * 100
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}: Memory reserved"
@@ -255,12 +261,17 @@ spec:
                 color:
                   fixedColor: text
                   mode: continuous-BlYlRd
+                decimals: 1
+                max: 100
+                min: 0
                 thresholds:
                   mode: absolute
                   steps:
                     - color: green
                       value: 0
-                unit: bytes
+                    - color: red
+                      value: 80
+                unit: percent
             options:
               colorMode: value
               graphMode: area
@@ -291,7 +302,10 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: sum (container_memory_usage_bytes{host="$host", name!=""})
+                      expr: >-
+                        (sum (container_memory_usage_bytes{host="$host", name!=""})
+                        /
+                        sum (node_memory_memtotal_bytes{host="$host"})) * 100
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}: Memory used"
@@ -299,7 +313,7 @@ spec:
                   refId: Memory used
             queryOptions: {}
             transformations: []
-        description: Memory used by all containers.
+        description: Memory used by all containers out of machine total.
         links: []
         title: Memory used
         vizConfig:
@@ -311,12 +325,17 @@ spec:
                 color:
                   fixedColor: text
                   mode: continuous-BlYlRd
+                decimals: 1
+                max: 100
+                min: 0
                 thresholds:
                   mode: absolute
                   steps:
                     - color: green
                       value: 0
-                unit: bytes
+                    - color: red
+                      value: 80
+                unit: percent
             options:
               colorMode: value
               graphMode: area
