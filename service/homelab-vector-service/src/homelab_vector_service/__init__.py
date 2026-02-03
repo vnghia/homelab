@@ -89,7 +89,11 @@ class VectorService(ExtraService[VectorConfig]):
             container or service.name(),
             opts=opts,
             config_data=VectorConfigData(
-                keys=keys, sources=sources, transforms=transforms, sinks=sinks
+                keys=keys,
+                sources=sources,
+                transforms=transforms,
+                sinks=sinks,
+                enrichment_tables={},
             ),
             vector_service=self,
         )

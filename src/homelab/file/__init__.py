@@ -31,6 +31,8 @@ class File(ComponentResource):
                 self.vector.build_one(service)
         self.vector.build_one(host.vector)
 
+        self.vector.finalize()
+
         self.traefik.register_outputs({})
         self.dagu.register_outputs({})
         self.register_outputs({})

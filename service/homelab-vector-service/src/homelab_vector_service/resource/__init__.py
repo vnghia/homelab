@@ -21,6 +21,7 @@ class VectorConfigData:
     sources: dict[str, Any]
     transforms: dict[str, Any]
     sinks: dict[str, Any]
+    enrichment_tables: dict[str, Any]
 
 
 class VectorConfigResource(
@@ -44,6 +45,11 @@ class VectorConfigResource(
             ({"sources": config_data.sources} if config_data.sources else {})
             | ({"transforms": config_data.transforms} if config_data.transforms else {})
             | ({"sinks": config_data.sinks} if config_data.sinks else {})
+            | (
+                {"enrichment_tables": config_data.enrichment_tables}
+                if config_data.enrichment_tables
+                else {}
+            )
         )
 
         super().__init__(
