@@ -55,9 +55,17 @@ services:
               - input: raw-metrics
             source: |
               .name = to_string!(.name)
-              if (!match(.name, r'container.*')) {{ abort }}
+              if !starts_with(.name, "container") { abort }
               .tags.service = del(.tags.container_label_homelab_service)
               .tags.alias = del(.tags.container_label_homelab_container)
+
+              if starts_with(.name, "container_network") {
+                if .tags.alias != "" {
+                  network_mode = get_enrichment_table_record!("container-network-mode", {"alias": .tags.alias }).network_mode
+                  if network_mode == "host" { abort } else { .tags.network_mode = network_mode }
+                }
+                if .tags.id == "/" { abort }
+              }
       volumes:
         "/":
           path: "/rootfs"
