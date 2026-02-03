@@ -26,8 +26,8 @@ class ContainerInfoSourceExtractor(ExtractorBase[ContainerExtractInfoSource]):
                 from ...model.docker.container.host import ContainerHostModeConfig
                 from ...model.docker.container.network import (
                     ContainerNetworkContainerConfig,
+                    ContainerNetworkMode,
                     ContainerNetworkModeConfig,
-                    NetworkMode,
                 )
                 from ...model.host import HostNoServiceModel
 
@@ -42,7 +42,7 @@ class ContainerInfoSourceExtractor(ExtractorBase[ContainerExtractInfoSource]):
                     )
                 if isinstance(network, ContainerNetworkModeConfig):
                     match network.mode:
-                        case NetworkMode.HOST:
+                        case ContainerNetworkMode.HOST:
                             return ContainerHostModeConfig.LOCALHOST_IP
                 return extractor_args.service.add_service_name(
                     extractor_args.container.key

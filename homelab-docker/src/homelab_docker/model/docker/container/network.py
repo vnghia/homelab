@@ -30,7 +30,7 @@ class ContainerNetworkArgs:
     advanced: list[docker.ContainerNetworksAdvancedArgs]
 
 
-class NetworkMode(StrEnum):
+class ContainerNetworkMode(StrEnum):
     HOST = auto()
     NONE = auto()
 
@@ -73,7 +73,7 @@ class ContainerNetworkContainerConfig(HomelabBaseModel):
 
 
 class ContainerNetworkModeConfig(HomelabBaseModel):
-    mode: NetworkMode
+    mode: ContainerNetworkMode
 
     def to_args(
         self,
@@ -82,7 +82,7 @@ class ContainerNetworkModeConfig(HomelabBaseModel):
         build_args: ContainerModelBuildArgs,
     ) -> ContainerNetworkArgs:
         match self.mode:
-            case NetworkMode.HOST | NetworkMode.NONE:
+            case ContainerNetworkMode.HOST | ContainerNetworkMode.NONE:
                 return ContainerNetworkArgs(mode=self.mode, advanced=[])
 
 
@@ -142,7 +142,7 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
         }
 
         if not bridges:
-            return ContainerNetworkModeConfig(mode=NetworkMode.NONE).to_args(
+            return ContainerNetworkModeConfig(mode=ContainerNetworkMode.NONE).to_args(
                 resource_name, extractor_args, build_args
             )
 

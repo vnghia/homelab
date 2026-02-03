@@ -5,8 +5,8 @@ from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container.host import ContainerHostModeConfig
 from homelab_docker.model.docker.container.network import (
     ContainerNetworkContainerConfig,
+    ContainerNetworkMode,
     ContainerNetworkModeConfig,
-    NetworkMode,
 )
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_extract import GlobalExtract
@@ -55,9 +55,9 @@ class TraefikDynamicServiceFullModelBuilder(
             network_config = service.container_models[root.container].network.root
             if isinstance(network_config, ContainerNetworkModeConfig):
                 match network_config.mode:
-                    case NetworkMode.HOST:
+                    case ContainerNetworkMode.HOST:
                         service_name = ContainerHostModeConfig.LOCALHOST_HOST
-                    case NetworkMode.NONE:
+                    case ContainerNetworkMode.NONE:
                         raise ValueError(
                             "Could not route traffic to container with no network"
                         )
