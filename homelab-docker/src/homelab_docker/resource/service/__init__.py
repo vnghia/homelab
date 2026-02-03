@@ -67,6 +67,7 @@ class ServiceResourceBase(ComponentResource):
         self.container_models: dict[str | None, ContainerModel] = model.containers
         self.containers: dict[str | None, ContainerResource] = {}
         self.raw_containers: dict[str | None, ContainerResource] = {}
+        self.container_full_names: dict[str | None, str] = {}
         self.options: defaultdict[str | None, ContainerModelBuildArgs] = defaultdict(
             ContainerModelBuildArgs
         )
@@ -262,7 +263,7 @@ class ServiceResourceBase(ComponentResource):
         container_model_build_args: ContainerModelBuildArgs | None,
     ) -> ContainerResource:
         resource = model.build_resource(
-            self.add_service_name(name),
+            self.container_full_names[name],
             opts=self.child_opts_no_aliases,
             extractor_args=self.extractor_args,
             build_args=container_model_build_args,
@@ -272,6 +273,9 @@ class ServiceResourceBase(ComponentResource):
     def build_container(self, name: str | None) -> ContainerResource | None:
         if name in self.raw_containers:
             return self.raw_containers[name]
+
+        full_name = self.add_service_name(name)
+        self.container_full_names[name] = full_name
 
         model = self.container_models[name]
         if not model.active:

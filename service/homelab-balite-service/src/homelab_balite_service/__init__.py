@@ -66,4 +66,6 @@ class BaliteService(ServiceWithConfigResourceBase[BaliteConfig]):
             }
         )
 
+        self.build_containers()
+
         self.register_outputs({})

@@ -30,7 +30,7 @@ class TraefikDynamicServiceFullModelBuilder(
             container_name in service.containers
             or container_name in service.container_models
         ):
-            return service.add_service_name(container_name)
+            return service.container_full_names[container_name]
         raise KeyError(
             "Container {} is not configured in service {}".format(
                 container_name, service.name()

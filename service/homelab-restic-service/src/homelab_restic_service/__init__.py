@@ -207,6 +207,8 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
         self.exports[self.REPOSITORY_PROFILE_EXPORT_KEY] = self.export_repositories
 
+        self.build_containers()
+
         self.register_outputs({})
 
     def get_global_profile_volume_path(self) -> ContainerVolumePath:

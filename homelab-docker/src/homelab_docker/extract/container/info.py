@@ -44,6 +44,6 @@ class ContainerInfoSourceExtractor(ExtractorBase[ContainerExtractInfoSource]):
                     match network.mode:
                         case ContainerNetworkMode.HOST:
                             return ContainerHostModeConfig.LOCALHOST_IP
-                return extractor_args.service.add_service_name(
+                return extractor_args.service.container_full_names[
                     extractor_args.container.key
-                )
+                ]

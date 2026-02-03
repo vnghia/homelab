@@ -46,7 +46,7 @@ class VectorService(ExtraService[VectorConfig]):
             return
 
         extractor_args = service.extractor_args.with_container(container_resource)
-        prefix = service.add_service_name(container)
+        prefix = service.container_full_names[container]
         keys: dict[str, str] = {}
 
         def build_input(input: ContainerObservabilityInputModel) -> str:
