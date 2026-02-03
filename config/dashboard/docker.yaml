@@ -810,6 +810,214 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
+    disk-usage-by-container:
+      kind: Panel
+      spec:
+        id: 9
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: container_fs_usage_bytes{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{device}}"
+                    version: v0
+                  refId: Disk space usage
+            queryOptions: {}
+            transformations: []
+        description: >
+          Disk space usage is the amount of storage being used on a device's
+          hard drive or storage medium, in bytes.
+        links: []
+        title: Disk usage
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: off
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: bytes
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                displayMode: table
+                placement: bottom
+                showLegend: true
+                sortBy: Mean
+                sortDesc: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    disk-io-by-container:
+      kind: Panel
+      spec:
+        id: 10
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: rate(container_fs_reads_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{device}} read"
+                    version: v0
+                  refId: Disk reads
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: rate(container_fs_writes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{device}} write"
+                    version: v0
+                  refId: Disk writes
+            queryOptions: {}
+            transformations: []
+        description: The number of I/O requests per second for the device/volume.
+        links: []
+        title: Disk I/O
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: true
+                  axisColorMode: text
+                  axisLabel: write(-) | read(+)
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: off
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: iops
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /write|written/
+                  properties:
+                    - id: custom.transform
+                      value: negative-Y
+                - matcher:
+                    id: byFrameRefID
+                    options: Disk reads
+                  properties:
+                    - id: unit
+                      value: reqps
+                - matcher:
+                    id: byFrameRefID
+                    options: Disk writes
+                  properties:
+                    - id: unit
+                      value: reqps
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                displayMode: table
+                placement: bottom
+                showLegend: true
+                sortBy: Mean
+                sortDesc: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
   layout:
     kind: RowsLayout
     spec:
@@ -919,11 +1127,37 @@ spec:
                       x: 12
                       y: 0
             title: Network
+        - kind: RowsLayoutRow
+          spec:
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: disk-usage-by-container
+                      height: 7
+                      width: 12
+                      x: 0
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: disk-io-by-container
+                      height: 7
+                      width: 12
+                      x: 12
+                      y: 0
+            title: Storage
   links: []
   liveNow: false
   preload: false
   timeSettings:
-    autoRefresh: ""
+    autoRefresh: 1m
     autoRefreshIntervals:
       - 15s
       - 30s
