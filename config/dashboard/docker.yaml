@@ -350,6 +350,192 @@ spec:
               showPercentChange: false
               textMode: auto
               wideLayout: true
+    cpu-by-container:
+      kind: Panel
+      spec:
+        id: 5
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        rate(container_cpu_usage_seconds_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval]) * 100
+                        / on() group_left()
+                        count (node_cpu_frequency_max_hertz{host="$host"})
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}"
+                    version: v0
+                  refId: CPU usage
+            queryOptions: {}
+            transformations: []
+        description: CPU time consumed in seconds by container.
+        links: []
+        title: CPU usage
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  axisSoftMax: 100
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: normal
+                  thresholdsStyle:
+                    mode: off
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+              overrides:
+                - matcher:
+                    id: byFrameRefID
+                    options: CPU usage
+                  properties:
+                    - id: unit
+                      value: percent
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                displayMode: table
+                placement: bottom
+                showLegend: true
+                sortBy: Mean
+                sortDesc: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    memory-by-container:
+      kind: Panel
+      spec:
+        id: 6
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: container_memory_usage_bytes{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}"
+                    version: v0
+                  refId: Memory usage
+            queryOptions: {}
+            transformations: []
+        description:
+          Current memory usage in bytes, including all memory regardless of
+          when it was accessed by container.
+        links: []
+        title: Memory usage
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: normal
+                  thresholdsStyle:
+                    mode: off
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: bytes
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                displayMode: table
+                placement: bottom
+                showLegend: true
+                sortBy: Mean
+                sortDesc: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
   layout:
     kind: RowsLayout
     spec:
@@ -413,7 +599,25 @@ spec:
             layout:
               kind: GridLayout
               spec:
-                items: []
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: cpu-by-container
+                      height: 7
+                      width: 12
+                      x: 0
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: memory-by-container
+                      height: 7
+                      width: 12
+                      x: 12
+                      y: 0
             title: Compute
   links: []
   liveNow: false
