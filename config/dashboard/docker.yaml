@@ -536,6 +536,280 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
+    network-by-container:
+      kind: Panel
+      spec:
+        id: 7
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: rate(container_network_receive_bytes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} receive"
+                    version: v0
+                  refId: received
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: rate(container_network_transmit_bytes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} transmit"
+                    version: v0
+                  refId: transmitted
+            queryOptions: {}
+            transformations: []
+        description: Network traffic (bytes per sec) measures data transmitted and received.
+        links: []
+        title: Network traffic
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: out(-) | in(+)
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: normal
+                  thresholdsStyle:
+                    mode: off
+                decimals: 1
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: binBps
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /transmit|tx|out/
+                  properties:
+                    - id: custom.transform
+                      value: negative-Y
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                displayMode: table
+                placement: bottom
+                showLegend: true
+                sortBy: Mean
+                sortDesc: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    network-error-by-container:
+      kind: Panel
+      spec:
+        id: 8
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: rate(container_network_receive_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} rx drops"
+                    version: v0
+                  refId: drops received
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: rate(container_network_transmit_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} tx drops"
+                    version: v0
+                  refId: drops transmitted
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: rate(container_network_receive_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} rx errors"
+                    version: v0
+                  refId: errors received
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: rate(container_network_transmit_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} tx errors"
+                    version: v0
+                  refId: errors transmitted
+            queryOptions: {}
+            transformations: []
+        description: >
+          Network errors refer to issues that occur during the transmission of
+          data across a network. 
+
+
+          These errors can result from various factors, including physical
+          issues, jitter, collisions, noise and interference.
+
+
+          Monitoring network errors is essential for diagnosing and resolving
+          issues, as they can indicate problems with network hardware or
+          environmental factors affecting network quality.
+        links: []
+        title: Network errors and drops
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: normal
+                  thresholdsStyle:
+                    mode: off
+                decimals: 1
+                noValue: No errors
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: pps
+              overrides:
+                - matcher:
+                    id: byFrameRefID
+                    options: drops received
+                  properties:
+                    - id: unit
+                      value: pps
+                - matcher:
+                    id: byFrameRefID
+                    options: drops transmitted
+                  properties:
+                    - id: unit
+                      value: pps
+                - matcher:
+                    id: byFrameRefID
+                    options: errors received
+                  properties:
+                    - id: unit
+                      value: pps
+                - matcher:
+                    id: byFrameRefID
+                    options: errors transmitted
+                  properties:
+                    - id: unit
+                      value: pps
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                displayMode: table
+                placement: bottom
+                showLegend: true
+                sortBy: Mean
+                sortDesc: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
   layout:
     kind: RowsLayout
     spec:
@@ -619,6 +893,32 @@ spec:
                       x: 12
                       y: 0
             title: Compute
+        - kind: RowsLayoutRow
+          spec:
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: network-by-container
+                      height: 7
+                      width: 12
+                      x: 0
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: network-error-by-container
+                      height: 7
+                      width: 12
+                      x: 12
+                      y: 0
+            title: Network
   links: []
   liveNow: false
   preload: false
