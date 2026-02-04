@@ -303,7 +303,7 @@ spec:
                     kind: DataQuery
                     spec:
                       expr: >-
-                        (sum (container_memory_usage_bytes{host="$host", name!=""})
+                        (sum (container_memory_working_set_bytes{host="$host", name!=""})
                         /
                         sum (node_memory_memtotal_bytes{host="$host"})) * 100
                       format: time_series
@@ -463,7 +463,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: container_memory_usage_bytes{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}
+                      expr: container_memory_working_set_bytes{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}
                       format: time_series
                       instant: false
                       legendFormat: "{{name}}"
@@ -587,7 +587,7 @@ spec:
                   mode: palette-classic
                 custom:
                   axisBorderShow: false
-                  axisCenteredZero: false
+                  axisCenteredZero: true
                   axisColorMode: text
                   axisLabel: out(-) | in(+)
                   axisPlacement: auto
@@ -1087,7 +1087,7 @@ spec:
                       element:
                         kind: ElementReference
                         name: cpu-by-container
-                      height: 7
+                      height: 10
                       width: 12
                       x: 0
                       y: 0
@@ -1096,7 +1096,7 @@ spec:
                       element:
                         kind: ElementReference
                         name: memory-by-container
-                      height: 7
+                      height: 10
                       width: 12
                       x: 12
                       y: 0
@@ -1113,7 +1113,7 @@ spec:
                       element:
                         kind: ElementReference
                         name: network-by-container
-                      height: 7
+                      height: 10
                       width: 12
                       x: 0
                       y: 0
@@ -1122,7 +1122,7 @@ spec:
                       element:
                         kind: ElementReference
                         name: network-error-by-container
-                      height: 7
+                      height: 10
                       width: 12
                       x: 12
                       y: 0
@@ -1139,7 +1139,7 @@ spec:
                       element:
                         kind: ElementReference
                         name: disk-usage-by-container
-                      height: 7
+                      height: 10
                       width: 12
                       x: 0
                       y: 0
@@ -1148,7 +1148,7 @@ spec:
                       element:
                         kind: ElementReference
                         name: disk-io-by-container
-                      height: 7
+                      height: 10
                       width: 12
                       x: 12
                       y: 0
