@@ -3,13 +3,15 @@ docker:
     remote:
       impress-backend:
         repo: lasuite/impress-backend
-        tag: &impress-version "v4.4.0"
+        tag: "v4.4.0"
       impress-frontend:
         repo: lasuite/impress-frontend
-        tag: *impress-version
+        tag:
+          from: impress-backend
       impress-collaboration:
         repo: lasuite/impress-y-provider
-        tag: *impress-version
+        tag:
+          from: impress-backend
 services:
   kanidm:
     config:

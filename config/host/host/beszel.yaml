@@ -3,10 +3,11 @@ docker:
     remote:
       beszel:
         repo: ghcr.io/henrygd/beszel/beszel
-        tag: &beszel-version "0.18.2"
+        tag: "0.18.2"
       beszel-agent:
         repo: ghcr.io/henrygd/beszel/beszel-agent
-        tag: *beszel-version
+        tag:
+          from: beszel
         suffix: "-alpine"
   volumes:
     local:

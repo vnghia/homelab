@@ -20,9 +20,7 @@ class ImageResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.remotes = {
-            name: model.build_resource(
-                name, opts=self.child_opts, platform=config.platform
-            )
+            name: model.build_resource(name, opts=self.child_opts, config=config)
             for name, model in config.images.remote.items()
         }
 
@@ -42,9 +40,7 @@ class ImageResource(ComponentResource):
                 for version, model in versions.items():
                     image_name = type_.get_short_name_version(name, version)
                     self.remotes[image_name] = model.build_resource(
-                        image_name,
-                        opts=self.child_opts,
-                        platform=config.platform,
+                        image_name, opts=self.child_opts, config=config
                     )
 
         export = {name: image.image_id for name, image in self.remotes.items()} | {
