@@ -398,7 +398,7 @@ spec:
   tags:
     - linux
   timeSettings:
-    autoRefresh: 1m
+    autoRefresh: 15s
     autoRefreshIntervals:
       - 15s
       - 30s
@@ -410,7 +410,7 @@ spec:
       - 2h
       - 1d
     fiscalYearStartMonth: 0
-    from: now-6h
+    from: now-1h
     hideTimepicker: false
     timezone: browser
     to: now
