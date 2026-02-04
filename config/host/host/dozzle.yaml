@@ -3,7 +3,7 @@ docker:
     remote:
       dozzle:
         repo: ghcr.io/amir20/dozzle
-        tag: "v9.0.2"
+        tag: "v9.0.3"
   volumes:
     local:
       dozzle-cert:
