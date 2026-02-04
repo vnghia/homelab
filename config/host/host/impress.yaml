@@ -3,7 +3,7 @@ docker:
     remote:
       impress-backend:
         repo: lasuite/impress-backend
-        tag: "v4.4.0"
+        tag: "v4.5.0"
       impress-frontend:
         repo: lasuite/impress-frontend
         tag:
