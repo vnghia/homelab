@@ -640,6 +640,416 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
+    disk-read-write-by-device:
+      kind: Panel
+      spec:
+        id: 6
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: irate(node_disk_read_bytes_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} read"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: irate(node_disk_written_bytes_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} written"
+                    version: v0
+                  refId: B
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: irate(node_disk_io_time_seconds_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} io util"
+                    version: v0
+                  refId: C
+            queryOptions: {}
+            transformations: []
+        description: Disk read/writes in bytes per second.
+        links: []
+        title: Disk reads/writes
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: binBps
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /time|used|busy|util/
+                  properties:
+                    - id: custom.axisSoftMax
+                      value: 100
+                    - id: custom.drawStyle
+                      value: points
+                    - id: unit
+                      value: percent
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    disk-io-by-device:
+      kind: Panel
+      spec:
+        id: 7
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: irate(node_disk_reads_completed_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} reads"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: irate(node_disk_writes_completed_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} writes"
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: |
+          The number of I/O requests per second for the device/volume.
+        links: []
+        title: Disk I/O
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: true
+                  axisColorMode: text
+                  axisLabel: write(-) | read(+)
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: iops
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /write|written/
+                  properties:
+                    - id: custom.transform
+                      value: negative-Y
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    disk-avg-wait-time:
+      kind: Panel
+      spec:
+        id: 8
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        irate(node_disk_read_time_seconds_total{host="$host", device!=""}[$__rate_interval])
+                        /
+                        irate(node_disk_reads_completed_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} avg read time"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        irate(node_disk_write_time_seconds_total{host="$host", device!=""}[$__rate_interval])
+                        /
+                        irate(node_disk_writes_completed_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} avg write time"
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: >
+          The average time for requests issued to the device to be served.
+
+          This includes the time spent by the requests in queue and the time
+          spent servicing them.'
+        links: []
+        title: Disk average wait time
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: true
+                  axisColorMode: text
+                  axisLabel: write(-) | read(+)
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: s
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /write|written/
+                  properties:
+                    - id: custom.transform
+                      value: negative-Y
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    disk-avg-queue-time:
+      kind: Panel
+      spec:
+        id: 9
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: irate(node_disk_io_time_weighted_seconds_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} avg queue"
+                    version: v0
+                  refId: A
+            queryOptions: {}
+            transformations: []
+        description: Disk average IO queue.
+        links: []
+        title: Disk average queue
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: true
+                  axisColorMode: text
+                  axisLabel: write(-) | read(+)
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /write|written/
+                  properties:
+                    - id: custom.transform
+                      value: negative-Y
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
   layout:
     kind: RowsLayout
     spec:
@@ -706,6 +1116,50 @@ spec:
                       x: 12
                       y: 16
             title: Filesystem
+        - kind: RowsLayoutRow
+          spec:
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: disk-read-write-by-device
+                      height: 8
+                      width: 12
+                      x: 0
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: disk-io-by-device
+                      height: 8
+                      width: 12
+                      x: 12
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: disk-avg-wait-time
+                      height: 8
+                      width: 12
+                      x: 0
+                      y: 8
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: disk-avg-queue-time
+                      height: 8
+                      width: 12
+                      x: 12
+                      y: 8
+            title: Disk
   links:
     - asDropdown: false
       icon: ""
