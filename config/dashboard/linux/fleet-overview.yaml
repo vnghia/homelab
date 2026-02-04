@@ -1,0 +1,443 @@
+apiVersion: dashboard.grafana.app/v2beta1
+kind: Dashboard
+metadata:
+  name: linux-fleet-overview
+spec:
+  annotations:
+    - kind: AnnotationQuery
+      spec:
+        builtIn: true
+        enable: true
+        hide: true
+        iconColor: rgba(0, 211, 255, 1)
+        name: Annotations & Alerts
+        query:
+          datasource:
+            name: "-- Grafana --"
+          group: grafana
+          kind: DataQuery
+          spec: {}
+          version: v0
+  cursorSync: "Off"
+  editable: false
+  elements:
+    overview:
+      kind: Panel
+      spec:
+        id: 0
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: &datasource
+                      name:
+                        secret: openobserve-prometheus-datasource-uid
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_uname_info{host=~"$host"} * on (host) group_left(pretty_name) node_os_info{host=~"$host"}
+                      format: table
+                      instant: true
+                    version: v0
+                  refId: OS Info
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: time() - node_boot_time_seconds{host=~"$host"}
+                      format: table
+                      instant: true
+                    version: v0
+                  refId: Uptime
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_load1{host=~"$host"}
+                      format: table
+                      instant: true
+                      legendFormat: 1m
+                    version: v0
+                  refId: Load 1
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: count without (cpu) (node_cpu_seconds_total{host=~"$host", mode="idle"})
+                      format: table
+                      instant: true
+                      legendFormat: Cores
+                    version: v0
+                  refId: Cores
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        (((count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host)))
+                        -
+                        sum by (host) (sum by (host,
+                        mode)(irate(node_cpu_seconds_total{host=~"$host", mode=~"idle|iowait|steal"}[$__rate_interval]))))
+                        * 100)
+                        /
+                        count by(host)
+                        (count(node_cpu_seconds_total{host=~"$host"})
+                        by (cpu, host))
+                      format: table
+                      instant: true
+                      legendFormat: CPU usage
+                    version: v0
+                  refId: CPU usage
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_memory_memtotal_bytes{host=~"$host"}
+                      format: table
+                      instant: true
+                      legendFormat: Memory total
+                    version: v0
+                  refId: Memory total
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: 100 - (avg by (host) (node_memory_memavailable_bytes{host=~"$host"}) / avg by (host) (node_memory_memtotal_bytes{host=~"$host"}) * 100)
+                      format: table
+                      instant: true
+                    version: v0
+                  refId: Memory usage
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filesystem_size_bytes{host=~"$host", mountpoint="/", fstype!="rootfs"}
+                      format: table
+                      instant: true
+                    version: v0
+                  refId: Root mount size
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: 100 - node_filesystem_avail_bytes{host=~"$host", mountpoint="/", fstype!="rootfs"} / node_filesystem_size_bytes{host=~"$host", mountpoint="/", fstype!="rootfs"} * 100
+                      format: table
+                      instant: true
+                    version: v0
+                  refId: Root mount used
+            queryOptions: {}
+            transformations:
+              - kind: joinByField
+                spec:
+                  id: joinByField
+                  options:
+                    byField: host
+                    mode: outer
+              - kind: filterFieldsByName
+                spec:
+                  id: filterFieldsByName
+                  options:
+                    include:
+                      pattern: host|host 1|product|^hostname$|^nodename$|^pretty_name$|Value.+
+              - kind: organize
+                spec:
+                  id: organize
+                  options:
+                    excludeByName:
+                      "Value #OS Info": true
+                    indexByName:
+                      hostname: 1
+                      host: 0
+                      nodename: 1
+                      pretty_name: 2
+                      product: 2
+                    renameByName:
+                      hostname: Hostname
+                      host: Host
+                      host 1: Host
+                      nodename: Hostname
+                      pretty_name: OS
+                      product: OS
+              - kind: renameByRegex
+                spec:
+                  id: renameByRegex
+                  options:
+                    regex: "Value #(.*)"
+                    renamePattern: $1
+        description: All nodes' perfomance at a glance.
+        links: []
+        title: Fleet overview
+        vizConfig:
+          group: table
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                custom:
+                  align: auto
+                  cellOptions:
+                    type: auto
+                  footer:
+                    reducers: []
+                  inspect: false
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+              overrides:
+                - matcher:
+                    id: byName
+                    options: Uptime
+                  properties:
+                    - id: custom.cellOptions
+                      value:
+                        type: color-text
+                    - id: color
+                      value:
+                        mode: thresholds
+                    - id: decimals
+                      value: 1
+                    - id: thresholds
+                      value:
+                        mode: absolute
+                        steps:
+                          - color: orange
+                            value: 0
+                          - color: text
+                            value: 600
+                    - id: unit
+                      value: dtdurations
+                - matcher:
+                    id: byRegexp
+                    options: Product|^Hostname$
+                  properties:
+                    - id: custom.filterable
+                      value: true
+                - matcher:
+                    id: byName
+                    options: Host
+                  properties:
+                    - id: custom.filterable
+                      value: true
+                    - id: links
+                      value:
+                        - targetBlank: false
+                          title: Drill down to ${__field.name} ${__value.text}
+                          url: d/linux-node-overview/node-overview?${__url_time_range}&var-host=${__data.fields.host}
+                - matcher:
+                    id: byName
+                    options: Cores
+                  properties:
+                    - id: custom.width
+                      value: 120
+                - matcher:
+                    id: byName
+                    options: CPU usage
+                  properties:
+                    - id: custom.width
+                      value: 120
+                    - id: custom.cellOptions
+                      value:
+                        mode: basic
+                        type: gauge
+                        valueDisplayMode: text
+                    - id: color
+                      value:
+                        mode: continuous-BlYlRd
+                    - id: decimals
+                      value: 1
+                    - id: max
+                      value: 100
+                    - id: min
+                      value: 0
+                    - id: unit
+                      value: percent
+                - matcher:
+                    id: byName
+                    options: Memory total
+                  properties:
+                    - id: custom.width
+                      value: 120
+                    - id: unit
+                      value: bytes
+                - matcher:
+                    id: byName
+                    options: Memory usage
+                  properties:
+                    - id: custom.width
+                      value: 120
+                    - id: custom.cellOptions
+                      value:
+                        mode: basic
+                        type: gauge
+                        valueDisplayMode: text
+                    - id: color
+                      value:
+                        mode: continuous-BlYlRd
+                    - id: decimals
+                      value: 1
+                    - id: max
+                      value: 100
+                    - id: min
+                      value: 0
+                    - id: unit
+                      value: percent
+                - matcher:
+                    id: byName
+                    options: Root mount size
+                  properties:
+                    - id: custom.width
+                      value: 120
+                    - id: unit
+                      value: bytes
+                - matcher:
+                    id: byName
+                    options: Root mount used
+                  properties:
+                    - id: custom.width
+                      value: 120
+                    - id: custom.cellOptions
+                      value:
+                        mode: basic
+                        type: gauge
+                        valueDisplayMode: text
+                    - id: unit
+                      value: percent
+                    - id: color
+                      value:
+                        mode: continuous-BlYlRd
+                    - id: decimals
+                      value: 1
+                    - id: max
+                      value: 100
+                    - id: min
+                      value: 0
+                    - id: unit
+                      value: percent
+                - matcher:
+                    id: byNames
+                    options:
+                      mode: include
+                      names:
+                        - "Value #Cores"
+                        - "Value #Load 1"
+                        - "Value #Memory total"
+                        - "Value #Root mount size"
+                  properties:
+                    - id: custom.footer.reducers
+                      value:
+                        - sum
+            options:
+              cellHeight: sm
+              showHeader: true
+  layout:
+    kind: GridLayout
+    spec:
+      items:
+        - kind: GridLayoutItem
+          spec:
+            element:
+              kind: ElementReference
+              name: overview
+            height: 6
+            width: 24
+            x: 0
+            y: 2
+  links:
+    - asDropdown: true
+      icon: ""
+      includeVars: true
+      keepTime: true
+      tags:
+        - linux
+      targetBlank: false
+      title: All linux dashboards
+      tooltip: ""
+      type: dashboards
+  liveNow: false
+  preload: false
+  tags:
+    - linux
+  timeSettings:
+    autoRefresh: 1m
+    autoRefreshIntervals:
+      - 15s
+      - 30s
+      - 1m
+      - 5m
+      - 15m
+      - 30m
+      - 1h
+      - 2h
+      - 1d
+    fiscalYearStartMonth: 0
+    from: now-6h
+    hideTimepicker: false
+    timezone: browser
+    to: now
+  title: Fleet overview
+  variables:
+    - kind: QueryVariable
+      spec:
+        name: host
+        includeAll: true
+        allValue: .+
+        current:
+          text: All
+          value: $__all
+        label: Host
+        hide: dontHide
+        refresh: onDashboardLoad
+        options: []
+        query:
+          datasource: *datasource
+          group: prometheus
+          kind: DataQuery
+          spec:
+            __legacyStringValue: label_values(node_uname_info, host)
+          version: v0
+        regex: ""
+        regexApplyTo: value
+        sort: alphabeticalAsc
+        multi: true
+        allowCustomValue: false
+status: {}

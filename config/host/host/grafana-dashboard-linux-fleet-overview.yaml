@@ -1,0 +1,13 @@
+services:
+  grafana:
+    files:
+      linux-fleet-overview-dashboard:
+        path:
+          extract:
+            volume: grafana-dashboard
+          transform:
+            path: linux/fleet-overview.json
+        content:
+          format: json
+          data:
+            include: config/dashboard/linux/fleet-overview.yaml
