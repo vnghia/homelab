@@ -11,3 +11,13 @@ services:
           format: json
           data:
             include: config/dashboard/linux/fleet-overview.yaml
+      linux-filesystem-and-disks:
+        path:
+          extract:
+            volume: grafana-dashboard
+          transform:
+            path: linux/filesystem-and-disks.json
+        content:
+          format: json
+          data:
+            include: config/dashboard/linux/filesystem-and-disks.yaml

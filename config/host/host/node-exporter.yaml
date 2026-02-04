@@ -32,7 +32,7 @@ services:
           transform:
             string:
               template: --path.rootfs={value}
-        - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|mnt/data/docker/.+)($|/)
+        - --collector.filesystem.mount-points-exclude=^/(boot|dev|proc|sys|run.*|mnt/data/docker/.+)($|/)
         - --web.disable-exporter-metrics
         - --log.format=json
       hostname:

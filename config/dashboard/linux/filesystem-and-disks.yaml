@@ -1,0 +1,393 @@
+apiVersion: dashboard.grafana.app/v2beta1
+kind: Dashboard
+metadata:
+  name: linux-filesystem-and-disks
+spec:
+  annotations:
+    - kind: AnnotationQuery
+      spec:
+        builtIn: true
+        enable: true
+        hide: true
+        iconColor: rgba(0, 211, 255, 1)
+        name: Annotations & Alerts
+        query:
+          datasource:
+            name: "-- Grafana --"
+          group: grafana
+          kind: DataQuery
+          spec: {}
+          version: v0
+  cursorSync: "Off"
+  editable: false
+  elements:
+    filesystem-usage-by-mountpoint:
+      kind: Panel
+      spec:
+        id: 0
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: &datasource
+                      name:
+                        secret: openobserve-prometheus-datasource-uid
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filesystem_avail_bytes{host="$host", fstype!="", mountpoint!=""}
+                      legendFormat: "{{ mountpoint }} free"
+                    version: v0
+                  refId: A
+            queryOptions: {}
+            transformations: []
+        description: Filesystem space utilisation in bytes, by mountpoint.
+        links: []
+        title: Filesystem space availabe
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: bytes
+              overrides: []
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    disk-usage-by-mountpoint:
+      kind: Panel
+      spec:
+        id: 1
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filesystem_size_bytes{host="$host", fstype!="", mountpoint!=""}
+                      format: table
+                      instant: true
+                    version: v0
+                  refId: TOTAL
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        node_filesystem_avail_bytes{host="$host", fstype!="", mountpoint!=""}
+                      format: table
+                      instant: true
+                      legendFormat: "{{ mountpoint }} free"
+                    version: v0
+                  refId: FREE
+            queryOptions: {}
+            transformations:
+              - kind: groupBy
+                spec:
+                  id: groupBy
+                  options:
+                    fields:
+                      "Value #FREE":
+                        aggregations:
+                          - lastNotNull
+                        operation: aggregate
+                      "Value #TOTAL":
+                        aggregations:
+                          - lastNotNull
+                        operation: aggregate
+                      mountpoint:
+                        aggregations: []
+                        operation: groupby
+              - kind: merge
+                spec:
+                  id: merge
+                  options: {}
+              - kind: calculateField
+                spec:
+                  id: calculateField
+                  options:
+                    alias: Used
+                    binary:
+                      left: "Value #TOTAL (lastNotNull)"
+                      operator: "-"
+                      reducer: sum
+                      right: "Value #FREE (lastNotNull)"
+                    mode: binary
+                    reduce:
+                      reducer: sum
+              - kind: calculateField
+                spec:
+                  id: calculateField
+                  options:
+                    alias: Used, %
+                    binary:
+                      left: Used
+                      operator: /
+                      reducer: sum
+                      right: "Value #TOTAL (lastNotNull)"
+                    mode: binary
+                    reduce:
+                      reducer: sum
+              - kind: organize
+                spec:
+                  id: organize
+                  options:
+                    excludeByName: {}
+                    indexByName:
+                      Used: 3
+                      Used, %: 4
+                      "Value #FREE (lastNotNull)": 2
+                      "Value #TOTAL (lastNotNull)": 1
+                      mountpoint: 0
+                    renameByName:
+                      "Value #FREE (lastNotNull)": Available
+                      "Value #TOTAL (lastNotNull)": Size
+                      mountpoint: Mounted on
+              - kind: sortBy
+                spec:
+                  id: sortBy
+                  options:
+                    fields: {}
+                    sort:
+                      - desc: false
+                        field: Mounted on
+        description: >-
+          Disk utilisation in percent, by mountpoint. Some duplication can occur
+          if the same filesystem is mounted in multiple locations.
+        links: []
+        title: Disk space usage
+        vizConfig:
+          group: table
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                custom:
+                  align: auto
+                  cellOptions:
+                    type: auto
+                  footer:
+                    reducers: []
+                  inspect: false
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: light-blue
+                      value: 0
+                    - color: light-yellow
+                      value: 0.8
+                    - color: light-red
+                      value: 0.9
+                unit: bytes
+              overrides:
+                - matcher:
+                    id: byName
+                    options: Mounted on
+                  properties:
+                    - id: custom.width
+                      value: 260
+                - matcher:
+                    id: byName
+                    options: Size
+                  properties:
+                    - id: custom.width
+                      value: 80
+                - matcher:
+                    id: byName
+                    options: Used
+                  properties:
+                    - id: custom.width
+                      value: 80
+                - matcher:
+                    id: byName
+                    options: Available
+                  properties:
+                    - id: custom.width
+                      value: 80
+                - matcher:
+                    id: byName
+                    options: Used, %
+                  properties:
+                    - id: custom.cellOptions
+                      value:
+                        mode: basic
+                        type: gauge
+                        valueDisplayMode: text
+                    - id: max
+                      value: 1
+                    - id: min
+                      value: 0
+                    - id: unit
+                      value: percentunit
+            options:
+              cellHeight: sm
+              showHeader: true
+  layout:
+    kind: RowsLayout
+    spec:
+      rows:
+        - kind: RowsLayoutRow
+          spec:
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: filesystem-usage-by-mountpoint
+                      height: 8
+                      width: 12
+                      x: 0
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: disk-usage-by-mountpoint
+                      height: 8
+                      width: 12
+                      x: 12
+                      y: 0
+            title: Filesystem
+  links:
+    - asDropdown: false
+      icon: ""
+      includeVars: false
+      keepTime: true
+      tags: []
+      targetBlank: false
+      title: Back to Linux fleet overview
+      tooltip: ""
+      type: link
+      url: /d/linux-fleet-overview/fleet-overview
+    - asDropdown: false
+      icon: ""
+      includeVars: false
+      keepTime: true
+      tags: []
+      targetBlank: false
+      title: Back to Linux node overview
+      tooltip: ""
+      type: link
+      url: /d/linux-node-overview/node-overview
+    - asDropdown: true
+      icon: ""
+      includeVars: true
+      keepTime: true
+      tags:
+        - linux
+      targetBlank: false
+      title: All Linux dashboards
+      tooltip: ""
+      type: dashboards
+  liveNow: false
+  preload: false
+  tags:
+    - linux
+  timeSettings:
+    autoRefresh: 15s
+    autoRefreshIntervals:
+      - 15s
+      - 30s
+      - 1m
+      - 5m
+      - 15m
+      - 30m
+      - 1h
+      - 2h
+      - 1d
+    fiscalYearStartMonth: 0
+    from: now-1h
+    hideTimepicker: false
+    timezone: browser
+    to: now
+  title: Filesystem and disks
+  variables:
+    - kind: QueryVariable
+      spec:
+        name: host
+        current:
+          text: sun
+          value: sun
+        label: Host
+        hide: dontHide
+        refresh: onDashboardLoad
+        options: []
+        query:
+          datasource: *datasource
+          group: prometheus
+          kind: DataQuery
+          spec:
+            __legacyStringValue: label_values(node_uname_info, host)
+          version: v0
+        regex: ""
+        regexApplyTo: value
+        sort: alphabeticalAsc
+        multi: false
+        includeAll: false
+        allowCustomValue: false
+status: {}
