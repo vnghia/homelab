@@ -3,7 +3,7 @@ docker:
     remote:
       mqtt:
         repo: rmqtt/rmqtt
-        tag: "0.17.0"
+        tag: "0.18.0"
   volumes:
     local:
       mqtt-config:
