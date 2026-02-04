@@ -6,7 +6,7 @@ docker:
         tag: "1.10.1"
       docker-cli:
         repo: docker
-        tag: "28.5.1-cli"
+        tag: "28.5.2-cli"
   volumes:
     local:
       docker-proxy-mtls:
