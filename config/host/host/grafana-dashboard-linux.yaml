@@ -11,7 +11,7 @@ services:
           format: json
           data:
             include: config/dashboard/linux/fleet-overview.yaml
-      linux-filesystem-and-disks:
+      linux-filesystem-and-disks-dashboard:
         path:
           extract:
             volume: grafana-dashboard
@@ -21,3 +21,13 @@ services:
           format: json
           data:
             include: config/dashboard/linux/filesystem-and-disks.yaml
+      linux-cpu-and-system-dashboard:
+        path:
+          extract:
+            volume: grafana-dashboard
+          transform:
+            path: linux/cpu-and-system.json
+        content:
+          format: json
+          data:
+            include: config/dashboard/linux/cpu-and-system.yaml

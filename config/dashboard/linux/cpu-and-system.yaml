@@ -1,0 +1,981 @@
+apiVersion: dashboard.grafana.app/v2beta1
+kind: Dashboard
+metadata:
+  name: linux-cpu-and-system
+spec:
+  annotations:
+    - kind: AnnotationQuery
+      spec:
+        builtIn: true
+        enable: true
+        hide: true
+        iconColor: rgba(0, 211, 255, 1)
+        name: Annotations & Alerts
+        query:
+          datasource:
+            name: "-- Grafana --"
+          group: grafana
+          kind: DataQuery
+          spec: {}
+          version: v0
+  cursorSync: "Off"
+  editable: false
+  elements:
+    cpu-usage-percent:
+      kind: Panel
+      spec:
+        id: 0
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: &datasource
+                      name:
+                        secret: openobserve-prometheus-datasource-uid
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        (((count by (host) (count(node_cpu_seconds_total{host="$host"}) by (cpu, host)))
+                        -
+                        sum by (host) (sum by (host, mode) (irate(node_cpu_seconds_total{host="$host", mode=~"idle|iowait|steal"}[$__rate_interval])))) * 100)
+                        /
+                        (count by (host) (count(node_cpu_seconds_total{host="$host"}) by (cpu, host)))
+                      legendFormat: CPU usage
+                    version: v0
+                  refId: A
+            queryOptions: {}
+            transformations: []
+        description: >
+          Total CPU utilization percent is a metric that indicates the overall
+          level of central processing unit (CPU) usage in a computer system.
+
+          It represents the combined load placed on all CPU cores or processors.
+
+
+          For instance, if the total CPU utilization percent is 50%, it means
+          that,
+
+          on average, half of the CPU's processing capacity is being used to
+          execute tasks. A higher percentage indicates that the CPU is working
+          more intensively, potentially leading to system slowdowns if it
+          remains consistently high.
+        links: []
+        title: CPU usage
+        vizConfig:
+          group: stat
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  fixedColor: text
+                  mode: continuous-BlYlRd
+                decimals: 1
+                max: 100
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: percent
+              overrides: []
+            options:
+              colorMode: value
+              graphMode: area
+              justifyMode: auto
+              orientation: auto
+              percentChangeColorMode: standard
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: ""
+                values: false
+              showPercentChange: false
+              textMode: auto
+              wideLayout: true
+    per-cpu-usage-percent:
+      kind: Panel
+      spec:
+        id: 1
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: (100 - sum without (mode) (rate(node_cpu_seconds_total{host="$host", mode=~"idle|iowait|steal"}[$__rate_interval])) * 100)
+                      legendFormat: CPU {{cpu}}
+                    version: v0
+                  refId: A
+            queryOptions: {}
+            transformations: []
+        description: >
+          Total CPU utilization percent is a metric that indicates the overall
+          level of central processing unit (CPU) usage in a computer system.
+
+          It represents the combined load placed on all CPU cores or processors.
+
+
+          For instance, if the total CPU utilization percent is 50%, it means
+          that,
+
+          on average, half of the CPU's processing capacity is being used to
+          execute tasks. A higher percentage indicates that the CPU is working
+          more intensively, potentially leading to system slowdowns if it
+          remains consistently high.
+        links: []
+        title: CPU usage
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: continuous-BlYlRd
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 30
+                  gradientMode: scheme
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                decimals: 1
+                max: 100
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: percent
+              overrides: []
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    cpu-usage-by-mode:
+      kind: Panel
+      spec:
+        id: 2
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        sum by(host, mode) (irate(node_cpu_seconds_total{host="$host"}[$__rate_interval]))
+                        / on(host) group_left
+                        sum by (host) (irate(node_cpu_seconds_total{host="$host"}[$__rate_interval]))
+                        * 100
+                      legendFormat: "{{ mode }}"
+                    version: v0
+                  refId: A
+            queryOptions: {}
+            transformations: []
+        description: >
+          - System: Processes executing in kernel mode.
+
+          - User: Normal processes executing in user mode.
+
+          - Nice: Niced processes executing in user mode.
+
+          - Idle: Waiting for something to happen.
+
+          - Iowait: Waiting for I/O to complete.
+
+          - Irq: Servicing interrupts.
+
+          - Softirq: Servicing softirqs.
+
+          - Steal: Time spent in other operating systems when running in a
+          virtualized environment.
+        links: []
+        title: CPU usage by modes
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 80
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: normal
+                  thresholdsStyle:
+                    mode: "off"
+                max: 100
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: percent
+              overrides:
+                - matcher:
+                    id: byName
+                    options: idle
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-blue
+                        mode: fixed
+                - matcher:
+                    id: byName
+                    options: interrupt
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-purple
+                        mode: fixed
+                - matcher:
+                    id: byName
+                    options: user
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-orange
+                        mode: fixed
+                - matcher:
+                    id: byRegexp
+                    options: system|privileged
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-red
+                        mode: fixed
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    load-avg:
+      kind: Panel
+      spec:
+        id: 3
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_load1{host="$host"}
+                      legendFormat: 1m
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_load5{host="$host"}
+                      legendFormat: 5m
+                    version: v0
+                  refId: B
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_load15{host="$host"}
+                      legendFormat: 15m
+                    version: v0
+                  refId: C
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: count without (cpu) (node_cpu_seconds_total{host="$host", mode="idle"})
+                      legendFormat: Cores
+                    version: v0
+                  refId: D
+            queryOptions: {}
+            transformations: []
+        description: >
+          System load average over the previous 1, 5, and 15 minute ranges.
+
+
+          A measurement of how many processes are waiting for CPU cycles. The
+          maximum number is the number of CPU cores for the node.
+        links: []
+        title: Load average
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 0
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: short
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: Cores
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-orange
+                        mode: fixed
+                    - id: custom.fillOpacity
+                      value: 0
+                    - id: custom.lineStyle
+                      value:
+                        dash:
+                          - 10
+                          - 10
+                        fill: dash
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    context-switches:
+      kind: Panel
+      spec:
+        id: 4
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: irate(node_context_switches_total{host="$host"}[$__rate_interval])
+                      legendFormat: Context switches
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: irate(node_intr_total{host="$host"}[$__rate_interval])
+                      legendFormat: Interrupts
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: >
+          Context switches occur when the operating system switches from running
+          one process to another. Interrupts are signals sent to the CPU by
+          external devices to request its attention.
+
+
+          A high number of context switches or interrupts can indicate that the
+          system is overloaded or that there are problems with specific devices
+          or processes.
+        links: []
+        title: Context switches/Interrupts
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+              overrides: []
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    timezone:
+      kind: Panel
+      spec:
+        id: 5
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_time_zone_offset_seconds{host="$host"}
+                      format: table
+                    version: v0
+                  refId: A
+            queryOptions: {}
+            transformations: []
+        description: Current system timezone.
+        links: []
+        title: Timezone
+        vizConfig:
+          group: stat
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  fixedColor: text
+                  mode: fixed
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+              overrides: []
+            options:
+              colorMode: fixed
+              graphMode: none
+              justifyMode: auto
+              orientation: auto
+              percentChangeColorMode: standard
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: /^time_zone$/
+                values: false
+              showPercentChange: false
+              textMode: auto
+              wideLayout: true
+    ntp-status:
+      kind: Panel
+      spec:
+        id: 6
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_timex_sync_status{host="$host"}
+                      legendFormat: NTP status
+                    version: v0
+                  refId: A
+            queryOptions:
+              maxDataPoints: 50
+            transformations: []
+        description: Status of time synchronization.
+        links: []
+        title: NTP status
+        vizConfig:
+          group: status-history
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: fixed
+                custom:
+                  axisPlacement: auto
+                  fillOpacity: 70
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  lineWidth: 1
+                mappings:
+                  - options:
+                      "0":
+                        color: light-yellow
+                        index: 1
+                        text: Not in sync
+                      "1":
+                        color: light-green
+                        index: 0
+                        text: In sync
+                    type: value
+                noValue: No data.
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+              overrides: []
+            options:
+              colWidth: 0.9
+              legend: false
+              rowHeight: 0.9
+              showValue: auto
+              tooltip:
+                hideZeros: false
+                mode: single
+                sort: none
+    time-drift:
+      kind: Panel
+      spec:
+        id: 7
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_timex_estimated_error_seconds{host="$host"}
+                      legendFormat: Estimated error in seconds
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_timex_offset_seconds{host="$host"}
+                      legendFormat: Time offset
+                    version: v0
+                  refId: B
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_timex_maxerror_seconds{host="$host"}
+                      legendFormat: Maximum error in seconds
+                    version: v0
+                  refId: C
+            queryOptions: {}
+            transformations: []
+        description: >
+          Time synchronization is essential to ensure accurate timekeeping,
+          which is critical for many system operations such as logging,
+          authentication, and network communication, as well as distributed
+          systems or clusters where data consistency is important.
+        links: []
+        title: Time synchronized drift
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                noValue: No data.
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: s
+              overrides: []
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+  layout:
+    kind: RowsLayout
+    spec:
+      rows:
+        - kind: RowsLayoutRow
+          spec:
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: cpu-usage-percent
+                      height: 6
+                      width: 6
+                      x: 0
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: per-cpu-usage-percent
+                      height: 6
+                      width: 9
+                      x: 6
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: cpu-usage-by-mode
+                      height: 6
+                      width: 9
+                      x: 15
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: load-avg
+                      height: 7
+                      width: 12
+                      x: 0
+                      y: 6
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: context-switches
+                      height: 7
+                      width: 12
+                      x: 12
+                      y: 6
+            title: System
+        - kind: RowsLayoutRow
+          spec:
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: timezone
+                      height: 4
+                      width: 3
+                      x: 0
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: ntp-status
+                      height: 4
+                      width: 21
+                      x: 3
+                      y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: time-drift
+                      height: 7
+                      width: 24
+                      x: 0
+                      y: 4
+            title: Time
+  links:
+    - asDropdown: false
+      icon: ""
+      includeVars: false
+      keepTime: true
+      tags: []
+      targetBlank: false
+      title: Back to Linux fleet overview
+      tooltip: ""
+      type: link
+      url: /d/linux-fleet-overview/fleet-overview
+    - asDropdown: false
+      icon: ""
+      includeVars: false
+      keepTime: true
+      tags: []
+      targetBlank: false
+      title: Back to Linux node overview
+      tooltip: ""
+      type: link
+      url: /d/linux-node-overview/node-overview
+    - asDropdown: true
+      icon: ""
+      includeVars: true
+      keepTime: true
+      tags:
+        - linux
+      targetBlank: false
+      title: All Linux dashboards
+      tooltip: ""
+      type: dashboards
+  liveNow: false
+  preload: false
+  tags:
+    - linux
+  timeSettings:
+    autoRefresh: 30s
+    autoRefreshIntervals:
+      - 15s
+      - 30s
+      - 1m
+      - 5m
+      - 15m
+      - 30m
+      - 1h
+      - 2h
+      - 1d
+    fiscalYearStartMonth: 0
+    from: now-1h
+    hideTimepicker: false
+    timezone: browser
+    to: now
+  title: CPU and system
+  variables:
+    - kind: QueryVariable
+      spec:
+        name: host
+        current:
+          text: sun
+          value: sun
+        label: Host
+        hide: dontHide
+        refresh: onDashboardLoad
+        options: []
+        query:
+          datasource: *datasource
+          group: prometheus
+          kind: DataQuery
+          spec:
+            __legacyStringValue: label_values(node_uname_info, host)
+          version: v0
+        regex: ""
+        regexApplyTo: value
+        sort: alphabeticalAsc
+        multi: false
+        includeAll: false
+        allowCustomValue: false
+status: {}
