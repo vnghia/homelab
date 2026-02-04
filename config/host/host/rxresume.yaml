@@ -3,7 +3,7 @@ docker:
     remote:
       rxresume:
         repo: ghcr.io/amruthpillai/reactive-resume
-        tag: "v5.0.3"
+        tag: "v5.0.5"
   volumes:
     local:
       rxresume-data: {}
