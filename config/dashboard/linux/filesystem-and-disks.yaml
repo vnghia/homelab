@@ -283,6 +283,363 @@ spec:
             options:
               cellHeight: sm
               showHeader: true
+    free-inode:
+      kind: Panel
+      spec:
+        id: 2
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filesystem_files_free{host="$host", fstype!="", mountpoint!=""}
+                      legendFormat: "{{ mountpoint }} inodes free"
+                    version: v0
+                  refId: A
+            queryOptions: {}
+            transformations: []
+        description: >-
+          The inode is a data structure in a Unix-style file system that
+          describes a file-system object such as a file or a directory.
+        links: []
+        title: Free inodes
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: short
+              overrides: []
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    total-inode:
+      kind: Panel
+      spec:
+        id: 3
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filesystem_files{host="$host", fstype!="", mountpoint!=""}
+                      legendFormat: "{{ mountpoint }} inodes total"
+                    version: v0
+                  refId: A
+            queryOptions: {}
+            transformations: []
+        description: >-
+          The inode is a data structure in a Unix-style file system that
+          describes a file-system object such as a file or a directory.
+        links: []
+        title: Total inodes
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: short
+              overrides: []
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    filesystem-error-or-read-only:
+      kind: Panel
+      spec:
+        id: 4
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filesystem_device_error{host="$host", fstype!="", mountpoint!=""}
+                      legendFormat: "{{ mountpoint }} device error"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filesystem_readonly{host="$host", fstype!="", mountpoint!=""}
+                      legendFormat: "{{ mountpoint }} read-only"
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: ""
+        links: []
+        title: Filesystems with errors / read-only
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                max: 1
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+              overrides: []
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    file-descriptors:
+      kind: Panel
+      spec:
+        id: 5
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filefd_maximum{host="$host"}
+                      legendFormat: Maximum open file descriptors
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: node_filefd_allocated{host="$host"}
+                      legendFormat: Open file descriptors
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: >
+          File descriptor is a handle to an open file or input/output (I/O)
+          resource, such as a network socket or a pipe.
+
+          The operating system uses file descriptors to keep track of open files
+          and I/O resources, and provides a way for programs to read from and
+          write to them.
+        links: []
+        title: File descriptors
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+              overrides: []
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
   layout:
     kind: RowsLayout
     spec:
@@ -312,6 +669,42 @@ spec:
                       width: 12
                       x: 12
                       y: 0
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: free-inode
+                      height: 8
+                      width: 12
+                      x: 0
+                      y: 8
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: total-inode
+                      height: 8
+                      width: 12
+                      x: 12
+                      y: 8
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: filesystem-error-or-read-only
+                      height: 8
+                      width: 12
+                      x: 0
+                      y: 16
+                  - kind: GridLayoutItem
+                    spec:
+                      element:
+                        kind: ElementReference
+                        name: file-descriptors
+                      height: 8
+                      width: 12
+                      x: 12
+                      y: 16
             title: Filesystem
   links:
     - asDropdown: false
