@@ -3,7 +3,7 @@ docker:
     remote:
       crowdsec:
         repo: ghcr.io/crowdsecurity/crowdsec
-        tag: "v1.7.4-slim"
+        tag: "v1.7.4"
   volumes:
     local:
       crowdsec-data:
@@ -94,10 +94,8 @@ services:
       tmpfs:
         - /tmp
       wud:
-        template: https://github.com/crowdsecurity/crowdsec/releases/tag/v${major}.${minor}.${patch}
+        template: https://github.com/crowdsecurity/crowdsec/releases/tag/${original}
         include-prefix: v
-        include-suffix: -slim
-        transform: true
       volumes:
         crowdsec-data: /var/lib/crowdsec/data
         crowdsec-config: /etc/crowdsec
