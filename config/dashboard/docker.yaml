@@ -1157,7 +1157,7 @@ spec:
   liveNow: false
   preload: false
   timeSettings:
-    autoRefresh: 15s
+    autoRefresh: 30s
     autoRefreshIntervals:
       - 15s
       - 30s
