@@ -1,6 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
+  "extends": ["config:recommended"],
+  "customManagers": [
+    {
+      "customType": "jsonata",
+      "fileFormat": "yaml",
+      "managerFilePatterns": ["config/host/**/*.yaml"],
+      "matchStrings": [
+        "$filter(docker.images.remote.*, function($v, $i, $a) { $type($a[$i].tag) = \"string\" }).{ \"depName\": repo, \"currentValue\": tag & suffix, \"datasource\": \"docker\"}"
+      ]
+    }
   ]
 }
