@@ -3,7 +3,7 @@ docker:
     remote:
       opencloud:
         repo: opencloudeu/opencloud-rolling
-        tag: "5.0.1"
+        tag: "5.0.2"
   volumes:
     local:
       opencloud-config:
