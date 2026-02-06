@@ -5,7 +5,7 @@ docker:
         mysql:
           "11":
             repo: mariadb
-            tag: "11.7.2-ubi9"
+            tag: "11.8.5-ubi9"
       version: 11
       port: 3306
       dir:
