@@ -9,7 +9,7 @@ docker:
         tag: "3.14.3-alpine3.23"
       python-builder:
         repo: ghcr.io/astral-sh/uv
-        tag: "0.9.30-python3.14-alpine"
+        tag: "0.10.0-python3.14-alpine"
       curl:
         repo: alpine/curl
         tag: "8.17.0"
