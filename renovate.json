@@ -7,7 +7,8 @@
       "fileFormat": "yaml",
       "managerFilePatterns": ["config/host/**/*.yaml"],
       "matchStrings": [
-        "$filter(docker.images.remote.*, function($v, $i, $a) { $type($a[$i].tag) = \"string\" }).{ \"depName\": repo, \"currentValue\": tag & suffix, \"datasource\": \"docker\"}"
+        "$filter(docker.images.remote.*, function($v, $i, $a) { $type($a[$i].tag) = \"string\" }).{ \"depName\": repo, \"currentValue\": tag & suffix, \"datasource\": \"docker\"}",
+        "$filter(docker.database.*.images.*.*, function($v, $i, $a) { $type($a[$i].tag) = \"string\" }).{ \"depName\": repo, \"currentValue\": tag & suffix, \"datasource\": \"docker\"}"
       ]
     }
   ]
