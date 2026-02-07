@@ -113,11 +113,6 @@ services:
             string:
               template:
                 join: ","
-        NTFY_AUTH_TOKENS:
-          transform:
-            string:
-              template:
-                join: ","
       volumes:
         ntfy-cache: /var/cache/ntfy
         ntfy-data: /var/lib/ntfy
