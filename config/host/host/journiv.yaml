@@ -3,7 +3,7 @@ docker:
     remote:
       journiv:
         repo: swalabtech/journiv-app
-        tag: "0.1.0-beta.14"
+        tag: "0.1.0-beta.17"
   volumes:
     local:
       journiv-data: {}
