@@ -41,9 +41,11 @@ class ContainerDatabaseSourceModel:
                 port=self.port,
             )
         ).apply(
-            lambda x: urllib.parse.urlparse(x)
-            ._replace(query=urllib.parse.urlencode(query=query))
-            .geturl()
+            lambda x: (
+                urllib.parse.urlparse(x)
+                ._replace(query=urllib.parse.urlencode(query=query))
+                .geturl()
+            )
         )
 
     def to_kv(self, query: dict[str, str] | None = None) -> Output[str]:

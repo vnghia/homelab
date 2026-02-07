@@ -23,9 +23,11 @@ class RecordModel(HomelabRootModel[str | RecordFullModel]):
         ip: Input[IPvAnyAddress],
     ) -> cloudflare.DnsRecord:
         type_ = Output.from_input(ip).apply(
-            lambda x: "A"
-            if IPvAnyAddressAdapter.validate_python(x).version == self.IPV4_VERSION
-            else "AAAA"
+            lambda x: (
+                "A"
+                if IPvAnyAddressAdapter.validate_python(x).version == self.IPV4_VERSION
+                else "AAAA"
+            )
         )
         return cloudflare.DnsRecord(
             resource_name,
