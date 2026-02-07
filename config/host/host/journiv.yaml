@@ -47,6 +47,13 @@ services:
         postgres: {}
       valkey:
         valkey: {}
+    network:
+      bridge:
+        egress:
+          https:
+            plus.journiv.com: null
+            nominatim.openstreetmap.org: null
+            api.openweathermap.org: null
     secrets:
       key: {}
     container:
@@ -73,6 +80,8 @@ services:
       hosts:
         - record: solar
           hostname: kanidm
+        - record: solar
+          hostname: immich
       volumes:
         journiv-data: /data
       tmpfs:
@@ -112,6 +121,13 @@ services:
             volume: journiv-data
           transform:
             path: media
+        OPEN_WEATHER_API_KEY_25:
+          env: OPEN_WEATHER_API_KEY_30
+        OPEN_WEATHER_API_KEY_30:
+        IMMICH_BASE_URL:
+          hostname: immich
+          record: solar
+          scheme: https
     containers:
       worker:
         inherit:
