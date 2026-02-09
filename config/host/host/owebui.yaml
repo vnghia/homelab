@@ -83,6 +83,7 @@ services:
         ENABLE_SIGNUP: false
         ENABLE_LOGIN_FORM: false
         DEFAULT_USER_ROLE: user
+        ENABLE_API_KEYS: true
         ENABLE_PERSISTENT_CONFIG: true
         PORT:
           svariable: PORT
