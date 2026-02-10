@@ -3,7 +3,7 @@ docker:
     remote:
       nghe:
         repo: ghcr.io/vnghia/nghe-musl
-        tag: "0.10.6"
+        tag: "0.10.12"
   volumes:
     local:
       nghe-music: {}
