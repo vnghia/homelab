@@ -3,7 +3,7 @@ docker:
     remote:
       donetick:
         repo: donetick/donetick
-        tag: "v0.1.70"
+        tag: "v0.1.71"
 services:
   kanidm:
     config:
