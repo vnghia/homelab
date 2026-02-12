@@ -39,10 +39,10 @@ services:
           default: {}
       ports:
         macos-tcp:
-          internal: 5009
+          internal: 5900
           protocol: tcp
         macos-udp:
-          internal: 5009
+          internal: 5900
           protocol: udp
       read-only: false
       volumes:
