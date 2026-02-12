@@ -8,6 +8,8 @@ docker:
     local:
       macos-storage:
         backup: false
+      macos-shared:
+        backup: false
 services:
   macos:
     variables:
@@ -47,6 +49,7 @@ services:
       read-only: false
       volumes:
         macos-storage: /storage
+        macos-shared: /shared
       wud:
         template: https://github.com/dockur/macos/releases/tag/v${original}
         semver-count: 2
