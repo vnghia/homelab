@@ -5,7 +5,7 @@ docker:
         postgres:
           "17":
             repo: postgres
-            tag: "17.7-bookworm"
+            tag: "18.2-bookworm"
       version: 17
       port: 5432
       dir:
