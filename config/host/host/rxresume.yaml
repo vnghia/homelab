@@ -72,6 +72,8 @@ services:
           hostname: browser
         - record: solar
           hostname: kanidm
+        - record: solar
+          hostname: owebui
       volumes:
         rxresume-data: /app/data
       wud:
