@@ -31,6 +31,7 @@ from .host import ContainerHostConfig
 from .image import ContainerImageModelConfig
 from .inherit import ContainerInheritConfig
 from .mail import ContainerMailConfig
+from .memory import ContainerMemoryConfig
 from .network import (
     ContainerBridgeNetworkArgs,
     ContainerCommonNetworkConfig,
@@ -118,6 +119,7 @@ class ContainerModel(HomelabBaseModel):
     raw_image: ContainerImageModelConfig | None = Field(None, alias="image")
 
     cap: ContainerCapConfig = ContainerCapConfig()
+    cpus: str | None = None
     command: list[GlobalExtract] | None = None
     databases: list[ContainerDatabaseConfig] | None = None
     devices: list[AbsolutePath] | None = None
@@ -129,6 +131,7 @@ class ContainerModel(HomelabBaseModel):
     hosts: list[ContainerHostConfig] = []
     init: bool | None = None
     mails: list[ContainerMailConfig] | None = None
+    memory: ContainerMemoryConfig = ContainerMemoryConfig()
     network: ContainerNetworkConfig = ContainerNetworkConfig()
     observability: ContainerObservabilityConfig | None = None
     ports: ContainerPortsConfig = ContainerPortsConfig()
@@ -425,6 +428,7 @@ class ContainerModel(HomelabBaseModel):
             image=self.image.to_image_name(extractor_args.host.docker.image),
             capabilities=self.build_cap(),
             command=self.build_command(extractor_args),
+            cpus=self.cpus,
             devices=[
                 docker.ContainerDeviceArgs(
                     host_path=device.as_posix(), container_path=device.as_posix()
@@ -444,6 +448,8 @@ class ContainerModel(HomelabBaseModel):
             hosts=self.build_hosts(extractor_args, build_args),
             init=self.init,
             logs=self.oneshot,
+            memory=self.memory.limit,
+            memory_reservation=self.memory.reservation,
             mounts=self.volumes.to_args(self.docker_socket, extractor_args, build_args),
             must_run=not self.oneshot,
             network_mode=network_args.mode,
