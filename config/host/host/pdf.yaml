@@ -3,7 +3,7 @@ docker:
     remote:
       pdf:
         repo: ghcr.io/alam00000/bentopdf-simple
-        tag: "2.2.0"
+        tag: "2.2.1"
 services:
   pdf:
     variables:
