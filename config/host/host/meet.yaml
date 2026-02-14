@@ -276,5 +276,7 @@ services:
       worker:
         inherit: backend
         command: ["celery", "-A", "meet.celery_app", "worker", "-l", "INFO"]
+        memory:
+          limit: 512
         s3:
         wud:
