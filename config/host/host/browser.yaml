@@ -6,6 +6,22 @@ docker:
         tag: "v2.40.0"
 services:
   browser:
+    variables:
+      PLAYWRIGHT_WS_URL:
+        extract:
+          kv:
+            url:
+              hostname: browser
+              record: solar
+              scheme: wss
+            token:
+              service: browser
+              extract:
+                secret: token
+        transform:
+          string:
+            template: "{url}?token={token}"
+      PORT: 3000
     config:
       traefik:
         dynamic:
@@ -21,8 +37,6 @@ services:
       # BLESS_USER_ID defined in https://github.com/browserless/browserless/blob/main/docker/base/Dockerfile
       uid: 999
       gid: 999
-    variables:
-      PORT: 3000
     container:
       image: browser
       network:

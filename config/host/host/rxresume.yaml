@@ -83,19 +83,9 @@ services:
           record: solar
           scheme: https
         PRINTER_ENDPOINT:
+          service: browser
           extract:
-            kv:
-              url:
-                hostname: browser
-                record: solar
-                scheme: wss
-              token:
-                service: browser
-                extract:
-                  secret: token
-          transform:
-            string:
-              template: "{url}?token={token}"
+            svariable: PLAYWRIGHT_WS_URL
         AUTH_SECRET:
           secret: auth
         OAUTH_PROVIDER_NAME: Kanidm
