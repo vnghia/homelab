@@ -65,6 +65,8 @@ services:
       hosts:
         - record: solar
           hostname: kanidm
+        - record: solar
+          hostname: browser
       network:
         bridge:
           vpn: {}
@@ -84,7 +86,7 @@ services:
         ENABLE_LOGIN_FORM: false
         DEFAULT_USER_ROLE: user
         ENABLE_API_KEYS: true
-        ENABLE_PERSISTENT_CONFIG: true
+        ENABLE_PERSISTENT_CONFIG: false
         PORT:
           svariable: PORT
         BYPASS_MODEL_ACCESS_CONTROL: true
@@ -129,3 +131,9 @@ services:
         OAUTH_ALLOWED_ROLES: user,admin
         OAUTH_ADMIN_ROLES: admin
         DATABASE_TYPE: postgres
+        WEB_LOADER_ENGINE: playwright
+        PLAYWRIGHT_WS_URL:
+          service: browser
+          extract:
+            svariable: PLAYWRIGHT_WS_URL
+        TORCHINDUCTOR_CACHE_DIR: /tmp
