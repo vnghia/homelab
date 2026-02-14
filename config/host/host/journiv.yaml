@@ -138,6 +138,8 @@ services:
           - "worker"
           - "--loglevel=info"
         healthcheck: {}
+        memory:
+          limit: 512
         wud:
         envs:
           SERVICE_ROLE: celery-worker
