@@ -275,7 +275,13 @@ services:
           - /tmp
       worker:
         inherit: backend
-        command: ["celery", "-A", "meet.celery_app", "worker", "-l", "INFO"]
+        command:
+          - "celery"
+          - "-A"
+          - "meet.celery_app"
+          - "worker"
+          - "--loglevel=info"
+          - "--concurrency=4"
         memory:
           limit: 512
         s3:
