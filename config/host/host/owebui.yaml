@@ -3,7 +3,7 @@ docker:
     remote:
       owebui:
         repo: ghcr.io/open-webui/open-webui
-        tag: "v0.8.2"
+        tag: "v0.8.3"
   volumes:
     local:
       owebui-data: {}
