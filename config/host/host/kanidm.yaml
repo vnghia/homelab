@@ -153,13 +153,6 @@ services:
         - "server"
         - "-c"
         - svariable: CONFIG
-      healthcheck:
-        tests:
-          - "CMD"
-          - "/sbin/kanidmd"
-          - "healthcheck"
-          - "-c"
-          - svariable: CONFIG
       network:
         bridge:
           default: {}
@@ -175,3 +168,5 @@ services:
         template: https://github.com/kanidm/kanidm/releases/tag/v${original}
       envs:
         KANIDM_TRUST_X_FORWARD_FOR: true
+        KANIDM_CONFIG:
+          svariable: CONFIG
