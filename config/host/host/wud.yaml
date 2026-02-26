@@ -3,7 +3,7 @@ docker:
     remote:
       wud:
         repo: ghcr.io/getwud/wud
-        tag: "8.1.1"
+        tag: "8.2.1"
   volumes:
     local:
       wud-storage: {}
