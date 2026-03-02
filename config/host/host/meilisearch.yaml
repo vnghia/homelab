@@ -52,3 +52,4 @@ services:
             svariable: MELISEARCH_VOLUME
           transform:
             path: snapshots
+        MEILI_EXPERIMENTAL_DUMPLESS_UPGRADE: true
