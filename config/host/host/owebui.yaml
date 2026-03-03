@@ -67,6 +67,8 @@ services:
           hostname: kanidm
         - record: solar
           hostname: browser
+        - record: solar
+          hostname: rxresume
       network:
         bridge:
           vpn: {}
