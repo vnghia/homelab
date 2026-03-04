@@ -3,7 +3,7 @@ docker:
     remote:
       journiv:
         repo: swalabtech/journiv-app
-        tag: "0.1.0-beta.17"
+        tag: "0.1.0-beta.21"
   volumes:
     local:
       journiv-data: {}
@@ -116,6 +116,7 @@ services:
           svariable: OIDC_REDIRECT_URI
         OIDC_SCOPES: openid email profile
         OIDC_AUTO_PROVISION: true
+        OIDC_ONLY: true
         MEDIA_ROOT:
           extract:
             volume: journiv-data
@@ -132,17 +133,19 @@ services:
       worker:
         inherit:
         command:
+          - /opt/venv/bin/python
+          - -m
           - "celery"
           - "-A"
           - "app.core.celery_app"
           - "worker"
           - "--loglevel=info"
-        healthcheck: {}
+          - "--concurrency=4"
         memory:
           limit: 512
         wud:
         envs:
-          SERVICE_ROLE: celery-worker
+          SERVICE_ROLE_HEALTHCHECK: celery-worker
       beat:
         inherit:
         command:
