@@ -63,6 +63,7 @@ services:
           envs:
             env: DATABASE_URL
             scheme: postgresql
+            query: {}
         - valkey:
           envs:
             env: REDIS_URL
