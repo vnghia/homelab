@@ -88,6 +88,7 @@ services:
           hostname: kanidm
       tmpfs:
         - /.cache
+        - /tmp
       volumes:
         vikunja-config:
           path: /etc/vikunja
