@@ -3,7 +3,7 @@ docker:
     remote:
       openobserve:
         repo: openobserve/openobserve
-        tag: v0.60.3
+        tag: v0.60.4
   volumes:
     local:
       openobserve-data: {}
