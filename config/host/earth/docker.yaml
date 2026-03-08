@@ -1,5 +1,0 @@
-services:
-  docker:
-    containers:
-      proxy:
-        active: true

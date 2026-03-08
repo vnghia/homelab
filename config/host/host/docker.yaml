@@ -1,9 +1,6 @@
 docker:
   images:
     remote:
-      docker-proxy:
-        repo: ghcr.io/wollomatic/socket-proxy
-        tag: "1.10.1"
       docker-cli:
         repo: docker
         tag: "29.3.0-cli"
@@ -21,7 +18,6 @@ services:
           read-only: true
   docker:
     variables:
-      PROXY_PORT: 2375
       CA_PATH:
         extract:
           svolume: docker-proxy-mtls
@@ -38,40 +34,6 @@ services:
         transform:
           path: server.pem
     config:
-      traefik:
-        dynamic:
-          proxy:
-            name: proxy
-            hostname: docker-proxy
-            service:
-              container: proxy
-              port:
-                svariable: PROXY_PORT
-            tls:
-              name: proxy
-              certs:
-                - cert:
-                    service: docker
-                    extract:
-                      container:
-                        service: traefik
-                      extract:
-                        svariable: CERT_PATH
-                  key:
-                    service: docker
-                    extract:
-                      container:
-                        service: traefik
-                      extract:
-                        svariable: KEY_PATH
-              mtls:
-                cas:
-                  - service: docker
-                    extract:
-                      container:
-                        service: traefik
-                      extract:
-                        svariable: CA_PATH
       dagu:
         docker:
           executor:
@@ -121,25 +83,6 @@ services:
         hostname:
           hostname: docker-proxy
     containers:
-      proxy:
-        active: false
-        image: docker-proxy
-        docker-socket:
-          write: false
-        healthcheck:
-          tests: ["CMD", "./healthcheck"]
-        user: docker
-        wud:
-          template: https://github.com/wollomatic/socket-proxy/releases/tag/${original}
-        envs:
-          SP_LISTENIP: 0.0.0.0
-          SP_ALLOWHEALTHCHECK: true
-          SP_ALLOWFROM: tailscale
-          SP_LOGJSON: true
-          SP_LOGLEVEL: INFO
-          SP_PROXYPORT:
-            svariable: PROXY_PORT
-          SP_ALLOW_GET: '/(v1\.\d{1,2}/)?(_ping|version|containers/json|images/.+/json)'
       cli:
         active: false
         image: docker-cli

@@ -32,11 +32,6 @@ services:
           svolume: docker-earth-mtls
         transform:
           path: client.pem
-    config:
-      traefik:
-        dynamic:
-          proxy:
-            active: false
     files:
       ca:
         active: false
