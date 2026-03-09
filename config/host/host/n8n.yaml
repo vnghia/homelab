@@ -7,8 +7,49 @@ docker:
   volumes:
     local:
       n8n-data: {}
+      n8n-hooks:
+        backup: false
 services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            n8n:
+              display-name: N8N
+              origin-url:
+                - service: n8n
+                  extract:
+                    svariable: REDIRECT_URL
+              origin-landing:
+                hostname: n8n
+                record: solar
+                scheme: https
+              prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
   n8n:
+    variables:
+      REDIRECT_URL:
+        extract:
+          hostname: n8n
+          record: solar
+          scheme: https
+        transform:
+          string:
+            template: "{value}/auth/oidc/callback"
+      OAUTH_URL:
+        extract:
+          hostname: kanidm
+          record: solar
+          scheme: https
+        transform:
+          string:
+            template: "{value}/oauth2/openid/n8n"
+      OIDC_HOOK_PATH:
+        extract:
+          volume: n8n-hooks
+        transform:
+          path: oidc.js
     config:
       traefik:
         dynamic:
@@ -25,6 +66,12 @@ services:
         hostname:
           hostname: n8n
           record: solar
+    files:
+      oidc-hook:
+        path:
+          svariable: OIDC_HOOK_PATH
+        content:
+          include: config/data/n8n/n8n-oidc/hooks.js
     secrets:
       key: {}
       jwt: {}
@@ -57,6 +104,9 @@ services:
         - /tmp/n8nDataTableUploads
       volumes:
         n8n-data: /home/node/.n8n
+        n8n-hooks:
+          path: /hooks
+          read-only: true
       wud:
         template: https://github.com/n8n-io/n8n/releases/tag/n8n@${original}
       envs:
@@ -67,7 +117,6 @@ services:
         N8N_DIAGNOSTICS_ENABLED: false
         N8N_VERSION_NOTIFICATIONS_ENABLED: false
         N8N_TEMPLATES_ENABLED: false
-        EXTERNAL_FRONTEND_HOOKS_URLS: ""
         N8N_DIAGNOSTICS_CONFIG_FRONTEND: ""
         N8N_DIAGNOSTICS_CONFIG_BACKEND: ""
         N8N_HIRING_BANNER_ENABLED: false
@@ -83,3 +132,16 @@ services:
           hostname: n8n
           record: solar
           scheme: https
+        EXTERNAL_HOOK_FILES:
+          svariable: OIDC_HOOK_PATH
+        OIDC_ISSUER_URL:
+          svariable: OAUTH_URL
+        OIDC_CLIENT_ID: n8n
+        OIDC_CLIENT_SECRET:
+          service: kanidm
+          extract:
+            export: n8n
+        OIDC_REDIRECT_URI:
+          svariable: REDIRECT_URL
+        N8N_ADDITIONAL_NON_UI_ROUTES: auth
+        EXTERNAL_FRONTEND_HOOKS_URLS: /assets/oidc-frontend-hook.js

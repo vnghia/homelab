@@ -1,0 +1,3 @@
+[submodule "config/data/n8n/n8n-oidc"]
+	path = config/data/n8n/n8n-oidc
+	url = https://github.com/cweagans/n8n-oidc.git
