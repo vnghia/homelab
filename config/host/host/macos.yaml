@@ -6,10 +6,8 @@ docker:
         tag: "2.29"
   volumes:
     local:
-      macos-storage:
-        backup: false
-      macos-shared:
-        backup: false
+      macos-storage: {}
+      macos-shared: {}
 services:
   macos:
     variables:

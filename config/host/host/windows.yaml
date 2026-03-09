@@ -14,8 +14,7 @@ docker:
         version: "0.0.1"
   volumes:
     local:
-      windows-storage:
-        backup: false
+      windows-storage: {}
 services:
   windows:
     variables:
