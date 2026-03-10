@@ -1,0 +1,159 @@
+docker:
+  images:
+    remote:
+      mail-stalwart:
+        repo: stalwartlabs/stalwart
+        tag: "v0.15.5"
+  volumes:
+    local:
+      mail-stalwart-config:
+        backup: false
+      mail-stalwart-data: {}
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            mail:
+              display-name: Mail
+              origin-url:
+                - hostname: mail
+                  record: solar
+                  scheme: https
+              origin-landing:
+                hostname: mail
+                record: solar
+                scheme: https
+              prefer-short-username: true
+  mail:
+    variables:
+      STALWART_MANAGEMENT_PORT: 8080
+      STALWART_CONFIG_PATH:
+        extract:
+          volume: mail-stalwart-config
+        transform:
+          path: config.toml
+      MAIL_OAUTH_URL:
+        extract:
+          record: solar
+          hostname: kanidm
+          scheme: https
+        transform:
+          string:
+            template: "{value}/oauth2/openid/mail"
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            record: solar
+            service:
+              port:
+                svariable: STALWART_MANAGEMENT_PORT
+    keepasses:
+      keepass:
+        username: admin
+        hostname:
+          record: solar
+          hostname: mail
+    files:
+      stalwart-config:
+        path:
+          svariable: STALWART_CONFIG_PATH
+        content:
+          format: toml
+          data:
+            server:
+              listener:
+                management:
+                  bind:
+                    extract:
+                      svariable: STALWART_MANAGEMENT_PORT
+                    transform:
+                      string:
+                        template: "[::]:{value}"
+                  protocol: "http"
+            storage:
+              data: rocksdb
+              fts: rocksdb
+              blob: rocksdb
+              lookup: rocksdb
+              directory: oidc
+            store:
+              rocksdb:
+                type: rocksdb
+                path:
+                  extract:
+                    volume: mail-stalwart-data
+                  transform:
+                    path: rocksdb
+                compression: lz4
+            directory:
+              oidc:
+                type: oidc
+                endpoint:
+                  url:
+                    extract:
+                      svariable: MAIL_OAUTH_URL
+                    transform:
+                      string:
+                        template: "{value}/userinfo"
+                  method: userinfo
+                auth:
+                  method: basic
+                  username: mail
+                  secret: "%{env:OIDC_CLIENT_SECRET}%"
+                fields:
+                  email: email
+                  username: preferred_username
+                  full-name: name
+                tls:
+                  enable: true
+                  allow-invalid-certs: false
+            http:
+              url:
+                record: solar
+                scheme: https
+              use-x-forwarded: false
+            tracer:
+              console:
+                type: console
+                level: info
+                ansi: true
+                enable: true
+            authentication:
+              fallback-admin:
+                user: "%{env:ADMIN_USER}%"
+                secret: "%{env:ADMIN_SECRET}%"
+    container:
+      image: mail-stalwart
+      hosts:
+        - record: solar
+          hostname: kanidm
+      network:
+        bridge:
+          default: {}
+      tmpfs:
+        - /tmp
+      volumes:
+        mail-stalwart-config:
+          path: /etc/stalwart
+          read-only: true
+        mail-stalwart-data: /var/lib/stalwart
+      envs:
+        ADMIN_USER:
+          keepass:
+          info: username
+        ADMIN_SECRET:
+          extract:
+            keepass:
+            info: password
+          transform:
+            secret:
+              encode: bcrypt
+        CONFIG_PATH:
+          svariable: STALWART_CONFIG_PATH
+        OIDC_CLIENT_SECRET:
+          service: kanidm
+          extract:
+            export: mail
