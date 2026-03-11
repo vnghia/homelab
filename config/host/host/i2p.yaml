@@ -1,0 +1,22 @@
+docker:
+  images:
+    remote:
+      i2p:
+        repo: ghcr.io/purplei2p/i2pd
+        tag: "release-2.59.0"
+  volumes:
+    local:
+      i2p-data: {}
+services:
+  i2p:
+    depends-on: [qbittorrent]
+    config: {}
+    network:
+      bridge:
+    container:
+      image: i2p
+      network:
+        service: qbittorrent
+        container: vpn
+      volumes:
+        i2p-data: /home/i2pd/data
