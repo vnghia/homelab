@@ -5,20 +5,12 @@ docker:
         active: false
 services:
   traefik:
-    variables:
-      HTTP_PUBLIC_BIND_PORT: 80
-      HTTPS_PUBLIC_BIND_PORT: 443
     config:
-      entrypoint:
+      record:
         config:
-          private-https:
-            middlewares:
-              http:
-                - local
-              tcp:
-                - local-tcp
-        mapping:
-          earth: "private-https"
+          earth:
+            internal: true
+            entrypoint: "https"
     container:
       hosts:
         - hostname:

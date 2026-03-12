@@ -25,9 +25,6 @@ if typing.TYPE_CHECKING:
 class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootModel[T]):
     TYPE: ClassVar[TraefikDynamicType]
 
-    LOCAL_MIDDLEWARE_NAMES: ClassVar[list[str]]
-    LOCAL_MIDDLEWARES: ClassVar[list[str] | None]
-
     def get_host(
         self,
         record: str,
@@ -66,6 +63,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
         root = self.root
         record = root.record or extractor_args.host.name
         traefik_config = traefik_service.config
+        record_config = traefik_config.record.config[record]
         main_service = extractor_args.service
 
         router_name = main_service.add_service_name(root.name)
@@ -75,11 +73,8 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
 
         rule = self.build_rule(record, router_name, traefik_service, extractor_args)
 
-        entrypoint = root.entrypoint or traefik_config.entrypoint.mapping[record]
+        entrypoint = root.entrypoint or record_config.entrypoint
         entrypoint_config = traefik_config.entrypoint.config[entrypoint]
-        entrypoint_middlewares = entrypoint_config.build_middlewares(
-            traefik_service, extractor_args, self.TYPE
-        )
 
         service_middlewares = [
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
@@ -91,7 +86,15 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
         if root.entrypoint:
             all_middlewares = service_middlewares
         else:
-            all_middlewares = entrypoint_middlewares + service_middlewares
+            all_middlewares = (
+                traefik_config.record.build_middlewares(
+                    record_config.internal, traefik_service, extractor_args, self.TYPE
+                )
+                + record_config.build_middlewares(
+                    traefik_service, extractor_args, self.TYPE
+                )
+                + service_middlewares
+            )
 
         tls, tls_router = self.build_tls(traefik_service, extractor_args)
 
@@ -106,39 +109,6 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
                     }
                     | ({"middlewares": all_middlewares} if all_middlewares else {})
                 }
-                | (
-                    {
-                        "{}-local".format(router_name): {
-                            "service": service,
-                            "entryPoints": [traefik_config.entrypoint.local_],
-                            "rule": rule,
-                            "tls": tls_router,
-                            "middlewares": self.build_local_middlewares(
-                                traefik_service, extractor_args
-                            )
-                            + service_middlewares,
-                        }
-                    }
-                    if root.entrypoint is None and entrypoint_config.local
-                    else {}
-                )
-                | (
-                    {
-                        "{}-internal".format(router_name): {
-                            "service": service,
-                            "entryPoints": [traefik_config.entrypoint.internal_],
-                            "rule": rule,
-                            "tls": tls_router,
-                        }
-                        | (
-                            {"middlewares": service_middlewares}
-                            if service_middlewares
-                            else {}
-                        )
-                    }
-                    if root.entrypoint is None and entrypoint_config.internal
-                    else {}
-                ),
             }
         }
 
@@ -166,27 +136,3 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
             data |= tls
 
         return data
-
-    @classmethod
-    def build_local_middlewares(
-        cls, traefik_service: TraefikService, extractor_args: ExtractorArgs
-    ) -> list[str]:
-        # Since local middleware's name won't change, we only need to build once regardless of extractor_args
-
-        if cls.LOCAL_MIDDLEWARES is None:
-            from homelab_traefik_config.model.dynamic.middleware import (
-                TraefikDynamicMiddlewareModel,
-                TraefikDynamicMiddlewareUseModel,
-            )
-
-            cls.LOCAL_MIDDLEWARES = [
-                TraefikDynamicMiddlewareModelBuilder(
-                    TraefikDynamicMiddlewareModel(
-                        TraefikDynamicMiddlewareUseModel(
-                            service=traefik_service.name(), name=middleware
-                        )
-                    ),
-                ).get_name(traefik_service, extractor_args, cls.TYPE)
-                for middleware in cls.LOCAL_MIDDLEWARE_NAMES
-            ]
-        return cls.LOCAL_MIDDLEWARES

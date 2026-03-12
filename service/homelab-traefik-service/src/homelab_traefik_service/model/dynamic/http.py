@@ -22,9 +22,6 @@ class TraefikDynamicHttpModelBuilder(
 ):
     TYPE: ClassVar[TraefikDynamicType] = TraefikDynamicType.HTTP
 
-    LOCAL_MIDDLEWARE_NAMES: ClassVar[list[str]] = ["local"]
-    LOCAL_MIDDLEWARES: ClassVar[list[str] | None] = None
-
     def build_rule(
         self,
         record: str,
@@ -54,7 +51,7 @@ class TraefikDynamicHttpModelBuilder(
                     for rule in root.rules
                 ]
             )
-        ).apply(lambda extractor_args: " && ".join(extractor_args))
+        ).apply(" && ".join)
 
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs

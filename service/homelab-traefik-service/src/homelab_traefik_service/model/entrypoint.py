@@ -1,20 +1,13 @@
-from __future__ import annotations
-
-import typing
 from typing import Any, ClassVar
 
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
-from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output
 from pydantic import NonNegativeInt, field_validator
 
 from ..resource.static import schema
-
-if typing.TYPE_CHECKING:
-    from .. import TraefikService
 
 
 class TraefikEntrypointPortModel(HomelabBaseModel):
@@ -144,12 +137,9 @@ class TraefikEntrypointMiddlewareModel(
 
 
 class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
-    local: bool = False
-    internal: bool = False
     http: TraefikEntrypointHttpModel | None = None
     timeout: TraefikEntrypointTimeoutModel | None = None
     proxy_protocol: TraefikEntrypointProxyProtocolModel | None = None
-    middlewares: dict[TraefikDynamicType, list[TraefikEntrypointMiddlewareModel]] = {}
 
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return (
@@ -169,67 +159,5 @@ class TraefikEntrypointFullModel(TraefikEntrypointPortModel):
 class TraefikEntrypointModel(
     HomelabRootModel[TraefikEntrypointRedirectModel | TraefikEntrypointFullModel]
 ):
-    _middlewares: dict[TraefikDynamicType, list[str]]
-
-    def model_post_init(self, context: Any, /) -> None:
-        self._middlewares = {}
-
     def to_entry_point(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return self.root.to_entry_point(extractor_args)
-
-    def build_middlewares(
-        self,
-        traefik_service: TraefikService,
-        extractor_args: ExtractorArgs,
-        type_: TraefikDynamicType,
-    ) -> list[str]:
-        # Since entrypoint middleware's name won't change, we only need to build once regardless of extractor_args
-
-        if type_ not in self._middlewares:
-            root = self.root
-            if (
-                isinstance(root, TraefikEntrypointFullModel)
-                and type_ in root.middlewares
-            ):
-                from homelab_traefik_config.model.dynamic.middleware import (
-                    TraefikDynamicMiddlewareModel,
-                    TraefikDynamicMiddlewareUseModel,
-                )
-
-                from ..model.dynamic.middleware import (
-                    TraefikDynamicMiddlewareModelBuilder,
-                )
-
-                self._middlewares[type_] = [
-                    TraefikDynamicMiddlewareModelBuilder(
-                        TraefikDynamicMiddlewareModel(
-                            TraefikDynamicMiddlewareUseModel(
-                                service=middleware.service, name=middleware.middleware
-                            )
-                        )
-                    ).get_name(traefik_service, extractor_args, type_)
-                    for middleware in sorted(
-                        map(
-                            TraefikEntrypointMiddlewareModel.to_full,
-                            root.middlewares[type_],
-                        ),
-                        key=lambda x: x.priority,
-                    )
-                ]
-            else:
-                self._middlewares[type_] = []
-        return self._middlewares[type_]
-
-    @property
-    def local(self) -> bool:
-        root = self.root
-        if isinstance(root, TraefikEntrypointFullModel):
-            return root.local
-        return False
-
-    @property
-    def internal(self) -> bool:
-        root = self.root
-        if isinstance(root, TraefikEntrypointFullModel):
-            return root.internal
-        return False

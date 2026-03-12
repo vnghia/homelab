@@ -21,9 +21,6 @@ class TraefikDynamicTcpModelBuilder(
 ):
     TYPE: ClassVar[TraefikDynamicType] = TraefikDynamicType.TCP
 
-    LOCAL_MIDDLEWARE_NAMES: ClassVar[list[str]] = ["local-tcp"]
-    LOCAL_MIDDLEWARES: ClassVar[list[str] | None] = None
-
     def build_rule(
         self,
         record: str,

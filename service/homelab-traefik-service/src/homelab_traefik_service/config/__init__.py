@@ -6,6 +6,7 @@ from pydantic import HttpUrl
 from ..resource.static.schema import TypesOTLP
 from .entrypoint import TraefikEntrypointConfig
 from .log import TraefikLogConfig
+from .record import TraefikRecordConfig
 
 
 class TraefikPathConfig(HomelabBaseModel):
@@ -44,4 +45,5 @@ class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):
     log: TraefikLogConfig
     metrics: TraefikMetricsConfig | None
     entrypoint: TraefikEntrypointConfig
+    record: TraefikRecordConfig
     plugins: dict[str, TraefikPluginConfig] = {}

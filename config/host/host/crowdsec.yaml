@@ -114,13 +114,11 @@ services:
               headers:
                 names:
                   X-Crowdsec-Remediation: keep
-      entrypoint:
-        config:
-          public-https:
-            middlewares:
-              http:
-                - service: crowdsec
-                  priority: 1000
+      record:
+        external-middlewares:
+          http:
+            - service: crowdsec
+              priority: 1000
       plugins:
         crowdsec:
           name: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin

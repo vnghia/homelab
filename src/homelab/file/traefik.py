@@ -26,7 +26,7 @@ from pulumi import ComponentResource, ResourceOptions
 
 class TraefikFile(ComponentResource):
     RESOURCE_NAME = TraefikService.name()
-    EGRESS_LOCAL_MIDDLEWARE_NAME = "egress-local"
+    EGRESS_INTERNAL_MIDDLEWARE_NAME = "egress-internal"
 
     def __init__(self, opts: ResourceOptions, traefik_service: TraefikService) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts=opts)
@@ -49,10 +49,10 @@ class TraefikFile(ComponentResource):
 
         service_name = service.name()
         if service_name in egresses:
-            dynamic[self.EGRESS_LOCAL_MIDDLEWARE_NAME] = TraefikDynamicModel(
+            dynamic[self.EGRESS_INTERNAL_MIDDLEWARE_NAME] = TraefikDynamicModel(
                 TraefikDynamicMiddlewareBuildModel(
                     type=TraefikDynamicType.TCP,
-                    name=self.EGRESS_LOCAL_MIDDLEWARE_NAME,
+                    name=self.EGRESS_INTERNAL_MIDDLEWARE_NAME,
                     data=TraefikDynamicMiddlewareIpWhitelistModel(
                         source_range=GlobalExtract(
                             HostExtract(
@@ -70,7 +70,7 @@ class TraefikFile(ComponentResource):
             egress_middlewares = [
                 TraefikDynamicMiddlewareModel(
                     TraefikDynamicMiddlewareUseModel(
-                        name=self.EGRESS_LOCAL_MIDDLEWARE_NAME,
+                        name=self.EGRESS_INTERNAL_MIDDLEWARE_NAME,
                     )
                 )
             ]
