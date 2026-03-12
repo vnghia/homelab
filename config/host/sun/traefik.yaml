@@ -32,7 +32,7 @@ services:
       plugins:
         oidc:
           name: github.com/sevensolutions/traefik-oidc-auth
-          version: "v0.17.0"
+          version: "v0.18.0"
       traefik:
         dynamic:
           oidc:
