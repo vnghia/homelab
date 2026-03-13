@@ -89,7 +89,8 @@ class Homelab:
                 )
             }
 
-            source_ips[host.name] |= {NetworkIpSource.CMESH: host.tailscale.ip}
+            if host.tailscale:
+                source_ips[host.name] |= {NetworkIpSource.CMESH: host.tailscale.ip}
 
         self.hostname = NetworkHostnameResource(
             self.config.network, opts=None, source_ips=source_ips

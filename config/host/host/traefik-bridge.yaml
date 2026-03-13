@@ -1,0 +1,6 @@
+services:
+  traefik:
+    container:
+      network:
+        bridge:
+          default: {}

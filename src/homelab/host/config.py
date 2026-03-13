@@ -11,7 +11,7 @@ from homelab_vector_service.config import VectorConfig
 
 
 class HostServiceConfig(ServiceConfigBase):
-    tailscale: ServiceModel
+    tailscale: ServiceModel | None = None
     traefik: ServiceWithConfigModel[TraefikConfig]
     vector: ServiceWithConfigModel[VectorConfig]
     dagu: ServiceWithConfigModel[DaguConfig]

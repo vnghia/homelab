@@ -9,6 +9,8 @@ docker:
       tailscale-data: {}
 services:
   tailscale:
+    network:
+      bridge:
     variables:
       PORT:
         port: udp
@@ -60,3 +62,7 @@ services:
               template: "--port={value} --no-logs-no-support"
         TS_HOSTNAME:
           hvariable: FULL_HOSTNAME
+  traefik:
+    container:
+      network:
+        service: tailscale

@@ -58,10 +58,14 @@ class HostBaseNoConfig(HostResourceBase):
         self.HOST_BASES[self.name] = self
 
     def build_tailscale_service(self) -> None:
-        self.tailscale = TailscaleService(
-            self.host_services_config.tailscale,
-            opts=self.child_opts,
-            extractor_args=self.extractor_args,
+        self.tailscale = (
+            TailscaleService(
+                self.host_services_config.tailscale,
+                opts=self.child_opts,
+                extractor_args=self.extractor_args,
+            )
+            if self.host_services_config.tailscale
+            else None
         )
 
     def build_traefik_service(self) -> None:
