@@ -29,6 +29,6 @@ class VpnWireguardModelBuilder(HomelabRootModel[VpnWireguardModel]):
                     GlobalExtractor(address).extract_str(extractor_args)
                     for address in root.addresses
                 ]
-            ).apply(lambda x: ",".join(x)),
+            ).apply(",".join),
             "VPN_TYPE": Output.from_input("wireguard"),
         }

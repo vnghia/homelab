@@ -52,7 +52,7 @@ class VectorService(ExtraService[VectorConfig]):
         def build_input(input: ContainerObservabilityInputModel) -> str:
             if not input.service and not input.has_container:
                 return keys[input.input]
-            service_name = input.service if input.service else service.name()
+            service_name = input.service or service.name()
             return self.configs[service_name][input.container].keys[input.input]
 
         sources = {}
