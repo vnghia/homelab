@@ -34,16 +34,15 @@ class GlobalResource(ComponentResource):
             plain_args=plain_args,
         )
 
-        self.mesh_ips: dict[str, list[IPvAnyAddress]] = {}
+        self.mesh_devices = tailscale.get_devices()
+        self.mesh_ips = {
+            device.name.split(".", maxsplit=1)[0]: list(
+                map(IPvAnyAddressAdapter.validate_python, device.addresses)
+            )
+            for device in tailscale.get_devices().devices
+        }
 
         self.register_outputs({})
 
     def get_mesh_ip(self, host: str) -> list[IPvAnyAddress]:
-        if host not in self.mesh_ips:
-            self.mesh_ips[host] = list(
-                map(
-                    IPvAnyAddressAdapter.validate_python,
-                    tailscale.get_device("{}-core".format(host)).addresses,
-                )
-            )
-        return self.mesh_ips[host]
+        return self.mesh_ips["{}-core".format(host)]

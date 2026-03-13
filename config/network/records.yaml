@@ -1,9 +1,16 @@
 records:
+  solar:
+    host: sun
+    source-ip: ddns
   sun:
+    host: sun
+    source-ip: cmesh
     records:
       xseed:
         routable: false
   earth:
+    host: earth
+    source-ip: cmesh
     records:
       docker-proxy:
         routable: false

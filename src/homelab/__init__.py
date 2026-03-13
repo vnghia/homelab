@@ -3,11 +3,16 @@ from homelab_backup.resource import BackupResource
 from homelab_config import Config, HostConfig
 from homelab_extract.plain import PlainArgs
 from homelab_global.resource import GlobalResource
-from homelab_network.model.ip import NetworkIpSource
+from homelab_network.model.ip import (
+    NetworkIpModel,
+    NetworkIpOutputModel,
+    NetworkIpSource,
+)
 from homelab_network.resource.hostname import NetworkHostnameResource
 from homelab_network.resource.network import NetworkResource
 from homelab_secret.resource.keepass import KeepassResource
 from loguru import logger
+from pulumi import Output
 
 from .host import HostBase
 from .host.earth import EarthHost
@@ -72,11 +77,20 @@ class Homelab:
             }
         )
 
+        source_ips = {}
+        for host in HostBase.HOST_BASES.values():
+            mesh_ips = self.global_resource.get_mesh_ip(host.name)
+            source_ips[host.name] = {
+                NetworkIpSource.HMESH: NetworkIpOutputModel(
+                    {
+                        NetworkIpModel.V4: Output.from_input(mesh_ips[0]),
+                        NetworkIpModel.V6: Output.from_input(mesh_ips[1]),
+                    }
+                )
+            }
+
+            source_ips[host.name] |= {NetworkIpSource.CMESH: host.tailscale.ip}
+
         self.hostname = NetworkHostnameResource(
-            self.config.network,
-            opts=None,
-            source_ips={
-                host.name: {NetworkIpSource.TAILSCALE: host.tailscale.ip}
-                for host in HostBase.HOST_BASES.values()
-            },
+            self.config.network, opts=None, source_ips=source_ips
         )

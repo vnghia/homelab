@@ -8,8 +8,9 @@ from pydantic import IPvAnyAddress
 
 
 class NetworkIpSource(StrEnum):
-    TAILSCALE = auto()
     DDNS = auto()
+    HMESH = auto()
+    CMESH = auto()
 
 
 class NetworkIpModel(HomelabRootModel[dict[str, IPvAnyAddress]]):
