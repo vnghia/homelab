@@ -899,6 +899,7 @@ dependencies = [
     { name = "homelab-s3" },
     { name = "homelab-secret" },
     { name = "pulumi" },
+    { name = "pulumi-tailscale" },
 ]
 
 [package.metadata]
@@ -909,6 +910,7 @@ requires-dist = [
     { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "pulumi", specifier = ">=3.207.0" },
+    { name = "pulumi-tailscale", specifier = ">=0.17.5" },
 ]
 
 [[package]]

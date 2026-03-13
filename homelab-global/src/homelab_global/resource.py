@@ -1,6 +1,9 @@
+import pulumi_tailscale as tailscale
 from homelab_extract.plain import PlainArgs
+from homelab_pydantic import IPvAnyAddressAdapter
 from homelab_secret.resource import SecretResource
 from pulumi import ComponentResource, ResourceOptions
+from pydantic import IPvAnyAddress
 
 from homelab_global import ProjectArgs
 from homelab_global.config import GlobalConfig
@@ -31,4 +34,16 @@ class GlobalResource(ComponentResource):
             plain_args=plain_args,
         )
 
+        self.mesh_ips: dict[str, list[IPvAnyAddress]] = {}
+
         self.register_outputs({})
+
+    def get_mesh_ip(self, host: str) -> list[IPvAnyAddress]:
+        if host not in self.mesh_ips:
+            self.mesh_ips[host] = list(
+                map(
+                    IPvAnyAddressAdapter.validate_python,
+                    tailscale.get_device("{}-core".format(host)).addresses,
+                )
+            )
+        return self.mesh_ips[host]

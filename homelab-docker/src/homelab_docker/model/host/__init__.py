@@ -9,7 +9,7 @@ from ...config.docker import DockerConfig
 from ...config.service import ServiceConfigBase
 from ...config.service.database import ServiceDatabaseConfig
 from ...config.user import UidGidConfig
-from ...model.host.ip import HostIpModel
+from ...model.host.datacenter import HostDatacenterModel
 from ...model.service import ServiceModel
 from .access import HostAccessModel
 
@@ -18,7 +18,7 @@ class HostNoServiceModel(HomelabBaseModel):
     byname: str
     access: HostAccessModel
     timezone: TimeZoneName
-    ip: HostIpModel
+    datacenter: HostDatacenterModel
     docker: DockerConfig
     users: UidGidConfig
     variables: dict[str, GlobalExtract] = {}
