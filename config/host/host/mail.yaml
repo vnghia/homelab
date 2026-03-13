@@ -1,7 +1,7 @@
 docker:
   images:
     remote:
-      mail-stalwart:
+      stalwart:
         repo: stalwartlabs/stalwart
         tag: "v0.15.5"
   volumes:
@@ -126,7 +126,7 @@ services:
                 user: "%{env:ADMIN_USER}%"
                 secret: "%{env:ADMIN_SECRET}%"
     container:
-      image: mail-stalwart
+      image: stalwart
       hosts:
         - record: solar
           hostname: kanidm
