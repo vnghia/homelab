@@ -143,8 +143,10 @@ services:
     containers:
       worker:
         inherit:
-        command: ["bundle", "exec", "sidekiq"]
+        command: ["sidekiq"]
         entrypoint: ["sidekiq-entrypoint.sh"]
         healthcheck:
           tests: ["CMD", "pgrep", "-f", "sidekiq"]
         wud:
+        envs:
+          BACKGROUND_PROCESSING_CONCURRENCY: 5
