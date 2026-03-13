@@ -35,3 +35,7 @@ class RecordConfig(HomelabBaseModel):
     @property
     def is_ddns(self) -> bool:
         return self.source_ip.root == NetworkIpSource.DDNS
+
+    @property
+    def is_internal(self) -> bool:
+        return not self.is_ddns

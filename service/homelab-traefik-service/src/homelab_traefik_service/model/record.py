@@ -65,7 +65,6 @@ class TraefikRecordMiddlewareModel(
 
 class TraefikRecordModel(HomelabBaseModel):
     entrypoint: str
-    internal: bool
     middlewares: dict[TraefikDynamicType, list[TraefikRecordMiddlewareModel]] = {}
 
     _middlewares: dict[TraefikDynamicType, list[str]]

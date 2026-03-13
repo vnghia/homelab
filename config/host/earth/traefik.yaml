@@ -9,7 +9,6 @@ services:
       record:
         config:
           earth:
-            internal: true
             entrypoint: "https"
     container:
       hosts:

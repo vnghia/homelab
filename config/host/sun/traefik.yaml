@@ -24,10 +24,8 @@ services:
       record:
         config:
           sun:
-            internal: true
             entrypoint: https
           solar:
-            internal: false
             entrypoint: https
       plugins:
         oidc:

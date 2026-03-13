@@ -88,7 +88,10 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
         else:
             all_middlewares = (
                 traefik_config.record.build_middlewares(
-                    record_config.internal, traefik_service, extractor_args, self.TYPE
+                    extractor_args.host.network.config.records[record].is_internal,
+                    traefik_service,
+                    extractor_args,
+                    self.TYPE,
                 )
                 + record_config.build_middlewares(
                     traefik_service, extractor_args, self.TYPE
