@@ -34,6 +34,7 @@ services:
                 scheme: https
               prefer-short-username: true
   paperless:
+    ondemand: true
     config:
       traefik:
         dynamic:
