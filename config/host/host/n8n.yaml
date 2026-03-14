@@ -50,6 +50,7 @@ services:
           volume: n8n-hooks
         transform:
           path: oidc.js
+    ondemand: true
     config:
       traefik:
         dynamic:
