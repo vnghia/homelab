@@ -32,6 +32,7 @@ services:
   airtrail:
     variables:
       PORT: 3000
+    ondemand: true
     config:
       traefik:
         dynamic:
