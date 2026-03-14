@@ -11,5 +11,12 @@ config:
     value:
       pulumi:template: python
   pulumi:disable-default-providers:
-    - docker
-    - docker-build
+    value:
+      - docker
+      - docker-build
+packages:
+  b2:
+    source: terraform-provider
+    version: 1.1.0
+    parameters:
+      - backblaze/b2

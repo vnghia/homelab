@@ -80,16 +80,21 @@ homelab-tailscale-service = { workspace = true }
 homelab-traefik-service = { workspace = true }
 homelab-vector-service = { workspace = true }
 
+pulumi-b2 = { path = "sdks/b2" }
+
 [tool.uv.workspace]
 members = ["homelab-*", "config/homelab-*", "service/homelab-*"]
 
 [tool.mypy]
 strict = true
-exclude = "image"
+exclude = "image|sdks"
 
 [[tool.mypy.overrides]]
 module = ["json_fix.*", "pykeepass.*"]
 ignore_missing_imports = true
+
+[tool.ruff]
+extend-exclude = ["sdks"]
 
 [tool.ruff.lint]
 extend-select = [
