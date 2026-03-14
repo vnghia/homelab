@@ -26,10 +26,15 @@ services:
         SABLIER_STRATEGY_BLOCKING_DEFAULT_TIMEOUT: 1m
   traefik:
     config:
+      sablier:
+        url:
+          service: sablier
+          extract:
+            svariable: PORT
+          transform:
+            string:
+              template: "http://sablier:{value}"
       plugins:
         sablier:
           name: github.com/sablierapp/sablier-traefik-plugin
           version: "v1.1.0"
-      traefik:
-        depends-on:
-          - sablier

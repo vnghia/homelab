@@ -297,6 +297,11 @@ class ContainerModel(HomelabBaseModel):
                         "homelab.service": service.name(),
                         "homelab.container": resource_name,
                     }
+                    | (
+                        {"sablier.enable": "true", "sablier.group": service.name()}
+                        if service.model.ondemand
+                        else {}
+                    )
                 ).items()
             }
             | {

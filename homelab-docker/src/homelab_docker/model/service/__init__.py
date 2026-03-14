@@ -21,6 +21,7 @@ class ServiceModel(HomelabBaseModel):
     depends_on: list[ServiceDependOnConfig] | None = None
 
     variables: dict[str, GlobalExtract] = {}
+    ondemand: bool = False
     backup: ServiceBackupConfig = ServiceBackupConfig()
     databases: ServiceDatabaseConfig | None = None
     files: ServiceFileConfig | None = None

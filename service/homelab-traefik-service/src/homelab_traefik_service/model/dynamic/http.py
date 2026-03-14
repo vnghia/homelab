@@ -6,6 +6,10 @@ from typing import Any, ClassVar
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_traefik_config.model.dynamic.http import TraefikDynamicHttpModel
+from homelab_traefik_config.model.dynamic.middleware import (
+    TraefikDynamicMiddlewareModel,
+    TraefikDynamicMiddlewareUseModel,
+)
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output, ResourceOptions
 
@@ -70,6 +74,21 @@ class TraefikDynamicHttpModelBuilder(
             tls_router["certResolver"] = traefik_service.static.CERT_RESOLVER
 
         return (tls, tls_router)
+
+    def build_service_middlewares(
+        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
+    ) -> list[TraefikDynamicMiddlewareModel]:
+        super_middlewares = super().build_service_middlewares(
+            traefik_service, extractor_args
+        )
+        if extractor_args.service.model.ondemand:
+            return [
+                TraefikDynamicMiddlewareModel(
+                    TraefikDynamicMiddlewareUseModel(name=traefik_service.ONDEMAND_NAME)
+                ),
+                *super_middlewares,
+            ]
+        return super_middlewares
 
     def build_resource(
         self,

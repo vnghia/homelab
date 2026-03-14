@@ -22,6 +22,8 @@ from .resource.static import TraefikStaticConfigResource
 
 
 class TraefikService(ServiceWithConfigResourceBase[TraefikConfig]):
+    ONDEMAND_NAME = "sablier"
+
     def __init__(
         self,
         model: ServiceWithConfigModel[TraefikConfig],

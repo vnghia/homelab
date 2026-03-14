@@ -9,6 +9,9 @@ from typing import Any, ClassVar
 from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import HomelabRootModel
 from homelab_traefik_config.model.dynamic.base import TraefikDynamicBaseModel
+from homelab_traefik_config.model.dynamic.middleware import (
+    TraefikDynamicMiddlewareModel,
+)
 from homelab_traefik_config.model.dynamic.type import TraefikDynamicType
 from pulumi import Output
 
@@ -57,6 +60,11 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> tuple[dict[str, Any] | None, dict[str, Any]]: ...
 
+    def build_service_middlewares(
+        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
+    ) -> list[TraefikDynamicMiddlewareModel]:
+        return self.root.middlewares
+
     def to_data(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> dict[str, Any]:
@@ -80,7 +88,9 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
             TraefikDynamicMiddlewareModelBuilder(middleware).get_name(
                 traefik_service, extractor_args, self.TYPE
             )
-            for middleware in root.middlewares
+            for middleware in self.build_service_middlewares(
+                traefik_service, extractor_args
+            )
         ]
 
         if root.entrypoint:

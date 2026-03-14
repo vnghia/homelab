@@ -33,6 +33,10 @@ class TraefikMetricsConfig(HomelabBaseModel):
     resource_attributes: dict[str, GlobalExtract] = {}
 
 
+class TraefikSablierConfig(HomelabBaseModel):
+    url: GlobalExtract
+
+
 class TraefikPluginConfig(HomelabBaseModel):
     name: str
     version: str
@@ -46,4 +50,11 @@ class TraefikConfig(TraefikServiceConfigBase, HomelabBaseModel):
     metrics: TraefikMetricsConfig | None
     entrypoint: TraefikEntrypointConfig
     record: TraefikRecordConfig
+    sablier: TraefikSablierConfig | None = None
     plugins: dict[str, TraefikPluginConfig] = {}
+
+    @property
+    def sablier_(self) -> TraefikSablierConfig:
+        if not self.sablier:
+            raise ValueError("Sablier url is not configured")
+        return self.sablier
