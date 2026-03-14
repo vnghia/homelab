@@ -1,0 +1,35 @@
+docker:
+  images:
+    remote:
+      sablier:
+        repo: ghcr.io/sablierapp/sablier
+        tag: "1.11.1"
+services:
+  sablier:
+    variables:
+      PORT: 10000
+    config: {}
+    container:
+      image: sablier
+      command:
+        - "start"
+        - "--provider.name=docker"
+      docker-socket:
+        write: false
+      envs:
+        SABLIER_PROVIDER_DOCKER_STRATEGY: stop
+        SABLIER_SERVER_PORT:
+          svariable: PORT
+        SABLIER_SESSIONS_DEFAULT_DURATION: 30m
+        SABLIER_SESSIONS_EXPIRATION_INTERVAL: 5m
+        SABLIER_STRATEGY_DYNAMIC_DEFAULT_THEME: ghost
+        SABLIER_STRATEGY_BLOCKING_DEFAULT_TIMEOUT: 1m
+  traefik:
+    config:
+      plugins:
+        sablier:
+          name: github.com/sablierapp/sablier-traefik-plugin
+          version: "v1.1.0"
+      traefik:
+        depends-on:
+          - sablier
