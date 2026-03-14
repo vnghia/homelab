@@ -81,6 +81,7 @@ homelab-traefik-service = { workspace = true }
 homelab-vector-service = { workspace = true }
 
 pulumi-b2 = { path = "sdks/b2" }
+pulumi-netbird = { path = "sdks/netbird" }
 
 [tool.uv.workspace]
 members = ["homelab-*", "config/homelab-*", "service/homelab-*"]
