@@ -46,6 +46,7 @@ services:
         transform:
           string:
             template: "{value}/oauth2/openid/impress"
+    ondemand: true
     config:
       traefik:
         dynamic:
