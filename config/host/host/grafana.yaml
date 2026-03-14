@@ -16,6 +16,7 @@ services:
   grafana:
     variables:
       PORT: 3000
+    ondemand: true
     config:
       traefik:
         dynamic:
