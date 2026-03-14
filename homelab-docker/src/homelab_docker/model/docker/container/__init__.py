@@ -297,11 +297,6 @@ class ContainerModel(HomelabBaseModel):
                         "homelab.service": service.name(),
                         "homelab.container": resource_name,
                     }
-                    | (
-                        self.wud.build_labels(resource_name)
-                        if self.wud and not self.oneshot
-                        else {}
-                    )
                 ).items()
             }
             | {
