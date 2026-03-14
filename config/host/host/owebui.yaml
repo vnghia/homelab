@@ -39,6 +39,7 @@ services:
   owebui:
     variables:
       PORT: 8080
+    ondemand: true
     config:
       traefik:
         dynamic:
