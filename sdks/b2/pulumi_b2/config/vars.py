@@ -23,14 +23,14 @@ class _ExportableConfig(types.ModuleType):
     @_builtins.property
     def application_key(self) -> Optional[str]:
         """
-        B2 Application Key (B2_APPLICATION_KEY env).
+        B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-dotnet="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-go="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-python="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-yaml="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-java="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`">`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`</span>.
         """
         return __config__.get('applicationKey')
 
     @_builtins.property
     def application_key_id(self) -> Optional[str]:
         """
-        B2 Application Key ID (B2_APPLICATION_KEY_ID env).
+        B2 Application Key ID (B2_APPLICATION_KEY_ID env). Defaults to <span pulumi-lang-nodejs="`b9c685bc94f8`" pulumi-lang-dotnet="`B9c685bc94f8`" pulumi-lang-go="`b9c685bc94f8`" pulumi-lang-python="`b9c685bc94f8`" pulumi-lang-yaml="`b9c685bc94f8`" pulumi-lang-java="`b9c685bc94f8`">`b9c685bc94f8`</span>.
         """
         return __config__.get('applicationKeyId')
 

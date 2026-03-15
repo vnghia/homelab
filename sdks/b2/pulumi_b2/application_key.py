@@ -31,7 +31,7 @@ class ApplicationKeyArgs:
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] capabilities: A set of strings, each one naming a capability the key has. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] key_name: The name of the key. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] bucket_id: When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] name_prefix: When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
         """
         pulumi.set(__self__, "capabilities", capabilities)
@@ -98,7 +98,7 @@ class ApplicationKeyArgs:
     @pulumi.getter(name="bucketIds")
     def bucket_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
         """
-        When provided, the new key can only access the specified buckets. **Modifying this attribute will force creation of a new resource.**
+        When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_ids")
 
@@ -137,7 +137,7 @@ class _ApplicationKeyState:
         :param pulumi.Input[_builtins.str] application_key: The key.
         :param pulumi.Input[_builtins.str] application_key_id: The ID of the newly created key.
         :param pulumi.Input[_builtins.str] bucket_id: When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] capabilities: A set of strings, each one naming a capability the key has. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] key_name: The name of the key. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] name_prefix: When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
@@ -215,7 +215,7 @@ class _ApplicationKeyState:
     @pulumi.getter(name="bucketIds")
     def bucket_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
         """
-        When provided, the new key can only access the specified buckets. **Modifying this attribute will force creation of a new resource.**
+        When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_ids")
 
@@ -291,7 +291,7 @@ class ApplicationKey(pulumi.CustomResource):
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] bucket_id: When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] capabilities: A set of strings, each one naming a capability the key has. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] key_name: The name of the key. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] name_prefix: When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
@@ -380,7 +380,7 @@ class ApplicationKey(pulumi.CustomResource):
         :param pulumi.Input[_builtins.str] application_key: The key.
         :param pulumi.Input[_builtins.str] application_key_id: The ID of the newly created key.
         :param pulumi.Input[_builtins.str] bucket_id: When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] capabilities: A set of strings, each one naming a capability the key has. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] key_name: The name of the key. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] name_prefix: When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
@@ -435,7 +435,7 @@ class ApplicationKey(pulumi.CustomResource):
     @pulumi.getter(name="bucketIds")
     def bucket_ids(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
         """
-        When provided, the new key can only access the specified buckets. **Modifying this attribute will force creation of a new resource.**
+        When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_ids")
 

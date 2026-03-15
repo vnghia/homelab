@@ -325,7 +325,7 @@ def get_plugin_download_url():
 	return None
 
 def get_version():
-    return "0.12.0"
+    return "0.12.1"
 
 _package_lock = asyncio.Lock()
 _package_ref = ...
@@ -339,7 +339,7 @@ async def get_package():
 					parameterization = resource_pb2.Parameterization(
 						name="b2",
 						version=get_version(),
-						value=base64.b64decode("eyJyZW1vdGUiOnsidXJsIjoicmVnaXN0cnkub3BlbnRvZnUub3JnL2JhY2tibGF6ZS9iMiIsInZlcnNpb24iOiIwLjEyLjAifX0="),
+						value=base64.b64decode("eyJyZW1vdGUiOnsidXJsIjoicmVnaXN0cnkub3BlbnRvZnUub3JnL2JhY2tibGF6ZS9iMiIsInZlcnNpb24iOiIwLjEyLjEifX0="),
 					)
 					registerPackageResponse = monitor.RegisterPackage(
 						resource_pb2.RegisterPackageRequest(
