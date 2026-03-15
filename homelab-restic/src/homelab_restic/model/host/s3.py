@@ -10,6 +10,8 @@ from .base import ResticHostBase
 class ResticS3Host(ResticHostBase):
     SCHEME: ClassVar[str] = "s3"
 
+    path: str = ""
+
     s3: S3Key
     bucket: str | None = None
 

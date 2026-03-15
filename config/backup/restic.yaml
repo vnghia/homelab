@@ -2,6 +2,10 @@ restic:
   default: main
   repositories:
     main:
+      host:
+        s3:
+          type: b2
+          name: restic
       password:
         protect: true
       keep:
