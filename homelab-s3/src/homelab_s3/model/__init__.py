@@ -18,3 +18,4 @@ class S3CredentialEnvKey(HomelabBaseModel):
     access_key: str = "AWS_SECRET_ACCESS_KEY"
     region: str = "AWS_REGION"
     endpoint: str = "AWS_ENDPOINT_URL"
+    bucket: str = "AWS_BUCKET"

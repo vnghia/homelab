@@ -5,8 +5,10 @@ from typing import Self
 
 from homelab_pydantic import HomelabRootModel, Hostnames
 from homelab_s3.resource import S3Credentials
+from pulumi import Output
 
 from .hostname import GlobalPlainExtractHostnameSource
+from .s3 import GlobalPlainExtractS3Source
 from .type import GlobalPlainExtractTypeSource
 
 
@@ -21,9 +23,13 @@ class PlainArgs:
 
 
 class GlobalPlainExtractSource(
-    HomelabRootModel[GlobalPlainExtractHostnameSource | GlobalPlainExtractTypeSource]
+    HomelabRootModel[
+        GlobalPlainExtractHostnameSource
+        | GlobalPlainExtractS3Source
+        | GlobalPlainExtractTypeSource
+    ]
 ):
-    def extract_str(self, plain_args: PlainArgs) -> str:
+    def extract_str(self, plain_args: PlainArgs) -> str | Output[str]:
         return self.root.extract_str(plain_args)
 
     @classmethod

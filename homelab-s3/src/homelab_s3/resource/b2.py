@@ -40,6 +40,7 @@ class B2Resource(ComponentResource):
                 key_id=key.application_key_id,
                 access_key=key.application_key,
                 endpoint=self.url,
+                bucket=bucket.bucket_name,
             )
 
             pulumi.export("b2.{}.key_id".format(name), key.application_key_id)

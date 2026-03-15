@@ -19,6 +19,8 @@ class S3CredentialArgs:
     region: Output[str] | None = None
     endpoint: HttpUrl | None = None
 
+    bucket: Output[str] | None = None
+
     def to_envs(self, env: S3CredentialEnvKey | None) -> dict[str, Output[str]]:
         env = env or self.DEFAULT_ENV_KEY
         return (
@@ -32,6 +34,7 @@ class S3CredentialArgs:
                 if self.endpoint
                 else {}
             )
+            | ({env.bucket: self.bucket} if self.bucket else {})
         )
 
 
