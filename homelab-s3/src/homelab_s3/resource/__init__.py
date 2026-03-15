@@ -34,7 +34,7 @@ class S3CredentialArgs:
                 if self.endpoint
                 else {}
             )
-            | ({env.bucket: self.bucket} if self.bucket else {})
+            | ({env.bucket: self.bucket} if env.bucket and self.bucket else {})
         )
 
 
