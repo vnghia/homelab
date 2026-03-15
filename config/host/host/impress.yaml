@@ -123,6 +123,12 @@ services:
         network:
           bridge:
             default: {}
+        s3:
+          key:
+            type: b2
+            name: impress
+          env:
+            bucket: AWS_STORAGE_BUCKET_NAME
         tmpfs:
           - /tmp
         wud:
