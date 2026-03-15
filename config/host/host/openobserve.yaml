@@ -52,7 +52,6 @@ services:
         bridge:
           default: {}
       s3:
-        config:
         env:
           key-id: ZO_S3_ACCESS_KEY
           access-key: ZO_S3_SECRET_KEY

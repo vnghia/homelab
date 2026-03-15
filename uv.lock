@@ -715,6 +715,7 @@ dependencies = [
     { name = "homelab-global" },
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
+    { name = "homelab-s3" },
     { name = "pulumi" },
     { name = "yaml-rs" },
 ]
@@ -727,6 +728,7 @@ requires-dist = [
     { name = "homelab-global", editable = "homelab-global" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "pulumi", specifier = ">=3.147.0" },
     { name = "yaml-rs", specifier = ">=0.0.9" },
 ]
@@ -740,6 +742,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
+    { name = "homelab-s3" },
     { name = "pulumi" },
     { name = "pydantic" },
 ]
@@ -750,6 +753,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -900,6 +904,7 @@ dependencies = [
     { name = "homelab-secret" },
     { name = "pulumi" },
     { name = "pulumi-tailscale" },
+    { name = "pydantic" },
 ]
 
 [package.metadata]
@@ -911,6 +916,7 @@ requires-dist = [
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pulumi-tailscale", specifier = ">=0.17.5" },
+    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]
@@ -1033,6 +1039,7 @@ source = { editable = "homelab-restic" }
 dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
+    { name = "homelab-s3" },
     { name = "homelab-secret" },
     { name = "pulumi" },
     { name = "pydantic" },
@@ -1042,6 +1049,7 @@ dependencies = [
 requires-dist = [
     { name = "homelab-extract", editable = "homelab-extract" },
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-s3", editable = "homelab-s3" },
     { name = "homelab-secret", editable = "homelab-secret" },
     { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -1084,6 +1092,7 @@ version = "0.1.0"
 source = { editable = "homelab-s3" }
 dependencies = [
     { name = "homelab-pydantic" },
+    { name = "pulumi" },
     { name = "pulumi-b2" },
     { name = "pydantic" },
 ]
@@ -1091,6 +1100,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-b2", directory = "sdks/b2" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1227,9 +1237,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extra-service" },
     { name = "homelab-extract" },
-    { name = "homelab-pydantic" },
     { name = "pulumi" },
-    { name = "pydantic" },
 ]
 
 [package.metadata]
@@ -1237,9 +1245,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
     { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
-    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]

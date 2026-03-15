@@ -123,8 +123,6 @@ services:
         network:
           bridge:
             default: {}
-        s3:
-          config:
         tmpfs:
           - /tmp
         wud:

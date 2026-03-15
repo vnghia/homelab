@@ -10,6 +10,7 @@ dependencies = [
     "homelab-s3",
     "homelab-secret",
     "pulumi>=3.207.0",
+    "pydantic>=2.10.6",
     "pulumi-tailscale>=0.17.5",
 ]
 

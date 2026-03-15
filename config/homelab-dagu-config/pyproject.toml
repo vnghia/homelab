@@ -10,6 +10,7 @@ dependencies = [
     "homelab-extract",
     "pulumi>=3.207.0",
     "homelab-backup",
+    "homelab-s3",
 ]
 
 [build-system]

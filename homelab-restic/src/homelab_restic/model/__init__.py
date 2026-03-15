@@ -1,6 +1,7 @@
 from homelab_extract.plain import PlainArgs
 from homelab_pydantic import HomelabBaseModel
 from homelab_secret.model.password import SecretPasswordModel
+from pulumi import Output
 from pydantic import PositiveInt
 
 from .host import ResticHost
@@ -14,8 +15,8 @@ class ResticRepositoryModel(HomelabBaseModel):
     compression: str | None = None
     pack_size: PositiveInt | None = None
 
-    def build_repository(self, plain_args: PlainArgs) -> str:
+    def build_repository(self, plain_args: PlainArgs) -> Output[str]:
         return self.host.root.build_repository(plain_args)
 
-    def build_envs(self, plain_args: PlainArgs) -> dict[str, str]:
+    def build_envs(self, plain_args: PlainArgs) -> dict[str, Output[str]]:
         return self.host.root.build_envs(plain_args)

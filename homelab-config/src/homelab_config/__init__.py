@@ -12,6 +12,7 @@ from homelab_global import ProjectArgs
 from homelab_global.config import GlobalConfig
 from homelab_network.config import NetworkConfig
 from homelab_pydantic import HomelabBaseModel
+from homelab_s3.config import S3Config
 
 from homelab_config.constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
 
@@ -38,6 +39,7 @@ class HostConfig[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBase
 class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):
     host: HostConfig[TSun, TEarth]
     network: NetworkConfig
+    s3: S3Config
     global_: GlobalConfig
     backup: BackupConfig
 
@@ -104,6 +106,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
         return cls(
             host=cls.get_host_config(host_type),
             network=NetworkConfig.model_validate(cls.get_key("network")),
+            s3=S3Config.model_validate(cls.get_key("s3")),
             global_=GlobalConfig.model_validate(cls.get_key("global")),
             backup=BackupConfig.model_validate(cls.get_key("backup")),
         )

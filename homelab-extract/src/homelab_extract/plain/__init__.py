@@ -4,7 +4,7 @@ import dataclasses
 from typing import Self
 
 from homelab_pydantic import HomelabRootModel, Hostnames
-from homelab_s3.config.credential import S3CredentialConfig
+from homelab_s3.resource import S3Credentials
 
 from .hostname import GlobalPlainExtractHostnameSource
 from .type import GlobalPlainExtractTypeSource
@@ -12,7 +12,7 @@ from .type import GlobalPlainExtractTypeSource
 
 @dataclasses.dataclass
 class PlainArgs:
-    s3: S3CredentialConfig
+    s3: S3Credentials
     hostnames: Hostnames
     host: str | None
 

@@ -10,6 +10,7 @@ from homelab_network.model.ip import (
 )
 from homelab_network.resource.hostname import NetworkHostnameResource
 from homelab_network.resource.network import NetworkResource
+from homelab_s3.resource import S3Resource
 from homelab_secret.resource.keepass import KeepassResource
 from loguru import logger
 from pulumi import Output
@@ -33,12 +34,12 @@ class Homelab:
         self.network = NetworkResource(
             self.config.network, opts=None, project_args=self.project_args
         )
+        self.s3 = S3Resource(self.config.s3, opts=None)
+
         self.global_resource = GlobalResource(
             self.config.global_,
             opts=None,
-            plain_args=PlainArgs(
-                self.config.global_.s3.custom, self.network.hostnames, None
-            ),
+            plain_args=PlainArgs(self.s3.credentials, self.network.hostnames, None),
             project_args=self.project_args,
         )
         self.backup_resource = BackupResource(

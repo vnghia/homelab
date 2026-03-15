@@ -3,7 +3,12 @@ name = "homelab-s3"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = ["homelab-pydantic", "pydantic>=2.10.6", "pulumi-b2"]
+dependencies = [
+    "homelab-pydantic",
+    "pydantic>=2.10.6",
+    "pulumi>=3.148.0",
+    "pulumi-b2",
+]
 
 [build-system]
 requires = ["uv_build"]
