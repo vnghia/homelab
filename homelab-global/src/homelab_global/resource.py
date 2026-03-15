@@ -1,6 +1,7 @@
 import pulumi_tailscale as tailscale
 from homelab_extract.plain import PlainArgs
 from homelab_pydantic import IPvAnyAddressAdapter
+from homelab_s3.resource.b2 import B2Resource
 from homelab_secret.resource import SecretResource
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import IPvAnyAddress
@@ -33,6 +34,8 @@ class GlobalResource(ComponentResource):
             name=self.RESOURCE_NAME,
             plain_args=plain_args,
         )
+
+        self.b2 = B2Resource(config.s3.b2, opts=self.child_opts)
 
         self.mesh_devices = tailscale.get_devices()
         self.mesh_ips = {

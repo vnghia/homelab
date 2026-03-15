@@ -1084,12 +1084,14 @@ version = "0.1.0"
 source = { editable = "homelab-s3" }
 dependencies = [
     { name = "homelab-pydantic" },
+    { name = "pulumi-b2" },
     { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "pulumi-b2", directory = "sdks/b2" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
@@ -1708,6 +1710,24 @@ dependencies = [
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dd/5c/4e9046afb24adad53752cf018857ab624ef983e0fa4cac0fcd435ff73f0c/pulumi-3.217.1-py3-none-any.whl", hash = "sha256:9e06ec1e5cbf4e9504e04412cc5ecae90e3ed25fce3bbda8f091f51c995ad3f8", size = 388428, upload-time = "2026-01-27T16:13:01.34Z" },
+]
+
+[[package]]
+name = "pulumi-b2"
+version = "0.12.0"
+source = { directory = "sdks/b2" }
+dependencies = [
+    { name = "parver" },
+    { name = "pulumi" },
+    { name = "semver" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "parver", specifier = ">=0.2.1" },
+    { name = "pulumi", specifier = ">=3.165.0,<4.0.0" },
+    { name = "semver", specifier = ">=2.8.1" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.11,<5" },
 ]
 
 [[package]]
