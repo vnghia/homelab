@@ -14,4 +14,6 @@ class ContainerS3Config(HomelabBaseModel):
     env: S3CredentialEnvKey | None = None
 
     def build_envs(self, extractor_args: ExtractorArgs) -> dict[str, str]:
-        return extractor_args.global_resource.config.s3[self.config].to_envs(self.env)
+        return extractor_args.global_resource.config.s3.custom[self.config].to_envs(
+            self.env
+        )
