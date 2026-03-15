@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 
 from homelab_pydantic.model import HomelabBaseModel
-from homelab_s3 import S3CredentialEnvKey
+from homelab_s3.model.credential import S3CredentialEnvKey
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
