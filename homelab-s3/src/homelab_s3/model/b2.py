@@ -1,4 +1,10 @@
 from homelab_pydantic import HomelabBaseModel
+from pydantic import PositiveInt
+
+
+class B2LifecycleModel(HomelabBaseModel):
+    prefix: str = ""
+    version: PositiveInt
 
 
 class B2Model(HomelabBaseModel):
@@ -23,3 +29,4 @@ class B2Model(HomelabBaseModel):
         "writeBuckets",
         "writeFiles",
     ]
+    lifecycles: list[B2LifecycleModel] = []

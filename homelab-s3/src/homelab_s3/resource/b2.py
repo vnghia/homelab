@@ -28,6 +28,15 @@ class B2Resource(ComponentResource):
                 default_server_side_encryption=b2.BucketDefaultServerSideEncryptionArgs(
                     algorithm="AES256", mode="SSE-B2"
                 ),
+                lifecycle_rules=[
+                    b2.BucketLifecycleRuleArgs(
+                        file_name_prefix=lifecycle.prefix,
+                        days_from_hiding_to_deleting=float(lifecycle.version),
+                    )
+                    for lifecycle in lifecycles
+                ]
+                if (lifecycles := model.lifecycles)
+                else None,
             )
             key = b2.application_key.ApplicationKey(
                 resource_name=name,
