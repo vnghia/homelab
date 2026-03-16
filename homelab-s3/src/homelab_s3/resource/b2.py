@@ -36,7 +36,11 @@ class B2Resource(ComponentResource):
                     for lifecycle in lifecycles
                 ]
                 if (lifecycles := model.lifecycles)
-                else None,
+                else [
+                    b2.BucketLifecycleRuleArgs(
+                        file_name_prefix="", days_from_hiding_to_deleting=1.0
+                    )
+                ],
             )
             key = b2.application_key.ApplicationKey(
                 resource_name=name,
