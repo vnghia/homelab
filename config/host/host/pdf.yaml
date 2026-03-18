@@ -16,6 +16,10 @@ services:
             service:
               port:
                 svariable: PORT
+    user:
+      # nginx user
+      uid: 101
+      gid: 101
     container:
       image: pdf
       healthcheck:
@@ -30,7 +34,7 @@ services:
               string:
                 template: "http://localhost:{value}"
       tmpfs:
-        - /var/cache/nginx
+        - /var/lib/nginx/tmp
         - /etc/nginx/tmp
       wud:
         template: https://github.com/alam00000/bentopdf/releases/tag/${original}
