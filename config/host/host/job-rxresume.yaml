@@ -1,0 +1,113 @@
+docker:
+  images:
+    remote:
+      rxresume:
+        repo: ghcr.io/amruthpillai/reactive-resume
+        tag: "v5.0.12"
+  volumes:
+    local:
+      job-rxresume-data: {}
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            rxresume:
+              display-name: Reactive Resume
+              origin-url:
+                - extract:
+                    hostname: rxresume
+                    record: solar
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/api/auth/oauth2/callback/custom"
+              origin-landing:
+                hostname: rxresume
+                record: solar
+                scheme: https
+              prefer-short-username: true
+              allow-insecure-client-disable-pkce: true
+  browser:
+    container:
+      hosts:
+        - record: solar
+          hostname: rxresume
+  job:
+    variables:
+      RXRESUME_PORT: 3000
+    config:
+      traefik:
+        dynamic:
+          rxresume:
+            name: rxresume
+            record: solar
+            hostname: rxresume
+            service:
+              container: rxresume
+              port:
+                svariable: RXRESUME_PORT
+    databases:
+      postgres:
+        rxresume: {}
+    secrets:
+      rxresume-auth: {}
+    containers:
+      rxresume:
+        image: rxresume
+        databases:
+          - postgres: rxresume
+            envs:
+              env: DATABASE_URL
+              scheme: postgresql
+        healthcheck:
+          tests:
+            - "CMD"
+            - "curl"
+            - "--fail"
+            - extract:
+                svariable: RXRESUME_PORT
+              transform:
+                string:
+                  template: "http://localhost:{value}/api/health"
+        hosts:
+          - record: solar
+            hostname: browser
+          - record: solar
+            hostname: kanidm
+          - record: solar
+            hostname: owebui
+        volumes:
+          job-rxresume-data: /app/data
+        wud:
+          template: https://github.com/amruthpillai/reactive-resume/releases/tag/${original}
+          include-prefix: v
+        envs:
+          APP_URL:
+            record: solar
+            hostname: rxresume
+            scheme: https
+          PRINTER_ENDPOINT:
+            service: browser
+            extract:
+              svariable: PLAYWRIGHT_WS_URL
+          AUTH_SECRET:
+            secret: rxresume-auth
+          OAUTH_PROVIDER_NAME: Kanidm
+          OAUTH_CLIENT_ID: rxresume
+          OAUTH_CLIENT_SECRET:
+            service: kanidm
+            extract:
+              export: rxresume
+          OAUTH_DISCOVERY_URL:
+            extract:
+              record: solar
+              hostname: kanidm
+              scheme: https
+            transform:
+              string:
+                template: "{value}/oauth2/openid/rxresume/.well-known/openid-configuration"
+          OAUTH_SCOPES: openid profile email
+          FLAG_DISABLE_SIGNUPS: false
+          FLAG_DISABLE_EMAIL_AUTH: true
