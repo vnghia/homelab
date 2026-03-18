@@ -92,6 +92,10 @@ services:
         ZO_COOKIE_SECURE_ONLY: true
         ZO_TELEMETRY: false
         ZO_LOG_JSON_FORMAT: true
+        ZO_DISK_CACHE_ENABLED: true
+        ZO_DISK_CACHE_MAX_SIZE: 10240 # 10 GiB
+        ZO_METRICS_CACHE_ENABLED: true
+        ZO_METRICS_CACHE_MAX_ENTRIES: 5000
         ZO_MASTER_ENCRYPTION_ALGORITHM: aes-256-siv
         ZO_MASTER_ENCRYPTION_KEY:
           extract:
