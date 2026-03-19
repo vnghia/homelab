@@ -64,10 +64,17 @@ services:
             vpn: {}
         tmpfs:
           - /tmp
+          - /app/extractors/adzuna/storage
+          - /app/extractors/gradcracker/storage
+          - /app/extractors/hiringcafe/storage
+          - /app/extractors/jobspy/storage
+          - /app/extractors/startupjobs/storage
+          - /app/extractors/ukvisajobs/storage
         volumes:
           job-jobops-data: /app/data
         envs:
           NODE_ENV: production
+          LOG_LEVEL: INFO
           PYTHON_PATH: /usr/bin/python3
           PORT:
             svariable: JOBOPS_PORT
