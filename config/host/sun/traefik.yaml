@@ -37,6 +37,7 @@ services:
             name: oidc
             plugin: oidc
             data:
+              LogLevel: INFO
               Secret:
                 secret: oidc
               Provider:
