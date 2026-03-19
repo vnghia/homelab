@@ -1,0 +1,90 @@
+docker:
+  images:
+    remote:
+      jobops:
+        repo: ghcr.io/dakheera47/job-ops
+        tag: "v0.2.0"
+  volumes:
+    local:
+      job-jobops-data:
+        backup:
+          sqlite:
+            dbs:
+              - jobs.db
+services:
+  kanidm:
+    config:
+      state:
+        systems:
+          oauth2:
+            kanidm:
+              origin-url:
+                - extract:
+                    record: solar
+                    hostname: jobops
+                    scheme: https
+                  transform:
+                    string:
+                      template: "{value}/oidc/callback"
+  job:
+    variables:
+      JOBOPS_PORT: 3000
+    config:
+      traefik:
+        dynamic:
+          jobops:
+            name: jobops
+            record: solar
+            hostname: jobops
+            service:
+              container: jobops
+              port:
+                svariable: JOBOPS_PORT
+            middlewares:
+              - service: traefik
+                name: oidc
+    containers:
+      jobops:
+        image: jobops
+        healthcheck:
+          tests:
+            - "CMD"
+            - "curl"
+            - "--fail"
+            - extract:
+                svariable: JOBOPS_PORT
+              transform:
+                string:
+                  template: "http://localhost:{value}/health"
+        hosts:
+          - record: solar
+            hostname: rxresume
+        network:
+          bridge:
+            vpn: {}
+        tmpfs:
+          - /tmp
+        volumes:
+          job-jobops-data: /app/data
+        envs:
+          NODE_ENV: production
+          PYTHON_PATH: /usr/bin/python3
+          PORT:
+            svariable: JOBOPS_PORT
+          JOBOPS_PUBLIC_BASE_URL:
+            record: solar
+            hostname: jobops
+            scheme: https
+          RXRESUME_URL:
+            record: solar
+            hostname: rxresume
+            scheme: https
+          RXRESUME_MODE: v5
+          GMAIL_OAUTH_REDIRECT_URI:
+            extract:
+              record: solar
+              hostname: jobops
+              scheme: https
+            transform:
+              string:
+                template: "{value}/oauth/gmail/callback"
