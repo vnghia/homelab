@@ -48,6 +48,10 @@ services:
         - postgres:
           envs:
             env: ZO_META_POSTGRES_DSN
+      log:
+        driver: json-file
+        opts:
+          max-size: "20m"
       network:
         bridge:
           default: {}
