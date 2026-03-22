@@ -24,11 +24,11 @@ services:
           level: info
           type: json
           stderr: false
-        sync-interval: 20s
+        sync-interval: 60s
         validation-interval: 6h
         snapshot:
-          interval: 24h
-          retention: 48h
+          interval: 6h
+          retention: 24h
     network:
       bridge:
     container:
