@@ -30,6 +30,7 @@ from .healthcheck import ContainerHealthCheckConfig
 from .host import ContainerHostConfig
 from .image import ContainerImageModelConfig
 from .inherit import ContainerInheritConfig
+from .log import ContainerLogConfig
 from .mail import ContainerMailConfig
 from .memory import ContainerMemoryConfig
 from .network import (
@@ -130,6 +131,7 @@ class ContainerModel(HomelabBaseModel):
     hostname: GlobalExtract | None = None
     hosts: list[ContainerHostConfig] = []
     init: bool | None = None
+    log: ContainerLogConfig | None = None
     mails: list[ContainerMailConfig] | None = None
     memory: ContainerMemoryConfig = ContainerMemoryConfig()
     network: ContainerNetworkConfig = ContainerNetworkConfig()
@@ -448,6 +450,8 @@ class ContainerModel(HomelabBaseModel):
             hosts=self.build_hosts(extractor_args, build_args),
             init=self.init,
             logs=self.oneshot,
+            log_driver=self.log.driver if self.log else None,
+            log_opts=self.log.opts if self.log else None,
             memory=self.memory.limit,
             memory_reservation=self.memory.reservation,
             mounts=self.volumes.to_args(self.docker_socket, extractor_args, build_args),
