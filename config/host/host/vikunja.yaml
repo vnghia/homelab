@@ -3,7 +3,7 @@ docker:
     remote:
       vikunja:
         repo: vikunja/vikunja
-        tag: "2.2.0"
+        tag: "2.2.2"
   volumes:
     local:
       vikunja-config:
