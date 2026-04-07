@@ -3,7 +3,7 @@ docker:
     remote:
       node-exporter:
         repo: prom/node-exporter
-        tag: "v1.11.0"
+        tag: "v1.11.1"
 services:
   node-exporter:
     variables:
