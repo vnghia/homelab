@@ -99,6 +99,7 @@ services:
         IMMICH_PORT: 2283
         IMMICH_MEDIA_LOCATION:
           volume: immich-data
+        IMMICH_HELMET_FILE: true
       volumes:
         immich-data: /usr/src/app/data
       tmpfs:
