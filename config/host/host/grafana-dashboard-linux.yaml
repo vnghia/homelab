@@ -41,3 +41,13 @@ services:
           format: json
           data:
             include: config/dashboard/linux/network.yaml
+      linux-memory-dashboard:
+        path:
+          extract:
+            volume: grafana-dashboard
+          transform:
+            path: linux/memory.json
+        content:
+          format: json
+          data:
+            include: config/dashboard/linux/memory.yaml
