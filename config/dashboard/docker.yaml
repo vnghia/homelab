@@ -587,7 +587,7 @@ spec:
                   mode: palette-classic
                 custom:
                   axisBorderShow: false
-                  axisCenteredZero: true
+                  axisCenteredZero: false
                   axisColorMode: text
                   axisLabel: out(-) | in(+)
                   axisPlacement: auto
@@ -950,7 +950,7 @@ spec:
                   mode: palette-classic
                 custom:
                   axisBorderShow: false
-                  axisCenteredZero: true
+                  axisCenteredZero: false
                   axisColorMode: text
                   axisLabel: write(-) | read(+)
                   axisPlacement: auto
