@@ -31,3 +31,13 @@ services:
           format: json
           data:
             include: config/dashboard/linux/cpu-and-system.yaml
+      linux-network-dashboard:
+        path:
+          extract:
+            volume: grafana-dashboard
+          transform:
+            path: linux/network.json
+        content:
+          format: json
+          data:
+            include: config/dashboard/linux/network.yaml
