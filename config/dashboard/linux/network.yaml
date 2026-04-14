@@ -1047,7 +1047,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_sockets_used{host=~"$host"}
+                      expr: node_sockstat_sockets_used{host="$host"}
                       legendFormat: IPv4 sockets in use
                   refId: A
                   hidden: false
@@ -1097,7 +1097,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_tcp_alloc{host=~"$host"}
+                      expr: node_sockstat_tcp_alloc{host="$host"}
                       legendFormat: Allocated
                   refId: A
                   hidden: false
@@ -1109,7 +1109,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_tcp_inuse{host=~"$host"}
+                      expr: node_sockstat_tcp_inuse{host="$host"}
                       legendFormat: IPv4 in use
                   refId: B
                   hidden: false
@@ -1121,7 +1121,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_tcp6_inuse{host=~"$host"}
+                      expr: node_sockstat_tcp6_inuse{host="$host"}
                       legendFormat: IPv6 in use
                   refId: C
                   hidden: false
@@ -1133,7 +1133,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_tcp_orphan{host=~"$host"}
+                      expr: node_sockstat_tcp_orphan{host="$host"}
                       legendFormat: Orphan sockets
                   refId: D
                   hidden: false
@@ -1145,7 +1145,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_tcp_tw{host=~"$host"}
+                      expr: node_sockstat_tcp_tw{host="$host"}
                       legendFormat: Time wait
                   refId: E
                   hidden: false
@@ -1196,7 +1196,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_udplite_inuse{host=~"$host"}
+                      expr: node_sockstat_udplite_inuse{host="$host"}
                       legendFormat: IPv4 UDPLITE in use
                   refId: A
                   hidden: false
@@ -1208,7 +1208,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_udp_inuse{host=~"$host"}
+                      expr: node_sockstat_udp_inuse{host="$host"}
                       legendFormat: IPv4 UDP in use
                   refId: B
                   hidden: false
@@ -1220,7 +1220,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_udplite6_inuse{host=~"$host"}
+                      expr: node_sockstat_udplite6_inuse{host="$host"}
                       legendFormat: IPv6 UDPLITE in use
                   refId: C
                   hidden: false
@@ -1232,7 +1232,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_udp6_inuse{host=~"$host"}
+                      expr: node_sockstat_udp6_inuse{host="$host"}
                       legendFormat: IPv6 UDP in use
                   refId: D
                   hidden: false
@@ -1278,7 +1278,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_tcp_mem{host=~"$host"}
+                      expr: node_sockstat_tcp_mem{host="$host"}
                       legendFormat: Memory pages allocated for TCP sockets
                   refId: A
                   hidden: false
@@ -1290,7 +1290,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_udp_mem{host=~"$host"}
+                      expr: node_sockstat_udp_mem{host="$host"}
                       legendFormat: Memory pages allocated for UDP sockets
                   refId: B
                   hidden: false
@@ -1302,7 +1302,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_tcp_mem_bytes{host=~"$host"}
+                      expr: node_sockstat_tcp_mem_bytes{host="$host"}
                       legendFormat: Memory bytes allocated for TCP sockets
                   refId: C
                   hidden: false
@@ -1314,7 +1314,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_udp_mem_bytes{host=~"$host"}
+                      expr: node_sockstat_udp_mem_bytes{host="$host"}
                       legendFormat: Memory bytes allocated for UDP sockets
                   refId: D
                   hidden: false
@@ -1382,7 +1382,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_frag_inuse{host=~"$host"}
+                      expr: node_sockstat_frag_inuse{host="$host"}
                       legendFormat: IPv4 Frag sockets in use
                   refId: A
                   hidden: false
@@ -1394,7 +1394,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_frag6_inuse{host=~"$host"}
+                      expr: node_sockstat_frag6_inuse{host="$host"}
                       legendFormat: IPv6 Frag sockets in use
                   refId: B
                   hidden: false
@@ -1406,7 +1406,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_raw_inuse{host=~"$host"}
+                      expr: node_sockstat_raw_inuse{host="$host"}
                       legendFormat: IPv4 Raw sockets in use
                   refId: C
                   hidden: false
@@ -1418,7 +1418,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: node_sockstat_raw6_inuse{host=~"$host"}
+                      expr: node_sockstat_raw6_inuse{host="$host"}
                       legendFormat: IPv6 Raw sockets in use
                   refId: D
                   hidden: false
@@ -1463,7 +1463,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_ipext_inoctets{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_ipext_inoctets{host="$host"}[$__rate_interval])
                       legendFormat: Octets received
                   refId: A
                   hidden: false
@@ -1475,7 +1475,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_ipext_outoctets{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_ipext_outoctets{host="$host"}[$__rate_interval])
                       legendFormat: Octets transmitted
                   refId: B
                   hidden: false
@@ -1531,7 +1531,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_tcp_insegs{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_tcp_insegs{host="$host"}[$__rate_interval])
                       legendFormat: TCP received
                   refId: A
                   hidden: false
@@ -1543,7 +1543,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_tcp_outsegs{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_tcp_outsegs{host="$host"}[$__rate_interval])
                       legendFormat: TCP transmitted
                   refId: B
                   hidden: false
@@ -1599,7 +1599,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_tcpext_listenoverflows{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_tcpext_listenoverflows{host="$host"}[$__rate_interval])
                       legendFormat: TCP overflow
                   refId: A
                   hidden: false
@@ -1611,7 +1611,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_tcpext_listendrops{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_tcpext_listendrops{host="$host"}[$__rate_interval])
                       legendFormat: TCP ListenDrops - SYNs to LISTEN sockets ignored
                   refId: B
                   hidden: false
@@ -1623,7 +1623,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_tcpext_tcpsynretrans{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_tcpext_tcpsynretrans{host="$host"}[$__rate_interval])
                       legendFormat: TCP SYN rentransmits
                   refId: C
                   hidden: false
@@ -1635,7 +1635,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_tcp_retranssegs{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_tcp_retranssegs{host="$host"}[$__rate_interval])
                       legendFormat: >-
                         TCP retransmitted segments, containing one or more
                         previously transmitted octets
@@ -1649,7 +1649,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_tcp_inerrs{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_tcp_inerrs{host="$host"}[$__rate_interval])
                       legendFormat: TCP received with errors
                   refId: E
                   hidden: false
@@ -1661,7 +1661,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_tcp_outrsts{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_tcp_outrsts{host="$host"}[$__rate_interval])
                       legendFormat: TCP segments sent with RST flag
                   refId: F
                   hidden: false
@@ -1709,7 +1709,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp_indatagrams{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp_indatagrams{host="$host"}[$__rate_interval])
                       legendFormat: UDP received
                   refId: A
                   hidden: false
@@ -1721,7 +1721,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp_outdatagrams{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp_outdatagrams{host="$host"}[$__rate_interval])
                       legendFormat: UDP transmitted
                   refId: B
                   hidden: false
@@ -1733,7 +1733,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp6_indatagrams{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp6_indatagrams{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 received
                   refId: C
                   hidden: false
@@ -1745,7 +1745,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp6_outdatagrams{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp6_outdatagrams{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 transmitted
                   refId: D
                   hidden: false
@@ -1801,7 +1801,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udplite_inerrors{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udplite_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: UDPLite InErrors
                   refId: A
                   hidden: false
@@ -1813,7 +1813,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp_inerrors{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP InErrors
                   refId: B
                   hidden: false
@@ -1826,7 +1826,7 @@ spec:
                     datasource: *datasource
                     spec:
                       expr: >-
-                        irate(node_netstat_Udp6_InErrors{host=~"$host"}[$__rate_interval])
+                        irate(node_netstat_Udp6_InErrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 InErrors
                   refId: C
                   hidden: false
@@ -1838,7 +1838,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp_noports{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp_noports{host="$host"}[$__rate_interval])
                       legendFormat: UDP NoPorts
                   refId: D
                   hidden: false
@@ -1850,7 +1850,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp6_noports{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp6_noports{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 NoPorts
                   refId: E
                   hidden: false
@@ -1862,7 +1862,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp_rcvbuferrors{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp_rcvbuferrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP receive buffer errors
                   refId: F
                   hidden: false
@@ -1874,7 +1874,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp6_rcvbuferrors{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp6_rcvbuferrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 receive buffer errors
                   refId: G
                   hidden: false
@@ -1886,7 +1886,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp_sndbuferrors{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp_sndbuferrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP transmit buffer errors
                   refId: H
                   hidden: false
@@ -1898,7 +1898,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_udp6_sndbuferrors{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp6_sndbuferrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 transmit buffer errors
                   refId: I
                   hidden: false
@@ -1946,7 +1946,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_icmp_inmsgs{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_icmp_inmsgs{host="$host"}[$__rate_interval])
                       legendFormat: ICMP received
                   refId: A
                   hidden: false
@@ -1958,7 +1958,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_icmp_outmsgs{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_icmp_outmsgs{host="$host"}[$__rate_interval])
                       legendFormat: ICMP transmitted
                   refId: B
                   hidden: false
@@ -1970,7 +1970,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_icmp6_inmsgs{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_icmp6_inmsgs{host="$host"}[$__rate_interval])
                       legendFormat: ICMP6 received
                   refId: C
                   hidden: false
@@ -1982,7 +1982,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_icmp6_outmsgs{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_icmp6_outmsgs{host="$host"}[$__rate_interval])
                       legendFormat: ICMP6 transmitted
                   refId: D
                   hidden: false
@@ -2038,7 +2038,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_icmp_inerrors{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_icmp_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: ICMP errors
                   refId: A
                   hidden: false
@@ -2050,7 +2050,7 @@ spec:
                     version: v0
                     datasource: *datasource
                     spec:
-                      expr: irate(node_netstat_icmp6_inerrors{host=~"$host"}[$__rate_interval])
+                      expr: irate(node_netstat_icmp6_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: ICMP6 errors
                   refId: B
                   hidden: false

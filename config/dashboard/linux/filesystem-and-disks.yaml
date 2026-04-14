@@ -134,8 +134,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: >-
-                        node_filesystem_avail_bytes{host="$host", fstype!="", mountpoint!=""}
+                      expr: node_filesystem_avail_bytes{host="$host", fstype!="", mountpoint!=""}
                       format: table
                       instant: true
                       legendFormat: "{{ mountpoint }} free"
