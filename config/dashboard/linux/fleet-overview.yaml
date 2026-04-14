@@ -39,7 +39,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: node_uname_info{host=~"$host"} * on (host) group_left(pretty_name) node_os_info{host=~"$host"}
+                      expr: node_uname_info * on (host) group_left(pretty_name) node_os_info
                       format: table
                       instant: true
                     version: v0
@@ -52,7 +52,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: time() - node_boot_time_seconds{host=~"$host"}
+                      expr: time() - node_boot_time_seconds
                       format: table
                       instant: true
                     version: v0
@@ -65,7 +65,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: node_load1{host=~"$host"}
+                      expr: node_load1
                       format: table
                       instant: true
                       legendFormat: 1m
@@ -79,7 +79,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: count without (cpu) (node_cpu_seconds_total{host=~"$host", mode="idle"})
+                      expr: count without (cpu) (node_cpu_seconds_total{mode="idle"})
                       format: table
                       instant: true
                       legendFormat: Cores
@@ -94,14 +94,14 @@ spec:
                     kind: DataQuery
                     spec:
                       expr: >-
-                        (((count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host)))
+                        (((count by (host) (count(node_cpu_seconds_total) by (cpu, host)))
                         -
                         sum by (host) (sum by (host,
-                        mode)(irate(node_cpu_seconds_total{host=~"$host", mode=~"idle|iowait|steal"}[$__rate_interval]))))
+                        mode)(irate(node_cpu_seconds_total{mode=~"idle|iowait|steal"}[$__rate_interval]))))
                         * 100)
                         /
                         count by(host)
-                        (count(node_cpu_seconds_total{host=~"$host"})
+                        (count(node_cpu_seconds_total)
                         by (cpu, host))
                       format: table
                       instant: true
@@ -116,7 +116,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: node_memory_memtotal_bytes{host=~"$host"}
+                      expr: node_memory_memtotal_bytes
                       format: table
                       instant: true
                       legendFormat: Memory total
@@ -130,7 +130,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: 100 - (avg by (host) (node_memory_memavailable_bytes{host=~"$host"}) / avg by (host) (node_memory_memtotal_bytes{host=~"$host"}) * 100)
+                      expr: 100 - (avg by (host) (node_memory_memavailable_bytes) / avg by (host) (node_memory_memtotal_bytes) * 100)
                       format: table
                       instant: true
                     version: v0
@@ -143,7 +143,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: node_filesystem_size_bytes{host=~"$host", mountpoint="/", fstype!="rootfs"}
+                      expr: node_filesystem_size_bytes{mountpoint="/", fstype!="rootfs"}
                       format: table
                       instant: true
                     version: v0
@@ -156,7 +156,7 @@ spec:
                     group: prometheus
                     kind: DataQuery
                     spec:
-                      expr: 100 - node_filesystem_avail_bytes{host=~"$host", mountpoint="/", fstype!="rootfs"} / node_filesystem_size_bytes{host=~"$host", mountpoint="/", fstype!="rootfs"} * 100
+                      expr: 100 - node_filesystem_avail_bytes{mountpoint="/", fstype!="rootfs"} / node_filesystem_size_bytes{mountpoint="/", fstype!="rootfs"} * 100
                       format: table
                       instant: true
                     version: v0
@@ -369,6 +369,885 @@ spec:
             options:
               cellHeight: sm
               showHeader: true
+    cpu-usage:
+      kind: Panel
+      spec:
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        topk(25, (((count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host)))
+                        -
+                        sum by (host) (sum by (host, mode) (irate(node_cpu_seconds_total{host=~"$host", mode=~"idle|iowait|steal"}[$__rate_interval])))) * 100)
+                        /
+                        (count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host))))
+                      legendFormat: "{{host}}"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        avg((((count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host)))
+                        -
+                        sum by (host) (sum by (host, mode) (irate(node_cpu_seconds_total{host=~"$host", mode=~"idle|iowait|steal"}[$__rate_interval])))) * 100)
+                        /
+                        count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host)))
+                      legendFormat: Mean
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: Top 25
+        id: 2
+        links: []
+        title: CPU usage
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: continuous-BlYlRd
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: scheme
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 1
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                decimals: 1
+                max: 100
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: percent
+              overrides:
+                - matcher:
+                    id: byName
+                    options: Mean
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-purple
+                        mode: fixed
+                    - id: custom.fillOpacity
+                      value: 0
+                    - id: custom.lineStyle
+                      value:
+                        dash:
+                          - 10
+                          - 10
+                        fill: dash
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    load-average:
+      kind: Panel
+      spec:
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        topk(25, node_load1{host=~"$host"}) > 0
+                      legendFormat: "{{host}}"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: true
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: count without (cpu) (node_cpu_seconds_total{host=~"$host", mode="idle"})
+                      legendFormat: Cores
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: Top 25
+        id: 3
+        links: []
+        title: Load average 1m
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 0
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: short
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: Cores
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-orange
+                        mode: fixed
+                    - id: custom.fillOpacity
+                      value: 0
+                    - id: custom.lineStyle
+                      value:
+                        dash:
+                          - 10
+                          - 10
+                        fill: dash
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    memory-usage:
+      kind: Panel
+      spec:
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        topk(25, 100 -
+                        (
+                          avg by (host) (node_memory_memavailable_bytes{host=~"$host"}) /
+                          avg by (host) (node_memory_memtotal_bytes{host=~"$host"})
+                        * 100
+                        ))
+                      legendFormat: "{{host}}"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        avg(100 -
+                        (
+                          avg by (host) (node_memory_memavailable_bytes{host=~"$host"}) /
+                          avg by (host) (node_memory_memtotal_bytes{host=~"$host"})
+                        * 100
+                        ))
+                      legendFormat: Mean
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: Top 25
+        id: 4
+        links: []
+        title: Memory usage
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: continuous-BlYlRd
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: scheme
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 1
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                decimals: 1
+                max: 100
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: percent
+              overrides:
+                - matcher:
+                    id: byName
+                    options: Mean
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-purple
+                        mode: fixed
+                    - id: custom.fillOpacity
+                      value: 0
+                    - id: custom.lineStyle
+                      value:
+                        dash:
+                          - 10
+                          - 10
+                        fill: dash
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    disk-io-by-device:
+      kind: Panel
+      spec:
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: topk(25, irate(node_disk_io_time_seconds_total{host=~"$host", device!=""}[$__rate_interval]))
+                      legendFormat: "{{host}}: {{device}}"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: avg(irate(node_disk_io_time_seconds_total{host=~"$host", device!=""}[$__rate_interval]))
+                      legendFormat: Mean
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: Top 25
+        id: 5
+        links: []
+        title: Disk IO
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: continuous-BlYlRd
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: scheme
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 1
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                decimals: 1
+                max: 100
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: percent
+              overrides:
+                - matcher:
+                    id: byName
+                    options: Mean
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-purple
+                        mode: fixed
+                    - id: custom.fillOpacity
+                      value: 0
+                    - id: custom.lineStyle
+                      value:
+                        dash:
+                          - 10
+                          - 10
+                        fill: dash
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    filesystem-usage-by-mountpoint:
+      kind: Panel
+      spec:
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        topk(25,
+                        100 - node_filesystem_avail_bytes{host=~"$host", fstype!="", mountpoint!=""}
+                        /
+                        node_filesystem_size_bytes{host=~"$host", fstype!="", mountpoint!=""} * 100)
+                      legendFormat: "{{host}}: {{mountpoint}}"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        avg(100 - node_filesystem_avail_bytes{host=~"$host", fstype!="", mountpoint!=""}
+                        /
+                        node_filesystem_size_bytes{host=~"$host", fstype!="", mountpoint!=""} * 100)
+                      legendFormat: Mean
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: Top 25
+        id: 6
+        links: []
+        title: Disk space usage
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: continuous-BlYlRd
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: scheme
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 1
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                decimals: 1
+                max: 100
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: percent
+              overrides:
+                - matcher:
+                    id: byName
+                    options: Mean
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-purple
+                        mode: fixed
+                    - id: custom.fillOpacity
+                      value: 0
+                    - id: custom.lineStyle
+                      value:
+                        dash:
+                          - 10
+                          - 10
+                        fill: dash
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    network-traffic:
+      kind: Panel
+      spec:
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        topk(25, irate(node_network_receive_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
+
+                        # only show interfaces that had traffic change at least
+                        once during selected dashboard interval:
+
+                        and
+
+                        increase(node_network_receive_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__range]) > 0) > 0
+                      legendFormat: "{{host}}: {{ device }} received"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: >-
+                        topk(25, irate(node_network_transmit_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
+
+                        # only show interfaces that had traffic change at least
+                        once during selected dashboard interval:
+
+                        and
+
+                        increase(node_network_transmit_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__range]) > 0) > 0
+                      legendFormat: "{{host}}: {{ device }} transmitted"
+                    version: v0
+                  refId: B
+            queryOptions: {}
+            transformations: []
+        description: Top 25 interfaces
+        id: 7
+        links: []
+        title: Network traffic
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: out(-) | in(+)
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                decimals: 1
+                noValue: No traffic
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: bps
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /transmit|tx|out/
+                  properties:
+                    - id: custom.transform
+                      value: negative-Y
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+    network-errors:
+      kind: Panel
+      spec:
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: topk(25, irate(node_network_transmit_errs_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
+                      legendFormat: "{{host}}: {{ device }} errors transmitted"
+                    version: v0
+                  refId: A
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: topk(25, irate(node_network_receive_errs_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
+                      legendFormat: "{{host}}: {{ device }} errors received"
+                    version: v0
+                  refId: B
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: topk(25, irate(node_network_transmit_drop_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
+                      legendFormat: "{{host}}: {{ device }} transmitted dropped"
+                    version: v0
+                  refId: C
+              - kind: PanelQuery
+                spec:
+                  hidden: false
+                  query:
+                    datasource: *datasource
+                    group: prometheus
+                    kind: DataQuery
+                    spec:
+                      expr: topk(25, irate(node_network_receive_drop_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
+                      legendFormat: "{{host}}: {{ device }} received dropped"
+                    version: v0
+                  refId: D
+            queryOptions: {}
+            transformations: []
+        description: >
+          Top 25.
+
+
+          **Network errors**:
+
+
+          Network errors refer to issues that occur during the transmission of
+          data across a network. 
+
+
+          These errors can result from various factors, including physical
+          issues, jitter, collisions, noise and interference.
+
+
+          Monitoring network errors is essential for diagnosing and resolving
+          issues, as they can indicate problems with network hardware or
+          environmental factors affecting network quality.
+
+
+          **Dropped packets**:
+
+
+          Dropped packets occur when data packets traveling through a network
+          are intentionally discarded or lost due to congestion, resource
+          limitations, or network configuration issues. 
+
+
+          Common causes include network congestion, buffer overflows, QoS
+          settings, and network errors, as corrupted or incomplete packets may
+          be discarded by receiving devices.
+
+
+          Dropped packets can impact network performance and lead to issues such
+          as degraded voice or video quality in real-time applications.
+        id: 8
+        links: []
+        title: Network errors and dropped packets
+        vizConfig:
+          group: timeseries
+          kind: VizConfig
+          spec:
+            fieldConfig:
+              defaults:
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: points
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
+                decimals: 1
+                noValue: No errors
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - color: green
+                      value: 0
+                    - color: red
+                      value: 80
+                unit: pps
+              overrides: []
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
   layout:
     kind: GridLayout
     spec:
@@ -382,10 +1261,83 @@ spec:
             width: 24
             x: 0
             y: 2
+        - kind: GridLayoutItem
+          spec:
+            element:
+              kind: ElementReference
+              name: cpu-usage
+            height: 7
+            width: 12
+            x: 0
+            y: 18
+        - kind: GridLayoutItem
+          spec:
+            element:
+              kind: ElementReference
+              name: load-average
+            height: 7
+            width: 12
+            x: 12
+            y: 18
+        - kind: GridLayoutItem
+          spec:
+            element:
+              kind: ElementReference
+              name: memory-usage
+            height: 7
+            width: 24
+            x: 0
+            y: 25
+        - kind: GridLayoutItem
+          spec:
+            element:
+              kind: ElementReference
+              name: disk-io-by-device
+            height: 7
+            width: 12
+            x: 0
+            y: 32
+        - kind: GridLayoutItem
+          spec:
+            element:
+              kind: ElementReference
+              name: filesystem-usage-by-mountpoint
+            height: 7
+            width: 12
+            x: 12
+            y: 32
+        - kind: GridLayoutItem
+          spec:
+            element:
+              kind: ElementReference
+              name: network-traffic
+            height: 7
+            width: 12
+            x: 0
+            y: 39
+        - kind: GridLayoutItem
+          spec:
+            element:
+              kind: ElementReference
+              name: network-errors
+            height: 7
+            width: 12
+            x: 12
+            y: 39
   links:
+    - asDropdown: false
+      icon: ""
+      includeVars: false
+      keepTime: true
+      tags: []
+      targetBlank: false
+      title: Back to Linux node overview
+      tooltip: ""
+      type: link
+      url: /d/linux-node-overview/node-overview
     - asDropdown: true
       icon: ""
-      includeVars: true
+      includeVars: false
       keepTime: true
       tags:
         - linux
