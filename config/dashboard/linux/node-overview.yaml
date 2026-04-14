@@ -1,0 +1,1559 @@
+apiVersion: dashboard.grafana.app/v2beta1
+kind: Dashboard
+metadata:
+  name: linux-node-overview
+spec:
+  annotations:
+    - kind: AnnotationQuery
+      spec:
+        builtIn: true
+        enable: true
+        hide: true
+        iconColor: rgba(0, 211, 255, 1)
+        name: Annotations & Alerts
+        query:
+          datasource:
+            name: "-- Grafana --"
+          group: grafana
+          kind: DataQuery
+          spec: {}
+          version: v0
+  cursorSync: "Off"
+  editable: false
+  elements:
+    uptime:
+      kind: Panel
+      spec:
+        id: 1
+        title: Uptime
+        description: >-
+          The duration of time that has passed since the last reboot or system
+          start.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: &datasource
+                      name:
+                        secret: openobserve-prometheus-datasource-uid
+                    spec:
+                      expr: time() - node_boot_time_seconds{host="$host"}
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: value
+              graphMode: none
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+            fieldConfig:
+              defaults:
+                unit: dtdurations
+                decimals: 1
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: null
+                      color: orange
+                    - value: 600
+                      color: text
+                color:
+                  mode: thresholds
+                  fixedColor: text
+              overrides: []
+    hostname:
+      kind: Panel
+      spec:
+        id: 2
+        title: Hostname
+        description: System's hostname.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_uname_info{host="$host"}
+                      format: table
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: fixed
+              graphMode: none
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: /^nodename$/
+            fieldConfig:
+              defaults:
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
+    kernel-version:
+      kind: Panel
+      spec:
+        id: 3
+        title: Kernel version
+        description: Kernel version of linux host.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_uname_info{host="$host"}
+                      format: table
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: fixed
+              graphMode: none
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: /^release$/
+            fieldConfig:
+              defaults:
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
+    os:
+      kind: Panel
+      spec:
+        id: 4
+        title: OS
+        description: Operating system
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_os_info{host="$host"}
+                      format: table
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: fixed
+              graphMode: none
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+                fields: /^pretty_name$/
+            fieldConfig:
+              defaults:
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
+    cpu-count:
+      kind: Panel
+      spec:
+        id: 5
+        title: CPU count
+        description: >
+          CPU count is the number of processor cores or central processing units
+          (CPUs) in a computer,
+
+          determining its processing capability and ability to handle tasks
+          concurrently.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: >-
+                        count without (cpu) (node_cpu_seconds_total{host="$host", mode="idle"})
+                      legendFormat: Cores
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: fixed
+              graphMode: none
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+            fieldConfig:
+              defaults:
+                unit: none
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
+    memory-total:
+      kind: Panel
+      spec:
+        id: 6
+        title: Memory total
+        description: >
+          Amount of random-access memory (RAM) installed.
+
+          It represents the system's available working memory that applications
+          and the operating system use to perform tasks.
+
+          A higher memory total generally leads to better system performance and
+          the ability to run more demanding applications and processes
+          simultaneously.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_memory_memtotal_bytes{host="$host"}
+                      legendFormat: Memory total
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: fixed
+              graphMode: none
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+            fieldConfig:
+              defaults:
+                unit: bytes
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
+    total-swap:
+      kind: Panel
+      spec:
+        id: 8
+        title: Total swap
+        description: >
+          Total swap available.
+
+
+          Swap is a space on a storage device (usually a dedicated swap
+          partition or a swap file) 
+
+          used as virtual memory when the physical RAM (random-access memory) is
+          fully utilized.
+
+          Swap space helps prevent memory-related performance issues by
+          temporarily transferring less-used data from RAM to disk,
+
+          freeing up physical memory for active processes and applications.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_memory_swaptotal_bytes{host="$host"}
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: fixed
+              graphMode: none
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+            fieldConfig:
+              defaults:
+                unit: bytes
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
+    root-mount-size:
+      kind: Panel
+      spec:
+        id: 9
+        title: Root mount size
+        description: |
+          Total capacity on the primary mount point /.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_filesystem_size_bytes{host="$host", mountpoint="/", fstype!="rootfs"}
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: fixed
+              graphMode: none
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+            fieldConfig:
+              defaults:
+                unit: bytes
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
+    cpu-usage-percent:
+      kind: Panel
+      spec:
+        id: 10
+        title: CPU usage
+        description: >
+          Total CPU utilization percent is a metric that indicates the overall
+          level of central processing unit (CPU) usage in a computer system.
+
+          It represents the combined load placed on all CPU cores or processors.
+
+
+          For instance, if the total CPU utilization percent is 50%, it means
+          that,
+
+          on average, half of the CPU's processing capacity is being used to
+          execute tasks. A higher percentage indicates that the CPU is working
+          more intensively, potentially leading to system slowdowns if it
+          remains consistently high.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: >-
+                        (((count by (host) (count(node_cpu_seconds_total{host="$host"}) by (cpu, host)))
+                        -
+                        sum by (host) (sum by (host, mode) (irate(node_cpu_seconds_total{host="$host", mode=~"idle|iowait|steal"}[$__rate_interval])))) * 100)
+                        /
+                        (count by (host) (count(node_cpu_seconds_total{host="$host"}) by (cpu, host)))
+                      legendFormat: CPU usage
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: value
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+            fieldConfig:
+              defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                color:
+                  mode: continuous-BlYlRd
+                  fixedColor: text
+              overrides: []
+    per-cpu-usage-percent:
+      kind: Panel
+      spec:
+        id: 11
+        title: CPU usage
+        description: >
+          Total CPU utilization percent is a metric that indicates the overall
+          level of central processing unit (CPU) usage in a computer system.
+
+          It represents the combined load placed on all CPU cores or processors.
+
+
+          For instance, if the total CPU utilization percent is 50%, it means
+          that,
+
+          on average, half of the CPU's processing capacity is being used to
+          execute tasks. A higher percentage indicates that the CPU is working
+          more intensively, potentially leading to system slowdowns if it
+          remains consistently high.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: (100 - sum without (mode) (rate(node_cpu_seconds_total{host="$host", mode=~"idle|iowait|steal"}[$__rate_interval])) * 100)
+                      legendFormat: CPU {{cpu}}
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+              tooltip:
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                color:
+                  mode: continuous-BlYlRd
+                custom:
+                  fillOpacity: 30
+                  gradientMode: scheme
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  showPoints: never
+              overrides: []
+    load-average:
+      kind: Panel
+      spec:
+        id: 12
+        title: Load average
+        description: >
+          System load average over the previous 1, 5, and 15 minute ranges.
+
+
+          A measurement of how many processes are waiting for CPU cycles. The
+          maximum number is the number of CPU cores for the node.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_load1{host="$host"}
+                      legendFormat: 1m
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_load5{host="$host"}
+                      legendFormat: 5m
+                  refId: B
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_load15{host="$host"}
+                      legendFormat: 15m
+                  refId: C
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: count without (cpu) (node_cpu_seconds_total{host="$host", mode="idle"})
+                      legendFormat: Cores
+                  refId: D
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+              tooltip:
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
+                unit: short
+                min: 0
+                custom:
+                  fillOpacity: 0
+                  gradientMode: opacity
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  showPoints: never
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: Cores
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-orange
+                        mode: fixed
+                    - id: custom.fillOpacity
+                      value: 0
+                    - id: custom.lineStyle
+                      value:
+                        dash:
+                          - 10
+                          - 10
+                        fill: dash
+    memory-usage-percent:
+      kind: Panel
+      spec:
+        id: 13
+        title: Memory usage
+        description: >-
+          RAM (random-access memory) currently in use by the operating system
+          and running applications, in percent.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: |
+                        100 -
+                        (
+                          avg by (instance) (node_memory_memavailable_bytes{host="$host"}) /
+                          avg by (instance) (node_memory_memtotal_bytes{host="$host"})
+                        * 100
+                        )
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: stat
+          spec:
+            options:
+              colorMode: value
+              reduceOptions:
+                calcs:
+                  - lastNotNull
+            fieldConfig:
+              defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                color:
+                  mode: continuous-BlYlRd
+                  fixedColor: text
+              overrides: []
+    memory-usage:
+      kind: Panel
+      spec:
+        id: 14
+        title: Memory usage
+        description: >
+          - Used: The amount of physical memory currently in use by the system.
+
+          - Cached: The amount of physical memory used for caching data from
+          disk. The Linux kernel uses available memory to cache data that is
+          read from or written to disk. This helps speed up disk access times.
+
+          - Free: The amount of physical memory that is currently not in use.
+
+          - Buffers: The amount of physical memory used for temporary storage of
+          data being transferred between devices or applications.
+
+          - Available: The amount of physical memory that is available for use
+          by applications. This takes into account memory that is currently
+          being used for caching but can be freed up if needed.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: |
+                        (
+                          node_memory_memtotal_bytes{host="$host"}
+                        -
+                          node_memory_memfree_bytes{host="$host"}
+                        -
+                          node_memory_buffers_bytes{host="$host"}
+                        -
+                          node_memory_cached_bytes{host="$host"}
+                        )
+                      legendFormat: Memory used
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_memory_cached_bytes{host="$host"}
+                      legendFormat: Memory cached
+                  refId: B
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_memory_memavailable_bytes{host="$host"}
+                      legendFormat: Memory available
+                  refId: C
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_memory_buffers_bytes{host="$host"}
+                      legendFormat: Memory buffers
+                  refId: D
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_memory_memfree_bytes{host="$host"}
+                      legendFormat: Memory free
+                  refId: E
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_memory_memtotal_bytes{host="$host"}
+                      legendFormat: Memory total
+                  refId: F
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+              tooltip:
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
+                unit: bytes
+                min: 0
+                custom:
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  showPoints: never
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: .*(T|t)otal.*
+                  properties:
+                    - id: color
+                      value:
+                        fixedColor: light-orange
+                        mode: fixed
+                    - id: custom.fillOpacity
+                      value: 0
+                    - id: custom.lineStyle
+                      value:
+                        dash:
+                          - 10
+                          - 10
+                        fill: dash
+                - __systemRef: hideSeriesFrom
+                  matcher:
+                    id: byNames
+                    options:
+                      mode: exclude
+                      names:
+                        - Memory total
+                        - Memory used
+                      prefix: "All except:"
+                      readOnly: true
+                  properties:
+                    - id: custom.hideFrom
+                      value:
+                        legend: false
+                        tooltip: true
+                        viz: true
+    disk-read-write-by-device:
+      kind: Panel
+      spec:
+        id: 15
+        title: Disk reads/writes
+        description: Disk read/writes in bytes per second.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: irate(node_disk_read_bytes_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} read"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: irate(node_disk_written_bytes_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} written"
+                  refId: B
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: irate(node_disk_io_time_seconds_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} io util"
+                  refId: C
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+              tooltip:
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
+                unit: binBps
+                custom:
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  showPoints: never
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /time|used|busy|util/
+                  properties:
+                    - id: custom.axisSoftMax
+                      value: 100
+                    - id: custom.drawStyle
+                      value: points
+                    - id: unit
+                      value: percent
+    disk-usage-by-mountpoint:
+      kind: Panel
+      spec:
+        id: 16
+        title: Disk space usage
+        description: >-
+          Disk utilisation in percent, by mountpoint. Some duplication can occur
+          if the same filesystem is mounted in multiple locations.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_filesystem_size_bytes{host="$host", fstype!="", mountpoint!=""}
+                      format: table
+                      instant: true
+                  refId: TOTAL
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: node_filesystem_avail_bytes{host="$host", fstype!="", mountpoint!=""}
+                      format: table
+                      instant: true
+                      legendFormat: "{{ mountpoint }} free"
+                  refId: FREE
+                  hidden: false
+            transformations:
+              - kind: Transformation
+                spec:
+                  id: groupBy
+                  options:
+                    fields:
+                      "Value #FREE":
+                        aggregations:
+                          - lastNotNull
+                        operation: aggregate
+                      "Value #TOTAL":
+                        aggregations:
+                          - lastNotNull
+                        operation: aggregate
+                      mountpoint:
+                        aggregations: []
+                        operation: groupby
+              - kind: Transformation
+                spec:
+                  id: merge
+                  options: {}
+              - kind: Transformation
+                spec:
+                  id: calculateField
+                  options:
+                    alias: Used
+                    binary:
+                      left: "Value #TOTAL (lastNotNull)"
+                      operator: "-"
+                      reducer: sum
+                      right: "Value #FREE (lastNotNull)"
+                    mode: binary
+                    reduce:
+                      reducer: sum
+              - kind: Transformation
+                spec:
+                  id: calculateField
+                  options:
+                    alias: Used, %
+                    binary:
+                      left: Used
+                      operator: /
+                      reducer: sum
+                      right: "Value #TOTAL (lastNotNull)"
+                    mode: binary
+                    reduce:
+                      reducer: sum
+              - kind: Transformation
+                spec:
+                  id: organize
+                  options:
+                    excludeByName: {}
+                    indexByName:
+                      Used: 3
+                      Used, %: 4
+                      "Value #FREE (lastNotNull)": 2
+                      "Value #TOTAL (lastNotNull)": 1
+                      mountpoint: 0
+                    renameByName:
+                      "Value #FREE (lastNotNull)": Available
+                      "Value #TOTAL (lastNotNull)": Size
+                      mountpoint: Mounted on
+              - kind: Transformation
+                spec:
+                  id: sortBy
+                  options:
+                    fields: {}
+                    sort:
+                      - desc: false
+                        field: Mounted on
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: table
+          spec:
+            options: {}
+            fieldConfig:
+              defaults:
+                unit: bytes
+                thresholds:
+                  mode: ""
+                  steps:
+                    - value: null
+                      color: light-blue
+                    - value: 0.8
+                      color: light-yellow
+                    - value: 0.9
+                      color: light-red
+              overrides:
+                - matcher:
+                    id: byName
+                    options: Mounted on
+                  properties:
+                    - id: custom.width
+                      value: 260
+                - matcher:
+                    id: byName
+                    options: Size
+                  properties:
+                    - id: custom.width
+                      value: 80
+                - matcher:
+                    id: byName
+                    options: Used
+                  properties:
+                    - id: custom.width
+                      value: 80
+                - matcher:
+                    id: byName
+                    options: Available
+                  properties:
+                    - id: custom.width
+                      value: 80
+                - matcher:
+                    id: byName
+                    options: Used, %
+                  properties:
+                    - id: custom.cellOptions
+                      value:
+                        mode: basic
+                        type: gauge
+                        valueDisplayMode: text
+                    - id: max
+                      value: 1
+                    - id: min
+                      value: 0
+                    - id: unit
+                      value: percentunit
+    network-traffic:
+      kind: Panel
+      spec:
+        id: 17
+        title: Network traffic
+        description: Network traffic (bits per sec) measures data transmitted and received.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: >
+                        irate(node_network_receive_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
+
+                        # only show interfaces that had traffic change at least
+                        once during selected dashboard interval:
+
+                        and
+
+                        increase(node_network_receive_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__range]) > 0
+                      legendFormat: "{{ device }} received"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: >
+                        irate(node_network_transmit_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
+
+                        # only show interfaces that had traffic change at least
+                        once during selected dashboard interval:
+
+                        and
+
+                        increase(node_network_transmit_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__range]) > 0
+                      legendFormat: "{{ device }} transmitted"
+                  refId: B
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+              tooltip:
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
+                unit: bps
+                decimals: 1
+                noValue: No traffic
+                custom:
+                  axisCenteredZero: false
+                  axisLabel: out(-) | in(+)
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  showPoints: never
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /transmit|tx|out/
+                  properties:
+                    - id: custom.transform
+                      value: negative-Y
+    network-errors:
+      kind: Panel
+      spec:
+        id: 18
+        title: Network errors and dropped packets
+        description: >
+          **Network errors**:
+
+
+          Network errors refer to issues that occur during the transmission of
+          data across a network. 
+
+
+          These errors can result from various factors, including physical
+          issues, jitter, collisions, noise and interference.
+
+
+          Monitoring network errors is essential for diagnosing and resolving
+          issues, as they can indicate problems with network hardware or
+          environmental factors affecting network quality.
+
+
+          **Dropped packets**:
+
+
+          Dropped packets occur when data packets traveling through a network
+          are intentionally discarded or lost due to congestion, resource
+          limitations, or network configuration issues. 
+
+
+          Common causes include network congestion, buffer overflows, QoS
+          settings, and network errors, as corrupted or incomplete packets may
+          be discarded by receiving devices.
+
+
+          Dropped packets can impact network performance and lead to issues such
+          as degraded voice or video quality in real-time applications.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: irate(node_network_transmit_errs_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) > 0
+                      legendFormat: "{{ device }} errors transmitted"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: irate(node_network_receive_errs_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) > 0
+                      legendFormat: "{{ device }} errors received"
+                  refId: B
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: irate(node_network_transmit_drop_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) > 0
+                      legendFormat: "{{ device }} transmitted dropped"
+                  refId: C
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource: *datasource
+                    spec:
+                      expr: irate(node_network_receive_drop_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) > 0
+                      legendFormat: "{{ device }} received dropped"
+                  refId: D
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+              tooltip:
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
+                unit: pps
+                decimals: 1
+                noValue: No errors
+                custom:
+                  axisCenteredZero: false
+                  axisLabel: out(-) | in(+)
+                  fillOpacity: 30
+                  gradientMode: opacity
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  showPoints: never
+              overrides:
+                - matcher:
+                    id: byRegexp
+                    options: /transmit|tx|out/
+                  properties:
+                    - id: custom.transform
+                      value: negative-Y
+  layout:
+    kind: RowsLayout
+    spec:
+      rows:
+        - kind: RowsLayoutRow
+          spec:
+            title: Overview
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 0
+                      y: 0
+                      width: 6
+                      height: 3
+                      element:
+                        kind: ElementReference
+                        name: uptime
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 6
+                      y: 0
+                      width: 6
+                      height: 3
+                      element:
+                        kind: ElementReference
+                        name: hostname
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 12
+                      y: 0
+                      width: 6
+                      height: 3
+                      element:
+                        kind: ElementReference
+                        name: kernel-version
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 18
+                      y: 0
+                      width: 6
+                      height: 3
+                      element:
+                        kind: ElementReference
+                        name: os
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 0
+                      y: 3
+                      width: 6
+                      height: 3
+                      element:
+                        kind: ElementReference
+                        name: cpu-count
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 6
+                      y: 3
+                      width: 6
+                      height: 3
+                      element:
+                        kind: ElementReference
+                        name: memory-total
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 12
+                      y: 3
+                      width: 6
+                      height: 3
+                      element:
+                        kind: ElementReference
+                        name: total-swap
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 18
+                      y: 3
+                      width: 6
+                      height: 3
+                      element:
+                        kind: ElementReference
+                        name: root-mount-size
+        - kind: RowsLayoutRow
+          spec:
+            title: CPU
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 0
+                      y: 0
+                      width: 6
+                      height: 6
+                      element:
+                        kind: ElementReference
+                        name: cpu-usage-percent
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 6
+                      y: 0
+                      width: 12
+                      height: 6
+                      element:
+                        kind: ElementReference
+                        name: per-cpu-usage-percent
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 18
+                      y: 0
+                      width: 6
+                      height: 6
+                      element:
+                        kind: ElementReference
+                        name: load-average
+        - kind: RowsLayoutRow
+          spec:
+            title: Memory
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 0
+                      y: 0
+                      width: 6
+                      height: 6
+                      element:
+                        kind: ElementReference
+                        name: memory-usage-percent
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 6
+                      y: 0
+                      width: 18
+                      height: 6
+                      element:
+                        kind: ElementReference
+                        name: memory-usage
+        - kind: RowsLayoutRow
+          spec:
+            title: Disk
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 0
+                      y: 0
+                      width: 12
+                      height: 8
+                      element:
+                        kind: ElementReference
+                        name: disk-read-write-by-device
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 12
+                      y: 0
+                      width: 12
+                      height: 8
+                      element:
+                        kind: ElementReference
+                        name: disk-usage-by-mountpoint
+        - kind: RowsLayoutRow
+          spec:
+            title: Network
+            collapse: false
+            layout:
+              kind: GridLayout
+              spec:
+                items:
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 0
+                      y: 0
+                      width: 12
+                      height: 8
+                      element:
+                        kind: ElementReference
+                        name: network-traffic
+                  - kind: GridLayoutItem
+                    spec:
+                      x: 12
+                      y: 0
+                      width: 12
+                      height: 8
+                      element:
+                        kind: ElementReference
+                        name: network-errors
+  links:
+    - asDropdown: false
+      icon: ""
+      includeVars: false
+      keepTime: true
+      tags: []
+      targetBlank: false
+      title: Back to Linux fleet overview
+      tooltip: ""
+      type: link
+      url: /d/linux-fleet-overview/fleet-overview
+    - asDropdown: true
+      icon: ""
+      includeVars: true
+      keepTime: true
+      tags:
+        - linux
+      targetBlank: false
+      title: All Linux dashboards
+      tooltip: ""
+      type: dashboards
+  liveNow: false
+  preload: false
+  tags:
+    - linux
+  timeSettings:
+    autoRefresh: 30s
+    autoRefreshIntervals:
+      - 15s
+      - 30s
+      - 1m
+      - 5m
+      - 15m
+      - 30m
+      - 1h
+      - 2h
+      - 1d
+    fiscalYearStartMonth: 0
+    from: now-1h
+    hideTimepicker: false
+    timezone: browser
+    to: now
+  title: Node overview
+  variables:
+    - kind: QueryVariable
+      spec:
+        name: host
+        current:
+          text: sun
+          value: sun
+        label: Host
+        hide: dontHide
+        refresh: onDashboardLoad
+        options: []
+        query:
+          datasource: *datasource
+          group: prometheus
+          kind: DataQuery
+          spec:
+            __legacyStringValue: label_values(node_uname_info, host)
+          version: v0
+        regex: ""
+        regexApplyTo: value
+        sort: alphabeticalAsc
+        multi: false
+        includeAll: false
+        allowCustomValue: false
+status: {}
