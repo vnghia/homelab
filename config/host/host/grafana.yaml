@@ -3,7 +3,7 @@ docker:
     remote:
       grafana:
         repo: grafana/grafana
-        tag: "12.4.2"
+        tag: "13.0.0"
   volumes:
     local:
       grafana-plugins:
