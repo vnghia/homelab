@@ -1,4 +1,4 @@
-apiVersion: dashboard.grafana.app/v2beta1
+apiVersion: dashboard.grafana.app/v2
 kind: Dashboard
 metadata:
   name: linux-network
@@ -6,18 +6,18 @@ spec:
   annotations:
     - kind: AnnotationQuery
       spec:
-        builtIn: true
-        enable: true
-        hide: true
-        iconColor: rgba(0, 211, 255, 1)
-        name: Annotations & Alerts
         query:
+          kind: DataQuery
+          group: grafana
+          version: v0
           datasource:
             name: "-- Grafana --"
-          group: grafana
-          kind: DataQuery
           spec: {}
-          version: v0
+        enable: true
+        hide: true
+        iconColor: "rgba(0, 211, 255, 1)"
+        name: Annotations & Alerts
+        builtIn: true
   cursorSync: "Off"
   editable: false
   elements:
@@ -38,9 +38,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: &datasource
-                      name:
-                        secret: openobserve-prometheus-datasource-uid
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_network_up{host="$host", device!~"^(br-|veth).+$"}
                       format: table
@@ -54,7 +53,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_network_carrier{host="$host", device!~"^(br-|veth).+$"}
                       format: table
@@ -68,7 +68,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
                       format: table
@@ -82,7 +83,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
                       format: table
@@ -96,7 +98,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_arp_entries{host="$host", device!~"^(br-|veth).+$"}
                       format: table
@@ -109,7 +112,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_network_mtu_bytes{host="$host", device!~"^(br-|veth).+$"}
                       format: table
@@ -122,7 +126,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_network_speed_bytes{host="$host", device!~"^(br-|veth).+$"} * 8
                       format: table
@@ -135,7 +140,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_network_transmit_queue_length{host="$host", device!~"^(br-|veth).+$"}
                       format: table
@@ -148,7 +154,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_network_info{host="$host", device!~"^(br-|veth).+$"}
                       format: table
@@ -157,26 +164,26 @@ spec:
                   hidden: false
             transformations:
               - kind: Transformation
+                group: joinByField
                 spec:
-                  id: joinByField
                   options:
                     byField: device
                     mode: outer
               - kind: Transformation
+                group: filterFieldsByName
                 spec:
-                  id: filterFieldsByName
                   options:
                     include:
                       pattern: device|duplex|address|Value.+
               - kind: Transformation
+                group: renameByRegex
                 spec:
-                  id: renameByRegex
                   options:
                     regex: "(Value) #(.*)"
                     renamePattern: $2
               - kind: Transformation
+                group: organize
                 spec:
-                  id: organize
                   options:
                     excludeByName:
                       Info: true
@@ -185,8 +192,8 @@ spec:
                       device: Interface
                       duplex: Duplex
               - kind: Transformation
+                group: organize
                 spec:
-                  id: organize
                   options:
                     indexByName:
                       Carrier: 2
@@ -198,6 +205,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: table
+          version: ""
           spec:
             options: {}
             fieldConfig:
@@ -267,16 +275,13 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
-                      expr: >
+                      expr: |
                         irate(node_network_receive_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
-
-                        # only show interfaces that had traffic change at least
-                        once during selected dashboard interval:
-
+                        # only show interfaces that had traffic change at least once during selected dashboard interval:
                         and
-
                         increase(node_network_receive_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__range]) > 0
                       legendFormat: "{{ device }} received"
                   refId: A
@@ -287,16 +292,13 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
-                      expr: >
+                      expr: |
                         irate(node_network_transmit_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
-
-                        # only show interfaces that had traffic change at least
-                        once during selected dashboard interval:
-
+                        # only show interfaces that had traffic change at least once during selected dashboard interval:
                         and
-
                         increase(node_network_transmit_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__range]) > 0
                       legendFormat: "{{ device }} transmitted"
                   refId: B
@@ -306,6 +308,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -351,7 +354,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_network_carrier{host="$host", device!~"^(br-|veth).+$"}
                       legendFormat: "{{device}}"
@@ -363,6 +367,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: status-history
+          version: ""
           spec:
             options:
               showValue: never
@@ -387,16 +392,10 @@ spec:
       spec:
         id: 4
         title: Network errors
-        description: >
-          Network errors refer to issues that occur during the transmission of
-          data across a network. 
-
-          These errors can result from various factors, including physical
-          issues, jitter, collisions, noise and interference.
-
-          Monitoring network errors is essential for diagnosing and resolving
-          issues, as they can indicate problems with network hardware or
-          environmental factors affecting network quality.
+        description: |
+          Network errors refer to issues that occur during the transmission of data across a network. 
+          These errors can result from various factors, including physical issues, jitter, collisions, noise and interference.
+          Monitoring network errors is essential for diagnosing and resolving issues, as they can indicate problems with network hardware or environmental factors affecting network quality.
         links: []
         data:
           kind: QueryGroup
@@ -408,7 +407,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_errs_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} errors received"
@@ -420,7 +420,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_errs_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} errors transmitted"
@@ -431,6 +432,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -464,17 +466,10 @@ spec:
       spec:
         id: 5
         title: Dropped packets
-        description: >
-          Dropped packets occur when data packets traveling through a network
-          are intentionally discarded or lost due to congestion, resource
-          limitations, or network configuration issues. 
-
-          Common causes include network congestion, buffer overflows, QoS
-          settings, and network errors, as corrupted or incomplete packets may
-          be discarded by receiving devices.
-
-          Dropped packets can impact network performance and lead to issues such
-          as degraded voice or video quality in real-time applications.
+        description: |
+          Dropped packets occur when data packets traveling through a network are intentionally discarded or lost due to congestion, resource limitations, or network configuration issues. 
+          Common causes include network congestion, buffer overflows, QoS settings, and network errors, as corrupted or incomplete packets may be discarded by receiving devices.
+          Dropped packets can impact network performance and lead to issues such as degraded voice or video quality in real-time applications.
         links: []
         data:
           kind: QueryGroup
@@ -486,7 +481,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_drop_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} received dropped"
@@ -498,7 +494,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_drop_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} transmitted dropped"
@@ -509,6 +506,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -542,10 +540,7 @@ spec:
       spec:
         id: 6
         title: Network packets
-        description: >-
-          Network packet count tracks the number of data packets transmitted and
-          received over a network connection, providing insight into network
-          activity and performance.
+        description: Network packet count tracks the number of data packets transmitted and received over a network connection, providing insight into network activity and performance.
         links: []
         data:
           kind: QueryGroup
@@ -557,7 +552,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_packets_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} received"
@@ -569,7 +565,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_packets_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} transmitted"
@@ -580,6 +577,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -625,7 +623,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_multicast_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} received"
@@ -637,7 +636,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_multicast_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} transmitted"
@@ -648,6 +648,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -681,16 +682,10 @@ spec:
       spec:
         id: 8
         title: Network FIFO
-        description: >
-          Network FIFO (First-In, First-Out) refers to a buffer used by the
-          network stack to store packets in a queue.
-
-          It is a mechanism used to manage network traffic and ensure that
-          packets are delivered to their destination in the order they were
-          received.
-
-          Packets are stored in the FIFO buffer until they can be transmitted or
-          processed further.
+        description: |
+          Network FIFO (First-In, First-Out) refers to a buffer used by the network stack to store packets in a queue.
+          It is a mechanism used to manage network traffic and ensure that packets are delivered to their destination in the order they were received.
+          Packets are stored in the FIFO buffer until they can be transmitted or processed further.
         links: []
         data:
           kind: QueryGroup
@@ -702,7 +697,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_fifo_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} received"
@@ -714,7 +710,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_fifo_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} transmitted"
@@ -725,6 +722,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -758,18 +756,12 @@ spec:
       spec:
         id: 9
         title: Compressed packets
-        description: >
+        description: |
           - Compressed received: 
-
-          Number of correctly received compressed packets. This counters is only
-          meaningful for interfaces which support packet compression (e.g.
-          CSLIP, PPP).
+          Number of correctly received compressed packets. This counters is only meaningful for interfaces which support packet compression (e.g. CSLIP, PPP).
 
           - Compressed transmitted:
-
-          Number of transmitted compressed packets. This counters is only
-          meaningful for interfaces which support packet compression (e.g.
-          CSLIP, PPP).
+          Number of transmitted compressed packets. This counters is only meaningful for interfaces which support packet compression (e.g. CSLIP, PPP).
 
           https://docs.kernel.org/networking/statistics.html
         links: []
@@ -783,7 +775,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_compressed_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} received"
@@ -795,7 +788,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_compressed_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval])
                       legendFormat: "{{ device }} transmitted"
@@ -806,6 +800,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -839,13 +834,7 @@ spec:
       spec:
         id: 10
         title: NF conntrack
-        description: >
-          NF Conntrack is a component of the Linux kernel's netfilter framework
-          that provides stateful packet inspection to track and manage network
-          connections,
-
-          enforce firewall rules, perform NAT, and manage network address/port
-          translation.
+        description: NF Conntrack is a component of the Linux kernel's netfilter framework that provides stateful packet inspection to track and manage network connections, enforce firewall rules, perform NAT, and manage network address/port translation.
         links: []
         data:
           kind: QueryGroup
@@ -857,7 +846,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_nf_conntrack_entries{host="$host"}
                       legendFormat: NF conntrack entries
@@ -869,7 +859,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_nf_conntrack_entries_limit{host="$host"}
                       legendFormat: NF conntrack limits
@@ -880,6 +871,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -902,14 +894,9 @@ spec:
       spec:
         id: 11
         title: Softnet packets
-        description: >
-          Softnet packets are received by the network and queued for processing
-          by the kernel's networking stack.
-
-          Softnet packets are usually generated by network traffic that is
-          directed to the local host, and they are typically processed by the
-          kernel's networking subsystem before being passed on to the relevant
-          application.
+        description: |
+          Softnet packets are received by the network and queued for processing by the kernel's networking stack.
+          Softnet packets are usually generated by network traffic that is directed to the local host, and they are typically processed by the kernel's networking subsystem before being passed on to the relevant application.
         links: []
         data:
           kind: QueryGroup
@@ -921,10 +908,11 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_softnet_processed_total{host="$host"}[$__rate_interval])
-                      legendFormat: CPU {{ cpu }} processed
+                      legendFormat: "CPU {{ cpu }} processed"
                   refId: A
                   hidden: false
               - kind: PanelQuery
@@ -933,10 +921,11 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_softnet_dropped_total{host="$host"}[$__rate_interval])
-                      legendFormat: CPU {{ cpu }} dropped
+                      legendFormat: "CPU {{ cpu }} dropped"
                   refId: B
                   hidden: false
             transformations: []
@@ -944,6 +933,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -977,15 +967,9 @@ spec:
       spec:
         id: 12
         title: Softnet out of quota
-        description: >
-          "Softnet out of quota" is a network-related metric in Linux that
-          measures the number of times the kernel's softirq processing was
-          unable to handle incoming network traffic due to insufficient softirq
-          processing capacity.
-
-          This means that the kernel has reached its processing capacity limit
-          for incoming packets, and any additional packets will be dropped or
-          deferred.
+        description: |
+          "Softnet out of quota" is a network-related metric in Linux that measures the number of times the kernel's softirq processing was unable to handle incoming network traffic due to insufficient softirq processing capacity.
+          This means that the kernel has reached its processing capacity limit for incoming packets, and any additional packets will be dropped or deferred.
         links: []
         data:
           kind: QueryGroup
@@ -997,10 +981,11 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_softnet_times_squeezed_total{host="$host"}[$__rate_interval])
-                      legendFormat: CPU {{ cpu }} out of quota
+                      legendFormat: "CPU {{ cpu }} out of quota"
                   refId: A
                   hidden: false
             transformations: []
@@ -1008,6 +993,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1031,7 +1017,7 @@ spec:
     sockets-in-use:
       kind: Panel
       spec:
-        id: 14
+        id: 13
         title: Sockets in use
         description: Number of sockets currently in use.
         links: []
@@ -1045,7 +1031,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_sockets_used{host="$host"}
                       legendFormat: IPv4 sockets in use
@@ -1056,6 +1043,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1076,14 +1064,11 @@ spec:
     sockets-tcp:
       kind: Panel
       spec:
-        id: 15
+        id: 14
         title: Sockets TCP
-        description: >
-          TCP sockets are used for establishing and managing network connections
-          between two endpoints over the TCP/IP protocol.
-
-          Orphan sockets: If a process terminates unexpectedly or is terminated
-          without closing its sockets properly, the sockets may become orphaned.
+        description: |
+          TCP sockets are used for establishing and managing network connections between two endpoints over the TCP/IP protocol.
+          Orphan sockets: If a process terminates unexpectedly or is terminated without closing its sockets properly, the sockets may become orphaned.
         links: []
         data:
           kind: QueryGroup
@@ -1095,7 +1080,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_tcp_alloc{host="$host"}
                       legendFormat: Allocated
@@ -1107,7 +1093,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_tcp_inuse{host="$host"}
                       legendFormat: IPv4 in use
@@ -1119,7 +1106,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_tcp6_inuse{host="$host"}
                       legendFormat: IPv6 in use
@@ -1131,7 +1119,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_tcp_orphan{host="$host"}
                       legendFormat: Orphan sockets
@@ -1143,7 +1132,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_tcp_tw{host="$host"}
                       legendFormat: Time wait
@@ -1154,6 +1144,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1174,15 +1165,11 @@ spec:
     sockets-udp:
       kind: Panel
       spec:
-        id: 16
+        id: 15
         title: Sockets UDP
-        description: >
-          UDP (User Datagram Protocol) and UDPlite (UDP-Lite) sockets are used
-          for transmitting and receiving data over the UDP and UDPlite
-          protocols, respectively.
-
-          Both UDP and UDPlite are connectionless protocols that do not provide
-          a reliable data delivery mechanism.
+        description: |
+          UDP (User Datagram Protocol) and UDPlite (UDP-Lite) sockets are used for transmitting and receiving data over the UDP and UDPlite protocols, respectively.
+          Both UDP and UDPlite are connectionless protocols that do not provide a reliable data delivery mechanism.
         links: []
         data:
           kind: QueryGroup
@@ -1194,7 +1181,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_udplite_inuse{host="$host"}
                       legendFormat: IPv4 UDPLITE in use
@@ -1206,7 +1194,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_udp_inuse{host="$host"}
                       legendFormat: IPv4 UDP in use
@@ -1218,7 +1207,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_udplite6_inuse{host="$host"}
                       legendFormat: IPv6 UDPLITE in use
@@ -1230,7 +1220,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_udp6_inuse{host="$host"}
                       legendFormat: IPv6 UDP in use
@@ -1241,6 +1232,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1261,10 +1253,9 @@ spec:
     sockets-memory:
       kind: Panel
       spec:
-        id: 17
+        id: 16
         title: Sockets memory
-        description: |
-          Memory currently in use for sockets.
+        description: Memory currently in use for sockets.
         links: []
         data:
           kind: QueryGroup
@@ -1276,7 +1267,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_tcp_mem{host="$host"}
                       legendFormat: Memory pages allocated for TCP sockets
@@ -1288,7 +1280,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_udp_mem{host="$host"}
                       legendFormat: Memory pages allocated for UDP sockets
@@ -1300,7 +1293,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_tcp_mem_bytes{host="$host"}
                       legendFormat: Memory bytes allocated for TCP sockets
@@ -1312,7 +1306,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_udp_mem_bytes{host="$host"}
                       legendFormat: Memory bytes allocated for UDP sockets
@@ -1324,6 +1319,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1361,14 +1357,12 @@ spec:
     sockets-other:
       kind: Panel
       spec:
-        id: 18
+        id: 17
         title: Sockets other
-        description: >
-          FRAG (IP fragment) sockets: Used to receive and process fragmented IP
-          packets. FRAG sockets are useful in network monitoring and analysis.
+        description: |
+          FRAG (IP fragment) sockets: Used to receive and process fragmented IP packets. FRAG sockets are useful in network monitoring and analysis.
 
-          RAW sockets: Allow applications to send and receive raw IP packets
-          directly without the need for a transport protocol like TCP or UDP.
+          RAW sockets: Allow applications to send and receive raw IP packets directly without the need for a transport protocol like TCP or UDP.
         links: []
         data:
           kind: QueryGroup
@@ -1380,7 +1374,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_frag_inuse{host="$host"}
                       legendFormat: IPv4 Frag sockets in use
@@ -1392,7 +1387,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_frag6_inuse{host="$host"}
                       legendFormat: IPv6 Frag sockets in use
@@ -1404,7 +1400,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_raw_inuse{host="$host"}
                       legendFormat: IPv4 Raw sockets in use
@@ -1416,7 +1413,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_sockstat_raw6_inuse{host="$host"}
                       legendFormat: IPv6 Raw sockets in use
@@ -1427,6 +1425,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1447,7 +1446,7 @@ spec:
     ip-octets:
       kind: Panel
       spec:
-        id: 19
+        id: 18
         title: IP octets
         description: Rate of IP octets received and transmitted.
         links: []
@@ -1461,7 +1460,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_ipext_inoctets{host="$host"}[$__rate_interval])
                       legendFormat: Octets received
@@ -1473,7 +1473,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_ipext_outoctets{host="$host"}[$__rate_interval])
                       legendFormat: Octets transmitted
@@ -1484,6 +1485,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1515,7 +1517,7 @@ spec:
     tcp-segments:
       kind: Panel
       spec:
-        id: 20
+        id: 19
         title: TCP segments
         description: Rate of TCP segments received and transmitted.
         links: []
@@ -1529,7 +1531,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_tcp_insegs{host="$host"}[$__rate_interval])
                       legendFormat: TCP received
@@ -1541,7 +1544,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_tcp_outsegs{host="$host"}[$__rate_interval])
                       legendFormat: TCP transmitted
@@ -1552,6 +1556,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1583,7 +1588,7 @@ spec:
     tcp-errors-rate:
       kind: Panel
       spec:
-        id: 21
+        id: 20
         title: TCP errors rate
         description: Rate of TCP errors.
         links: []
@@ -1597,7 +1602,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_tcpext_listenoverflows{host="$host"}[$__rate_interval])
                       legendFormat: TCP overflow
@@ -1609,7 +1615,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_tcpext_listendrops{host="$host"}[$__rate_interval])
                       legendFormat: TCP ListenDrops - SYNs to LISTEN sockets ignored
@@ -1621,7 +1628,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_tcpext_tcpsynretrans{host="$host"}[$__rate_interval])
                       legendFormat: TCP SYN rentransmits
@@ -1633,12 +1641,11 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_tcp_retranssegs{host="$host"}[$__rate_interval])
-                      legendFormat: >-
-                        TCP retransmitted segments, containing one or more
-                        previously transmitted octets
+                      legendFormat: TCP retransmitted segments, containing one or more previously transmitted octets
                   refId: D
                   hidden: false
               - kind: PanelQuery
@@ -1647,7 +1654,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_tcp_inerrs{host="$host"}[$__rate_interval])
                       legendFormat: TCP received with errors
@@ -1659,7 +1667,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_tcp_outrsts{host="$host"}[$__rate_interval])
                       legendFormat: TCP segments sent with RST flag
@@ -1670,6 +1679,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1693,7 +1703,7 @@ spec:
     udp-datagrams:
       kind: Panel
       spec:
-        id: 22
+        id: 21
         title: UDP datagrams
         description: Rate of UDP datagrams received and transmitted.
         links: []
@@ -1707,7 +1717,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp_indatagrams{host="$host"}[$__rate_interval])
                       legendFormat: UDP received
@@ -1719,7 +1730,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp_outdatagrams{host="$host"}[$__rate_interval])
                       legendFormat: UDP transmitted
@@ -1731,7 +1743,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp6_indatagrams{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 received
@@ -1743,7 +1756,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp6_outdatagrams{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 transmitted
@@ -1754,6 +1768,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1785,7 +1800,7 @@ spec:
     udp-errors-rate:
       kind: Panel
       spec:
-        id: 23
+        id: 22
         title: UDP errors rate
         description: Rate of UDP errors.
         links: []
@@ -1799,7 +1814,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udplite_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: UDPLite InErrors
@@ -1811,7 +1827,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP InErrors
@@ -1823,10 +1840,10 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
-                      expr: >-
-                        irate(node_netstat_Udp6_InErrors{host="$host"}[$__rate_interval])
+                      expr: irate(node_netstat_udp6_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 InErrors
                   refId: C
                   hidden: false
@@ -1836,7 +1853,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp_noports{host="$host"}[$__rate_interval])
                       legendFormat: UDP NoPorts
@@ -1848,7 +1866,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp6_noports{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 NoPorts
@@ -1860,7 +1879,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp_rcvbuferrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP receive buffer errors
@@ -1872,7 +1892,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp6_rcvbuferrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 receive buffer errors
@@ -1884,7 +1905,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp_sndbuferrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP transmit buffer errors
@@ -1896,7 +1918,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_udp6_sndbuferrors{host="$host"}[$__rate_interval])
                       legendFormat: UDP6 transmit buffer errors
@@ -1907,6 +1930,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1930,7 +1954,7 @@ spec:
     icmp-messages:
       kind: Panel
       spec:
-        id: 24
+        id: 23
         title: ICMP messages
         description: Rate of ICMP messages, like 'ping', received and transmitted.
         links: []
@@ -1944,7 +1968,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_icmp_inmsgs{host="$host"}[$__rate_interval])
                       legendFormat: ICMP received
@@ -1956,7 +1981,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_icmp_outmsgs{host="$host"}[$__rate_interval])
                       legendFormat: ICMP transmitted
@@ -1968,7 +1994,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_icmp6_inmsgs{host="$host"}[$__rate_interval])
                       legendFormat: ICMP6 received
@@ -1980,7 +2007,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_icmp6_outmsgs{host="$host"}[$__rate_interval])
                       legendFormat: ICMP6 transmitted
@@ -1991,6 +2019,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -2022,7 +2051,7 @@ spec:
     icmp-errors-rate:
       kind: Panel
       spec:
-        id: 25
+        id: 24
         title: ICMP errors rate
         description: Rate of ICMP messages received and transmitted with errors.
         links: []
@@ -2036,7 +2065,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_icmp_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: ICMP errors
@@ -2048,7 +2078,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_netstat_icmp6_inerrors{host="$host"}[$__rate_interval])
                       legendFormat: ICMP6 errors
@@ -2059,6 +2090,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -2324,41 +2356,44 @@ spec:
                         kind: ElementReference
                         name: icmp-errors-rate
   links:
-    - asDropdown: false
-      icon: ""
-      includeVars: false
-      keepTime: true
-      tags: []
-      targetBlank: false
-      title: Back to Linux fleet overview
-      tooltip: ""
+    - title: Back to Linux fleet overview
       type: link
+      icon: ""
+      tooltip: ""
       url: /d/linux-fleet-overview/fleet-overview
-    - asDropdown: false
-      icon: ""
+      tags: []
+      asDropdown: false
+      targetBlank: false
       includeVars: false
       keepTime: true
-      tags: []
-      targetBlank: false
-      title: Back to Linux node overview
-      tooltip: ""
+    - title: Back to Linux node overview
       type: link
-      url: /d/linux-node-overview/node-overview
-    - asDropdown: true
       icon: ""
-      includeVars: true
+      tooltip: ""
+      url: /d/linux-node-overview/node-overview
+      tags: []
+      asDropdown: false
+      targetBlank: false
+      includeVars: false
       keepTime: true
+    - title: All Linux dashboards
+      type: dashboards
+      icon: ""
+      tooltip: ""
       tags:
         - linux
+      asDropdown: true
       targetBlank: false
-      title: All Linux dashboards
-      tooltip: ""
-      type: dashboards
+      includeVars: true
+      keepTime: true
   liveNow: false
   preload: false
   tags:
     - linux
   timeSettings:
+    timezone: browser
+    from: now-1h
+    to: now
     autoRefresh: 30s
     autoRefreshIntervals:
       - 15s
@@ -2370,13 +2405,22 @@ spec:
       - 1h
       - 2h
       - 1d
-    fiscalYearStartMonth: 0
-    from: now-1h
     hideTimepicker: false
-    timezone: browser
-    to: now
+    fiscalYearStartMonth: 0
   title: Network
   variables:
+    - kind: DatasourceVariable
+      spec:
+        name: datasource
+        pluginId: prometheus
+        refresh: never
+        options: []
+        multi: false
+        includeAll: false
+        label: Data source
+        hide: inControlsMenu
+        skipUrlSync: false
+        allowCustomValue: true
     - kind: QueryVariable
       spec:
         name: host
@@ -2386,18 +2430,19 @@ spec:
         label: Host
         hide: dontHide
         refresh: onDashboardLoad
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
+          group: prometheus
+          version: v0
+          datasource:
+            name: ${datasource}
           spec:
             __legacyStringValue: label_values(node_uname_info, host)
-          version: v0
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: false
         includeAll: false
         allowCustomValue: false
-status: {}
