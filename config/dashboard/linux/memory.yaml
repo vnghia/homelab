@@ -1,4 +1,4 @@
-apiVersion: dashboard.grafana.app/v2beta1
+apiVersion: dashboard.grafana.app/v2
 kind: Dashboard
 metadata:
   name: linux-memory
@@ -6,18 +6,18 @@ spec:
   annotations:
     - kind: AnnotationQuery
       spec:
-        builtIn: true
-        enable: true
-        hide: true
-        iconColor: rgba(0, 211, 255, 1)
-        name: Annotations & Alerts
         query:
+          kind: DataQuery
+          group: grafana
+          version: v0
           datasource:
             name: "-- Grafana --"
-          group: grafana
-          kind: DataQuery
           spec: {}
-          version: v0
+        enable: true
+        hide: true
+        iconColor: "rgba(0, 211, 255, 1)"
+        name: Annotations & Alerts
+        builtIn: true
   cursorSync: "Off"
   editable: false
   elements:
@@ -26,9 +26,7 @@ spec:
       spec:
         id: 1
         title: Memory usage
-        description: >-
-          RAM (random-access memory) currently in use by the operating system
-          and running applications, in percent.
+        description: RAM (random-access memory) currently in use by the operating system and running applications, in percent.
         links: []
         data:
           kind: QueryGroup
@@ -40,9 +38,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: &datasource
-                      name:
-                        secret: openobserve-prometheus-datasource-uid
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: |
                         100 -
@@ -58,6 +55,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: value
@@ -79,21 +77,12 @@ spec:
       spec:
         id: 2
         title: Memory usage
-        description: >
+        description: |
           - Used: The amount of physical memory currently in use by the system.
-
-          - Cached: The amount of physical memory used for caching data from
-          disk. The Linux kernel uses available memory to cache data that is
-          read from or written to disk. This helps speed up disk access times.
-
+          - Cached: The amount of physical memory used for caching data from disk. The Linux kernel uses available memory to cache data that is read from or written to disk. This helps speed up disk access times.
           - Free: The amount of physical memory that is currently not in use.
-
-          - Buffers: The amount of physical memory used for temporary storage of
-          data being transferred between devices or applications.
-
-          - Available: The amount of physical memory that is available for use
-          by applications. This takes into account memory that is currently
-          being used for caching but can be freed up if needed.
+          - Buffers: The amount of physical memory used for temporary storage of data being transferred between devices or applications.
+          - Available: The amount of physical memory that is available for use by applications. This takes into account memory that is currently being used for caching but can be freed up if needed.
         links: []
         data:
           kind: QueryGroup
@@ -105,7 +94,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: |
                         (
@@ -126,7 +116,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_cached_bytes{host="$host"}
                       legendFormat: Memory cached
@@ -138,7 +129,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_memavailable_bytes{host="$host"}
                       legendFormat: Memory available
@@ -150,7 +142,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_buffers_bytes{host="$host"}
                       legendFormat: Memory buffers
@@ -162,7 +155,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_memfree_bytes{host="$host"}
                       legendFormat: Memory free
@@ -174,7 +168,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_memtotal_bytes{host="$host"}
                       legendFormat: Memory total
@@ -185,6 +180,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -206,7 +202,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -241,22 +237,12 @@ spec:
       spec:
         id: 3
         title: Memory pages in / out
-        description: >
-          Page-In - Return of pages to physical memory. This is a common and
-          normal event.
-
-          Page-Out - process of writing pages to disk. Unlike page-in, page-outs
-          can indicate trouble.
-
-          When the kernel detects low memory, it attempts to free memory by
-          paging out. 
-
-          While occasional page-outs are normal, excessive and frequent
-          page-outs can lead to thrashing.
-
-          Thrashing is a state in which the kernel spends more time managing
-          paging activity than running applications, resulting in poor system
-          performance.
+        description: |
+          Page-In - Return of pages to physical memory. This is a common and normal event.
+          Page-Out - process of writing pages to disk. Unlike page-in, page-outs can indicate trouble.
+          When the kernel detects low memory, it attempts to free memory by paging out. 
+          While occasional page-outs are normal, excessive and frequent page-outs can lead to thrashing.
+          Thrashing is a state in which the kernel spends more time managing paging activity than running applications, resulting in poor system performance.
         links: []
         data:
           kind: QueryGroup
@@ -268,7 +254,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_vmstat_pgpgin{host="$host"}[$__rate_interval])
                       legendFormat: Page-In
@@ -280,7 +267,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_vmstat_pgpgout{host="$host"}[$__rate_interval])
                       legendFormat: Page-Out
@@ -291,6 +279,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -321,22 +310,12 @@ spec:
       spec:
         id: 4
         title: Memory pages swapping in / out
-        description: >
-          Compared to the speed of the CPU and main memory, writing pages out to
-          disk is relatively slow.
-
-          Nonetheless, it is a preferable option to crashing or killing off
-          processes.
-
-          The process of writing pages out to disk to free memory is known as
-          swapping-out.
-
-          If a page fault occurs because the page is on disk, in the swap area,
-          rather than in memory,
-
-          the kernel will read the page back in from the disk to satisfy the
-          page fault. 
-
+        description: |
+          Compared to the speed of the CPU and main memory, writing pages out to disk is relatively slow.
+          Nonetheless, it is a preferable option to crashing or killing off processes.
+          The process of writing pages out to disk to free memory is known as swapping-out.
+          If a page fault occurs because the page is on disk, in the swap area, rather than in memory,
+          the kernel will read the page back in from the disk to satisfy the page fault. 
           This is known as swapping-in.
         links: []
         data:
@@ -349,7 +328,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_vmstat_pswpin{host="$host"}[$__rate_interval])
                       legendFormat: Pages swapped in
@@ -361,7 +341,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_vmstat_pswpout{host="$host"}[$__rate_interval])
                       legendFormat: Pages swapped out
@@ -372,6 +353,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -402,23 +384,12 @@ spec:
       spec:
         id: 5
         title: Memory page faults
-        description: >
-          A page fault is an exception raised by the memory when a process
-          accesses a memory page without the necessary preparations,
-
-          requiring a mapping to be added to the process's virtual address
-          space.
-
-          The page contents may also need to be loaded from a backing store such
-          as a disk.
-
-          While the MMU detects the page fault, the operating system's kernel
-          handles the exception by either making the required page accessible in
-          physical memory or denying an illegal memory access.
-
-          Valid page faults are common and necessary to increase memory
-          availability in any operating system that uses virtual memory,
-          including Windows, macOS, and the Linux kernel.
+        description: |
+          A page fault is an exception raised by the memory when a process accesses a memory page without the necessary preparations,
+          requiring a mapping to be added to the process's virtual address space.
+          The page contents may also need to be loaded from a backing store such as a disk.
+          While the MMU detects the page fault, the operating system's kernel handles the exception by either making the required page accessible in physical memory or denying an illegal memory access.
+          Valid page faults are common and necessary to increase memory availability in any operating system that uses virtual memory, including Windows, macOS, and the Linux kernel.
         links: []
         data:
           kind: QueryGroup
@@ -430,7 +401,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_vmstat_pgmajfault{host="$host"}[$__rate_interval])
                       legendFormat: Major page fault operations
@@ -442,7 +414,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >
                         irate(node_vmstat_pgfault{host="$host"}[$__rate_interval])
@@ -456,6 +429,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -476,14 +450,11 @@ spec:
     oom-killer:
       kind: Panel
       spec:
-        id: 8
+        id: 6
         title: OOM Killer
-        description: >
-          Out Of Memory killer is a process used by the Linux kernel when the
-          system is running critically low on memory.
-
-          This can happen when the kernel has allocated more memory than is
-          available for its processes.
+        description: |
+          Out Of Memory killer is a process used by the Linux kernel when the system is running critically low on memory.
+          This can happen when the kernel has allocated more memory than is available for its processes.
         links: []
         data:
           kind: QueryGroup
@@ -495,7 +466,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: increase(node_vmstat_oom_kill{host="$host"}[$__interval:]offset - $__interval)
                       legendFormat: OOM killer invocations
@@ -506,6 +478,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -526,14 +499,11 @@ spec:
     memory-active-inactive:
       kind: Panel
       spec:
-        id: 9
+        id: 7
         title: Memory active / inactive
-        description: >
-          - Inactive: Memory which has been less recently used. It is more
-          eligible to be reclaimed for other purposes.
-
-          - Active: Memory that has been used more recently and usually not
-          reclaimed unless absolutely necessary.
+        description: |
+          - Inactive: Memory which has been less recently used. It is more eligible to be reclaimed for other purposes.
+          - Active: Memory that has been used more recently and usually not reclaimed unless absolutely necessary.
         links: []
         data:
           kind: QueryGroup
@@ -545,7 +515,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_active_bytes{host="$host"}
                       legendFormat: Active
@@ -557,7 +528,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_inactive_bytes{host="$host"}
                       legendFormat: Inactive
@@ -568,6 +540,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -589,7 +562,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -606,18 +579,13 @@ spec:
     memory-active-inactive-details:
       kind: Panel
       spec:
-        id: 10
+        id: 8
         title: Memory active / inactive details
-        description: >
+        description: |
           - Inactive_file: File-backed memory on inactive LRU list.
-
-          - Inactive_anon: Anonymous and swap cache on inactive LRU list,
-          including tmpfs (shmem).
-
+          - Inactive_anon: Anonymous and swap cache on inactive LRU list, including tmpfs (shmem).
           - Active_file: File-backed memory on active LRU list.
-
-          - Active_anon: Anonymous and swap cache on active least-recently-used
-          (LRU) list, including tmpfs.
+          - Active_anon: Anonymous and swap cache on active least-recently-used (LRU) list, including tmpfs.
         links: []
         data:
           kind: QueryGroup
@@ -629,7 +597,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_inactive_file_bytes{host="$host"}
                       legendFormat: Inactive_file
@@ -641,7 +610,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_inactive_anon_bytes{host="$host"}
                       legendFormat: Inactive_anon
@@ -653,7 +623,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_active_file_bytes{host="$host"}
                       legendFormat: Active_file
@@ -665,7 +636,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_active_anon_bytes{host="$host"}
                       legendFormat: Active_anon
@@ -676,6 +648,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -697,7 +670,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -714,13 +687,11 @@ spec:
     memory-committed:
       kind: Panel
       spec:
-        id: 11
+        id: 9
         title: Memory commited
-        description: >
+        description: |
           - Committed_AS - Amount of memory presently allocated on the system.
-
-          - CommitLimit - Amount of memory currently available to be allocated
-          on the system.
+          - CommitLimit - Amount of memory currently available to be allocated on the system.
         links: []
         data:
           kind: QueryGroup
@@ -732,7 +703,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_committed_as_bytes{host="$host"}
                       legendFormat: Commited_AS
@@ -744,7 +716,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_commitlimit_bytes{host="$host"}
                       legendFormat: CommitLimit
@@ -755,6 +728,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -776,7 +750,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -793,20 +767,13 @@ spec:
     memory-shared-and-mapped:
       kind: Panel
       spec:
-        id: 12
+        id: 10
         title: Memory shared and mapped
-        description: >
-          - Mapped: This refers to the memory used in mapped page files that
-          have been memory mapped, such as libraries.
-
-          - Shmem: This is the memory used by shared memory, which is shared
-          between multiple processes, including RAM disks.
-
-          - ShmemHugePages: This is the memory used by shared memory and tmpfs
-          allocated with huge pages.
-
-          - ShmemPmdMapped: This is the amount of shared memory (shmem/tmpfs)
-          backed by huge pages.
+        description: |
+          - Mapped: This refers to the memory used in mapped page files that have been memory mapped, such as libraries.
+          - Shmem: This is the memory used by shared memory, which is shared between multiple processes, including RAM disks.
+          - ShmemHugePages: This is the memory used by shared memory and tmpfs allocated with huge pages.
+          - ShmemPmdMapped: This is the amount of shared memory (shmem/tmpfs) backed by huge pages.
         links: []
         data:
           kind: QueryGroup
@@ -818,7 +785,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_mapped_bytes{host="$host"}
                       legendFormat: Mapped
@@ -830,7 +798,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_shmem_bytes{host="$host"}
                       legendFormat: Shmem
@@ -842,7 +811,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_shmempmdmapped_bytes{host="$host"}
                       legendFormat: ShmemPmdMapped
@@ -854,7 +824,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_shmemhugepages_bytes{host="$host"}
                       legendFormat: ShmemHugePages
@@ -865,6 +836,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -886,7 +858,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -903,17 +875,12 @@ spec:
     memory-writeback-and-dirty:
       kind: Panel
       spec:
-        id: 13
+        id: 11
         title: Memory writeback and dirty
-        description: >
-          - Writeback: This refers to the memory that is currently being
-          actively written back to the disk.
-
-          - WritebackTmp: This is the memory used by FUSE for temporary
-          writeback buffers.
-
-          - Dirty: This type of memory is waiting to be written back to the
-          disk.
+        description: |
+          - Writeback: This refers to the memory that is currently being actively written back to the disk.
+          - WritebackTmp: This is the memory used by FUSE for temporary writeback buffers.
+          - Dirty: This type of memory is waiting to be written back to the disk.
         links: []
         data:
           kind: QueryGroup
@@ -925,7 +892,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_writeback_bytes{host="$host"}
                       legendFormat: Writeback
@@ -937,7 +905,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_writebacktmp_bytes{host="$host"}
                       legendFormat: WritebackTmp
@@ -949,7 +918,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_dirty_bytes{host="$host"}
                       legendFormat: Dirty
@@ -960,6 +930,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -981,7 +952,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -998,21 +969,13 @@ spec:
     memory-vmalloc:
       kind: Panel
       spec:
-        id: 14
+        id: 12
         title: Memory Vmalloc
-        description: >
-          Virtual Memory Allocation is a type of memory allocation in Linux that
-          allows a process to request a contiguous block of memory larger than
-          the amount of physically available memory. This is achieved by mapping
-          the requested memory to virtual addresses that are backed by a
-          combination of physical memory and swap space on disk.
+        description: |
+          Virtual Memory Allocation is a type of memory allocation in Linux that allows a process to request a contiguous block of memory larger than the amount of physically available memory. This is achieved by mapping the requested memory to virtual addresses that are backed by a combination of physical memory and swap space on disk.
 
-
-          - VmallocChunk: Largest contiguous block of vmalloc area which is
-          free.
-
+          - VmallocChunk: Largest contiguous block of vmalloc area which is free.
           - VmallocTotal: Total size of vmalloc memory area.
-
           - VmallocUsed: Amount of vmalloc area which is used.
         links: []
         data:
@@ -1025,7 +988,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_vmallocchunk_bytes{host="$host"}
                       legendFormat: VmallocChunk
@@ -1037,7 +1001,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_vmalloctotal_bytes{host="$host"}
                       legendFormat: VmallocTotal
@@ -1049,7 +1014,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_vmallocused_bytes{host="$host"}
                       legendFormat: VmallocUsed
@@ -1060,6 +1026,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1081,7 +1048,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -1098,26 +1065,14 @@ spec:
     memory-slab:
       kind: Panel
       spec:
-        id: 15
+        id: 13
         title: Memory slab
-        description: >
-          Slab Allocation is a type of memory allocation in Linux that allows
-          the kernel to efficiently manage the allocation and deallocation of
-          small and frequently used data structures, such as network packets,
-          file system objects, and process descriptors.
+        description: |
+          Slab Allocation is a type of memory allocation in Linux that allows the kernel to efficiently manage the allocation and deallocation of small and frequently used data structures, such as network packets, file system objects, and process descriptors.
 
+          The Slab Allocator maintains a cache of pre-allocated objects of a fixed size and type, called slabs. When an application requests an object of a particular size and type, the Slab Allocator checks if a pre-allocated object of that size and type is available in the cache. If an object is available, it is returned to the application; if not, a new slab of objects is allocated and added to the cache.
 
-          The Slab Allocator maintains a cache of pre-allocated objects of a
-          fixed size and type, called slabs. When an application requests an
-          object of a particular size and type, the Slab Allocator checks if a
-          pre-allocated object of that size and type is available in the cache.
-          If an object is available, it is returned to the application; if not,
-          a new slab of objects is allocated and added to the cache.
-
-
-          - SUnreclaim: Part of Slab, that cannot be reclaimed on memory
-          pressure.
-
+          - SUnreclaim: Part of Slab, that cannot be reclaimed on memory pressure.
           - SReclaimable: Part of Slab, that might be reclaimed, such as caches.
         links: []
         data:
@@ -1130,7 +1085,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_sunreclaim_bytes{host="$host"}
                       legendFormat: SUnreclaim
@@ -1142,7 +1098,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_sreclaimable_bytes{host="$host"}
                       legendFormat: SReclaimable
@@ -1153,6 +1110,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1174,7 +1132,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -1191,31 +1149,18 @@ spec:
     memory-anonymous:
       kind: Panel
       spec:
-        id: 16
+        id: 14
         title: Memory anonymous
-        description: >
-          Memory Anonymous refers to the portion of the virtual memory that is
-          used by a process for dynamically allocated memory that is not backed
-          by any file or device.
+        description: |
+          Memory Anonymous refers to the portion of the virtual memory that is used by a process for dynamically allocated memory that is not backed by any file or device.
 
+          This type of memory is commonly used for heap memory allocation, which is used by programs to allocate and free memory dynamically during runtime.
 
-          This type of memory is commonly used for heap memory allocation, which
-          is used by programs to allocate and free memory dynamically during
-          runtime.
-
-
-          Memory Anonymous is different from Memory Mapped files, which refer to
-          portions of the virtual memory space that are backed by a file or
-          device,
-
+          Memory Anonymous is different from Memory Mapped files, which refer to portions of the virtual memory space that are backed by a file or device,
           and from Memory Shared with other processes,
-
-          which refers to memory regions that can be accessed and modified by
-          multiple processes.
-
+          which refers to memory regions that can be accessed and modified by multiple processes.
 
           - AnonHugePages: Memory in anonymous huge pages.
-
           - AnonPages: Memory in user pages not backed by files.
         links: []
         data:
@@ -1228,7 +1173,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_anonhugepages_bytes{host="$host"}
                       legendFormat: AnonHugePages
@@ -1240,7 +1186,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_anonpages_bytes{host="$host"}
                       legendFormat: AnonPages
@@ -1251,6 +1198,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1272,7 +1220,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -1289,23 +1237,14 @@ spec:
     memory-hugepages-counter:
       kind: Panel
       spec:
-        id: 17
+        id: 15
         title: Memory HugePages counter
-        description: >
-          Huge Pages are a feature that allows for the allocation of larger
-          memory pages than the standard 4KB page size. By using larger page
-          sizes, the kernel can reduce the overhead associated with managing a
-          large number of smaller pages, which can improve system performance
-          for certain workloads.
-
+        description: |
+          Huge Pages are a feature that allows for the allocation of larger memory pages than the standard 4KB page size. By using larger page sizes, the kernel can reduce the overhead associated with managing a large number of smaller pages, which can improve system performance for certain workloads.
 
           - HugePages_Free: Huge pages in the pool that are not yet allocated.
-
-          - HugePages_Rsvd: Huge pages for which a commitment to allocate from
-          the pool has been made, but no allocation has yet been made.
-
-          - HugePages_Surp: Huge pages in the pool above the value in
-          /proc/sys/vm/nr_hugepages.
+          - HugePages_Rsvd: Huge pages for which a commitment to allocate from the pool has been made, but no allocation has yet been made.
+          - HugePages_Surp: Huge pages in the pool above the value in /proc/sys/vm/nr_hugepages.
         links: []
         data:
           kind: QueryGroup
@@ -1317,7 +1256,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_hugepages_free{host="$host"}
                       legendFormat: HugePages_Free
@@ -1329,7 +1269,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_hugepages_rsvd{host="$host"}
                       legendFormat: HugePages_Rsvd
@@ -1341,7 +1282,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_hugepages_surp{host="$host"}
                       legendFormat: HugePages_Surp
@@ -1352,6 +1294,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1372,14 +1315,10 @@ spec:
     memory-hugepages-size:
       kind: Panel
       spec:
-        id: 18
+        id: 16
         title: Memory HugePages size
-        description: >
-          Huge Pages are a feature that allows for the allocation of larger
-          memory pages than the standard 4KB page size. By using larger page
-          sizes, the kernel can reduce the overhead associated with managing a
-          large number of smaller pages, which can improve system performance
-          for certain workloads.
+        description: |
+          Huge Pages are a feature that allows for the allocation of larger memory pages than the standard 4KB page size. By using larger page sizes, the kernel can reduce the overhead associated with managing a large number of smaller pages, which can improve system performance for certain workloads.
         links: []
         data:
           kind: QueryGroup
@@ -1391,7 +1330,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_hugepages_total{host="$host"}
                       legendFormat: Huge pages total size
@@ -1403,7 +1343,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_hugepagesize_bytes{host="$host"}
                       legendFormat: Huge page size
@@ -1414,6 +1355,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1435,7 +1377,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -1452,14 +1394,10 @@ spec:
     memory-direct-map:
       kind: Panel
       spec:
-        id: 19
+        id: 17
         title: Memory direct map
-        description: >
-          Direct Map memory refers to the portion of the kernel's virtual
-          address space that is directly mapped to physical memory. This mapping
-          is set up by the kernel during boot time and is used to provide fast
-          access to certain critical kernel data structures, such as page tables
-          and interrupt descriptor tables.
+        description: |
+          Direct Map memory refers to the portion of the kernel's virtual address space that is directly mapped to physical memory. This mapping is set up by the kernel during boot time and is used to provide fast access to certain critical kernel data structures, such as page tables and interrupt descriptor tables.
         links: []
         data:
           kind: QueryGroup
@@ -1471,7 +1409,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_directmap1g_bytes{host="$host"}
                       legendFormat: DirectMap1G
@@ -1483,7 +1422,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_directmap2m_bytes{host="$host"}
                       legendFormat: DirectMap2M
@@ -1495,7 +1435,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_directmap4k_bytes{host="$host"}
                       legendFormat: DirectMap4k
@@ -1506,6 +1447,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1527,7 +1469,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -1544,24 +1486,12 @@ spec:
     memory-bounce:
       kind: Panel
       spec:
-        id: 20
+        id: 18
         title: Memory bounce
-        description: >
-          Memory bounce is a technique used in the Linux kernel to handle
-          situations where direct memory access (DMA) is required but the
-          physical memory being accessed is not contiguous. This can happen when
-          a device, such as a network interface card or a disk controller,
-          requires access to a large amount of memory that is not available as a
-          single contiguous block.
+        description: |
+          Memory bounce is a technique used in the Linux kernel to handle situations where direct memory access (DMA) is required but the physical memory being accessed is not contiguous. This can happen when a device, such as a network interface card or a disk controller, requires access to a large amount of memory that is not available as a single contiguous block.
 
-
-          To handle this situation, the kernel uses a technique called memory
-          bouncing. In memory bouncing, the kernel sets up a temporary buffer in
-          physical memory that is large enough to hold the entire data block
-          being transferred by the device. The data is then copied from the
-          non-contiguous source memory to the temporary buffer, which is
-          physically contiguous.
-
+          To handle this situation, the kernel uses a technique called memory bouncing. In memory bouncing, the kernel sets up a temporary buffer in physical memory that is large enough to hold the entire data block being transferred by the device. The data is then copied from the non-contiguous source memory to the temporary buffer, which is physically contiguous.
 
           - Bounce: Memory used for block device bounce buffers.
         links: []
@@ -1575,7 +1505,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_bounce_bytes{host="$host"}
                       legendFormat: Bounce
@@ -1586,6 +1517,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1607,7 +1539,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -1621,6 +1553,7 @@ spec:
                           - 10
                           - 10
                         fill: dash
+
   layout:
     kind: RowsLayout
     spec:
@@ -1812,41 +1745,44 @@ spec:
                         kind: ElementReference
                         name: memory-bounce
   links:
-    - asDropdown: false
-      icon: ""
-      includeVars: false
-      keepTime: true
-      tags: []
-      targetBlank: false
-      title: Back to Linux fleet overview
-      tooltip: ""
+    - title: Back to Linux fleet overview
       type: link
+      icon: ""
+      tooltip: ""
       url: /d/linux-fleet-overview/fleet-overview
-    - asDropdown: false
-      icon: ""
+      tags: []
+      asDropdown: false
+      targetBlank: false
       includeVars: false
       keepTime: true
-      tags: []
-      targetBlank: false
-      title: Back to Linux node overview
-      tooltip: ""
+    - title: Back to Linux node overview
       type: link
-      url: /d/linux-node-overview/node-overview
-    - asDropdown: true
       icon: ""
-      includeVars: true
+      tooltip: ""
+      url: /d/linux-node-overview/node-overview
+      tags: []
+      asDropdown: false
+      targetBlank: false
+      includeVars: false
       keepTime: true
+    - title: All Linux dashboards
+      type: dashboards
+      icon: ""
+      tooltip: ""
       tags:
         - linux
+      asDropdown: true
       targetBlank: false
-      title: All Linux dashboards
-      tooltip: ""
-      type: dashboards
+      includeVars: true
+      keepTime: true
   liveNow: false
   preload: false
   tags:
     - linux
   timeSettings:
+    timezone: browser
+    from: now-1h
+    to: now
     autoRefresh: 30s
     autoRefreshIntervals:
       - 15s
@@ -1858,13 +1794,22 @@ spec:
       - 1h
       - 2h
       - 1d
-    fiscalYearStartMonth: 0
-    from: now-1h
     hideTimepicker: false
-    timezone: browser
-    to: now
+    fiscalYearStartMonth: 0
   title: Memory
   variables:
+    - kind: DatasourceVariable
+      spec:
+        name: datasource
+        pluginId: prometheus
+        refresh: never
+        options: []
+        multi: false
+        includeAll: false
+        label: Data source
+        hide: inControlsMenu
+        skipUrlSync: false
+        allowCustomValue: true
     - kind: QueryVariable
       spec:
         name: host
@@ -1874,18 +1819,19 @@ spec:
         label: Host
         hide: dontHide
         refresh: onDashboardLoad
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
-          spec:
-            __legacyStringValue: label_values(node_uname_info, host)
+          group: prometheus
           version: v0
+          datasource:
+            name: ${datasource}
+          spec:
+            __legacyStringValue: "label_values(node_uname_info, host)"
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: false
         includeAll: false
         allowCustomValue: false
-status: {}
