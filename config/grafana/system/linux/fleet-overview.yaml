@@ -1349,6 +1349,16 @@ spec:
       targetBlank: false
       includeVars: false
       keepTime: true
+    - title: All docker dashboards
+      type: dashboards
+      icon: ""
+      tooltip: ""
+      tags:
+        - docker
+      asDropdown: true
+      targetBlank: false
+      includeVars: true
+      keepTime: true
   liveNow: false
   preload: false
   tags:

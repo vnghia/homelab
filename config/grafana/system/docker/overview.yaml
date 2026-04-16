@@ -1109,7 +1109,7 @@ spec:
       - 1d
     hideTimepicker: false
     fiscalYearStartMonth: 0
-  title: Docker
+  title: Overview
   variables:
     - kind: DatasourceVariable
       spec:
