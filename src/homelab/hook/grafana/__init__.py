@@ -15,6 +15,10 @@ class Folder:
     path: Path | None
     resource: grafana.oss.Folder | None
 
+    @classmethod
+    def path_to_uid(cls, path: Path) -> str:
+        return path.with_suffix("").as_posix().replace("/", "-")
+
     def provision(self, grafana_folder: Path, grafana_opts: ResourceOptions) -> None:
         opts = ResourceOptions.merge(
             grafana_opts, ResourceOptions(parent=self.resource or None)
@@ -23,8 +27,8 @@ class Folder:
         path = grafana_folder / self.path if self.path else grafana_folder
         for file in os.listdir(path):
             full_path = path / file
-            sub_path = self.path / file if self.path else Path(file)
-            sub_path_posix = sub_path.with_suffix("").as_posix().replace("/", "-")
+            relative_sub_path = self.path / file if self.path else Path(file)
+            relative_sub_path_uid = self.path_to_uid(relative_sub_path)
 
             if full_path.is_dir():
                 resource = grafana.oss.Folder(
@@ -32,9 +36,9 @@ class Folder:
                     opts=opts,
                     parent_folder_uid=self.resource.uid if self.resource else None,
                     title=file.capitalize(),
-                    uid=sub_path.as_posix().replace("/", "-"),
+                    uid=relative_sub_path_uid,
                 )
-                Folder(path=sub_path, resource=resource).provision(
+                Folder(path=relative_sub_path, resource=resource).provision(
                     grafana_folder, grafana_opts
                 )
             elif full_path.suffix == ".yaml":
@@ -48,10 +52,18 @@ class Folder:
                     kind = config["kind"]
                     match kind:
                         case "Dashboard":
-                            dashboard_name = full_path.stem
-                            config["metadata"] = {"name": sub_path_posix}
+                            config["metadata"] = {"name": relative_sub_path_uid}
+                            for link in config["spec"].get("links", []):
+                                link_path = link.pop("path", None)
+                                if link_path:
+                                    link["url"] = "/d/{}".format(
+                                        self.path_to_uid(
+                                            relative_sub_path.parent / link_path
+                                        )
+                                    )
+
                             grafana.oss.Dashboard(
-                                dashboard_name,
+                                full_path.stem,
                                 opts=opts,
                                 config_json=orjson.dumps(config).decode(),
                                 folder=self.resource.uid if self.resource else None,
