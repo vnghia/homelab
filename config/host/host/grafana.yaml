@@ -6,6 +6,11 @@ docker:
         tag: "13.0.0"
   volumes:
     local:
+      grafana-data:
+        backup:
+          sqlite:
+            dbs:
+              - grafana.db
       grafana-plugins:
         backup: false
       grafana-provision:
@@ -16,6 +21,21 @@ services:
   grafana:
     variables:
       PORT: 3000
+      URL:
+        hostname: grafana
+        scheme: https
+      AUTH:
+        extract:
+          kv:
+            username:
+              keepass:
+              info: username
+            password:
+              keepass:
+              info: password
+        transform:
+          string:
+            template: "{username}:{password}"
     config:
       traefik:
         dynamic:
@@ -52,9 +72,8 @@ services:
       key: {}
     container:
       image: grafana
-      tmpfs:
-        - /var/lib/grafana
       volumes:
+        grafana-data: /var/lib/grafana/data
         grafana-plugins:
           path: /var/lib/grafana/plugins
           read-only: true
@@ -74,10 +93,11 @@ services:
         GF_SERVER_HTTP_PORT:
           svariable: PORT
         GF_SERVER_ROOT_URL:
-          hostname: grafana
-          scheme: https
+          svariable: URL
         GF_SERVER_ENABLE_GZIP: true
         GF_DATABASE_WAL: true
+        GF_PATHS_DATA:
+          volume: grafana-data
         GF_PATHS_PLUGINS:
           volume: grafana-plugins
         GF_ANALYTICS_ENABLED: false
@@ -99,17 +119,7 @@ services:
           - --json
           - "{}"
           - -u
-          - extract:
-              kv:
-                username:
-                  keepass:
-                  info: username
-                password:
-                  keepass:
-                  info: password
-            transform:
-              string:
-                template: "{username}:{password}"
+          - svariable: AUTH
           - extract:
               svariable: PORT
             transform:
@@ -126,17 +136,7 @@ services:
           - --json
           - "{}"
           - -u
-          - extract:
-              kv:
-                username:
-                  keepass:
-                  info: username
-                password:
-                  keepass:
-                  info: password
-            transform:
-              string:
-                template: "{username}:{password}"
+          - svariable: AUTH
           - extract:
               svariable: PORT
             transform:

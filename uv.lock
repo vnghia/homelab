@@ -551,6 +551,7 @@ dependencies = [
     { name = "json-fix" },
     { name = "loguru" },
     { name = "pulumi" },
+    { name = "pulumiverse-grafana" },
 ]
 
 [package.dev-dependencies]
@@ -588,6 +589,7 @@ requires-dist = [
     { name = "json-fix", specifier = ">=1.0.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pulumiverse-grafana", specifier = ">=2.25.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -1818,6 +1820,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5e/4a/eda9909797bb898fbe97101ed1daeed31629f53bce24cf956e609ff55c9a/pulumi_tls-5.2.3.tar.gz", hash = "sha256:0a8c398d4daac34477d21d42f97a98c816f2d187775d0541b8b718464d9821cd", size = 26523, upload-time = "2025-11-13T22:46:09.338Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/10/1a492d796ebec9182a3f8b8ec684f4eb53e663cca6e08eab7c97f7804968/pulumi_tls-5.2.3-py3-none-any.whl", hash = "sha256:74602f072312081966b92f51cce35f2b725f0fcd536e27382ea54b96406c47f5", size = 34983, upload-time = "2025-11-13T22:46:07.764Z" },
+]
+
+[[package]]
+name = "pulumiverse-grafana"
+version = "2.25.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "parver" },
+    { name = "pulumi" },
+    { name = "semver" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/06/c1/b9dcf6557afba487cf5df127111c5b6bb1ad18877f906fefecc8dbffc721/pulumiverse_grafana-2.25.1.tar.gz", hash = "sha256:ce29ed2a3c6a7e668ba7d036582690066763abfb741f4dfe1a458ea518dfa13d", size = 464928, upload-time = "2026-04-15T09:33:57.495Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5e/e3/ba614e137a8c7eac40b26399af0c90fe71b10d703aec4aad7c1b60e70f21/pulumiverse_grafana-2.25.1-py3-none-any.whl", hash = "sha256:cdcae0e65a70f1aa65c4a73813989a266e860908253af17e00f99319b4134277", size = 693224, upload-time = "2026-04-15T09:33:56.229Z" },
 ]
 
 [[package]]
