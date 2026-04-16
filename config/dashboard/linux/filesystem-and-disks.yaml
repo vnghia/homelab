@@ -1,4 +1,4 @@
-apiVersion: dashboard.grafana.app/v2beta1
+apiVersion: dashboard.grafana.app/v2
 kind: Dashboard
 metadata:
   name: linux-filesystem-and-disks
@@ -6,54 +6,73 @@ spec:
   annotations:
     - kind: AnnotationQuery
       spec:
-        builtIn: true
-        enable: true
-        hide: true
-        iconColor: rgba(0, 211, 255, 1)
-        name: Annotations & Alerts
         query:
+          kind: DataQuery
+          group: grafana
+          version: v0
           datasource:
             name: "-- Grafana --"
-          group: grafana
-          kind: DataQuery
           spec: {}
-          version: v0
+        enable: true
+        hide: true
+        iconColor: "rgba(0, 211, 255, 1)"
+        name: Annotations & Alerts
+        builtIn: true
   cursorSync: "Off"
   editable: false
   elements:
     filesystem-usage-by-mountpoint:
       kind: Panel
       spec:
-        id: 0
+        id: 1
+        title: Filesystem space availabe
+        description: Filesystem space utilisation in bytes, by mountpoint.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: &datasource
-                      name:
-                        secret: openobserve-prometheus-datasource-uid
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_avail_bytes{host="$host", fstype!="", mountpoint!=""}
                       legendFormat: "{{ mountpoint }} free"
-                    version: v0
                   refId: A
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Filesystem space utilisation in bytes, by mountpoint.
-        links: []
-        title: Filesystem space availabe
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                unit: bytes
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
                 custom:
@@ -85,66 +104,51 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: bytes
               overrides: []
-            options:
-              legend:
-                calcs: []
-                displayMode: list
-                placement: bottom
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
     disk-usage-by-mountpoint:
       kind: Panel
       spec:
-        id: 1
+        id: 2
+        title: Disk space usage
+        description: Disk utilisation in percent, by mountpoint. Some duplication can occur if the same filesystem is mounted in multiple locations.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_size_bytes{host="$host", fstype!="", mountpoint!=""}
                       format: table
                       instant: true
-                    version: v0
                   refId: TOTAL
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_avail_bytes{host="$host", fstype!="", mountpoint!=""}
                       format: table
                       instant: true
                       legendFormat: "{{ mountpoint }} free"
-                    version: v0
                   refId: FREE
-            queryOptions: {}
+                  hidden: false
             transformations:
-              - kind: groupBy
+              - kind: Transformation
+                group: groupBy
                 spec:
-                  id: groupBy
                   options:
                     fields:
                       "Value #FREE":
@@ -158,13 +162,13 @@ spec:
                       mountpoint:
                         aggregations: []
                         operation: groupby
-              - kind: merge
+              - kind: Transformation
+                group: merge
                 spec:
-                  id: merge
                   options: {}
-              - kind: calculateField
+              - kind: Transformation
+                group: calculateField
                 spec:
-                  id: calculateField
                   options:
                     alias: Used
                     binary:
@@ -175,11 +179,11 @@ spec:
                     mode: binary
                     reduce:
                       reducer: sum
-              - kind: calculateField
+              - kind: Transformation
+                group: calculateField
                 spec:
-                  id: calculateField
                   options:
-                    alias: Used, %
+                    alias: "Used, %"
                     binary:
                       left: Used
                       operator: /
@@ -188,14 +192,14 @@ spec:
                     mode: binary
                     reduce:
                       reducer: sum
-              - kind: organize
+              - kind: Transformation
+                group: organize
                 spec:
-                  id: organize
                   options:
                     excludeByName: {}
                     indexByName:
                       Used: 3
-                      Used, %: 4
+                      "Used, %": 4
                       "Value #FREE (lastNotNull)": 2
                       "Value #TOTAL (lastNotNull)": 1
                       mountpoint: 0
@@ -203,25 +207,35 @@ spec:
                       "Value #FREE (lastNotNull)": Available
                       "Value #TOTAL (lastNotNull)": Size
                       mountpoint: Mounted on
-              - kind: sortBy
+              - kind: Transformation
+                group: sortBy
                 spec:
-                  id: sortBy
                   options:
                     fields: {}
                     sort:
                       - desc: false
                         field: Mounted on
-        description: >-
-          Disk utilisation in percent, by mountpoint. Some duplication can occur
-          if the same filesystem is mounted in multiple locations.
-        links: []
-        title: Disk space usage
+            queryOptions: {}
         vizConfig:
-          group: table
           kind: VizConfig
+          group: table
+          version: ""
           spec:
+            options:
+              cellHeight: sm
+              showHeader: true
             fieldConfig:
               defaults:
+                unit: bytes
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: light-blue
+                    - value: 0.8
+                      color: light-yellow
+                    - value: 0.9
+                      color: light-red
                 custom:
                   align: auto
                   cellOptions:
@@ -229,16 +243,6 @@ spec:
                   footer:
                     reducers: []
                   inspect: false
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: light-blue
-                      value: 0
-                    - color: light-yellow
-                      value: 0.8
-                    - color: light-red
-                      value: 0.9
-                unit: bytes
               overrides:
                 - matcher:
                     id: byName
@@ -266,7 +270,7 @@ spec:
                       value: 80
                 - matcher:
                     id: byName
-                    options: Used, %
+                    options: "Used, %"
                   properties:
                     - id: custom.cellOptions
                       value:
@@ -279,42 +283,57 @@ spec:
                       value: 0
                     - id: unit
                       value: percentunit
-            options:
-              cellHeight: sm
-              showHeader: true
     free-inode:
       kind: Panel
       spec:
-        id: 2
+        id: 3
+        title: Free inodes
+        description: The inode is a data structure in a Unix-style file system that describes a file-system object such as a file or a directory.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_files_free{host="$host", fstype!="", mountpoint!=""}
                       legendFormat: "{{ mountpoint }} inodes free"
-                    version: v0
                   refId: A
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: >-
-          The inode is a data structure in a Unix-style file system that
-          describes a file-system object such as a file or a directory.
-        links: []
-        title: Free inodes
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                unit: short
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
                 custom:
@@ -346,98 +365,38 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: short
               overrides: []
-            options:
-              legend:
-                calcs: []
-                displayMode: list
-                placement: bottom
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
     total-inode:
       kind: Panel
       spec:
-        id: 3
+        id: 4
+        title: Total inodes
+        description: The inode is a data structure in a Unix-style file system that describes a file-system object such as a file or a directory.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_files{host="$host", fstype!="", mountpoint!=""}
                       legendFormat: "{{ mountpoint }} inodes total"
-                    version: v0
                   refId: A
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: >-
-          The inode is a data structure in a Unix-style file system that
-          describes a file-system object such as a file or a directory.
-        links: []
-        title: Total inodes
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
-            fieldConfig:
-              defaults:
-                color:
-                  mode: palette-classic
-                custom:
-                  axisBorderShow: false
-                  axisCenteredZero: false
-                  axisColorMode: text
-                  axisLabel: ""
-                  axisPlacement: auto
-                  barAlignment: 0
-                  barWidthFactor: 0.6
-                  drawStyle: line
-                  fillOpacity: 1
-                  gradientMode: opacity
-                  hideFrom:
-                    legend: false
-                    tooltip: false
-                    viz: false
-                  insertNulls: false
-                  lineInterpolation: smooth
-                  lineWidth: 2
-                  pointSize: 5
-                  scaleDistribution:
-                    type: linear
-                  showPoints: never
-                  showValues: false
-                  spanNulls: false
-                  stacking:
-                    group: A
-                    mode: none
-                  thresholdsStyle:
-                    mode: "off"
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: short
-              overrides: []
             options:
               legend:
                 calcs: []
@@ -448,49 +407,16 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    filesystem-error-or-read-only:
-      kind: Panel
-      spec:
-        id: 4
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: node_filesystem_device_error{host="$host", fstype!="", mountpoint!=""}
-                      legendFormat: "{{ mountpoint }} device error"
-                    version: v0
-                  refId: A
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: node_filesystem_readonly{host="$host", fstype!="", mountpoint!=""}
-                      legendFormat: "{{ mountpoint }} read-only"
-                    version: v0
-                  refId: B
-            queryOptions: {}
-            transformations: []
-        description: ""
-        links: []
-        title: Filesystems with errors / read-only
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: short
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
                 custom:
@@ -522,113 +448,149 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
+              overrides: []
+    filesystem-error-or-read-only:
+      kind: Panel
+      spec:
+        id: 5
+        title: Filesystems with errors / read-only
+        description: ""
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: node_filesystem_device_error{host="$host", fstype!="", mountpoint!=""}
+                      legendFormat: "{{ mountpoint }} device error"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: node_filesystem_readonly{host="$host", fstype!="", mountpoint!=""}
+                      legendFormat: "{{ mountpoint }} read-only"
+                  refId: B
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
                 max: 1
                 thresholds:
                   mode: absolute
                   steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
               overrides: []
-            options:
-              legend:
-                calcs: []
-                displayMode: list
-                placement: bottom
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
     file-descriptors:
       kind: Panel
       spec:
-        id: 5
+        id: 6
+        title: File descriptors
+        description: |
+          File descriptor is a handle to an open file or input/output (I/O) resource, such as a network socket or a pipe.
+          The operating system uses file descriptors to keep track of open files and I/O resources, and provides a way for programs to read from and write to them.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filefd_maximum{host="$host"}
                       legendFormat: Maximum open file descriptors
-                    version: v0
                   refId: A
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filefd_allocated{host="$host"}
                       legendFormat: Open file descriptors
-                    version: v0
                   refId: B
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: >
-          File descriptor is a handle to an open file or input/output (I/O)
-          resource, such as a network socket or a pipe.
-
-          The operating system uses file descriptors to keep track of open files
-          and I/O resources, and provides a way for programs to read from and
-          write to them.
-        links: []
-        title: File descriptors
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
-            fieldConfig:
-              defaults:
-                color:
-                  mode: palette-classic
-                custom:
-                  axisBorderShow: false
-                  axisCenteredZero: false
-                  axisColorMode: text
-                  axisLabel: ""
-                  axisPlacement: auto
-                  barAlignment: 0
-                  barWidthFactor: 0.6
-                  drawStyle: line
-                  fillOpacity: 1
-                  gradientMode: opacity
-                  hideFrom:
-                    legend: false
-                    tooltip: false
-                    viz: false
-                  insertNulls: false
-                  lineInterpolation: smooth
-                  lineWidth: 2
-                  pointSize: 5
-                  scaleDistribution:
-                    type: linear
-                  showPoints: never
-                  showValues: false
-                  spanNulls: false
-                  stacking:
-                    group: A
-                    mode: none
-                  thresholdsStyle:
-                    mode: "off"
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-              overrides: []
             options:
               legend:
                 calcs: []
@@ -639,61 +601,15 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    disk-read-write-by-device:
-      kind: Panel
-      spec:
-        id: 6
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: irate(node_disk_read_bytes_total{host="$host", device!=""}[$__rate_interval])
-                      legendFormat: "{{ device }} read"
-                    version: v0
-                  refId: A
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: irate(node_disk_written_bytes_total{host="$host", device!=""}[$__rate_interval])
-                      legendFormat: "{{ device }} written"
-                    version: v0
-                  refId: B
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: irate(node_disk_io_time_seconds_total{host="$host", device!=""}[$__rate_interval])
-                      legendFormat: "{{ device }} io util"
-                    version: v0
-                  refId: C
-            queryOptions: {}
-            transformations: []
-        description: Disk read/writes in bytes per second.
-        links: []
-        title: Disk reads/writes
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
                 custom:
@@ -725,14 +641,115 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
+              overrides: []
+    disk-read-write-by-device:
+      kind: Panel
+      spec:
+        id: 7
+        title: Disk reads/writes
+        description: Disk read/writes in bytes per second.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: irate(node_disk_read_bytes_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} read"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: irate(node_disk_written_bytes_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} written"
+                  refId: B
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: irate(node_disk_io_time_seconds_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} io util"
+                  refId: C
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
+                unit: binBps
                 thresholds:
                   mode: absolute
                   steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: binBps
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
+                color:
+                  mode: palette-classic
+                custom:
+                  axisBorderShow: false
+                  axisCenteredZero: false
+                  axisColorMode: text
+                  axisLabel: ""
+                  axisPlacement: auto
+                  barAlignment: 0
+                  barWidthFactor: 0.6
+                  drawStyle: line
+                  fillOpacity: 1
+                  gradientMode: opacity
+                  hideFrom:
+                    legend: false
+                    tooltip: false
+                    viz: false
+                  insertNulls: false
+                  lineInterpolation: smooth
+                  lineWidth: 2
+                  pointSize: 5
+                  scaleDistribution:
+                    type: linear
+                  showPoints: never
+                  showValues: false
+                  spanNulls: false
+                  stacking:
+                    group: A
+                    mode: none
+                  thresholdsStyle:
+                    mode: "off"
               overrides:
                 - matcher:
                     id: byRegexp
@@ -744,6 +761,50 @@ spec:
                       value: points
                     - id: unit
                       value: percent
+    disk-io-by-device:
+      kind: Panel
+      spec:
+        id: 8
+        title: Disk I/O
+        description: The number of I/O requests per second for the device/volume.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: irate(node_disk_reads_completed_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} reads"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: irate(node_disk_writes_completed_total{host="$host", device!=""}[$__rate_interval])
+                      legendFormat: "{{ device }} writes"
+                  refId: B
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs: []
@@ -754,50 +815,16 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    disk-io-by-device:
-      kind: Panel
-      spec:
-        id: 7
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: irate(node_disk_reads_completed_total{host="$host", device!=""}[$__rate_interval])
-                      legendFormat: "{{ device }} reads"
-                    version: v0
-                  refId: A
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: irate(node_disk_writes_completed_total{host="$host", device!=""}[$__rate_interval])
-                      legendFormat: "{{ device }} writes"
-                    version: v0
-                  refId: B
-            queryOptions: {}
-            transformations: []
-        description: |
-          The number of I/O requests per second for the device/volume.
-        links: []
-        title: Disk I/O
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: iops
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
                 custom:
@@ -829,14 +856,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: iops
               overrides:
                 - matcher:
                     id: byRegexp
@@ -844,69 +863,78 @@ spec:
                   properties:
                     - id: custom.transform
                       value: negative-Y
-            options:
-              legend:
-                calcs: []
-                displayMode: list
-                placement: bottom
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
     disk-avg-wait-time:
       kind: Panel
       spec:
-        id: 8
+        id: 9
+        title: Disk average wait time
+        description: |
+          The average time for requests issued to the device to be served.
+          This includes the time spent by the requests in queue and the time spent servicing them.'
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         irate(node_disk_read_time_seconds_total{host="$host", device!=""}[$__rate_interval])
                         /
                         irate(node_disk_reads_completed_total{host="$host", device!=""}[$__rate_interval])
                       legendFormat: "{{ device }} avg read time"
-                    version: v0
                   refId: A
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         irate(node_disk_write_time_seconds_total{host="$host", device!=""}[$__rate_interval])
                         /
                         irate(node_disk_writes_completed_total{host="$host", device!=""}[$__rate_interval])
                       legendFormat: "{{ device }} avg write time"
-                    version: v0
                   refId: B
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: >
-          The average time for requests issued to the device to be served.
-
-          This includes the time spent by the requests in queue and the time
-          spent servicing them.'
-        links: []
-        title: Disk average wait time
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                unit: s
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
                 custom:
@@ -938,14 +966,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: s
               overrides:
                 - matcher:
                     id: byRegexp
@@ -953,47 +973,56 @@ spec:
                   properties:
                     - id: custom.transform
                       value: negative-Y
-            options:
-              legend:
-                calcs: []
-                displayMode: list
-                placement: bottom
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
     disk-avg-queue-time:
       kind: Panel
       spec:
-        id: 9
+        id: 10
+        title: Disk average queue
+        description: Disk average IO queue.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_disk_io_time_weighted_seconds_total{host="$host", device!=""}[$__rate_interval])
                       legendFormat: "{{ device }} avg queue"
-                    version: v0
                   refId: A
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Disk average IO queue.
-        links: []
-        title: Disk average queue
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: bottom
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
                 custom:
@@ -1025,13 +1054,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
               overrides:
                 - matcher:
                     id: byRegexp
@@ -1039,22 +1061,13 @@ spec:
                   properties:
                     - id: custom.transform
                       value: negative-Y
-            options:
-              legend:
-                calcs: []
-                displayMode: list
-                placement: bottom
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
   layout:
     kind: RowsLayout
     spec:
       rows:
         - kind: RowsLayoutRow
           spec:
+            title: Filesystem
             collapse: false
             layout:
               kind: GridLayout
@@ -1062,61 +1075,61 @@ spec:
                 items:
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 0
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: filesystem-usage-by-mountpoint
-                      height: 8
-                      width: 12
-                      x: 0
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 0
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: disk-usage-by-mountpoint
-                      height: 8
-                      width: 12
-                      x: 12
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 8
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: free-inode
-                      height: 8
-                      width: 12
-                      x: 0
-                      y: 8
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 8
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: total-inode
-                      height: 8
-                      width: 12
-                      x: 12
-                      y: 8
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 16
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: filesystem-error-or-read-only
-                      height: 8
-                      width: 12
-                      x: 0
-                      y: 16
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 16
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: file-descriptors
-                      height: 8
-                      width: 12
-                      x: 12
-                      y: 16
-            title: Filesystem
         - kind: RowsLayoutRow
           spec:
+            title: Disk
             collapse: false
             layout:
               kind: GridLayout
@@ -1124,77 +1137,79 @@ spec:
                 items:
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 0
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: disk-read-write-by-device
-                      height: 8
-                      width: 12
-                      x: 0
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 0
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: disk-io-by-device
-                      height: 8
-                      width: 12
-                      x: 12
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 8
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: disk-avg-wait-time
-                      height: 8
-                      width: 12
-                      x: 0
-                      y: 8
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 8
+                      width: 12
+                      height: 8
                       element:
                         kind: ElementReference
                         name: disk-avg-queue-time
-                      height: 8
-                      width: 12
-                      x: 12
-                      y: 8
-            title: Disk
   links:
-    - asDropdown: false
-      icon: ""
-      includeVars: false
-      keepTime: true
-      tags: []
-      targetBlank: false
-      title: Back to Linux fleet overview
-      tooltip: ""
+    - title: Back to Linux fleet overview
       type: link
+      icon: ""
+      tooltip: ""
       url: /d/linux-fleet-overview/fleet-overview
-    - asDropdown: false
-      icon: ""
+      tags: []
+      asDropdown: false
+      targetBlank: false
       includeVars: false
       keepTime: true
-      tags: []
-      targetBlank: false
-      title: Back to Linux node overview
-      tooltip: ""
+    - title: Back to Linux node overview
       type: link
-      url: /d/linux-node-overview/node-overview
-    - asDropdown: true
       icon: ""
-      includeVars: true
+      tooltip: ""
+      url: /d/linux-node-overview/node-overview
+      tags: []
+      asDropdown: false
+      targetBlank: false
+      includeVars: false
       keepTime: true
+    - title: All Linux dashboards
+      type: dashboards
+      icon: ""
+      tooltip: ""
       tags:
         - linux
+      asDropdown: true
       targetBlank: false
-      title: All Linux dashboards
-      tooltip: ""
-      type: dashboards
+      includeVars: true
+      keepTime: true
   liveNow: false
   preload: false
   tags:
     - linux
   timeSettings:
+    timezone: browser
+    from: now-1h
+    to: now
     autoRefresh: 30s
     autoRefreshIntervals:
       - 15s
@@ -1206,13 +1221,22 @@ spec:
       - 1h
       - 2h
       - 1d
-    fiscalYearStartMonth: 0
-    from: now-1h
     hideTimepicker: false
-    timezone: browser
-    to: now
+    fiscalYearStartMonth: 0
   title: Filesystem and disks
   variables:
+    - kind: DatasourceVariable
+      spec:
+        name: datasource
+        pluginId: prometheus
+        refresh: never
+        options: []
+        multi: false
+        includeAll: false
+        label: Data source
+        hide: inControlsMenu
+        skipUrlSync: false
+        allowCustomValue: true
     - kind: QueryVariable
       spec:
         name: host
@@ -1222,18 +1246,19 @@ spec:
         label: Host
         hide: dontHide
         refresh: onDashboardLoad
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
-          spec:
-            __legacyStringValue: label_values(node_uname_info, host)
+          group: prometheus
           version: v0
+          datasource:
+            name: ${datasource}
+          spec:
+            __legacyStringValue: "label_values(node_uname_info, host)"
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: false
         includeAll: false
         allowCustomValue: false
-status: {}
