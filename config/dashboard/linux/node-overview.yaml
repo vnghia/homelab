@@ -1,4 +1,4 @@
-apiVersion: dashboard.grafana.app/v2beta1
+apiVersion: dashboard.grafana.app/v2
 kind: Dashboard
 metadata:
   name: linux-node-overview
@@ -6,18 +6,18 @@ spec:
   annotations:
     - kind: AnnotationQuery
       spec:
-        builtIn: true
-        enable: true
-        hide: true
-        iconColor: rgba(0, 211, 255, 1)
-        name: Annotations & Alerts
         query:
+          kind: DataQuery
+          group: grafana
+          version: v0
           datasource:
             name: "-- Grafana --"
-          group: grafana
-          kind: DataQuery
           spec: {}
-          version: v0
+        enable: true
+        hide: true
+        iconColor: "rgba(0, 211, 255, 1)"
+        name: Annotations & Alerts
+        builtIn: true
   cursorSync: "Off"
   editable: false
   elements:
@@ -26,9 +26,7 @@ spec:
       spec:
         id: 1
         title: Uptime
-        description: >-
-          The duration of time that has passed since the last reboot or system
-          start.
+        description: The duration of time that has passed since the last reboot or system start.
         links: []
         data:
           kind: QueryGroup
@@ -40,9 +38,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: &datasource
-                      name:
-                        secret: openobserve-prometheus-datasource-uid
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: time() - node_boot_time_seconds{host="$host"}
                   refId: A
@@ -52,6 +49,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: value
@@ -91,7 +89,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_uname_info{host="$host"}
                       format: table
@@ -102,6 +101,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: fixed
@@ -133,7 +133,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_uname_info{host="$host"}
                       format: table
@@ -144,6 +145,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: fixed
@@ -175,7 +177,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_os_info{host="$host"}
                       format: table
@@ -186,6 +189,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: fixed
@@ -205,12 +209,9 @@ spec:
       spec:
         id: 5
         title: CPU count
-        description: >
-          CPU count is the number of processor cores or central processing units
-          (CPUs) in a computer,
-
-          determining its processing capability and ability to handle tasks
-          concurrently.
+        description: |
+          CPU count is the number of processor cores or central processing units (CPUs) in a computer,
+          determining its processing capability and ability to handle tasks concurrently.
         links: []
         data:
           kind: QueryGroup
@@ -222,10 +223,10 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
-                      expr: >-
-                        count without (cpu) (node_cpu_seconds_total{host="$host", mode="idle"})
+                      expr: count without (cpu) (node_cpu_seconds_total{host="$host", mode="idle"})
                       legendFormat: Cores
                   refId: A
                   hidden: false
@@ -234,6 +235,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: fixed
@@ -253,15 +255,10 @@ spec:
       spec:
         id: 6
         title: Memory total
-        description: >
+        description: |
           Amount of random-access memory (RAM) installed.
-
-          It represents the system's available working memory that applications
-          and the operating system use to perform tasks.
-
-          A higher memory total generally leads to better system performance and
-          the ability to run more demanding applications and processes
-          simultaneously.
+          It represents the system's available working memory that applications and the operating system use to perform tasks.
+          A higher memory total generally leads to better system performance and the ability to run more demanding applications and processes simultaneously.
         links: []
         data:
           kind: QueryGroup
@@ -273,7 +270,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_memtotal_bytes{host="$host"}
                       legendFormat: Memory total
@@ -284,6 +282,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: fixed
@@ -301,21 +300,14 @@ spec:
     total-swap:
       kind: Panel
       spec:
-        id: 8
+        id: 7
         title: Total swap
-        description: >
+        description: |
           Total swap available.
 
-
-          Swap is a space on a storage device (usually a dedicated swap
-          partition or a swap file) 
-
-          used as virtual memory when the physical RAM (random-access memory) is
-          fully utilized.
-
-          Swap space helps prevent memory-related performance issues by
-          temporarily transferring less-used data from RAM to disk,
-
+          Swap is a space on a storage device (usually a dedicated swap partition or a swap file) 
+          used as virtual memory when the physical RAM (random-access memory) is fully utilized.
+          Swap space helps prevent memory-related performance issues by temporarily transferring less-used data from RAM to disk,
           freeing up physical memory for active processes and applications.
         links: []
         data:
@@ -328,7 +320,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_swaptotal_bytes{host="$host"}
                   refId: A
@@ -338,6 +331,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: fixed
@@ -355,7 +349,7 @@ spec:
     root-mount-size:
       kind: Panel
       spec:
-        id: 9
+        id: 8
         title: Root mount size
         description: |
           Total capacity on the primary mount point /.
@@ -370,7 +364,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_size_bytes{host="$host", mountpoint="/", fstype!="rootfs"}
                   refId: A
@@ -380,6 +375,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: fixed
@@ -397,22 +393,14 @@ spec:
     cpu-usage-percent:
       kind: Panel
       spec:
-        id: 10
+        id: 9
         title: CPU usage
-        description: >
-          Total CPU utilization percent is a metric that indicates the overall
-          level of central processing unit (CPU) usage in a computer system.
-
+        description: |
+          Total CPU utilization percent is a metric that indicates the overall level of central processing unit (CPU) usage in a computer system.
           It represents the combined load placed on all CPU cores or processors.
 
-
-          For instance, if the total CPU utilization percent is 50%, it means
-          that,
-
-          on average, half of the CPU's processing capacity is being used to
-          execute tasks. A higher percentage indicates that the CPU is working
-          more intensively, potentially leading to system slowdowns if it
-          remains consistently high.
+          For instance, if the total CPU utilization percent is 50%, it means that,
+          on average, half of the CPU's processing capacity is being used to execute tasks. A higher percentage indicates that the CPU is working more intensively, potentially leading to system slowdowns if it remains consistently high.
         links: []
         data:
           kind: QueryGroup
@@ -424,7 +412,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         (((count by (host) (count(node_cpu_seconds_total{host="$host"}) by (cpu, host)))
@@ -440,6 +429,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: value
@@ -459,22 +449,14 @@ spec:
     per-cpu-usage-percent:
       kind: Panel
       spec:
-        id: 11
+        id: 10
         title: CPU usage
-        description: >
-          Total CPU utilization percent is a metric that indicates the overall
-          level of central processing unit (CPU) usage in a computer system.
-
+        description: |
+          Total CPU utilization percent is a metric that indicates the overall level of central processing unit (CPU) usage in a computer system.
           It represents the combined load placed on all CPU cores or processors.
 
-
-          For instance, if the total CPU utilization percent is 50%, it means
-          that,
-
-          on average, half of the CPU's processing capacity is being used to
-          execute tasks. A higher percentage indicates that the CPU is working
-          more intensively, potentially leading to system slowdowns if it
-          remains consistently high.
+          For instance, if the total CPU utilization percent is 50%, it means that,
+          on average, half of the CPU's processing capacity is being used to execute tasks. A higher percentage indicates that the CPU is working more intensively, potentially leading to system slowdowns if it remains consistently high.
         links: []
         data:
           kind: QueryGroup
@@ -486,10 +468,11 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: (100 - sum without (mode) (rate(node_cpu_seconds_total{host="$host", mode=~"idle|iowait|steal"}[$__rate_interval])) * 100)
-                      legendFormat: CPU {{cpu}}
+                      legendFormat: "CPU {{cpu}}"
                   refId: A
                   hidden: false
             transformations: []
@@ -497,6 +480,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -523,14 +507,12 @@ spec:
     load-average:
       kind: Panel
       spec:
-        id: 12
+        id: 11
         title: Load average
-        description: >
+        description: |
           System load average over the previous 1, 5, and 15 minute ranges.
 
-
-          A measurement of how many processes are waiting for CPU cycles. The
-          maximum number is the number of CPU cores for the node.
+          A measurement of how many processes are waiting for CPU cycles. The maximum number is the number of CPU cores for the node.
         links: []
         data:
           kind: QueryGroup
@@ -542,7 +524,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_load1{host="$host"}
                       legendFormat: 1m
@@ -554,7 +537,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_load5{host="$host"}
                       legendFormat: 5m
@@ -566,7 +550,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_load15{host="$host"}
                       legendFormat: 15m
@@ -578,7 +563,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: count without (cpu) (node_cpu_seconds_total{host="$host", mode="idle"})
                       legendFormat: Cores
@@ -589,6 +575,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -627,11 +614,9 @@ spec:
     memory-usage-percent:
       kind: Panel
       spec:
-        id: 13
+        id: 12
         title: Memory usage
-        description: >-
-          RAM (random-access memory) currently in use by the operating system
-          and running applications, in percent.
+        description: RAM (random-access memory) currently in use by the operating system and running applications, in percent.
         links: []
         data:
           kind: QueryGroup
@@ -643,7 +628,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: |
                         100 -
@@ -659,6 +645,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: stat
+          version: ""
           spec:
             options:
               colorMode: value
@@ -678,23 +665,14 @@ spec:
     memory-usage:
       kind: Panel
       spec:
-        id: 14
+        id: 13
         title: Memory usage
-        description: >
+        description: |
           - Used: The amount of physical memory currently in use by the system.
-
-          - Cached: The amount of physical memory used for caching data from
-          disk. The Linux kernel uses available memory to cache data that is
-          read from or written to disk. This helps speed up disk access times.
-
+          - Cached: The amount of physical memory used for caching data from disk. The Linux kernel uses available memory to cache data that is read from or written to disk. This helps speed up disk access times.
           - Free: The amount of physical memory that is currently not in use.
-
-          - Buffers: The amount of physical memory used for temporary storage of
-          data being transferred between devices or applications.
-
-          - Available: The amount of physical memory that is available for use
-          by applications. This takes into account memory that is currently
-          being used for caching but can be freed up if needed.
+          - Buffers: The amount of physical memory used for temporary storage of data being transferred between devices or applications.
+          - Available: The amount of physical memory that is available for use by applications. This takes into account memory that is currently being used for caching but can be freed up if needed.
         links: []
         data:
           kind: QueryGroup
@@ -706,7 +684,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: |
                         (
@@ -727,7 +706,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_cached_bytes{host="$host"}
                       legendFormat: Memory cached
@@ -739,7 +719,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_memavailable_bytes{host="$host"}
                       legendFormat: Memory available
@@ -751,7 +732,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_buffers_bytes{host="$host"}
                       legendFormat: Memory buffers
@@ -763,7 +745,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_memfree_bytes{host="$host"}
                       legendFormat: Memory free
@@ -775,7 +758,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_memtotal_bytes{host="$host"}
                       legendFormat: Memory total
@@ -786,6 +770,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -807,7 +792,7 @@ spec:
               overrides:
                 - matcher:
                     id: byRegexp
-                    options: .*(T|t)otal.*
+                    options: ".*(T|t)otal.*"
                   properties:
                     - id: color
                       value:
@@ -840,7 +825,7 @@ spec:
     disk-read-write-by-device:
       kind: Panel
       spec:
-        id: 15
+        id: 14
         title: Disk reads/writes
         description: Disk read/writes in bytes per second.
         links: []
@@ -854,7 +839,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_disk_read_bytes_total{host="$host", device!=""}[$__rate_interval])
                       legendFormat: "{{ device }} read"
@@ -866,7 +852,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_disk_written_bytes_total{host="$host", device!=""}[$__rate_interval])
                       legendFormat: "{{ device }} written"
@@ -878,7 +865,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_disk_io_time_seconds_total{host="$host", device!=""}[$__rate_interval])
                       legendFormat: "{{ device }} io util"
@@ -889,6 +877,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -920,11 +909,9 @@ spec:
     disk-usage-by-mountpoint:
       kind: Panel
       spec:
-        id: 16
+        id: 15
         title: Disk space usage
-        description: >-
-          Disk utilisation in percent, by mountpoint. Some duplication can occur
-          if the same filesystem is mounted in multiple locations.
+        description: Disk utilisation in percent, by mountpoint. Some duplication can occur if the same filesystem is mounted in multiple locations.
         links: []
         data:
           kind: QueryGroup
@@ -936,7 +923,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_size_bytes{host="$host", fstype!="", mountpoint!=""}
                       format: table
@@ -949,7 +937,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_avail_bytes{host="$host", fstype!="", mountpoint!=""}
                       format: table
@@ -959,8 +948,8 @@ spec:
                   hidden: false
             transformations:
               - kind: Transformation
+                group: groupBy
                 spec:
-                  id: groupBy
                   options:
                     fields:
                       "Value #FREE":
@@ -975,12 +964,12 @@ spec:
                         aggregations: []
                         operation: groupby
               - kind: Transformation
+                group: merge
                 spec:
-                  id: merge
                   options: {}
               - kind: Transformation
+                group: calculateField
                 spec:
-                  id: calculateField
                   options:
                     alias: Used
                     binary:
@@ -992,10 +981,10 @@ spec:
                     reduce:
                       reducer: sum
               - kind: Transformation
+                group: calculateField
                 spec:
-                  id: calculateField
                   options:
-                    alias: Used, %
+                    alias: "Used, %"
                     binary:
                       left: Used
                       operator: /
@@ -1005,13 +994,13 @@ spec:
                     reduce:
                       reducer: sum
               - kind: Transformation
+                group: organize
                 spec:
-                  id: organize
                   options:
                     excludeByName: {}
                     indexByName:
                       Used: 3
-                      Used, %: 4
+                      "Used, %": 4
                       "Value #FREE (lastNotNull)": 2
                       "Value #TOTAL (lastNotNull)": 1
                       mountpoint: 0
@@ -1020,8 +1009,8 @@ spec:
                       "Value #TOTAL (lastNotNull)": Size
                       mountpoint: Mounted on
               - kind: Transformation
+                group: sortBy
                 spec:
-                  id: sortBy
                   options:
                     fields: {}
                     sort:
@@ -1031,6 +1020,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: table
+          version: ""
           spec:
             options: {}
             fieldConfig:
@@ -1072,7 +1062,7 @@ spec:
                       value: 80
                 - matcher:
                     id: byName
-                    options: Used, %
+                    options: "Used, %"
                   properties:
                     - id: custom.cellOptions
                       value:
@@ -1088,7 +1078,7 @@ spec:
     network-traffic:
       kind: Panel
       spec:
-        id: 17
+        id: 16
         title: Network traffic
         description: Network traffic (bits per sec) measures data transmitted and received.
         links: []
@@ -1102,16 +1092,13 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
-                      expr: >
+                      expr: |
                         irate(node_network_receive_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
-
-                        # only show interfaces that had traffic change at least
-                        once during selected dashboard interval:
-
+                        # only show interfaces that had traffic change at least once during selected dashboard interval:
                         and
-
                         increase(node_network_receive_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__range]) > 0
                       legendFormat: "{{ device }} received"
                   refId: A
@@ -1122,16 +1109,13 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
-                      expr: >
+                      expr: |
                         irate(node_network_transmit_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
-
-                        # only show interfaces that had traffic change at least
-                        once during selected dashboard interval:
-
+                        # only show interfaces that had traffic change at least once during selected dashboard interval:
                         and
-
                         increase(node_network_transmit_bytes_total{host="$host", device!~"^(br-|veth).+$"}[$__range]) > 0
                       legendFormat: "{{ device }} transmitted"
                   refId: B
@@ -1141,6 +1125,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1172,40 +1157,24 @@ spec:
     network-errors:
       kind: Panel
       spec:
-        id: 18
+        id: 17
         title: Network errors and dropped packets
-        description: >
+        description: |
           **Network errors**:
 
+          Network errors refer to issues that occur during the transmission of data across a network. 
 
-          Network errors refer to issues that occur during the transmission of
-          data across a network. 
+          These errors can result from various factors, including physical issues, jitter, collisions, noise and interference.
 
-
-          These errors can result from various factors, including physical
-          issues, jitter, collisions, noise and interference.
-
-
-          Monitoring network errors is essential for diagnosing and resolving
-          issues, as they can indicate problems with network hardware or
-          environmental factors affecting network quality.
-
+          Monitoring network errors is essential for diagnosing and resolving issues, as they can indicate problems with network hardware or environmental factors affecting network quality.
 
           **Dropped packets**:
 
+          Dropped packets occur when data packets traveling through a network are intentionally discarded or lost due to congestion, resource limitations, or network configuration issues. 
 
-          Dropped packets occur when data packets traveling through a network
-          are intentionally discarded or lost due to congestion, resource
-          limitations, or network configuration issues. 
+          Common causes include network congestion, buffer overflows, QoS settings, and network errors, as corrupted or incomplete packets may be discarded by receiving devices.
 
-
-          Common causes include network congestion, buffer overflows, QoS
-          settings, and network errors, as corrupted or incomplete packets may
-          be discarded by receiving devices.
-
-
-          Dropped packets can impact network performance and lead to issues such
-          as degraded voice or video quality in real-time applications.
+          Dropped packets can impact network performance and lead to issues such as degraded voice or video quality in real-time applications.
         links: []
         data:
           kind: QueryGroup
@@ -1217,7 +1186,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_errs_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) > 0
                       legendFormat: "{{ device }} errors transmitted"
@@ -1229,7 +1199,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_errs_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) > 0
                       legendFormat: "{{ device }} errors received"
@@ -1241,7 +1212,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_transmit_drop_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) > 0
                       legendFormat: "{{ device }} transmitted dropped"
@@ -1253,7 +1225,8 @@ spec:
                     kind: DataQuery
                     group: prometheus
                     version: v0
-                    datasource: *datasource
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: irate(node_network_receive_drop_total{host="$host", device!~"^(br-|veth).+$"}[$__rate_interval]) > 0
                       legendFormat: "{{ device }} received dropped"
@@ -1264,6 +1237,7 @@ spec:
         vizConfig:
           kind: VizConfig
           group: timeseries
+          version: ""
           spec:
             options:
               legend:
@@ -1490,31 +1464,34 @@ spec:
                         kind: ElementReference
                         name: network-errors
   links:
-    - asDropdown: false
+    - title: Back to Linux fleet overview
+      type: link
       icon: ""
+      tooltip: ""
+      url: /d/linux-fleet-overview/fleet-overview
+      tags: []
+      asDropdown: false
+      targetBlank: false
       includeVars: false
       keepTime: true
-      tags: []
-      targetBlank: false
-      title: Back to Linux fleet overview
-      tooltip: ""
-      type: link
-      url: /d/linux-fleet-overview/fleet-overview
-    - asDropdown: true
+    - title: All Linux dashboards
+      type: dashboards
       icon: ""
-      includeVars: true
-      keepTime: true
+      tooltip: ""
       tags:
         - linux
+      asDropdown: true
       targetBlank: false
-      title: All Linux dashboards
-      tooltip: ""
-      type: dashboards
+      includeVars: true
+      keepTime: true
   liveNow: false
   preload: false
   tags:
     - linux
   timeSettings:
+    timezone: browser
+    from: now-1h
+    to: now
     autoRefresh: 30s
     autoRefreshIntervals:
       - 15s
@@ -1526,13 +1503,22 @@ spec:
       - 1h
       - 2h
       - 1d
-    fiscalYearStartMonth: 0
-    from: now-1h
     hideTimepicker: false
-    timezone: browser
-    to: now
+    fiscalYearStartMonth: 0
   title: Node overview
   variables:
+    - kind: DatasourceVariable
+      spec:
+        name: datasource
+        pluginId: prometheus
+        refresh: never
+        options: []
+        multi: false
+        includeAll: false
+        label: Data source
+        hide: inControlsMenu
+        skipUrlSync: false
+        allowCustomValue: true
     - kind: QueryVariable
       spec:
         name: host
@@ -1542,18 +1528,19 @@ spec:
         label: Host
         hide: dontHide
         refresh: onDashboardLoad
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
-          spec:
-            __legacyStringValue: label_values(node_uname_info, host)
+          group: prometheus
           version: v0
+          datasource:
+            name: ${datasource}
+          spec:
+            __legacyStringValue: "label_values(node_uname_info, host)"
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: false
         includeAll: false
         allowCustomValue: false
-status: {}
