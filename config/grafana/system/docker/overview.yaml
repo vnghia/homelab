@@ -616,7 +616,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: rate(container_network_receive_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      expr: rate(container_network_receive_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval]) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{name}}/{{interface}} rx drops"
@@ -631,7 +631,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: rate(container_network_transmit_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      expr: rate(container_network_transmit_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval]) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{name}}/{{interface}} tx drops"
@@ -646,7 +646,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: rate(container_network_receive_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      expr: rate(container_network_receive_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval]) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{name}}/{{interface}} rx errors"
@@ -661,7 +661,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: rate(container_network_transmit_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      expr: rate(container_network_transmit_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval]) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{name}}/{{interface}} tx errors"
