@@ -91,7 +91,6 @@ services:
           secret: key
         GF_SECURITY_DISABLE_GRAVATAR: true
         GF_PLUGINS_ENABLE_ALPHA: true
-        GF_FEATURE_TOGGLES_ENABLE: dashboardNewLayouts,sqlExpressions
     containers:
       reload-dashboards:
         oneshot: true
