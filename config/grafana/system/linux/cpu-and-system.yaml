@@ -1,7 +1,5 @@
 apiVersion: dashboard.grafana.app/v2
 kind: Dashboard
-metadata:
-  name: linux-cpu-and-system
 spec:
   annotations:
     - kind: AnnotationQuery
@@ -946,6 +944,10 @@ spec:
         name: datasource
         pluginId: prometheus
         refresh: never
+        regex: ""
+        current:
+          text: ""
+          value: ""
         options: []
         multi: false
         includeAll: false
