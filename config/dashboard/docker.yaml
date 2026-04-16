@@ -1,71 +1,57 @@
-apiVersion: dashboard.grafana.app/v2beta1
+apiVersion: dashboard.grafana.app/v2
 kind: Dashboard
-metadata:
-  name: docker
 spec:
   annotations:
     - kind: AnnotationQuery
       spec:
-        builtIn: true
-        enable: true
-        hide: true
-        iconColor: rgba(0, 211, 255, 1)
-        name: Annotations & Alerts
         query:
+          kind: DataQuery
+          group: grafana
+          version: v0
           datasource:
             name: "-- Grafana --"
-          group: grafana
-          kind: DataQuery
           spec: {}
-          version: v0
+        enable: true
+        hide: true
+        iconColor: "rgba(0, 211, 255, 1)"
+        name: Annotations & Alerts
+        builtIn: true
   cursorSync: "Off"
   editable: false
   elements:
     container-count:
       kind: Panel
       spec:
-        id: 0
+        id: 1
+        title: Containers
+        description: Total number of running containers last seen by the exporter.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: &datasource
-                      name:
-                        secret: openobserve-prometheus-datasource-uid
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: count(container_last_seen{host="$host", name!=""})
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}: Containers"
-                    version: v0
                   refId: Containers
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Total number of running containers last seen by the exporter.
-        links: []
-        title: Containers
+            queryOptions: {}
         vizConfig:
-          group: stat
           kind: VizConfig
+          group: stat
+          version: ""
           spec:
-            fieldConfig:
-              defaults:
-                color:
-                  fixedColor: text
-                  mode: fixed
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
             options:
               colorMode: value
               graphMode: area
@@ -80,49 +66,45 @@ spec:
               showPercentChange: false
               textMode: auto
               wideLayout: true
+            fieldConfig:
+              defaults:
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
     image-count:
       kind: Panel
       spec:
-        id: 1
+        id: 2
+        title: Images
+        description: Total number of distinct images found across running containers.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: count (sum by (image) (container_last_seen{host="$host", name!=""}))
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}: Images"
-                    version: v0
                   refId: Images
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Total number of distinct images found across running containers.
-        links: []
-        title: Images
+            queryOptions: {}
         vizConfig:
-          group: stat
           kind: VizConfig
+          group: stat
+          version: ""
           spec:
-            fieldConfig:
-              defaults:
-                color:
-                  fixedColor: text
-                  mode: fixed
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
             options:
               colorMode: value
               graphMode: area
@@ -137,21 +119,36 @@ spec:
               showPercentChange: false
               textMode: auto
               wideLayout: true
+            fieldConfig:
+              defaults:
+                color:
+                  mode: fixed
+                  fixedColor: text
+              overrides: []
     total-cpu-usage:
       kind: Panel
       spec:
-        id: 2
+        id: 3
+        title: CPU usage
+        description: |
+          Total CPU utilization percent is a metric that indicates the overall level of central processing unit (CPU) usage in a computer system.
+          It represents the combined load placed on all CPU cores or processors.
+
+          For instance, if the total CPU utilization percent is 50%, it means that,
+          on average, half of the CPU's processing capacity is being used to execute tasks. A higher percentage indicates that the CPU is working more intensively, potentially leading to system slowdowns if it remains consistently high.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         avg by (name) (rate(container_cpu_usage_seconds_total{host="$host", name!=""}[$__rate_interval])) * 100
@@ -160,54 +157,23 @@ spec:
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}"
-                    version: v0
                   refId: CPU usage
-            queryOptions: {}
+                  hidden: false
             transformations:
-              - kind: calculateField
+              - kind: Transformation
+                group: calculateField
                 spec:
-                  id: calculateField
                   options:
                     mode: reduceRow
                     reduce:
                       reducer: sum
                     replaceFields: true
-        description: >
-          Total CPU utilization percent is a metric that indicates the overall
-          level of central processing unit (CPU) usage in a computer system.
-
-          It represents the combined load placed on all CPU cores or processors.
-
-
-          For instance, if the total CPU utilization percent is 50%, it means
-          that,
-
-          on average, half of the CPU's processing capacity is being used to
-          execute tasks. A higher percentage indicates that the CPU is working
-          more intensively, potentially leading to system slowdowns if it
-          remains consistently high.
-        links: []
-        title: CPU usage
+            queryOptions: {}
         vizConfig:
-          group: stat
           kind: VizConfig
+          group: stat
+          version: ""
           spec:
-            fieldConfig:
-              defaults:
-                color:
-                  fixedColor: text
-                  mode: continuous-BlYlRd
-                decimals: 1
-                max: 100
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: percent
             options:
               colorMode: value
               graphMode: area
@@ -222,21 +188,35 @@ spec:
               showPercentChange: false
               textMode: auto
               wideLayout: true
+            fieldConfig:
+              defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                color:
+                  mode: continuous-BlYlRd
+                  fixedColor: text
+              overrides: []
     total-memory-reserved:
       kind: Panel
       spec:
-        id: 3
+        id: 4
+        title: Memory reserved
+        description: Memory reserved by the containers on the machine.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         (sum (container_spec_memory_reservation_limit_bytes{host="$host", name!=""})
@@ -245,33 +225,15 @@ spec:
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}: Memory reserved"
-                    version: v0
                   refId: Memory reserved
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Memory reserved by the containers on the machine.
-        links: []
-        title: Memory reserved
+            queryOptions: {}
         vizConfig:
-          group: stat
           kind: VizConfig
+          group: stat
+          version: ""
           spec:
-            fieldConfig:
-              defaults:
-                color:
-                  fixedColor: text
-                  mode: continuous-BlYlRd
-                decimals: 1
-                max: 100
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: percent
             options:
               colorMode: value
               graphMode: area
@@ -286,21 +248,35 @@ spec:
               showPercentChange: false
               textMode: auto
               wideLayout: true
+            fieldConfig:
+              defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                color:
+                  mode: continuous-BlYlRd
+                  fixedColor: text
+              overrides: []
     total-memory-usage:
       kind: Panel
       spec:
-        id: 4
+        id: 5
+        title: Memory used
+        description: Memory used by all containers out of machine total.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         (sum (container_memory_working_set_bytes{host="$host", name!=""})
@@ -309,33 +285,15 @@ spec:
                       format: time_series
                       instant: false
                       legendFormat: "{{host}}: Memory used"
-                    version: v0
                   refId: Memory used
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Memory used by all containers out of machine total.
-        links: []
-        title: Memory used
+            queryOptions: {}
         vizConfig:
-          group: stat
           kind: VizConfig
+          group: stat
+          version: ""
           spec:
-            fieldConfig:
-              defaults:
-                color:
-                  fixedColor: text
-                  mode: continuous-BlYlRd
-                decimals: 1
-                max: 100
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: percent
             options:
               colorMode: value
               graphMode: area
@@ -350,21 +308,35 @@ spec:
               showPercentChange: false
               textMode: auto
               wideLayout: true
+            fieldConfig:
+              defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                color:
+                  mode: continuous-BlYlRd
+                  fixedColor: text
+              overrides: []
     cpu-by-container:
       kind: Panel
       spec:
-        id: 5
+        id: 6
+        title: CPU usage
+        description: CPU time consumed in seconds by container.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         rate(container_cpu_usage_seconds_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval]) * 100
@@ -373,19 +345,32 @@ spec:
                       format: time_series
                       instant: false
                       legendFormat: "{{name}}"
-                    version: v0
                   refId: CPU usage
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: CPU time consumed in seconds by container.
-        links: []
-        title: CPU usage
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                displayMode: table
+                placement: bottom
+                showLegend: true
+                sortBy: Mean
+                sortDesc: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                min: 0
                 color:
                   mode: palette-classic
                 custom:
@@ -416,16 +401,6 @@ spec:
                   stacking:
                     group: A
                     mode: normal
-                  thresholdsStyle:
-                    mode: off
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
               overrides:
                 - matcher:
                     id: byFrameRefID
@@ -433,6 +408,39 @@ spec:
                   properties:
                     - id: unit
                       value: percent
+    memory-by-container:
+      kind: Panel
+      spec:
+        id: 7
+        title: Memory usage
+        description: "Current memory usage in bytes, including all memory regardless of when it was accessed by container."
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: container_memory_working_set_bytes{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}"
+                  refId: Memory usage
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs:
@@ -447,41 +455,10 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    memory-by-container:
-      kind: Panel
-      spec:
-        id: 6
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: container_memory_working_set_bytes{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}"
-                    version: v0
-                  refId: Memory usage
-            queryOptions: {}
-            transformations: []
-        description:
-          Current memory usage in bytes, including all memory regardless of
-          when it was accessed by container.
-        links: []
-        title: Memory usage
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: bytes
+                min: 0
                 color:
                   mode: palette-classic
                 custom:
@@ -511,17 +488,55 @@ spec:
                   stacking:
                     group: A
                     mode: normal
-                  thresholdsStyle:
-                    mode: off
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: bytes
+              overrides: []
+    network-by-container:
+      kind: Panel
+      spec:
+        id: 8
+        title: Network traffic
+        description: Network traffic (bytes per sec) measures data transmitted and received.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: rate(container_network_receive_bytes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} receive"
+                  refId: received
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: rate(container_network_transmit_bytes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} transmit"
+                  refId: transmitted
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs:
@@ -536,53 +551,10 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    network-by-container:
-      kind: Panel
-      spec:
-        id: 7
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: rate(container_network_receive_bytes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{interface}} receive"
-                    version: v0
-                  refId: received
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: rate(container_network_transmit_bytes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{interface}} transmit"
-                    version: v0
-                  refId: transmitted
-            queryOptions: {}
-            transformations: []
-        description: Network traffic (bytes per sec) measures data transmitted and received.
-        links: []
-        title: Network traffic
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: binBps
+                decimals: 1
                 color:
                   mode: palette-classic
                 custom:
@@ -612,17 +584,6 @@ spec:
                   stacking:
                     group: A
                     mode: normal
-                  thresholdsStyle:
-                    mode: off
-                decimals: 1
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: binBps
               overrides:
                 - matcher:
                     id: byRegexp
@@ -630,6 +591,89 @@ spec:
                   properties:
                     - id: custom.transform
                       value: negative-Y
+    network-error-by-container:
+      kind: Panel
+      spec:
+        id: 9
+        title: Network errors and drops
+        description: |
+          Network errors refer to issues that occur during the transmission of data across a network. 
+
+          These errors can result from various factors, including physical issues, jitter, collisions, noise and interference.
+
+          Monitoring network errors is essential for diagnosing and resolving issues, as they can indicate problems with network hardware or environmental factors affecting network quality.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: rate(container_network_receive_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} rx drops"
+                  refId: drops received
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: rate(container_network_transmit_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} tx drops"
+                  refId: drops transmitted
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: rate(container_network_receive_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} rx errors"
+                  refId: errors received
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: rate(container_network_transmit_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{interface}} tx errors"
+                  refId: errors transmitted
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs:
@@ -644,94 +688,13 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    network-error-by-container:
-      kind: Panel
-      spec:
-        id: 8
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: rate(container_network_receive_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{interface}} rx drops"
-                    version: v0
-                  refId: drops received
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: rate(container_network_transmit_packets_dropped_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{interface}} tx drops"
-                    version: v0
-                  refId: drops transmitted
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: rate(container_network_receive_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{interface}} rx errors"
-                    version: v0
-                  refId: errors received
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: rate(container_network_transmit_errors_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name", network_mode="bridge"}[$__rate_interval])
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{interface}} tx errors"
-                    version: v0
-                  refId: errors transmitted
-            queryOptions: {}
-            transformations: []
-        description: >
-          Network errors refer to issues that occur during the transmission of
-          data across a network. 
-
-
-          These errors can result from various factors, including physical
-          issues, jitter, collisions, noise and interference.
-
-
-          Monitoring network errors is essential for diagnosing and resolving
-          issues, as they can indicate problems with network hardware or
-          environmental factors affecting network quality.
-        links: []
-        title: Network errors and drops
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: pps
+                decimals: 1
                 color:
                   mode: palette-classic
+                noValue: No errors
                 custom:
                   axisBorderShow: false
                   axisCenteredZero: false
@@ -759,18 +722,6 @@ spec:
                   stacking:
                     group: A
                     mode: normal
-                  thresholdsStyle:
-                    mode: off
-                decimals: 1
-                noValue: No errors
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: pps
               overrides:
                 - matcher:
                     id: byFrameRefID
@@ -796,6 +747,40 @@ spec:
                   properties:
                     - id: unit
                       value: pps
+    disk-usage-by-container:
+      kind: Panel
+      spec:
+        id: 10
+        title: Disk usage
+        description: |
+          Disk space usage is the amount of storage being used on a device's hard drive or storage medium, in bytes.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: container_fs_usage_bytes{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{device}}"
+                  refId: Disk space usage
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs:
@@ -810,41 +795,10 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    disk-usage-by-container:
-      kind: Panel
-      spec:
-        id: 9
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: container_fs_usage_bytes{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{device}}"
-                    version: v0
-                  refId: Disk space usage
-            queryOptions: {}
-            transformations: []
-        description: >
-          Disk space usage is the amount of storage being used on a device's
-          hard drive or storage medium, in bytes.
-        links: []
-        title: Disk usage
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: bytes
+                min: 0
                 color:
                   mode: palette-classic
                 custom:
@@ -874,17 +828,55 @@ spec:
                   stacking:
                     group: A
                     mode: none
-                  thresholdsStyle:
-                    mode: off
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: bytes
+              overrides: []
+    disk-io-by-container:
+      kind: Panel
+      spec:
+        id: 11
+        title: Disk I/O
+        description: The number of I/O requests per second for the device/volume.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: rate(container_fs_reads_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{device}} read"
+                  refId: Disk reads
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: rate(container_fs_writes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
+                      format: time_series
+                      instant: false
+                      legendFormat: "{{name}}/{{device}} write"
+                  refId: Disk writes
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs:
@@ -899,53 +891,9 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    disk-io-by-container:
-      kind: Panel
-      spec:
-        id: 10
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: rate(container_fs_reads_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{device}} read"
-                    version: v0
-                  refId: Disk reads
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: rate(container_fs_writes_total{host="$host", service=~"$service", alias=~"$alias", name=~"$name"}[$__rate_interval])
-                      format: time_series
-                      instant: false
-                      legendFormat: "{{name}}/{{device}} write"
-                    version: v0
-                  refId: Disk writes
-            queryOptions: {}
-            transformations: []
-        description: The number of I/O requests per second for the device/volume.
-        links: []
-        title: Disk I/O
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: iops
                 color:
                   mode: palette-classic
                 custom:
@@ -975,16 +923,6 @@ spec:
                   stacking:
                     group: A
                     mode: none
-                  thresholdsStyle:
-                    mode: off
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: iops
               overrides:
                 - matcher:
                     id: byRegexp
@@ -1004,26 +942,13 @@ spec:
                   properties:
                     - id: unit
                       value: reqps
-            options:
-              legend:
-                calcs:
-                  - mean
-                  - max
-                displayMode: table
-                placement: bottom
-                showLegend: true
-                sortBy: Mean
-                sortDesc: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
   layout:
     kind: RowsLayout
     spec:
       rows:
         - kind: RowsLayoutRow
           spec:
+            title: Overview
             collapse: false
             layout:
               kind: GridLayout
@@ -1031,52 +956,52 @@ spec:
                 items:
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 0
+                      width: 4
+                      height: 4
                       element:
                         kind: ElementReference
                         name: container-count
-                      height: 4
-                      width: 4
-                      x: 0
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 4
+                      y: 0
+                      width: 4
+                      height: 4
                       element:
                         kind: ElementReference
                         name: image-count
-                      height: 4
-                      width: 4
-                      x: 4
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 8
+                      y: 0
+                      width: 4
+                      height: 4
                       element:
                         kind: ElementReference
                         name: total-cpu-usage
-                      height: 4
-                      width: 4
-                      x: 8
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 0
+                      width: 4
+                      height: 4
                       element:
                         kind: ElementReference
                         name: total-memory-reserved
-                      height: 4
-                      width: 4
-                      x: 12
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 16
+                      y: 0
+                      width: 4
+                      height: 4
                       element:
                         kind: ElementReference
                         name: total-memory-usage
-                      height: 4
-                      width: 4
-                      x: 16
-                      y: 0
-            title: Overview
         - kind: RowsLayoutRow
           spec:
+            title: Compute
             collapse: false
             layout:
               kind: GridLayout
@@ -1084,25 +1009,25 @@ spec:
                 items:
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 0
+                      width: 12
+                      height: 10
                       element:
                         kind: ElementReference
                         name: cpu-by-container
-                      height: 10
-                      width: 12
-                      x: 0
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 0
+                      width: 12
+                      height: 10
                       element:
                         kind: ElementReference
                         name: memory-by-container
-                      height: 10
-                      width: 12
-                      x: 12
-                      y: 0
-            title: Compute
         - kind: RowsLayoutRow
           spec:
+            title: Network
             collapse: false
             layout:
               kind: GridLayout
@@ -1110,25 +1035,25 @@ spec:
                 items:
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 0
+                      width: 12
+                      height: 10
                       element:
                         kind: ElementReference
                         name: network-by-container
-                      height: 10
-                      width: 12
-                      x: 0
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 0
+                      width: 12
+                      height: 10
                       element:
                         kind: ElementReference
                         name: network-error-by-container
-                      height: 10
-                      width: 12
-                      x: 12
-                      y: 0
-            title: Network
         - kind: RowsLayoutRow
           spec:
+            title: Storage
             collapse: false
             layout:
               kind: GridLayout
@@ -1136,27 +1061,41 @@ spec:
                 items:
                   - kind: GridLayoutItem
                     spec:
+                      x: 0
+                      y: 0
+                      width: 12
+                      height: 10
                       element:
                         kind: ElementReference
                         name: disk-usage-by-container
-                      height: 10
-                      width: 12
-                      x: 0
-                      y: 0
                   - kind: GridLayoutItem
                     spec:
+                      x: 12
+                      y: 0
+                      width: 12
+                      height: 10
                       element:
                         kind: ElementReference
                         name: disk-io-by-container
-                      height: 10
-                      width: 12
-                      x: 12
-                      y: 0
-            title: Storage
-  links: []
+  links:
+    - title: All Linux dashboards
+      type: dashboards
+      icon: ""
+      tooltip: ""
+      tags:
+        - linux
+      asDropdown: true
+      targetBlank: false
+      includeVars: true
+      keepTime: true
   liveNow: false
   preload: false
+  tags:
+    - docker
   timeSettings:
+    timezone: browser
+    from: now-1h
+    to: now
     autoRefresh: 30s
     autoRefreshIntervals:
       - 15s
@@ -1168,13 +1107,26 @@ spec:
       - 1h
       - 2h
       - 1d
-    fiscalYearStartMonth: 0
-    from: now-1h
     hideTimepicker: false
-    timezone: browser
-    to: now
+    fiscalYearStartMonth: 0
   title: Docker
   variables:
+    - kind: DatasourceVariable
+      spec:
+        name: datasource
+        pluginId: prometheus
+        refresh: never
+        regex: ""
+        current:
+          text: ""
+          value: ""
+        options: []
+        multi: false
+        includeAll: false
+        label: Data source
+        hide: inControlsMenu
+        skipUrlSync: false
+        allowCustomValue: true
     - kind: QueryVariable
       spec:
         name: host
@@ -1184,90 +1136,97 @@ spec:
         label: Host
         hide: dontHide
         refresh: onDashboardLoad
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
-          spec:
-            __legacyStringValue: label_values(container_last_seen, host)
+          group: prometheus
           version: v0
+          datasource:
+            name: ${datasource}
+          spec:
+            __legacyStringValue: "label_values(container_last_seen, host)"
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: false
         includeAll: false
         allowCustomValue: false
     - kind: QueryVariable
       spec:
         name: service
-        includeAll: true
-        allValue: .+
         current:
           text: All
           value: $__all
         label: Service
         hide: dontHide
         refresh: onTimeChanged
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
-          spec:
-            __legacyStringValue: label_values(container_last_seen{host="$host"}, service)
+          group: prometheus
           version: v0
+          datasource:
+            name: ${datasource}
+          spec:
+            __legacyStringValue: 'label_values(container_last_seen{host="$host"}, service)'
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: true
+        includeAll: true
+        allValue: ".+"
         allowCustomValue: false
     - kind: QueryVariable
       spec:
         name: alias
-        includeAll: true
-        allValue: .+
         current:
           text: All
           value: $__all
         label: Alias
         hide: dontHide
         refresh: onTimeChanged
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
-          spec:
-            __legacyStringValue: label_values(container_last_seen{host="$host", service=~"$service"}, alias)
+          group: prometheus
           version: v0
+          datasource:
+            name: ${datasource}
+          spec:
+            __legacyStringValue: 'label_values(container_last_seen{host="$host", service=~"$service"}, alias)'
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: true
+        includeAll: true
+        allValue: ".+"
         allowCustomValue: false
     - kind: QueryVariable
       spec:
         name: name
-        includeAll: true
-        allValue: .+
         current:
           text: Name
           value: $__all
         label: Name
         hide: dontHide
         refresh: onTimeChanged
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
-          spec:
-            __legacyStringValue: label_values(container_last_seen{host="$host", service=~"$service", alias=~"$alias"}, name)
+          group: prometheus
           version: v0
+          datasource:
+            name: ${datasource}
+          spec:
+            __legacyStringValue: 'label_values(container_last_seen{host="$host", service=~"$service", alias=~"$alias"}, name)'
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: true
+        includeAll: true
+        allValue: ".+"
         allowCustomValue: false
-status: {}
