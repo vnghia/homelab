@@ -1,4 +1,4 @@
-apiVersion: dashboard.grafana.app/v2beta1
+apiVersion: dashboard.grafana.app/v2
 kind: Dashboard
 metadata:
   name: linux-fleet-overview
@@ -6,92 +6,98 @@ spec:
   annotations:
     - kind: AnnotationQuery
       spec:
-        builtIn: true
-        enable: true
-        hide: true
-        iconColor: rgba(0, 211, 255, 1)
-        name: Annotations & Alerts
         query:
+          kind: DataQuery
+          group: grafana
+          version: v0
           datasource:
             name: "-- Grafana --"
-          group: grafana
-          kind: DataQuery
           spec: {}
-          version: v0
+        enable: true
+        hide: true
+        iconColor: "rgba(0, 211, 255, 1)"
+        name: Annotations & Alerts
+        builtIn: true
   cursorSync: "Off"
   editable: false
   elements:
     overview:
       kind: Panel
       spec:
-        id: 0
+        id: 1
+        title: Fleet overview
+        description: All nodes' perfomance at a glance.
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: &datasource
-                      name:
-                        secret: openobserve-prometheus-datasource-uid
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_uname_info * on (host) group_left(pretty_name) node_os_info
                       format: table
                       instant: true
-                    version: v0
                   refId: OS Info
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: time() - node_boot_time_seconds
                       format: table
                       instant: true
-                    version: v0
                   refId: Uptime
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_load1
                       format: table
                       instant: true
                       legendFormat: 1m
-                    version: v0
                   refId: Load 1
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: count without (cpu) (node_cpu_seconds_total{mode="idle"})
                       format: table
                       instant: true
                       legendFormat: Cores
-                    version: v0
                   refId: Cores
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         (((count by (host) (count(node_cpu_seconds_total) by (cpu, host)))
@@ -106,109 +112,121 @@ spec:
                       format: table
                       instant: true
                       legendFormat: CPU usage
-                    version: v0
                   refId: CPU usage
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_memory_memtotal_bytes
                       format: table
                       instant: true
                       legendFormat: Memory total
-                    version: v0
                   refId: Memory total
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: 100 - (avg by (host) (node_memory_memavailable_bytes) / avg by (host) (node_memory_memtotal_bytes) * 100)
                       format: table
                       instant: true
-                    version: v0
                   refId: Memory usage
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: node_filesystem_size_bytes{mountpoint="/", fstype!="rootfs"}
                       format: table
                       instant: true
-                    version: v0
                   refId: Root mount size
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: 100 - node_filesystem_avail_bytes{mountpoint="/", fstype!="rootfs"} / node_filesystem_size_bytes{mountpoint="/", fstype!="rootfs"} * 100
                       format: table
                       instant: true
-                    version: v0
                   refId: Root mount used
-            queryOptions: {}
+                  hidden: false
             transformations:
-              - kind: joinByField
+              - kind: Transformation
+                group: joinByField
                 spec:
-                  id: joinByField
                   options:
                     byField: host
                     mode: outer
-              - kind: filterFieldsByName
+              - kind: Transformation
+                group: filterFieldsByName
                 spec:
-                  id: filterFieldsByName
                   options:
                     include:
                       pattern: host|host 1|product|^hostname$|^nodename$|^pretty_name$|Value.+
-              - kind: organize
+              - kind: Transformation
+                group: organize
                 spec:
-                  id: organize
                   options:
                     excludeByName:
                       "Value #OS Info": true
                     indexByName:
-                      hostname: 1
                       host: 0
+                      hostname: 1
                       nodename: 1
                       pretty_name: 2
                       product: 2
                     renameByName:
-                      hostname: Hostname
                       host: Host
                       host 1: Host
+                      hostname: Hostname
                       nodename: Hostname
                       pretty_name: OS
                       product: OS
-              - kind: renameByRegex
+              - kind: Transformation
+                group: renameByRegex
                 spec:
-                  id: renameByRegex
                   options:
                     regex: "Value #(.*)"
                     renamePattern: $1
-        description: All nodes' perfomance at a glance.
-        links: []
-        title: Fleet overview
+            queryOptions: {}
         vizConfig:
-          group: table
           kind: VizConfig
+          group: table
+          version: ""
           spec:
+            options:
+              cellHeight: sm
+              showHeader: true
             fieldConfig:
               defaults:
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 custom:
                   align: auto
                   cellOptions:
@@ -216,13 +234,6 @@ spec:
                   footer:
                     reducers: []
                   inspect: false
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
               overrides:
                 - matcher:
                     id: byName
@@ -261,8 +272,8 @@ spec:
                     - id: links
                       value:
                         - targetBlank: false
-                          title: Drill down to ${__field.name} ${__value.text}
-                          url: d/linux-node-overview/node-overview?${__url_time_range}&var-host=${__data.fields.host}
+                          title: "Drill down to ${__field.name} ${__value.text}"
+                          url: "d/linux-node-overview/node-overview?${__url_time_range}&var-host=${__data.fields.host}"
                 - matcher:
                     id: byName
                     options: Cores
@@ -366,23 +377,25 @@ spec:
                     - id: custom.footer.reducers
                       value:
                         - sum
-            options:
-              cellHeight: sm
-              showHeader: true
     cpu-usage:
       kind: Panel
       spec:
+        id: 2
+        title: CPU usage
+        description: Top 25
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         topk(25, (((count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host)))
@@ -391,15 +404,16 @@ spec:
                         /
                         (count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host))))
                       legendFormat: "{{host}}"
-                    version: v0
                   refId: A
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         avg((((count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host)))
@@ -408,20 +422,41 @@ spec:
                         /
                         count by (host) (count(node_cpu_seconds_total{host=~"$host"}) by (cpu, host)))
                       legendFormat: Mean
-                    version: v0
                   refId: B
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Top 25
-        id: 2
-        links: []
-        title: CPU usage
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: continuous-BlYlRd
                 custom:
@@ -453,17 +488,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                decimals: 1
-                max: 100
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: percent
               overrides:
                 - matcher:
                     id: byName
@@ -481,6 +505,50 @@ spec:
                           - 10
                           - 10
                         fill: dash
+    load-average:
+      kind: Panel
+      spec:
+        id: 3
+        title: Load average 1m
+        description: Top 25
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: topk(25, node_load1{host=~"$host"}) > 0
+                      legendFormat: "{{host}}"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: count without (cpu) (node_cpu_seconds_total{host=~"$host", mode="idle"})
+                      legendFormat: Cores
+                  refId: B
+                  hidden: true
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs:
@@ -494,50 +562,17 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    load-average:
-      kind: Panel
-      spec:
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: >-
-                        topk(25, node_load1{host=~"$host"}) > 0
-                      legendFormat: "{{host}}"
-                    version: v0
-                  refId: A
-              - kind: PanelQuery
-                spec:
-                  hidden: true
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: count without (cpu) (node_cpu_seconds_total{host=~"$host", mode="idle"})
-                      legendFormat: Cores
-                    version: v0
-                  refId: B
-            queryOptions: {}
-            transformations: []
-        description: Top 25
-        id: 3
-        links: []
-        title: Load average 1m
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: short
+                min: 0
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
                 custom:
@@ -569,15 +604,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: short
               overrides:
                 - matcher:
                     id: byRegexp
@@ -595,33 +621,25 @@ spec:
                           - 10
                           - 10
                         fill: dash
-            options:
-              legend:
-                calcs:
-                  - mean
-                  - max
-                  - lastNotNull
-                displayMode: table
-                placement: right
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
     memory-usage:
       kind: Panel
       spec:
+        id: 4
+        title: Memory usage
+        description: Top 25
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         topk(25, 100 -
@@ -631,15 +649,16 @@ spec:
                         * 100
                         ))
                       legendFormat: "{{host}}"
-                    version: v0
                   refId: A
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         avg(100 -
@@ -649,20 +668,41 @@ spec:
                         * 100
                         ))
                       legendFormat: Mean
-                    version: v0
                   refId: B
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Top 25
-        id: 4
-        links: []
-        title: Memory usage
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: continuous-BlYlRd
                 custom:
@@ -694,17 +734,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                decimals: 1
-                max: 100
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: percent
               overrides:
                 - matcher:
                     id: byName
@@ -722,62 +751,76 @@ spec:
                           - 10
                           - 10
                         fill: dash
-            options:
-              legend:
-                calcs:
-                  - mean
-                  - max
-                  - lastNotNull
-                displayMode: table
-                placement: right
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
     disk-io-by-device:
       kind: Panel
       spec:
+        id: 5
+        title: Disk IO
+        description: Top 25
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: topk(25, irate(node_disk_io_time_seconds_total{host=~"$host", device!=""}[$__rate_interval]))
                       legendFormat: "{{host}}: {{device}}"
-                    version: v0
                   refId: A
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: avg(irate(node_disk_io_time_seconds_total{host=~"$host", device!=""}[$__rate_interval]))
                       legendFormat: Mean
-                    version: v0
                   refId: B
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Top 25
-        id: 5
-        links: []
-        title: Disk IO
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: continuous-BlYlRd
                 custom:
@@ -809,17 +852,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                decimals: 1
-                max: 100
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: percent
               overrides:
                 - matcher:
                     id: byName
@@ -837,33 +869,25 @@ spec:
                           - 10
                           - 10
                         fill: dash
-            options:
-              legend:
-                calcs:
-                  - mean
-                  - max
-                  - lastNotNull
-                displayMode: table
-                placement: right
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
     filesystem-usage-by-mountpoint:
       kind: Panel
       spec:
+        id: 6
+        title: Disk space usage
+        description: Top 25
+        links: []
         data:
           kind: QueryGroup
           spec:
             queries:
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         topk(25,
@@ -871,35 +895,57 @@ spec:
                         /
                         node_filesystem_size_bytes{host=~"$host", fstype!="", mountpoint!=""} * 100)
                       legendFormat: "{{host}}: {{mountpoint}}"
-                    version: v0
                   refId: A
+                  hidden: false
               - kind: PanelQuery
                 spec:
-                  hidden: false
                   query:
-                    datasource: *datasource
-                    group: prometheus
                     kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
                     spec:
                       expr: >-
                         avg(100 - node_filesystem_avail_bytes{host=~"$host", fstype!="", mountpoint!=""}
                         /
                         node_filesystem_size_bytes{host=~"$host", fstype!="", mountpoint!=""} * 100)
                       legendFormat: Mean
-                    version: v0
                   refId: B
-            queryOptions: {}
+                  hidden: false
             transformations: []
-        description: Top 25
-        id: 6
-        links: []
-        title: Disk space usage
+            queryOptions: {}
         vizConfig:
-          group: timeseries
           kind: VizConfig
+          group: timeseries
+          version: ""
           spec:
+            options:
+              legend:
+                calcs:
+                  - mean
+                  - max
+                  - lastNotNull
+                displayMode: table
+                placement: right
+                showLegend: true
+              tooltip:
+                hideZeros: false
+                mode: multi
+                sort: desc
             fieldConfig:
               defaults:
+                unit: percent
+                decimals: 1
+                min: 0
+                max: 100
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: continuous-BlYlRd
                 custom:
@@ -931,17 +977,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                decimals: 1
-                max: 100
-                min: 0
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: percent
               overrides:
                 - matcher:
                     id: byName
@@ -959,6 +994,58 @@ spec:
                           - 10
                           - 10
                         fill: dash
+    network-traffic:
+      kind: Panel
+      spec:
+        id: 7
+        title: Network traffic
+        description: Top 25 interfaces
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: |
+                        topk(25, irate(node_network_receive_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
+                        # only show interfaces that had traffic change at least once during selected dashboard interval:
+                        and
+                        increase(node_network_receive_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__range]) > 0) > 0
+                      legendFormat: "{{host}}: {{ device }} received"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: |
+                        topk(25, irate(node_network_transmit_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
+                        # only show interfaces that had traffic change at least once during selected dashboard interval:
+                        and
+                        increase(node_network_transmit_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__range]) > 0) > 0
+                      legendFormat: "{{host}}: {{ device }} transmitted"
+                  refId: B
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs:
@@ -972,67 +1059,20 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    network-traffic:
-      kind: Panel
-      spec:
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: >-
-                        topk(25, irate(node_network_receive_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
-
-                        # only show interfaces that had traffic change at least
-                        once during selected dashboard interval:
-
-                        and
-
-                        increase(node_network_receive_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__range]) > 0) > 0
-                      legendFormat: "{{host}}: {{ device }} received"
-                    version: v0
-                  refId: A
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: >-
-                        topk(25, irate(node_network_transmit_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval]) * 8
-
-                        # only show interfaces that had traffic change at least
-                        once during selected dashboard interval:
-
-                        and
-
-                        increase(node_network_transmit_bytes_total{host=~"$host", device!~"^(br-|veth).+$"}[$__range]) > 0) > 0
-                      legendFormat: "{{host}}: {{ device }} transmitted"
-                    version: v0
-                  refId: B
-            queryOptions: {}
-            transformations: []
-        description: Top 25 interfaces
-        id: 7
-        links: []
-        title: Network traffic
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: bps
+                decimals: 1
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
+                noValue: No traffic
                 custom:
                   axisBorderShow: false
                   axisCenteredZero: false
@@ -1062,16 +1102,6 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                decimals: 1
-                noValue: No traffic
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: bps
               overrides:
                 - matcher:
                     id: byRegexp
@@ -1079,6 +1109,93 @@ spec:
                   properties:
                     - id: custom.transform
                       value: negative-Y
+    network-errors:
+      kind: Panel
+      spec:
+        id: 8
+        title: Network errors and dropped packets
+        description: |
+          Top 25.
+
+          **Network errors**:
+
+          Network errors refer to issues that occur during the transmission of data across a network. 
+
+          These errors can result from various factors, including physical issues, jitter, collisions, noise and interference.
+
+          Monitoring network errors is essential for diagnosing and resolving issues, as they can indicate problems with network hardware or environmental factors affecting network quality.
+
+          **Dropped packets**:
+
+          Dropped packets occur when data packets traveling through a network are intentionally discarded or lost due to congestion, resource limitations, or network configuration issues. 
+
+          Common causes include network congestion, buffer overflows, QoS settings, and network errors, as corrupted or incomplete packets may be discarded by receiving devices.
+
+          Dropped packets can impact network performance and lead to issues such as degraded voice or video quality in real-time applications.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: topk(25, irate(node_network_transmit_errs_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
+                      legendFormat: "{{host}}: {{ device }} errors transmitted"
+                  refId: A
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: topk(25, irate(node_network_receive_errs_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
+                      legendFormat: "{{host}}: {{ device }} errors received"
+                  refId: B
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: topk(25, irate(node_network_transmit_drop_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
+                      legendFormat: "{{host}}: {{ device }} transmitted dropped"
+                  refId: C
+                  hidden: false
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: topk(25, irate(node_network_receive_drop_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
+                      legendFormat: "{{host}}: {{ device }} received dropped"
+                  refId: D
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
             options:
               legend:
                 calcs:
@@ -1092,109 +1209,20 @@ spec:
                 hideZeros: false
                 mode: multi
                 sort: desc
-    network-errors:
-      kind: Panel
-      spec:
-        data:
-          kind: QueryGroup
-          spec:
-            queries:
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: topk(25, irate(node_network_transmit_errs_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
-                      legendFormat: "{{host}}: {{ device }} errors transmitted"
-                    version: v0
-                  refId: A
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: topk(25, irate(node_network_receive_errs_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
-                      legendFormat: "{{host}}: {{ device }} errors received"
-                    version: v0
-                  refId: B
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: topk(25, irate(node_network_transmit_drop_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
-                      legendFormat: "{{host}}: {{ device }} transmitted dropped"
-                    version: v0
-                  refId: C
-              - kind: PanelQuery
-                spec:
-                  hidden: false
-                  query:
-                    datasource: *datasource
-                    group: prometheus
-                    kind: DataQuery
-                    spec:
-                      expr: topk(25, irate(node_network_receive_drop_total{host=~"$host", device!~"^(br-|veth).+$"}[$__rate_interval])) > 0
-                      legendFormat: "{{host}}: {{ device }} received dropped"
-                    version: v0
-                  refId: D
-            queryOptions: {}
-            transformations: []
-        description: >
-          Top 25.
-
-
-          **Network errors**:
-
-
-          Network errors refer to issues that occur during the transmission of
-          data across a network. 
-
-
-          These errors can result from various factors, including physical
-          issues, jitter, collisions, noise and interference.
-
-
-          Monitoring network errors is essential for diagnosing and resolving
-          issues, as they can indicate problems with network hardware or
-          environmental factors affecting network quality.
-
-
-          **Dropped packets**:
-
-
-          Dropped packets occur when data packets traveling through a network
-          are intentionally discarded or lost due to congestion, resource
-          limitations, or network configuration issues. 
-
-
-          Common causes include network congestion, buffer overflows, QoS
-          settings, and network errors, as corrupted or incomplete packets may
-          be discarded by receiving devices.
-
-
-          Dropped packets can impact network performance and lead to issues such
-          as degraded voice or video quality in real-time applications.
-        id: 8
-        links: []
-        title: Network errors and dropped packets
-        vizConfig:
-          group: timeseries
-          kind: VizConfig
-          spec:
             fieldConfig:
               defaults:
+                unit: pps
+                decimals: 1
+                thresholds:
+                  mode: absolute
+                  steps:
+                    - value: 0
+                      color: green
+                    - value: 80
+                      color: red
                 color:
                   mode: palette-classic
+                noValue: No errors
                 custom:
                   axisBorderShow: false
                   axisCenteredZero: false
@@ -1224,132 +1252,113 @@ spec:
                     mode: none
                   thresholdsStyle:
                     mode: "off"
-                decimals: 1
-                noValue: No errors
-                thresholds:
-                  mode: absolute
-                  steps:
-                    - color: green
-                      value: 0
-                    - color: red
-                      value: 80
-                unit: pps
               overrides: []
-            options:
-              legend:
-                calcs:
-                  - mean
-                  - max
-                  - lastNotNull
-                displayMode: table
-                placement: right
-                showLegend: true
-              tooltip:
-                hideZeros: false
-                mode: multi
-                sort: desc
+
   layout:
     kind: GridLayout
     spec:
       items:
         - kind: GridLayoutItem
           spec:
+            x: 0
+            y: 2
+            width: 24
+            height: 6
             element:
               kind: ElementReference
               name: overview
-            height: 6
-            width: 24
-            x: 0
-            y: 2
         - kind: GridLayoutItem
           spec:
+            x: 0
+            y: 18
+            width: 12
+            height: 7
             element:
               kind: ElementReference
               name: cpu-usage
-            height: 7
-            width: 12
-            x: 0
-            y: 18
         - kind: GridLayoutItem
           spec:
+            x: 12
+            y: 18
+            width: 12
+            height: 7
             element:
               kind: ElementReference
               name: load-average
-            height: 7
-            width: 12
-            x: 12
-            y: 18
         - kind: GridLayoutItem
           spec:
+            x: 0
+            y: 25
+            width: 24
+            height: 7
             element:
               kind: ElementReference
               name: memory-usage
-            height: 7
-            width: 24
-            x: 0
-            y: 25
         - kind: GridLayoutItem
           spec:
+            x: 0
+            y: 32
+            width: 12
+            height: 7
             element:
               kind: ElementReference
               name: disk-io-by-device
-            height: 7
-            width: 12
-            x: 0
-            y: 32
         - kind: GridLayoutItem
           spec:
+            x: 12
+            y: 32
+            width: 12
+            height: 7
             element:
               kind: ElementReference
               name: filesystem-usage-by-mountpoint
-            height: 7
-            width: 12
-            x: 12
-            y: 32
         - kind: GridLayoutItem
           spec:
+            x: 0
+            y: 39
+            width: 12
+            height: 7
             element:
               kind: ElementReference
               name: network-traffic
-            height: 7
-            width: 12
-            x: 0
-            y: 39
         - kind: GridLayoutItem
           spec:
+            x: 12
+            y: 39
+            width: 12
+            height: 7
             element:
               kind: ElementReference
               name: network-errors
-            height: 7
-            width: 12
-            x: 12
-            y: 39
   links:
-    - asDropdown: false
-      icon: ""
-      includeVars: false
-      keepTime: true
-      tags: []
-      targetBlank: false
-      title: Back to Linux node overview
-      tooltip: ""
+    - title: Back to Linux node overview
       type: link
-      url: /d/linux-node-overview/node-overview
-    - asDropdown: true
       icon: ""
+      tooltip: ""
+      url: /d/linux-node-overview/node-overview
+      tags: []
+      asDropdown: false
+      targetBlank: false
       includeVars: false
       keepTime: true
+    - title: All linux dashboards
+      type: dashboards
+      icon: ""
+      tooltip: ""
       tags:
         - linux
+      asDropdown: true
       targetBlank: false
-      title: All linux dashboards
-      tooltip: ""
-      type: dashboards
+      includeVars: false
+      keepTime: true
   liveNow: false
   preload: false
   tags:
     - linux
   timeSettings:
+    timezone: browser
+    from: now-1h
+    to: now
     autoRefresh: 30s
     autoRefreshIntervals:
       - 15s
@@ -1361,35 +1370,45 @@ spec:
       - 1h
       - 2h
       - 1d
-    fiscalYearStartMonth: 0
-    from: now-1h
     hideTimepicker: false
-    timezone: browser
-    to: now
+    fiscalYearStartMonth: 0
   title: Fleet overview
   variables:
+    - kind: DatasourceVariable
+      spec:
+        name: datasource
+        pluginId: prometheus
+        refresh: never
+        options: []
+        multi: false
+        includeAll: false
+        label: Data source
+        hide: inControlsMenu
+        skipUrlSync: false
+        allowCustomValue: true
     - kind: QueryVariable
       spec:
         name: host
-        includeAll: true
-        allValue: .+
         current:
           text: All
           value: $__all
         label: Host
         hide: dontHide
         refresh: onDashboardLoad
-        options: []
+        skipUrlSync: false
         query:
-          datasource: *datasource
-          group: prometheus
           kind: DataQuery
-          spec:
-            __legacyStringValue: label_values(node_uname_info, host)
+          group: prometheus
           version: v0
+          datasource:
+            name: ${datasource}
+          spec:
+            __legacyStringValue: "label_values(node_uname_info, host)"
         regex: ""
         regexApplyTo: value
         sort: alphabeticalAsc
+        options: []
         multi: true
+        includeAll: true
+        allValue: ".+"
         allowCustomValue: false
-status: {}
