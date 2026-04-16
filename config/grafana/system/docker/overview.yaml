@@ -1160,7 +1160,7 @@ spec:
           value: $__all
         label: Service
         hide: dontHide
-        refresh: onTimeChanged
+        refresh: onTimeRangeChanged
         skipUrlSync: false
         query:
           kind: DataQuery
@@ -1186,7 +1186,7 @@ spec:
           value: $__all
         label: Alias
         hide: dontHide
-        refresh: onTimeChanged
+        refresh: onTimeRangeChanged
         skipUrlSync: false
         query:
           kind: DataQuery
@@ -1212,7 +1212,7 @@ spec:
           value: $__all
         label: Name
         hide: dontHide
-        refresh: onTimeChanged
+        refresh: onTimeRangeChanged
         skipUrlSync: false
         query:
           kind: DataQuery
