@@ -890,7 +890,7 @@ spec:
       type: link
       icon: ""
       tooltip: ""
-      url: /d/linux-fleet-overview/fleet-overview
+      path: fleet-overview.yaml
       tags: []
       asDropdown: false
       targetBlank: false
@@ -900,7 +900,7 @@ spec:
       type: link
       icon: ""
       tooltip: ""
-      url: /d/linux-node-overview/node-overview
+      path: node-overview.yaml
       tags: []
       asDropdown: false
       targetBlank: false

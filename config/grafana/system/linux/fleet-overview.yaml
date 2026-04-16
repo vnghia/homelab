@@ -271,7 +271,7 @@ spec:
                       value:
                         - targetBlank: false
                           title: "Drill down to ${__field.name} ${__value.text}"
-                          url: "d/linux-node-overview/node-overview?${__url_time_range}&var-host=${__data.fields.host}"
+                          url: "/d/system-linux-node-overview?${__url_time_range}&var-host=${__data.fields.host}"
                 - matcher:
                     id: byName
                     options: Cores
@@ -1333,7 +1333,7 @@ spec:
       type: link
       icon: ""
       tooltip: ""
-      url: /d/linux-node-overview/node-overview
+      path: node-overview.yaml
       tags: []
       asDropdown: false
       targetBlank: false
