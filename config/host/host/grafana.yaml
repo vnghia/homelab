@@ -49,15 +49,15 @@ services:
       key: {}
     container:
       image: grafana
+      tmpfs:
+        - /tmp
       volumes:
-        grafana-data: /var/lib/grafana/data
-        grafana-plugins:
-          path: /var/lib/grafana/plugins
-          read-only: true
         grafana-provision:
           path: /etc/grafana/provision
           read-only: true
           bind-file: false
+        grafana-data: /var/lib/grafana/data
+        grafana-plugins: /var/lib/grafana/plugins
       wud:
         template: https://github.com/grafana/grafana/releases/tag/v${original}
       envs:
@@ -84,6 +84,11 @@ services:
           secret: key
         GF_SECURITY_DISABLE_GRAVATAR: true
         GF_PLUGINS_ENABLE_ALPHA: true
+        GF_PLUGINS_PREINSTALL_SYNC:
+          transform:
+            string:
+              template:
+                join: ","
     containers:
       reload-datasources:
         oneshot: true

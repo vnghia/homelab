@@ -53,30 +53,12 @@ services:
       openobserve-prometheus-datasource-uid:
         id:
     container:
-      depends-on: [install-openobserve-plugin]
       envs:
         GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: openobserve
         OPENOBSERVE_USERNAME:
           hvariable: OPENOBSERVE_USERNAME
         OPENOBSERVE_PASSWORD:
           hvariable: OPENOBSERVE_PASSWORD
-    containers:
-      install-openobserve-plugin:
-        oneshot: true
-        inherit:
-        command:
-          - "-c"
-          - "curl -o /tmp/zo_gp.tar.gz https://zincsearch-releases.s3.us-west-2.amazonaws.com/zo_gp/zo_gp.tar.gz && tar -zxvf /tmp/zo_gp.tar.gz --directory $GF_PATHS_PLUGINS"
-        entrypoint: ["/bin/bash"]
-        network:
-          bridge:
-            vpn: {}
-        volumes:
-          grafana-plugins:
-            path: /var/lib/grafana/plugins
-            read-only: false
-        tmpfs:
-          - /tmp
   openobserve:
     container:
       network:
