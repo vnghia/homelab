@@ -63,7 +63,7 @@ class Folder:
                                     )
 
                             grafana.oss.Dashboard(
-                                full_path.stem,
+                                relative_sub_path_uid,
                                 opts=opts,
                                 config_json=orjson.dumps(config).decode(),
                                 folder=self.resource.uid if self.resource else None,
