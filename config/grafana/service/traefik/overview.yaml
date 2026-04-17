@@ -128,9 +128,9 @@ spec:
                       name: ${datasource}
                     spec:
                       expr: >-
-                        sum(traefik_service_request_duration_seconds_sum{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"})
+                        sum(increase(traefik_service_request_duration_seconds_sum{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$agg_interval] offset - $agg_interval))
                         /
-                        sum(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"})
+                        sum(increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$agg_interval] offset - $agg_interval))
                       format: time_series
                       instant: false
                       legendFormat: Average response time
@@ -199,7 +199,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum(increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service", code=~"^[45]\\d{2}"}[$__interval] offset - $__interval))
+                      expr: sum(increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service", code=~"^[45]\\d{2}"}[$agg_interval] offset - $agg_interval))
                       format: time_series
                       instant: false
                       legendFormat: Errors
@@ -215,7 +215,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum(increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$__interval] offset - $__interval))
+                      expr: sum(increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$agg_interval] offset - $agg_interval))
                       format: time_series
                       instant: false
                       legendFormat: Total
@@ -300,7 +300,7 @@ spec:
       kind: Panel
       spec:
         id: 4
-        title: Load / $__interval
+        title: Load / $agg_interval
         description: ""
         links: []
         data:
@@ -316,7 +316,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$__interval] offset - $__interval)) > 0
+                      expr: sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{service}}"
@@ -332,7 +332,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum by () (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$__interval] offset - $__interval)) > 0
+                      expr: sum by () (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: Total
@@ -443,9 +443,9 @@ spec:
                       name: ${datasource}
                     spec:
                       expr: >-
-                        sum by (service) (traefik_service_request_duration_seconds_sum{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"})
+                        sum by (service) (increase(traefik_service_request_duration_seconds_sum{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$agg_interval] offset - $agg_interval)) > 0
                         /
-                        sum by (service) (traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"})
+                        sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: __auto
@@ -545,9 +545,9 @@ spec:
                       name: ${datasource}
                     spec:
                       expr: |
-                        sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service", code=~"^[45]\\d{2}"}[$__interval] offset - $__interval))
+                        sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service", code=~"^[45]\\d{2}"}[$agg_interval] offset - $agg_interval))
                         /
-                        sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$__interval] offset - $__interval) > 0)
+                        sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$agg_interval] offset - $agg_interval) > 0)
                         * 100
                       format: time_series
                       instant: false
@@ -625,8 +625,8 @@ spec:
       kind: Panel
       spec:
         id: 7
-        title: Load by HTTP codes/$__interval
-        description: "Load distribution by method, code over $__interval"
+        title: Load by HTTP codes/$agg_interval
+        description: "Load distribution by method, code over $agg_interval"
         links: []
         data:
           kind: QueryGroup
@@ -642,7 +642,7 @@ spec:
                       name: ${datasource}
                     spec:
                       expr: |-
-                        sum by (code) (label_replace((increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service"}[$__interval] offset - $__interval )) > 0,
+                        sum by (code) (label_replace((increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service"}[$agg_interval] offset - $agg_interval )) > 0,
                           "code", "HTTP ${1}00-${1}99", "code", "^([0-9]).+"
                         ))
                       format: time_series
@@ -660,7 +660,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum by () (increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service"}[$__interval] offset - $__interval)) > 0
+                      expr: sum by () (increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: Total
@@ -833,8 +833,8 @@ spec:
       kind: Panel
       spec:
         id: 8
-        title: Load by method/$__interval
-        description: "Load distribution by method, code over $__interval"
+        title: Load by method/$agg_interval
+        description: "Load distribution by method, code over $agg_interval"
         links: []
         data:
           kind: QueryGroup
@@ -849,7 +849,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum by (method) (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service", code!=""}[$__interval] offset - $__interval)) > 0
+                      expr: sum by (method) (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service", code!=""}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{alias}}"
@@ -865,7 +865,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum by () (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$__interval] offset - $__interval)) > 0
+                      expr: sum by () (increase(traefik_service_requests_total{service_namespace="$namespace", protocol=~"$protocol", service=~"$service"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: Total
@@ -959,7 +959,7 @@ spec:
       kind: Panel
       spec:
         id: 9
-        title: Status codes 2xx/$__interval
+        title: Status codes 2xx/$agg_interval
         description: ""
         links: []
         data:
@@ -975,7 +975,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum by (method, code) (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint", protocol="http", code=~"^2\\d{2}"}[$__interval] offset - $__interval)) > 0
+                      expr: sum by (method, code) (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint", protocol="http", code=~"^2\\d{2}"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{method}}: {{code}}"
@@ -1053,7 +1053,7 @@ spec:
       kind: Panel
       spec:
         id: 10
-        title: Others status codes/$__interval
+        title: Others status codes/$agg_interval
         description: ""
         links: []
         data:
@@ -1069,7 +1069,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum by (method, code) (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint", protocol=~"$protocol", code!~"^2\\d{2}"}[$__interval] offset - $__interval)) > 0
+                      expr: sum by (method, code) (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint", protocol=~"$protocol", code!~"^2\\d{2}"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{ method }} : {{code}}"
@@ -1163,7 +1163,7 @@ spec:
                     datasource:
                       name: ${datasource}
                     spec:
-                      expr: sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$__interval] offset - $__interval)) > 0
+                      expr: sum by (service) (increase(traefik_service_requests_total{service_namespace="$namespace", service=~"$service"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{ service }}"
@@ -1229,7 +1229,7 @@ spec:
                       name: ${datasource}
                     spec:
                       editorMode: code
-                      expr: sum by (protocol, entrypoint) (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint"}[$__interval] offset - $__interval)) > 0
+                      expr: sum by (protocol, entrypoint) (increase(traefik_entrypoint_requests_total{service_namespace="$namespace", entrypoint=~"$entrypoint"}[$agg_interval] offset - $agg_interval)) > 0
                       format: time_series
                       instant: false
                       legendFormat: "{{entrypoint}}: {{ protocol }}"
