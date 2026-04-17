@@ -15,8 +15,6 @@ docker:
         backup: false
       grafana-provision:
         backup: false
-      grafana-dashboard:
-        backup: false
 services:
   grafana:
     variables:
@@ -47,27 +45,6 @@ services:
       keepass:
         hostname:
           hostname: grafana
-    files:
-      dashboard:
-        path:
-          extract:
-            volume: grafana-provision
-          transform:
-            path: dashboards/providers.yaml
-        content:
-          format: yaml
-          data:
-            apiVersion: 1
-            providers:
-              - name: "file"
-                type: file
-                disableDeletion: false
-                updateIntervalSeconds: 0
-                allowUiUpdates: false
-                options:
-                  path:
-                    volume: grafana-dashboard
-                  foldersFromFilesStructure: true
     secrets:
       key: {}
     container:
@@ -79,10 +56,6 @@ services:
           read-only: true
         grafana-provision:
           path: /etc/grafana/provision
-          read-only: true
-          bind-file: false
-        grafana-dashboard:
-          path: /var/lib/grafana/dashboards
           read-only: true
           bind-file: false
       wud:
@@ -112,23 +85,6 @@ services:
         GF_SECURITY_DISABLE_GRAVATAR: true
         GF_PLUGINS_ENABLE_ALPHA: true
     containers:
-      reload-dashboards:
-        oneshot: true
-        image: curl
-        command:
-          - --json
-          - "{}"
-          - -u
-          - svariable: AUTH
-          - extract:
-              svariable: PORT
-            transform:
-              string:
-                template: "http://grafana:{value}/api/admin/provisioning/dashboards/reload"
-        volumes:
-          grafana-provision:
-            path: /etc/grafana/provision
-            read-only: true
       reload-datasources:
         oneshot: true
         image: curl
