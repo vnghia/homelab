@@ -4,10 +4,10 @@ default:
 generate-schema source destination:
     uv run datamodel-codegen \
         --formatters ruff-format \
-        --input-file-type jsonschema \
-        --output {{destination}} \
+        --input-file-type auto \
+        --output {{ destination }} \
         --output-model-type pydantic_v2.BaseModel \
-        --{{if source =~ 'https://+*' { "url" } else { "input" }}} {{source}} \
+        --{{ if source =~ 'https://+*' { "url" } else { "input" } }} {{ source }} \
         --base-class homelab_pydantic.HomelabBaseModel \
         --disable-future-imports \
         --enum-field-as-literal none \
