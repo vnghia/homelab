@@ -16,15 +16,16 @@ services:
               - name: Huginn
                 uid:
                   secret: openobserve-datasource-uid
-                type: openobserve
+                type: grafana-openobserve-datasource
                 access: proxy
                 editable: false
                 url:
                   hvariable: OPENOBSERVE_URI
-                basicAuth: true
-                basicAuthUser: $OPENOBSERVE_USERNAME
+                user: $OPENOBSERVE_USERNAME
+                jsonData:
+                  database: default
                 secureJsonData:
-                  basicAuthPassword: $OPENOBSERVE_PASSWORD
+                  password: $OPENOBSERVE_PASSWORD
               - name: Huginn Metrics
                 uid:
                   secret: openobserve-prometheus-datasource-uid
@@ -47,6 +48,12 @@ services:
                   disableRecordingRules: true
                 secureJsonData:
                   basicAuthPassword: $OPENOBSERVE_PASSWORD
+    network:
+      bridge:
+        egress:
+          https:
+            github.com: null
+            release-assets.githubusercontent.com: null
     secrets:
       openobserve-datasource-uid:
         id:
@@ -54,7 +61,15 @@ services:
         id:
     container:
       envs:
-        GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: openobserve
+        GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: grafana-openobserve-datasource
+        GF_PLUGINS_PREINSTALL_SYNC:
+          extract:
+            kv:
+              openobserve:
+                extract: "1.3.0"
+                transform:
+                  string:
+                    template: grafana-openobserve-datasource@{value}@https://github.com/LinPr/grafana-openobserve-datasource/releases/download/v{value}/grafana-openobserve-datasource-{value}.zip
         OPENOBSERVE_USERNAME:
           hvariable: OPENOBSERVE_USERNAME
         OPENOBSERVE_PASSWORD:
