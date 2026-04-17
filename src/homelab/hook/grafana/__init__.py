@@ -1,6 +1,7 @@
 import dataclasses
 import os
 from pathlib import Path
+from typing import ClassVar
 
 import orjson
 import pulumiverse_grafana as grafana
@@ -12,6 +13,8 @@ from pulumi import ResourceOptions
 
 @dataclasses.dataclass
 class Folder:
+    DASHBOARD_FOLDER: ClassVar[str] = "dashboard"
+
     path: Path | None
     resource: grafana.oss.Folder | None
 
@@ -27,10 +30,41 @@ class Folder:
         path = grafana_folder / self.path if self.path else grafana_folder
         for file in os.listdir(path):
             full_path = path / file
-            relative_sub_path = self.path / file if self.path else Path(file)
-            relative_sub_path_uid = self.path_to_uid(relative_sub_path)
+            if not full_path.is_dir():
+                continue
 
-            if full_path.is_dir():
+            relative_sub_path = self.path / file if self.path else Path(file)
+
+            if file == self.DASHBOARD_FOLDER:
+                for config_path in full_path.glob("*.yaml"):
+                    dashboard_uid = self.path_to_uid(
+                        relative_sub_path.parent / config_path.name
+                    )
+                    with open(config_path, "r+b") as config_file:
+                        config = yaml_rs.load(config_file)
+                        if not isinstance(config, dict):
+                            raise ValueError(
+                                "Grafana config should contain only one object"
+                            )
+
+                        config["metadata"] = {"name": dashboard_uid}
+                        for link in config["spec"].get("links", []):
+                            link_path = link.pop("path", None)
+                            if link_path:
+                                link["url"] = "/d/{}".format(
+                                    self.path_to_uid(
+                                        relative_sub_path.parent / link_path
+                                    )
+                                )
+
+                        grafana.oss.Dashboard(
+                            dashboard_uid,
+                            opts=opts,
+                            config_json=orjson.dumps(config).decode(),
+                            folder=self.resource.uid if self.resource else None,
+                        )
+            else:
+                relative_sub_path_uid = self.path_to_uid(relative_sub_path)
                 resource = grafana.oss.Folder(
                     file,
                     opts=opts,
@@ -41,37 +75,6 @@ class Folder:
                 Folder(path=relative_sub_path, resource=resource).provision(
                     grafana_folder, grafana_opts
                 )
-            elif full_path.suffix == ".yaml":
-                with open(full_path, "r+b") as config_file:
-                    config = yaml_rs.load(config_file)
-                    if not isinstance(config, dict):
-                        raise ValueError(
-                            "Grafana config should contain only one object"
-                        )
-
-                    kind = config["kind"]
-                    match kind:
-                        case "Dashboard":
-                            config["metadata"] = {"name": relative_sub_path_uid}
-                            for link in config["spec"].get("links", []):
-                                link_path = link.pop("path", None)
-                                if link_path:
-                                    link["url"] = "/d/{}".format(
-                                        self.path_to_uid(
-                                            relative_sub_path.parent / link_path
-                                        )
-                                    )
-
-                            grafana.oss.Dashboard(
-                                relative_sub_path_uid,
-                                opts=opts,
-                                config_json=orjson.dumps(config).decode(),
-                                folder=self.resource.uid if self.resource else None,
-                            )
-                        case _:
-                            raise ValueError(
-                                "Unsupported grafana config kind: {}".format(kind)
-                            )
 
 
 def pre_build(service: ExtraService[ExtraConfig]) -> None:
