@@ -98,7 +98,7 @@ services:
               template: "label=pulumi.stack={stack}"
         DOZZLE_NO_ANALYTICS: true
         DOZZLE_ENABLE_ACTIONS: true
-        DOZZLE_ENABLE_SHELL: true
+        DOZZLE_ENABLE_SHELL: false
         DOZZLE_CERT:
           svariable: DOZZLE_CERT_PATH
         DOZZLE_KEY:
