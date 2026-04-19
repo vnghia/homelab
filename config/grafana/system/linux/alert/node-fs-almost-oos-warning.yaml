@@ -1,0 +1,62 @@
+spec:
+  annotations:
+    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available space left.
+    summary: Filesystem has less than 5% space left.
+  execErrState: OK
+  expressions:
+    query:
+      datasourceUID:
+        svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+      model:
+        datasource:
+          type: prometheus
+          uid:
+            svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+        expr: |
+          node_filesystem_avail_bytes{fstype!="", mountpoint!=""} / node_filesystem_size_bytes{fstype!="", mountpoint!=""} * 100 < 5
+          and
+          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
+        instant: true
+        range: false
+        refId: query
+      queryType: prometheus
+      relativeTimeRange:
+        from: 11m
+        to: 1m
+    prometheus_math:
+      model:
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: is_number($query) || is_nan($query) || is_inf($query)
+        refId: prometheus_math
+        type: math
+      queryType: math
+    threshold:
+      model:
+        conditions:
+          - evaluator:
+              params:
+                - 0
+              type: gt
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: prometheus_math
+        refId: threshold
+        type: threshold
+      queryType: threshold
+      source: true
+  for: 30m
+  labels:
+    alert_category: failure
+    entity_type: filesystem
+    severity: warning
+  missingSeriesEvalsToResolve: 1
+  noDataState: OK
+  notificationSettings:
+    receiver: empty
+  paused: false
+  title: NodeFilesystemAlmostOutOfSpace
+  trigger:
+    interval: 1m
