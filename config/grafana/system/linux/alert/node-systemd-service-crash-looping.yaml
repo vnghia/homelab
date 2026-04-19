@@ -52,7 +52,8 @@ spec:
   missingSeriesEvalsToResolve: 1
   noDataState: OK
   notificationSettings:
-    receiver: empty
+    receiver:
+      svariable: DEFAULT_CONTACT_POINT
   paused: false
   title: NodeSystemdServiceCrashlooping
   trigger:

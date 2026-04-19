@@ -54,7 +54,8 @@ spec:
   missingSeriesEvalsToResolve: 2
   noDataState: OK
   notificationSettings:
-    receiver: empty
+    receiver:
+      svariable: DEFAULT_CONTACT_POINT
   paused: false
   title: NodeCPUHighUsage
   trigger:
