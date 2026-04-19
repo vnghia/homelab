@@ -4,7 +4,7 @@ services:
       OPENOBSERVE_DATASOURCE_UID: openobserve-datasource
       OPENOBSERVE_PROMETHEUS_DATASOURCE_UID: openobserve-prometheus-datasource
     files:
-      openobserve:
+      datasource-openobserve:
         path:
           extract:
             volume: grafana-provision
