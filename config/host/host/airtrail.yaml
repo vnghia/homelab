@@ -55,6 +55,8 @@ services:
           https:
             api.adsbdb.com: null
             api.github.com: null
+            codeload.github.com: null
+            basemaps.cartocdn.com: null
             raw.githubusercontent.com: null
             davidmegginson.github.io: null
             aerodatabox.p.rapidapi.com: null
