@@ -34,6 +34,9 @@ services:
         transform:
           string:
             template: "{username}:{password}"
+      DEFAULT_CONTACT_POINT: me
+      PUSHOVER_USER_KEY:
+      PUSHOVER_API_TOKEN:
     config:
       traefik:
         dynamic:
@@ -41,10 +44,37 @@ services:
             service:
               port:
                 env: GF_SERVER_HTTP_PORT
+    files:
+      alerting-default-contact-point:
+        path:
+          extract:
+            volume: grafana-provision
+          transform:
+            path: alerting/default-contact-point.yaml
+        content:
+          format: yaml
+          data:
+            apiVersion: 1
+            contactPoints:
+              - name:
+                  svariable: DEFAULT_CONTACT_POINT
+                receivers:
+                  - uid: pushover-me
+                    type: pushover
+                    settings:
+                      apiToken:
+                        svariable: PUSHOVER_API_TOKEN
+                      userKey:
+                        svariable: PUSHOVER_USER_KEY
     keepasses:
       keepass:
         hostname:
           hostname: grafana
+    network:
+      bridge:
+        egress:
+          https:
+            api.pushover.net: null
     secrets:
       key: {}
     container:
