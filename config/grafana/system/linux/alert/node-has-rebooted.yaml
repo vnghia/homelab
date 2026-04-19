@@ -1,0 +1,57 @@
+spec:
+  annotations:
+    description: Node {{ $labels.host }} has rebooted {{ $value | humanize }} seconds ago.
+    summary: Node has rebooted.
+  execErrState: OK
+  expressions:
+    query:
+      datasourceUID:
+        svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+      model:
+        datasource:
+          type: prometheus
+          uid:
+            svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+        expr: (time() - node_boot_time_seconds) < 600 and (time() - (node_boot_time_seconds offset 10m)) > 600
+        instant: true
+        range: false
+        refId: query
+      queryType: prometheus
+      relativeTimeRange:
+        from: 11m
+        to: 1m
+    prometheus_math:
+      model:
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: is_number($query) || is_nan($query) || is_inf($query)
+        refId: prometheus_math
+        type: math
+      queryType: math
+    threshold:
+      model:
+        conditions:
+          - evaluator:
+              params:
+                - 0
+              type: gt
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: prometheus_math
+        refId: threshold
+        type: threshold
+      queryType: threshold
+      source: true
+  labels:
+    entity_type: node
+    severity: info
+  missingSeriesEvalsToResolve: 1
+  noDataState: OK
+  notificationSettings:
+    receiver: empty
+  paused: false
+  title: NodeHasRebooted
+  trigger:
+    interval: 1m

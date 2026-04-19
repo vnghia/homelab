@@ -1,0 +1,60 @@
+spec:
+  annotations:
+    description: |
+      {{ $labels.host }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} transmit errors in the last two minutes.
+    summary: Network interface is reporting many transmit errors.
+  execErrState: OK
+  expressions:
+    query:
+      datasourceUID:
+        svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+      model:
+        datasource:
+          type: prometheus
+          uid:
+            svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+        expr: rate(node_network_transmit_errs_total[2m]) / rate(node_network_transmit_packets_total[2m]) > 0.01
+        instant: true
+        range: false
+        refId: query
+      queryType: prometheus
+      relativeTimeRange:
+        from: 11m
+        to: 1m
+    prometheus_math:
+      model:
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: is_number($query) || is_nan($query) || is_inf($query)
+        refId: prometheus_math
+        type: math
+      queryType: math
+    threshold:
+      model:
+        conditions:
+          - evaluator:
+              params:
+                - 0
+              type: gt
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: prometheus_math
+        refId: threshold
+        type: threshold
+      queryType: threshold
+      source: true
+  for: 1h
+  labels:
+    alert_category: failure
+    entity_type: node
+    severity: warning
+  missingSeriesEvalsToResolve: 1
+  noDataState: OK
+  notificationSettings:
+    receiver: empty
+  paused: false
+  title: NodeNetworkTransmitErrs
+  trigger:
+    interval: 1m

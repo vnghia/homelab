@@ -1,0 +1,59 @@
+spec:
+  annotations:
+    description: Clock at {{ $labels.host }} is not synchronising. Ensure NTP is configured on this host.
+    summary: Clock not synchronising.
+  execErrState: OK
+  expressions:
+    query:
+      datasourceUID:
+        svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+      model:
+        datasource:
+          type: prometheus
+          uid:
+            svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+        expr: min_over_time(node_timex_sync_status[5m]) == 0 and node_timex_maxerror_seconds >= 16
+        instant: true
+        range: false
+        refId: query
+      queryType: prometheus
+      relativeTimeRange:
+        from: 11m
+        to: 1m
+    prometheus_math:
+      model:
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: is_number($query) || is_nan($query) || is_inf($query)
+        refId: prometheus_math
+        type: math
+      queryType: math
+    threshold:
+      model:
+        conditions:
+          - evaluator:
+              params:
+                - 0
+              type: gt
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: prometheus_math
+        refId: threshold
+        type: threshold
+      queryType: threshold
+      source: true
+  for: 10m
+  labels:
+    alert_category: failure
+    entity_type: node
+    severity: warning
+  missingSeriesEvalsToResolve: 1
+  noDataState: OK
+  notificationSettings:
+    receiver: empty
+  paused: false
+  title: NodeClockNotSynchronising
+  trigger:
+    interval: 1m

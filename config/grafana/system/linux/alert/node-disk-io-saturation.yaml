@@ -1,0 +1,61 @@
+spec:
+  annotations:
+    description: |
+      Disk IO queue (aqu-sq) is high on {{ $labels.device }} at {{ $labels.host }}, has been above 10 for the last 30 minutes, is currently at {{ printf "%.2f" $value }}.
+      This symptom might indicate disk saturation.
+    summary: Disk IO queue is high.
+  execErrState: OK
+  expressions:
+    query:
+      datasourceUID:
+        svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+      model:
+        datasource:
+          type: prometheus
+          uid:
+            svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+        expr: rate(node_disk_io_time_weighted_seconds_total{device!=""}[5m]) > 10
+        instant: true
+        range: false
+        refId: query
+      queryType: prometheus
+      relativeTimeRange:
+        from: 11m
+        to: 1m
+    prometheus_math:
+      model:
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: is_number($query) || is_nan($query) || is_inf($query)
+        refId: prometheus_math
+        type: math
+      queryType: math
+    threshold:
+      model:
+        conditions:
+          - evaluator:
+              params:
+                - 0
+              type: gt
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: prometheus_math
+        refId: threshold
+        type: threshold
+      queryType: threshold
+      source: true
+  for: 30m
+  labels:
+    alert_category: failure
+    entity_type: node
+    severity: warning
+  missingSeriesEvalsToResolve: 1
+  noDataState: OK
+  notificationSettings:
+    receiver: empty
+  paused: false
+  title: NodeDiskIOSaturation
+  trigger:
+    interval: 1m

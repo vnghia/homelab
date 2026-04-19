@@ -1,0 +1,61 @@
+spec:
+  annotations:
+    description: |
+      Systemd service {{ $labels.name }} has entered failed state at {{ $labels.host }}.
+      If this service is not required anymore, remove it or run `systemctl reset-failed {{ $labels.name }}` in order to reset the failed counter.
+    summary: Systemd service has entered failed state.
+  execErrState: OK
+  expressions:
+    query:
+      datasourceUID:
+        svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+      model:
+        datasource:
+          type: prometheus
+          uid:
+            svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+        expr: node_systemd_unit_state{state="failed"} == 1
+        instant: true
+        range: false
+        refId: query
+      queryType: prometheus
+      relativeTimeRange:
+        from: 11m
+        to: 1m
+    prometheus_math:
+      model:
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: is_number($query) || is_nan($query) || is_inf($query)
+        refId: prometheus_math
+        type: math
+      queryType: math
+    threshold:
+      model:
+        conditions:
+          - evaluator:
+              params:
+                - 0
+              type: gt
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: prometheus_math
+        refId: threshold
+        type: threshold
+      queryType: threshold
+      source: true
+  for: 5m
+  labels:
+    alert_category: failure
+    entity_type: node
+    severity: warning
+  missingSeriesEvalsToResolve: 1
+  noDataState: OK
+  notificationSettings:
+    receiver: empty
+  paused: false
+  title: NodeSystemdServiceFailed
+  trigger:
+    interval: 1m
