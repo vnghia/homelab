@@ -1,7 +1,9 @@
 spec:
   annotations:
-    description: At least one device in RAID array at {{ $labels.host }} failed. Array '{{ $labels.device }}' needs attention and possibly a disk swap.
-    summary: Failed device in RAID array.
+    description: |
+      Memory major pages are occurring at very high rate at {{ $labels.host }}, 500 major page faults per second for the last 15 minutes, is currently at {{ printf "%.2f" $value }}.
+      Please check that there is enough memory available at this instance.
+    summary: Memory major page faults are occurring at very high rate.
   execErrState: OK
   expressions:
     query:
@@ -12,7 +14,7 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: node_md_disks{state="failed", device!=""} > 0
+        expr: rate(node_vmstat_pgmajfault[5m]) > 500
         instant: true
         range: false
         refId: query
@@ -44,9 +46,10 @@ spec:
         type: threshold
       queryType: threshold
       source: true
+  for: 15m
   labels:
     alert_category: failure
-    entity_type: node
+    entity_type: host
     severity: warning
   missingSeriesEvalsToResolve: 1
   noDataState: OK
@@ -54,6 +57,6 @@ spec:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeRAIDDiskFailure
+  title: HostMemoryMajorPagesFaults
   trigger:
     interval: 1m

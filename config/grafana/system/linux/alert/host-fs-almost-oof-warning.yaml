@@ -58,6 +58,6 @@ spec:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeFilesystemAlmostOutOfFiles
+  title: HostFilesystemAlmostOutOfFiles
   trigger:
     interval: 1m

@@ -1,7 +1,9 @@
 spec:
   annotations:
-    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up.
-    summary: Filesystem is predicted to run out of inodes within the next 24 hours.
+    description: |
+      System load per core at {{ $labels.host }} has been above 2 for the last 15 minutes, is currently at {{ printf "%.2f" $value }}.
+      This might indicate this instance resources saturation and can cause it becoming unresponsive.
+    summary: System saturated, load per core is very high.
   execErrState: OK
   expressions:
     query:
@@ -12,12 +14,7 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: |
-          node_filesystem_files_free{fstype!="", mountpoint!=""} / node_filesystem_files{fstype!="", mountpoint!=""} * 100 < 40
-          and
-          predict_linear(node_filesystem_files_free{fstype!="", mountpoint!=""}[6h], 24 * 60 * 60) < 0
-          and
-          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
+        expr: node_load1 / count without (cpu, mode) (node_cpu_seconds_total{mode="idle"}) > 2
         instant: true
         range: false
         refId: query
@@ -49,10 +46,10 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 1h
+  for: 15m
   labels:
     alert_category: failure
-    entity_type: filesystem
+    entity_type: host
     severity: warning
   missingSeriesEvalsToResolve: 1
   noDataState: OK
@@ -60,6 +57,6 @@ spec:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeFilesystemFilesFillingUp
+  title: HostSystemSaturation
   trigger:
     interval: 1m

@@ -50,7 +50,7 @@ spec:
   for: 10m
   labels:
     alert_category: failure
-    entity_type: node
+    entity_type: host
     severity: warning
   missingSeriesEvalsToResolve: 1
   noDataState: OK
@@ -58,6 +58,6 @@ spec:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeClockSkewDetected
+  title: HostClockSkewDetected
   trigger:
     interval: 1m

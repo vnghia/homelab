@@ -1,8 +1,7 @@
 spec:
   annotations:
-    description: |
-      Memory is filling up at {{ $labels.host }}, has been above 80% for the last 10 minutes, is currently at {{ printf "%.2f" $value }}%.
-    summary: Host is using more than 80% of available memory.
+    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available space left and is filling up fast.
+    summary: Filesystem is predicted to run out of space within the next 4 hours.
   execErrState: OK
   expressions:
     query:
@@ -13,7 +12,12 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: 100 - (node_memory_memavailable_bytes / node_memory_memtotal_bytes * 100) > 80
+        expr: |
+          node_filesystem_avail_bytes{fstype!="", mountpoint!=""} / node_filesystem_size_bytes{fstype!="", mountpoint!=""} * 100 < 20
+          and
+          predict_linear(node_filesystem_avail_bytes{fstype!="", mountpoint!=""}[6h], 4 * 60 * 60) < 0
+          and
+          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
         instant: true
         range: false
         refId: query
@@ -45,17 +49,17 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 10m
+  for: 1h
   labels:
     alert_category: failure
-    entity_type: node
-    severity: info
+    entity_type: filesystem
+    severity: critical
   missingSeriesEvalsToResolve: 1
   noDataState: OK
   notificationSettings:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeAlmostOutOfMemory
+  title: HostFilesystemSpaceFillingUp
   trigger:
     interval: 1m

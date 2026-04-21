@@ -1,7 +1,7 @@
 spec:
   annotations:
-    description: There is {{ $value }} running processes on {{ $labels.host }}.
-    summary: There is more than 400 running processes on host.
+    description: Node {{ $labels.host }} has rebooted {{ $value | humanize }} seconds ago.
+    summary: Node has rebooted.
   execErrState: OK
   expressions:
     query:
@@ -12,7 +12,7 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: node_procs_running > 400
+        expr: (time() - node_boot_time_seconds) < 600 and (time() - (node_boot_time_seconds offset 10m)) > 600
         instant: true
         range: false
         refId: query
@@ -44,16 +44,15 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 5m
   labels:
-    entity_type: node
-    severity: warning
+    entity_type: host
+    severity: info
   missingSeriesEvalsToResolve: 1
   noDataState: OK
   notificationSettings:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeProcessesCountIsHigh
+  title: HostHasRebooted
   trigger:
     interval: 1m

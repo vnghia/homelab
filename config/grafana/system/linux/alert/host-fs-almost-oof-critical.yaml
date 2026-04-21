@@ -1,9 +1,7 @@
 spec:
   annotations:
-    description: |
-      Systemd service {{ $labels.name }} has entered failed state at {{ $labels.host }}.
-      If this service is not required anymore, remove it or run `systemctl reset-failed {{ $labels.name }}` in order to reset the failed counter.
-    summary: Systemd service has entered failed state.
+    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available inodes left.
+    summary: Filesystem has less than 3% inodes left.
   execErrState: OK
   expressions:
     query:
@@ -14,7 +12,10 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: node_systemd_unit_state{state="failed"} == 1
+        expr: |
+          node_filesystem_files_free{fstype!="", mountpoint!=""} / node_filesystem_files{fstype!="", mountpoint!=""} * 100 < 3
+          and
+          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
         instant: true
         range: false
         refId: query
@@ -46,17 +47,17 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 5m
+  for: 1h
   labels:
     alert_category: failure
-    entity_type: node
-    severity: warning
+    entity_type: filesystem
+    severity: critical
   missingSeriesEvalsToResolve: 1
   noDataState: OK
   notificationSettings:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeSystemdServiceFailed
+  title: HostFilesystemAlmostOutOfFiles
   trigger:
     interval: 1m

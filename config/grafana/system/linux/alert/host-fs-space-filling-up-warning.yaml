@@ -1,9 +1,7 @@
 spec:
   annotations:
-    description: |
-      System load per core at {{ $labels.host }} has been above 2 for the last 15 minutes, is currently at {{ printf "%.2f" $value }}.
-      This might indicate this instance resources saturation and can cause it becoming unresponsive.
-    summary: System saturated, load per core is very high.
+    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available space left and is filling up.
+    summary: Filesystem is predicted to run out of space within the next 24 hours.
   execErrState: OK
   expressions:
     query:
@@ -14,7 +12,12 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: node_load1 / count without (cpu, mode) (node_cpu_seconds_total{mode="idle"}) > 2
+        expr: |
+          node_filesystem_avail_bytes{fstype!="", mountpoint!=""} / node_filesystem_size_bytes{fstype!="", mountpoint!=""} * 100 < 40
+          and
+          predict_linear(node_filesystem_avail_bytes{fstype!="", mountpoint!=""}[6h], 24 * 60 * 60) < 0
+          and
+          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
         instant: true
         range: false
         refId: query
@@ -46,10 +49,10 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 15m
+  for: 1h
   labels:
     alert_category: failure
-    entity_type: node
+    entity_type: filesystem
     severity: warning
   missingSeriesEvalsToResolve: 1
   noDataState: OK
@@ -57,6 +60,6 @@ spec:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeSystemSaturation
+  title: HostFilesystemSpaceFillingUp
   trigger:
     interval: 1m

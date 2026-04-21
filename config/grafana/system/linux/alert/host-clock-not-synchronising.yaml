@@ -1,7 +1,7 @@
 spec:
   annotations:
-    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available space left.
-    summary: Filesystem has less than 5% space left.
+    description: Clock at {{ $labels.host }} is not synchronising. Ensure NTP is configured on this host.
+    summary: Clock not synchronising.
   execErrState: OK
   expressions:
     query:
@@ -12,10 +12,7 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: |
-          node_filesystem_avail_bytes{fstype!="", mountpoint!=""} / node_filesystem_size_bytes{fstype!="", mountpoint!=""} * 100 < 5
-          and
-          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
+        expr: min_over_time(node_timex_sync_status[5m]) == 0 and node_timex_maxerror_seconds >= 16
         instant: true
         range: false
         refId: query
@@ -47,10 +44,10 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 30m
+  for: 10m
   labels:
     alert_category: failure
-    entity_type: filesystem
+    entity_type: host
     severity: warning
   missingSeriesEvalsToResolve: 1
   noDataState: OK
@@ -58,6 +55,6 @@ spec:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeFilesystemAlmostOutOfSpace
+  title: HostClockNotSynchronising
   trigger:
     interval: 1m

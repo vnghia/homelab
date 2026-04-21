@@ -1,8 +1,9 @@
 spec:
   annotations:
     description: |
-      {{ $labels.host }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} receive errors in the last two minutes.
-    summary: Network interface is reporting many receive errors.
+      Disk IO queue (aqu-sq) is high on {{ $labels.device }} at {{ $labels.host }}, has been above 10 for the last 30 minutes, is currently at {{ printf "%.2f" $value }}.
+      This symptom might indicate disk saturation.
+    summary: Disk IO queue is high.
   execErrState: OK
   expressions:
     query:
@@ -13,7 +14,7 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: rate(node_network_receive_errs_total[2m]) / rate(node_network_receive_packets_total[2m]) > 0.01
+        expr: rate(node_disk_io_time_weighted_seconds_total{device!=""}[5m]) > 10
         instant: true
         range: false
         refId: query
@@ -45,10 +46,10 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 1h
+  for: 30m
   labels:
     alert_category: failure
-    entity_type: node
+    entity_type: host
     severity: warning
   missingSeriesEvalsToResolve: 1
   noDataState: OK
@@ -56,6 +57,6 @@ spec:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeNetworkReceiveErrs
+  title: HostDiskIOSaturation
   trigger:
     interval: 1m

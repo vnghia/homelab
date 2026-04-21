@@ -1,7 +1,7 @@
 spec:
   annotations:
-    description: RAID array '{{ $labels.device }}' at {{ $labels.host }} is in degraded state due to one or more disks failures. Number of spare drives is insufficient to fix issue automatically.
-    summary: RAID Array is degraded.
+    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available space left.
+    summary: Filesystem has less than 5% space left.
   execErrState: OK
   expressions:
     query:
@@ -12,7 +12,10 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: node_md_disks_required{device!=""} - ignoring (state) (node_md_disks{state="active", device!=""}) > 0
+        expr: |
+          node_filesystem_avail_bytes{fstype!="", mountpoint!=""} / node_filesystem_size_bytes{fstype!="", mountpoint!=""} * 100 < 5
+          and
+          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
         instant: true
         range: false
         refId: query
@@ -44,17 +47,17 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 15m
+  for: 30m
   labels:
     alert_category: failure
-    entity_type: node
-    severity: critical
+    entity_type: filesystem
+    severity: warning
   missingSeriesEvalsToResolve: 1
   noDataState: OK
   notificationSettings:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeRAIDDegraded
+  title: HostFilesystemAlmostOutOfSpace
   trigger:
     interval: 1m

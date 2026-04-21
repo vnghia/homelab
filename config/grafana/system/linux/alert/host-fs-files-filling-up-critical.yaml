@@ -1,7 +1,7 @@
 spec:
   annotations:
-    description: "{{ $labels.host }} {{ $value | humanizePercentage }} of conntrack entries are used."
-    summary: Number of conntrack are getting close to the limit.
+    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up fast.
+    summary: Filesystem is predicted to run out of inodes within the next 4 hours.
   execErrState: OK
   expressions:
     query:
@@ -12,7 +12,12 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: (node_nf_conntrack_entries / node_nf_conntrack_entries_limit) > 0.75
+        expr: |
+          node_filesystem_files_free{fstype!="", mountpoint!=""} / node_filesystem_files{fstype!="", mountpoint!=""} * 100 < 20
+          and
+          predict_linear(node_filesystem_files_free{fstype!="", mountpoint!=""}[6h], 4 * 60 * 60) < 0
+          and
+          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
         instant: true
         range: false
         refId: query
@@ -44,16 +49,17 @@ spec:
         type: threshold
       queryType: threshold
       source: true
+  for: 1h
   labels:
     alert_category: failure
-    entity_type: node
-    severity: warning
+    entity_type: filesystem
+    severity: critical
   missingSeriesEvalsToResolve: 1
   noDataState: OK
   notificationSettings:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeHighNumberConntrackEntriesUsed
+  title: HostFilesystemFilesFillingUp
   trigger:
     interval: 1m

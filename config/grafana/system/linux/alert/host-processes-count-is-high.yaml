@@ -1,9 +1,7 @@
 spec:
   annotations:
-    description: |
-      CPU usage at {{ $labels.host }} has been above 90% for the last 15 minutes, is currently at {{ printf "%.2f" $value }}%.
-      Note that 'iowait' CPU mode is excluded from total utilization.
-    summary: High CPU usage.
+    description: There is {{ $value }} running processes on {{ $labels.host }}.
+    summary: There is more than 400 running processes on host.
   execErrState: OK
   expressions:
     query:
@@ -14,7 +12,7 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: sum without (mode) (avg without (cpu) (rate(node_cpu_seconds_total{mode!~"idle|iowait"}[2m]))) * 100 > 90
+        expr: node_procs_running > 400
         instant: true
         range: false
         refId: query
@@ -46,17 +44,16 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 15m
+  for: 5m
   labels:
-    alert_category: failure
-    entity_type: node
-    severity: info
-  missingSeriesEvalsToResolve: 2
+    entity_type: host
+    severity: warning
+  missingSeriesEvalsToResolve: 1
   noDataState: OK
   notificationSettings:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeCPUHighUsage
+  title: HostProcessesCountIsHigh
   trigger:
     interval: 1m

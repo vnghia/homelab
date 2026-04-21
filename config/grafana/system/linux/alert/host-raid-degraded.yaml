@@ -1,7 +1,7 @@
 spec:
   annotations:
-    description: Filesystem on {{ $labels.device }}, mounted on {{ $labels.mountpoint }}, at {{ $labels.host }} has only {{ printf "%.2f" $value }}% available space left and is filling up.
-    summary: Filesystem is predicted to run out of space within the next 24 hours.
+    description: RAID array '{{ $labels.device }}' at {{ $labels.host }} is in degraded state due to one or more disks failures. Number of spare drives is insufficient to fix issue automatically.
+    summary: RAID Array is degraded.
   execErrState: OK
   expressions:
     query:
@@ -12,12 +12,7 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: |
-          node_filesystem_avail_bytes{fstype!="", mountpoint!=""} / node_filesystem_size_bytes{fstype!="", mountpoint!=""} * 100 < 40
-          and
-          predict_linear(node_filesystem_avail_bytes{fstype!="", mountpoint!=""}[6h], 24 * 60 * 60) < 0
-          and
-          node_filesystem_readonly{fstype!="", mountpoint!=""} == 0
+        expr: node_md_disks_required{device!=""} - ignoring (state) (node_md_disks{state="active", device!=""}) > 0
         instant: true
         range: false
         refId: query
@@ -49,17 +44,17 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 1h
+  for: 15m
   labels:
     alert_category: failure
-    entity_type: filesystem
-    severity: warning
+    entity_type: host
+    severity: critical
   missingSeriesEvalsToResolve: 1
   noDataState: OK
   notificationSettings:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeFilesystemSpaceFillingUp
+  title: HostRAIDDegraded
   trigger:
     interval: 1m
