@@ -3,7 +3,7 @@ docker:
     remote:
       geoip-updater:
         repo: ghcr.io/crazy-max/geoip-updater
-        tag: "1.12.0"
+        tag: "1.13.0"
   volumes:
     local:
       geoip-download: {}
