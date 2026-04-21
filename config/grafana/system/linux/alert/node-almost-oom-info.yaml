@@ -1,0 +1,61 @@
+spec:
+  annotations:
+    description: |
+      Memory is filling up at {{ $labels.host }}, has been above 80% for the last 10 minutes, is currently at {{ printf "%.2f" $value }}%.
+    summary: Host is using more than 80% of available memory.
+  execErrState: OK
+  expressions:
+    query:
+      datasourceUID:
+        svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+      model:
+        datasource:
+          type: prometheus
+          uid:
+            svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
+        expr: 100 - (node_memory_memavailable_bytes / node_memory_memtotal_bytes * 100) > 80
+        instant: true
+        range: false
+        refId: query
+      queryType: prometheus
+      relativeTimeRange:
+        from: 11m
+        to: 1m
+    prometheus_math:
+      model:
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: is_number($query) || is_nan($query) || is_inf($query)
+        refId: prometheus_math
+        type: math
+      queryType: math
+    threshold:
+      model:
+        conditions:
+          - evaluator:
+              params:
+                - 0
+              type: gt
+        datasource:
+          type: __expr__
+          uid: __expr__
+        expression: prometheus_math
+        refId: threshold
+        type: threshold
+      queryType: threshold
+      source: true
+  for: 10m
+  labels:
+    alert_category: failure
+    entity_type: node
+    severity: info
+  missingSeriesEvalsToResolve: 1
+  noDataState: OK
+  notificationSettings:
+    receiver:
+      svariable: DEFAULT_CONTACT_POINT
+  paused: false
+  title: NodeAlmostOutOfMemory
+  trigger:
+    interval: 1m

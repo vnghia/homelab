@@ -1,8 +1,8 @@
 spec:
   annotations:
     description: |
-      Memory is filling up at {{ $labels.host }}, has been above 90% for the last 15 minutes, is currently at {{ printf "%.2f" $value }}%.
-    summary: Host is running out of memory.
+      Memory is filling up at {{ $labels.host }}, has been above 90% for the last 10 minutes, is currently at {{ printf "%.2f" $value }}%.
+    summary: Host is using more than 90% of available memory.
   execErrState: OK
   expressions:
     query:
@@ -45,7 +45,7 @@ spec:
         type: threshold
       queryType: threshold
       source: true
-  for: 15m
+  for: 10m
   labels:
     alert_category: failure
     entity_type: node
@@ -56,6 +56,6 @@ spec:
     receiver:
       svariable: DEFAULT_CONTACT_POINT
   paused: false
-  title: NodeMemoryHighUtilization
+  title: NodeAlmostOutOfMemory
   trigger:
     interval: 1m
