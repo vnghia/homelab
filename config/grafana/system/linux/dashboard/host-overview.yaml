@@ -510,7 +510,7 @@ spec:
         description: |
           System load average over the previous 1, 5, and 15 minute ranges.
 
-          A measurement of how many processes are waiting for CPU cycles. The maximum number is the number of CPU cores for the node.
+          A measurement of how many processes are waiting for CPU cycles. The maximum number is the number of CPU cores for the host.
         links: []
         data:
           kind: QueryGroup
@@ -1513,7 +1513,7 @@ spec:
       - 1d
     hideTimepicker: false
     fiscalYearStartMonth: 0
-  title: Node overview
+  title: Host overview
   variables:
     - kind: DatasourceVariable
       spec:

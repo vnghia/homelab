@@ -896,11 +896,11 @@ spec:
       targetBlank: false
       includeVars: false
       keepTime: true
-    - title: Back to Linux node overview
+    - title: Back to Linux host overview
       type: link
       icon: ""
       tooltip: ""
-      path: node-overview.yaml
+      path: host-overview.yaml
       tags: []
       asDropdown: false
       targetBlank: false
