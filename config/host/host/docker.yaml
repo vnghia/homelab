@@ -3,7 +3,7 @@ docker:
     remote:
       docker-cli:
         repo: docker
-        tag: "29.4.0-cli"
+        tag: "29.4.1-cli"
   volumes:
     local:
       docker-proxy-mtls:
