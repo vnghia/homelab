@@ -19,8 +19,7 @@ class ContainerHealthCheckConfig(HomelabBaseModel):
     SECONDS_IN_MINUTE: ClassVar[PositiveInt] = 60
     BINARY_HTTP_REQUEST: ClassVar[set[str]] = {"wget", "curl"}
 
-    # TODO: set the default value to None after https://github.com/kreuzwerker/terraform-provider-docker/pull/834
-    tests: list[GlobalExtract] = []
+    tests: list[GlobalExtract] | None = None
     interval: PositiveInt = 120
     timeout: PositiveInt = 5
     start_period: PositiveInt = 60
@@ -54,12 +53,19 @@ class ContainerHealthCheckConfig(HomelabBaseModel):
         )
 
     def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHealthcheckArgs:
-        tests = [
-            GlobalExtractor(test).extract_str(extractor_args) for test in self.tests
-        ]
+        tests = (
+            Output.all(
+                *[
+                    GlobalExtractor(test).extract_str(extractor_args)
+                    for test in self.tests
+                ]
+            ).apply(self.transform_tests)
+            if self.tests
+            else None
+        )
 
         return docker.ContainerHealthcheckArgs(
-            tests=Output.all(*tests).apply(self.transform_tests) if tests else tests,
+            tests=tests,
             interval=self.to_second(self.interval),
             timeout=self.to_second(self.timeout),
             start_period=self.to_second(self.start_period),

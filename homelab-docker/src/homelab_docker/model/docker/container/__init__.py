@@ -433,7 +433,9 @@ class ContainerModel(HomelabBaseModel):
             cpus=self.cpus,
             devices=[
                 docker.ContainerDeviceArgs(
-                    host_path=device.as_posix(), container_path=device.as_posix()
+                    host_path=device.as_posix(),
+                    container_path=device.as_posix(),
+                    permissions="rwm",
                 )
                 for device in self.devices
             ]
