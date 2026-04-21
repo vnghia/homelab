@@ -1,8 +1,8 @@
 spec:
   annotations:
     description: |
-      Memory is filling up at {{ $labels.host }}, has been above 90% for the last 10 minutes, is currently at {{ printf "%.2f" $value }}%.
-    summary: Host is using more than 90% of available memory.
+      Memory is filling up at {{ $labels.host }}, has been above 80% for the last 10 minutes, is currently at {{ printf "%.2f" $value }}%.
+    summary: Host is using more than 80% of available memory.
   execErrState: OK
   expressions:
     query:
@@ -13,7 +13,7 @@ spec:
           type: prometheus
           uid:
             svariable: OPENOBSERVE_PROMETHEUS_DATASOURCE_UID
-        expr: 100 - (node_memory_memavailable_bytes / node_memory_memtotal_bytes * 100) > 90
+        expr: 100 - (node_memory_memavailable_bytes / node_memory_memtotal_bytes * 100) > 80
         instant: true
         range: false
         refId: query
