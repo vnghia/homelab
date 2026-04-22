@@ -15,6 +15,10 @@ services:
       bridge:
     container:
       image: i2p
+      log:
+        driver: json-file
+        opts:
+          max-size: "20m"
       network:
         service: qbittorrent
         container: vpn
