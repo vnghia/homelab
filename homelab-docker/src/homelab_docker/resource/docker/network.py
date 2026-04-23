@@ -29,6 +29,9 @@ from ...model.host import HostServiceModelModel
 
 class NetworkResource(ComponentResource):
     RESOURCE_NAME = "network"
+    SERVICE_GATEWAY_PRIORITY: int = 0
+    INTERNAL_GATEWAY_PRIORITY: int = 10
+    EXTERNAL_GATEWAY_PRIORITY: int = 100
 
     def __init__(
         self,
@@ -47,7 +50,7 @@ class NetworkResource(ComponentResource):
 
         self.bridge = {
             key: model.build_resource(
-                self.get_bridge_name(key),
+                key,
                 opts=self.child_opts,
                 project_labels=project_args.labels,
                 ipam=[],
@@ -192,7 +195,7 @@ class NetworkResource(ComponentResource):
                 ipam.append(model)
 
             self.bridge[service_name] = service_network_model.build_resource(
-                self.get_bridge_name(service_name),
+                service_name,
                 opts=self.child_opts,
                 project_labels=extractor_args.global_resource.project_args.labels,
                 ipam=ipam,
@@ -201,20 +204,27 @@ class NetworkResource(ComponentResource):
                 service_name, service_bridge, extractor_args, ipam
             )
 
-    @classmethod
-    def get_bridge_name(cls, name: str) -> str:
-        return "{}-bridge".format(name)
-
     def get_bridge_args(
         self,
         name: str,
+        service: str,
+        internal: bool,
         aliases: list[Input[str]],
         ipv4: Output[str] | None,
         ipv6: Output[str] | None,
     ) -> docker.ContainerNetworksAdvancedArgs:
+        gw_priority = (
+            self.SERVICE_GATEWAY_PRIORITY
+            if name == service
+            else self.INTERNAL_GATEWAY_PRIORITY
+            if internal
+            else self.EXTERNAL_GATEWAY_PRIORITY
+        )
         return docker.ContainerNetworksAdvancedArgs(
             name=self.bridge[name].name,
             aliases=aliases,
+            driver_opts=["com.docker.network.endpoint.ifname={}".format(name)],
+            gw_priority=gw_priority,
             ipv4_address=ipv4,
             ipv6_address=ipv6,
         )

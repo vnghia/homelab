@@ -129,14 +129,13 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
         # TODO: remove bridge mode after https://github.com/pulumi/pulumi-docker/issues/1272
         bridge_config = extractor_args.host.docker.network.bridge_config
         service_network = extractor_args.service_model.network
+        service_name = extractor_args.service.name()
 
         bridges: dict[str, ContainerBridgeNetworkArgs] = {}
         if build_args.network.bridges:
             bridges |= build_args.network.bridges
         if service_network.bridge:
-            bridges[extractor_args.service.name()] = ContainerBridgeNetworkArgs(
-                service_network.bridge
-            )
+            bridges[service_name] = ContainerBridgeNetworkArgs(service_network.bridge)
         bridges |= {
             key: ContainerBridgeNetworkArgs(value) for key, value in self.bridge.items()
         }
@@ -151,14 +150,16 @@ class ContainerCommonNetworkConfig(HomelabBaseModel):
             advanced=[
                 extractor_args.host.docker.network.get_bridge_args(
                     name,
+                    service_name,
+                    bridge_model.internal,
                     self.build_resource_aliases(
-                        resource_name, bridge_config[name], args.config, extractor_args
+                        resource_name, bridge_model, args.config, extractor_args
                     ),
                     args.ipv4,
                     args.ipv6,
                 )
                 for name, args in bridges.items()
-                if args.config.active
+                if args.config.active and (bridge_model := bridge_config[name])
             ],
         )
 

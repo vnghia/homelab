@@ -56,6 +56,10 @@ class BridgeNetworkModel(HomelabBaseModel):
     labels: dict[str, str] = {}
     options: dict[str, str] = {}
 
+    @classmethod
+    def get_bridge_name(cls, name: str) -> str:
+        return "{}-bridge".format(name)
+
     def build_resource(
         self,
         resource_name: str,
@@ -64,19 +68,18 @@ class BridgeNetworkModel(HomelabBaseModel):
         project_labels: dict[str, str],
         ipam: list[Output[BridgeIpamNetworkModel]],
     ) -> docker.Network:
-        options = self.options
+        options = self.options | {
+            "name": "br-{}".format(resource_name),
+        }
         if not self.icc:
             options["enable_icc"] = "false"
 
         has_static_ipam = bool(self.ipam) or bool(ipam)
 
         return docker.Network(
-            resource_name,
+            self.get_bridge_name(resource_name),
             opts=ResourceOptions.merge(
-                opts,
-                ResourceOptions(
-                    delete_before_replace=opts.delete_before_replace or has_static_ipam
-                ),
+                opts, ResourceOptions(delete_before_replace=True)
             ),
             driver="bridge",
             ipv6=self.ipv6,
@@ -90,7 +93,6 @@ class BridgeNetworkModel(HomelabBaseModel):
                 for k, v in (project_labels | self.labels).items()
             ],
             options={
-                "com.docker.network.bridge.{}".format(k): v
-                for k, v in self.options.items()
+                "com.docker.network.bridge.{}".format(k): v for k, v in options.items()
             },
         )
