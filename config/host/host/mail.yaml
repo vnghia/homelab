@@ -54,6 +54,10 @@ services:
             info: password
     keepasses:
       stalwart-admin:
+        username:
+          force-lower: true
+        password:
+          special: false
         hostname:
           record: solar
           hostname: mail
@@ -83,9 +87,6 @@ services:
       hosts:
         - record: solar
           hostname: kanidm
-      network:
-        bridge:
-          direct: {}
       tmpfs:
         - /tmp
       volumes:
@@ -93,3 +94,5 @@ services:
           path: /etc/stalwart
           read-only: true
         mail-stalwart-data: /var/lib/stalwart
+      envs:
+        STALWART_RECOVERY_MODE_LOG_LEVEL: debug

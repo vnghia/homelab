@@ -1,5 +1,15 @@
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
+from homelab_docker.model.docker.container import ContainerNetworkModelBuildArgs
+from homelab_docker.model.docker.container.network import (
+    ContainerBridgeNetworkArgs,
+    ContainerBridgeNetworkConfig,
+)
+from homelab_docker.model.docker.container.port import ContainerPortProtocol
+from homelab_docker.model.docker.container.ports import (
+    ContainerPortRangeConfig,
+    ContainerPortsConfig,
+)
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_extra_service import ExtraService
 from pulumi import Output, ResourceOptions
@@ -41,5 +51,22 @@ class MailService(ExtraService[MailConfig]):
                     stalwart_config.recovery.port
                 ),
             }
+            self.options[self.STALWART_CONTAINER].add_network(
+                ContainerNetworkModelBuildArgs(
+                    ports=ContainerPortsConfig(
+                        {
+                            "recovery": ContainerPortRangeConfig(
+                                internal=stalwart_config.recovery.port,
+                                protocol=ContainerPortProtocol.TCP,
+                            )
+                        }
+                    ),
+                    bridges={
+                        "direct": ContainerBridgeNetworkArgs(
+                            config=ContainerBridgeNetworkConfig()
+                        )
+                    },
+                )
+            )
 
         self.build(None)
