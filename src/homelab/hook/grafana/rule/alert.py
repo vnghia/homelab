@@ -3,7 +3,6 @@ from typing import Any
 import pulumiverse_grafana as grafana
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_pydantic import DictAdapter
 from pulumi import Output, ResourceOptions
 
 from . import schema
