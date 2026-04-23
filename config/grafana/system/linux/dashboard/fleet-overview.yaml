@@ -1251,7 +1251,54 @@ spec:
                   thresholdsStyle:
                     mode: "off"
               overrides: []
-
+    temperature:
+      kind: Panel
+      spec:
+        id: 18
+        title: Temperature
+        description: Hardware temperature in °C.
+        links: []
+        data:
+          kind: QueryGroup
+          spec:
+            queries:
+              - kind: PanelQuery
+                spec:
+                  query:
+                    kind: DataQuery
+                    group: prometheus
+                    version: v0
+                    datasource:
+                      name: ${datasource}
+                    spec:
+                      expr: |
+                        node_hwmon_temp_celsius
+                        * on(host, chip) group_left(chip_name) node_hwmon_chip_names
+                        * on(host, chip, sensor) group_left(label) node_hwmon_sensor_label
+                      legendFormat: "{{host}}: {{chip_name}}/{{label}}"
+                  refId: A
+                  hidden: false
+            transformations: []
+            queryOptions: {}
+        vizConfig:
+          kind: VizConfig
+          group: timeseries
+          version: ""
+          spec:
+            options:
+              legend:
+                calcs: []
+                displayMode: list
+                placement: right
+              tooltip:
+                mode: multi
+                sort: desc
+            fieldConfig:
+              defaults:
+                unit: celsius
+                custom:
+                  lineWidth: 2
+              overrides: []
   layout:
     kind: GridLayout
     spec:
@@ -1328,6 +1375,15 @@ spec:
             element:
               kind: ElementReference
               name: network-errors
+        - kind: GridLayoutItem
+          spec:
+            x: 0
+            y: 46
+            width: 24
+            height: 6
+            element:
+              kind: ElementReference
+              name: temperature
   links:
     - title: Back to Linux host overview
       type: link
