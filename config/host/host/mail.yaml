@@ -28,12 +28,11 @@ services:
               prefer-short-username: true
   mail:
     variables:
-      STALWART_MANAGEMENT_PORT: 8080
       STALWART_CONFIG_PATH:
         extract:
           volume: mail-stalwart-config
         transform:
-          path: config.toml
+          path: config.json
       MAIL_OAUTH_URL:
         extract:
           record: solar
@@ -43,15 +42,18 @@ services:
           string:
             template: "{value}/oauth2/openid/mail"
     config:
-      traefik:
-        dynamic:
-          traefik:
-            record: solar
-            service:
-              port:
-                svariable: STALWART_MANAGEMENT_PORT
+      stalwart:
+        recovery:
+          enabled: true
+          port: 12908
+          username:
+            keepass: admin
+            info: username
+          password:
+            keepass: admin
+            info: password
     keepasses:
-      keepass:
+      admin:
         username: admin
         hostname:
           record: solar
@@ -61,72 +63,24 @@ services:
         path:
           svariable: STALWART_CONFIG_PATH
         content:
-          format: toml
+          format: json
           data:
-            server:
-              listener:
-                management:
-                  bind:
-                    extract:
-                      svariable: STALWART_MANAGEMENT_PORT
-                    transform:
-                      string:
-                        template: "[::]:{value}"
-                  protocol: "http"
-            storage:
-              data: rocksdb
-              fts: rocksdb
-              blob: rocksdb
-              lookup: rocksdb
-              directory: oidc
-            store:
-              rocksdb:
-                type: rocksdb
-                path:
-                  extract:
-                    volume: mail-stalwart-data
-                  transform:
-                    path: rocksdb
-                compression: lz4
-            directory:
-              oidc:
-                type: oidc
-                endpoint:
-                  url:
-                    extract:
-                      svariable: MAIL_OAUTH_URL
-                    transform:
-                      string:
-                        template: "{value}/userinfo"
-                  method: userinfo
-                auth:
-                  method: basic
-                  username: mail
-                  secret: "%{env:OIDC_CLIENT_SECRET}%"
-                fields:
-                  email: email
-                  username: preferred_username
-                  full-name: name
-                tls:
-                  enable: true
-                  allow-invalid-certs: false
-            http:
-              url:
-                record: solar
-                scheme: https
-              use-x-forwarded: false
-            tracer:
-              console:
-                type: console
-                level: info
-                ansi: true
-                enable: true
-            authentication:
-              fallback-admin:
-                user: "%{env:ADMIN_USER}%"
-                secret: "%{env:ADMIN_SECRET}%"
+            "@type": "RocksDb"
+            path:
+              extract:
+                volume: mail-stalwart-data
+              transform:
+                path: rocksdb
     container:
+      delete-before-replace: true
       image: stalwart
+      cap:
+        add:
+          - NET_BIND_SERVICE
+      command:
+        - "-c"
+        - svariable: STALWART_CONFIG_PATH
+      healthcheck: {}
       hosts:
         - record: solar
           hostname: kanidm
@@ -140,20 +94,3 @@ services:
           path: /etc/stalwart
           read-only: true
         mail-stalwart-data: /var/lib/stalwart
-      envs:
-        ADMIN_USER:
-          keepass:
-          info: username
-        ADMIN_SECRET:
-          extract:
-            keepass:
-            info: password
-          transform:
-            secret:
-              encode: bcrypt
-        CONFIG_PATH:
-          svariable: STALWART_CONFIG_PATH
-        OIDC_CLIENT_SECRET:
-          service: kanidm
-          extract:
-            export: mail

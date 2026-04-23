@@ -2,6 +2,7 @@ from homelab_backup.resource import BackupResource
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global.resource import GlobalResource
 from homelab_kanidm_service import KanidmService
+from homelab_mail_service import MailService
 from homelab_network.resource.network import NetworkResource
 from pulumi import ResourceOptions
 
@@ -28,6 +29,12 @@ class SunHost(HostBase[SunServiceConfig]):
             backup_resource=backup_resource,
             network_resource=network_resource,
             config=config,
+        )
+
+        self.mail = MailService(
+            self.services_config.mail,
+            opts=self.child_opts,
+            extractor_args=self.extractor_args,
         )
 
         self.kanidm = KanidmService(

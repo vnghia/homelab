@@ -26,6 +26,7 @@ dependencies = [
     "homelab-restic-service",
     "homelab-balite-service",
     "homelab-litestream-service",
+    "homelab-mail-service",
     "pulumi>=3.148.0",
     "json-fix>=1.0.0",
     "loguru>=0.7.3",
@@ -76,6 +77,7 @@ homelab-barman-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-extra-service = { workspace = true }
 homelab-kanidm-service = { workspace = true }
+homelab-mail-service = { workspace = true }
 homelab-restic-service = { workspace = true }
 homelab-tailscale-service = { workspace = true }
 homelab-traefik-service = { workspace = true }

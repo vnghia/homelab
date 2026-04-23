@@ -1,6 +1,6 @@
 version = 1
 revision = 3
-requires-python = ">=3.14.0"
+requires-python = ">=3.14.4"
 
 [manifest]
 members = [
@@ -19,6 +19,7 @@ members = [
     "homelab-kanidm-service",
     "homelab-litestream-service",
     "homelab-mail",
+    "homelab-mail-service",
     "homelab-network",
     "homelab-pydantic",
     "homelab-restic",
@@ -539,6 +540,7 @@ dependencies = [
     { name = "homelab-kanidm-service" },
     { name = "homelab-litestream-service" },
     { name = "homelab-mail" },
+    { name = "homelab-mail-service" },
     { name = "homelab-network" },
     { name = "homelab-restic-service" },
     { name = "homelab-s3" },
@@ -577,6 +579,7 @@ requires-dist = [
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
     { name = "homelab-litestream-service", editable = "service/homelab-litestream-service" },
     { name = "homelab-mail", editable = "homelab-mail" },
+    { name = "homelab-mail-service", editable = "service/homelab-mail-service" },
     { name = "homelab-network", editable = "homelab-network" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-s3", editable = "homelab-s3" },
@@ -994,6 +997,25 @@ dependencies = [
 requires-dist = [
     { name = "homelab-pydantic", editable = "homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-mail-service"
+version = "0.1.0"
+source = { editable = "service/homelab-mail-service" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-extra-service" },
+    { name = "homelab-extract" },
+    { name = "pulumi" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
+    { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "pulumi", specifier = ">=3.148.0" },
 ]
 
 [[package]]
