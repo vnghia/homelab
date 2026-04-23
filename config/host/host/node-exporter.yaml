@@ -68,7 +68,7 @@ services:
         - mode: localhost
       network:
         bridge:
-          default: {} # To be able to connect to the localhost
+          direct: {} # To be able to connect to the localhost
       observability:
         transforms:
           add-host-label:

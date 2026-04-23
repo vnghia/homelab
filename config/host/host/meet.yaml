@@ -124,7 +124,7 @@ services:
             record: solar
         network:
           bridge:
-            default: {}
+            direct: {}
         tmpfs:
           - /tmp
         wud:

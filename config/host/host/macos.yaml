@@ -36,7 +36,7 @@ services:
         - /dev/net/tun
       network:
         bridge:
-          default: {}
+          direct: {}
       ports:
         macos-tcp:
           internal: 5900

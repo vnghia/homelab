@@ -3,4 +3,4 @@ services:
     container:
       network:
         bridge:
-          default: {}
+          direct: {}

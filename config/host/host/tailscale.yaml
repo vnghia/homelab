@@ -35,7 +35,7 @@ services:
         hinfo: name
       network:
         bridge:
-          default: {}
+          direct: {}
       ports:
         udp:
           internal:

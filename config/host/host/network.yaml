@@ -2,7 +2,7 @@ docker:
   network:
     bridge:
       host:
-        default:
+        direct:
           icc: false
         vpn:
           ipam:

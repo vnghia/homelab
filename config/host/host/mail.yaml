@@ -132,7 +132,7 @@ services:
           hostname: kanidm
       network:
         bridge:
-          default: {}
+          direct: {}
       tmpfs:
         - /tmp
       volumes:

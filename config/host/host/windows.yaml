@@ -51,7 +51,7 @@ services:
         - /dev/net/tun
       network:
         bridge:
-          default: {}
+          direct: {}
       ports:
         rdp-tcp:
           internal: 3389
@@ -85,7 +85,7 @@ services:
           write: false
         network:
           bridge:
-            default: {}
+            direct: {}
         envs:
           WINTELE_TOKEN:
           WINTELE_TOTP:

@@ -119,7 +119,7 @@ services:
         healthcheck: {}
         network:
           bridge:
-            default: {}
+            direct: {}
         volumes:
           immich-machine-learning-cache: /cache
         tmpfs:

@@ -122,7 +122,7 @@ services:
             hostname: kanidm
         network:
           bridge:
-            default: {}
+            direct: {}
         s3:
           key:
             type: b2

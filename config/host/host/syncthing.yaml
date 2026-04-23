@@ -39,7 +39,7 @@ services:
         hvariable: FULL_HOSTNAME
       network:
         bridge:
-          default: {}
+          direct: {}
       ports:
         tcp:
           internal: 22000

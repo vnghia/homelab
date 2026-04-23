@@ -54,7 +54,7 @@ services:
           max-size: "20m"
       network:
         bridge:
-          default: {}
+          direct: {}
       s3:
         env:
           key-id: ZO_S3_ACCESS_KEY

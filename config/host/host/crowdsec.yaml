@@ -90,7 +90,7 @@ services:
         USE_WAL: true
       network:
         bridge:
-          default: {}
+          direct: {}
       tmpfs:
         - /tmp
       wud:

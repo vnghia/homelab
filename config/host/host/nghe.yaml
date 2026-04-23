@@ -32,7 +32,7 @@ services:
             env: NGHE_DATABASE__URL
       network:
         bridge:
-          default: {}
+          direct: {}
       volumes:
         nghe-music:
           path: /music

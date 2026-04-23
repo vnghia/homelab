@@ -23,7 +23,7 @@ services:
       healthcheck: {}
       network:
         bridge:
-          default: {}
+          direct: {}
       volumes:
         ddns-data: /updater/data
       wait_timeout: 300

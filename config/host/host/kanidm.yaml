@@ -155,7 +155,7 @@ services:
         - svariable: CONFIG
       network:
         bridge:
-          default: {}
+          direct: {}
       ports:
         https:
           internal: *port

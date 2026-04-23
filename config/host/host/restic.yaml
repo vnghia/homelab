@@ -102,7 +102,7 @@ services:
           - SETUID
       network:
         bridge:
-          default: {}
+          direct: {}
       tmpfs:
         - /tmp
       volumes:

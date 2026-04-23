@@ -125,7 +125,7 @@ services:
             database: 1
       network:
         bridge:
-          default: {}
+          direct: {}
       tmpfs:
         - /tmp
       volumes:
