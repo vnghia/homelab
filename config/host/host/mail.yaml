@@ -47,14 +47,13 @@ services:
           enabled: true
           port: 12908
           username:
-            keepass: admin
+            keepass: stalwart-admin
             info: username
           password:
-            keepass: admin
+            keepass: stalwart-admin
             info: password
     keepasses:
-      admin:
-        username: admin
+      stalwart-admin:
         hostname:
           record: solar
           hostname: mail
