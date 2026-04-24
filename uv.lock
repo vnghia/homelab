@@ -1007,6 +1007,8 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extra-service" },
     { name = "homelab-extract" },
+    { name = "homelab-mail" },
+    { name = "orjson" },
     { name = "pulumi" },
 ]
 
@@ -1015,6 +1017,8 @@ requires-dist = [
     { name = "homelab-docker", editable = "homelab-docker" },
     { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
     { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "homelab-mail", editable = "homelab-mail" },
+    { name = "orjson", specifier = ">=3.11.5" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
 

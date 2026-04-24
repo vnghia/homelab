@@ -63,6 +63,7 @@ class Homelab:
             global_resource=self.global_resource,
             backup_resource=self.backup_resource,
             network_resource=self.network,
+            mail_resource=self.mail,
             config=self.host_config,
         )
         self.earth = EarthHost(

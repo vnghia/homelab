@@ -12,6 +12,7 @@ from homelab_docker.model.docker.container.ports import (
 )
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_extra_service import ExtraService
+from homelab_mail.resource import MailResource
 from pulumi import Output, ResourceOptions
 
 from .config import MailConfig
@@ -26,10 +27,12 @@ class MailService(ExtraService[MailConfig]):
         model: ServiceWithConfigModel[MailConfig],
         *,
         opts: ResourceOptions,
+        mail_resource: MailResource,
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
 
+        self.mail_resource = mail_resource
         self.stalwart_config = self.config.stalwart
 
         self.stalwart_recovery_url = Output.format(
