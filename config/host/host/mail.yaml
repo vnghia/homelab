@@ -56,8 +56,6 @@ services:
       stalwart-admin:
         username:
           force-lower: true
-        password:
-          special: false
         hostname:
           record: solar
           hostname: mail
