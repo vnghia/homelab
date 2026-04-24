@@ -54,6 +54,16 @@ services:
           password:
             keepass: stalwart-admin
             info: password
+      traefik:
+        dynamic:
+          traefik:
+            hostsni:
+            entrypoint: smtps
+            service:
+              port:
+                service: traefik
+                extract:
+                  svariable: SMTPS_PORT
     keepasses:
       stalwart-admin:
         username:

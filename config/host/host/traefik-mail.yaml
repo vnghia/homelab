@@ -1,0 +1,10 @@
+services:
+  traefik:
+    variables:
+      SMTPS_PORT: 465
+    config:
+      entrypoint:
+        config:
+          smtps:
+            port:
+              svariable: SMTPS_PORT
