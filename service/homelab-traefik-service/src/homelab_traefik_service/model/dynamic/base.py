@@ -93,7 +93,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
             )
         ]
 
-        if root.entrypoint:
+        if not root.keep_default_middleware:
             all_middlewares = service_middlewares
         else:
             all_middlewares = (

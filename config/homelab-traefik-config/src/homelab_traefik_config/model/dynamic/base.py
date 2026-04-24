@@ -8,6 +8,7 @@ class TraefikDynamicBaseModel(HomelabBaseModel):
     active: bool = True
 
     entrypoint: str | None = None
+    keep_default_middleware: bool = True
 
     name: str | None = None
     record: str | None = None

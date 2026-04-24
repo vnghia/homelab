@@ -93,6 +93,7 @@ class TraefikFile(ComponentResource):
                                 TraefikDynamicTcpModel(
                                     name=egress_name,
                                     entrypoint=egress_entrypoint,
+                                    keep_default_middleware=False,
                                     service=TraefikDynamicServiceModel(
                                         TraefikDynamicServiceFullModel(
                                             external=egress_model.ip
@@ -113,6 +114,7 @@ class TraefikFile(ComponentResource):
                                 TraefikDynamicTcpModel(
                                     name=egress_name,
                                     entrypoint=egress_entrypoint,
+                                    keep_default_middleware=False,
                                     service=TraefikDynamicServiceModel(
                                         TraefikDynamicServiceFullModel(
                                             service=egress_proxy.service,
