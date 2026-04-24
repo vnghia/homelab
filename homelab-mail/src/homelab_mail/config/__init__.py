@@ -2,7 +2,7 @@ from homelab_pydantic import HomelabBaseModel
 from pydantic import PositiveInt
 
 from .credential import MailCredentialConfig
-from .no_reply import NoReplyConfig
+from .noreply import NoReplyConfig
 
 
 class MailAddressConfig(HomelabBaseModel):
@@ -14,4 +14,4 @@ class MailAddressConfig(HomelabBaseModel):
 class MailConfig(HomelabBaseModel):
     address: MailAddressConfig
     custom: MailCredentialConfig = MailCredentialConfig()
-    no_reply: NoReplyConfig = NoReplyConfig()
+    noreply: NoReplyConfig = NoReplyConfig()

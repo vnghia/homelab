@@ -107,7 +107,7 @@ class MailStalwartResource(Resource, module="stalwart", name="Configuration"):
         ]
 
     def create_noreply_operations(self, mail_service: MailService) -> list[Any]:
-        mail_noreply = mail_service.mail_resource.no_reply
+        mail_noreply = mail_service.mail_resource.noreply
 
         operations = []
         for name, account in mail_noreply.accounts.items():

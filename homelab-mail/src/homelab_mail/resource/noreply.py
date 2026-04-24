@@ -38,7 +38,7 @@ class NoReplyResource(ComponentResource):
         self.host = hostnames[config.address.record][config.address.hostname].value
         self.port = config.address.port
 
-        for name, model in config.no_reply.root.items():
+        for name, model in config.noreply.root.items():
             account = NoReplyAccountArgs(
                 username=model.username,
                 domain=hostnames[model.record][model.hostname or name].value,

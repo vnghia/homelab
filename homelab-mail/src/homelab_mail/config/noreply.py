@@ -1,6 +1,6 @@
 from homelab_pydantic.model import HomelabRootModel
 
-from ..model.no_reply import NoReplyModel
+from ..model.noreply import NoReplyModel
 
 
 class NoReplyConfig(HomelabRootModel[dict[str, NoReplyModel]]):
