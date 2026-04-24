@@ -3,7 +3,7 @@ docker:
     remote:
       jobops:
         repo: ghcr.io/dakheera47/job-ops
-        tag: "v0.3.2"
+        tag: "v0.4.0"
   volumes:
     local:
       job-jobops-data:
