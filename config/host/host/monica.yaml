@@ -100,12 +100,15 @@ services:
         - record: solar
           hostname: kanidm
       mails:
-        - mail: no-reply
-          host: MAIL_HOST
-          port: MAIL_PORT
-          address: MAIL_FROM_ADDRESS
-          username: MAIL_USERNAME
-          password: MAIL_PASSWORD
+        - key:
+            type: custom
+            name: no-reply
+          env:
+            host: MAIL_HOST
+            port: MAIL_PORT
+            address: MAIL_FROM_ADDRESS
+            username: MAIL_USERNAME
+            password: MAIL_PASSWORD
       envs:
         APP_NAME:
         APP_ENV: production

@@ -3,6 +3,7 @@ from homelab_backup.resource import BackupResource
 from homelab_config import Config, HostConfig
 from homelab_extract.plain import PlainArgs
 from homelab_global.resource import GlobalResource
+from homelab_mail.resource import MailResource
 from homelab_network.model.ip import (
     NetworkIpModel,
     NetworkIpOutputModel,
@@ -34,12 +35,15 @@ class Homelab:
         self.network = NetworkResource(
             self.config.network, opts=None, project_args=self.project_args
         )
+        self.mail = MailResource(self.config.mail, opts=None)
         self.s3 = S3Resource(self.config.s3, opts=None)
 
         self.global_resource = GlobalResource(
             self.config.global_,
             opts=None,
-            plain_args=PlainArgs(self.s3.credentials, self.network.hostnames, None),
+            plain_args=PlainArgs(
+                self.mail.credentials, self.s3.credentials, self.network.hostnames, None
+            ),
             project_args=self.project_args,
         )
         self.backup_resource = BackupResource(

@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 from typing import Self
 
+from homelab_mail.resource import MailCredentials
 from homelab_pydantic import HomelabRootModel, Hostnames
 from homelab_s3.resource import S3Credentials
 from pulumi import Output
@@ -14,6 +15,7 @@ from .type import GlobalPlainExtractTypeSource
 
 @dataclasses.dataclass
 class PlainArgs:
+    mail: MailCredentials
     s3: S3Credentials
     hostnames: Hostnames
     host: str | None

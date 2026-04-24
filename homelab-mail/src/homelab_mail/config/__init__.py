@@ -1,10 +1,7 @@
-from homelab_pydantic import HomelabRootModel
+from homelab_pydantic import HomelabBaseModel
 
-from ..model.credential import MailCredentialModel
+from .credential import MailCredentialConfig
 
 
-class MailConfig(HomelabRootModel[dict[str, MailCredentialModel]]):
-    root: dict[str, MailCredentialModel] = {}
-
-    def __getitem__(self, key: str) -> MailCredentialModel:
-        return self.root[key]
+class MailConfig(HomelabBaseModel):
+    custom: MailCredentialConfig = MailCredentialConfig()

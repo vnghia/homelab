@@ -10,6 +10,7 @@ from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.host import HostModel
 from homelab_global import ProjectArgs
 from homelab_global.config import GlobalConfig
+from homelab_mail.config import MailConfig
 from homelab_network.config import NetworkConfig
 from homelab_pydantic import HomelabBaseModel
 from homelab_s3.config import S3Config
@@ -38,6 +39,7 @@ class HostConfig[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBase
 
 class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):
     host: HostConfig[TSun, TEarth]
+    mail: MailConfig
     network: NetworkConfig
     s3: S3Config
     global_: GlobalConfig
@@ -105,6 +107,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
     def build(cls, host_type: Type[HostConfig[TSun, TEarth]]) -> Self:
         return cls(
             host=cls.get_host_config(host_type),
+            mail=MailConfig.model_validate(cls.get_key("mail")),
             network=NetworkConfig.model_validate(cls.get_key("network")),
             s3=S3Config.model_validate(cls.get_key("s3")),
             global_=GlobalConfig.model_validate(cls.get_key("global")),
