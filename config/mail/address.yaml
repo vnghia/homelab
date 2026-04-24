@@ -1,7 +1,9 @@
 address:
   hostname: mail
   record: sun
-  port: 465
+  port:
+    smtp: 25
+    smtps: 465
   variable:
     host: MAIL_HOST
-    port: MAIL_SMTPS_PORT
+    port: MAIL_{}_PORT

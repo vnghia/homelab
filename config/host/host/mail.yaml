@@ -59,6 +59,10 @@ services:
             port:
               svariable: STALWART_HTTP_PORT
             protocol: http
+          smtp:
+            port:
+              gvariable: MAIL_SMTP_PORT
+            protocol: smtp
           smtps:
             port:
               gvariable: MAIL_SMTPS_PORT

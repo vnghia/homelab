@@ -8,6 +8,11 @@ class MailType(StrEnum):
     NOREPLY = auto()
 
 
+class MailProtocol(StrEnum):
+    SMTP = auto()
+    SMTPS = auto()
+
+
 class MailKey(HomelabBaseModel):
     type: MailType
     name: str

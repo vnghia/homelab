@@ -1,6 +1,7 @@
 from homelab_pydantic import HomelabBaseModel
 from pydantic import PositiveInt
 
+from ..model import MailProtocol
 from .credential import MailCredentialConfig
 from .noreply import NoReplyConfig
 
@@ -13,7 +14,7 @@ class MailVariableConfig(HomelabBaseModel):
 class MailAddressConfig(HomelabBaseModel):
     hostname: str
     record: str
-    port: PositiveInt
+    port: dict[MailProtocol, PositiveInt]
     variable: MailVariableConfig
 
 

@@ -36,8 +36,6 @@ class NoReplyResource(ComponentResource):
 
         from ..resource import MailCredentialArgs
 
-        self.port = config.address.port
-
         for name, model in config.noreply.root.items():
             account = NoReplyAccountArgs(
                 username=model.username,
@@ -53,7 +51,7 @@ class NoReplyResource(ComponentResource):
             self.accounts[name] = account
             self.credentials[name] = MailCredentialArgs(
                 host=Output.from_input(host),
-                port=self.port,
+                port=config.address.port[model.port],
                 address=Output.from_input(account.address),
                 password=account.password.result,
                 username=None,

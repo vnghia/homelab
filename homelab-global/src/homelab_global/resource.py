@@ -27,14 +27,20 @@ class GlobalResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.config = config
-        self.variables = config.variables | {
-            mail_resource.config.address.variable.host: GlobalExtract.from_simple(
-                mail_resource.host
-            ),
-            mail_resource.config.address.variable.port: GlobalExtract.from_simple(
-                str(mail_resource.config.address.port)
-            ),
-        }
+        self.variables = (
+            config.variables
+            | {
+                mail_resource.config.address.variable.host: GlobalExtract.from_simple(
+                    mail_resource.host
+                ),
+            }
+            | {
+                mail_resource.config.address.variable.port.format(
+                    k.upper()
+                ): GlobalExtract.from_simple(str(v))
+                for k, v in mail_resource.config.address.port.items()
+            }
+        )
         self.plain_args = plain_args
         self.project_args = project_args
 
