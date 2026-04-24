@@ -61,9 +61,7 @@ services:
             entrypoint: smtps
             service:
               port:
-                service: traefik
-                extract:
-                  svariable: SMTPS_PORT
+                gvariable: MAIL_SMTPS_PORT
     keepasses:
       stalwart-admin:
         username:

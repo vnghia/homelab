@@ -43,6 +43,7 @@ class Homelab:
         self.global_resource = GlobalResource(
             self.config.global_,
             opts=None,
+            mail_resource=self.mail,
             plain_args=PlainArgs(
                 self.mail.credentials, self.s3.credentials, self.network.hostnames, None
             ),

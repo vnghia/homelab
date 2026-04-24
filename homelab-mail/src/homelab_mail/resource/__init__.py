@@ -55,6 +55,9 @@ class MailResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
         self.config = config
 
+        self.host = hostnames[self.config.address.record][
+            self.config.address.hostname
+        ].value
         self.custom = {
             k: MailCredentialArgs(
                 host=Output.from_input(v.host),
@@ -66,7 +69,7 @@ class MailResource(ComponentResource):
             for k, v in config.custom.root.items()
         }
         self.noreply = NoReplyResource(
-            config, opts=self.child_opts, hostnames=hostnames
+            config, opts=self.child_opts, host=self.host, hostnames=hostnames
         )
 
         self.credentials = MailCredentials(

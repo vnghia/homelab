@@ -20,7 +20,7 @@ class GlobalVariableSourceExtractor(ExtractorBase[GlobalExtractVariableSource]):
         from .global_ import GlobalExtractor
 
         return GlobalExtractor(
-            extractor_args.global_resource.config.variables[self.root.gvariable]
+            extractor_args.global_resource.variables[self.root.gvariable]
         )
 
     def extract_str(

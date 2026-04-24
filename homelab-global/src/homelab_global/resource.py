@@ -1,5 +1,7 @@
 import pulumi_tailscale as tailscale
+from homelab_extract import GlobalExtract
 from homelab_extract.plain import PlainArgs
+from homelab_mail.resource import MailResource
 from homelab_pydantic import IPvAnyAddressAdapter
 from homelab_secret.resource import SecretResource
 from pulumi import ComponentResource, ResourceOptions
@@ -17,6 +19,7 @@ class GlobalResource(ComponentResource):
         config: GlobalConfig,
         *,
         opts: ResourceOptions | None,
+        mail_resource: MailResource,
         plain_args: PlainArgs,
         project_args: ProjectArgs,
     ) -> None:
@@ -24,6 +27,14 @@ class GlobalResource(ComponentResource):
         self.child_opts = ResourceOptions(parent=self)
 
         self.config = config
+        self.variables = config.variables | {
+            mail_resource.config.address.variable.host: GlobalExtract.from_simple(
+                mail_resource.host
+            ),
+            mail_resource.config.address.variable.port: GlobalExtract.from_simple(
+                str(mail_resource.config.address.port)
+            ),
+        }
         self.plain_args = plain_args
         self.project_args = project_args
 

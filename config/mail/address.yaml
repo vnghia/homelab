@@ -2,3 +2,6 @@ address:
   hostname: mail
   record: sun
   port: 465
+  variable:
+    host: MAIL_HOST
+    port: MAIL_SMTPS_PORT
