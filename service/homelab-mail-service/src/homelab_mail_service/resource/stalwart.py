@@ -75,8 +75,10 @@ class MailStalwartResource(Resource, module="stalwart", name="Configuration"):
         )
 
     def compute_plan(self, mail_service: MailService) -> list[Any]:
-        return self.destroy_operations() + self.create_listeners_operations(
-            mail_service
+        return (
+            self.destroy_operations()
+            + self.create_listeners_operations(mail_service)
+            + self.create_noreply_operations(mail_service)
         )
 
     def destroy_operations(self) -> list[Any]:
@@ -103,3 +105,46 @@ class MailStalwartResource(Resource, module="stalwart", name="Configuration"):
                 },
             }
         ]
+
+    def create_noreply_operations(self, mail_service: MailService) -> list[Any]:
+        mail_noreply = mail_service.mail_resource.no_reply
+
+        operations = []
+        for name, account in mail_noreply.accounts.items():
+            domain_key = "domain-noreply-{}".format(name)
+            user_key = "user-noreply-{}".format(name)
+            operations += [
+                {
+                    "@type": "create",
+                    "object": "Domain",
+                    "value": {
+                        domain_key: {
+                            "name": account.domain,
+                            "certificateManagement": {"@type": "Manual"},
+                            "allowRelaying": True,
+                            "dkimManagement": {"@type": "Manual"},
+                            "dnsManagement": {"@type": "Manual"},
+                            "subAddressing": {"@type": "Disabled"},
+                        }
+                    },
+                },
+                {
+                    "@type": "create",
+                    "object": "Account",
+                    "value": {
+                        user_key: {
+                            "@type": "User",
+                            "name": account.username,
+                            "credentials": {
+                                "0": {
+                                    "@type": "Password",
+                                    "secret": account.password.bcrypt_hash,
+                                }
+                            },
+                            "domainId": "#{}".format(domain_key),
+                        }
+                    },
+                },
+            ]
+
+        return operations

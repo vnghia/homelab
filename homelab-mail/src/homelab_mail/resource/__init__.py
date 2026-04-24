@@ -59,5 +59,10 @@ class MailResource(ComponentResource):
             config, opts=self.child_opts, hostnames=hostnames
         )
 
-        self.credentials = MailCredentials(root={MailType.CUSTOM: self.custom})
+        self.credentials = MailCredentials(
+            root={
+                MailType.CUSTOM: self.custom,
+                MailType.NO_REPLY: self.no_reply.credentials,
+            }
+        )
         self.register_outputs({})
