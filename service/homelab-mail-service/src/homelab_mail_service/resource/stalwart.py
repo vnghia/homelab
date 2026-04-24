@@ -5,8 +5,9 @@ import typing
 from typing import Any, ClassVar
 
 import orjson
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_pydantic import HomelabBaseModel
-from pulumi import ResourceOptions
+from pulumi import Output, ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider, UpdateResult
 
 if typing.TYPE_CHECKING:
@@ -26,8 +27,17 @@ class MailStalwartProviderProps(HomelabBaseModel):
         if not binary:
             raise ValueError("{} is not installed".format(self.BINARY))
 
+        plan = self.plan
+        for operation in plan:
+            if (
+                operation["@type"] == "create"
+                and operation["object"] == "NetworkListener"
+            ):
+                for value in operation["value"].values():
+                    value["bind"] = dict.fromkeys(value["bind"], True)
+
         with tempfile.NamedTemporaryFile(mode="w+b") as file:
-            file.write(orjson.dumps(self.plan))
+            file.write(orjson.dumps(plan))
             file.flush()
 
             subprocess.check_call(
@@ -90,18 +100,27 @@ class MailStalwartResource(Resource, module="stalwart", name="Configuration"):
         ]
 
     def create_listeners_operations(self, mail_service: MailService) -> list[Any]:
-        mail_config = mail_service.mail_resource.config
+        stalwart_config = mail_service.stalwart_config
         return [
             {
                 "@type": "create",
                 "object": "NetworkListener",
                 "value": {
-                    "smpts": {
-                        "name": "smtps",
-                        "bind": {"[::]:{}".format(mail_config.address.port): True},
-                        "protocol": "smtp",
-                        "tlsImplicit": True,
+                    name: {
+                        "name": name,
+                        "bind": [
+                            Output.concat(
+                                "[::]:",
+                                GlobalExtractor(model.port).extract_str(
+                                    mail_service.extractor_args
+                                ),
+                            )
+                        ],
+                        "protocol": model.protocol,
+                        "useTls": model.use_tls,
+                        "tlsImplicit": model.tls_implicit if model.use_tls else False,
                     }
+                    for name, model in stalwart_config.listener.root.items()
                 },
             }
         ]

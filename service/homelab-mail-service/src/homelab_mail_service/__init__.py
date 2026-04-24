@@ -35,12 +35,17 @@ class MailService(ExtraService[MailConfig]):
         self.mail_resource = mail_resource
         self.stalwart_config = self.config.stalwart
 
+        self.http_port_source = self.stalwart_config.listener.root["http"].port
+        self.http_port = GlobalExtractor(self.http_port_source).extract_str(
+            self.extractor_args
+        )
+
         self.stalwart_recovery_url = Output.format(
             "http://{}:{}",
             GlobalExtractor(self.stalwart_config.recovery.address).extract_str(
                 self.extractor_args
             ),
-            self.stalwart_config.recovery.port,
+            self.http_port,
         )
         self.stalwart_recovery_username = GlobalExtractor(
             self.stalwart_config.recovery.username
@@ -52,14 +57,11 @@ class MailService(ExtraService[MailConfig]):
         if self.stalwart_config.recovery.enabled:
             self.options[self.STALWART_CONTAINER].envs = {
                 "STALWART_RECOVERY_MODE": "1",
-                "STALWART_RECOVERY_MODE_PORT": str(self.stalwart_config.recovery.port),
+                "STALWART_RECOVERY_MODE_PORT": self.http_port,
                 "STALWART_RECOVERY_ADMIN": Output.concat(
                     self.stalwart_recovery_username,
                     ":",
                     self.stalwart_recovery_password,
-                ),
-                "STALWART_HEALTHCHECK_URL": "http://localhost:{}/healthz/live".format(
-                    self.stalwart_config.recovery.port
                 ),
             }
             self.options[self.STALWART_CONTAINER].add_network(
@@ -67,7 +69,7 @@ class MailService(ExtraService[MailConfig]):
                     ports=ContainerPortsConfig(
                         {
                             "recovery": ContainerPortRangeConfig(
-                                internal=self.stalwart_config.recovery.port,
+                                internal=self.http_port_source,
                                 protocol=ContainerPortProtocol.TCP,
                             )
                         }

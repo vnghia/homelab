@@ -33,6 +33,7 @@ services:
           volume: mail-stalwart-config
         transform:
           path: config.json
+      STALWART_HTTP_PORT: 12908
       MAIL_OAUTH_URL:
         extract:
           record: solar
@@ -47,13 +48,22 @@ services:
           enabled: true
           address:
             hinfo: address
-          port: 12908
           username:
             keepass: stalwart-admin
             info: username
           password:
             keepass: stalwart-admin
             info: password
+        listener:
+          http:
+            port:
+              svariable: STALWART_HTTP_PORT
+            protocol: http
+          smtps:
+            port:
+              gvariable: MAIL_SMTPS_PORT
+            protocol: smtp
+            tls-implicit: true
       traefik:
         dynamic:
           traefik:
@@ -104,3 +114,9 @@ services:
         mail-stalwart-data: /var/lib/stalwart
       envs:
         STALWART_RECOVERY_MODE_LOG_LEVEL: debug
+        STALWART_HEALTHCHECK_URL:
+          extract:
+            svariable: STALWART_HTTP_PORT
+          transform:
+            string:
+              template: "http://localhost:{value}/healthz/live"
