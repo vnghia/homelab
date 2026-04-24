@@ -45,7 +45,16 @@ class TraefikDynamicTcpModelBuilder(
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> tuple[dict[str, Any] | None, dict[str, Any]]:
-        return (None, {"passthrough": True})
+        root = self.root
+        return (
+            None,
+            {"passthrough": root.passthrough}
+            | (
+                {"certResolver": traefik_service.static.CERT_RESOLVER}
+                if not root.passthrough
+                else {}
+            ),
+        )
 
     def build_resource(
         self,
