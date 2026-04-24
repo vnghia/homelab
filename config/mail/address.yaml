@@ -1,0 +1,4 @@
+address:
+  hostname: mail
+  record: sun
+  port: 465

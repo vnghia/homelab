@@ -3,7 +3,7 @@ name = "homelab-mail"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = ["homelab-pydantic", "pydantic>=2.10.6"]
+dependencies = ["homelab-pydantic", "pydantic>=2.10.6", "pulumi-random>=4.17.0"]
 
 [build-system]
 requires = ["uv_build"]

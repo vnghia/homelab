@@ -5,6 +5,7 @@ from homelab_pydantic import HomelabBaseModel
 
 class MailType(StrEnum):
     CUSTOM = auto()
+    NO_REPLY = auto()
 
 
 class MailKey(HomelabBaseModel):

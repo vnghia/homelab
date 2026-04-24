@@ -1,9 +1,11 @@
 import dataclasses
 
+from homelab_pydantic import Hostnames
 from pulumi import ComponentResource, Output, ResourceOptions
 from pydantic import PositiveInt
 
 from homelab_mail.config import MailConfig
+from homelab_mail.resource.no_reply import NoReplyResource
 
 from ..model import MailCredentialEnvKey, MailKey, MailType
 
@@ -36,7 +38,9 @@ class MailCredentials:
 class MailResource(ComponentResource):
     RESOURCE_NAME = "mail"
 
-    def __init__(self, config: MailConfig, *, opts: ResourceOptions | None) -> None:
+    def __init__(
+        self, config: MailConfig, *, opts: ResourceOptions | None, hostnames: Hostnames
+    ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
@@ -50,6 +54,9 @@ class MailResource(ComponentResource):
             )
             for k, v in config.custom.root.items()
         }
+        self.no_reply = NoReplyResource(
+            config, opts=self.child_opts, hostnames=hostnames
+        )
 
         self.credentials = MailCredentials(root={MailType.CUSTOM: self.custom})
         self.register_outputs({})

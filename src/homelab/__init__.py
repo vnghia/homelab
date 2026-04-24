@@ -35,7 +35,9 @@ class Homelab:
         self.network = NetworkResource(
             self.config.network, opts=None, project_args=self.project_args
         )
-        self.mail = MailResource(self.config.mail, opts=None)
+        self.mail = MailResource(
+            self.config.mail, opts=None, hostnames=self.network.hostnames
+        )
         self.s3 = S3Resource(self.config.s3, opts=None)
 
         self.global_resource = GlobalResource(
