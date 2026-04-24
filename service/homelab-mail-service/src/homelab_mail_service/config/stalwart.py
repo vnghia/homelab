@@ -5,6 +5,7 @@ from pydantic import PositiveInt
 
 class MailStalwartRecoveryConfig(HomelabBaseModel):
     enabled: bool
+    address: GlobalExtract
     port: PositiveInt
     username: GlobalExtract
     password: GlobalExtract

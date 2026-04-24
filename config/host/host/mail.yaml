@@ -45,6 +45,8 @@ services:
       stalwart:
         recovery:
           enabled: true
+          address:
+            hinfo: address
           port: 12908
           username:
             keepass: stalwart-admin
