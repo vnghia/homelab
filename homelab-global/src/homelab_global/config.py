@@ -1,5 +1,5 @@
 from homelab_extract import GlobalExtract
-from homelab_mail import MailConfig
+from homelab_mail.config import MailConfig
 from homelab_pydantic import HomelabBaseModel
 from homelab_secret.config import SecretConfig
 
