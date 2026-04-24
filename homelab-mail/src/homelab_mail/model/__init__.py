@@ -13,9 +13,13 @@ class MailKey(HomelabBaseModel):
     name: str
 
 
-class MailCredentialEnvKey(HomelabBaseModel):
+class MailCredentialHostModel(HomelabBaseModel):
     host: str
     port: str
+
+
+class MailCredentialEnvKey(HomelabBaseModel):
+    host: str | MailCredentialHostModel
     address: str
     username: str | None = None
     password: str

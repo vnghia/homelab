@@ -19,12 +19,22 @@ class MailCredentialArgs:
     username: Output[str] | None = None
 
     def to_envs(self, env: MailCredentialEnvKey) -> dict[str, Output[str]]:
-        return {
-            env.host: self.host,
-            env.port: Output.from_input(str(self.port)),
-            env.address: self.address,
-            env.password: Output.format('"{}"', self.password),
-        } | ({env.username: self.username or self.address} if env.username else {})
+        result = {}
+
+        if isinstance(env.host, str):
+            result[env.host] = Output.concat(self.host, ":", str(self.port))
+        else:
+            result[env.host.host] = self.host
+            result[env.host.port] = Output.from_input(str(self.port))
+
+        return (
+            result
+            | {
+                env.address: self.address,
+                env.password: Output.format('"{}"', self.password),
+            }
+            | ({env.username: self.username or self.address} if env.username else {})
+        )
 
 
 @dataclasses.dataclass

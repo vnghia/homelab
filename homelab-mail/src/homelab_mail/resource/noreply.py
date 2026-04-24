@@ -56,7 +56,7 @@ class NoReplyResource(ComponentResource):
                 port=self.port,
                 address=Output.from_input(account.address),
                 password=account.password.result,
-                username=Output.from_input(account.username),
+                username=None,
             )
 
         self.register_outputs({})
