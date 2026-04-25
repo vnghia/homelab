@@ -70,12 +70,14 @@ services:
             tls-implicit: true
       traefik:
         dynamic:
-          traefik:
+          smtps:
+            name: smtps
             hostsni:
             entrypoint: smtps
+            passthrough: false
             service:
               port:
-                gvariable: MAIL_SMTPS_PORT
+                gvariable: MAIL_SMTP_PORT
     keepasses:
       stalwart-admin:
         username:
