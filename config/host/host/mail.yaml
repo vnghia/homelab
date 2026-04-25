@@ -3,7 +3,7 @@ docker:
     remote:
       stalwart:
         repo: stalwartlabs/stalwart
-        tag: "v0.16.0"
+        tag: "v0.16.1"
   volumes:
     local:
       mail-stalwart-config:
