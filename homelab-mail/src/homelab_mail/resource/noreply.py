@@ -19,7 +19,7 @@ class NoReplyAccountArgs:
 
 
 class NoReplyResource(ComponentResource):
-    RESOURCE_NAME = "no-reply"
+    RESOURCE_NAME = "noreply"
 
     def __init__(
         self,
@@ -37,9 +37,15 @@ class NoReplyResource(ComponentResource):
         from ..resource import MailCredentialArgs
 
         for name, model in config.noreply.root.items():
+            hostname = hostnames[model.record][model.hostname or name]
+            if model.relay:
+                config.relay.root[model.relay].build_resource(
+                    "{}-{}".format(self.RESOURCE_NAME, name), self.child_opts, hostname
+                )
+
             account = NoReplyAccountArgs(
                 username=model.username,
-                domain=hostnames[model.record][model.hostname or name].value,
+                domain=hostname.value,
                 password=random.RandomPassword(
                     name,
                     opts=self.child_opts,

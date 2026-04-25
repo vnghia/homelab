@@ -4,6 +4,7 @@ from ..model import MailProtocol
 
 
 class NoReplyModel(HomelabBaseModel):
+    relay: str | None = None
     hostname: str | None = None
     record: str
     username: str = "noreply"
