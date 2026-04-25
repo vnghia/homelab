@@ -1,11 +1,13 @@
 from typing import ClassVar
 
 import pulumi_cloudflare as cloudflare
-from homelab_pydantic import HomelabBaseModel, Hostname
+from homelab_pydantic import Hostname
 from pulumi import ResourceOptions
 
+from .base import MailRelayBaseModel
 
-class MailRelayPurelyMailModel(HomelabBaseModel):
+
+class MailRelayPurelyMailModel(MailRelayBaseModel):
     SPF_RECORD: ClassVar[str] = "v=spf1 include:_spf.purelymail.com ~all"
 
     DKIM_NAME_TEMPLATE: ClassVar[str] = "purelymail{i}._domainkey"
