@@ -21,8 +21,11 @@ class RecordConfig(HomelabBaseModel):
     def model_post_init(self, context: Any, /) -> None:
         self._domain = cloudflare.get_zone(zone_id=self.zone_id).name
         self._hostnames = {
-            hostname: Hostname(value=self.records[hostname].hostname(self._domain))
+            hostname: Hostname(
+                zone=self.zone_id, name=record.name, value=record.hostname(self._domain)
+            )
             for hostname in self.records
+            if (record := self.records[hostname])
         }
 
     def __getitem__(self, hostname: str) -> str:
