@@ -87,6 +87,7 @@ class MailStalwartResource(Resource, module="stalwart", name="Configuration"):
     def compute_plan(self, mail_service: MailService) -> list[Any]:
         return (
             self.destroy_operations()
+            + self.update_mta_operations()
             + self.create_listeners_operations(mail_service)
             + self.create_noreply_operations(mail_service)
         )
@@ -97,6 +98,19 @@ class MailStalwartResource(Resource, module="stalwart", name="Configuration"):
             {"@type": "destroy", "object": "Domain"},
             {"@type": "destroy", "object": "Account", "value": {"@type": "Group"}},
             {"@type": "destroy", "object": "Account", "value": {"@type": "User"}},
+        ]
+
+    def update_mta_operations(self) -> list[Any]:
+        return [
+            {
+                "@type": "update",
+                "object": "MtaStageEhlo",
+                "value": {
+                    "script": {"else": "false", "match": {}},
+                    "rejectNonFqdn": {"else": "false", "match": {}},
+                    "require": {"else": "true", "match": {}},
+                },
+            }
         ]
 
     def create_listeners_operations(self, mail_service: MailService) -> list[Any]:
