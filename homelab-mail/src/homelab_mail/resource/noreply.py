@@ -9,6 +9,8 @@ from ..config import MailConfig
 
 @dataclasses.dataclass
 class NoReplyAccountArgs:
+    record: str
+    hostname: str
     username: str
     domain: str
     password: random.RandomPassword
@@ -37,15 +39,20 @@ class NoReplyResource(ComponentResource):
         from ..resource import MailCredentialArgs
 
         for name, model in config.noreply.root.items():
-            hostname = hostnames[model.record][model.hostname or name]
+            record = model.record
+            hostname = model.hostname or name
+
+            domain = hostnames[record][hostname]
             if model.relay:
                 config.relay.root[model.relay].build_resource(
-                    "{}-{}".format(self.RESOURCE_NAME, name), self.child_opts, hostname
+                    "{}-{}".format(self.RESOURCE_NAME, name), self.child_opts, domain
                 )
 
             account = NoReplyAccountArgs(
+                record=record,
+                hostname=hostname,
                 username=model.username,
-                domain=hostname.value,
+                domain=domain.value,
                 password=random.RandomPassword(
                     name,
                     opts=self.child_opts,

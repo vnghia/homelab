@@ -134,3 +134,29 @@ class MailStalwartNetworkListenerResource(
         data: dict[str, Any],
     ) -> None:
         super().__init__("NetworkListener", name, opts, mail_service, data)
+
+
+class MailStalwartDomainResource(
+    MailStalwartJmapResource, module="stalwart", name="Domain"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("Domain", name, opts, mail_service, data)
+
+
+class MailStalwartAccountResource(
+    MailStalwartJmapResource, module="stalwart", name="Account"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("Account", name, opts, mail_service, data)

@@ -1,9 +1,12 @@
 import typing
+from collections import defaultdict
 
 from homelab_docker.extract.global_ import GlobalExtractor
 from pulumi import ComponentResource, Output, ResourceOptions
 
 from .jmap import (
+    MailStalwartAccountResource,
+    MailStalwartDomainResource,
     MailStalwartJmapProviderProps,
     MailStalwartNetworkListenerResource,
     MailStalwartTracerResource,
@@ -20,6 +23,11 @@ class MailStalwartResource(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
         stalwart_config = mail_service.stalwart_config
+        mail_noreply = mail_service.mail_resource.noreply
+
+        self.domains: dict[str, dict[str, MailStalwartDomainResource]] = defaultdict(
+            dict
+        )
 
         MailStalwartTracerResource(
             "stdout",
@@ -47,6 +55,42 @@ class MailStalwartResource(ComponentResource):
                     "protocol": model.protocol,
                     "useTls": model.use_tls,
                     "tlsImplicit": model.tls_implicit if model.use_tls else False,
+                },
+            )
+
+        for name, account in mail_noreply.accounts.items():
+            if account.hostname in self.domains[account.record]:
+                domain = self.domains[account.record][account.hostname]
+            else:
+                domain = MailStalwartDomainResource(
+                    "{}-{}".format(account.record, account.hostname),
+                    self.child_opts,
+                    mail_service,
+                    {
+                        "name": account.domain,
+                        "certificateManagement": {"@type": "Manual"},
+                        "allowRelaying": True,
+                        "dkimManagement": {"@type": "Manual"},
+                        "dnsManagement": {"@type": "Manual"},
+                        "subAddressing": {"@type": "Disabled"},
+                    },
+                )
+                self.domains[account.record][account.hostname] = domain
+
+            MailStalwartAccountResource(
+                "noreply-{}".format(name),
+                self.child_opts,
+                mail_service,
+                {
+                    "@type": "User",
+                    "name": account.username,
+                    "credentials": [
+                        {
+                            "@type": "Password",
+                            "secret": account.password.bcrypt_hash,
+                        }
+                    ],
+                    "domainId": domain.id,
                 },
             )
 
