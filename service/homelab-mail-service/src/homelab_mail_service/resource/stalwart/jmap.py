@@ -110,6 +110,19 @@ class MailStalwartJmapResource(Resource, module="stalwart", name="Jmap"):
         )
 
 
+class MailStalwartTracerResource(
+    MailStalwartJmapResource, module="stalwart", name="Tracer"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("Tracer", name, opts, mail_service, data)
+
+
 class MailStalwartNetworkListenerResource(
     MailStalwartJmapResource, module="stalwart", name="NetworkListener"
 ):
