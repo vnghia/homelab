@@ -3,6 +3,7 @@ from pydantic import BaseModel as BaseModel
 from .hostname import Hostname as Hostname
 from .hostname import Hostnames as Hostnames
 from .model import DictAdapter as DictAdapter
+from .model import DictAnyAdapter as DictAnyAdapter
 from .model import HomelabBaseModel as HomelabBaseModel
 from .model import HomelabRootModel as HomelabRootModel
 from .model import HomelabServiceConfigDict as HomelabServiceConfigDict

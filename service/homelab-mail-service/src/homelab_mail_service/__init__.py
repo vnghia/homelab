@@ -16,6 +16,7 @@ from homelab_mail.resource import MailResource
 from pulumi import Output, ResourceOptions
 
 from .config import MailConfig
+from .resource.stalwart import MailStalwartResource
 
 
 class MailService(ExtraService[MailConfig]):
@@ -82,3 +83,7 @@ class MailService(ExtraService[MailConfig]):
             )
 
         self.build(None)
+
+        self.stalwart_resource = MailStalwartResource(
+            opts=self.child_opts, mail_service=self
+        )

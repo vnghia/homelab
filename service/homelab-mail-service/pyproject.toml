@@ -9,7 +9,7 @@ dependencies = [
     "pulumi>=3.148.0",
     "homelab-extract",
     "homelab-mail",
-    "orjson>=3.11.5",
+    "httpx>=0.28.1",
 ]
 
 [build-system]

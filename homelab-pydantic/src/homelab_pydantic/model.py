@@ -98,3 +98,4 @@ class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
 
 
 DictAdapter: TypeAdapter[dict[str, str]] = TypeAdapter(dict[str, str])
+DictAnyAdapter: TypeAdapter[dict[str, Any]] = TypeAdapter(dict[str, Any])
