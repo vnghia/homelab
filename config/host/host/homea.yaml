@@ -3,7 +3,7 @@ docker:
     remote:
       homea:
         repo: ghcr.io/home-assistant/home-assistant
-        tag: "2026.4.3"
+        tag: "2026.4.4"
   volumes:
     local:
       homea-config: {}
