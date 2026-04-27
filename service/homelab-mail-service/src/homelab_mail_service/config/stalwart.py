@@ -17,13 +17,6 @@ class MailStalwartListenerConfig(
     root: dict[str, MailStalwartListenerModel]
 
 
-class MailStalwartOidcConfig(HomelabBaseModel):
-    issuer_url: GlobalExtract
-    audience: GlobalExtract
-    scopes: list[str]
-
-
 class MailStalwartConfig(HomelabBaseModel):
     recovery: MailStalwartRecoveryConfig
     listener: MailStalwartListenerConfig
-    oidc: MailStalwartOidcConfig | None

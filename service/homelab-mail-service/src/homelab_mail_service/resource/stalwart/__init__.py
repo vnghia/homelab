@@ -6,8 +6,6 @@ from pulumi import ComponentResource, Output, ResourceOptions
 
 from .jmap import (
     MailStalwartAccountResource,
-    MailStalwartAuthenticationResource,
-    MailStalwartDirectoryResource,
     MailStalwartDomainResource,
     MailStalwartJmapProviderProps,
     MailStalwartMtaOutboundStrategyResource,
@@ -64,32 +62,6 @@ class MailStalwartResource(ComponentResource):
                     "useTls": model.use_tls,
                     "tlsImplicit": model.tls_implicit if model.use_tls else False,
                 },
-            )
-
-        if oidc_config := stalwart_config.oidc:
-            self.oidc = MailStalwartDirectoryResource(
-                "oidc",
-                self.child_opts,
-                mail_service,
-                {
-                    "@type": "Oidc",
-                    "description": "oidc",
-                    "issuerUrl": GlobalExtractor(oidc_config.issuer_url).extract_str(
-                        mail_service.extractor_args
-                    ),
-                    "requireAudience": GlobalExtractor(
-                        oidc_config.audience
-                    ).extract_str(mail_service.extractor_args),
-                    "requireScopes": [
-                        MailStalwartJmapProviderProps.SET_KEY,
-                        *oidc_config.scopes,
-                    ],
-                    "claimUsername": "preferred_username",
-                    "claimName": "name",
-                },
-            )
-            MailStalwartAuthenticationResource(
-                "oidc", self.child_opts, mail_service, {"directoryId": self.oidc.id}
             )
 
         for name, relay in mail_config.relay.root.items():

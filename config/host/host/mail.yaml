@@ -67,14 +67,6 @@ services:
             port:
               gvariable: MAIL_SMTP_PORT
             protocol: smtp
-        oidc:
-          issuer_url:
-            svariable: MAIL_OIDC_URL
-          audience: mail
-          scopes:
-            - openid
-            - email
-            - profile
       traefik:
         dynamic:
           http:
