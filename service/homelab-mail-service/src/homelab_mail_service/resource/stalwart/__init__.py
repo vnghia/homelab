@@ -6,6 +6,7 @@ from pulumi import ComponentResource, Output, ResourceOptions
 
 from .jmap import (
     MailStalwartAccountResource,
+    MailStalwartAuthenticationResource,
     MailStalwartDirectoryResource,
     MailStalwartDomainResource,
     MailStalwartJmapProviderProps,
@@ -80,6 +81,9 @@ class MailStalwartResource(ComponentResource):
                     "claimUsername": "preferred_username",
                     "claimName": "name",
                 },
+            )
+            MailStalwartAuthenticationResource(
+                "oidc", self.child_opts, mail_service, {"directoryId": self.oidc.id}
             )
 
         for name, account in mail_notification.accounts.items():

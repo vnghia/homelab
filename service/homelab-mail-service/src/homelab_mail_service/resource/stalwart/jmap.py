@@ -142,6 +142,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
 
     def delete(self, id: str) -> None:
         if self.singleton:
+            self.__replace__(data={}).update(self.SINGLETON_ID, olds=self.data)
             return
 
         with httpx.Client(
@@ -246,6 +247,19 @@ class MailStalwartDirectoryResource(
         data: dict[str, Any],
     ) -> None:
         super().__init__("Directory", False, name, opts, mail_service, data)
+
+
+class MailStalwartAuthenticationResource(
+    MailStalwartJmapResource, module="stalwart", name="Authentication"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("Authentication", True, name, opts, mail_service, data)
 
 
 class MailStalwartDomainResource(
