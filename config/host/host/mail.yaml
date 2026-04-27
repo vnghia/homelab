@@ -118,6 +118,9 @@ services:
       hosts:
         - record: solar
           hostname: kanidm
+      network:
+        bridge:
+          vpn: {}
       tmpfs:
         - /tmp
       volumes:
