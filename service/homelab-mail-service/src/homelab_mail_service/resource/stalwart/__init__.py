@@ -12,6 +12,7 @@ from .jmap import (
     MailStalwartJmapProviderProps,
     MailStalwartMtaOutboundStrategyResource,
     MailStalwartMtaRouteResource,
+    MailStalwartMtaStageEhloResource,
     MailStalwartNetworkListenerResource,
     MailStalwartTracerResource,
 )
@@ -149,6 +150,19 @@ class MailStalwartResource(ComponentResource):
                 self.relay_conditions[account.relay].append(
                     "sender == '{}'".format(account.address)
                 )
+
+        # TODO: Restrict this to local ips after setting up ProxyProtocol
+        MailStalwartMtaStageEhloResource(
+            "ehlo",
+            self.child_opts,
+            mail_service,
+            {
+                "rejectNonFqdn": {
+                    "else": "false",
+                    "match": [{"if": "local_port == 25", "then": "false"}],
+                }
+            },
+        )
 
         MailStalwartMtaOutboundStrategyResource(
             "route",
