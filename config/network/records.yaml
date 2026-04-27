@@ -6,8 +6,6 @@ records:
     host: sun
     source-ip: hmesh
     records:
-      mail:
-        routable: false
       xseed:
         routable: false
   earth:
