@@ -67,11 +67,6 @@ services:
             port:
               gvariable: MAIL_SMTP_PORT
             protocol: smtp
-          smtps:
-            port:
-              gvariable: MAIL_SMTPS_PORT
-            protocol: smtp
-            tls-implicit: true
         oidc:
           issuer_url:
             svariable: MAIL_OIDC_URL
