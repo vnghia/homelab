@@ -112,10 +112,7 @@ class MailStalwartResource(ComponentResource):
                     "@type": "User",
                     "name": account.username,
                     "credentials": [
-                        {
-                            "@type": "Password",
-                            "secret": account.password.bcrypt_hash,
-                        }
+                        {"@type": "Password", "secret": account.password.result}
                     ],
                     "domainId": domain.id,
                 },
