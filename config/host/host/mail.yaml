@@ -49,15 +49,19 @@ services:
     config:
       stalwart:
         recovery:
-          enabled: true
+          enabled: false
+          admin: true
           address:
             hinfo: address
           username:
-            keepass: stalwart-admin
+            keepass: stalwart-recovery-admin
             info: username
           password:
-            keepass: stalwart-admin
+            keepass: stalwart-recovery-admin
             info: password
+        system:
+          record: sun
+          hostname: mail
         listener:
           http:
             port:
@@ -83,11 +87,10 @@ services:
               port:
                 gvariable: MAIL_SMTP_PORT
     keepasses:
-      stalwart-admin:
+      stalwart-recovery-admin:
         username:
           force-lower: true
         hostname:
-          record: solar
           hostname: mail
     files:
       stalwart-config:

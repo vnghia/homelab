@@ -6,9 +6,15 @@ from ..model.stalwart import MailStalwartListenerModel
 
 class MailStalwartRecoveryConfig(HomelabBaseModel):
     enabled: bool
+    admin: bool
     address: GlobalExtract
     username: GlobalExtract
     password: GlobalExtract
+
+
+class MailStalwartSystemConfig(HomelabBaseModel):
+    record: str
+    hostname: str
 
 
 class MailStalwartListenerConfig(
@@ -19,4 +25,5 @@ class MailStalwartListenerConfig(
 
 class MailStalwartConfig(HomelabBaseModel):
     recovery: MailStalwartRecoveryConfig
+    system: MailStalwartSystemConfig
     listener: MailStalwartListenerConfig

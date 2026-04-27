@@ -197,7 +197,9 @@ class MailStalwartJmapResource(Resource, module="stalwart", name="Jmap"):
             MailStalwartJmapProvider(),
             name,
             {
-                "url": mail_service.stalwart_recovery_url,
+                "url": mail_service.stalwart_recovery_url
+                if mail_service.stalwart_config.recovery.enabled
+                else mail_service.stalwart_url,
                 "username": mail_service.stalwart_recovery_username,
                 "password": mail_service.stalwart_recovery_password,
                 "type": type,

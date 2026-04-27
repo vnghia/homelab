@@ -22,10 +22,12 @@ if typing.TYPE_CHECKING:
 class MailStalwartResource(ComponentResource):
     RESOURCE_NAME = "stalwart"
 
+    # TODO: Restrict access to all accounts/reject non FQDN to local ips after setting up ProxyProtocol
     def __init__(self, *, opts: ResourceOptions, mail_service: MailService) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
         stalwart_config = mail_service.stalwart_config
+
         mail_config = mail_service.mail_resource.config
         mail_notification = mail_service.mail_resource.notification
 
@@ -123,7 +125,6 @@ class MailStalwartResource(ComponentResource):
                     "sender == '{}'".format(account.address)
                 )
 
-        # TODO: Restrict this to local ips after setting up ProxyProtocol
         MailStalwartMtaStageEhloResource(
             "ehlo",
             self.child_opts,

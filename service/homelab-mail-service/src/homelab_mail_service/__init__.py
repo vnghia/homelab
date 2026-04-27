@@ -40,6 +40,11 @@ class MailService(ExtraService[MailConfig]):
             self.extractor_args
         )
 
+        self.stalwart_url = "https://{}".format(
+            self.extractor_args.hostnames[self.stalwart_config.system.record][
+                self.stalwart_config.system.hostname
+            ].value
+        )
         self.stalwart_recovery_url = Output.format(
             "http://{}:{}",
             GlobalExtractor(self.stalwart_config.recovery.address).extract_str(
@@ -54,16 +59,21 @@ class MailService(ExtraService[MailConfig]):
             self.stalwart_config.recovery.password
         ).extract_str(self.extractor_args)
 
-        if self.stalwart_config.recovery.enabled:
+        if self.stalwart_config.recovery.enabled or self.stalwart_config.recovery.admin:
             self.options[self.STALWART_CONTAINER].envs = {
-                "STALWART_RECOVERY_MODE": "1",
-                "STALWART_RECOVERY_MODE_PORT": self.http_port,
                 "STALWART_RECOVERY_ADMIN": Output.concat(
                     self.stalwart_recovery_username,
                     ":",
                     self.stalwart_recovery_password,
-                ),
+                )
             }
+        if self.stalwart_config.recovery.enabled:
+            self.options[self.STALWART_CONTAINER].add_envs(
+                {
+                    "STALWART_RECOVERY_MODE": "1",
+                    "STALWART_RECOVERY_MODE_PORT": self.http_port,
+                }
+            )
             self.options[self.STALWART_CONTAINER].add_network(
                 ContainerNetworkModelBuildArgs(
                     ports=ContainerPortsConfig(
