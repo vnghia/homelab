@@ -1,0 +1,5 @@
+notification:
+  grafana:
+    relay: purelymail
+    hostname: grafana
+    record: sun

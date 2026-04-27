@@ -79,6 +79,17 @@ services:
       key: {}
     container:
       image: grafana
+      hosts:
+        - gvariable: MAIL_HOST
+      mails:
+        - key:
+            type: notification
+            name: grafana
+          env:
+            host: GF_SMTP_HOST
+            address: GF_SMTP_FROM_ADDRESS
+            username: GF_SMTP_USER
+            password: GF_SMTP_PASSWORD
       tmpfs:
         - /tmp
       volumes:
@@ -104,6 +115,7 @@ services:
         GF_PATHS_PLUGINS:
           volume: grafana-plugins
         GF_ANALYTICS_ENABLED: false
+        GF_SMTP_ENABLED: true
         GF_SECURITY_ADMIN_USER:
           keepass:
           info: username
