@@ -294,6 +294,19 @@ class MailStalwartMtaStageEhloResource(
         super().__init__("MtaStageEhlo", True, name, opts, mail_service, data)
 
 
+class MailStalwartMtaStageAuthResource(
+    MailStalwartJmapResource, module="stalwart", name="MtaStageAuth"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("MtaStageAuth", True, name, opts, mail_service, data)
+
+
 class MailStalwartMtaRouteResource(
     MailStalwartJmapResource, module="stalwart", name="MtaRoute"
 ):

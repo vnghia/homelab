@@ -10,6 +10,7 @@ from .jmap import (
     MailStalwartJmapProviderProps,
     MailStalwartMtaOutboundStrategyResource,
     MailStalwartMtaRouteResource,
+    MailStalwartMtaStageAuthResource,
     MailStalwartMtaStageEhloResource,
     MailStalwartNetworkListenerResource,
     MailStalwartTracerResource,
@@ -22,7 +23,7 @@ if typing.TYPE_CHECKING:
 class MailStalwartResource(ComponentResource):
     RESOURCE_NAME = "stalwart"
 
-    # TODO: Restrict access to all accounts/reject non FQDN to local ips after setting up ProxyProtocol
+    # TODO: Restrict access to all accounts/reject non FQDN/sasl to local ips after setting up ProxyProtocol
     def __init__(self, *, opts: ResourceOptions, mail_service: MailService) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -41,7 +42,7 @@ class MailStalwartResource(ComponentResource):
             "stdout",
             self.child_opts,
             mail_service,
-            {"@type": "Stdout", "enable": True, "level": "info"},
+            {"@type": "Stdout", "enable": True, "level": "trace"},
         )
 
         for name, model in stalwart_config.listener.root.items():
@@ -137,13 +138,28 @@ class MailStalwartResource(ComponentResource):
             },
         )
 
+        MailStalwartMtaStageAuthResource(
+            "auth",
+            self.child_opts,
+            mail_service,
+            {
+                "saslMechanisms": {
+                    "else": "false",
+                    "match": [
+                        {"if": "true", "then": "[plain, login, oauthbearer, xoauth2]"},
+                    ],
+                },
+                "require": {"else": "true"},
+            },
+        )
+
         MailStalwartMtaOutboundStrategyResource(
             "route",
             self.child_opts,
             mail_service,
             {
                 "route": {
-                    "else": "'mx'",
+                    "else": "false",
                     "match": [
                         {"if": " || ".join(condition), "then": "'{}'".format(relay)}
                         for relay, condition in self.relay_conditions.items()
