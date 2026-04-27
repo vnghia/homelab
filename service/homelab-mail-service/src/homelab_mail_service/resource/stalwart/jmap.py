@@ -5,12 +5,15 @@ import httpx
 from homelab_pydantic import DictAnyAdapter, HomelabBaseModel
 from pulumi import ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider, UpdateResult
+from pydantic import ConfigDict
 
 if typing.TYPE_CHECKING:
     from ... import MailService
 
 
 class MailStalwartJmapProviderProps(HomelabBaseModel):
+    model_config = ConfigDict(extra="ignore")
+
     RESOURCE_KEY: ClassVar[str] = "resource"
     SET_KEY: ClassVar[str] = "@set"
 
@@ -22,6 +25,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
     type: str
     singleton: bool
     data: dict[str, Any]
+    attrs: list[str] = []
 
     @classmethod
     def transform_data(cls, data: dict[str, Any]) -> dict[str, Any]:
@@ -65,10 +69,13 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
 
         return diff
 
+    @classmethod
+    def extract_data(cls, data: dict[str, Any], attrs: list[str]) -> dict[str, Any]:
+        return {attr: data[attr] for attr in attrs}
+
     def create(self) -> tuple[str, dict[str, Any]]:
         if self.singleton:
-            self.update(self.SINGLETON_ID, olds={})
-            return (self.SINGLETON_ID, {})
+            return self.SINGLETON_ID, self.update(self.SINGLETON_ID, olds={})
 
         data = self.transform_data(self.data)
         with httpx.Client(
@@ -96,16 +103,16 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                     response["methodResponses"][0][1]["created"][self.RESOURCE_KEY]
                 )
                 id = str(resource["id"])
+                return id, self.extract_data(resource, self.attrs)
             except KeyError as error:
                 raise RuntimeError(response) from error
-            return id, resource
 
-    def update(self, id: str, olds: dict[str, Any]) -> None:
+    def update(self, id: str, olds: dict[str, Any]) -> dict[str, Any]:
         olds = self.transform_data(olds)
         news = self.transform_data(self.data)
         diff = self.compare_data(olds, news)
         if not diff:
-            return
+            return self.extract_data(self.data, self.attrs)
 
         with httpx.Client(
             base_url=self.url, auth=httpx.BasicAuth(self.username, self.password)
@@ -124,7 +131,12 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                 .json()
             )
             try:
-                response["methodResponses"][0][1]["updated"][id]
+                resource = response["methodResponses"][0][1]["updated"][id]
+                if not resource:
+                    return self.extract_data(self.data, self.attrs)
+                return self.extract_data(
+                    DictAnyAdapter.validate_python(resource), self.attrs
+                )
             except KeyError as error:
                 raise RuntimeError(response) from error
 
@@ -173,6 +185,8 @@ class MailStalwartJmapResource(Resource, module="stalwart", name="Jmap"):
         opts: ResourceOptions,
         mail_service: MailService,
         data: dict[str, Any],
+        attrs: list[str] | None = None,
+        secret_attrs: list[str] | None = None,
     ) -> None:
         super().__init__(
             MailStalwartJmapProvider(),
@@ -184,8 +198,11 @@ class MailStalwartJmapResource(Resource, module="stalwart", name="Jmap"):
                 "type": type,
                 "singleton": singleton,
                 "data": data,
-            },
-            opts,
+            }
+            | dict.fromkeys((attrs or []) + (secret_attrs or [])),
+            ResourceOptions.merge(
+                opts, ResourceOptions(additional_secret_outputs=secret_attrs)
+            ),
         )
 
 
