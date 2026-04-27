@@ -201,7 +201,10 @@ class MailStalwartJmapResource(Resource, module="stalwart", name="Jmap"):
             }
             | dict.fromkeys((attrs or []) + (secret_attrs or [])),
             ResourceOptions.merge(
-                opts, ResourceOptions(additional_secret_outputs=secret_attrs)
+                opts,
+                ResourceOptions(
+                    delete_before_replace=True, additional_secret_outputs=secret_attrs
+                ),
             ),
         )
 
@@ -230,6 +233,19 @@ class MailStalwartNetworkListenerResource(
         data: dict[str, Any],
     ) -> None:
         super().__init__("NetworkListener", False, name, opts, mail_service, data)
+
+
+class MailStalwartDirectoryResource(
+    MailStalwartJmapResource, module="stalwart", name="Directory"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("Directory", False, name, opts, mail_service, data)
 
 
 class MailStalwartDomainResource(

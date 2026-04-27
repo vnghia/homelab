@@ -17,9 +17,13 @@ services:
           oauth2:
             mail:
               display-name: Mail
+              public: true
               origin-url:
                 - hostname: mail
                   record: solar
+                  scheme: https
+                - hostname: mail
+                  record: sun
                   scheme: https
               origin-landing:
                 hostname: mail
@@ -34,7 +38,7 @@ services:
         transform:
           path: config.json
       STALWART_HTTP_PORT: 12908
-      MAIL_OAUTH_URL:
+      MAIL_OIDC_URL:
         extract:
           record: solar
           hostname: kanidm
@@ -68,6 +72,14 @@ services:
               gvariable: MAIL_SMTPS_PORT
             protocol: smtp
             tls-implicit: true
+        oidc:
+          issuer_url:
+            svariable: MAIL_OIDC_URL
+          audience: mail
+          scopes:
+            - openid
+            - email
+            - profile
       traefik:
         dynamic:
           http:
