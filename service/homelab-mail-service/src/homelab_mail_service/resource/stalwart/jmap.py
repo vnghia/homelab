@@ -31,11 +31,15 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
     def transform_data(cls, data: dict[str, Any]) -> dict[str, Any]:
         data = data.copy()
         for key, value in data.items():
-            if isinstance(value, list):
+            if isinstance(value, dict):
+                data[key] = cls.transform_data(data[key])
+            elif isinstance(value, list):
                 if value[0] == cls.SET_KEY:
                     data[key] = dict.fromkeys(value[1:], True)
                 else:
                     data[key] = {str(i): item for i, item in enumerate(value)}
+            elif isinstance(value, float):
+                data[key] = int(value)
         return data
 
     @classmethod
@@ -273,6 +277,32 @@ class MailStalwartDomainResource(
         data: dict[str, Any],
     ) -> None:
         super().__init__("Domain", False, name, opts, mail_service, data)
+
+
+class MailStalwartMtaRouteResource(
+    MailStalwartJmapResource, module="stalwart", name="MtaRoute"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("MtaRoute", False, name, opts, mail_service, data)
+
+
+class MailStalwartMtaOutboundStrategyResource(
+    MailStalwartJmapResource, module="stalwart", name="MtaOutboundStrategy"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("MtaOutboundStrategy", True, name, opts, mail_service, data)
 
 
 class MailStalwartAccountResource(

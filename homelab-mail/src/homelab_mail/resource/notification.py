@@ -9,6 +9,7 @@ from ..config import MailConfig
 
 @dataclasses.dataclass
 class NotificationAccountArgs:
+    relay: str | None
     record: str
     hostname: str
     username: str
@@ -49,6 +50,7 @@ class NotificationResource(ComponentResource):
                 )
 
             account = NotificationAccountArgs(
+                relay=model.relay,
                 record=record,
                 hostname=hostname,
                 username=model.username,
