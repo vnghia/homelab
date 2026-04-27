@@ -28,3 +28,4 @@ class MailCredentialEnvKey(HomelabBaseModel):
     address: str
     username: str | None = None
     password: str
+    password_template: str | None = None

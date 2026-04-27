@@ -31,7 +31,11 @@ class MailCredentialArgs:
             result
             | {
                 env.address: self.address,
-                env.password: Output.format('"{}"', self.password),
+                env.password: Output.format(
+                    env.password_template, password=self.password
+                )
+                if env.password_template
+                else self.password,
             }
             | ({env.username: self.username or self.address} if env.username else {})
         )

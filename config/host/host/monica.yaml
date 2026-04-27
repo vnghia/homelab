@@ -110,6 +110,7 @@ services:
             address: MAIL_FROM_ADDRESS
             username: MAIL_USERNAME
             password: MAIL_PASSWORD
+            password-template: '"{password}"'
       envs:
         APP_NAME:
         APP_ENV: production
