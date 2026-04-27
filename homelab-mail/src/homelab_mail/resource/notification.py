@@ -8,7 +8,7 @@ from ..config import MailConfig
 
 
 @dataclasses.dataclass
-class NoReplyAccountArgs:
+class NotificationAccountArgs:
     record: str
     hostname: str
     username: str
@@ -20,8 +20,8 @@ class NoReplyAccountArgs:
         return "{}@{}".format(self.username, self.domain)
 
 
-class NoReplyResource(ComponentResource):
-    RESOURCE_NAME = "noreply"
+class NotificationResource(ComponentResource):
+    RESOURCE_NAME = "notification"
 
     def __init__(
         self,
@@ -38,7 +38,7 @@ class NoReplyResource(ComponentResource):
 
         from ..resource import MailCredentialArgs
 
-        for name, model in config.noreply.root.items():
+        for name, model in config.notification.root.items():
             record = model.record
             hostname = model.hostname or name
 
@@ -48,7 +48,7 @@ class NoReplyResource(ComponentResource):
                     "{}-{}".format(self.RESOURCE_NAME, name), self.child_opts, domain
                 )
 
-            account = NoReplyAccountArgs(
+            account = NotificationAccountArgs(
                 record=record,
                 hostname=hostname,
                 username=model.username,

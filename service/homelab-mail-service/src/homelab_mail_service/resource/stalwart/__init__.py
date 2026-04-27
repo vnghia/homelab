@@ -23,7 +23,7 @@ class MailStalwartResource(ComponentResource):
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
         stalwart_config = mail_service.stalwart_config
-        mail_noreply = mail_service.mail_resource.noreply
+        mail_notification = mail_service.mail_resource.notification
 
         self.domains: dict[str, dict[str, MailStalwartDomainResource]] = defaultdict(
             dict
@@ -58,7 +58,7 @@ class MailStalwartResource(ComponentResource):
                 },
             )
 
-        for name, account in mail_noreply.accounts.items():
+        for name, account in mail_notification.accounts.items():
             if account.hostname in self.domains[account.record]:
                 domain = self.domains[account.record][account.hostname]
             else:
@@ -78,7 +78,7 @@ class MailStalwartResource(ComponentResource):
                 self.domains[account.record][account.hostname] = domain
 
             MailStalwartAccountResource(
-                "noreply-{}".format(name),
+                "notification-{}".format(name),
                 self.child_opts,
                 mail_service,
                 {

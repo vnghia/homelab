@@ -5,7 +5,7 @@ from pulumi import ComponentResource, Output, ResourceOptions
 from pydantic import PositiveInt
 
 from homelab_mail.config import MailConfig
-from homelab_mail.resource.noreply import NoReplyResource
+from homelab_mail.resource.notification import NotificationResource
 
 from ..model import MailCredentialEnvKey, MailKey, MailType
 
@@ -68,14 +68,14 @@ class MailResource(ComponentResource):
             )
             for k, v in config.custom.root.items()
         }
-        self.noreply = NoReplyResource(
+        self.notification = NotificationResource(
             config, opts=self.child_opts, host=self.host, hostnames=hostnames
         )
 
         self.credentials = MailCredentials(
             root={
                 MailType.CUSTOM: self.custom,
-                MailType.NOREPLY: self.noreply.credentials,
+                MailType.NOTIFICATION: self.notification.credentials,
             }
         )
         self.register_outputs({})

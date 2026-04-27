@@ -3,7 +3,7 @@ from pydantic import PositiveInt
 
 from ..model import MailProtocol
 from .credential import MailCredentialConfig
-from .noreply import NoReplyConfig
+from .notification import NotificationConfig
 from .relay import MailRelayConfig
 
 
@@ -23,4 +23,4 @@ class MailConfig(HomelabBaseModel):
     address: MailAddressConfig
     relay: MailRelayConfig = MailRelayConfig()
     custom: MailCredentialConfig = MailCredentialConfig()
-    noreply: NoReplyConfig = NoReplyConfig()
+    notification: NotificationConfig = NotificationConfig()

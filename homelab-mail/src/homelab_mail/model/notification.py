@@ -3,9 +3,9 @@ from homelab_pydantic import HomelabBaseModel
 from ..model import MailProtocol
 
 
-class NoReplyModel(HomelabBaseModel):
+class NotificationModel(HomelabBaseModel):
     relay: str | None = None
     hostname: str | None = None
     record: str
-    username: str = "noreply"
+    username: str = "notifications"
     port: MailProtocol = MailProtocol.SMTPS

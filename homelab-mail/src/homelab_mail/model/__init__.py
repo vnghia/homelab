@@ -5,7 +5,7 @@ from homelab_pydantic import HomelabBaseModel
 
 class MailType(StrEnum):
     CUSTOM = auto()
-    NOREPLY = auto()
+    NOTIFICATION = auto()
 
 
 class MailProtocol(StrEnum):
