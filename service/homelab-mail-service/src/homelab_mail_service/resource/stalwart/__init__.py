@@ -80,7 +80,7 @@ class MailStalwartResource(ComponentResource):
                     "port": credential.port,
                     "protocol": "smtp",
                     "implicitTls": True,
-                    "authUsername": credential.username,
+                    "authUsername": credential.address,
                     "authSecret": {"@type": "Value", "secret": credential.password},
                 },
             )
