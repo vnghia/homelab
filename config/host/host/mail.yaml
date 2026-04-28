@@ -38,6 +38,7 @@ services:
         transform:
           path: config.json
       STALWART_HTTP_PORT: 12908
+      STALWART_SMTPS_PORT: 466
       MAIL_OIDC_URL:
         extract:
           record: solar
@@ -74,6 +75,10 @@ services:
             port:
               gvariable: MAIL_SMTP_PORT
             protocol: smtp
+          smtps:
+            port:
+              svariable: STALWART_SMTPS_PORT
+            protocol: smtp
       traefik:
         dynamic:
           http:
@@ -102,7 +107,7 @@ services:
               passthrough: false
             service:
               port:
-                gvariable: MAIL_SMTP_PORT
+                svariable: STALWART_SMTPS_PORT
     keepasses:
       stalwart-recovery-admin:
         username:

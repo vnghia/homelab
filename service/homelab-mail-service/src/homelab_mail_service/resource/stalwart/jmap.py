@@ -52,9 +52,9 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
         diff: dict[str, Any] = {}
 
         for new_key, new_value in news.items():
-            if new_key == "@type":
-                diff[new_key] = new_value
-            elif old_value := olds.get(new_key):
+            if new_key in {"@type", "else", "match"}:
+                return news
+            if old_value := olds.get(new_key):
                 if type(old_value) is not type(new_value):
                     raise ValueError(
                         "old ({}) and new ({}) value must have the same type".format(

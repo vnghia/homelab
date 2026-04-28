@@ -14,7 +14,6 @@ from .jmap import (
     MailStalwartMtaOutboundStrategyResource,
     MailStalwartMtaRouteResource,
     MailStalwartMtaStageAuthResource,
-    MailStalwartMtaStageEhloResource,
     MailStalwartNetworkListenerResource,
     MailStalwartSystemSettingsResource,
     MailStalwartTracerResource,
@@ -27,7 +26,6 @@ if typing.TYPE_CHECKING:
 class MailStalwartResource(ComponentResource):
     RESOURCE_NAME = "stalwart"
 
-    # TODO: Restrict access to all accounts/reject non FQDN/sasl to local ips after setting up ProxyProtocol
     def __init__(self, *, opts: ResourceOptions, mail_service: MailService) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
@@ -198,18 +196,6 @@ class MailStalwartResource(ComponentResource):
                     "sender == '{}'".format(account.address)
                 )
 
-        MailStalwartMtaStageEhloResource(
-            "ehlo",
-            self.child_opts,
-            mail_service,
-            {
-                "rejectNonFqdn": {
-                    "else": "false",
-                    "match": [{"if": "local_port == 25", "then": "false"}],
-                }
-            },
-        )
-
         MailStalwartMtaStageAuthResource(
             "auth",
             self.child_opts,
@@ -218,10 +204,12 @@ class MailStalwartResource(ComponentResource):
                 "saslMechanisms": {
                     "else": "false",
                     "match": [
-                        {"if": "true", "then": "[plain, login, oauthbearer, xoauth2]"},
+                        {
+                            "if": "local_port != 25",
+                            "then": "[plain, login, oauthbearer, xoauth2]",
+                        },
                     ],
-                },
-                "require": {"else": "true"},
+                }
             },
         )
 
