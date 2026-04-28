@@ -84,6 +84,7 @@ class TraefikDynamicServiceFullModelBuilder(
         self,
         type_: TraefikDynamicType,
         router_name: str,
+        server_transport: str | None,
         extractor_args: ExtractorArgs,
     ) -> dict[str, Any]:
         root = self.root
@@ -106,6 +107,7 @@ class TraefikDynamicServiceFullModelBuilder(
                     if root.pass_host_header is not None
                     else {}
                 )
+                | ({"serversTransport": server_transport} if server_transport else {})
             }
         }
 

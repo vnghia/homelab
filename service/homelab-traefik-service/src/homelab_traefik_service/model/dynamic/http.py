@@ -75,6 +75,14 @@ class TraefikDynamicHttpModelBuilder(
 
         return (tls, tls_router)
 
+    def build_servers_transports(
+        self,
+        server_name: str,
+        traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
+    ) -> tuple[str, dict[str, Any]] | None:
+        return None
+
     def build_service_middlewares(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> list[TraefikDynamicMiddlewareModel]:

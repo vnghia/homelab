@@ -1517,6 +1517,7 @@ class Http(HomelabBaseModel):
         None,
         description="Attached to the routers, pieces of middleware are a means of tweaking the requests before they are sent to your service (or before the answer from the services are sent to the clients).\n\nThere are several available middleware in Traefik, some can modify the request, the headers, some are in charge of redirections, some add authentication, and so on.\n\nPieces of middleware can be combined in chains to fit every scenario.",
     )
+    servers_transports: dict[str, Any] | None = Field(None, alias="serversTransports")
 
 
 class Tcp(HomelabBaseModel):
@@ -1526,6 +1527,7 @@ class Tcp(HomelabBaseModel):
         description="Each of the fields of the service section represents a kind of service. Which means, that for each specified service, one of the fields, and only one, has to be enabled to define what kind of service is created. Currently, the two available kinds are LoadBalancer, and Weighted.",
     )
     middlewares: dict[str, Any] | None = None
+    servers_transports: dict[str, Any] | None = Field(None, alias="serversTransports")
 
 
 class Udp(HomelabBaseModel):

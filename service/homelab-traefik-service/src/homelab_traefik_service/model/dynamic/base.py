@@ -57,8 +57,18 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
 
     @abc.abstractmethod
     def build_tls(
-        self, traefik_service: TraefikService, extractor_args: ExtractorArgs
+        self,
+        traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
     ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]: ...
+
+    @abc.abstractmethod
+    def build_servers_transports(
+        self,
+        server_name: str,
+        traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
+    ) -> tuple[str, dict[str, Any]] | None: ...
 
     def build_service_middlewares(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
@@ -110,6 +120,12 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
             )
 
         tls, tls_router = self.build_tls(traefik_service, extractor_args)
+        if server_transport := self.build_servers_transports(
+            service, traefik_service, extractor_args
+        ):
+            server_transport_name, server_transport_data = server_transport
+        else:
+            server_transport_name, server_transport_data = (None, None)
 
         data: dict[str, Any] = {
             self.TYPE: {
@@ -130,7 +146,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
                 service_full
                 if service_full.port is not None
                 else service_full.__replace__(port=entrypoint_config.root.port)
-            ).to_service(self.TYPE, router_name, extractor_args)
+            ).to_service(self.TYPE, router_name, server_transport_name, extractor_args)
 
         middlewares: dict[str, Any] = reduce(
             operator.or_,
@@ -147,5 +163,10 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
 
         if tls:
             data |= tls
+
+        if server_transport_data:
+            data[self.TYPE]["serversTransports"] = {
+                server_transport_name: server_transport_data
+            }
 
         return data

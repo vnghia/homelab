@@ -64,6 +64,19 @@ class TraefikDynamicTcpModelBuilder(
             else None,
         )
 
+    def build_servers_transports(
+        self,
+        server_name: str,
+        traefik_service: TraefikService,
+        extractor_args: ExtractorArgs,
+    ) -> tuple[str, dict[str, Any]] | None:
+        root = self.root
+        if root.proxy_protocol.enabled:
+            return server_name, {
+                "proxyProtocol": {"version": root.proxy_protocol.version}
+            }
+        return None
+
     def build_resource(
         self,
         resource_name: str | None,
