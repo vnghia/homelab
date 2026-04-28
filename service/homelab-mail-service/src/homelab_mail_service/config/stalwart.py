@@ -15,6 +15,7 @@ class MailStalwartRecoveryConfig(HomelabBaseModel):
 class MailStalwartSystemConfig(HomelabBaseModel):
     record: str
     hostname: str
+    proxies: GlobalExtract
 
 
 class MailStalwartListenerConfig(

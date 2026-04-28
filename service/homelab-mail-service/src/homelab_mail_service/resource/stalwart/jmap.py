@@ -37,7 +37,12 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                 if value[0] == cls.SET_KEY:
                     data[key] = dict.fromkeys(value[1:], True)
                 else:
-                    data[key] = {str(i): item for i, item in enumerate(value)}
+                    data[key] = {
+                        str(i): cls.transform_data(item)
+                        if isinstance(item, dict)
+                        else item
+                        for i, item in enumerate(value)
+                    }
             elif isinstance(value, float):
                 data[key] = int(value)
         return data
@@ -67,9 +72,9 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
             else:
                 diff[new_key] = new_value
 
-        for old_key in olds:
+        for old_key, old_value in olds.items():
             if old_key not in news:
-                diff[old_key] = None
+                diff[old_key] = {} if isinstance(old_value, dict) else False
 
         return diff
 
@@ -279,6 +284,19 @@ class MailStalwartDomainResource(
         data: dict[str, Any],
     ) -> None:
         super().__init__("Domain", False, name, opts, mail_service, data)
+
+
+class MailStalwartSystemSettingsResource(
+    MailStalwartJmapResource, module="stalwart", name="SystemSettings"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("SystemSettings", True, name, opts, mail_service, data)
 
 
 class MailStalwartMtaStageEhloResource(

@@ -2,6 +2,9 @@ import typing
 from collections import defaultdict
 
 from homelab_docker.extract.global_ import GlobalExtractor
+from homelab_extract import GlobalExtract
+from homelab_extract.host import HostExtract, HostExtractSource
+from homelab_extract.host.network import HostExtractNetworkSource, HostNetworkInfoSource
 from pulumi import ComponentResource, Output, ResourceOptions
 
 from .jmap import (
@@ -13,6 +16,7 @@ from .jmap import (
     MailStalwartMtaStageAuthResource,
     MailStalwartMtaStageEhloResource,
     MailStalwartNetworkListenerResource,
+    MailStalwartSystemSettingsResource,
     MailStalwartTracerResource,
 )
 
@@ -38,11 +42,50 @@ class MailStalwartResource(ComponentResource):
         self.relays: dict[str, MailStalwartMtaRouteResource] = {}
         self.relay_conditions: dict[str, list[str]] = defaultdict(list)
 
+        self.default_hostname = mail_service.extractor_args.hostnames[
+            stalwart_config.system.record
+        ][stalwart_config.system.hostname].value
+        self.default_domain = MailStalwartDomainResource(
+            "{}-{}".format(
+                stalwart_config.system.record, stalwart_config.system.hostname
+            ),
+            self.child_opts,
+            mail_service,
+            {
+                "name": mail_service.extractor_args.hostnames[
+                    stalwart_config.system.record
+                ][stalwart_config.system.hostname].value,
+                "certificateManagement": {"@type": "Manual"},
+                "allowRelaying": True,
+                "dkimManagement": {"@type": "Manual"},
+                "dnsManagement": {"@type": "Manual"},
+                "subAddressing": {"@type": "Disabled"},
+            },
+        )
+        self.domains[stalwart_config.system.record][stalwart_config.system.hostname] = (
+            self.default_domain
+        )
+
+        proxies = GlobalExtractor(
+            stalwart_config.system.proxies
+        ).extract_str_explicit_transform(mail_service.extractor_args)
+        if not isinstance(proxies, list):
+            raise ValueError("Proxies config has to be a list")
+        MailStalwartSystemSettingsResource(
+            "system",
+            self.child_opts,
+            mail_service,
+            {
+                "defaultHostname": self.default_hostname,
+                "defaultDomainId": self.default_domain.id,
+            },
+        )
+
         MailStalwartTracerResource(
             "stdout",
             self.child_opts,
             mail_service,
-            {"@type": "Stdout", "enable": True, "level": "trace"},
+            {"@type": "Stdout", "enable": True, "level": "info"},
         )
 
         for name, model in stalwart_config.listener.root.items():
@@ -64,7 +107,17 @@ class MailStalwartResource(ComponentResource):
                     "protocol": model.protocol,
                     "useTls": model.use_tls,
                     "tlsImplicit": model.tls_implicit if model.use_tls else False,
-                },
+                }
+                | (
+                    {
+                        "overrideProxyTrustedNetworks": [
+                            MailStalwartJmapProviderProps.SET_KEY,
+                            *proxies,
+                        ]
+                    }
+                    if model.use_tls or model.protocol == "smtp"
+                    else {}
+                ),
             )
 
         for name, relay in mail_config.relay.root.items():
@@ -104,6 +157,21 @@ class MailStalwartResource(ComponentResource):
                 )
                 self.domains[account.record][account.hostname] = domain
 
+            allowed_ips = GlobalExtractor(
+                GlobalExtract(
+                    HostExtract(
+                        HostExtractSource(
+                            HostExtractNetworkSource(
+                                network=name,
+                                info=HostNetworkInfoSource.SUBNET,
+                            )
+                        )
+                    )
+                )
+            ).extract_str_explicit_transform(mail_service.extractor_args)
+            if not isinstance(allowed_ips, list):
+                raise RuntimeError(allowed_ips)
+
             MailStalwartAccountResource(
                 "notification-{}".format(name),
                 self.child_opts,
@@ -112,7 +180,14 @@ class MailStalwartResource(ComponentResource):
                     "@type": "User",
                     "name": account.username,
                     "credentials": [
-                        {"@type": "Password", "secret": account.password.result}
+                        {
+                            "@type": "Password",
+                            "secret": account.password.result,
+                            "allowedIps": [
+                                MailStalwartJmapProviderProps.SET_KEY,
+                                *allowed_ips,
+                            ],
+                        }
                     ],
                     "domainId": domain.id,
                 },
