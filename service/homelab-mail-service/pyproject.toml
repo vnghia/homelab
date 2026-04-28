@@ -9,6 +9,7 @@ dependencies = [
     "pulumi>=3.148.0",
     "homelab-extract",
     "homelab-mail",
+    "homelab-kanidm-service",
     "httpx>=0.28.1",
 ]
 

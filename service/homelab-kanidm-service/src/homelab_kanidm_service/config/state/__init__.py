@@ -16,7 +16,7 @@ class KanidmStateConfig(HomelabBaseModel):
     systems: KanidmStateSystemConfig = KanidmStateSystemConfig()
 
     def build(
-        self, openid_group: str, admin_group: str, user_group: str
+        self, openid_group: str, admin_group: str, user_group: str, domain: str
     ) -> KanidmStateConfig:
         openid_members = []
         admin_members = []
@@ -30,6 +30,17 @@ class KanidmStateConfig(HomelabBaseModel):
                 user_members.append(member_extract)
 
         return self.__replace__(
+            persons=KanidmStatePersonConfig(
+                {
+                    username: model.__replace__(
+                        mail_addresses=[
+                            GlobalExtract.from_simple("{}@{}".format(username, domain)),
+                            *model.mail_addresses,
+                        ]
+                    )
+                    for username, model in self.persons.root.items()
+                }
+            ),
             groups=KanidmStateGroupConfig(
                 self.groups.root
                 | {openid_group: KanidmStateGroupModel(members=openid_members)}

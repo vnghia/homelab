@@ -12,6 +12,7 @@ from homelab_docker.model.docker.container.ports import (
 )
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_extra_service import ExtraService
+from homelab_kanidm_service import KanidmService
 from homelab_mail.resource import MailResource
 from pulumi import Output, ResourceOptions
 
@@ -28,6 +29,7 @@ class MailService(ExtraService[MailConfig]):
         *,
         opts: ResourceOptions,
         mail_resource: MailResource,
+        kanidm_service: KanidmService,
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
@@ -95,5 +97,5 @@ class MailService(ExtraService[MailConfig]):
         self.build(None)
 
         self.stalwart_resource = MailStalwartResource(
-            opts=self.child_opts, mail_service=self
+            opts=self.child_opts, mail_service=self, kanidm_service=kanidm_service
         )

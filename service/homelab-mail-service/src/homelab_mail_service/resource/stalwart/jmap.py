@@ -114,7 +114,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                 id = str(resource["id"])
                 return id, self.extract_data(resource, self.attrs)
             except KeyError as error:
-                raise RuntimeError(response) from error
+                raise RuntimeError(data, response) from error
 
     def update(self, id: str, olds: dict[str, Any]) -> dict[str, Any]:
         olds = self.transform_data(olds)
@@ -147,7 +147,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                     DictAnyAdapter.validate_python(resource), self.attrs
                 )
             except KeyError as error:
-                raise RuntimeError(response) from error
+                raise RuntimeError(diff, response) from error
 
     def delete(self, id: str) -> None:
         if self.singleton:
@@ -310,6 +310,19 @@ class MailStalwartMtaStageEhloResource(
         data: dict[str, Any],
     ) -> None:
         super().__init__("MtaStageEhlo", True, name, opts, mail_service, data)
+
+
+class MailStalwartMtaStageRcptResource(
+    MailStalwartJmapResource, module="stalwart", name="MtaStageRcpt"
+):
+    def __init__(
+        self,
+        name: str,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        data: dict[str, Any],
+    ) -> None:
+        super().__init__("MtaStageRcpt", True, name, opts, mail_service, data)
 
 
 class MailStalwartMtaStageAuthResource(

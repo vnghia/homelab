@@ -52,6 +52,7 @@ services:
             admin: true
             present: true
             display-name: "Me"
+      record: solar
       traefik:
         dynamic:
           traefik:

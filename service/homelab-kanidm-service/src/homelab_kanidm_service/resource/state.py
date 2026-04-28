@@ -118,10 +118,13 @@ class KanidmStateProvider(ResourceProvider):
 
 class KanidmStateResource(Resource, module="kanidm", name="State"):
     def __init__(self, opts: ResourceOptions, kanidm_service: KanidmService) -> None:
-        state = kanidm_service.config.state.build(
+        self.config = kanidm_service.config.state.build(
             kanidm_service.OPENID_GROUP,
             kanidm_service.ADMIN_GROUP,
             kanidm_service.USER_GROUP,
+            kanidm_service.extractor_args.host.network.config.records[
+                kanidm_service.config.record
+            ]._domain,
         )
 
         super().__init__(
@@ -131,7 +134,7 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
                 "url": kanidm_service.url,
                 "password": kanidm_service.idm_admin.password,
                 "state": GlobalExtractor.extract_recursively(
-                    state.model_dump(mode="json"), kanidm_service.extractor_args
+                    self.config.model_dump(mode="json"), kanidm_service.extractor_args
                 ),
                 "hash": None,
             },

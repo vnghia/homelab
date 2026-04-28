@@ -5,6 +5,7 @@ from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_extract import GlobalExtract
 from homelab_extract.host import HostExtract, HostExtractSource
 from homelab_extract.host.network import HostExtractNetworkSource, HostNetworkInfoSource
+from homelab_kanidm_service import KanidmService
 from pulumi import ComponentResource, Output, ResourceOptions
 
 from .jmap import (
@@ -14,6 +15,7 @@ from .jmap import (
     MailStalwartMtaOutboundStrategyResource,
     MailStalwartMtaRouteResource,
     MailStalwartMtaStageAuthResource,
+    MailStalwartMtaStageRcptResource,
     MailStalwartNetworkListenerResource,
     MailStalwartSystemSettingsResource,
     MailStalwartTracerResource,
@@ -25,8 +27,15 @@ if typing.TYPE_CHECKING:
 
 class MailStalwartResource(ComponentResource):
     RESOURCE_NAME = "stalwart"
+    MAIL_ADDRESSES_MINIMUM_LEN = 2
 
-    def __init__(self, *, opts: ResourceOptions, mail_service: MailService) -> None:
+    def __init__(
+        self,
+        *,
+        opts: ResourceOptions,
+        mail_service: MailService,
+        kanidm_service: KanidmService,
+    ) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts)
         self.child_opts = ResourceOptions(parent=self)
         stalwart_config = mail_service.stalwart_config
@@ -195,6 +204,36 @@ class MailStalwartResource(ComponentResource):
                 self.relay_conditions[account.relay].append(
                     "sender == '{}'".format(account.address)
                 )
+
+        MailStalwartMtaStageRcptResource(
+            "rcpt",
+            self.child_opts,
+            mail_service,
+            {
+                "rewrite": {
+                    "match": [
+                        {
+                            "if": Output.format(
+                                "rcpt == '{}'",
+                                GlobalExtractor(addresses[0]).extract_str(
+                                    kanidm_service.extractor_args
+                                ),
+                            ),
+                            "then": Output.format(
+                                "'{}'",
+                                GlobalExtractor(addresses[1]).extract_str(
+                                    kanidm_service.extractor_args
+                                ),
+                            ),
+                        }
+                        for person in kanidm_service.state.config.persons.root.values()
+                        if (addresses := person.mail_addresses)
+                        and len(addresses) >= self.MAIL_ADDRESSES_MINIMUM_LEN
+                    ],
+                    "else": "false",
+                }
+            },
+        )
 
         MailStalwartMtaStageAuthResource(
             "auth",

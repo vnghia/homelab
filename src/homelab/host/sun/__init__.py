@@ -33,15 +33,16 @@ class SunHost(HostBase[SunServiceConfig]):
             config=config,
         )
 
+        self.kanidm = KanidmService(
+            self.services_config.kanidm,
+            opts=self.child_opts,
+            extractor_args=self.extractor_args,
+        )
+
         self.mail = MailService(
             self.services_config.mail,
             opts=self.child_opts,
             mail_resource=mail_resource,
-            extractor_args=self.extractor_args,
-        )
-
-        self.kanidm = KanidmService(
-            self.services_config.kanidm,
-            opts=self.child_opts,
+            kanidm_service=self.kanidm,
             extractor_args=self.extractor_args,
         )

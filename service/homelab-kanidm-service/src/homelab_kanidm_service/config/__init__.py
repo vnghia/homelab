@@ -10,3 +10,4 @@ class KandimConfig(TraefikServiceConfigBase, DaguServiceConfigBase):
     port: GlobalExtract
     state: KanidmStateConfig
     address: GlobalExtract
+    record: str
