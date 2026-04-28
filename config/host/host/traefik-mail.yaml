@@ -3,6 +3,9 @@ services:
     config:
       entrypoint:
         config:
+          smtp:
+            port:
+              gvariable: MAIL_SMTP_PORT
           smtps:
             port:
               gvariable: MAIL_SMTPS_PORT

@@ -78,11 +78,21 @@ services:
             service:
               port:
                 svariable: STALWART_HTTP_PORT
+          smtp:
+            name: smtp
+            hostsni:
+            entrypoint: smtp
+            tls:
+              enabled: false
+            service:
+              port:
+                gvariable: MAIL_SMTP_PORT
           smtps:
             name: smtps
             hostsni:
             entrypoint: smtps
-            passthrough: false
+            tls:
+              passthrough: false
             service:
               port:
                 gvariable: MAIL_SMTP_PORT
