@@ -58,7 +58,7 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
     @abc.abstractmethod
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
-    ) -> tuple[dict[str, Any] | None, dict[str, Any]]: ...
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]: ...
 
     def build_service_middlewares(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
@@ -118,8 +118,8 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
                         "service": service,
                         "entryPoints": [entrypoint],
                         "rule": rule,
-                        "tls": tls_router,
                     }
+                    | ({"tls": tls_router} if tls_router else {})
                     | ({"middlewares": all_middlewares} if all_middlewares else {})
                 }
             }

@@ -59,7 +59,7 @@ class TraefikDynamicHttpModelBuilder(
 
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
-    ) -> tuple[dict[str, Any] | None, dict[str, Any]]:
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
         root = self.root
         main_service = extractor_args.service
 

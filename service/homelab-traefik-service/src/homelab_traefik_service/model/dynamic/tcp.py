@@ -28,6 +28,9 @@ class TraefikDynamicTcpModelBuilder(
         traefik_service: TraefikService,
         extractor_args: ExtractorArgs,
     ) -> Output[str]:
+        if not self.root.tls.enabled:
+            return Output.from_input("HostSNI(`*`)")
+
         hostsni = self.root.hostsni
         if hostsni is None or isinstance(hostsni, str):
             return Output.format(
@@ -36,6 +39,7 @@ class TraefikDynamicTcpModelBuilder(
                     record, hostsni, router_name, traefik_service, extractor_args
                 ),
             )
+
         return Output.all(
             *[GlobalExtractor(value).extract_str(extractor_args) for value in hostsni]
         ).apply(
@@ -44,16 +48,20 @@ class TraefikDynamicTcpModelBuilder(
 
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
-    ) -> tuple[dict[str, Any] | None, dict[str, Any]]:
-        root = self.root
+    ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        tls = self.root.tls
         return (
             None,
-            {"passthrough": root.passthrough}
-            | (
-                {"certResolver": traefik_service.static.CERT_RESOLVER}
-                if not root.passthrough
-                else {}
-            ),
+            (
+                {"passthrough": tls.passthrough}
+                | (
+                    {"certResolver": traefik_service.static.CERT_RESOLVER}
+                    if not tls.passthrough
+                    else {}
+                )
+            )
+            if tls.enabled
+            else None,
         )
 
     def build_resource(
