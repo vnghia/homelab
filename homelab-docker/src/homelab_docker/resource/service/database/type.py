@@ -132,6 +132,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                         )
                     )
                 ),
+                **model.envs,
             }
             if self.config.env.username:
                 envs[self.config.env.username] = GlobalExtract.from_simple(

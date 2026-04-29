@@ -1,3 +1,4 @@
+from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 from homelab_pydantic.model import HomelabRootModel
 from pydantic import PositiveInt
@@ -19,3 +20,4 @@ class ServiceDatabaseModel(HomelabBaseModel):
     versions: list[PositiveInt] = []
     scripts: list[ServiceDatabaseInitScriptModel] = []
     config: ServiceDatabaseConfigModel | None = None
+    envs: dict[str, GlobalExtract] = {}
