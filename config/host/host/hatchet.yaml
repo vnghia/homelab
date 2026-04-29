@@ -1,0 +1,100 @@
+docker:
+  images:
+    remote:
+      hatchet:
+        repo: ghcr.io/hatchet-dev/hatchet/hatchet-lite
+        tag: "v0.83.60"
+  volumes:
+    local:
+      hatchet-config: {}
+services:
+  hatchet:
+    variables:
+      SERVER_PORT: 8080
+      LITE_FRONTEND_PORT: 8081
+      LITE_RUNTIME_PORT: 8082
+      SERVER_GRPC_PORT: 7070
+      SERVER_HEALTHCHECK_PORT: 8733
+    config:
+      traefik:
+        dynamic:
+          traefik:
+            record: sun
+            service:
+              port:
+                svariable: LITE_RUNTIME_PORT
+    databases:
+      postgres:
+        postgres:
+          envs:
+            TZ: UTC
+    keepasses:
+      keepass:
+        username:
+          pcontext: email-me
+        hostname:
+          hostname: hatchet
+          record: sun
+    secrets:
+      tenant-id:
+        uuid:
+    container:
+      image: hatchet
+      databases:
+        - postgres:
+          envs:
+            env: DATABASE_URL
+      volumes:
+        hatchet-config: /config
+      envs:
+        SERVER_PORT:
+          svariable: SERVER_PORT
+        LITE_FRONTEND_PORT:
+          svariable: LITE_FRONTEND_PORT
+        LITE_RUNTIME_PORT:
+          svariable: LITE_RUNTIME_PORT
+        SERVER_URL:
+          hostname: hatchet
+          scheme: https
+        SERVER_GRPC_PORT:
+          svariable: SERVER_GRPC_PORT
+        SERVER_GRPC_BIND_ADDRESS: "0.0.0.0"
+        SERVER_GRPC_BROADCAST_ADDRESS:
+          extract:
+            svariable: SERVER_GRPC_PORT
+          transform:
+            string:
+              template: "0.0.0.0:{value}"
+        SERVER_GRPC_INSECURE: true
+        SERVER_ALLOW_SIGNUP: false
+        SERVER_ALLOW_INVITES: false
+        SERVER_ALLOW_CREATE_TENANT: false
+        SERVER_ALLOW_CHANGE_PASSWORD: false
+        SERVER_HEALTHCHECK: true
+        SERVER_HEALTHCHECK_PORT:
+          svariable: SERVER_HEALTHCHECK_PORT
+        SERVER_ENABLE_DATA_RETENTION: true
+        SERVER_ENABLE_WORKER_RETENTION: false
+        ADMIN_EMAIL:
+          keepass:
+          info: username
+        ADMIN_PASSWORD:
+          keepass:
+          info: password
+        ADMIN_NAME: Me
+        DEFAULT_TENANT_ID:
+          secret: tenant-id
+        SERVER_SECURITY_CHECK_ENABLED: false
+        SERVER_AUTH_COOKIE_DOMAIN:
+          record: sun
+          hostname: hatchet
+        SERVER_AUTH_BASIC_AUTH_ENABLED: true
+        SERVER_INTERNAL_CLIENT_INTERNAL_GRPC_BROADCAST_ADDRESS:
+          extract:
+            svariable: SERVER_GRPC_PORT
+          transform:
+            string:
+              template: "localhost:{value}"
+        SERVER_LOGGER_LEVEL: INFO
+        SERVER_LOGGER_FORMAT: json
+        SERVER_DEFAULT_ENGINE_VERSION: "V1"
