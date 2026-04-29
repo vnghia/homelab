@@ -1,11 +1,12 @@
 import datetime
 import logging
 import os
+from typing import Self
 
 import docker
 import pyotp
 from docker.models.containers import Container
-from pyrate_limiter import BucketFullException, Duration, Limiter, Rate
+from pyrate_limiter import Duration, Limiter, Rate
 from pythonjsonlogger.json import JsonFormatter
 from telegram import Update
 from telegram.ext import (
@@ -45,10 +46,10 @@ class BotData:
         self.container = docker.from_env().containers.get(os.environ[CONTAINER_KEY])
 
 
-class BotContext(CallbackContext[ExtBot, None, None, BotData]):
+class BotContext(CallbackContext[ExtBot[None], None, None, BotData]):
     def __init__(
         self,
-        application: Application,
+        application: Application[ExtBot[None], Self, None, None, BotData, None],
         chat_id: int | None = None,
         user_id: int | None = None,
     ) -> None:
@@ -63,7 +64,9 @@ class BotContext(CallbackContext[ExtBot, None, None, BotData]):
         return self.bot_data.container
 
 
-async def post_init(application: Application) -> None:
+async def post_init(
+    application: Application[ExtBot[None], BotContext, None, None, BotData, None],
+) -> None:
     await application.bot.set_my_commands(
         [
             ("on", "Turn the machine on. Usage: /on <totp>"),
@@ -77,53 +80,50 @@ async def on(update: Update, context: BotContext) -> None:
         logger.error("No effective message found. This is a bug in python-telegram-bot")
         return
 
-    try:
-        context.bot_data.limiter.try_acquire(str(update.effective_message.chat_id))
-
-        if context.args is None:
-            raise IndexError
-        totp = context.args[0]
-        success = context.totp.verify(totp)
-        if success:
-            logger.info(
-                f"On request from user {update.effective_message.from_user} is accepted"
-            )
-
-            container = context.bot_data.container
-            container.reload()
-            if container.status == "running":
-                await update.effective_message.reply_text(
-                    "The machine has been turned on"
-                )
-            else:
-                await update.effective_message.reply_text("Turning on the machine ...")
-                container.start()
-
-                now = datetime.datetime.now()
-                for log in container.logs(stream=True, follow=True, since=now):
-                    if b"Windows started succesfully" in log:
-                        await update.effective_message.reply_text(
-                            "The machine has been turned on"
-                        )
-                        break
-                    if (
-                        datetime.datetime.now() - now
-                    ).total_seconds() >= BotData.CONTAINER_START_TIMEOUT:
-                        await update.effective_message.reply_text(
-                            "Could not turn on the machine"
-                        )
-                        break
-
-            container.start()
-        else:
-            await update.effective_message.reply_text("Request denied")
-    except BucketFullException:
+    if not context.bot_data.limiter.try_acquire(str(update.effective_message.chat_id)):
         logger.info(f"User {update.effective_message.from_user} has been rate-limited")
         await update.effective_message.reply_text(
             "You have been rate-limited. Please try again later"
         )
-    except IndexError:
+        return
+
+    if context.args is None:
         await update.effective_message.reply_text("Usage: /on <totp>")
+        return
+
+    totp = context.args[0]
+    success = context.totp.verify(totp)
+    if success:
+        logger.info(
+            f"On request from user {update.effective_message.from_user} is accepted"
+        )
+
+        container = context.bot_data.container
+        container.reload()
+        if container.status == "running":
+            await update.effective_message.reply_text("The machine has been turned on")
+        else:
+            await update.effective_message.reply_text("Turning on the machine ...")
+            container.start()
+
+            now = datetime.datetime.now()
+            for log in container.logs(stream=True, follow=True, since=now):
+                if b"Windows started succesfully" in log:
+                    await update.effective_message.reply_text(
+                        "The machine has been turned on"
+                    )
+                    break
+                if (
+                    datetime.datetime.now() - now
+                ).total_seconds() >= BotData.CONTAINER_START_TIMEOUT:
+                    await update.effective_message.reply_text(
+                        "Could not turn on the machine"
+                    )
+                    break
+
+        container.start()
+    else:
+        await update.effective_message.reply_text("Request denied")
 
 
 async def off(update: Update, context: BotContext) -> None:
@@ -131,30 +131,31 @@ async def off(update: Update, context: BotContext) -> None:
         logger.error("No effective message found. This is a bug in python-telegram-bot")
         return
 
-    try:
-        context.bot_data.limiter.try_acquire(str(update.effective_message.chat_id))
-
-        if context.args is None:
-            raise IndexError
-        totp = context.args[0]
-        success = context.totp.verify(totp)
-        if success:
-            logger.info(
-                f"Off request from user {update.effective_message.from_user} is accepted"
-            )
-
-            await update.effective_message.reply_text("Turning off the machine ...")
-            container = context.bot_data.container
-            container.reload()
-            container.stop()
-            await update.effective_message.reply_text("The machine has been turned off")
-        else:
-            await update.effective_message.reply_text("Request denied")
-    except BucketFullException:
+    if not context.bot_data.limiter.try_acquire(str(update.effective_message.chat_id)):
         logger.info(f"User {update.effective_message.from_user} has been rate-limited")
         await update.effective_message.reply_text(
             "You have been rate-limited. Please try again later"
         )
+        return
+
+    if context.args is None:
+        await update.effective_message.reply_text("Usage: /off <totp>")
+        return
+
+    totp = context.args[0]
+    success = context.totp.verify(totp)
+    if success:
+        logger.info(
+            f"Off request from user {update.effective_message.from_user} is accepted"
+        )
+
+        await update.effective_message.reply_text("Turning off the machine ...")
+        container = context.bot_data.container
+        container.reload()
+        container.stop()
+        await update.effective_message.reply_text("The machine has been turned off")
+    else:
+        await update.effective_message.reply_text("Request denied")
 
 
 def main() -> None:
