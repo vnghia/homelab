@@ -66,13 +66,6 @@ services:
         postgres: {}
       valkey:
         valkey: {}
-    keepasses:
-      keepass:
-        hostname:
-          hostname: monica
-          record: solar
-        apps:
-          - at.bitfire.davdroid
     secrets:
       key:
         length: 32

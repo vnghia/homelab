@@ -69,6 +69,8 @@ services:
         valkey: {}
     keepasses:
       keepass:
+        username:
+          pcontext: email-me
         hostname:
           hostname: immich
           record: solar

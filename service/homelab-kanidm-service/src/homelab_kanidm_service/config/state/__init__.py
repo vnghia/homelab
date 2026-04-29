@@ -34,7 +34,7 @@ class KanidmStateConfig(HomelabBaseModel):
                 {
                     username: model.__replace__(
                         mail_addresses=[
-                            GlobalExtract.from_simple("{}@{}".format(username, domain)),
+                            "{}@{}".format(username, domain),
                             *model.mail_addresses,
                         ]
                     )

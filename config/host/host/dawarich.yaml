@@ -58,11 +58,6 @@ services:
           image: postgis
       valkey:
         valkey: {}
-    keepasses:
-      keepass:
-        hostname:
-          hostname: dawarich
-          record: solar
     secrets:
       key: {}
     container:

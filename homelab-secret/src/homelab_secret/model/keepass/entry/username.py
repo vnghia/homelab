@@ -1,4 +1,4 @@
-from homelab_extract.plain import PlainArgs
+from homelab_extract.plain import GlobalPlainExtractSource, PlainArgs
 from homelab_extract.plain.hostname import GlobalPlainExtractHostnameSource
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pulumi import Output, ResourceOptions
@@ -40,12 +40,16 @@ class KeepassEntryUsernameEmailModel(HomelabBaseModel):
 
 class KeepassEntryUsernameModel(
     HomelabRootModel[
-        KeepassEntryUsernameEmailModel | KeepassEntryUsernameUsernameModel | str
+        KeepassEntryUsernameEmailModel
+        | KeepassEntryUsernameUsernameModel
+        | GlobalPlainExtractSource
     ]
 ):
-    root: KeepassEntryUsernameEmailModel | KeepassEntryUsernameUsernameModel | str = (
-        KeepassEntryUsernameUsernameModel()
-    )
+    root: (
+        KeepassEntryUsernameEmailModel
+        | KeepassEntryUsernameUsernameModel
+        | GlobalPlainExtractSource
+    ) = KeepassEntryUsernameUsernameModel()
 
     def to_username(self, opts: ResourceOptions, plain_args: PlainArgs) -> Output[str]:
         root = self.root
@@ -53,4 +57,4 @@ class KeepassEntryUsernameModel(
             return root.to_email(opts=opts, plain_args=plain_args)
         if isinstance(root, KeepassEntryUsernameUsernameModel):
             return root.build_username("username", opts, None, plain_args)
-        return Output.from_input(root)
+        return Output.from_input(root.extract_str(plain_args))

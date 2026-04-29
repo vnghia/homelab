@@ -57,6 +57,9 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             .apply(int),
         )
 
+        self.domain = self.extractor_args.host.network.config.records[
+            self.config.record
+        ]._domain
         self.state = KanidmStateResource(
             opts=self.child_opts.merge(
                 ResourceOptions(depends_on=[self.container.resource])
@@ -70,7 +73,13 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             self.client_data, self.idm_admin.password
         ).apply(lambda x: KanidmClient.model_validate_json(x[0]).login(password=x[1]))
 
-        self.exports |= {
+        self.emails = {
+            "email-{}".format(name): Output.from_input(person.mail_addresses[0])
+            for name, person in self.state.config.persons.root.items()
+        }
+        self.extractor_args.plain_args.contexts |= self.emails
+
+        self.oauths = {
             system: Output.all(
                 self.client_data, system, model.model_dump_json(), self.login_account
             ).apply(
@@ -81,7 +90,8 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
             for system, model in self.config.state.systems.oauth2.root.items()
             if not model.public
         }
-        for system, secret in self.exports.items():
+        self.exports |= self.oauths | self.emails
+        for system, secret in self.oauths.items():
             pulumi.export("kanidm.{}.oauth".format(system), secret)
 
         self.register_outputs({})

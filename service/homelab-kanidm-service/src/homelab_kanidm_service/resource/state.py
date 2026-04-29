@@ -122,9 +122,7 @@ class KanidmStateResource(Resource, module="kanidm", name="State"):
             kanidm_service.OPENID_GROUP,
             kanidm_service.ADMIN_GROUP,
             kanidm_service.USER_GROUP,
-            kanidm_service.extractor_args.host.network.config.records[
-                kanidm_service.config.record
-            ]._domain,
+            kanidm_service.domain,
         )
 
         super().__init__(

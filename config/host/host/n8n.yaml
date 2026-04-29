@@ -64,6 +64,8 @@ services:
         postgres: {}
     keepasses:
       keepass:
+        username:
+          pcontext: email-me
         hostname:
           hostname: n8n
           record: solar

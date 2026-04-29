@@ -213,18 +213,8 @@ class MailStalwartResource(ComponentResource):
                 "rewrite": {
                     "match": [
                         {
-                            "if": Output.format(
-                                "rcpt == '{}'",
-                                GlobalExtractor(addresses[0]).extract_str(
-                                    kanidm_service.extractor_args
-                                ),
-                            ),
-                            "then": Output.format(
-                                "'{}'",
-                                GlobalExtractor(addresses[1]).extract_str(
-                                    kanidm_service.extractor_args
-                                ),
-                            ),
+                            "if": "rcpt == '{}'".format(addresses[0]),
+                            "then": "'{}'".format(addresses[1]),
                         }
                         for person in kanidm_service.state.config.persons.root.values()
                         if (addresses := person.mail_addresses)

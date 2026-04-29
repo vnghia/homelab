@@ -55,6 +55,10 @@ services:
         include-prefix: v
         semver-count: 2
       envs:
+        CONVOS_ADMIN:
+          service: kanidm
+          extract:
+            export: email-me
         CONVOS_LOCAL_SECRET:
           secret: local
         CONVOS_REVERSE_PROXY: 1
