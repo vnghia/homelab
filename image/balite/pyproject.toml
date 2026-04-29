@@ -1,5 +1,5 @@
 [project]
-name = "homelab-balite"
+name = "homelab-balite-docker"
 version = "0.1.0"
 requires-python = ">=3.13.1"
 dependencies = [
@@ -9,5 +9,9 @@ dependencies = [
     "typer>=0.15.3",
 ]
 
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
 [project.scripts]
-homelab-balite = "main:main"
+homelab-balite = "homelab_balite_docker:main"

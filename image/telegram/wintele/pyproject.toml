@@ -1,5 +1,5 @@
 [project]
-name = "homelab-wintele"
+name = "homelab-wintele-docker"
 version = "0.1.0"
 requires-python = ">=3.14.2"
 dependencies = [
@@ -11,5 +11,9 @@ dependencies = [
     "python-telegram-bot[webhooks]>=22.2",
 ]
 
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
 [project.scripts]
-homelab-wintele = "main:main"
+homelab-wintele = "homelab_wintele_docker:main"

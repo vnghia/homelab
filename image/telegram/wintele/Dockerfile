@@ -1,7 +1,7 @@
 FROM python-builder AS builder
-ENV UV_COMPILE_BYTECODE=1 
-ENV UV_LINK_MODE=copy 
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 ENV UV_NO_DEV=1
+ENV UV_NO_EDITABLE=1
 ENV UV_PYTHON_DOWNLOADS=0
 
 WORKDIR /app
@@ -11,9 +11,10 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-install-project
 ADD . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv build
+    uv sync --locked
 
 FROM base
-COPY --from=builder /app/dist /app/dist
-RUN pip install /app/dist/homelab_wintele-0.1.0-py3-none-any.whl
-CMD [ "homelab-wintele" ]
+COPY --from=builder /app /app
+ENV PATH="/app/.venv/bin:$PATH"
+WORKDIR /app
+ENTRYPOINT [ "homelab-wintele" ]
