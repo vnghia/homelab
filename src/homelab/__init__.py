@@ -45,7 +45,11 @@ class Homelab:
             opts=None,
             mail_resource=self.mail,
             plain_args=PlainArgs(
-                self.mail.credentials, self.s3.credentials, self.network.hostnames, None
+                self.mail.credentials,
+                self.s3.credentials,
+                self.network.hostnames,
+                None,
+                {},
             ),
             project_args=self.project_args,
         )

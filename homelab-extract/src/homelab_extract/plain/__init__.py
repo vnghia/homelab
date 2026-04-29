@@ -8,6 +8,7 @@ from homelab_pydantic import HomelabRootModel, Hostnames
 from homelab_s3.resource import S3Credentials
 from pulumi import Output
 
+from .context import GlobalPlainExtractContextSource
 from .hostname import GlobalPlainExtractHostnameSource
 from .s3 import GlobalPlainExtractS3Source
 from .type import GlobalPlainExtractTypeSource
@@ -19,6 +20,7 @@ class PlainArgs:
     s3: S3Credentials
     hostnames: Hostnames
     host: str | None
+    contexts: dict[str, Output[str]]
 
     def with_host(self, host: str | None) -> PlainArgs:
         return self.__replace__(host=host)
@@ -26,7 +28,8 @@ class PlainArgs:
 
 class GlobalPlainExtractSource(
     HomelabRootModel[
-        GlobalPlainExtractHostnameSource
+        GlobalPlainExtractContextSource
+        | GlobalPlainExtractHostnameSource
         | GlobalPlainExtractS3Source
         | GlobalPlainExtractTypeSource
     ]
