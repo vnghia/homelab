@@ -74,7 +74,7 @@ services:
         path:
           svariable: OIDC_HOOK_PATH
         content:
-          include: config/data/n8n/n8n-oidc/hooks.js
+          include: data/n8n/n8n-oidc/hooks.js
     secrets:
       key: {}
       jwt: {}

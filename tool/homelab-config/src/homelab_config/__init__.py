@@ -50,7 +50,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
         data = pulumi.Config().get_object(key, {})
 
         for path in (
-            (Path(__file__).parent.parent.parent.parent / "config" / key)
+            (Path(__file__).parent.parent.parent.parent.parent / "config" / key)
             .resolve(True)
             .glob("*.yaml")
         ):
@@ -71,7 +71,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
 
         config_data = {}
         config_dir = (
-            Path(__file__).parent.parent.parent.parent / "config" / key
+            Path(__file__).parent.parent.parent.parent.parent / "config" / key
         ).resolve(True)
 
         for host in HostConfig.model_fields:
