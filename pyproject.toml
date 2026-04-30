@@ -95,7 +95,7 @@ pulumi-b2 = { path = "sdks/b2" }
 pulumi-netbird = { path = "sdks/netbird" }
 
 [tool.uv.workspace]
-members = ["homelab-*", "config/homelab-*", "service/homelab-*"]
+members = ["tool/homelab-*", "tool/config/homelab-*", "service/homelab-*"]
 
 [tool.mypy]
 strict = true

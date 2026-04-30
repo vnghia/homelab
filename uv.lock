@@ -754,29 +754,29 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-backup-service", editable = "service/homelab-backup-service" },
     { name = "homelab-balite-docker", directory = "image/balite" },
     { name = "homelab-balite-service", editable = "service/homelab-balite-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
-    { name = "homelab-config", editable = "homelab-config" },
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
+    { name = "homelab-config", editable = "tool/homelab-config" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-global", editable = "homelab-global" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-global", editable = "tool/homelab-global" },
     { name = "homelab-hatchet-worker-docker", directory = "image/hatchet/worker" },
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
     { name = "homelab-litestream-service", editable = "service/homelab-litestream-service" },
-    { name = "homelab-mail", editable = "homelab-mail" },
+    { name = "homelab-mail", editable = "tool/homelab-mail" },
     { name = "homelab-mail-service", editable = "service/homelab-mail-service" },
-    { name = "homelab-network", editable = "homelab-network" },
+    { name = "homelab-network", editable = "tool/homelab-network" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
-    { name = "homelab-s3", editable = "homelab-s3" },
-    { name = "homelab-s3-config", editable = "config/homelab-s3-config" },
-    { name = "homelab-secret", editable = "homelab-secret" },
+    { name = "homelab-s3", editable = "tool/homelab-s3" },
+    { name = "homelab-s3-config", editable = "tool/config/homelab-s3-config" },
+    { name = "homelab-secret", editable = "tool/homelab-secret" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
-    { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
+    { name = "homelab-traefik-config", editable = "tool/config/homelab-traefik-config" },
     { name = "homelab-traefik-service", editable = "service/homelab-traefik-service" },
     { name = "homelab-vector-service", editable = "service/homelab-vector-service" },
     { name = "homelab-wintele-docker", directory = "image/telegram/wintele" },
@@ -798,7 +798,7 @@ dev = [
 [[package]]
 name = "homelab-backup"
 version = "0.1.0"
-source = { editable = "homelab-backup" }
+source = { editable = "tool/homelab-backup" }
 dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
@@ -809,10 +809,10 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-restic", editable = "homelab-restic" },
-    { name = "homelab-secret", editable = "homelab-secret" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-restic", editable = "tool/homelab-restic" },
+    { name = "homelab-secret", editable = "tool/homelab-secret" },
     { name = "pulumi", specifier = ">=3.150.0" },
 ]
 
@@ -837,15 +837,15 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-balite-service", editable = "service/homelab-balite-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
     { name = "homelab-dagu-service", editable = "service/homelab-dagu-service" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-restic", editable = "homelab-restic" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-restic", editable = "tool/homelab-restic" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -886,11 +886,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-backup", editable = "homelab-backup" },
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "orjson", specifier = ">=3.11.5" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
@@ -911,11 +911,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-backup", editable = "homelab-backup" },
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -923,7 +923,7 @@ requires-dist = [
 [[package]]
 name = "homelab-config"
 version = "0.1.0"
-source = { editable = "homelab-config" }
+source = { editable = "tool/homelab-config" }
 dependencies = [
     { name = "deepmerge" },
     { name = "homelab-backup" },
@@ -940,13 +940,13 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "deepmerge", specifier = ">=2.0" },
-    { name = "homelab-backup", editable = "homelab-backup" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-global", editable = "homelab-global" },
-    { name = "homelab-mail", editable = "homelab-mail" },
-    { name = "homelab-network", editable = "homelab-network" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-s3", editable = "homelab-s3" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-global", editable = "tool/homelab-global" },
+    { name = "homelab-mail", editable = "tool/homelab-mail" },
+    { name = "homelab-network", editable = "tool/homelab-network" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-s3", editable = "tool/homelab-s3" },
     { name = "pulumi", specifier = ">=3.147.0" },
     { name = "yaml-rs", specifier = ">=0.0.9" },
 ]
@@ -954,7 +954,7 @@ requires-dist = [
 [[package]]
 name = "homelab-dagu-config"
 version = "0.1.0"
-source = { editable = "config/homelab-dagu-config" }
+source = { editable = "tool/config/homelab-dagu-config" }
 dependencies = [
     { name = "homelab-backup" },
     { name = "homelab-docker" },
@@ -967,11 +967,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-backup", editable = "homelab-backup" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-s3", editable = "homelab-s3" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-s3", editable = "tool/homelab-s3" },
     { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -992,11 +992,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
-    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1004,7 +1004,7 @@ requires-dist = [
 [[package]]
 name = "homelab-docker"
 version = "0.1.0"
-source = { editable = "homelab-docker" }
+source = { editable = "tool/homelab-docker" }
 dependencies = [
     { name = "docker" },
     { name = "homelab-backup" },
@@ -1041,16 +1041,16 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "docker", specifier = ">=7.1.0" },
-    { name = "homelab-backup", editable = "homelab-backup" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-global", editable = "homelab-global" },
-    { name = "homelab-network", editable = "homelab-network" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-restic", editable = "homelab-restic" },
-    { name = "homelab-s3", editable = "homelab-s3" },
-    { name = "homelab-secret", editable = "homelab-secret" },
-    { name = "homelab-sequence", editable = "homelab-sequence" },
-    { name = "homelab-vpn", editable = "homelab-vpn" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-global", editable = "tool/homelab-global" },
+    { name = "homelab-network", editable = "tool/homelab-network" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-restic", editable = "tool/homelab-restic" },
+    { name = "homelab-s3", editable = "tool/homelab-s3" },
+    { name = "homelab-secret", editable = "tool/homelab-secret" },
+    { name = "homelab-sequence", editable = "tool/homelab-sequence" },
+    { name = "homelab-vpn", editable = "tool/homelab-vpn" },
     { name = "jsonschema", specifier = ">=4.23.0" },
     { name = "orjson", specifier = ">=3.11.5" },
     { name = "paramiko", specifier = ">=4.0.0" },
@@ -1086,9 +1086,9 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-traefik-config", editable = "tool/config/homelab-traefik-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1096,7 +1096,7 @@ requires-dist = [
 [[package]]
 name = "homelab-extract"
 version = "0.1.0"
-source = { editable = "homelab-extract" }
+source = { editable = "tool/homelab-extract" }
 dependencies = [
     { name = "homelab-pydantic" },
     { name = "homelab-s3" },
@@ -1105,15 +1105,15 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-s3", editable = "homelab-s3" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-s3", editable = "tool/homelab-s3" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]
 name = "homelab-global"
 version = "0.1.0"
-source = { editable = "homelab-global" }
+source = { editable = "tool/homelab-global" }
 dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-mail" },
@@ -1126,10 +1126,10 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-mail", editable = "homelab-mail" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-secret", editable = "homelab-secret" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-mail", editable = "tool/homelab-mail" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-secret", editable = "tool/homelab-secret" },
     { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pulumi-tailscale", specifier = ">=0.17.5" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -1169,11 +1169,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-traefik-config", editable = "tool/config/homelab-traefik-config" },
     { name = "orjson", specifier = ">=3.11.5" },
     { name = "pexpect", specifier = ">=4.9.0" },
     { name = "pulumi", specifier = ">=3.148.0" },
@@ -1198,18 +1198,18 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-backup", editable = "homelab-backup" },
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
 
 [[package]]
 name = "homelab-mail"
 version = "0.1.0"
-source = { editable = "homelab-mail" }
+source = { editable = "tool/homelab-mail" }
 dependencies = [
     { name = "homelab-pydantic" },
     { name = "pulumi" },
@@ -1220,7 +1220,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-cloudflare", specifier = ">=5.49.0" },
     { name = "pulumi-random", specifier = ">=4.17.0" },
@@ -1243,11 +1243,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
-    { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
-    { name = "homelab-mail", editable = "homelab-mail" },
+    { name = "homelab-mail", editable = "tool/homelab-mail" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
@@ -1255,7 +1255,7 @@ requires-dist = [
 [[package]]
 name = "homelab-network"
 version = "0.1.0"
-source = { editable = "homelab-network" }
+source = { editable = "tool/homelab-network" }
 dependencies = [
     { name = "homelab-global" },
     { name = "homelab-pydantic" },
@@ -1267,8 +1267,8 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-global", editable = "homelab-global" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-global", editable = "tool/homelab-global" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "orjson", specifier = ">=3.11.5" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-cloudflare", specifier = ">=5.49.0" },
@@ -1278,7 +1278,7 @@ requires-dist = [
 [[package]]
 name = "homelab-pydantic"
 version = "0.1.0"
-source = { editable = "homelab-pydantic" }
+source = { editable = "tool/homelab-pydantic" }
 dependencies = [
     { name = "deepmerge" },
     { name = "pydantic" },
@@ -1293,7 +1293,7 @@ requires-dist = [
 [[package]]
 name = "homelab-restic"
 version = "0.1.0"
-source = { editable = "homelab-restic" }
+source = { editable = "tool/homelab-restic" }
 dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
@@ -1305,10 +1305,10 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-s3", editable = "homelab-s3" },
-    { name = "homelab-secret", editable = "homelab-secret" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-s3", editable = "tool/homelab-s3" },
+    { name = "homelab-secret", editable = "tool/homelab-secret" },
     { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1332,14 +1332,14 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-backup", editable = "homelab-backup" },
+    { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-balite-service", editable = "service/homelab-balite-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
-    { name = "homelab-dagu-config", editable = "config/homelab-dagu-config" },
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "homelab-dagu-config", editable = "tool/config/homelab-dagu-config" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-litestream-service", editable = "service/homelab-litestream-service" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.150.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1347,7 +1347,7 @@ requires-dist = [
 [[package]]
 name = "homelab-s3"
 version = "0.1.0"
-source = { editable = "homelab-s3" }
+source = { editable = "tool/homelab-s3" }
 dependencies = [
     { name = "homelab-pydantic" },
     { name = "pulumi" },
@@ -1357,7 +1357,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-b2", directory = "sdks/b2" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -1366,18 +1366,18 @@ requires-dist = [
 [[package]]
 name = "homelab-s3-config"
 version = "0.1.0"
-source = { editable = "config/homelab-s3-config" }
+source = { editable = "tool/config/homelab-s3-config" }
 dependencies = [
     { name = "homelab-pydantic" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "homelab-pydantic", editable = "homelab-pydantic" }]
+requires-dist = [{ name = "homelab-pydantic", editable = "tool/homelab-pydantic" }]
 
 [[package]]
 name = "homelab-secret"
 version = "0.1.0"
-source = { editable = "homelab-secret" }
+source = { editable = "tool/homelab-secret" }
 dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
@@ -1390,8 +1390,8 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.147.0" },
     { name = "pulumi-random", specifier = ">=4.17.0" },
     { name = "pulumi-tls", specifier = ">=5.1.1" },
@@ -1402,7 +1402,7 @@ requires-dist = [
 [[package]]
 name = "homelab-sequence"
 version = "0.1.0"
-source = { editable = "homelab-sequence" }
+source = { editable = "tool/homelab-sequence" }
 dependencies = [
     { name = "bidict" },
     { name = "homelab-pydantic" },
@@ -1413,7 +1413,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "bidict", specifier = ">=0.23.1" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1434,9 +1434,9 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-network", editable = "homelab-network" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-network", editable = "tool/homelab-network" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-tailscale", specifier = ">=0.17.5" },
@@ -1446,7 +1446,7 @@ requires-dist = [
 [[package]]
 name = "homelab-traefik-config"
 version = "0.1.0"
-source = { editable = "config/homelab-traefik-config" }
+source = { editable = "tool/config/homelab-traefik-config" }
 dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extract" },
@@ -1456,9 +1456,9 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
@@ -1478,11 +1478,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-docker", editable = "homelab-docker" },
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-network", editable = "homelab-network" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
-    { name = "homelab-traefik-config", editable = "config/homelab-traefik-config" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-network", editable = "tool/homelab-network" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "homelab-traefik-config", editable = "tool/config/homelab-traefik-config" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
@@ -1500,16 +1500,16 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-docker", editable = "homelab-docker" },
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
-    { name = "homelab-extract", editable = "homelab-extract" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
 
 [[package]]
 name = "homelab-vpn"
 version = "0.1.0"
-source = { editable = "homelab-vpn" }
+source = { editable = "tool/homelab-vpn" }
 dependencies = [
     { name = "homelab-extract" },
     { name = "homelab-pydantic" },
@@ -1518,8 +1518,8 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homelab-extract", editable = "homelab-extract" },
-    { name = "homelab-pydantic", editable = "homelab-pydantic" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
