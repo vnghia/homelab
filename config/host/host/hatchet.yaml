@@ -4,17 +4,69 @@ docker:
       hatchet:
         repo: ghcr.io/hatchet-dev/hatchet/hatchet-lite
         tag: "v0.83.60"
+    build:
+      hatchet-worker:
+        context:
+          location: image/hatchet/worker
+          base: python-alpine
+          python-builder:
+            image: python-builder
+        version: "0.0.1"
   volumes:
     local:
       hatchet-config: {}
+      hatchet-engine-mtls:
+        backup: false
 services:
   hatchet:
     variables:
-      SERVER_PORT: 8080
-      LITE_FRONTEND_PORT: 8081
-      LITE_RUNTIME_PORT: 8082
-      SERVER_GRPC_PORT: 7070
-      SERVER_HEALTHCHECK_PORT: 8733
+      PORT: 8080
+      FRONTEND_PORT: 8081
+      RUNTIME_PORT: 8082
+      GRPC_PORT: 7070
+      HEALTHCHECK_PORT: 8733
+      URL:
+        record: sun
+        hostname: hatchet
+        scheme: https
+      GRPC_ADDRESS:
+        extract:
+          kv:
+            hostname:
+              record: sun
+              hostname: hatchet-engine
+            port:
+              service: traefik
+              extract:
+                svariable: HTTPS_PORT
+        transform:
+          string:
+            template: "{hostname}:{port}"
+      CA_PATH:
+        extract:
+          svolume: hatchet-engine-mtls
+        transform:
+          path: ca.crt
+      SERVER_CERT_PATH:
+        extract:
+          svolume: hatchet-engine-mtls
+        transform:
+          path: server.crt
+      SERVER_KEY_PATH:
+        extract:
+          svolume: hatchet-engine-mtls
+        transform:
+          path: server.pem
+      CLIENT_CERT_PATH:
+        extract:
+          svolume: hatchet-engine-mtls
+        transform:
+          path: client.crt
+      CLIENT_KEY_PATH:
+        extract:
+          svolume: hatchet-engine-mtls
+        transform:
+          path: client.pem
     config:
       traefik:
         dynamic:
@@ -22,7 +74,13 @@ services:
             record: sun
             service:
               port:
-                svariable: LITE_RUNTIME_PORT
+                svariable: RUNTIME_PORT
+          engine:
+            name: engine
+            hostsni: hatchet-engine
+            service:
+              port:
+                svariable: GRPC_PORT
     databases:
       postgres:
         postgres:
@@ -35,44 +93,80 @@ services:
         hostname:
           hostname: hatchet
           record: sun
+    files:
+      ca:
+        path:
+          svariable: CA_PATH
+        content:
+          mtls: engine-mtls
+          info: ca_cert
+      server-cert:
+        path:
+          svariable: SERVER_CERT_PATH
+        content:
+          mtls: engine-mtls
+          info: server_cert
+      server-key:
+        path:
+          svariable: SERVER_KEY_PATH
+        content:
+          mtls: engine-mtls
+          info: server_key
+      client-cert:
+        path:
+          svariable: CLIENT_CERT_PATH
+        content:
+          mtls: engine-mtls
+          info: client_cert
+      client-key:
+        path:
+          svariable: CLIENT_KEY_PATH
+        content:
+          mtls: engine-mtls
+          info: client_key
     secrets:
       tenant-id:
         uuid:
+      engine-mtls:
+        algorithm: RSA
+        hostname:
+          hostname: hatchet-engine
     container:
       image: hatchet
       databases:
         - postgres:
           envs:
             env: DATABASE_URL
+      hosts:
+        - record: sun
+          hostname: hatchet
+        - record: sun
+          hostname: hatchet-engine
       volumes:
         hatchet-config: /config
+        hatchet-engine-mtls: /etc/hatchet/mtls/engine
       envs:
         SERVER_PORT:
-          svariable: SERVER_PORT
+          svariable: PORT
         LITE_FRONTEND_PORT:
-          svariable: LITE_FRONTEND_PORT
+          svariable: FRONTEND_PORT
         LITE_RUNTIME_PORT:
-          svariable: LITE_RUNTIME_PORT
+          svariable: RUNTIME_PORT
         SERVER_URL:
-          hostname: hatchet
-          scheme: https
+          svariable: URL
         SERVER_GRPC_PORT:
-          svariable: SERVER_GRPC_PORT
+          svariable: GRPC_PORT
         SERVER_GRPC_BIND_ADDRESS: "0.0.0.0"
         SERVER_GRPC_BROADCAST_ADDRESS:
-          extract:
-            svariable: SERVER_GRPC_PORT
-          transform:
-            string:
-              template: "0.0.0.0:{value}"
-        SERVER_GRPC_INSECURE: true
+          svariable: GRPC_ADDRESS
+        SERVER_GRPC_INSECURE: false
         SERVER_ALLOW_SIGNUP: false
         SERVER_ALLOW_INVITES: false
         SERVER_ALLOW_CREATE_TENANT: false
         SERVER_ALLOW_CHANGE_PASSWORD: false
         SERVER_HEALTHCHECK: true
         SERVER_HEALTHCHECK_PORT:
-          svariable: SERVER_HEALTHCHECK_PORT
+          svariable: HEALTHCHECK_PORT
         SERVER_ENABLE_DATA_RETENTION: true
         SERVER_ENABLE_WORKER_RETENTION: false
         ADMIN_EMAIL:
@@ -88,13 +182,55 @@ services:
         SERVER_AUTH_COOKIE_DOMAIN:
           record: sun
           hostname: hatchet
-        SERVER_AUTH_BASIC_AUTH_ENABLED: true
+        SERVER_TLS_STRATEGY: mtls
+        SERVER_TLS_CERT_FILE:
+          svariable: SERVER_CERT_PATH
+        SERVER_TLS_KEY_FILE:
+          svariable: SERVER_KEY_PATH
+        SERVER_TLS_ROOT_CA_FILE:
+          svariable: CA_PATH
+        SERVER_TLS_SERVER_NAME:
+          record: sun
+          hostname: hatchet-engine
+        SERVER_INTERNAL_CLIENT_BASE_INHERIT_BASE: false
+        SERVER_INTERNAL_CLIENT_BASE_STRATEGY: mtls
+        SERVER_INTERNAL_CLIENT_TLS_BASE_CERT_FILE:
+          svariable: CLIENT_CERT_PATH
+        SERVER_INTERNAL_CLIENT_TLS_BASE_KEY_FILE:
+          svariable: CLIENT_KEY_PATH
+        SERVER_INTERNAL_CLIENT_TLS_BASE_ROOT_CA_FILE:
+          svariable: CA_PATH
+        SERVER_INTERNAL_CLIENT_TLS_SERVER_NAME:
+          env: SERVER_TLS_SERVER_NAME
         SERVER_INTERNAL_CLIENT_INTERNAL_GRPC_BROADCAST_ADDRESS:
-          extract:
-            svariable: SERVER_GRPC_PORT
-          transform:
-            string:
-              template: "localhost:{value}"
-        SERVER_LOGGER_LEVEL: INFO
+          env: SERVER_GRPC_BROADCAST_ADDRESS
+        SERVER_LOGGER_LEVEL: WARN
         SERVER_LOGGER_FORMAT: json
         SERVER_DEFAULT_ENGINE_VERSION: "V1"
+    containers:
+      worker:
+        image:
+          build: hatchet-worker
+        hosts:
+          - record: sun
+            hostname: hatchet
+          - record: sun
+            hostname: hatchet-engine
+        volumes:
+          hatchet-engine-mtls: /etc/hatchet/mtls/engine
+        envs:
+          HATCHET_CLIENT_TOKEN:
+          HATCHET_CLIENT_HOST_PORT:
+            svariable: GRPC_ADDRESS
+          HATCHET_CLIENT_SERVER_URL:
+            svariable: URL
+          HATCHET_CLIENT_TLS_STRATEGY: mtls
+          HATCHET_CLIENT_TLS_CERT_FILE:
+            svariable: CLIENT_CERT_PATH
+          HATCHET_CLIENT_TLS_KEY_FILE:
+            svariable: CLIENT_KEY_PATH
+          HATCHET_CLIENT_TLS_ROOT_CA_FILE:
+            svariable: CA_PATH
+          HATCHET_CLIENT_TLS_SERVER_NAME:
+            record: sun
+            hostname: hatchet-engine

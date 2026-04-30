@@ -33,6 +33,7 @@ dependencies = [
     "pulumiverse-grafana>=2.25.1",
     "homelab-balite-docker",
     "homelab-wintele-docker",
+    "homelab-hatchet-worker-docker",
 ]
 readme = "README.md"
 requires-python = ">= 3.14.0"
@@ -88,6 +89,7 @@ homelab-vector-service = { workspace = true }
 
 homelab-balite-docker = { path = "image/balite" }
 homelab-wintele-docker = { path = "image/telegram/wintele" }
+homelab-hatchet-worker-docker = { path = "image/hatchet/worker" }
 
 pulumi-b2 = { path = "sdks/b2" }
 pulumi-netbird = { path = "sdks/netbird" }
