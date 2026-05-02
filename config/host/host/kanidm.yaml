@@ -3,7 +3,7 @@ docker:
     remote:
       kanidm-server:
         repo: kanidm/server
-        tag: "1.9.3"
+        tag: "1.10.0"
   volumes:
     local:
       kanidm-config:
