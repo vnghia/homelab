@@ -5,6 +5,8 @@ ENV UV_NO_EDITABLE=1
 ENV UV_PYTHON_DOWNLOADS=0
 
 WORKDIR /app
+COPY ./homelab-hatchet-restic /app/homelab-hatchet-restic
+COPY --from=homelab-pydantic . /app/homelab-pydantic
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \

@@ -36,6 +36,18 @@ members = [
 ]
 
 [[package]]
+name = "aiodocker"
+version = "0.26.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiohttp" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/96/64/3b724f650cedc6d5c1cad7fdae3dd3b53c976d075547ff5268e2f1e56db5/aiodocker-0.26.0.tar.gz", hash = "sha256:7e4ee40c6f98e6d1cf95d712f15aef3853087c0475bc7ea5ec499c2d485ba7ec", size = 162018, upload-time = "2026-02-17T18:53:23.234Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3c/0d/e8f4164cbd950195900dd77aad23136f9ddc7feb0fb478d71839d1fda573/aiodocker-0.26.0-py3-none-any.whl", hash = "sha256:f450acf0b402a03c6a6f1517d06bdff739c404e62578b332182ca272fde6e986", size = 47825, upload-time = "2026-02-17T18:53:22.088Z" },
+]
+
+[[package]]
 name = "aiohappyeyeballs"
 version = "2.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1136,15 +1148,34 @@ requires-dist = [
 ]
 
 [[package]]
+name = "homelab-hatchet-restic"
+version = "0.1.0"
+source = { editable = "image/hatchet/worker/homelab-hatchet-restic" }
+dependencies = [
+    { name = "aiodocker" },
+    { name = "homelab-pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiodocker", specifier = ">=0.26.0" },
+    { name = "homelab-pydantic", editable = "image/hatchet/worker/homelab-pydantic" },
+]
+
+[[package]]
 name = "homelab-hatchet-worker-docker"
 version = "0.1.0"
 source = { directory = "image/hatchet/worker" }
 dependencies = [
     { name = "hatchet-sdk" },
+    { name = "homelab-hatchet-restic" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "hatchet-sdk", specifier = ">=1.33.2" }]
+requires-dist = [
+    { name = "hatchet-sdk", specifier = ">=1.33.2" },
+    { name = "homelab-hatchet-restic", editable = "image/hatchet/worker/homelab-hatchet-restic" },
+]
 
 [[package]]
 name = "homelab-kanidm-service"

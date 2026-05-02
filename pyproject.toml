@@ -99,7 +99,7 @@ members = ["tool/homelab-*", "tool/config/homelab-*", "service/homelab-*"]
 
 [tool.mypy]
 strict = true
-exclude = "sdks"
+exclude = "sdks|image/.*/homelab-pydantic"
 
 [[tool.mypy.overrides]]
 module = ["json_fix.*", "pykeepass.*"]

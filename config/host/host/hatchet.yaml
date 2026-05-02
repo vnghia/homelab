@@ -11,6 +11,8 @@ docker:
           base: python-alpine
           python-builder:
             image: python-builder
+          homelab-pydantic:
+            path: tool/homelab-pydantic
         version: "0.0.1"
   volumes:
     local:
