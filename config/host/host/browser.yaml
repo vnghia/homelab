@@ -48,7 +48,7 @@ services:
         template: https://github.com/browserless/browserless/releases/tag/${original}
         include-prefix: v
       envs:
-        TIMEOUT: 10000
+        TIMEOUT: 300000
         CONCURRENT: 5
         TOKEN:
           secret: token
