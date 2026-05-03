@@ -47,6 +47,13 @@ services:
             service:
               port:
                 svariable: PORT
+          content:
+            name: content
+            record: solar
+            hostname: linkwarden-content
+            service:
+              port:
+                svariable: PORT
     databases:
       postgres:
         postgres: {}
@@ -68,6 +75,7 @@ services:
       tmpfs:
         - path: /tmp
           exec: true
+        - /data/apps/web/.next/cache
       volumes:
         linkwarden-data: /data/data
         linkwarden-home-cache: /home/node/.cache
@@ -110,13 +118,19 @@ services:
           service: kanidm
           extract:
             export: linkwarden
+        STORAGE_FOLDER:
+          volume: linkwarden-data
         PDF_MAX_BUFFER: 500
         SCREENSHOT_MAX_BUFFER: 500
         MONOLITH_MAX_BUFFER: 500
         READABILITY_MAX_BUFFER: 500
         PREVIEW_MAX_BUFFER: 50
-        IGNORE_UNAUTHORIZED_CA: true
-        IGNORE_HTTPS_ERRORS: true
+        ALLOW_INSECURE_TLS: true
+        ALLOW_PRIVATE_NETWORK_ACCESS: true
+        NEXT_PUBLIC_USER_CONTENT_DOMAIN:
+          record: solar
+          hostname: linkwarden-content
+          scheme: https
         PLAYWRIGHT_WS_URL:
           service: browser
           extract:
