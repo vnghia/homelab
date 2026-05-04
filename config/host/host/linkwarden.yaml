@@ -118,8 +118,6 @@ services:
           service: kanidm
           extract:
             export: linkwarden
-        STORAGE_FOLDER:
-          volume: linkwarden-data
         PDF_MAX_BUFFER: 500
         SCREENSHOT_MAX_BUFFER: 500
         MONOLITH_MAX_BUFFER: 500
