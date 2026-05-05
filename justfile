@@ -1,10 +1,10 @@
 default:
     just --list
 
-generate-schema source destination:
+generate-schema source destination type='auto':
     uv run datamodel-codegen \
         --formatters ruff-format \
-        --input-file-type auto \
+        --input-file-type {{ type }} \
         --output {{ destination }} \
         --output-model-type pydantic_v2.BaseModel \
         --{{ if source =~ 'https://+*' { "url" } else { "input" } }} {{ source }} \
