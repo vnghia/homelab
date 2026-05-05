@@ -3,7 +3,7 @@ docker:
     remote:
       hatchet:
         repo: ghcr.io/hatchet-dev/hatchet/hatchet-lite
-        tag: "v0.85.4"
+        tag: "v0.85.7"
     build:
       hatchet-worker:
         context:
