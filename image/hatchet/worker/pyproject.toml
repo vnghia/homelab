@@ -2,7 +2,11 @@
 name = "homelab-hatchet-worker-docker"
 version = "0.1.0"
 requires-python = ">=3.13.1"
-dependencies = ["hatchet-sdk>=1.33.2", "homelab-hatchet-restic"]
+dependencies = [
+    "hatchet-sdk>=1.33.2",
+    "homelab-hatchet-tool",
+    "watchfiles>=1.1.1",
+]
 
 [build-system]
 requires = ["uv_build"]
@@ -10,7 +14,7 @@ build-backend = "uv_build"
 
 [tool.uv.sources]
 homelab-pydantic = { workspace = true }
-homelab-hatchet-restic = { workspace = true }
+homelab-hatchet-tool = { workspace = true }
 
 [tool.uv.workspace]
 members = ["homelab-*"]

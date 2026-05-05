@@ -1,9 +1,13 @@
 [project]
-name = "homelab-hatchet-restic"
+name = "homelab-hatchet-tool"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = ["aiodocker>=0.26.0", "homelab-pydantic"]
+dependencies = [
+    "aiodocker>=0.26.0",
+    "homelab-pydantic",
+    "pydantic-settings>=2.14.0",
+]
 
 [build-system]
 requires = ["uv_build>=0.11.8,<0.12.0"]

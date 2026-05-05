@@ -19,6 +19,8 @@ docker:
       hatchet-config: {}
       hatchet-engine-mtls:
         backup: false
+      hatchet-worker-workflow:
+        backup: false
 services:
   hatchet:
     variables:
@@ -220,6 +222,9 @@ services:
             hostname: hatchet-engine
         volumes:
           hatchet-engine-mtls: /etc/hatchet/mtls/engine
+          hatchet-worker-workflow:
+            path: /etc/hatchet/worker/workflow
+            read-only: true
         envs:
           HATCHET_CLIENT_TOKEN:
           HATCHET_CLIENT_HOST_PORT:
@@ -236,3 +241,5 @@ services:
           HATCHET_CLIENT_TLS_SERVER_NAME:
             record: sun
             hostname: hatchet-engine
+          HATCHET_WORKER_WORKFLOW_DIR:
+            volume: hatchet-worker-workflow

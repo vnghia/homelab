@@ -1,16 +1,31 @@
-from hatchet_sdk import Context, Hatchet
-from homelab_hatchet_restic import ResticTask
-from homelab_hatchet_restic.config import ResticConfig
+import logging
+import sys
 
-hatchet = Hatchet()
+from hatchet_sdk import ClientConfig, Context, EmptyModel, Hatchet, Worker
+from homelab_hatchet_tool.config import Config
+
+config = Config.load()
+
+logging.basicConfig(
+    level=logging.INFO if not config.debug else logging.DEBUG, stream=sys.stdout
+)
+logger = logging.getLogger()
+
+hatchet = Hatchet(config=ClientConfig(debug=config.debug, logger=logger))
 
 
-@hatchet.task(input_validator=ResticConfig)
-async def restic_debug(input: ResticConfig, ctx: Context) -> dict[str, str]:
-    await ResticTask(input).debug()
-    return {"task": "restic"}
+@hatchet.task()
+async def dummy(input: EmptyModel, ctx: Context) -> dict[str, str]:
+    return {}
+
+
+def load_workflows(hatchet: Hatchet, worker: Worker, config: Config) -> None:
+    for path in config.workflow_dir.glob("*.py"):
+        logger.info("Loading workflow from %s", path)
 
 
 def main() -> None:
-    worker = hatchet.worker("worker", workflows=[restic_debug])
+    logger.info(config)
+    worker = hatchet.worker("worker", workflows=[dummy])
+    load_workflows(hatchet, worker, config)
     worker.start()
