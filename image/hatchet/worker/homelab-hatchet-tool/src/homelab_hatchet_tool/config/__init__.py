@@ -8,10 +8,14 @@ class Config(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="HATCHET_WORKER_")
 
     CONFIG_PATH_PREFIX: ClassVar[Path] = Path("/etc/hatchet/worker")
+    instance: ClassVar[Self | None] = None
 
     debug: bool = False
     workflow_dir: Path = CONFIG_PATH_PREFIX / "workflow"
+    docker_dir: Path = CONFIG_PATH_PREFIX / "docker"
 
     @classmethod
     def load(cls) -> Self:
-        return cls()
+        if not cls.instance:
+            cls.instance = cls()
+        return cls.instance

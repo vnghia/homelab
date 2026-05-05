@@ -50,6 +50,7 @@ dev = [
     "ruff>=0.9.6",
     "dtach>=0.31.2",
     "homelab-balite-docker",
+    "types-aiofiles>=25.1.0.20260409",
 ]
 
 [tool.uv]
