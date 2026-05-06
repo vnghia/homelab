@@ -9,7 +9,6 @@ if typing.TYPE_CHECKING:
 
 
 class DockerContainerOverwriteModel(HomelabBaseModel):
-    service: str | None = None
     model: str | None = None
     entrypoint: list[GlobalExtract] | None = None
     command: list[GlobalExtract] | None = None
@@ -20,9 +19,6 @@ class DockerContainerOverwriteModel(HomelabBaseModel):
         from ...extract.global_ import GlobalExtractor
 
         if self.entrypoint is not None:
-            extractor_args = extractor_args.get_service_resource(
-                self.service
-            ).extractor_args
             return [
                 GlobalExtractor(entrypoint).extract_str(extractor_args)
                 for entrypoint in self.entrypoint
@@ -33,9 +29,6 @@ class DockerContainerOverwriteModel(HomelabBaseModel):
         from ...extract.global_ import GlobalExtractor
 
         if self.command is not None:
-            extractor_args = extractor_args.get_service_resource(
-                self.service
-            ).extractor_args
             return [
                 GlobalExtractor(command).extract_str(extractor_args)
                 for command in self.command

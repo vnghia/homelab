@@ -56,6 +56,16 @@ class ConfigDumper(Generic[T]):
     def suffix() -> str: ...
 
 
+class JsonDumper(ConfigDumper[T]):
+    @classmethod
+    def dumps_any(cls, data: Any) -> str:
+        return orjson.dumps(data).decode()
+
+    @staticmethod
+    def suffix() -> str:
+        return ".json"
+
+
 class TomlDumper(ConfigDumper[T]):
     @classmethod
     def dumps_any(cls, data: Any) -> str:

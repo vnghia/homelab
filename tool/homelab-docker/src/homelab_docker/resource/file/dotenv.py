@@ -11,8 +11,8 @@ from .config import ConfigDumper, ConfigFileResource
 
 
 class DotenvDumper(ConfigDumper[HomelabRootModel[dict[str, str]]]):
-    @staticmethod
-    def dumps(data: HomelabRootModel[dict[str, str]]) -> str:
+    @classmethod
+    def dumps(cls, data: HomelabRootModel[dict[str, str]]) -> str:
         return (
             "\n".join(
                 '{}="{}"'.format(k, v.replace('"', '\\"'))
