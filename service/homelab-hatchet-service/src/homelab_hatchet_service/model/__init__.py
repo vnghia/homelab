@@ -9,7 +9,7 @@ from homelab_hatchet_config import HatchetServiceConfig
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
 
-from ..tool import find_ast
+from .. import tool
 from .task import HatchetTaskModelBuilder
 
 if typing.TYPE_CHECKING:
@@ -38,7 +38,7 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         ]
 
         workflow = copy.deepcopy(TEMPLATE)
-        function_def = find_ast(workflow, ast.FunctionDef, self.TEMPLATE_NAME)
+        function_def = tool.ast.find(workflow, ast.FunctionDef, self.TEMPLATE_NAME)
         function_def.body = [
             *tasks,
             ast.Return(ast.List(elts=[ast.Name(id=task.name) for task in tasks])),

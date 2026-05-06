@@ -15,7 +15,7 @@ from homelab_hatchet_config.model.task.docker import (
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
 
-from ....tool import find_ast
+from .... import tool
 
 if typing.TYPE_CHECKING:
     from .... import HatchetService
@@ -34,7 +34,7 @@ def replace_placeholder(
     name: str | None,
 ) -> ast.AsyncFunctionDef:
     function_def = copy.deepcopy(
-        find_ast(TEMPLATE, ast.AsyncFunctionDef, template_name)
+        tool.ast.find(TEMPLATE, ast.AsyncFunctionDef, template_name)
     )
 
     task_name = service.add_service_name(name)
@@ -43,15 +43,9 @@ def replace_placeholder(
 
     function_def.name = function_name
 
-    for expr in function_def.decorator_list:
-        if isinstance(expr, ast.Call):
-            for keywork in expr.keywords:
-                if (
-                    isinstance(keywork.value, ast.Constant)
-                    and keywork.value.value == TASK_NAME_PLACEHOLDER
-                ):
-                    keywork.value.value = task_name
-                    break
+    tool.ast.add_keyword(
+        function_def, ast.keyword(arg="name", value=ast.Constant(value=task_name))
+    )
 
     for stmt in function_def.body:
         if isinstance(stmt, ast.Assign) and isinstance(stmt.value, ast.Constant):
@@ -109,9 +103,9 @@ class HatchetTaskDockerModelBuilder(HomelabRootModel[HatchetTaskDockerModel]):
         hatchet_service: HatchetService,
         extractor_args: ExtractorArgs,
     ) -> ast.AsyncFunctionDef:
-        root = self.root.docker
+        root = self.root
         return (
-            HatchetTaskDockerRunModelBuilder(root)
-            if isinstance(root, HatchetTaskDockerRunModel)
-            else HatchetTaskDockerExecModelBuilder(root)
+            HatchetTaskDockerRunModelBuilder(root.docker)
+            if isinstance(root.docker, HatchetTaskDockerRunModel)
+            else HatchetTaskDockerExecModelBuilder(root.docker)
         ).build_resources(opts, hatchet_service, extractor_args)
