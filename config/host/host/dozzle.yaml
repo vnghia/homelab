@@ -78,9 +78,6 @@ services:
         dozzle-cert:
           path: /etc/dozzle/cert
           read-only: true
-      wud:
-        template: https://github.com/amir20/dozzle/releases/tag/${original}
-        include-prefix: v
       envs:
         DOZZLE_ADDR:
           extract:
@@ -109,7 +106,6 @@ services:
         command: ["agent"]
         tmpfs:
           - /tmp
-        wud:
         envs:
           DOZZLE_AGENT_ADDR:
             extract:

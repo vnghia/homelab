@@ -74,9 +74,6 @@ services:
           exec: true
       volumes:
         airtrail-uploads: /app/uploads
-      wud:
-        template: https://github.com/johanohly/AirTrail/releases/tag/${original}
-        include-prefix: v
       envs:
         NODE_ENV: production
         ORIGIN:

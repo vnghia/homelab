@@ -165,8 +165,6 @@ services:
         kanidm-config: /config
         kanidm-data: /data
         kanidm-backup: /backup
-      wud:
-        template: https://github.com/kanidm/kanidm/releases/tag/v${original}
       envs:
         KANIDM_TRUST_X_FORWARD_FOR: true
         KANIDM_CONFIG:

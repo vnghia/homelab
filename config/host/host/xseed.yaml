@@ -33,8 +33,6 @@ services:
         - hostname: starr-radarr
         - hostname: starr-sonarr
         - hostname: starr-prowlarr
-      wud:
-        template: https://github.com/cross-seed/cross-seed/releases/tag/v${original}
       volumes:
         xseed-config: /config
         qbittorrent-downloads:

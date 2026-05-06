@@ -105,8 +105,6 @@ services:
         - /var/app/tmp/sockets
       volumes:
         dawarich-storage: /var/app/storage
-      wud:
-        template: https://github.com/Freika/dawarich/releases/tag/${original}
       envs:
         SELF_HOSTED: true
         STORE_GEODATA: true
@@ -142,6 +140,5 @@ services:
         entrypoint: ["sidekiq-entrypoint.sh"]
         healthcheck:
           tests: ["CMD", "pgrep", "-f", "sidekiq"]
-        wud:
         envs:
           BACKGROUND_PROCESSING_CONCURRENCY: 5

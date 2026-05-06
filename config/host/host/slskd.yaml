@@ -54,8 +54,6 @@ services:
         slskd-download: /mnt/download
         slskd-incomplete: /mnt/incomplete
         slskd-tmp: /tmp
-      wud:
-        template: https://github.com/slskd/slskd/releases/tag/${original}
       envs:
         DOTNET_BUNDLE_EXTRACT_BASE_DIR:
           extract:

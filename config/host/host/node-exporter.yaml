@@ -54,8 +54,6 @@ services:
       network:
         mode: host
       pid: host
-      wud:
-        template: https://github.com/prometheus/node_exporter/releases/tag/${original}
       volumes:
         "/":
           path:

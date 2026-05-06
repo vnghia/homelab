@@ -113,10 +113,6 @@ services:
         dagu-config:
           path: /etc/dagu
           read-only: true
-      wud:
-        template: https://github.com/dagu-org/dagu/releases/tag/v${major}.${minor}.${patch}
-        include-suffix: -alpine
-        transform: true
       envs:
         DAGU_PORT: 8080
         DAGU_TZ:

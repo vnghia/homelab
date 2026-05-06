@@ -80,9 +80,6 @@ services:
             hostname: owebui
         volumes:
           job-rxresume-data: /app/data
-        wud:
-          template: https://github.com/amruthpillai/reactive-resume/releases/tag/${original}
-          include-prefix: v
         envs:
           APP_URL:
             record: solar

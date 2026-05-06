@@ -48,7 +48,6 @@ from .volume import (
     ContainerVolumeFullConfig,
     ContainerVolumesConfig,
 )
-from .wud import ContainerWudConfig
 
 if typing.TYPE_CHECKING:
     from ....extract import ExtractorArgs
@@ -150,7 +149,6 @@ class ContainerModel(HomelabBaseModel):
     volumes: ContainerVolumesConfig = ContainerVolumesConfig()
     wait: bool = True
     wait_timeout: PositiveInt | None = None
-    wud: ContainerWudConfig | None = None
 
     envs: dict[str, GlobalExtract | None] = {}
     labels: dict[str, GlobalExtract] = {}

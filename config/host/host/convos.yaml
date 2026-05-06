@@ -50,10 +50,6 @@ services:
           vpn: {}
       volumes:
         convos-data: /data
-      wud:
-        template: https://github.com/convos-chat/convos/releases/tag/${original}
-        include-prefix: v
-        semver-count: 2
       envs:
         CONVOS_ADMIN:
           service: kanidm

@@ -79,9 +79,6 @@ services:
       volumes:
         linkwarden-data: /data/data
         linkwarden-home-cache: /home/node/.cache
-      wud:
-        template: https://github.com/linkwarden/linkwarden/releases/tag/${original}
-        include-prefix: v
       envs:
         NEXTAUTH_URL:
           extract:

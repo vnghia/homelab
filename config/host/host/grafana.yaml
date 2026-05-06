@@ -99,8 +99,6 @@ services:
           bind-file: false
         grafana-data: /var/lib/grafana/data
         grafana-plugins: /var/lib/grafana/plugins
-      wud:
-        template: https://github.com/grafana/grafana/releases/tag/v${original}
       envs:
         GF_PATHS_PROVISIONING:
           volume: grafana-provision

@@ -116,6 +116,3 @@ services:
       volumes:
         ntfy-cache: /var/cache/ntfy
         ntfy-data: /var/lib/ntfy
-      wud:
-        template: https://github.com/binwiederhier/ntfy/releases/tag/${original}
-        include-prefix: v

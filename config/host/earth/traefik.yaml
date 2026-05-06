@@ -16,4 +16,3 @@ services:
             hostname: openobserve-grpc
             record: sun
           host: sun
-      wud:

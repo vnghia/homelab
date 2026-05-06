@@ -27,9 +27,6 @@ services:
       volumes:
         ddns-data: /updater/data
       wait_timeout: 300
-      wud:
-        template: https://github.com/qdm12/ddns-updater/releases/tag/${original}
-        include-prefix: v
       envs:
         LISTENING_ADDRESS:
           extract:

@@ -106,5 +106,3 @@ services:
             transform:
               string:
                 template: "-grpc-addr=memos:{value}"
-        wud:
-          template: https://github.com/usememos/memos/releases/tag/v${original}

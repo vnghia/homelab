@@ -45,9 +45,6 @@ services:
         - /run
       volumes:
         tailscale-data: /var/lib/tailscale
-      wud:
-        template: https://tailscale.com/changelog
-        include-prefix: v
       envs:
         TS_STATE_DIR:
           volume: tailscale-data

@@ -44,9 +44,6 @@ services:
           vpn: {}
       tmpfs:
         - /tmp
-      wud:
-        template: https://github.com/browserless/browserless/releases/tag/${original}
-        include-prefix: v
       envs:
         TIMEOUT: 300000
         CONCURRENT: 5

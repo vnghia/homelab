@@ -110,8 +110,6 @@ services:
         n8n-hooks:
           path: /hooks
           read-only: true
-      wud:
-        template: https://github.com/n8n-io/n8n/releases/tag/n8n@${original}
       envs:
         DB_TYPE: postgresdb
         N8N_ENCRYPTION_KEY:

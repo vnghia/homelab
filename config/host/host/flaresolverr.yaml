@@ -23,8 +23,5 @@ services:
         bridge:
           vpn: {}
       read-only: false
-      wud:
-        template: https://github.com/FlareSolverr/FlareSolverr/releases/tag/${original}
-        include-prefix: v
       envs:
         PORT: 8191

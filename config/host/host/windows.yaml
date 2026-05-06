@@ -62,9 +62,6 @@ services:
       read-only: false
       volumes:
         windows-storage: /storage
-      wud:
-        template: https://github.com/dockur/windows/releases/tag/v${original}
-        semver-count: 2
       envs:
         VERSION: tiny11
         RAM_SIZE: "6G"

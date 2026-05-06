@@ -89,8 +89,6 @@ services:
         paperless-media: /usr/src/paperless/media
         paperless-static: /usr/src/paperless/static
         paperless-tmp: /tmp
-      wud:
-        template: https://github.com/paperless-ngx/paperless-ngx/releases/tag/v${original}
       envs:
         S6_READ_ONLY_ROOT: 1
         XDG_CACHE_HOME:

@@ -50,8 +50,6 @@ services:
       volumes:
         syncthing-config: /var/syncthing/config
         syncthing-data: /var/syncthing/data
-      wud:
-        template: https://github.com/syncthing/syncthing/releases/tag/v${original}
       envs:
         STGUIADDRESS:
           extract:

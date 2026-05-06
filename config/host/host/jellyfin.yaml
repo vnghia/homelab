@@ -88,8 +88,6 @@ services:
           read-only: true
       tmpfs:
         - /tmp/jellyfin
-      wud:
-        template: https://github.com/jellyfin/jellyfin/releases/tag/v${original}
       envs:
         JELLYFIN_DATA_DIR:
           volume: jellyfin-data

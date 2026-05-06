@@ -94,8 +94,6 @@ services:
           path: /etc/vikunja
           read-only: true
         vikunja-files: /app/vikunja/files
-      wud:
-        template: https://github.com/go-vikunja/vikunja/releases/tag/v${original}
       envs:
         VIKUNJA_SERVICE_ROOTPATH:
           volume: vikunja-config

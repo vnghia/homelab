@@ -37,6 +37,3 @@ services:
         - /var/lib/nginx/tmp
         - /var/cache/nginx
         - /etc/nginx/tmp
-      wud:
-        template: https://github.com/alam00000/bentopdf/releases/tag/${original}
-        include-prefix: v

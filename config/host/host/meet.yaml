@@ -127,9 +127,6 @@ services:
             direct: {}
         tmpfs:
           - /tmp
-        wud:
-          template: https://github.com/suitenumerique/meet/releases/tag/${original}
-          include-prefix: v
         envs:
           DJANGO_ALLOWED_HOSTS:
             extract:
@@ -283,4 +280,3 @@ services:
         memory:
           limit: 512
         s3:
-        wud:

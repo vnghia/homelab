@@ -48,9 +48,6 @@ services:
       volumes:
         macos-storage: /storage
         macos-shared: /shared
-      wud:
-        template: https://github.com/dockur/macos/releases/tag/v${original}
-        semver-count: 2
       envs:
         VERSION: 14
         RAM_SIZE: "6G"

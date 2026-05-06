@@ -106,9 +106,6 @@ services:
         immich-data: /usr/src/app/data
       tmpfs:
         - /home/node/.cache
-      wud:
-        template: https://github.com/immich-app/immich/releases/tag/${original}
-        include-prefix: v
     containers:
       machine-learning:
         image: immich-machine-learning

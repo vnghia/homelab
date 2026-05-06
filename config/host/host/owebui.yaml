@@ -77,8 +77,6 @@ services:
         - /tmp
       volumes:
         owebui-data: /app/backend/data
-      wud:
-        template: https://github.com/open-webui/open-webui/releases/tag/v${original}
       envs:
         ENV: prod
         WEBUI_URL:

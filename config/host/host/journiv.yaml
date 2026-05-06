@@ -144,7 +144,6 @@ services:
           - "--concurrency=4"
         memory:
           limit: 512
-        wud:
         envs:
           SERVICE_ROLE_HEALTHCHECK: celery-worker
       beat:
@@ -174,6 +173,5 @@ services:
               env: REDBEAT_REDIS_URL
               database: 2
         healthcheck: {}
-        wud:
         envs:
           SERVICE_ROLE: celery-beat

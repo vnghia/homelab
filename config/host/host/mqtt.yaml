@@ -48,5 +48,3 @@ services:
         mqtt-config:
           path: /etc/rqmtt/
           read-only: false
-      wud:
-        template: https://github.com/rmqtt/rmqtt/releases/tag/${original}
