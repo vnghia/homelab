@@ -257,6 +257,8 @@ services:
           HATCHET_CLIENT_TLS_SERVER_NAME:
             record: sun
             hostname: hatchet-engine
+          HATCHET_WORKER_HOST:
+            hinfo: name
           HATCHET_WORKER_WORKFLOW_DIR:
             svariable: WORKER_WORKFLOW_DIR
           HATCHET_WORKER_DOCKER_DIR:
