@@ -19,7 +19,7 @@ docker:
       hatchet-config: {}
       hatchet-engine-mtls:
         backup: false
-      hatchet-worker-workflow:
+      hatchet-worker-config:
         backup: false
 services:
   hatchet:
@@ -71,6 +71,16 @@ services:
           svolume: hatchet-engine-mtls
         transform:
           path: client.pem
+      WORKER_WORKFLOW_DIR:
+        extract:
+          volume: hatchet-worker-config
+        transform:
+          path: workflow
+      WORKER_DOCKER_DIR:
+        extract:
+          volume: hatchet-worker-config
+        transform:
+          path: docker
     config:
       traefik:
         dynamic:
@@ -85,6 +95,10 @@ services:
             service:
               port:
                 svariable: GRPC_PORT
+      workflow-dir:
+        svariable: WORKER_WORKFLOW_DIR
+      docker-dir:
+        svariable: WORKER_DOCKER_DIR
     databases:
       postgres:
         postgres:
@@ -222,8 +236,8 @@ services:
             hostname: hatchet-engine
         volumes:
           hatchet-engine-mtls: /etc/hatchet/mtls/engine
-          hatchet-worker-workflow:
-            path: /etc/hatchet/worker/workflow
+          hatchet-worker-config:
+            path: /etc/hatchet/worker
             read-only: true
         envs:
           HATCHET_CLIENT_TOKEN:
@@ -242,4 +256,6 @@ services:
             record: sun
             hostname: hatchet-engine
           HATCHET_WORKER_WORKFLOW_DIR:
-            volume: hatchet-worker-workflow
+            svariable: WORKER_WORKFLOW_DIR
+          HATCHET_WORKER_DOCKER_DIR:
+            svariable: WORKER_DOCKER_DIR

@@ -21,6 +21,7 @@ dependencies = [
     "homelab-vector-service",
     "homelab-backup-service",
     "homelab-barman-service",
+    "homelab-hatchet-service",
     "homelab-kanidm-service",
     "homelab-restic-service",
     "homelab-balite-service",
@@ -79,6 +80,7 @@ homelab-litestream-service = { workspace = true }
 homelab-barman-service = { workspace = true }
 homelab-dagu-service = { workspace = true }
 homelab-extra-service = { workspace = true }
+homelab-hatchet-service = { workspace = true }
 homelab-kanidm-service = { workspace = true }
 homelab-mail-service = { workspace = true }
 homelab-restic-service = { workspace = true }

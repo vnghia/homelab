@@ -1,6 +1,7 @@
 from homelab_backup.resource import BackupResource
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_global.resource import GlobalResource
+from homelab_hatchet_service import HatchetService
 from homelab_kanidm_service import KanidmService
 from homelab_mail.resource import MailResource
 from homelab_mail_service import MailService
@@ -44,5 +45,11 @@ class SunHost(HostBase[SunServiceConfig]):
             opts=self.child_opts,
             mail_resource=mail_resource,
             kanidm_service=self.kanidm,
+            extractor_args=self.extractor_args,
+        )
+
+        self.hatchet = HatchetService(
+            self.services_config.hatchet,
+            opts=self.child_opts,
             extractor_args=self.extractor_args,
         )

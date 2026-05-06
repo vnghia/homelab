@@ -16,6 +16,7 @@ members = [
     "homelab-extra-service",
     "homelab-extract",
     "homelab-global",
+    "homelab-hatchet-service",
     "homelab-kanidm-service",
     "homelab-litestream-service",
     "homelab-mail",
@@ -741,6 +742,7 @@ dependencies = [
     { name = "homelab-docker" },
     { name = "homelab-extract" },
     { name = "homelab-global" },
+    { name = "homelab-hatchet-service" },
     { name = "homelab-hatchet-worker-docker" },
     { name = "homelab-kanidm-service" },
     { name = "homelab-litestream-service" },
@@ -784,6 +786,7 @@ requires-dist = [
     { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-global", editable = "tool/homelab-global" },
+    { name = "homelab-hatchet-service", editable = "service/homelab-hatchet-service" },
     { name = "homelab-hatchet-worker-docker", directory = "image/hatchet/worker" },
     { name = "homelab-kanidm-service", editable = "service/homelab-kanidm-service" },
     { name = "homelab-litestream-service", editable = "service/homelab-litestream-service" },
@@ -1157,6 +1160,29 @@ requires-dist = [
     { name = "homelab-secret", editable = "tool/homelab-secret" },
     { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pulumi-tailscale", specifier = ">=0.17.5" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+]
+
+[[package]]
+name = "homelab-hatchet-service"
+version = "0.1.0"
+source = { editable = "service/homelab-hatchet-service" }
+dependencies = [
+    { name = "homelab-docker" },
+    { name = "homelab-extra-service" },
+    { name = "homelab-extract" },
+    { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
