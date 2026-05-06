@@ -4,8 +4,9 @@
 from enum import IntEnum, StrEnum
 from typing import Any
 
-from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from pydantic import AnyUrl, AwareDatetime, Field, NonNegativeInt
+
+from .model import HomelabBaseModel, HomelabRootModel
 
 
 class Model(HomelabRootModel[Any]):

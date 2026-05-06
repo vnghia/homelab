@@ -1,5 +1,6 @@
 from pydantic import BaseModel as BaseModel
 
+from . import docker as docker
 from .hostname import Hostname as Hostname
 from .hostname import Hostnames as Hostnames
 from .model import DictAdapter as DictAdapter

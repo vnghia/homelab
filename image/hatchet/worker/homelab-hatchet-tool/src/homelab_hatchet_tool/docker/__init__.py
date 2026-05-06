@@ -3,9 +3,9 @@ import secrets
 import aiodocker
 import aiofiles
 from hatchet_sdk import Context
+from homelab_pydantic import docker
 
 from ..config import Config
-from . import schema
 
 
 class Docker:
@@ -22,28 +22,28 @@ class Docker:
     @classmethod
     async def load_config(
         cls, service: str, name: str | None
-    ) -> schema.ModelContainerConfig:
+    ) -> docker.ModelContainerConfig:
         async with aiofiles.open(
             (Config.load().docker_dir / service / (name or service))
             .with_suffix(".json")
             .resolve(True),
             "r+b",
         ) as file:
-            return schema.ModelContainerConfig.model_validate_json(await file.read())
+            return docker.ModelContainerConfig.model_validate_json(await file.read())
 
     @classmethod
     async def run_config(
         cls,
         context: Context,
-        config: schema.ModelContainerConfig,
+        config: docker.ModelContainerConfig,
         name: str | None,
         stdout: bool = True,
         stderr: bool = True,
-    ) -> schema.ModelContainerWaitResponse:
+    ) -> docker.ModelContainerWaitResponse:
         container = await cls().client.containers.create(
             config.model_dump(mode="json"), name=name
         )
-        response = schema.ModelContainerInspectResponse.model_validate(
+        response = docker.ModelContainerInspectResponse.model_validate(
             await container.show()
         )
         context.log(
@@ -57,7 +57,7 @@ class Docker:
             ):
                 for log in logs.splitlines():
                     context.log(log)
-            return schema.ModelContainerWaitResponse.model_validate(
+            return docker.ModelContainerWaitResponse.model_validate(
                 await container.wait(timeout=None)
             )
         finally:
@@ -69,7 +69,7 @@ class Docker:
         context: Context,
         service: str,
         name: str | None,
-    ) -> schema.ModelContainerWaitResponse:
+    ) -> docker.ModelContainerWaitResponse:
         config = await cls.load_config(service, name)
         return await cls.run_config(
             context, config, cls.generate_container_name(service, name)
