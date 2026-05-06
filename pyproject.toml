@@ -13,7 +13,6 @@ dependencies = [
     "homelab-secret",
     "homelab-s3",
     "homelab-extract",
-    "homelab-s3-config",
     "homelab-traefik-config",
     "homelab-dagu-config",
     "homelab-tailscale-service",
@@ -72,7 +71,6 @@ homelab-secret = { workspace = true }
 homelab-vpn = { workspace = true }
 
 homelab-dagu-config = { workspace = true }
-homelab-s3-config = { workspace = true }
 homelab-traefik-config = { workspace = true }
 
 homelab-backup-service = { workspace = true }

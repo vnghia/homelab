@@ -25,7 +25,6 @@ members = [
     "homelab-restic",
     "homelab-restic-service",
     "homelab-s3",
-    "homelab-s3-config",
     "homelab-secret",
     "homelab-sequence",
     "homelab-tailscale-service",
@@ -750,7 +749,6 @@ dependencies = [
     { name = "homelab-network" },
     { name = "homelab-restic-service" },
     { name = "homelab-s3" },
-    { name = "homelab-s3-config" },
     { name = "homelab-secret" },
     { name = "homelab-tailscale-service" },
     { name = "homelab-traefik-config" },
@@ -794,7 +792,6 @@ requires-dist = [
     { name = "homelab-network", editable = "tool/homelab-network" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
     { name = "homelab-s3", editable = "tool/homelab-s3" },
-    { name = "homelab-s3-config", editable = "tool/config/homelab-s3-config" },
     { name = "homelab-secret", editable = "tool/homelab-secret" },
     { name = "homelab-tailscale-service", editable = "service/homelab-tailscale-service" },
     { name = "homelab-traefik-config", editable = "tool/config/homelab-traefik-config" },
@@ -1032,6 +1029,7 @@ dependencies = [
     { name = "homelab-backup" },
     { name = "homelab-extract" },
     { name = "homelab-global" },
+    { name = "homelab-mail" },
     { name = "homelab-network" },
     { name = "homelab-pydantic" },
     { name = "homelab-restic" },
@@ -1066,6 +1064,7 @@ requires-dist = [
     { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-global", editable = "tool/homelab-global" },
+    { name = "homelab-mail", editable = "tool/homelab-mail" },
     { name = "homelab-network", editable = "tool/homelab-network" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "homelab-restic", editable = "tool/homelab-restic" },
@@ -1120,15 +1119,19 @@ name = "homelab-extract"
 version = "0.1.0"
 source = { editable = "tool/homelab-extract" }
 dependencies = [
+    { name = "homelab-mail" },
     { name = "homelab-pydantic" },
     { name = "homelab-s3" },
+    { name = "pulumi" },
     { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "homelab-mail", editable = "tool/homelab-mail" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "homelab-s3", editable = "tool/homelab-s3" },
+    { name = "pulumi", specifier = ">=3.207.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
@@ -1409,17 +1412,6 @@ requires-dist = [
     { name = "pulumi-b2", directory = "sdks/b2" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
-
-[[package]]
-name = "homelab-s3-config"
-version = "0.1.0"
-source = { editable = "tool/config/homelab-s3-config" }
-dependencies = [
-    { name = "homelab-pydantic" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "homelab-pydantic", editable = "tool/homelab-pydantic" }]
 
 [[package]]
 name = "homelab-secret"

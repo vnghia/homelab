@@ -23,6 +23,7 @@ dependencies = [
     "homelab-global",
     "homelab-restic",
     "homelab-backup",
+    "homelab-mail",
     "paramiko>=4.0.0",
     "orjson>=3.11.5",
     "yaml-rs>=0.0.9",

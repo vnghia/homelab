@@ -3,7 +3,13 @@ name = "homelab-extract"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
-dependencies = ["homelab-s3", "homelab-pydantic", "pydantic>=2.10.6"]
+dependencies = [
+    "homelab-s3",
+    "homelab-pydantic",
+    "homelab-mail",
+    "pydantic>=2.10.6",
+    "pulumi>=3.207.0",
+]
 
 [build-system]
 requires = ["uv_build"]

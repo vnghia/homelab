@@ -23,7 +23,6 @@ source_roots = [
     "tool/homelab-secret/src",
     "tool/homelab-sequence/src",
     "tool/homelab-vpn/src",
-    "tool/config/homelab-s3-config/src",
     "tool/config/homelab-dagu-config/src",
     "tool/config/homelab-traefik-config/src",
     "service/homelab-backup-service/src",
