@@ -20,11 +20,16 @@ class Docker:
         return result + "-" + secrets.token_hex(4)[:7]
 
     @classmethod
-    async def load_config(
+    async def load_model(
         cls, service: str, name: str | None
     ) -> docker.ContainerCreationModel:
         async with aiofiles.open(
-            (Config.load().docker_dir / "config" / service / (name or service))
+            (
+                Config.load().docker_dir
+                / Config.DOCKER_RUN_PREFIX
+                / service
+                / (name or service)
+            )
             .with_suffix(".json")
             .resolve(True),
             "r+b",
@@ -32,7 +37,7 @@ class Docker:
             return docker.ContainerCreationModel.model_validate_json(await file.read())
 
     @classmethod
-    async def run_config(
+    async def run_model(
         cls,
         context: Context,
         model: docker.ContainerCreationModel,
@@ -72,10 +77,10 @@ class Docker:
             await container.delete(force=True, v=True, link=True)
 
     @classmethod
-    async def load_and_run_config(
+    async def load_and_run_model(
         cls, context: Context, service: str, name: str | None
     ) -> None:
-        config = await cls.load_config(service, name)
-        return await cls.run_config(
+        config = await cls.load_model(service, name)
+        return await cls.run_model(
             context, config, cls.generate_container_name(service, name)
         )

@@ -14,6 +14,7 @@ from homelab_docker.resource.host import HostResourceBase
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
 from homelab_global.resource import GlobalResource
+from homelab_hatchet_service import HatchetService
 from homelab_litestream_service import LitestreamService
 from homelab_network.resource.network import NetworkResource
 from homelab_restic_service import ResticService
@@ -90,6 +91,17 @@ class HostBaseNoConfig(HostResourceBase):
             extractor_args=self.extractor_args,
         )
 
+    def build_hatchet_service(self) -> None:
+        self.hatchet = (
+            HatchetService(
+                self.host_services_config.hatchet,
+                opts=self.child_opts,
+                extractor_args=self.extractor_args,
+            )
+            if self.host_services_config.hatchet
+            else None
+        )
+
     def build_extra_service(self, service: str) -> None:
         if service in self.services:
             return
@@ -163,15 +175,20 @@ class HostBaseNoConfig(HostResourceBase):
     def finalize(cls) -> None:
         from .sun import SunHost
 
+        sun_instance = cls.HOST_BASES[SunHost.instance_name()]
+        # Building Hatchet service on Sun host first since it provides the API tokens for other hosts.
+        sun_instance.build_hatchet_service()
+
         for name, host in cls.HOST_BASES.items():
             if name != SunHost.instance_name():
                 host.build_dagu_service()
+                host.build_hatchet_service()
 
             for service in host.extra_services_config:
                 host.build_extra_service(service)
 
         # Building Dagu service on Sun host last since it depends on Dagu API tokens of other hosts.
-        cls.HOST_BASES[SunHost.instance_name()].build_dagu_service()
+        sun_instance.build_dagu_service()
 
         for host in cls.HOST_BASES.values():
             host.build_final_services_before_file()

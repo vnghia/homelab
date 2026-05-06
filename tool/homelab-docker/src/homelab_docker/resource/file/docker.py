@@ -14,7 +14,7 @@ from .config import ConfigFileResource, JsonDumper
 class DockerContainerCreationModelResource(
     ConfigFileResource[schema.ContainerCreationModel],
     module="docker",
-    name="ContainerConfig",
+    name="ContainerCreation",
 ):
     validator = schema.ContainerCreationModel
     dumper = JsonDumper[schema.ContainerCreationModel]
@@ -46,6 +46,12 @@ class DockerContainerCreationModelResource(
             if (entrypoint := overwrite.build_entrypoint(extractor_args))
             and entrypoint is not None
             else model.build_entrypoint(extractor_args)
+        )
+        config["Cmd"] = (
+            command
+            if (command := overwrite.build_command(extractor_args))
+            and command is not None
+            else model.build_command(extractor_args)
         )
         config["Labels"] = model.build_labels(
             service.container_full_names[overwrite.model],

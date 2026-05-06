@@ -10,6 +10,9 @@ class HatchetTaskConfig(HomelabServiceConfigDict[HatchetTaskModel]):
 class HatchetServiceConfig(HomelabBaseModel):
     task: HatchetTaskConfig = HatchetTaskConfig({})
 
+    def __bool__(self) -> bool:
+        return bool(self.task)
+
 
 class HatchetServiceConfigBase(HomelabBaseModel):
     hatchet: HatchetServiceConfig = HatchetServiceConfig()

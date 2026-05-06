@@ -4,6 +4,8 @@ import typing
 
 from pulumi import ComponentResource, ResourceOptions
 
+from homelab.file.hatchet import HatchetFile
+
 from .dagu import DaguFile
 from .traefik import TraefikFile
 from .vector import VectorFile
@@ -22,11 +24,13 @@ class File(ComponentResource):
         self.traefik = TraefikFile(opts=self.child_opts, traefik_service=host.traefik)
         self.dagu = DaguFile(opts=self.child_opts, dagu_service=host.dagu)
         self.vector = VectorFile(opts=self.child_opts, vector_service=host.vector)
+        self.hatchet = HatchetFile(opts=self.child_opts, hatchet_service=host.hatchet)
 
         self.traefik.build_one(host.traefik)
         for service in host.extractor_args.services.values():
             self.traefik.build_one(service)
             self.dagu.build_one(service)
+            self.hatchet.build_one(service)
             if service.name() != host.vector.name():
                 self.vector.build_one(service)
         self.vector.build_one(host.vector)
