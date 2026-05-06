@@ -1,5 +1,6 @@
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
+from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import (
     ServiceResourceBase,
@@ -7,6 +8,7 @@ from homelab_docker.resource.service import (
 )
 from homelab_extra_service import ExtraService
 from homelab_hatchet_config import HatchetServiceConfig, HatchetServiceConfigBase
+from homelab_hatchet_tool.config import Config as HatchetToolConfig
 from pulumi import ResourceOptions
 
 from .config import HatchetConfig
@@ -29,6 +31,19 @@ class HatchetService(ExtraService[HatchetConfig]):
         self.docker_dir_volume_path = GlobalExtractor(
             self.config.docker_dir
         ).extract_volume_path(self.extractor_args)
+
+    def get_workflow_volume_path(self, name: str) -> ContainerVolumePath:
+        return (self.workflow_dir_volume_path / name).with_suffix(".py")
+
+    def get_docker_run_volume_path(
+        self, service: str, name: str | None
+    ) -> ContainerVolumePath:
+        return (
+            self.docker_dir_volume_path
+            / HatchetToolConfig.DOCKER_RUN_PREFIX
+            / service
+            / (name or service)
+        )
 
     @classmethod
     def get_service_config(

@@ -32,7 +32,6 @@ class Docker:
             )
             .with_suffix(".json")
             .resolve(True),
-            "r+b",
         ) as file:
             return docker.ContainerCreationModel.model_validate_json(await file.read())
 
@@ -46,7 +45,8 @@ class Docker:
         stderr: bool = True,
     ) -> None:
         container = await cls().client.containers.create(
-            model.model_dump(mode="json"), name=name
+            model.model_dump(mode="json", by_alias=True, exclude_unset=True),
+            name=name,
         )
         response = docker.schema.ModelContainerInspectResponse.model_validate(
             await container.show()
@@ -74,7 +74,7 @@ class Docker:
                     ),
                 )
         finally:
-            await container.delete(force=True, v=True, link=True)
+            await container.delete(force=True, v=True)
 
     @classmethod
     async def load_and_run_model(

@@ -1,3 +1,4 @@
+import ast
 import typing
 
 from homelab_docker.extract import ExtractorArgs
@@ -17,8 +18,8 @@ class HatchetTaskModelBuilder(HomelabRootModel[HatchetTaskModel]):
         opts: ResourceOptions,
         hatchet_service: HatchetService,
         extractor_args: ExtractorArgs,
-    ) -> None:
+    ) -> ast.AsyncFunctionDef:
         root = self.root.root
-        HatchetTaskDockerModelBuilder(root).build_resources(
+        return HatchetTaskDockerModelBuilder(root).build_resources(
             opts, hatchet_service, extractor_args
         )
