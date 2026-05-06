@@ -92,6 +92,10 @@ services:
             hostname: hatchet
           - record: sun
             hostname: hatchet-engine
+        log:
+          driver: json-file
+          opts:
+            max-size: "20m"
         volumes:
           hatchet-engine-mtls: /etc/hatchet/mtls/engine
           hatchet-worker-config:

@@ -9,13 +9,18 @@ from typing import Any, ClassVar, Self
 
 import watchfiles
 from hatchet_sdk import ClientConfig, Hatchet, Worker
+from hatchet_sdk import logger as hatchet_logger
 from hatchet_sdk.runnables.workflow import BaseWorkflow
 from homelab_hatchet_tool.config import Config
 
 config = Config.load()
 
+hatchet_logger.logger.removeHandler(hatchet_logger.handler)
+
 logging.basicConfig(
-    level=logging.INFO if not config.debug else logging.DEBUG, stream=sys.stdout
+    level=logging.INFO if not config.debug else logging.DEBUG,
+    stream=sys.stdout,
+    format="[%(levelname)s] - %(message)s",
 )
 logger = logging.getLogger()
 
@@ -113,7 +118,7 @@ class WorkflowLoader:
 
 
 def main() -> None:
-    logger.info(config)
+    logger.info(config.model_dump_json())
     worker = hatchet.worker(
         config.host + ("-" + config.name if config.name else ""),
         labels={config.HOST_LABEL: config.host},
