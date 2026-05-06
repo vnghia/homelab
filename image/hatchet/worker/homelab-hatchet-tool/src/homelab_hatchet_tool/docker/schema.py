@@ -3377,7 +3377,7 @@ class ModelEventMessageType(StrEnum):
     NETWORK = "network"
     NODE = "node"
     PLUGIN = "plugin"
-    SECRET = "secret"
+    SECRET = "secret"  # noqa: S105
     SERVICE = "service"
     VOLUME = "volume"
 
