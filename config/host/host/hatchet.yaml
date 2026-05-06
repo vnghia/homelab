@@ -229,6 +229,8 @@ services:
       worker:
         image:
           build: hatchet-worker
+        docker-socket:
+          write: false
         hosts:
           - record: sun
             hostname: hatchet
