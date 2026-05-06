@@ -6,7 +6,7 @@ from typing import Any
 
 from pydantic import AnyUrl, AwareDatetime, Field, NonNegativeInt
 
-from .model import HomelabBaseModel, HomelabRootModel
+from ..model import HomelabBaseModel, HomelabRootModel
 
 
 class Model(HomelabRootModel[Any]):

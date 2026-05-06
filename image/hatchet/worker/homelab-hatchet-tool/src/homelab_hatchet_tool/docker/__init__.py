@@ -22,28 +22,28 @@ class Docker:
     @classmethod
     async def load_config(
         cls, service: str, name: str | None
-    ) -> docker.ModelContainerConfig:
+    ) -> docker.ContainerCreationModel:
         async with aiofiles.open(
             (Config.load().docker_dir / "config" / service / (name or service))
             .with_suffix(".json")
             .resolve(True),
             "r+b",
         ) as file:
-            return docker.ModelContainerConfig.model_validate_json(await file.read())
+            return docker.ContainerCreationModel.model_validate_json(await file.read())
 
     @classmethod
     async def run_config(
         cls,
         context: Context,
-        config: docker.ModelContainerConfig,
+        model: docker.ContainerCreationModel,
         name: str | None,
         stdout: bool = True,
         stderr: bool = True,
     ) -> None:
         container = await cls().client.containers.create(
-            config.model_dump(mode="json"), name=name
+            model.model_dump(mode="json"), name=name
         )
-        response = docker.ModelContainerInspectResponse.model_validate(
+        response = docker.schema.ModelContainerInspectResponse.model_validate(
             await container.show()
         )
         context.log(
@@ -58,13 +58,13 @@ class Docker:
                 for log in logs.splitlines():
                     context.log(log)
 
-            exit_status = docker.ModelContainerWaitResponse.model_validate(
+            exit_status = docker.schema.ModelContainerWaitResponse.model_validate(
                 await container.wait(timeout=None)
             )
             if exit_status.status_code > 0:
                 raise RuntimeError(
                     exit_status,
-                    docker.ModelContainerInspectResponse.model_validate(
+                    docker.schema.ModelContainerInspectResponse.model_validate(
                         await container.show()
                     ),
                 )
