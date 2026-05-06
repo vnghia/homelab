@@ -3,5 +3,6 @@ from homelab_extract import GlobalExtract
 
 
 class HatchetConfig(ExtraConfig):
+    worker: str
     workflow_dir: GlobalExtract
     docker_dir: GlobalExtract

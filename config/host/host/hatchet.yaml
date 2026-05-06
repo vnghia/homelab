@@ -4,22 +4,10 @@ docker:
       hatchet:
         repo: ghcr.io/hatchet-dev/hatchet/hatchet-lite
         tag: "v0.85.7"
-    build:
-      hatchet-worker:
-        context:
-          location: image/hatchet/worker
-          base: python-alpine
-          python-builder:
-            image: python-builder
-          homelab-pydantic:
-            path: tool/homelab-pydantic
-        version: "0.0.1"
   volumes:
     local:
       hatchet-config: {}
       hatchet-engine-mtls:
-        backup: false
-      hatchet-worker-config:
         backup: false
 services:
   hatchet:
@@ -61,26 +49,7 @@ services:
           svolume: hatchet-engine-mtls
         transform:
           path: server.pem
-      CLIENT_CERT_PATH:
-        extract:
-          svolume: hatchet-engine-mtls
-        transform:
-          path: client.crt
-      CLIENT_KEY_PATH:
-        extract:
-          svolume: hatchet-engine-mtls
-        transform:
-          path: client.pem
-      WORKER_WORKFLOW_DIR:
-        extract:
-          volume: hatchet-worker-config
-        transform:
-          path: workflow
-      WORKER_DOCKER_DIR:
-        extract:
-          volume: hatchet-worker-config
-        transform:
-          path: docker
+      WORKER_CLIENT_TOKEN:
     config:
       traefik:
         dynamic:
@@ -95,10 +64,6 @@ services:
             service:
               port:
                 svariable: GRPC_PORT
-      workflow-dir:
-        svariable: WORKER_WORKFLOW_DIR
-      docker-dir:
-        svariable: WORKER_DOCKER_DIR
     databases:
       postgres:
         postgres:
@@ -116,32 +81,32 @@ services:
         path:
           svariable: CA_PATH
         content:
-          mtls: engine-mtls
-          info: ca_cert
+          host: sun
+          extract:
+            service: hatchet
+            extract:
+              mtls: engine-mtls
+              info: ca_cert
       server-cert:
         path:
           svariable: SERVER_CERT_PATH
         content:
-          mtls: engine-mtls
-          info: server_cert
+          host: sun
+          extract:
+            service: hatchet
+            extract:
+              mtls: engine-mtls
+              info: server_cert
       server-key:
         path:
           svariable: SERVER_KEY_PATH
         content:
-          mtls: engine-mtls
-          info: server_key
-      client-cert:
-        path:
-          svariable: CLIENT_CERT_PATH
-        content:
-          mtls: engine-mtls
-          info: client_cert
-      client-key:
-        path:
-          svariable: CLIENT_KEY_PATH
-        content:
-          mtls: engine-mtls
-          info: client_key
+          host: sun
+          extract:
+            service: hatchet
+            extract:
+              mtls: engine-mtls
+              info: server_key
     secrets:
       tenant-id:
         uuid:
@@ -225,41 +190,3 @@ services:
         SERVER_LOGGER_LEVEL: WARN
         SERVER_LOGGER_FORMAT: json
         SERVER_DEFAULT_ENGINE_VERSION: "V1"
-    containers:
-      worker:
-        image:
-          build: hatchet-worker
-        docker-socket:
-          write: false
-        hosts:
-          - record: sun
-            hostname: hatchet
-          - record: sun
-            hostname: hatchet-engine
-        volumes:
-          hatchet-engine-mtls: /etc/hatchet/mtls/engine
-          hatchet-worker-config:
-            path: /etc/hatchet/worker
-            read-only: true
-        envs:
-          HATCHET_CLIENT_TOKEN:
-          HATCHET_CLIENT_HOST_PORT:
-            svariable: GRPC_ADDRESS
-          HATCHET_CLIENT_SERVER_URL:
-            svariable: URL
-          HATCHET_CLIENT_TLS_STRATEGY: mtls
-          HATCHET_CLIENT_TLS_CERT_FILE:
-            svariable: CLIENT_CERT_PATH
-          HATCHET_CLIENT_TLS_KEY_FILE:
-            svariable: CLIENT_KEY_PATH
-          HATCHET_CLIENT_TLS_ROOT_CA_FILE:
-            svariable: CA_PATH
-          HATCHET_CLIENT_TLS_SERVER_NAME:
-            record: sun
-            hostname: hatchet-engine
-          HATCHET_WORKER_HOST:
-            hinfo: name
-          HATCHET_WORKER_WORKFLOW_DIR:
-            svariable: WORKER_WORKFLOW_DIR
-          HATCHET_WORKER_DOCKER_DIR:
-            svariable: WORKER_DOCKER_DIR

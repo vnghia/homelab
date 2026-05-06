@@ -25,12 +25,16 @@ class HatchetService(ExtraService[HatchetConfig]):
         super().__init__(model, opts=opts, extractor_args=extractor_args)
         self.build(None)
 
+        self.workder_model = self.containers[self.config.worker].model
+        self.workder_extractor_args = self.extractor_args.with_container(
+            self.workder_model
+        )
         self.workflow_dir_volume_path = GlobalExtractor(
             self.config.workflow_dir
-        ).extract_volume_path(self.extractor_args)
+        ).extract_volume_path(self.workder_extractor_args)
         self.docker_dir_volume_path = GlobalExtractor(
             self.config.docker_dir
-        ).extract_volume_path(self.extractor_args)
+        ).extract_volume_path(self.workder_extractor_args)
 
     def get_workflow_volume_path(self, name: str) -> ContainerVolumePath:
         return (self.workflow_dir_volume_path / name).with_suffix(".py")

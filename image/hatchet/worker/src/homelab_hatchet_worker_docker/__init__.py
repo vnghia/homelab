@@ -115,7 +115,8 @@ class WorkflowLoader:
 def main() -> None:
     logger.info(config)
     worker = hatchet.worker(
-        config.name or "worker", labels={config.HOST_LABEL: config.host}
+        config.host + ("-" + config.name if config.name else ""),
+        labels={config.HOST_LABEL: config.host},
     )
     WorkflowLoader(hatchet, worker, config).watch()
     worker.start()

@@ -1,0 +1,13 @@
+services:
+  hatchet:
+    network:
+      bridge:
+        egress:
+          https:
+            sun:
+              host: sun
+              hostnames:
+                - record: sun
+                  hostname: hatchet
+                - record: sun
+                  hostname: hatchet-engine
