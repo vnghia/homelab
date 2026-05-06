@@ -160,6 +160,16 @@ class ExtractorArgs:
             return self._host.services.get(key, self._host.model.services[key])
         return self._host.services[key]
 
+    def get_service_model(self, key: str | None) -> ServiceModel:
+        service = self.get_service(key)
+        return service.model if isinstance(service, ServiceResourceBase) else service
+
+    def get_service_resource(self, key: str | None) -> ServiceResourceBase:
+        service = self.get_service(key)
+        if not isinstance(service, ServiceResourceBase):
+            raise ValueError("Service is required for this extractor")
+        return service
+
     def get_container(self, key: str | None) -> ContainerResource | ContainerModel:
         from ..resource.service import ServiceResourceBase
 

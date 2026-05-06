@@ -1,15 +1,13 @@
 [project]
-name = "homelab-extra-service"
+name = "homelab-hatchet-config"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.13.1"
 dependencies = [
+    "homelab-pydantic",
     "homelab-docker",
-    "homelab-dagu-config",
-    "homelab-hatchet-config",
-    "homelab-traefik-config",
-    "pulumi>=3.148.0",
     "pydantic>=2.10.6",
+    "homelab-extract",
 ]
 
 [build-system]
@@ -17,4 +15,4 @@ requires = ["uv_build"]
 build-backend = "uv_build"
 
 [tool.ruff]
-extend = "../../pyproject.toml"
+extend = "../../../pyproject.toml"
