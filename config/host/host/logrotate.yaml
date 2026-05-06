@@ -21,15 +21,14 @@ services:
             template:
               join: " "
     config:
-      dagu:
-        dag:
-          dag:
-            schedule: "0 * * * *"
-            steps:
-              - name: logrotate
-                executor:
-                  model:
-                run:
+      hatchet:
+        task:
+          task:
+            schedules:
+              - "0 * * * *"
+            docker:
+              run:
+                command:
                   - logrotate
                   - --verbose
                   - --state
