@@ -24,7 +24,7 @@ class Docker:
         cls, service: str, name: str | None
     ) -> docker.ModelContainerConfig:
         async with aiofiles.open(
-            (Config.load().docker_dir / service / (name or service))
+            (Config.load().docker_dir / "config" / service / (name or service))
             .with_suffix(".json")
             .resolve(True),
             "r+b",
@@ -39,7 +39,7 @@ class Docker:
         name: str | None,
         stdout: bool = True,
         stderr: bool = True,
-    ) -> docker.ModelContainerWaitResponse:
+    ) -> None:
         container = await cls().client.containers.create(
             config.model_dump(mode="json"), name=name
         )
@@ -57,19 +57,24 @@ class Docker:
             ):
                 for log in logs.splitlines():
                     context.log(log)
-            return docker.ModelContainerWaitResponse.model_validate(
+
+            exit_status = docker.ModelContainerWaitResponse.model_validate(
                 await container.wait(timeout=None)
             )
+            if exit_status.status_code > 0:
+                raise RuntimeError(
+                    exit_status,
+                    docker.ModelContainerInspectResponse.model_validate(
+                        await container.show()
+                    ),
+                )
         finally:
             await container.delete(force=True, v=True, link=True)
 
     @classmethod
     async def load_and_run_config(
-        cls,
-        context: Context,
-        service: str,
-        name: str | None,
-    ) -> docker.ModelContainerWaitResponse:
+        cls, context: Context, service: str, name: str | None
+    ) -> None:
         config = await cls.load_config(service, name)
         return await cls.run_config(
             context, config, cls.generate_container_name(service, name)
