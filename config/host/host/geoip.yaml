@@ -13,24 +13,13 @@ services:
     variables:
       LICENSE_KEY:
     config:
-      dagu:
-        dotenvs:
-          dotenv:
-            envs:
-              LICENSE_KEY:
-                svariable: LICENSE_KEY
-        dag:
-          dag:
-            schedule: "0 0 * * *"
-            dotenvs:
-              - null
-            steps:
-              - name: geoip
-                executor:
-                  model:
-                run:
-                  - --license-key
-                  - "${LICENSE_KEY}"
+      hatchet:
+        task:
+          task:
+            schedules:
+              - "0 0 * * *"
+            docker:
+              run: {}
     network:
       bridge: {}
     container:
