@@ -12,7 +12,6 @@ from homelab_hatchet_config.model.task.docker import (
     HatchetTaskDockerModel,
     HatchetTaskDockerRunModel,
 )
-from homelab_hatchet_tool.worker import HOST_SEPARATOR
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
 
@@ -45,29 +44,7 @@ def replace_placeholder(
     function_def.name = function_name
 
     tool.ast.add_keyword(
-        function_def,
-        ast.keyword(
-            arg="name",
-            value=ast.Call(
-                func=ast.Attribute(
-                    value=ast.Constant(
-                        value="{{}}{}{}".format(HOST_SEPARATOR, task_name)
-                    ),
-                    attr="format",
-                ),
-                args=[
-                    ast.Attribute(
-                        value=ast.Call(
-                            func=ast.Attribute(
-                                value=ast.Name(id="Config"), attr="load"
-                            ),
-                            args=[],
-                        ),
-                        attr="host",
-                    )
-                ],
-            ),
-        ),
+        function_def, ast.keyword(arg="name", value=ast.Constant(value=task_name))
     )
 
     for stmt in function_def.body:
