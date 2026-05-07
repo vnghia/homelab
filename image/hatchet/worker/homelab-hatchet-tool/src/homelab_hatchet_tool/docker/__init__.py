@@ -4,8 +4,6 @@ import secrets
 import aiodocker
 import aiofiles
 from hatchet_sdk import Context
-from hatchet_sdk.utils.typing import LogLevel
-from hatchet_sdk.worker.runner.utils.capture_logs import LogRecord
 from homelab_pydantic import docker
 
 from ..config import Config
@@ -53,10 +51,16 @@ class Docker:
             model.model_dump(mode="json", by_alias=True, exclude_unset=True),
             name=name,
         )
-        response = docker.schema.ModelContainerInspectResponse.model_validate(
+
+        container_inspect = docker.schema.ModelContainerInspectResponse.model_validate(
             await container.show()
         )
-        logger.info("Running container name={}".format(response.name))
+        container_name = (
+            container_inspect.name.removeprefix("/") if container_inspect.name else None
+        )
+        logger.info("Running container {}".format(container_name))
+        logger.debug(container_inspect)
+
         try:
             await container.start()
 
@@ -65,7 +69,7 @@ class Docker:
             ):
                 # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
                 for line in logs.splitlines():
-                    logger.info(line)
+                    logger.info("[{}] - {}".format(container_name, line))
 
             exit_status = docker.schema.ModelContainerWaitResponse.model_validate(
                 await container.wait(timeout=None)

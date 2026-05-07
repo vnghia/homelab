@@ -1,6 +1,5 @@
 import dataclasses
 import importlib
-import logging
 import sys
 import threading
 import types
@@ -9,23 +8,18 @@ from typing import Any, ClassVar, Self
 
 import watchfiles
 from hatchet_sdk import ClientConfig, Hatchet, Worker
-from hatchet_sdk import logger as hatchet_logger
 from hatchet_sdk.runnables.workflow import BaseWorkflow
 from homelab_hatchet_tool.config import Config
 
+from .logging import setup_logger
+
 config = Config.load()
-
-hatchet_logger.logger.removeHandler(hatchet_logger.handler)
-
-logging.basicConfig(
-    level=logging.INFO if not config.debug else logging.DEBUG,
-    stream=sys.stdout,
-    format="[%(levelname)s] - %(message)s",
-)
-logger = logging.getLogger()
+logger = setup_logger(config)
 
 hatchet = Hatchet(
-    config=ClientConfig(debug=config.debug, logger=logger, namespace=config.host)
+    config=ClientConfig(
+        debug=config.log_level == "DEBUG", logger=logger, namespace=config.host
+    )
 )
 
 

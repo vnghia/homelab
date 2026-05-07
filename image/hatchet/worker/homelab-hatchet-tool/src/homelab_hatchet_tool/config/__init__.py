@@ -17,7 +17,7 @@ class Config(BaseSettings):
 
     worker_host_label: ClassVar[DesiredWorkerLabel | None] = None
 
-    debug: bool = False
+    log_level: str = "INFO"
 
     host: str
     name: str | None = None
