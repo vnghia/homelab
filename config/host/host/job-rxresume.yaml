@@ -29,11 +29,6 @@ services:
                 scheme: https
               prefer-short-username: true
               allow-insecure-client-disable-pkce: true
-  browser:
-    container:
-      hosts:
-        - record: solar
-          hostname: rxresume
   job:
     variables:
       RXRESUME_PORT: 3000
@@ -64,31 +59,25 @@ services:
         healthcheck:
           tests:
             - "CMD"
-            - "curl"
-            - "--fail"
+            - "node"
+            - "-e"
             - extract:
                 svariable: RXRESUME_PORT
               transform:
                 string:
-                  template: "http://localhost:{value}/api/health"
+                  template: 'fetch("http://localhost:{value}/api/health").then((r) => {{ if (!r.ok) process.exit(1); }}).catch(() => process.exit(1));'
         hosts:
-          - record: solar
-            hostname: browser
           - record: solar
             hostname: kanidm
           - record: solar
             hostname: owebui
         volumes:
-          job-rxresume-data: /app/data
+          job-rxresume-data: /app/apps/web/data
         envs:
           APP_URL:
             record: solar
             hostname: rxresume
             scheme: https
-          PRINTER_ENDPOINT:
-            service: browser
-            extract:
-              svariable: PLAYWRIGHT_WS_URL
           AUTH_SECRET:
             secret: rxresume-auth
           OAUTH_PROVIDER_NAME: Kanidm
