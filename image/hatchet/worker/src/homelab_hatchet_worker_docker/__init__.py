@@ -12,10 +12,11 @@ from hatchet_sdk.runnables.workflow import BaseWorkflow
 from homelab_hatchet_tool.config import Config
 from homelab_hatchet_tool.worker import label
 
-from .logging import setup_logger
+from . import setup
 
 config = Config.load()
-logger = setup_logger(config)
+setup.otel()
+logger = setup.logger(config)
 
 hatchet = Hatchet(
     config=ClientConfig(

@@ -5,7 +5,7 @@ from hatchet_sdk import logger as hatchet_logger
 from homelab_hatchet_tool.config import Config
 
 
-def setup_logger(config: Config) -> logging.Logger:
+def logger(config: Config) -> logging.Logger:
     hatchet_logger.logger.removeHandler(hatchet_logger.handler)
 
     logging.basicConfig(
@@ -14,3 +14,9 @@ def setup_logger(config: Config) -> logging.Logger:
         format="[%(levelname)s] - %(message)s",
     )
     return logging.getLogger()
+
+
+def otel() -> None:
+    # TODO: enable this after https://github.com/hatchet-dev/hatchet/pull/3847
+    # HatchetInstrumentor().instrument()
+    return
