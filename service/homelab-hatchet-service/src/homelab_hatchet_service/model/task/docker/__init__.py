@@ -44,26 +44,7 @@ def replace_placeholder(
     function_def.name = function_name
 
     tool.ast.add_keyword(
-        function_def,
-        ast.keyword(
-            arg="name",
-            value=ast.Call(
-                func=ast.Attribute(
-                    value=ast.Constant(value="{{}}-{}".format(task_name)), attr="format"
-                ),
-                args=[
-                    ast.Attribute(
-                        value=ast.Call(
-                            func=ast.Attribute(
-                                value=ast.Name(id="Config"), attr="load"
-                            ),
-                            args=[],
-                        ),
-                        attr="host",
-                    )
-                ],
-            ),
-        ),
+        function_def, ast.keyword(arg="name", value=ast.Constant(value=task_name))
     )
 
     for stmt in function_def.body:

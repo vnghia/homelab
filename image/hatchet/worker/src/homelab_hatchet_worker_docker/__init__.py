@@ -24,7 +24,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger()
 
-hatchet = Hatchet(config=ClientConfig(debug=config.debug, logger=logger))
+hatchet = Hatchet(
+    config=ClientConfig(debug=config.debug, logger=logger, namespace=config.host)
+)
 
 
 @dataclasses.dataclass
@@ -120,8 +122,7 @@ class WorkflowLoader:
 def main() -> None:
     logger.info(config.model_dump_json())
     worker = hatchet.worker(
-        config.host + ("-" + config.name if config.name else ""),
-        labels={config.HOST_LABEL: config.host},
+        config.name or "worker", labels={config.HOST_LABEL: config.host}
     )
     WorkflowLoader(hatchet, worker, config).watch()
     worker.start()
