@@ -10,7 +10,7 @@ import watchfiles
 from hatchet_sdk import ClientConfig, Hatchet, Worker
 from hatchet_sdk.runnables.workflow import BaseWorkflow
 from homelab_hatchet_tool.config import Config
-from homelab_hatchet_tool.worker import label
+from homelab_hatchet_tool.worker import HOST_SEPARATOR, label
 
 from . import setup
 
@@ -114,7 +114,7 @@ class WorkflowLoader:
 def main() -> None:
     logger.info(config.model_dump_json())
     worker = hatchet.worker(
-        config.host + ("-" + config.name if config.name else ""),
+        config.host + ((HOST_SEPARATOR + config.name) if config.name else ""),
         labels={label.HOST_LABEL: config.host, label.DOCKER_LABEL: label.DOCKER_VALUE},
     )
     WorkflowLoader(hatchet, worker, config).watch()
