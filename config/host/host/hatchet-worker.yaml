@@ -55,6 +55,8 @@ services:
         svariable: WORKER_WORKFLOW_DIR
       docker-dir:
         svariable: WORKER_DOCKER_DIR
+      schedule-dir:
+        svariable: WORKER_SCHEDULE_DIR
     files:
       ca:
         path:

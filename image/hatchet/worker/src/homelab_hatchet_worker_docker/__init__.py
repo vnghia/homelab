@@ -29,6 +29,7 @@ def main() -> None:
     static_workflows = Workflow.register_models(
         hatchet, worker, namespace, Docker.build_workflows(hatchet)
     )
+    logger.info("Staic workflows: {}".format(static_workflows))
 
     workflow_loader = WorkflowLoader(
         hatchet, worker, config, namespace, static_workflows

@@ -8,6 +8,7 @@ dependencies = [
     "homelab-extra-service",
     "pulumi>=3.148.0",
     "homelab-extract",
+    "homelab-pydantic",
 ]
 
 [build-system]

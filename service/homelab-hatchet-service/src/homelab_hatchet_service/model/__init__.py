@@ -28,26 +28,41 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         hatchet_service: HatchetService,
         extractor_args: ExtractorArgs,
     ) -> None:
-        from ..resource import HatchetWorkflowResource
+        from ..resource import HatchetScheduleResource, HatchetWorkflowResource
 
-        tasks = [
-            HatchetTaskModelBuilder(task_model).build_resources(
+        tasks = []
+        schedules = {}
+
+        for task_name, task_model in self.root.task.root.items():
+            result = HatchetTaskModelBuilder(task_model).build_resources(
                 opts, hatchet_service, extractor_args
             )
-            for task_model in self.root.task.root.values()
-        ]
+            if isinstance(result, ast.AsyncFunctionDef):
+                tasks.append(result)
+            else:
+                schedules[task_name] = result
 
-        workflow = copy.deepcopy(TEMPLATE)
-        function_def = tool.ast.find(workflow, ast.FunctionDef, self.TEMPLATE_NAME)
-        function_def.body = [
-            *tasks,
-            ast.Return(ast.List(elts=[ast.Name(id=task.name) for task in tasks])),
-        ]
+        if tasks:
+            workflow = copy.deepcopy(TEMPLATE)
+            function_def = tool.ast.find(workflow, ast.FunctionDef, self.TEMPLATE_NAME)
+            function_def.body = [
+                *tasks,
+                ast.Return(ast.List(elts=[ast.Name(id=task.name) for task in tasks])),
+            ]
 
-        HatchetWorkflowResource(
-            None,
-            content=ast.unparse(workflow),
-            opts=opts,
-            hatchet_service=hatchet_service,
-            extractor_args=extractor_args,
-        )
+            HatchetWorkflowResource(
+                None,
+                content=ast.unparse(workflow),
+                opts=opts,
+                hatchet_service=hatchet_service,
+                extractor_args=extractor_args,
+            )
+
+        if schedules:
+            HatchetScheduleResource(
+                None,
+                schedules,
+                opts=opts,
+                hatchet_service=hatchet_service,
+                extractor_args=extractor_args,
+            )

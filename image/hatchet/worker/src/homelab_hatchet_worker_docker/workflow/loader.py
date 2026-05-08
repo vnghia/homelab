@@ -31,14 +31,12 @@ class WorkflowLoader:
             if self.namespace and not workflow_data.name.startswith(self.namespace):
                 continue
 
-            should_delete = True
-            for module in WorkflowModule.instances.values():
-                if (
-                    workflow_data.name in module.workflows
-                    or workflow_data.name in self.static_workflows
-                ):
-                    should_delete = False
-                    break
+            should_delete = workflow_data.name not in self.static_workflows
+            if should_delete:
+                for module in WorkflowModule.instances.values():
+                    if workflow_data.name in module.workflows:
+                        should_delete = False
+                        break
 
             if should_delete:
                 logger.info(

@@ -1,0 +1,3 @@
+import os
+
+IS_INSIDE_WORKER_ENVIRONMENT = "HATCHET_CLIENT_TOKEN" in os.environ
