@@ -2,7 +2,15 @@ from typing import Any, ClassVar, Self
 
 import deepmerge
 from deepmerge.merger import Merger
-from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    RootModel,
+    SerializerFunctionWrapHandler,
+    TypeAdapter,
+    model_serializer,
+    model_validator,
+)
 
 OVERWRITE_TYPE_SPECIFIC_MERGE_STRATEGIES: list[tuple[type, str]] = [
     (list, "override"),
@@ -86,6 +94,12 @@ class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
                 for key, model in self.root.items()
             }
         )
+
+    @model_serializer(mode="wrap")
+    def unset_none_key(self, handler: SerializerFunctionWrapHandler) -> Any:
+        if (value := self.root.pop(None, None)) is not None:
+            self.root[self.NONE_KEY] = value
+        return handler(self)
 
     def __bool__(self) -> bool:
         return bool(self.root)
