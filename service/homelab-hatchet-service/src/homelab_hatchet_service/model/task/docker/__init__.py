@@ -25,21 +25,22 @@ if typing.TYPE_CHECKING:
 TEMPLATE_PATH = Path(__file__).parent / "template.py"
 TEMPLATE = ast.parse(TEMPLATE_PATH.read_text())
 
-TASK_NAME_PLACEHOLDER = "#task-name"
 SERVICE_PLACEHOLDER = "#service"
+CONTAINER_PLACEHOLDER = "#container"
 NAME_PLACEHOLDER = "#name"
 
 
 def replace_placeholder(
     template_name: str,
     service: ServiceResourceBase,
+    container: str | None,
     name: str | None,
 ) -> ast.AsyncFunctionDef:
     function_def = copy.deepcopy(
         tool.ast.find(TEMPLATE, ast.AsyncFunctionDef, template_name)
     )
 
-    task_name = service.add_service_name(name)
+    task_name = service.add_service_name(container)
     function_name = task_name.replace("-", "_")
     service_name = service.name()
 
@@ -53,6 +54,8 @@ def replace_placeholder(
         if isinstance(stmt, ast.Assign) and isinstance(stmt.value, ast.Constant):
             if stmt.value.value == SERVICE_PLACEHOLDER:
                 stmt.value.value = service_name
+            elif stmt.value.value == CONTAINER_PLACEHOLDER:
+                stmt.value.value = container
             elif stmt.value.value == NAME_PLACEHOLDER:
                 stmt.value.value = name
 
@@ -71,21 +74,44 @@ class HatchetTaskDockerRunModelBuilder(HomelabRootModel[HatchetTaskDockerRunMode
     ) -> ast.AsyncFunctionDef | HatchetTaskWorkflowInputArgs:
         root = self.root.run
         service = extractor_args.service
-        DockerContainerCreationModelResource(
-            root,
-            opts=opts,
-            volume_path=hatchet_service.get_docker_run_volume_path(
-                service.name(), root.model
-            ),
-            permission=hatchet_service.user,
-            extractor_args=extractor_args,
-        )
+
+        if not hatchet_service.docker_container_creation_resources[service.name()].get(
+            root.container, None
+        ):
+            hatchet_service.docker_container_creation_resources[service.name()][
+                root.container
+            ] = DockerContainerCreationModelResource(
+                root.container,
+                opts=opts,
+                volume_path=hatchet_service.get_docker_run_volume_path(
+                    service.name(), root.container
+                ),
+                permission=hatchet_service.user,
+                extractor_args=extractor_args,
+            )
 
         if workflow:
-            return replace_placeholder(self.TEMPLATE_NAME, service, root.model)
+            if root.command or root.entrypoint:
+                raise ValueError(
+                    "Docker task workflow builder only supports service, container and name"
+                )
+            return replace_placeholder(
+                self.TEMPLATE_NAME, service, root.container, root.name
+            )
+
         return HatchetTaskWorkflowInputArgs(
             workflow=Docker.DOCKER_RUN_TASK,
-            input={"service": service.name(), "model": root.model},
+            input={"service": service.name(), "container": root.container}
+            | (
+                {"command": command}
+                if (command := root.build_command(extractor_args))
+                else {}
+            )
+            | (
+                {"entrypoint": entrypoint}
+                if (entrypoint := root.build_entrypoint(extractor_args))
+                else {}
+            ),
         )
 
 
@@ -101,7 +127,7 @@ class HatchetTaskDockerExecModelBuilder(HomelabRootModel[HatchetTaskDockerExecMo
     ) -> ast.AsyncFunctionDef:
         root = self.root.exec
         return replace_placeholder(
-            self.TEMPLATE_NAME, extractor_args.service, root.model
+            self.TEMPLATE_NAME, extractor_args.service, root.container, None
         )
 
 

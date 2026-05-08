@@ -6,7 +6,6 @@ from pulumi import Output, ResourceOptions
 from ...extract import ExtractorArgs
 from ...model.docker.container.volume_path import ContainerVolumePath
 from ...model.file import FilePermissionModel
-from ...model.file.docker import DockerContainerCreationModel
 from ...model.user import UidGidModel
 from .config import ConfigFileResource, JsonDumper
 
@@ -21,18 +20,17 @@ class DockerContainerCreationModelResource(
 
     def __init__(
         self,
-        creation: DockerContainerCreationModel | None,
+        container: str | None,
         *,
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         permission: UidGidModel | FilePermissionModel,
         extractor_args: ExtractorArgs,
     ) -> None:
-        creation = creation or DockerContainerCreationModel()
         service = extractor_args.service
-        model = service.model[creation.model].to_full(extractor_args)
+        model = service.model[container].to_full(extractor_args)
 
-        build_args = model.build_args(service.options[creation.model], extractor_args)
+        build_args = model.build_args(service.options[container], extractor_args)
         user = model.build_user(extractor_args)
 
         config: dict[str, Any] = {}
@@ -41,20 +39,10 @@ class DockerContainerCreationModelResource(
 
         config["Image"] = model.image.to_image_name(extractor_args.host.docker.image)
         config["User"] = model.build_container_user(user)
-        config["Entrypoint"] = (
-            entrypoint
-            if (entrypoint := creation.build_entrypoint(extractor_args))
-            and entrypoint is not None
-            else model.build_entrypoint(extractor_args)
-        )
-        config["Cmd"] = (
-            command
-            if (command := creation.build_command(extractor_args))
-            and command is not None
-            else model.build_command(extractor_args)
-        )
+        config["Entrypoint"] = model.build_entrypoint(extractor_args)
+        config["Cmd"] = model.build_command(extractor_args)
         config["Labels"] = model.build_labels(
-            service.container_full_names[creation.model],
+            service.container_full_names[container],
             extractor_args,
             build_args,
         )
@@ -124,7 +112,7 @@ class DockerContainerCreationModelResource(
         config["NetworkingConfig"] = network_config
 
         super().__init__(
-            service.add_service_name(creation.model),
+            service.add_service_name(container),
             opts=opts,
             volume_path=volume_path,
             data=config,

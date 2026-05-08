@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
 
 
 class DockerProcessCreationModel(HomelabBaseModel):
-    model: str | None = None
+    container: str | None = None
     entrypoint: list[GlobalExtract] | None = None
     command: list[GlobalExtract] | None = None
 
@@ -37,4 +37,4 @@ class DockerProcessCreationModel(HomelabBaseModel):
 
 
 class DockerContainerCreationModel(DockerProcessCreationModel):
-    pass
+    name: str | None = None

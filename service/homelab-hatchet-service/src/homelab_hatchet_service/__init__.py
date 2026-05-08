@@ -1,7 +1,10 @@
+from collections import defaultdict
+
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
+from homelab_docker.resource.file.docker import DockerContainerCreationModelResource
 from homelab_docker.resource.service import (
     ServiceResourceBase,
     ServiceWithConfigResourceBase,
@@ -24,6 +27,10 @@ class HatchetService(ExtraService[HatchetConfig]):
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
         self.build(None)
+
+        self.docker_container_creation_resources: dict[
+            str, dict[str | None, DockerContainerCreationModelResource]
+        ] = defaultdict(dict)
 
         self.workder_model = self.containers[self.config.worker].model
         self.workder_extractor_args = self.extractor_args.with_container(

@@ -3,8 +3,10 @@ from homelab_pydantic import HomelabBaseModel
 
 class DockerProcessCreationModel(HomelabBaseModel):
     service: str
-    model: str | None = None
+    container: str | None = None
+    command: list[str] | None = None
+    entrypoint: list[str] | None = None
 
 
 class DockerContainerCreationModel(DockerProcessCreationModel):
-    pass
+    name: str | None = None

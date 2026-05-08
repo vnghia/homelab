@@ -30,14 +30,14 @@ class Docker:
 
     @classmethod
     async def load_model(
-        cls, service: str, name: str | None
+        cls, model: DockerContainerCreationModel
     ) -> docker.ContainerCreationModel:
         async with aiofiles.open(
             (
                 Config.load().docker_dir
                 / Config.DOCKER_RUN_PREFIX
-                / service
-                / (name or service)
+                / model.service
+                / (model.container or model.service)
             )
             .with_suffix(".json")
             .resolve(True),
@@ -92,11 +92,18 @@ class Docker:
 
     @classmethod
     async def load_and_run_model(
-        cls, context: Context, service: str, name: str | None
+        cls, context: Context, model: DockerContainerCreationModel
     ) -> None:
-        config = await cls.load_model(service, name)
+        config = await cls.load_model(model)
+        if model.command is not None:
+            config = config.__replace__(Cmd=model.command)
+        if model.entrypoint is not None:
+            config = config.__replace__(Entrypoint=model.entrypoint)
+
         return await cls.run_model(
-            context, config, cls.generate_container_name(service, name)
+            context,
+            config,
+            model.name or cls.generate_container_name(model.service, model.container),
         )
 
     @classmethod
@@ -112,6 +119,6 @@ class Docker:
         async def docker_run(
             input: DockerContainerCreationModel, context: Context
         ) -> None:
-            return await cls.load_and_run_model(context, input.service, input.model)
+            return await cls.load_and_run_model(context, input)
 
         return [docker_run]
