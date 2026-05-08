@@ -1,12 +1,16 @@
 import logging
 import secrets
+from typing import Any
 
 import aiodocker
 import aiofiles
-from hatchet_sdk import Context
+from hatchet_sdk import Context, Hatchet
+from hatchet_sdk.runnables.workflow import BaseWorkflow
 from homelab_pydantic import docker
 
 from ..config import Config
+from ..worker import label
+from .model import DockerContainerCreationModel
 
 logger = logging.getLogger(__name__)
 
@@ -92,3 +96,19 @@ class Docker:
         return await cls.run_model(
             context, config, cls.generate_container_name(service, name)
         )
+
+    @classmethod
+    def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
+        @hatchet.task(
+            input_validator=DockerContainerCreationModel,
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
+        )
+        async def docker_run(
+            input: DockerContainerCreationModel, context: Context
+        ) -> None:
+            return await cls.load_and_run_model(context, input.service, input.model)
+
+        return [docker_run]

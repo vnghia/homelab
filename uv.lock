@@ -1200,6 +1200,7 @@ name = "homelab-hatchet-service"
 version = "0.1.0"
 source = { editable = "service/homelab-hatchet-service" }
 dependencies = [
+    { name = "hatchet-sdk" },
     { name = "homelab-docker" },
     { name = "homelab-extra-service" },
     { name = "homelab-extract" },
@@ -1211,6 +1212,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "hatchet-sdk", specifier = ">=1.33.2" },
     { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-extra-service", editable = "service/homelab-extra-service" },
     { name = "homelab-extract", editable = "tool/homelab-extract" },

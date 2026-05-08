@@ -8,7 +8,7 @@ from typing import ClassVar, Self
 
 from hatchet_sdk import Hatchet, Worker
 
-from .type import Workflow
+from .types import Workflow
 
 logger = logging.getLogger("workflow")
 
@@ -41,12 +41,9 @@ class WorkflowModule:
             )
             return None
 
-        workflows = {}
-        for workflow_model in module.build_workflows(hatchet):
-            if workflow := Workflow.register_model(
-                hatchet, worker, namespace, workflow_model
-            ):
-                workflows[workflow.name] = workflow
+        workflows = Workflow.register_models(
+            hatchet, worker, namespace, module.build_workflows(hatchet)
+        )
 
         for old_workflow in old_workflows.values():
             if old_workflow.name not in workflows:
