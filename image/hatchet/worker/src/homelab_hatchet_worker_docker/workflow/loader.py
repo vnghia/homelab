@@ -11,7 +11,6 @@ from homelab_hatchet_tool.config import Config
 from .module import WorkflowModule
 from .types import Workflow
 
-config = Config.load()
 logger = logging.getLogger("workflow")
 
 
@@ -24,8 +23,8 @@ class WorkflowLoader:
     static_workflows: dict[str, Workflow]
 
     def __post_init__(self) -> None:
-        sys.path.append(config.workflow_dir.as_posix())
-        for path in config.workflow_dir.glob("*.py"):
+        sys.path.append(self.config.workflow_dir.as_posix())
+        for path in self.config.workflow_dir.glob("*.py"):
             WorkflowModule.load(self.hatchet, self.worker, self.namespace, path)
 
         for workflow_data in self.hatchet.workflows.list(self.namespace).rows or []:

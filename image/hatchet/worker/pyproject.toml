@@ -6,6 +6,7 @@ dependencies = [
     "hatchet-sdk[otel]>=1.33.2",
     "homelab-hatchet-tool",
     "watchfiles>=1.1.1",
+    "pydantic>=2.10.6",
 ]
 
 [build-system]

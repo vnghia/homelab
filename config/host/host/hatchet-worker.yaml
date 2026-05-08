@@ -44,6 +44,11 @@ services:
           volume: hatchet-worker-config
         transform:
           path: docker
+      WORKER_SCHEDULE_DIR:
+        extract:
+          volume: hatchet-worker-config
+        transform:
+          path: schedule
     config:
       worker: worker
       workflow-dir:
@@ -136,3 +141,5 @@ services:
             svariable: WORKER_WORKFLOW_DIR
           HATCHET_WORKER_DOCKER_DIR:
             svariable: WORKER_DOCKER_DIR
+          HATCHET_WORKER_SCHEDULE_DIR:
+            svariable: WORKER_SCHEDULE_DIR

@@ -773,7 +773,6 @@ dependencies = [
     { name = "loguru" },
     { name = "pulumi" },
     { name = "pulumiverse-grafana" },
-    { name = "pydantic-ast" },
 ]
 
 [package.dev-dependencies]
@@ -819,7 +818,6 @@ requires-dist = [
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumiverse-grafana", specifier = ">=2.25.1" },
-    { name = "pydantic-ast", specifier = ">=0.2.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -1248,6 +1246,7 @@ source = { directory = "image/hatchet/worker" }
 dependencies = [
     { name = "hatchet-sdk", extra = ["otel"] },
     { name = "homelab-hatchet-tool" },
+    { name = "pydantic" },
     { name = "watchfiles" },
 ]
 
@@ -1255,6 +1254,7 @@ dependencies = [
 requires-dist = [
     { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.33.2" },
     { name = "homelab-hatchet-tool", editable = "image/hatchet/worker/homelab-hatchet-tool" },
+    { name = "pydantic", specifier = ">=2.10.6" },
     { name = "watchfiles", specifier = ">=1.1.1" },
 ]
 
@@ -2527,18 +2527,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/69/44/36f1a6e523abc58ae5f928898e4aca2e0ea509b5aa6f6f392a5d882be928/pydantic-2.12.5.tar.gz", hash = "sha256:4d351024c75c0f085a9febbb665ce8c0c6ec5d30e903bdb6394b7ede26aebb49", size = 821591, upload-time = "2025-11-26T15:11:46.471Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5a/87/b70ad306ebb6f9b585f114d0ac2137d792b48be34d732d60e597c2f8465a/pydantic-2.12.5-py3-none-any.whl", hash = "sha256:e561593fccf61e8a20fc46dfc2dfe075b8be7d0188df33f221ad1f0139180f9d", size = 463580, upload-time = "2025-11-26T15:11:44.605Z" },
-]
-
-[[package]]
-name = "pydantic-ast"
-version = "0.2.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pydantic" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/62/d0/2d338d5a1adc0a5411b94d079951c363fc7c0bf671d860322313d090e1ee/pydantic_ast-0.2.1.tar.gz", hash = "sha256:b288e6f3c3e3b74f791fb5616cfa283a9f7b1b6842f3107d804159b9ca176f25", size = 7035, upload-time = "2026-04-16T14:39:35.512Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/08/8a/25f2b3692e5360a12048f9ce42110deaa563cf7ab9e9d9b457bed805176a/pydantic_ast-0.2.1-py3-none-any.whl", hash = "sha256:eb05b3edc043d9ccc41d8d31ec30501fdd07ed0df4dad0c1aa82591ed2a9cfbb", size = 13660, upload-time = "2026-04-16T14:39:34.343Z" },
 ]
 
 [[package]]

@@ -35,7 +35,6 @@ dependencies = [
     "homelab-balite-docker",
     "homelab-wintele-docker",
     "homelab-hatchet-worker-docker",
-    "pydantic-ast>=0.2.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.14.0"

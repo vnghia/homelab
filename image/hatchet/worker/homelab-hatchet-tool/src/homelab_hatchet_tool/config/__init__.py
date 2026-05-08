@@ -18,6 +18,7 @@ class Config(BaseSettings):
     name: str | None = None
     workflow_dir: Path = CONFIG_PATH_PREFIX / "workflow"
     docker_dir: Path = CONFIG_PATH_PREFIX / "docker"
+    schedule_dir: Path = CONFIG_PATH_PREFIX / "schedule"
 
     @classmethod
     def load(cls) -> Self:

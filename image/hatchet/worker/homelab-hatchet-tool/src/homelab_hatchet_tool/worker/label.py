@@ -3,9 +3,10 @@ from hatchet_sdk import DesiredWorkerLabel, WorkerLabelComparator
 from ..config import Config
 
 HOST_LABEL = "host"
+HOST_VALUE = Config.load().host
 DESIRED_HOST_LABEL = DesiredWorkerLabel(
     key=HOST_LABEL,
-    value=Config.load().host,
+    value=HOST_VALUE,
     comparator=WorkerLabelComparator.EQUAL,
     required=True,
 )

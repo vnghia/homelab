@@ -435,6 +435,7 @@ source = { editable = "." }
 dependencies = [
     { name = "hatchet-sdk", extra = ["otel"] },
     { name = "homelab-hatchet-tool" },
+    { name = "pydantic" },
     { name = "watchfiles" },
 ]
 
@@ -442,6 +443,7 @@ dependencies = [
 requires-dist = [
     { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.33.2" },
     { name = "homelab-hatchet-tool", editable = "homelab-hatchet-tool" },
+    { name = "pydantic", specifier = ">=2.10.6" },
     { name = "watchfiles", specifier = ">=1.1.1" },
 ]
 

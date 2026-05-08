@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 class Docker:
+    DOCKER_RUN_TASK = "docker-run"
+
     def __init__(self) -> None:
         self.client = aiodocker.Docker()
 
@@ -100,6 +102,7 @@ class Docker:
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         @hatchet.task(
+            name=cls.DOCKER_RUN_TASK,
             input_validator=DockerContainerCreationModel,
             desired_worker_labels=[
                 label.DESIRED_HOST_LABEL,

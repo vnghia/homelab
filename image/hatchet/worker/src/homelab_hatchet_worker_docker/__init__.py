@@ -4,6 +4,7 @@ from homelab_hatchet_tool.docker import Docker
 from homelab_hatchet_tool.worker import NAMESPACE_SEPARATOR, label
 
 from . import setup
+from .schedule.loader import ScheduleLoader
 from .workflow.loader import WorkflowLoader
 from .workflow.types import Workflow
 
@@ -17,11 +18,14 @@ hatchet = Hatchet(config=ClientConfig(debug=config.log_level == "DEBUG", logger=
 def main() -> None:
     logger.info(config.model_dump_json())
     worker = hatchet.worker(
-        config.host + ((NAMESPACE_SEPARATOR + config.name) if config.name else ""),
-        labels={label.HOST_LABEL: config.host, label.DOCKER_LABEL: label.DOCKER_VALUE},
+        label.HOST_VALUE + ((NAMESPACE_SEPARATOR + config.name) if config.name else ""),
+        labels={
+            label.HOST_LABEL: label.HOST_VALUE,
+            label.DOCKER_LABEL: label.DOCKER_VALUE,
+        },
     )
 
-    namespace = config.host
+    namespace = label.HOST_VALUE
     static_workflows = Workflow.register_models(
         hatchet, worker, namespace, Docker.build_workflows(hatchet)
     )
@@ -30,5 +34,8 @@ def main() -> None:
         hatchet, worker, config, namespace, static_workflows
     )
     workflow_loader.watch()
+
+    schedule_loader = ScheduleLoader(workflow_loader)
+    schedule_loader.watch()
 
     worker.start()
