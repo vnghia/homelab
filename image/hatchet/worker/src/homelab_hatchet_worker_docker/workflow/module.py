@@ -1,6 +1,7 @@
 import dataclasses
 import importlib
 import logging
+import sys
 import types
 from pathlib import Path
 from typing import ClassVar, Self
@@ -42,10 +43,10 @@ class WorkflowModule:
 
         workflows = {}
         for workflow_model in module.build_workflows(hatchet):
-            workflow = Workflow.register_model(
+            if workflow := Workflow.register_model(
                 hatchet, worker, namespace, workflow_model
-            )
-            workflows[workflow.name] = workflow
+            ):
+                workflows[workflow.name] = workflow
 
         for old_workflow in old_workflows.values():
             if old_workflow.name not in workflows:
@@ -67,5 +68,4 @@ class WorkflowModule:
         for workflow in instance.workflows.values():
             logger.info("Deleting workflow {}:{}".format(workflow.name, workflow.id))
             hatchet.workflows.delete(workflow.id)
-
-        importlib.invalidate_caches()
+        del sys.modules[path.stem]
