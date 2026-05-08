@@ -6,7 +6,7 @@ from pulumi import Output, ResourceOptions
 from ...extract import ExtractorArgs
 from ...model.docker.container.volume_path import ContainerVolumePath
 from ...model.file import FilePermissionModel
-from ...model.file.docker import DockerContainerOverwriteModel
+from ...model.file.docker import DockerContainerCreationModel
 from ...model.user import UidGidModel
 from .config import ConfigFileResource, JsonDumper
 
@@ -21,18 +21,18 @@ class DockerContainerCreationModelResource(
 
     def __init__(
         self,
-        overwrite: DockerContainerOverwriteModel | None,
+        creation: DockerContainerCreationModel | None,
         *,
         opts: ResourceOptions,
         volume_path: ContainerVolumePath,
         permission: UidGidModel | FilePermissionModel,
         extractor_args: ExtractorArgs,
     ) -> None:
-        overwrite = overwrite or DockerContainerOverwriteModel()
+        creation = creation or DockerContainerCreationModel()
         service = extractor_args.service
-        model = service.model[overwrite.model].to_full(extractor_args)
+        model = service.model[creation.model].to_full(extractor_args)
 
-        build_args = model.build_args(service.options[overwrite.model], extractor_args)
+        build_args = model.build_args(service.options[creation.model], extractor_args)
         user = model.build_user(extractor_args)
 
         config: dict[str, Any] = {}
@@ -43,18 +43,18 @@ class DockerContainerCreationModelResource(
         config["User"] = model.build_container_user(user)
         config["Entrypoint"] = (
             entrypoint
-            if (entrypoint := overwrite.build_entrypoint(extractor_args))
+            if (entrypoint := creation.build_entrypoint(extractor_args))
             and entrypoint is not None
             else model.build_entrypoint(extractor_args)
         )
         config["Cmd"] = (
             command
-            if (command := overwrite.build_command(extractor_args))
+            if (command := creation.build_command(extractor_args))
             and command is not None
             else model.build_command(extractor_args)
         )
         config["Labels"] = model.build_labels(
-            service.container_full_names[overwrite.model],
+            service.container_full_names[creation.model],
             extractor_args,
             build_args,
         )
@@ -124,7 +124,7 @@ class DockerContainerCreationModelResource(
         config["NetworkingConfig"] = network_config
 
         super().__init__(
-            service.add_service_name(overwrite.model),
+            service.add_service_name(creation.model),
             opts=opts,
             volume_path=volume_path,
             data=config,

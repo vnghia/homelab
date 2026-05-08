@@ -8,7 +8,7 @@ if typing.TYPE_CHECKING:
     from ...extract import ExtractorArgs
 
 
-class DockerContainerOverwriteModel(HomelabBaseModel):
+class DockerProcessCreationModel(HomelabBaseModel):
     model: str | None = None
     entrypoint: list[GlobalExtract] | None = None
     command: list[GlobalExtract] | None = None
@@ -34,3 +34,7 @@ class DockerContainerOverwriteModel(HomelabBaseModel):
                 for command in self.command
             ]
         return None
+
+
+class DockerContainerCreationModel(DockerProcessCreationModel):
+    pass
