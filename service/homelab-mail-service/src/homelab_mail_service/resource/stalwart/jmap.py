@@ -2,7 +2,7 @@ import typing
 from typing import Any, ClassVar
 
 import httpx
-from homelab_pydantic import DictAnyAdapter, HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, JsonAdapter
 from pulumi import ResourceOptions
 from pulumi.dynamic import CreateResult, Resource, ResourceProvider, UpdateResult
 from pydantic import ConfigDict
@@ -108,7 +108,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                 .json()
             )
             try:
-                resource = DictAnyAdapter.validate_python(
+                resource = JsonAdapter.validate_python(
                     response["methodResponses"][0][1]["created"][self.RESOURCE_KEY]
                 )
                 id = str(resource["id"])
@@ -144,7 +144,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                 if not resource:
                     return self.extract_data(self.data, self.attrs)
                 return self.extract_data(
-                    DictAnyAdapter.validate_python(resource), self.attrs
+                    JsonAdapter.validate_python(resource), self.attrs
                 )
             except KeyError as error:
                 raise RuntimeError(diff, response) from error

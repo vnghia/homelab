@@ -4,10 +4,11 @@ from . import docker as docker
 from .hostname import Hostname as Hostname
 from .hostname import Hostnames as Hostnames
 from .model import DictAdapter as DictAdapter
-from .model import DictAnyAdapter as DictAnyAdapter
 from .model import HomelabBaseModel as HomelabBaseModel
 from .model import HomelabRootModel as HomelabRootModel
 from .model import HomelabServiceConfigDict as HomelabServiceConfigDict
+from .model import Json as Json
+from .model import JsonAdapter as JsonAdapter
 from .network import IPvAnyAddressAdapter as IPvAnyAddressAdapter
 from .network import IPvAnyNetworkAdapter as IPvAnyNetworkAdapter
 from .path import AbsolutePath as AbsolutePath

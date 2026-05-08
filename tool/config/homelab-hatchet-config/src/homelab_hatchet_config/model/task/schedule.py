@@ -1,16 +1,16 @@
 import dataclasses
 
-from hatchet_sdk.utils.typing import JSONSerializableMapping
+from homelab_pydantic import Json
 
 
 @dataclasses.dataclass
 class HatchetTaskWorkflowInputArgs:
     workflow: str
-    input: JSONSerializableMapping | None
+    input: Json | None
 
 
 @dataclasses.dataclass
 class HatchetTaskScheduleArgs:
     workflow: str
     schedules: list[str]
-    input: JSONSerializableMapping | None
+    input: Json | None

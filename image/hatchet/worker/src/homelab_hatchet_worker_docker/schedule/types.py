@@ -1,15 +1,14 @@
 from collections import defaultdict
 from typing import Annotated
 
-from hatchet_sdk.utils.typing import JSONSerializableMapping
-from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel, Json
 from pydantic import Field
 
 
 class ScheduleWorkflow(HomelabBaseModel):
     id: str
     workflow: str
-    input: JSONSerializableMapping | None
+    input: Json | None
 
 
 class NamespacedExpressionScheduleWorkflows(

@@ -1183,14 +1183,12 @@ name = "homelab-hatchet-config"
 version = "0.1.0"
 source = { editable = "tool/config/homelab-hatchet-config" }
 dependencies = [
-    { name = "hatchet-sdk" },
     { name = "homelab-docker" },
     { name = "homelab-pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "hatchet-sdk", specifier = ">=1.33.2" },
     { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
 ]
