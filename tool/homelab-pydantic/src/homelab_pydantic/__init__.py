@@ -12,3 +12,13 @@ from .network import IPvAnyAddressAdapter as IPvAnyAddressAdapter
 from .network import IPvAnyNetworkAdapter as IPvAnyNetworkAdapter
 from .path import AbsolutePath as AbsolutePath
 from .path import RelativePath as RelativePath
+
+
+def add_namespace(
+    namespace: str | None, name: str | None, *, separator: str = "-"
+) -> str:
+    if namespace:
+        return namespace + ((separator + name) if name else "")
+    if name:
+        return ((namespace + separator) if namespace else "") + name
+    raise ValueError("Either namespace of name must not be null")

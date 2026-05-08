@@ -6,7 +6,7 @@ from typing import cast
 import pulumi
 import pulumi_tls as tls
 from homelab_extract.service.mtls import MTlsInfoSourceModel
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import HomelabBaseModel, add_namespace
 from homelab_secret.resource import SecretResource
 from homelab_secret.resource.cert.mtls import SecretMTlsResource
 from pulumi import Alias, ComponentResource, Output, Resource, ResourceOptions
@@ -95,9 +95,7 @@ class ServiceResourceBase(ComponentResource):
 
     @classmethod
     def add_service_name(cls, name: str | None, prefix: str | None = None) -> str:
-        from ...model.host import HostNoServiceModel
-
-        return HostNoServiceModel.add_prefix(prefix or cls.name(), name)
+        return add_namespace(prefix or cls.name(), name)
 
     @classmethod
     def get_key(cls, name: str | None) -> str | None:

@@ -6,6 +6,7 @@ from homelab_extract.container.info import (
     ContainerExtractInfoSource,
     ContainerInfoSource,
 )
+from homelab_pydantic import add_namespace
 from pulumi import Output
 
 from .. import ExtractorBase
@@ -29,14 +30,13 @@ class ContainerInfoSourceExtractor(ExtractorBase[ContainerExtractInfoSource]):
                     ContainerNetworkMode,
                     ContainerNetworkModeConfig,
                 )
-                from ...model.host import HostNoServiceModel
 
                 network = extractor_args.container_model.network.root
                 if isinstance(network, ContainerNetworkContainerConfig):
                     extractor_args.get_service(network.service).containers[
                         network.container
                     ]
-                    return HostNoServiceModel.add_prefix(
+                    return add_namespace(
                         network.service or extractor_args.service.name(),
                         network.container,
                     )

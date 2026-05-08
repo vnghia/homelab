@@ -4,13 +4,13 @@ import pulumi_docker as docker
 import pulumi_docker_build as docker_build
 from homelab_global.resource import GlobalResource
 from homelab_network.resource.network import NetworkResource
+from homelab_pydantic import add_namespace
 from pulumi import ComponentResource, ResourceOptions
 from pydantic.alias_generators import to_snake
 
 from ..client import DockerClient
 from ..config.host import HostServiceModelConfig
 from ..extract import ExtractorArgs
-from ..model.host import HostNoServiceModel
 from ..resource.docker import DockerResource
 from ..resource.service import ServiceResourceBase
 
@@ -84,4 +84,4 @@ class HostResourceBase(ComponentResource):
         return cls._host_name
 
     def add_host_name(self, name: str | None, prefix: str | None = None) -> str:
-        return HostNoServiceModel.add_prefix(prefix or self.name, name)
+        return add_namespace(prefix or self.name, name)

@@ -6,10 +6,10 @@ from homelab_docker.model.docker.container.observability import (
     ContainerObservabilityInputModel,
 )
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
-from homelab_docker.model.host import HostNoServiceModel
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_extra_service import ExtraService
+from homelab_pydantic import add_namespace
 from pulumi import ResourceOptions
 
 from .config import VectorConfig
@@ -57,7 +57,7 @@ class VectorService(ExtraService[VectorConfig]):
 
         sources = {}
         for key, data in config.sources.items():
-            full_key = HostNoServiceModel.add_prefix(prefix, key)
+            full_key = add_namespace(prefix, key)
             keys[key] = full_key
             sources[full_key] = {
                 "type": data.type
@@ -68,7 +68,7 @@ class VectorService(ExtraService[VectorConfig]):
             inputs = [build_input(input) for input in data.inputs]
             if not inputs:
                 continue
-            full_key = HostNoServiceModel.add_prefix(prefix, key)
+            full_key = add_namespace(prefix, key)
             keys[key] = full_key
             transforms[full_key] = {
                 "type": data.type,
@@ -80,7 +80,7 @@ class VectorService(ExtraService[VectorConfig]):
             inputs = [build_input(input) for input in data.inputs]
             if not inputs:
                 continue
-            sinks[HostNoServiceModel.add_prefix(prefix, key)] = {
+            sinks[add_namespace(prefix, key)] = {
                 "type": data.type,
                 "inputs": inputs,
             } | GlobalExtractor.extract_recursively(data.model_extra, extractor_args)
