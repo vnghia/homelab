@@ -27,22 +27,22 @@ services:
             schedules:
               - "0 * * * *"
             docker:
-              run:
-                command:
-                  - logrotate
-                  - --verbose
-                  - --state
-                  - extract:
-                      volume: logrotate-state
-                    transform:
-                      path: logrotate.state
-                  - svariable: LOG_ROTATE_CONFIG_PATH
+              run: {}
     network:
       bridge:
     container:
       active: false
       image:
         build: logrotate
+      command:
+        - logrotate
+        - --verbose
+        - --state
+        - extract:
+            volume: logrotate-state
+          transform:
+            path: logrotate.state
+        - svariable: LOG_ROTATE_CONFIG_PATH
       docker-socket:
         write: false
       volumes:
