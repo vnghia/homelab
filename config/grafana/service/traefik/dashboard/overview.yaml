@@ -642,8 +642,8 @@ spec:
                       name: ${datasource}
                     spec:
                       expr: |-
-                        sum by (code) (label_replace((increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service"}[$agg_interval] offset - $agg_interval )) > 0,
-                          "code", "HTTP ${1}00-${1}99", "code", "^([0-9]).+"
+                        sum by (alias) (label_replace((increase(traefik_service_requests_total{service_namespace="$namespace", protocol="http", service=~"$service"}[$agg_interval] offset - $agg_interval )) > 0,
+                          "alias", "HTTP ${1}00-${1}99", "code", "^([0-9]).+"
                         ))
                       format: time_series
                       instant: false
@@ -667,46 +667,7 @@ spec:
                       range: true
                   refId: B
                   hidden: false
-            transformations:
-              - group: seriesToRows
-                kind: Transformation
-                spec:
-                  filter:
-                    id: byRefId
-                    options: A
-                  options: {}
-              - group: groupBy
-                kind: Transformation
-                spec:
-                  filter:
-                    id: byRefId
-                    options: /^(?:seriesToRows-A.*)$/
-                  options:
-                    fields:
-                      Metric:
-                        aggregations: []
-                        operation: groupby
-                      Time:
-                        aggregations: []
-                        operation: groupby
-                      Value:
-                        aggregations:
-                          - sum
-                        operation: aggregate
-              - group: prepareTimeSeries
-                kind: Transformation
-                spec:
-                  filter:
-                    id: byRefId
-                    options: /^(?:seriesToRows-A.*)$/
-                  options:
-                    format: multi
-              - group: renameByRegex
-                kind: Transformation
-                spec:
-                  options:
-                    regex: Value \(sum\) (.+)
-                    renamePattern: $1
+            transformations: []
             queryOptions:
               interval: $agg_interval
         vizConfig:
