@@ -10,6 +10,7 @@ from homelab_pydantic import docker
 
 from ..config import Config
 from ..worker import label
+from .model.exec import DockerContainerExecModel
 from .model.run import DockerContainerRunModel
 
 logger = logging.getLogger("docker")
@@ -17,6 +18,7 @@ logger = logging.getLogger("docker")
 
 class Docker:
     DOCKER_RUN_TASK = "docker-run"
+    DOCKER_EXEC_TASK = "docker-exec"
 
     def __init__(self) -> None:
         self.client = aiodocker.Docker()
@@ -76,6 +78,33 @@ class Docker:
             await container.delete(force=True, v=True)
 
     @classmethod
+    async def exec_container(
+        cls,
+        context: Context,
+        exec: docker.ContainerExecModel,
+        name: str,
+        stdout: bool = True,
+        stderr: bool = True,
+    ) -> None:
+        logger.debug(exec)
+        logger.info("Execing container {}".format(name))
+
+        instance = (
+            await cls()
+            .client.containers.container(name)
+            .exec(cmd=exec.command, stdout=stdout, stderr=stderr, tty=False)
+        )
+        logger.debug(instance)
+
+        exec_id = instance.id[:7]
+        async with instance.start(timeout=None, detach=False) as stream:
+            while message := (await stream.read_out()):
+                # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
+                logger.info(
+                    "[{}] - [{}] - {}".format(name, exec_id, message.data.decode())
+                )
+
+    @classmethod
     async def load_and_run_model(
         cls, context: Context, model: DockerContainerRunModel
     ) -> None:
@@ -85,6 +114,13 @@ class Docker:
             creation,
             model.name or cls.generate_container_name(model.service, model.container),
         )
+
+    @classmethod
+    async def load_and_exec_model(
+        cls, context: Context, model: DockerContainerExecModel
+    ) -> None:
+        exec, name = await model.load(Config.load())
+        return await cls.exec_container(context, exec, name)
 
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
@@ -100,4 +136,18 @@ class Docker:
         async def docker_run(input: DockerContainerRunModel, context: Context) -> None:
             return await cls.load_and_run_model(context, input)
 
-        return [docker_run]
+        @hatchet.task(
+            name=cls.DOCKER_EXEC_TASK,
+            input_validator=DockerContainerExecModel,
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
+            execution_timeout=datetime.timedelta(days=7),
+        )
+        async def docker_exec(
+            input: DockerContainerExecModel, context: Context
+        ) -> None:
+            return await cls.load_and_exec_model(context, input)
+
+        return [docker_run, docker_exec]

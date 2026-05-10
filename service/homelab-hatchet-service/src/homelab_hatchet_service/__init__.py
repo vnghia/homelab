@@ -31,6 +31,9 @@ class HatchetService(ExtraService[HatchetConfig]):
         self.docker_container_creation_resources: dict[
             str, dict[str | None, DockerContainerCreationModelResource]
         ] = defaultdict(dict)
+        self.docker_container_service_name_resources: dict[str, set[str | None]] = (
+            defaultdict(set)
+        )
 
         self.workder_model = self.containers[self.config.worker].model
         self.workder_extractor_args = self.extractor_args.with_container(
@@ -57,6 +60,21 @@ class HatchetService(ExtraService[HatchetConfig]):
             / HatchetToolConfig.DOCKER_RUN_PREFIX
             / service
             / (name or service)
+        )
+
+    def get_docker_exec_volume_path(
+        self, service: str, name: str | None
+    ) -> ContainerVolumePath:
+        return (
+            self.docker_dir_volume_path
+            / HatchetToolConfig.DOCKER_EXEC_PREFIX
+            / service
+            / (name or service)
+        )
+
+    def get_docker_name_volume_path(self, service: str) -> ContainerVolumePath:
+        return (
+            self.docker_dir_volume_path / HatchetToolConfig.DOCKER_NAME_PREFIX / service
         )
 
     def get_schedule_volume_path(self, name: str) -> ContainerVolumePath:

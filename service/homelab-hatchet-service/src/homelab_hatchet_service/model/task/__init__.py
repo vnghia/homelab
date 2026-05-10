@@ -17,13 +17,14 @@ if typing.TYPE_CHECKING:
 class HatchetTaskModelBuilder(HomelabRootModel[HatchetTaskModel]):
     def build_resources(
         self,
+        task_name: str | None,
         opts: ResourceOptions,
         hatchet_service: HatchetService,
         extractor_args: ExtractorArgs,
     ) -> ast.AsyncFunctionDef | HatchetTaskScheduleArgs:
         root = self.root.root
         task = HatchetTaskDockerModelBuilder(root).build_resources(
-            opts, hatchet_service, extractor_args
+            task_name, opts, hatchet_service, extractor_args
         )
 
         if isinstance(task, ast.AsyncFunctionDef):

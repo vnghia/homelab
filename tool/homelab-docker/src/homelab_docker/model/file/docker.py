@@ -8,10 +8,11 @@ if typing.TYPE_CHECKING:
     from ...extract import ExtractorArgs
 
 
-class DockerProcessCreationModel(HomelabBaseModel):
+class DockerContainerRunModel(HomelabBaseModel):
     container: str | None = None
     entrypoint: list[GlobalExtract] | None = None
     command: list[GlobalExtract] | None = None
+    name: str | None = None
 
     def build_entrypoint(
         self, extractor_args: ExtractorArgs
@@ -34,7 +35,3 @@ class DockerProcessCreationModel(HomelabBaseModel):
                 for command in self.command
             ]
         return None
-
-
-class DockerContainerCreationModel(DockerProcessCreationModel):
-    name: str | None = None

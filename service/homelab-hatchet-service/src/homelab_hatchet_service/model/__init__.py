@@ -29,13 +29,14 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         extractor_args: ExtractorArgs,
     ) -> None:
         from ..resource import HatchetScheduleResource, HatchetWorkflowResource
+        from ..resource.docker import HatchetDockerContainerServiceNameResource
 
         tasks = []
         schedules = {}
 
         for task_name, task_model in self.root.task.root.items():
             result = HatchetTaskModelBuilder(task_model).build_resources(
-                opts, hatchet_service, extractor_args
+                task_name, opts, hatchet_service, extractor_args
             )
             if isinstance(result, ast.AsyncFunctionDef):
                 tasks.append(result)
@@ -66,3 +67,7 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                 hatchet_service=hatchet_service,
                 extractor_args=extractor_args,
             )
+
+        HatchetDockerContainerServiceNameResource(
+            opts=opts, hatchet_service=hatchet_service, extractor_args=extractor_args
+        )

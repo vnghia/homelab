@@ -1,5 +1,6 @@
 from hatchet_sdk import Context, EmptyModel, Hatchet
 from homelab_hatchet_tool.docker import Docker
+from homelab_hatchet_tool.docker.model.exec import DockerContainerExecModel
 from homelab_hatchet_tool.docker.model.run import DockerContainerRunModel
 from homelab_hatchet_tool.worker import label
 
@@ -24,7 +25,7 @@ async def run(_: EmptyModel, context: Context) -> None:
 )
 async def exec(_: EmptyModel, context: Context) -> None:
     service = "#service"
-    container = "#container"
-    return await Docker.load_and_run_model(
-        context, DockerContainerRunModel(service=service, container=container)
+    exec = "#exec"
+    return await Docker.load_and_exec_model(
+        context, DockerContainerExecModel(service=service, exec=exec)
     )

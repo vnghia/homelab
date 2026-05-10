@@ -28,6 +28,7 @@ TEMPLATE = ast.parse(TEMPLATE_PATH.read_text())
 SERVICE_PLACEHOLDER = "#service"
 CONTAINER_PLACEHOLDER = "#container"
 NAME_PLACEHOLDER = "#name"
+EXEC_PLACEHOLDER = "#exec"
 
 
 def replace_placeholder(
@@ -67,6 +68,7 @@ class HatchetTaskDockerRunModelBuilder(HomelabRootModel[HatchetTaskDockerRunMode
 
     def build_resources(
         self,
+        task_name: str | None,
         opts: ResourceOptions,
         workflow: bool,
         hatchet_service: HatchetService,
@@ -96,7 +98,7 @@ class HatchetTaskDockerRunModelBuilder(HomelabRootModel[HatchetTaskDockerRunMode
                     "Docker task workflow builder only supports service, container and name"
                 )
             return replace_placeholder(
-                self.TEMPLATE_NAME, service, root.container, root.name
+                self.TEMPLATE_NAME, service, task_name, root.name
             )
 
         return HatchetTaskWorkflowInputArgs(
@@ -120,20 +122,44 @@ class HatchetTaskDockerExecModelBuilder(HomelabRootModel[HatchetTaskDockerExecMo
 
     def build_resources(
         self,
+        task_name: str | None,
         opts: ResourceOptions,
         workflow: bool,
         hatchet_service: HatchetService,
         extractor_args: ExtractorArgs,
-    ) -> ast.AsyncFunctionDef:
+    ) -> ast.AsyncFunctionDef | HatchetTaskWorkflowInputArgs:
+        from ....resource.docker import HatchetDockerContainerExecModelResource
+
         root = self.root.exec
-        return replace_placeholder(
-            self.TEMPLATE_NAME, extractor_args.service, root.container, None
+        service = extractor_args.service
+
+        hatchet_service.docker_container_service_name_resources[service.name()].add(
+            root.container
+        )
+
+        HatchetDockerContainerExecModelResource(
+            task_name,
+            root,
+            opts=opts,
+            hatchet_service=hatchet_service,
+            extractor_args=extractor_args,
+        )
+
+        if workflow:
+            return replace_placeholder(
+                self.TEMPLATE_NAME, extractor_args.service, root.container, None
+            )
+
+        return HatchetTaskWorkflowInputArgs(
+            workflow=Docker.DOCKER_EXEC_TASK,
+            input={"service": service.name(), "exec": task_name},
         )
 
 
 class HatchetTaskDockerModelBuilder(HomelabRootModel[HatchetTaskDockerModel]):
     def build_resources(
         self,
+        task_name: str | None,
         opts: ResourceOptions,
         hatchet_service: HatchetService,
         extractor_args: ExtractorArgs,
@@ -143,4 +169,6 @@ class HatchetTaskDockerModelBuilder(HomelabRootModel[HatchetTaskDockerModel]):
             HatchetTaskDockerRunModelBuilder(root.docker)
             if isinstance(root.docker, HatchetTaskDockerRunModel)
             else HatchetTaskDockerExecModelBuilder(root.docker)
-        ).build_resources(opts, root.should_workflow, hatchet_service, extractor_args)
+        ).build_resources(
+            task_name, opts, root.should_workflow, hatchet_service, extractor_args
+        )
