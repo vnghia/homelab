@@ -30,27 +30,29 @@ def to_args(
         missing_series_evals_to_resolve=model.missing_series_evals_to_resolve,
         no_data_state=model.no_data_state,
         notification_settings=grafana.alerting.v0alpha1.AlertRuleSpecNotificationSettingsArgs(
-            contact_point=model.notification_settings.receiver,
-            active_timings=[
-                i.root for i in model.notification_settings.active_time_intervals
-            ]
-            if model.notification_settings.active_time_intervals
-            else None,
-            group_bies=model.notification_settings.group_by,
-            group_interval=model.notification_settings.group_interval.root
-            if model.notification_settings.group_interval
-            else None,
-            group_wait=model.notification_settings.group_wait.root
-            if model.notification_settings.group_wait
-            else None,
-            mute_timings=[
-                i.root for i in model.notification_settings.mute_time_intervals
-            ]
-            if model.notification_settings.mute_time_intervals
-            else None,
-            repeat_interval=model.notification_settings.repeat_interval.root
-            if model.notification_settings.repeat_interval
-            else None,
+            simplified_routing=grafana.alerting.v0alpha1.AlertRuleSpecNotificationSettingsSimplifiedRoutingArgs(
+                active_timings=[
+                    i.root for i in model.notification_settings.active_time_intervals
+                ]
+                if model.notification_settings.active_time_intervals
+                else None,
+                contact_point=model.notification_settings.receiver,
+                group_bies=model.notification_settings.group_by,
+                group_interval=model.notification_settings.group_interval.root
+                if model.notification_settings.group_interval
+                else None,
+                group_wait=model.notification_settings.group_wait.root
+                if model.notification_settings.group_wait
+                else None,
+                mute_timings=[
+                    i.root for i in model.notification_settings.mute_time_intervals
+                ]
+                if model.notification_settings.mute_time_intervals
+                else None,
+                repeat_interval=model.notification_settings.repeat_interval.root
+                if model.notification_settings.repeat_interval
+                else None,
+            ),
         )
         if model.notification_settings
         else None,

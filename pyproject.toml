@@ -35,6 +35,7 @@ dependencies = [
     "homelab-balite-docker",
     "homelab-wintele-docker",
     "homelab-hatchet-worker-docker",
+    "yaml-rs==0.0.11",
 ]
 readme = "README.md"
 requires-python = ">= 3.14.0"
@@ -46,7 +47,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "mypy>=1.14.1",
+    "mypy==1.19",
     "datamodel-code-generator[http]>=0.28.1",
     "ruff>=0.9.6",
     "dtach>=0.31.2",
