@@ -13,7 +13,7 @@ dependencies = [
     "deepmerge>=2.0",
     "homelab-global",
     "homelab-backup",
-    "yaml-rs>=0.0.9",
+    "yaml-rs>=0.1.1",
 ]
 
 [build-system]
