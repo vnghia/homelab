@@ -34,7 +34,9 @@ class ScheduleLoader:
     workflow_loader: WorkflowLoader
 
     schedules: dict[str, NamespacedExpressionScheduleWorkflows] = dataclasses.field(
-        default_factory=lambda: defaultdict(NamespacedExpressionScheduleWorkflows)
+        default_factory=lambda: defaultdict(
+            lambda: NamespacedExpressionScheduleWorkflows(root=defaultdict(dict))
+        )
     )
 
     @property
@@ -99,7 +101,7 @@ class ScheduleLoader:
         namespace = path.stem
         old_schedules = self.schedules.pop(namespace, None)
         logger.info("Old {} schedule: {}".format(namespace, old_schedules))
-        new_schedules = NamespacedExpressionScheduleWorkflows()
+        new_schedules = NamespacedExpressionScheduleWorkflows(root=defaultdict(dict))
 
         with open(path) as file:
             try:

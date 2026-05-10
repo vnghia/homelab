@@ -30,7 +30,7 @@ class WorkflowModule:
         if path in cls.instances:
             instance = cls.instances[path]
             module = importlib.reload(instance.module)
-            old_workflows = instance.workflows
+            old_workflows: dict[str, Workflow] = instance.workflows
         else:
             module = importlib.import_module(path.stem)
             old_workflows = {}

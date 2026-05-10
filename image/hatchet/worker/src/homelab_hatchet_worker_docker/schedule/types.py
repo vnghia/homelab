@@ -20,4 +20,4 @@ class NamespacedExpressionScheduleWorkflows(
 ):
     root: defaultdict[
         str, Annotated[dict[str, ScheduleWorkflow], Field(default_factory=dict)]
-    ] = defaultdict(dict)
+    ]

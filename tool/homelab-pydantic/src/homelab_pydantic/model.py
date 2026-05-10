@@ -64,6 +64,8 @@ class HomelabRootModel[T](RootModel[T]):
         validation_error_cause=True,
     )
 
+    root: T
+
     @model_validator(mode="before")
     @classmethod
     def ignore_pulumi_provider(cls, data: Any) -> Any:

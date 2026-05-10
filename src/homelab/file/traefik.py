@@ -82,7 +82,7 @@ class TraefikFile(ComponentResource):
 
                 match egress_type:
                     case NetworkEgressType.HTTPS:
-                        proxies = []
+                        proxies: list[GlobalExtract] = []
                         for egress_key, egress_model in egress.items():
                             if egress_model.proxied:
                                 proxies.extend(egress_model.addresses)

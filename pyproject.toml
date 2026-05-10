@@ -146,3 +146,13 @@ ignore = [
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "pydantic.BaseModel".msg = "Use homelab_pydantic.HomelabBaseModel instead"
 "pydantic.RootModel".msg = "Use homelab_pydantic.HomelabRootModel instead"
+
+[tool.pyrefly]
+preset = "strict"
+project-excludes = ["**/sdks*", "**/image/*/homelab-pydantic*"]
+ignore-missing-imports = ["json_fix.*", "pykeepass.*"]
+search-path = [
+    "image/balite/src",
+    "image/hatchet/worker/src",
+    "image/telegram/wintele/src",
+]
