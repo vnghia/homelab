@@ -1,3 +1,4 @@
+import socket
 from pathlib import Path
 from typing import ClassVar, Self
 
@@ -14,7 +15,7 @@ class Config(BaseSettings):
 
     log_level: str = "INFO"
 
-    host: str
+    host: str = socket.gethostname()
     name: str | None = None
     workflow_dir: Path = CONFIG_PATH_PREFIX / "workflow"
     docker_dir: Path = CONFIG_PATH_PREFIX / "docker"
@@ -23,5 +24,5 @@ class Config(BaseSettings):
     @classmethod
     def load(cls) -> Self:
         if not cls.instance:
-            cls.instance = cls()  # type: ignore
+            cls.instance = cls()
         return cls.instance

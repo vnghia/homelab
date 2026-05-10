@@ -1,18 +1,18 @@
+import datetime
 import logging
 import secrets
 from typing import Any
 
 import aiodocker
-import aiofiles
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow
 from homelab_pydantic import docker
 
 from ..config import Config
 from ..worker import label
-from .model import DockerContainerCreationModel
+from .model.run import DockerContainerRunModel
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("docker")
 
 
 class Docker:
@@ -29,34 +29,19 @@ class Docker:
         return result + "-" + secrets.token_hex(4)[:7]
 
     @classmethod
-    async def load_model(
-        cls, model: DockerContainerCreationModel
-    ) -> docker.ContainerCreationModel:
-        async with aiofiles.open(
-            (
-                Config.load().docker_dir
-                / Config.DOCKER_RUN_PREFIX
-                / model.service
-                / (model.container or model.service)
-            )
-            .with_suffix(".json")
-            .resolve(True),
-        ) as file:
-            return docker.ContainerCreationModel.model_validate_json(await file.read())
-
-    @classmethod
-    async def run_model(
+    async def run_container(
         cls,
         context: Context,
-        model: docker.ContainerCreationModel,
+        creation: docker.ContainerCreationModel,
         name: str | None,
         stdout: bool = True,
         stderr: bool = True,
     ) -> None:
         container = await cls().client.containers.create(
-            model.model_dump(mode="json", by_alias=True, exclude_unset=True),
+            creation.model_dump(mode="json", by_alias=True, exclude_unset=True),
             name=name,
         )
+        logger.debug(creation)
 
         container_inspect = docker.schema.ModelContainerInspectResponse.model_validate(
             await container.show()
@@ -92,17 +77,12 @@ class Docker:
 
     @classmethod
     async def load_and_run_model(
-        cls, context: Context, model: DockerContainerCreationModel
+        cls, context: Context, model: DockerContainerRunModel
     ) -> None:
-        config = await cls.load_model(model)
-        if model.command is not None:
-            config = config.__replace__(Cmd=model.command)
-        if model.entrypoint is not None:
-            config = config.__replace__(Entrypoint=model.entrypoint)
-
-        return await cls.run_model(
+        creation = await model.load(Config.load())
+        return await cls.run_container(
             context,
-            config,
+            creation,
             model.name or cls.generate_container_name(model.service, model.container),
         )
 
@@ -110,15 +90,14 @@ class Docker:
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         @hatchet.task(
             name=cls.DOCKER_RUN_TASK,
-            input_validator=DockerContainerCreationModel,
+            input_validator=DockerContainerRunModel,
             desired_worker_labels=[
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
             ],
+            execution_timeout=datetime.timedelta(days=7),
         )
-        async def docker_run(
-            input: DockerContainerCreationModel, context: Context
-        ) -> None:
+        async def docker_run(input: DockerContainerRunModel, context: Context) -> None:
             return await cls.load_and_run_model(context, input)
 
         return [docker_run]
