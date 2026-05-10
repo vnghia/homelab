@@ -6,7 +6,6 @@ docker:
           location: image/barman
           base: alpine
         args:
-          SUPERCRONIC_VERSION: "0.2.41"
           BARMAN_VERSION: &barman-version "3.17.0-r0"
         version: *barman-version
   database:
@@ -80,10 +79,23 @@ services:
                       type: backup
                   - param:
                       type: snapshot
+      hatchet:
+        task:
+          cron:
+            schedules:
+              - "* * * * *"
+            docker:
+              exec:
+                command:
+                  - /usr/bin/barman
+                  - cron
+                  - --keep-descriptors
     container:
       delete-before-replace: true
       image:
         build: barman
+      command: ["infinity"]
+      entrypoint: ["sleep"]
       init: true
       tmpfs:
         - /tmp
