@@ -53,6 +53,10 @@ services:
                 - "restore"
                 - param:
                     type: snapshot
+      hatchet:
+        docker:
+          models:
+            - null
     files:
       ssh-config:
         path:
