@@ -3,7 +3,7 @@ docker:
     remote:
       hatchet:
         repo: ghcr.io/hatchet-dev/hatchet/hatchet-lite
-        tag: "v0.86.5"
+        tag: "v0.86.7"
   volumes:
     local:
       hatchet-config: {}
