@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import ClassVar
 
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.resource.file.docker import DockerContainerCreationModelResource
 from homelab_docker.resource.service import ServiceResourceBase
 from homelab_hatchet_config.model.task.docker import (
     HatchetTaskDockerExecModel,
@@ -77,20 +76,9 @@ class HatchetTaskDockerRunModelBuilder(HomelabRootModel[HatchetTaskDockerRunMode
         root = self.root.run
         service = extractor_args.service
 
-        if not hatchet_service.docker_container_creation_resources[service.name()].get(
-            root.container, None
-        ):
-            hatchet_service.docker_container_creation_resources[service.name()][
-                root.container
-            ] = DockerContainerCreationModelResource(
-                root.container,
-                opts=opts,
-                volume_path=hatchet_service.get_docker_run_volume_path(
-                    service.name(), root.container
-                ),
-                permission=hatchet_service.user,
-                extractor_args=extractor_args,
-            )
+        hatchet_service.docker_container_creation_resources[service.name()].add(
+            root.container
+        )
 
         if workflow:
             if root.command or root.entrypoint:

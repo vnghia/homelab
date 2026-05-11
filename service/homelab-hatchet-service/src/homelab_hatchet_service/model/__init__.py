@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from homelab_docker.extract import ExtractorArgs
+from homelab_docker.resource.file.docker import DockerContainerCreationModelResource
 from homelab_hatchet_config import HatchetServiceConfig
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
@@ -31,10 +32,13 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         from ..resource import HatchetScheduleResource, HatchetWorkflowResource
         from ..resource.docker import HatchetDockerContainerServiceNameResource
 
+        root = self.root
+        service = extractor_args.service
+
         tasks = []
         schedules = {}
 
-        for task_name, task_model in self.root.task.root.items():
+        for task_name, task_model in root.task.root.items():
             result = HatchetTaskModelBuilder(task_model).build_resources(
                 task_name, opts, hatchet_service, extractor_args
             )
@@ -42,6 +46,27 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                 tasks.append(result)
             else:
                 schedules[task_name] = result
+
+        for docker_container_creation in (
+            hatchet_service.docker_container_creation_resources[service.name()]
+            | root.docker.models
+        ):
+            DockerContainerCreationModelResource(
+                docker_container_creation,
+                opts=opts,
+                volume_path=hatchet_service.get_docker_model_volume_path(
+                    service.name(), docker_container_creation
+                ),
+                permission=hatchet_service.user,
+                extractor_args=extractor_args,
+            )
+
+        HatchetDockerContainerServiceNameResource(
+            root,
+            opts=opts,
+            hatchet_service=hatchet_service,
+            extractor_args=extractor_args,
+        )
 
         if tasks:
             workflow = copy.deepcopy(TEMPLATE)
@@ -67,7 +92,3 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                 hatchet_service=hatchet_service,
                 extractor_args=extractor_args,
             )
-
-        HatchetDockerContainerServiceNameResource(
-            opts=opts, hatchet_service=hatchet_service, extractor_args=extractor_args
-        )

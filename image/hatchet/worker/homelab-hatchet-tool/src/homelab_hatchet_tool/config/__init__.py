@@ -12,8 +12,9 @@ class Config(BaseSettings):
 
     CONFIG_PATH_PREFIX: ClassVar[Path] = Path("/etc/hatchet/worker")
 
-    DOCKER_RUN_PREFIX: ClassVar[str] = "run"
     DOCKER_EXEC_PREFIX: ClassVar[str] = "exec"
+
+    DOCKER_MODEL_PREFIX: ClassVar[str] = "model"
     DOCKER_NAME_PREFIX: ClassVar[str] = "name"
 
     log_level: str = "INFO"

@@ -1,5 +1,6 @@
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.config import ConfigFileResource, JsonDumper
+from homelab_hatchet_config import HatchetServiceConfig
 from homelab_hatchet_config.model.task.docker import HatchetTaskDockerExecInnerModel
 from homelab_pydantic import docker as schema
 from pulumi import ResourceOptions
@@ -50,6 +51,7 @@ class HatchetDockerContainerServiceNameResource(
 
     def __init__(
         self,
+        config: HatchetServiceConfig,
         *,
         opts: ResourceOptions,
         hatchet_service: HatchetService,
@@ -68,7 +70,7 @@ class HatchetDockerContainerServiceNameResource(
                     (key or schema.ContainerServiceName.NONE_KEY): service.containers[
                         key
                     ].resource.name
-                    for key in containers
+                    for key in containers | config.docker.names
                 },
                 permission=hatchet_service.user,
                 extractor_args=hatchet_service.extractor_args,

@@ -4,7 +4,6 @@ from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
-from homelab_docker.resource.file.docker import DockerContainerCreationModelResource
 from homelab_docker.resource.service import (
     ServiceResourceBase,
     ServiceWithConfigResourceBase,
@@ -28,9 +27,9 @@ class HatchetService(ExtraService[HatchetConfig]):
         super().__init__(model, opts=opts, extractor_args=extractor_args)
         self.build(None)
 
-        self.docker_container_creation_resources: dict[
-            str, dict[str | None, DockerContainerCreationModelResource]
-        ] = defaultdict(dict)
+        self.docker_container_creation_resources: dict[str, set[str | None]] = (
+            defaultdict(set)
+        )
         self.docker_container_service_name_resources: dict[str, set[str | None]] = (
             defaultdict(set)
         )
@@ -52,12 +51,12 @@ class HatchetService(ExtraService[HatchetConfig]):
     def get_workflow_volume_path(self, name: str) -> ContainerVolumePath:
         return (self.workflow_dir_volume_path / name).with_suffix(".py")
 
-    def get_docker_run_volume_path(
+    def get_docker_model_volume_path(
         self, service: str, name: str | None
     ) -> ContainerVolumePath:
         return (
             self.docker_dir_volume_path
-            / HatchetToolConfig.DOCKER_RUN_PREFIX
+            / HatchetToolConfig.DOCKER_MODEL_PREFIX
             / service
             / (name or service)
         )

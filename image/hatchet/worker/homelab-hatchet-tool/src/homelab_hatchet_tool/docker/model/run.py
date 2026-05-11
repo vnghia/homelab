@@ -31,7 +31,7 @@ class DockerContainerRunModel(HomelabBaseModel):
         async with aiofiles.open(
             (
                 config.docker_dir
-                / Config.DOCKER_RUN_PREFIX
+                / Config.DOCKER_MODEL_PREFIX
                 / self.service
                 / (self.container or self.service)
             )
