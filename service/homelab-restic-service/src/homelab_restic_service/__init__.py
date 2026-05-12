@@ -1,3 +1,5 @@
+import functools
+import operator
 from collections import defaultdict
 from pathlib import PosixPath
 
@@ -109,8 +111,8 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             )
             self.export_repositories.append(Output.from_input(repository_profile))
 
-        self.database_configs = []
-        self.volume_configs = []
+        self.database_configs: list[ResticVolumeConfig] = []
+        self.volume_configs: list[ResticVolumeConfig] = []
 
         for (
             name,
@@ -189,6 +191,17 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 )
             )
 
+        self.service_database_profiles: dict[str, list[str]] = {
+            self.get_database_group(service): functools.reduce(
+                operator.iadd,
+                [
+                    [profile.name for profile in profiles]
+                    for profiles in service_database_args.values()
+                ],
+                [],
+            )
+            for service, service_database_args in self.service_database_groups.items()
+        }
         self.global_ = ResticGlobalProfileResource(
             opts=self.child_opts, restic_service=self
         )
@@ -204,6 +217,26 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 for config in self.database_configs
             }
         )
+
+        self.config.hatchet.config = {
+            "container": None,
+            "restic": {
+                "groups": {
+                    self.get_file_group(service): profiles
+                    for service, profiles in self.service_groups.items()
+                }
+                | self.service_database_profiles,
+                "profiles": {
+                    config.name: {
+                        "volume": self.extractor_args.host.docker.volume.volumes[
+                            config.name
+                        ].resource.name,
+                        "path": config.path,
+                    }
+                    for config in self.volume_configs + self.database_configs
+                },
+            },
+        }
 
         self.exports[self.REPOSITORY_PROFILE_EXPORT_KEY] = self.export_repositories
 
@@ -226,6 +259,10 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
     @property
     def default_repository(self) -> str:
         return self.backup_resource.restic.config.default
+
+    @classmethod
+    def get_file_group(cls, service: str) -> str:
+        return "{}-file".format(service)
 
     @classmethod
     def get_database_group(cls, service: str) -> str:

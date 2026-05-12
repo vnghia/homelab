@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import functools
-import operator
 import typing
 
 from homelab_docker.extract.global_ import GlobalExtractor
@@ -75,17 +73,8 @@ class ResticGlobalProfileResource(
                     for service, profiles in restic_service.service_groups.items()
                 }
                 | {
-                    restic_service.get_database_group(service): {
-                        "profiles": functools.reduce(
-                            operator.iadd,
-                            [
-                                [profile.name for profile in profiles]
-                                for profiles in service_database_args.values()
-                            ],
-                            [],
-                        )
-                    }
-                    for service, service_database_args in restic_service.service_database_groups.items()
+                    group: {"profiles": profiles}
+                    for group, profiles in restic_service.service_database_profiles.items()
                 },
             },
             permission=restic_service.user,
