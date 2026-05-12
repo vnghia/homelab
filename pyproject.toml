@@ -52,6 +52,7 @@ dev = [
     "dtach>=0.31.2",
     "homelab-balite-docker",
     "types-aiofiles>=25.1.0.20260409",
+    "pyrefly>=0.64.1",
 ]
 
 [tool.uv]
