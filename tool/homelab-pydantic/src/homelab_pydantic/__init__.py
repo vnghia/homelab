@@ -11,6 +11,7 @@ from .model import Json as Json
 from .model import JsonAdapter as JsonAdapter
 from .network import IPvAnyAddressAdapter as IPvAnyAddressAdapter
 from .network import IPvAnyNetworkAdapter as IPvAnyNetworkAdapter
+from .path import ROOT_PATH as ROOT_PATH
 from .path import AbsolutePath as AbsolutePath
 from .path import RelativePath as RelativePath
 

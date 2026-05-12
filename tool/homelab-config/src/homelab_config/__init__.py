@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, Self, Type
 
 import deepmerge
@@ -12,7 +11,7 @@ from homelab_global import ProjectArgs
 from homelab_global.config import GlobalConfig
 from homelab_mail.config import MailConfig
 from homelab_network.config import NetworkConfig
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import ROOT_PATH, HomelabBaseModel
 from homelab_s3.config import S3Config
 
 from homelab_config.constant import PROJECT_LABELS, PROJECT_NAME, PROJECT_STACK
@@ -49,11 +48,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
     def get_key(cls, key: str) -> Any:
         data = pulumi.Config().get_object(key, {})
 
-        for path in (
-            (Path(__file__).parent.parent.parent.parent.parent / "config" / key)
-            .resolve(True)
-            .glob("*.yaml")
-        ):
+        for path in (ROOT_PATH / "config" / key).resolve(True).glob("*.yaml"):
             with open(path, "rb") as file:
                 data = deepmerge.always_merger.merge(
                     data, yaml_rs.load(file, parse_datetime=False)
@@ -70,9 +65,7 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
         key = "host"
 
         config_data = {}
-        config_dir = (
-            Path(__file__).parent.parent.parent.parent.parent / "config" / key
-        ).resolve(True)
+        config_dir = (ROOT_PATH / "config" / key).resolve(True)
 
         for host in HostConfig.model_fields:
             host_data: dict[str, Any] | list[dict[str, Any]] = {}

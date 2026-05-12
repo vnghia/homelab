@@ -9,6 +9,7 @@ import yaml_rs
 from homelab_docker.extract import ExtractorArgs
 from homelab_extra_service import ExtraService
 from homelab_extra_service.config import ExtraConfig
+from homelab_pydantic import ROOT_PATH
 from pulumi import Output, ResourceOptions
 
 from .rule.alert import provision_alert_rule
@@ -122,9 +123,7 @@ def post_build(service: ExtraService[ExtraConfig]) -> None:
         ),
     )
 
-    grafana_folder = (
-        Path(__file__).parent.parent.parent.parent.parent / "config" / "grafana"
-    ).resolve(True)
+    grafana_folder = (ROOT_PATH / "config" / "grafana").resolve(True)
     Folder(path=None, resource=None).provision(
         grafana_folder, grafana_opts, service.extractor_args
     )

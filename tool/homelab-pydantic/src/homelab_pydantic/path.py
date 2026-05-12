@@ -1,9 +1,11 @@
-from pathlib import PosixPath
+from pathlib import Path, PosixPath
 from typing import Self
 
 from pydantic import model_validator
 
 from .model import HomelabRootModel
+
+ROOT_PATH: Path = Path(__file__).parent.parent.parent.parent.parent.resolve(True)
 
 
 class RelativePath(HomelabRootModel[PosixPath]):
@@ -62,3 +64,7 @@ class AbsolutePath(HomelabRootModel[PosixPath]):
 
     def with_suffix(self, suffix: str) -> Self:
         return self.__class__(self.root.with_suffix(suffix))
+
+    @classmethod
+    def root_path(cls) -> Self:
+        return cls(PosixPath(ROOT_PATH))
