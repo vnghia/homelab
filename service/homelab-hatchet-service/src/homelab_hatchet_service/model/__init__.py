@@ -7,7 +7,7 @@ from typing import ClassVar
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.docker import DockerContainerCreationModelResource
 from homelab_hatchet_config import HatchetServiceConfig
-from homelab_pydantic import HomelabRootModel
+from homelab_pydantic import ROOT_PATH, HomelabRootModel
 from pulumi import ResourceOptions
 
 from .. import tool
@@ -23,6 +23,18 @@ TEMPLATE = ast.parse(TEMPLATE_PATH.read_text())
 class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
     TEMPLATE_NAME: ClassVar[str] = "build_workflows"
 
+    @classmethod
+    def get_workflow_dir(cls, hatchet_service: HatchetService, service: str) -> Path:
+        return (
+            ROOT_PATH
+            / "service"
+            / "homelab-{}-service".format(service)
+            / "src"
+            / "homelab_{}_service".format(service)
+            / hatchet_service.name()
+            / "workflow"
+        )
+
     def build_resources(
         self,
         opts: ResourceOptions,
@@ -35,7 +47,7 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         root = self.root
         service = extractor_args.service
 
-        tasks = []
+        tasks_defs = []
         schedules = {}
 
         for task_name, task_model in root.task.root.items():
@@ -43,7 +55,7 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                 task_name, opts, hatchet_service, extractor_args
             )
             if isinstance(result, ast.AsyncFunctionDef):
-                tasks.append(result)
+                tasks_defs.append(result)
             else:
                 schedules[task_name] = result
 
@@ -61,6 +73,14 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                 extractor_args=extractor_args,
             )
 
+        workflows = {}
+        if workflow_dir := self.get_workflow_dir(hatchet_service, service.name()):
+            for workflow_path in workflow_dir.glob("*.py"):
+                if workflow_path.name.startswith("__"):
+                    continue
+                with open(workflow_path) as workflow_file:
+                    workflows[workflow_path.stem] = ast.parse(workflow_file.read())
+
         HatchetDockerContainerServiceNameResource(
             root,
             opts=opts,
@@ -68,12 +88,16 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
             extractor_args=extractor_args,
         )
 
-        if tasks:
+        if tasks_defs:
             workflow = copy.deepcopy(TEMPLATE)
             function_def = tool.ast.find(workflow, ast.FunctionDef, self.TEMPLATE_NAME)
             function_def.body = [
-                *tasks,
-                ast.Return(ast.List(elts=[ast.Name(id=task.name) for task in tasks])),
+                *tasks_defs,
+                ast.Return(
+                    ast.List(
+                        elts=[ast.Name(id=task_def.name) for task_def in tasks_defs]
+                    )
+                ),
             ]
 
             HatchetWorkflowResource(
@@ -88,6 +112,15 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
             HatchetScheduleResource(
                 None,
                 schedules,
+                opts=opts,
+                hatchet_service=hatchet_service,
+                extractor_args=extractor_args,
+            )
+
+        for workflow_name, workflow in workflows.items():
+            HatchetWorkflowResource(
+                workflow_name,
+                content=ast.unparse(workflow),
                 opts=opts,
                 hatchet_service=hatchet_service,
                 extractor_args=extractor_args,
