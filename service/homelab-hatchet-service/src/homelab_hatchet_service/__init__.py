@@ -47,6 +47,9 @@ class HatchetService(ExtraService[HatchetConfig]):
         self.schedule_dir_volume_path = GlobalExtractor(
             self.config.schedule_dir
         ).extract_volume_path(self.workder_extractor_args)
+        self.config_dir_volume_path = GlobalExtractor(
+            self.config.config_dir
+        ).extract_volume_path(self.workder_extractor_args)
 
     def get_workflow_volume_path(self, name: str) -> ContainerVolumePath:
         return (self.workflow_dir_volume_path / name).with_suffix(".py")
@@ -78,6 +81,9 @@ class HatchetService(ExtraService[HatchetConfig]):
 
     def get_schedule_volume_path(self, name: str) -> ContainerVolumePath:
         return self.schedule_dir_volume_path / name
+
+    def get_config_volume_path(self, service: str) -> ContainerVolumePath:
+        return self.config_dir_volume_path / service
 
     @classmethod
     def get_service_config(

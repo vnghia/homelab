@@ -1,14 +1,45 @@
 import typing
 
 from homelab_docker.extract import ExtractorArgs
+from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.resource.file import FileResource
-from homelab_docker.resource.file.config import ConfigFileResource, JsonDumper
+from homelab_docker.resource.file.config import (
+    ConfigFileResource,
+    JsonDefaultModel,
+    JsonDumper,
+)
 from homelab_hatchet_config.model.task.schedule import HatchetTaskScheduleArgs
 from homelab_hatchet_tool.schedule.model import ScheduleConfig
+from homelab_pydantic import Json
 from pulumi import ResourceOptions
 
 if typing.TYPE_CHECKING:
     from .. import HatchetService
+
+
+class HatchetServiceConfigResource(
+    ConfigFileResource[JsonDefaultModel], module="hatchet", name="ServiceConfig"
+):
+    validator = JsonDefaultModel
+    dumper = JsonDumper[JsonDefaultModel]
+
+    def __init__(
+        self,
+        config: Json,
+        *,
+        opts: ResourceOptions,
+        hatchet_service: HatchetService,
+        extractor_args: ExtractorArgs,
+    ) -> None:
+        service = extractor_args.service
+        super().__init__(
+            service.name(),
+            opts=opts,
+            volume_path=hatchet_service.get_config_volume_path(service.name()),
+            data=GlobalExtractor.extract_recursively(config, extractor_args),
+            permission=hatchet_service.user,
+            extractor_args=hatchet_service.extractor_args,
+        )
 
 
 class HatchetWorkflowResource(FileResource, module="hatchet", name="Workflow"):

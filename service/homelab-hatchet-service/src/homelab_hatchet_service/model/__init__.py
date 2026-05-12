@@ -41,7 +41,11 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         hatchet_service: HatchetService,
         extractor_args: ExtractorArgs,
     ) -> None:
-        from ..resource import HatchetScheduleResource, HatchetWorkflowResource
+        from ..resource import (
+            HatchetScheduleResource,
+            HatchetServiceConfigResource,
+            HatchetWorkflowResource,
+        )
         from ..resource.docker import HatchetDockerContainerServiceNameResource
 
         root = self.root
@@ -80,6 +84,14 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                     continue
                 with open(workflow_path) as workflow_file:
                     workflows[workflow_path.stem] = ast.parse(workflow_file.read())
+
+        if root.config:
+            HatchetServiceConfigResource(
+                root.config,
+                opts=opts,
+                hatchet_service=hatchet_service,
+                extractor_args=extractor_args,
+            )
 
         HatchetDockerContainerServiceNameResource(
             root,

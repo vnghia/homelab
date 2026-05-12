@@ -7,3 +7,4 @@ class HatchetConfig(ExtraConfig):
     workflow_dir: GlobalExtract
     docker_dir: GlobalExtract
     schedule_dir: GlobalExtract
+    config_dir: GlobalExtract
