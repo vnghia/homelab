@@ -80,16 +80,9 @@ services:
                   - param:
                       type: snapshot
       hatchet:
-        task:
-          cron:
-            schedules:
-              - "* * * * *"
-            docker:
-              exec:
-                command:
-                  - /usr/bin/barman
-                  - cron
-                  - --keep-descriptors
+        docker:
+          names:
+            - null
     container:
       delete-before-replace: true
       image:

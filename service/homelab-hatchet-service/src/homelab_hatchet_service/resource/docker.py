@@ -59,9 +59,10 @@ class HatchetDockerContainerServiceNameResource(
     ) -> None:
         service = extractor_args.service
 
-        if containers := hatchet_service.docker_container_service_name_resources[
-            service.name()
-        ]:
+        if containers := (
+            hatchet_service.docker_container_service_name_resources[service.name()]
+            | config.docker.names
+        ):
             super().__init__(
                 service.name(),
                 opts=opts,
@@ -70,7 +71,7 @@ class HatchetDockerContainerServiceNameResource(
                     (key or schema.ContainerServiceName.NONE_KEY): service.containers[
                         key
                     ].resource.name
-                    for key in containers | config.docker.names
+                    for key in containers
                 },
                 permission=hatchet_service.user,
                 extractor_args=hatchet_service.extractor_args,

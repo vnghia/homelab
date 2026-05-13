@@ -11,7 +11,7 @@ from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
 from homelab_pydantic import AbsolutePath, DatabaseType, HomelabBaseModel
-from pulumi import ResourceOptions
+from pulumi import Output, ResourceOptions
 from pydantic import PositiveInt
 
 from .config import BarmanConfig
@@ -19,6 +19,7 @@ from .resource import BarmanConfigFileResource
 
 
 class BarmanServiceMapNameModel(HomelabBaseModel):
+    short: str
     full: str
     backup: str
 
@@ -27,6 +28,7 @@ class BarmanServiceMapNameModel(HomelabBaseModel):
         cls, service_name: str, name: str | None, version: PositiveInt
     ) -> Self:
         return cls(
+            short=DatabaseType.POSTGRES.get_short_name_version(name, version),
             full=DatabaseType.POSTGRES.get_full_name_version(
                 service_name, name, version
             ),
@@ -60,6 +62,7 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         self.service_maps: defaultdict[str, list[BarmanServiceMapNameModel]] = (
             defaultdict(list)
         )
+        self.profiles: dict[str, Output[str]] = {}
 
         self.server_volumes = {}
         self.pgdata_volumes = {}
@@ -79,6 +82,9 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
                         service_name, name, version
                     )
                     self.service_maps[service_name].append(map_name)
+                    self.profiles[map_name.full] = service_resource.containers[
+                        map_name.short
+                    ].resource.name
 
                     self.configs.append(
                         BarmanConfigFileResource(
@@ -104,6 +110,8 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         self.options[None].add_files(self.configs)
         self.options[None].add_volumes(self.server_volumes)
         self.options[None].add_volumes(self.pgdata_volumes)
+
+        self.config.hatchet.config = {"container": None, "profiles": self.profiles}
 
         self.build_containers()
 

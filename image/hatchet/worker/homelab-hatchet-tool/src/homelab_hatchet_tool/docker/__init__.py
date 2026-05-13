@@ -155,6 +155,15 @@ class Docker:
                     )
                 )
 
+        if (
+            status_code := int((await instance.inspect())["ExitCode"])
+        ) and status_code > 0:
+            raise RuntimeError(
+                "[{}] - [{}] - Exec exited with non-zero status code {}".format(
+                    model.name, exec_id, status_code
+                )
+            )
+
     @classmethod
     async def load_and_run_config(
         cls, context: Context, run_config: DockerContainerRunConfig, config: Config
