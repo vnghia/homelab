@@ -35,6 +35,17 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
             / "workflow"
         )
 
+    @classmethod
+    def replace_import(cls, workflow: ast.Module) -> ast.Module:
+        for i, stmt in enumerate(workflow.body):
+            if (
+                isinstance(stmt, ast.ImportFrom)
+                and stmt.module
+                and stmt.module.endswith("hatchet.workflow")
+            ):
+                workflow.body[i] = ast.Import(names=stmt.names)
+        return workflow
+
     def build_resources(
         self,
         opts: ResourceOptions,
@@ -83,7 +94,9 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                 if workflow_path.name.startswith("__"):
                     continue
                 with open(workflow_path) as workflow_file:
-                    workflows[workflow_path.stem] = ast.parse(workflow_file.read())
+                    workflows[workflow_path.stem] = self.replace_import(
+                        ast.parse(workflow_file.read())
+                    )
 
         if root.config:
             HatchetServiceConfigResource(

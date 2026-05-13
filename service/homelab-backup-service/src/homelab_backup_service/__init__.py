@@ -39,7 +39,7 @@ from pulumi import ResourceOptions
 
 from .config import BackupConfig
 from .config.service import BackupServiceConfig
-from .hatchet.workflow.backup import HatchetBackupConfig, HatchetBackupServiceModel
+from .hatchet.workflow.backup import HatchetBackupConfig, HatchetBackupModel
 from .model.service import BackupServiceModel, BackupServiceVolumeModel
 
 
@@ -355,7 +355,7 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
 
         self.config.hatchet.config = HatchetBackupConfig(
             services={
-                service: HatchetBackupServiceModel(
+                service: HatchetBackupModel(
                     profiles=service_group
                     if (service_group := restic_service.service_groups.get(service))
                     else [],

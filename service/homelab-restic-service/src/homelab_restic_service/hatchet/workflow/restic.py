@@ -42,6 +42,14 @@ class HatchetResticConfig(HomelabBaseModel):
     restic: HatchetResticModel
 
 
+class HatchetResticBackupModel(HomelabBaseModel):
+    profiles: list[str]
+
+    @classmethod
+    def build_cmd(cls, profile: str) -> list[str]:
+        return ["-n", profile, "backup"]
+
+
 class HatchetResticModelConfig(HomelabBaseModel):
     RESTIC: ClassVar[str] = "restic"
 
@@ -87,13 +95,15 @@ class HatchetResticModelConfig(HomelabBaseModel):
             labels={},
         )
 
-
-class HatchetResticBackupModel(HomelabBaseModel):
-    profiles: list[str]
-
-    @classmethod
-    def build_cmd(cls, profile: str) -> list[str]:
-        return ["-n", profile, "backup"]
+    def build_backup_model(self, profile: str) -> DockerContainerRunModel:
+        return DockerContainerRunModel(
+            creation=self.build_model(
+                profile,
+                True,
+                HatchetResticBackupModel.build_cmd(profile),
+            ),
+            name_prefix=add_namespace(self.RESTIC, profile),
+        )
 
 
 class Restic:
@@ -122,6 +132,10 @@ class Restic:
             name="backup",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[restic_load_config],
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
         )
         async def restic_backup(
             input: HatchetResticBackupModel, context: Context
@@ -130,13 +144,7 @@ class Restic:
             await docker_run_model_workflow.aio_run_many(
                 [
                     docker_run_model_workflow.create_bulk_run_item(
-                        DockerContainerRunModel(
-                            creation=restic_config.build_model(
-                                profile, True, input.build_cmd(profile)
-                            ),
-                            name_prefix=add_namespace(cls.SERVICE, profile),
-                        ),
-                        key=profile,
+                        restic_config.build_backup_model(profile), key=profile
                     )
                     for profile in restic_config.resolve_profiles(input.profiles)
                 ]
