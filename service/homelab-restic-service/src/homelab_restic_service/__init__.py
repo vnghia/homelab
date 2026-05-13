@@ -206,18 +206,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             opts=self.child_opts, restic_service=self
         )
 
-        # No need to specify file dependencies because the file are created after `pulumi up`
-        self.options[None].add_volumes(
-            {
-                config.name: config.container_volume_config
-                for config in self.volume_configs
-            }
-            | {
-                config.name: config.container_volume_config
-                for config in self.database_configs
-            }
-        )
-
         self.config.hatchet.config = {
             "container": None,
             "restic": {
