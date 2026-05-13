@@ -18,12 +18,20 @@ logger = logging.getLogger("docker")
 
 class Docker:
     DOCKER_RUN_CONFIG_TASK = "docker-run-config"
+    DOCKER_RUN_MODEL_TASK = "docker-run-model"
+
     DOCKER_EXEC_CONFIG_TASK = "docker-exec-config"
+    DOCKER_EXEC_MODEL_TASK = "docker-exec-model"
 
     _docker_run_config_workflow: Standalone[DockerContainerRunConfig, None] | None = (
         None
     )
+    _docker_run_model_workflow: Standalone[DockerContainerRunModel, None] | None = None
+
     _docker_exec_config_workflow: Standalone[DockerContainerExecConfig, None] | None = (
+        None
+    )
+    _docker_exec_model_workflow: Standalone[DockerContainerExecModel, None] | None = (
         None
     )
 
@@ -39,12 +47,28 @@ class Docker:
         return cls._docker_run_config_workflow
 
     @classmethod
+    def docker_run_model_workflow(cls) -> Standalone[DockerContainerRunModel, None]:
+        if not cls._docker_run_model_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._docker_run_model_workflow
+
+    @classmethod
     def docker_exec_config_workflow(cls) -> Standalone[DockerContainerExecConfig, None]:
         if not cls._docker_exec_config_workflow:
             raise RuntimeError(
                 "Please call `build_workflows` at least once before accesing this function"
             )
         return cls._docker_exec_config_workflow
+
+    @classmethod
+    def docker_exec_model_workflow(cls) -> Standalone[DockerContainerExecModel, None]:
+        if not cls._docker_exec_model_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._docker_exec_model_workflow
 
     @classmethod
     def generate_name_prefix(cls, name: str) -> str:
@@ -160,6 +184,20 @@ class Docker:
             return await cls.load_and_run_config(context, input, config)
 
         @hatchet.task(
+            name=cls.DOCKER_RUN_MODEL_TASK,
+            input_validator=DockerContainerRunModel,
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
+            execution_timeout=datetime.timedelta(days=7),
+        )
+        async def docker_run_model(
+            input: DockerContainerRunModel, context: Context
+        ) -> None:
+            return await cls.run_container(context, input)
+
+        @hatchet.task(
             name=cls.DOCKER_EXEC_CONFIG_TASK,
             input_validator=DockerContainerExecConfig,
             desired_worker_labels=[
@@ -173,7 +211,29 @@ class Docker:
         ) -> None:
             return await cls.load_and_exec_config(context, input, config)
 
-        cls._docker_run_config_workflow = docker_run_config
-        cls._docker_exec_config_workflow = docker_exec_config
+        @hatchet.task(
+            name=cls.DOCKER_EXEC_MODEL_TASK,
+            input_validator=DockerContainerExecModel,
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
+            execution_timeout=datetime.timedelta(days=7),
+        )
+        async def docker_exec_model(
+            input: DockerContainerExecModel, context: Context
+        ) -> None:
+            return await cls.exec_container(context, input)
 
-        return [cls._docker_run_config_workflow, cls._docker_exec_config_workflow]
+        cls._docker_run_config_workflow = docker_run_config
+        cls._docker_run_model_workflow = docker_run_model
+
+        cls._docker_exec_config_workflow = docker_exec_config
+        cls._docker_exec_model_workflow = docker_exec_model
+
+        return [
+            cls._docker_run_config_workflow,
+            cls._docker_run_model_workflow,
+            cls._docker_exec_config_workflow,
+            cls._docker_exec_model_workflow,
+        ]
