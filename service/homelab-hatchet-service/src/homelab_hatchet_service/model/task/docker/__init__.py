@@ -90,7 +90,7 @@ class HatchetTaskDockerRunModelBuilder(HomelabRootModel[HatchetTaskDockerRunMode
             )
 
         return HatchetTaskWorkflowInputArgs(
-            workflow=Docker.DOCKER_RUN_TASK,
+            workflow=Docker.DOCKER_RUN_CONFIG_TASK,
             input={"service": service.name(), "container": root.container}
             | (
                 {"command": command}
@@ -139,7 +139,7 @@ class HatchetTaskDockerExecModelBuilder(HomelabRootModel[HatchetTaskDockerExecMo
             )
 
         return HatchetTaskWorkflowInputArgs(
-            workflow=Docker.DOCKER_EXEC_TASK,
+            workflow=Docker.DOCKER_EXEC_CONFIG_TASK,
             input={"service": service.name(), "exec": task_name},
         )
 

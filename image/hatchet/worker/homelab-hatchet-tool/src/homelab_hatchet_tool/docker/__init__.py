@@ -5,45 +5,69 @@ from typing import Any
 
 import aiodocker
 from hatchet_sdk import Context, Hatchet
-from hatchet_sdk.runnables.workflow import BaseWorkflow
-from homelab_pydantic import docker
+from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
+from homelab_pydantic import add_namespace, docker
 
 from ..config import Config, ConfigDependency
 from ..worker import label
-from .model.exec import DockerContainerExecModel
-from .model.run import DockerContainerRunModel
+from .model.exec import DockerContainerExecConfig, DockerContainerExecModel
+from .model.run import DockerContainerRunConfig, DockerContainerRunModel
 
 logger = logging.getLogger("docker")
 
 
 class Docker:
-    DOCKER_RUN_TASK = "docker-run"
-    DOCKER_EXEC_TASK = "docker-exec"
+    DOCKER_RUN_CONFIG_TASK = "docker-run-config"
+    DOCKER_EXEC_CONFIG_TASK = "docker-exec-config"
+
+    _docker_run_config_workflow: Standalone[DockerContainerRunConfig, None] | None = (
+        None
+    )
+    _docker_exec_config_workflow: Standalone[DockerContainerExecConfig, None] | None = (
+        None
+    )
 
     def __init__(self) -> None:
         self.client = aiodocker.Docker()
 
     @classmethod
-    def generate_container_name(cls, service: str, name: str | None) -> str:
-        result = service
-        if name:
-            result += "-" + name
-        return result + "-" + secrets.token_hex(4)[:7]
+    def docker_run_config_workflow(cls) -> Standalone[DockerContainerRunConfig, None]:
+        if not cls._docker_run_config_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._docker_run_config_workflow
+
+    @classmethod
+    def docker_exec_config_workflow(cls) -> Standalone[DockerContainerExecConfig, None]:
+        if not cls._docker_exec_config_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._docker_exec_config_workflow
+
+    @classmethod
+    def generate_name_prefix(cls, name: str) -> str:
+        return add_namespace(name, secrets.token_hex(4)[:7])
 
     @classmethod
     async def run_container(
         cls,
         context: Context,
-        creation: docker.ContainerCreationModel,
-        name: str | None,
+        model: DockerContainerRunModel,
         stdout: bool = True,
         stderr: bool = True,
     ) -> None:
         container = await cls().client.containers.create(
-            creation.model_dump(mode="json", by_alias=True, exclude_unset=True),
-            name=name,
+            model.creation.model_dump(mode="json", by_alias=True, exclude_unset=True),
+            name=model.name
+            or (
+                cls.generate_name_prefix(model.name_prefix)
+                if model.name_prefix
+                else None
+            ),
         )
-        logger.debug(creation)
+        logger.debug(model.creation)
 
         container_inspect = docker.schema.ModelContainerInspectResponse.model_validate(
             await container.show()
@@ -81,18 +105,17 @@ class Docker:
     async def exec_container(
         cls,
         context: Context,
-        exec: docker.ContainerExecModel,
-        name: str,
+        model: DockerContainerExecModel,
         stdout: bool = True,
         stderr: bool = True,
     ) -> None:
-        logger.debug(exec)
-        logger.info("Execing container {}".format(name))
+        logger.debug(model)
+        logger.info("Execing container {}".format(model.name))
 
         instance = (
             await cls()
-            .client.containers.container(name)
-            .exec(cmd=exec.command, stdout=stdout, stderr=stderr, tty=False)
+            .client.containers.container(model.name)
+            .exec(cmd=model.exec.command, stdout=stdout, stderr=stderr, tty=False)
         )
         logger.debug(instance)
 
@@ -101,55 +124,56 @@ class Docker:
             while message := (await stream.read_out()):
                 # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
                 logger.info(
-                    "[{}] - [{}] - {}".format(name, exec_id, message.data.decode())
+                    "[{}] - [{}] - {}".format(
+                        model.name, exec_id, message.data.decode()
+                    )
                 )
 
     @classmethod
-    async def load_and_run_model(
-        cls, context: Context, model: DockerContainerRunModel, config: Config
+    async def load_and_run_config(
+        cls, context: Context, run_config: DockerContainerRunConfig, config: Config
     ) -> None:
-        creation = await model.load(config)
-        return await cls.run_container(
-            context,
-            creation,
-            model.name or cls.generate_container_name(model.service, model.container),
-        )
+        model = await run_config.load(config)
+        return await cls.run_container(context, model)
 
     @classmethod
-    async def load_and_exec_model(
-        cls, context: Context, model: DockerContainerExecModel, config: Config
+    async def load_and_exec_config(
+        cls, context: Context, exec_config: DockerContainerExecConfig, config: Config
     ) -> None:
-        exec, name = await model.load(config)
-        return await cls.exec_container(context, exec, name)
+        model = await exec_config.load(config)
+        return await cls.exec_container(context, model)
 
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         @hatchet.task(
-            name=cls.DOCKER_RUN_TASK,
-            input_validator=DockerContainerRunModel,
+            name=cls.DOCKER_RUN_CONFIG_TASK,
+            input_validator=DockerContainerRunConfig,
             desired_worker_labels=[
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
             ],
             execution_timeout=datetime.timedelta(days=7),
         )
-        async def docker_run(
-            input: DockerContainerRunModel, context: Context, config: ConfigDependency
+        async def docker_run_config(
+            input: DockerContainerRunConfig, context: Context, config: ConfigDependency
         ) -> None:
-            return await cls.load_and_run_model(context, input, config)
+            return await cls.load_and_run_config(context, input, config)
 
         @hatchet.task(
-            name=cls.DOCKER_EXEC_TASK,
-            input_validator=DockerContainerExecModel,
+            name=cls.DOCKER_EXEC_CONFIG_TASK,
+            input_validator=DockerContainerExecConfig,
             desired_worker_labels=[
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
             ],
             execution_timeout=datetime.timedelta(days=7),
         )
-        async def docker_exec(
-            input: DockerContainerExecModel, context: Context, config: ConfigDependency
+        async def docker_exec_config(
+            input: DockerContainerExecConfig, context: Context, config: ConfigDependency
         ) -> None:
-            return await cls.load_and_exec_model(context, input, config)
+            return await cls.load_and_exec_config(context, input, config)
 
-        return [docker_run, docker_exec]
+        cls._docker_run_config_workflow = docker_run_config
+        cls._docker_exec_config_workflow = docker_exec_config
+
+        return [cls._docker_run_config_workflow, cls._docker_exec_config_workflow]

@@ -1,8 +1,8 @@
 from hatchet_sdk import Context, EmptyModel, Hatchet
 from homelab_hatchet_tool.config import ConfigDependency
 from homelab_hatchet_tool.docker import Docker
-from homelab_hatchet_tool.docker.model.exec import DockerContainerExecModel
-from homelab_hatchet_tool.docker.model.run import DockerContainerRunModel
+from homelab_hatchet_tool.docker.model.exec import DockerContainerExecConfig
+from homelab_hatchet_tool.docker.model.run import DockerContainerRunConfig
 from homelab_hatchet_tool.worker import label
 
 hatchet = Hatchet()
@@ -15,9 +15,9 @@ async def run(_: EmptyModel, context: Context, config: ConfigDependency) -> None
     service = "#service"
     container = "#container"
     name = "#name"
-    return await Docker.load_and_run_model(
+    return await Docker.load_and_run_config(
         context,
-        DockerContainerRunModel(service=service, container=container, name=name),
+        DockerContainerRunConfig(service=service, container=container, name=name),
         config,
     )
 
@@ -28,6 +28,6 @@ async def run(_: EmptyModel, context: Context, config: ConfigDependency) -> None
 async def exec(_: EmptyModel, context: Context, config: ConfigDependency) -> None:
     service = "#service"
     exec = "#exec"
-    return await Docker.load_and_exec_model(
-        context, DockerContainerExecModel(service=service, exec=exec), config
+    return await Docker.load_and_exec_config(
+        context, DockerContainerExecConfig(service=service, exec=exec), config
     )

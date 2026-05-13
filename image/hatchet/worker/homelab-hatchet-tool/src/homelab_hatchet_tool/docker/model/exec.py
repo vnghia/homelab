@@ -9,10 +9,15 @@ logger = logging.getLogger("docker")
 
 
 class DockerContainerExecModel(HomelabBaseModel):
+    exec: docker.ContainerExecModel
+    name: str
+
+
+class DockerContainerExecConfig(HomelabBaseModel):
     service: str
     exec: str | None = None
 
-    async def load(self, config: Config) -> tuple[docker.ContainerExecModel, str]:
+    async def load(self, config: Config) -> DockerContainerExecModel:
         logger.debug(self)
         async with (
             aiofiles.open(
@@ -36,4 +41,4 @@ class DockerContainerExecModel(HomelabBaseModel):
                 await name_file.read()
             )[exec.container]
 
-            return exec, name
+            return DockerContainerExecModel(exec=exec, name=name)

@@ -2,7 +2,7 @@ import copy
 import logging
 
 import aiofiles
-from homelab_pydantic import HomelabBaseModel, docker
+from homelab_pydantic import HomelabBaseModel, add_namespace, docker
 
 from ...config import Config
 
@@ -19,14 +19,21 @@ class DockerContainerRunOverwriteDebugModel(HomelabBaseModel):
 
 
 class DockerContainerRunModel(HomelabBaseModel):
+    creation: docker.ContainerCreationModel
+    name: str | None = None
+    name_prefix: str | None = None
+
+
+class DockerContainerRunConfig(HomelabBaseModel):
     service: str
     container: str | None = None
     name: str | None = None
+    name_prefix: str | None = None
     overwrite: (
         DockerContainerRunOverwriteModel | DockerContainerRunOverwriteDebugModel | None
     ) = None
 
-    async def load(self, config: Config) -> docker.ContainerCreationModel:
+    async def load(self, config: Config) -> DockerContainerRunModel:
         logger.debug(self)
         async with aiofiles.open(
             (
@@ -60,4 +67,8 @@ class DockerContainerRunModel(HomelabBaseModel):
                     entrypoint=["sleep"],
                 )
 
-            return creation
+            return DockerContainerRunModel(
+                creation=creation,
+                name=self.name,
+                name_prefix=self.name_prefix or add_namespace(self.service, self.name),
+            )
