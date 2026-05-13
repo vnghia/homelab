@@ -9,14 +9,13 @@ from homelab_extract.container import ContainerExtract
 from homelab_extract.container.volume import ContainerExtractVolumeSource
 from homelab_extract.host import HostExtract
 from homelab_extract.service import ServiceExtract
-from homelab_pydantic import RelativePath
+from homelab_pydantic import DatabaseType, RelativePath
 from homelab_secret.model.password import SecretPasswordModel
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
 from ....config.docker.database import DatabaseConfig, DatabaseTypeEnvConfig
 from ....extract import ExtractorArgs
-from ....model.database.type import DatabaseType
 from ....model.docker.container import ContainerModel, ContainerModelBuildArgs
 from ....model.docker.container.database.source import ContainerDatabaseSourceModel
 from ....model.docker.container.image import ContainerImageModelConfig

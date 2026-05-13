@@ -1,9 +1,8 @@
 from typing import Self
 
-from homelab_pydantic import HomelabRootModel
+from homelab_pydantic import DatabaseType, HomelabRootModel
 from pydantic import model_validator
 
-from ....model.database.type import DatabaseType
 from ....model.service.database import ServiceDatabaseModel
 
 

@@ -1,5 +1,4 @@
-from homelab_docker.model.database.type import DatabaseType
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import DatabaseType, HomelabBaseModel
 
 
 class BackupServiceVolumeModel(HomelabBaseModel):

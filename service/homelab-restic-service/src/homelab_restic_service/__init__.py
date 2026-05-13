@@ -10,14 +10,13 @@ from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_litestream_service import LitestreamService
-from homelab_pydantic import RelativePath
+from homelab_pydantic import DatabaseType, RelativePath
 from pulumi import ComponentResource, Output, ResourceOptions
 
 from .config import ResticConfig

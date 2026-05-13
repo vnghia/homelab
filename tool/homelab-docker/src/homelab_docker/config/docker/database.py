@@ -1,10 +1,9 @@
 from typing import ClassVar, Self
 
-from homelab_pydantic import HomelabBaseModel, HomelabRootModel
+from homelab_pydantic import DatabaseType, HomelabBaseModel, HomelabRootModel
 from homelab_pydantic.path import AbsolutePath
 from pydantic import PositiveInt, model_validator
 
-from ...model.database.type import DatabaseType
 from ...model.docker.container import ContainerModel
 from ...model.docker.image import RemoteImageModel
 from ...model.service.database import (

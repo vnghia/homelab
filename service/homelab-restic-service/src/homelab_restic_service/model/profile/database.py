@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from homelab_docker.model.database.type import DatabaseType
-from homelab_pydantic import HomelabBaseModel, RelativePath
+from homelab_pydantic import DatabaseType, HomelabBaseModel, RelativePath
 from pulumi import ResourceOptions
 
 if typing.TYPE_CHECKING:

@@ -25,7 +25,6 @@ from homelab_dagu_config.model.step.run.subdag import (
 from homelab_dagu_config.model.step.script import DaguDagStepScriptModel
 from homelab_dagu_service import DaguService
 from homelab_docker.extract import ExtractorArgs
-from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
@@ -33,6 +32,7 @@ from homelab_extract.transform.string import (
     ExtractTransformString,
     ExtractTransformStringTemplate,
 )
+from homelab_pydantic import DatabaseType
 from homelab_restic.model.frequency import BackupFrequency
 from homelab_restic_service import ResticService
 from pulumi import ResourceOptions

@@ -1,6 +1,6 @@
+from homelab_pydantic import DatabaseType
 from pydantic import PositiveInt
 
-from ....model.database.type import DatabaseType
 from ....model.docker.container.database.source import ContainerDatabaseSourceModel
 from ....model.service.database import ServiceDatabaseConfigModel
 

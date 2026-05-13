@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 
 from homelab_extract.service.database import ServiceExtractDatabaseSource
+from homelab_pydantic import DatabaseType
 from pulumi import Output
 
 from .. import ExtractorBase
@@ -15,8 +16,6 @@ class ServiceDatabaseSourceExtractor(ExtractorBase[ServiceExtractDatabaseSource]
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> Output[str] | dict[str, Output[str]]:
-        from ...model.database.type import DatabaseType
-
         root = self.root
         type = DatabaseType(root.type)
         version = (

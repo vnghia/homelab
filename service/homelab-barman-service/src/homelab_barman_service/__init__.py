@@ -5,13 +5,12 @@ from typing import Self
 from homelab_backup.config import BackupHostConfig
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
-from homelab_docker.model.database.type import DatabaseType
 from homelab_docker.model.docker.container.volume import ContainerVolumeConfig
 from homelab_docker.model.docker.container.volume_path import ContainerVolumePath
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_extract import GlobalExtract
-from homelab_pydantic import AbsolutePath, HomelabBaseModel
+from homelab_pydantic import AbsolutePath, DatabaseType, HomelabBaseModel
 from pulumi import ResourceOptions
 from pydantic import PositiveInt
 

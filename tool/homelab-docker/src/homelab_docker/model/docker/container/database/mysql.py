@@ -1,6 +1,6 @@
+from homelab_pydantic import DatabaseType
 from pydantic import Field
 
-from ....database.type import DatabaseType
 from .source.envs import ContainerDatabaseSourceEnvs
 from .source.mysql.url import ContainerDatabaseMysqlSourceUrlEnvs
 from .type import ContainerDatabaseTypeConfig

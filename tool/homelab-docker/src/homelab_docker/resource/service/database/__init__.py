@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import typing
 
+from homelab_pydantic import DatabaseType
 from pulumi import ComponentResource, ResourceOptions
 from pydantic import PositiveInt
 
 from ....config.docker.database import DatabaseConfig
 from ....config.service.database import ServiceDatabaseConfig
 from ....config.service.database.source import ServiceDatabaseSourceConfig
-from ....model.database.type import DatabaseType
 from .type import DatabaseContainerArgs, ServiceDatabaseTypeResource
 
 if typing.TYPE_CHECKING:

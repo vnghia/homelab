@@ -3,11 +3,10 @@ from __future__ import annotations
 import typing
 from typing import ClassVar
 
-from homelab_pydantic import HomelabBaseModel
+from homelab_pydantic import DatabaseType, HomelabBaseModel
 from pulumi import Output
 from pydantic import PositiveInt
 
-from ....database.type import DatabaseType
 from .source import (
     ContainerDatabaseSourceEnvsBase,
     ContainerDatabaseSourceEnvsRootBase,
