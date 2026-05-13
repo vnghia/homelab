@@ -8,7 +8,7 @@ from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow
 from homelab_pydantic import docker
 
-from ..config import Config
+from ..config import Config, ConfigDependency
 from ..worker import label
 from .model.exec import DockerContainerExecModel
 from .model.run import DockerContainerRunModel
@@ -106,9 +106,9 @@ class Docker:
 
     @classmethod
     async def load_and_run_model(
-        cls, context: Context, model: DockerContainerRunModel
+        cls, context: Context, model: DockerContainerRunModel, config: Config
     ) -> None:
-        creation = await model.load(Config.load())
+        creation = await model.load(config)
         return await cls.run_container(
             context,
             creation,
@@ -117,9 +117,9 @@ class Docker:
 
     @classmethod
     async def load_and_exec_model(
-        cls, context: Context, model: DockerContainerExecModel
+        cls, context: Context, model: DockerContainerExecModel, config: Config
     ) -> None:
-        exec, name = await model.load(Config.load())
+        exec, name = await model.load(config)
         return await cls.exec_container(context, exec, name)
 
     @classmethod
@@ -133,8 +133,10 @@ class Docker:
             ],
             execution_timeout=datetime.timedelta(days=7),
         )
-        async def docker_run(input: DockerContainerRunModel, context: Context) -> None:
-            return await cls.load_and_run_model(context, input)
+        async def docker_run(
+            input: DockerContainerRunModel, context: Context, config: ConfigDependency
+        ) -> None:
+            return await cls.load_and_run_model(context, input, config)
 
         @hatchet.task(
             name=cls.DOCKER_EXEC_TASK,
@@ -146,8 +148,8 @@ class Docker:
             execution_timeout=datetime.timedelta(days=7),
         )
         async def docker_exec(
-            input: DockerContainerExecModel, context: Context
+            input: DockerContainerExecModel, context: Context, config: ConfigDependency
         ) -> None:
-            return await cls.load_and_exec_model(context, input)
+            return await cls.load_and_exec_model(context, input, config)
 
         return [docker_run, docker_exec]

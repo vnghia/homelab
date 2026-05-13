@@ -1,8 +1,9 @@
 import socket
 from pathlib import Path
-from typing import ClassVar, Self
+from typing import Annotated, ClassVar, Self
 
 import aiofiles
+from hatchet_sdk import Context, Depends, EmptyModel
 from homelab_pydantic import HomelabBaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -34,8 +35,15 @@ class Config(BaseSettings):
             cls.instance = cls()
         return cls.instance
 
+    @classmethod
+    def dependency(cls, input: EmptyModel, ctx: Context) -> Self:
+        return cls.load()
+
     async def load_service[T: HomelabBaseModel](self, service: str, type: type[T]) -> T:
         async with aiofiles.open(
             (self.config_dir / service).with_suffix(".json")
         ) as file:
             return type.model_validate_json(await file.read())
+
+
+type ConfigDependency = Annotated[Config, Depends(Config.dependency)]
