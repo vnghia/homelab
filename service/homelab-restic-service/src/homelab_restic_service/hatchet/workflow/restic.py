@@ -122,7 +122,7 @@ class Restic:
             name="load-config",
             desired_worker_labels=[label.DESIRED_HOST_LABEL],
         )
-        async def restic_load_config(
+        async def restic_backup_load_config(
             input: HatchetResticBackupModel, context: Context, config: ConfigDependency
         ) -> HatchetResticModelConfig:
             return await HatchetResticModelConfig.load(config)
@@ -131,7 +131,7 @@ class Restic:
         @restic_backup_workflow.task(
             name="backup",
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            parents=[restic_load_config],
+            parents=[restic_backup_load_config],
             desired_worker_labels=[
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
@@ -140,7 +140,7 @@ class Restic:
         async def restic_backup(
             input: HatchetResticBackupModel, context: Context
         ) -> None:
-            restic_config = context.task_output(restic_load_config)
+            restic_config = context.task_output(restic_backup_load_config)
             await docker_run_model_workflow.aio_run_many(
                 [
                     docker_run_model_workflow.create_bulk_run_item(
