@@ -17,6 +17,8 @@ logger = logging.getLogger("docker")
 
 
 class Docker:
+    DOCKER_TIMEOUT = datetime.timedelta(days=7)
+
     DOCKER_RUN_CONFIG_TASK = "docker-run-config"
     DOCKER_RUN_MODEL_TASK = "docker-run-model"
 
@@ -176,7 +178,7 @@ class Docker:
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
             ],
-            execution_timeout=datetime.timedelta(days=7),
+            execution_timeout=cls.DOCKER_TIMEOUT,
         )
         async def docker_run_config(
             input: DockerContainerRunConfig, context: Context, config: ConfigDependency
@@ -190,7 +192,7 @@ class Docker:
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
             ],
-            execution_timeout=datetime.timedelta(days=7),
+            execution_timeout=cls.DOCKER_TIMEOUT,
         )
         async def docker_run_model(
             input: DockerContainerRunModel, context: Context
@@ -204,7 +206,7 @@ class Docker:
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
             ],
-            execution_timeout=datetime.timedelta(days=7),
+            execution_timeout=cls.DOCKER_TIMEOUT,
         )
         async def docker_exec_config(
             input: DockerContainerExecConfig, context: Context, config: ConfigDependency
@@ -218,7 +220,7 @@ class Docker:
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
             ],
-            execution_timeout=datetime.timedelta(days=7),
+            execution_timeout=cls.DOCKER_TIMEOUT,
         )
         async def docker_exec_model(
             input: DockerContainerExecModel, context: Context
