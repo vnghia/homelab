@@ -39,6 +39,7 @@ from pulumi import ResourceOptions
 
 from .config import BackupConfig
 from .config.service import BackupServiceConfig
+from .hatchet.workflow.backup import HatchetBackupConfig, HatchetBackupServiceModel
 from .model.service import BackupServiceModel, BackupServiceVolumeModel
 
 
@@ -351,6 +352,29 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                 ],
                 tags=[self.name()],
             )
+
+        self.config.hatchet.config = HatchetBackupConfig(
+            services={
+                service: HatchetBackupServiceModel(
+                    profiles=service_group
+                    if (service_group := restic_service.service_groups.get(service))
+                    else [],
+                    databases={
+                        service_database_group_type: [
+                            service_database.name
+                            for service_database in service_database_group_model
+                        ]
+                        for service_database_group_type, service_database_group_model in service_database_group.items()
+                    }
+                    if (
+                        service_database_group
+                        := restic_service.service_database_groups.get(service)
+                    )
+                    else {},
+                )
+                for service in self.extractor_args.services
+            }
+        ).model_dump(mode="json")
 
         self.register_outputs({})
 

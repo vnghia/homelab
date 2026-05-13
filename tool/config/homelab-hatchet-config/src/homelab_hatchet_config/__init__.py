@@ -17,7 +17,7 @@ class HatchetServiceConfig(HomelabBaseModel):
     config: Json = {}
 
     def __bool__(self) -> bool:
-        return bool(self.docker) or bool(self.task)
+        return bool(self.docker) or bool(self.task) or bool(self.config)
 
 
 class HatchetServiceConfigBase(HomelabBaseModel):
