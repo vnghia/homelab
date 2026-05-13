@@ -2,9 +2,9 @@ from typing import Any, ClassVar, Self
 
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow
+from homelab_hatchet_tool import label
 from homelab_hatchet_tool.config import Config, ConfigDependency
 from homelab_hatchet_tool.docker import Docker
-from homelab_hatchet_tool.worker import label
 from homelab_pydantic import DatabaseType, HomelabBaseModel
 from homelab_restic_service.hatchet.workflow import restic
 
@@ -38,11 +38,11 @@ class Backup:
         backup_service_workflow = hatchet.workflow(
             name="{}-service".format(cls.SERVICE),
             input_validator=HatchetBackupServiceModel,
+            default_additional_metadata=label.build_labels(cls.SERVICE),
         )
 
         @backup_service_workflow.task(
-            name="load-config",
-            desired_worker_labels=[label.DESIRED_HOST_LABEL],
+            name="load-config", desired_worker_labels=[label.DESIRED_HOST_LABEL]
         )
         async def backup_service_load_config(
             input: HatchetBackupServiceModel,
@@ -67,10 +67,6 @@ class Backup:
             name="backup-service-file",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_service_load_config, backup_service_load_restic_config],
-            desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
-            ],
         )
         async def backup_service_file(
             input: HatchetBackupServiceModel, context: Context
@@ -81,7 +77,12 @@ class Backup:
             await docker_run_model_workflow.aio_run_many(
                 [
                     docker_run_model_workflow.create_bulk_run_item(
-                        restic_config.build_backup_model(profile), key=profile
+                        restic_config.build_backup_model(profile),
+                        key=profile,
+                        desired_worker_labels=[
+                            label.DESIRED_HOST_LABEL,
+                            label.DESIRED_DOCKER_LABEL,
+                        ],
                     )
                     for profile in backup_config.profiles
                 ]

@@ -8,8 +8,8 @@ from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
 from homelab_pydantic import add_namespace, docker
 
+from .. import label
 from ..config import Config, ConfigDependency
-from ..worker import label
 from .model.exec import DockerContainerExecConfig, DockerContainerExecModel
 from .model.run import DockerContainerRunConfig, DockerContainerRunModel
 

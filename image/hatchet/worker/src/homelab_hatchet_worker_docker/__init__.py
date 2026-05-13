@@ -1,7 +1,7 @@
 from hatchet_sdk import ClientConfig, Hatchet
+from homelab_hatchet_tool import label
 from homelab_hatchet_tool.config import Config
 from homelab_hatchet_tool.docker import Docker
-from homelab_hatchet_tool.worker import NAMESPACE_SEPARATOR, label
 
 from . import setup
 from .schedule.loader import ScheduleLoader
@@ -18,7 +18,8 @@ hatchet = Hatchet(config=ClientConfig(debug=config.log_level == "DEBUG", logger=
 def main() -> None:
     logger.info(config.model_dump_json())
     worker = hatchet.worker(
-        label.HOST_VALUE + ((NAMESPACE_SEPARATOR + config.name) if config.name else ""),
+        label.HOST_VALUE
+        + ((label.NAMESPACE_SEPARATOR + config.name) if config.name else ""),
         labels={
             label.HOST_LABEL: label.HOST_VALUE,
             label.DOCKER_LABEL: label.DOCKER_VALUE,

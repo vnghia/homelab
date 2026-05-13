@@ -2,19 +2,13 @@ import asyncio
 import logging
 from typing import Any, ClassVar, Self
 
-from hatchet_sdk import (
-    ConcurrencyExpression,
-    ConcurrencyLimitStrategy,
-    Context,
-    EmptyModel,
-    Hatchet,
-)
+from hatchet_sdk import Context, EmptyModel, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow
+from homelab_hatchet_tool import label
 from homelab_hatchet_tool.config import Config, ConfigDependency
 from homelab_hatchet_tool.docker import Docker
 from homelab_hatchet_tool.docker.model.exec import DockerContainerExecModel
 from homelab_hatchet_tool.docker.model.name import DockerContainerNameConfig
-from homelab_hatchet_tool.worker import label
 from homelab_pydantic import HomelabBaseModel, docker
 
 logger = logging.getLogger("barman")
@@ -69,10 +63,9 @@ class HatchetBarmanContainerConfig(HomelabBaseModel):
         container_is_not_running = (
             container_state.status
             if (
-                container_state
-                := docker.schema.ModelContainerInspectResponse.model_validate(
-                    container._container
-                ).state
+                container_state := docker.schema.ContainerState.model_validate(
+                    container._container["State"]
+                )
             )
             else None
         ) != docker.schema.ContainerStateStatus.RUNNING
@@ -102,18 +95,12 @@ class Barman:
         @hatchet.task(
             name="{}-cron".format(cls.SERVICE),
             on_crons=["* * * * *"],
-            concurrency=[
-                ConcurrencyExpression(
-                    expression='"{}-cron"'.format(cls.SERVICE),
-                    max_runs=1,
-                    limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
-                )
-            ],
+            concurrency=1,
             desired_worker_labels=[
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
             ],
-            default_additional_metadata={label.HOST_LABEL: label.HOST_VALUE},
+            default_additional_metadata=label.build_labels(cls.SERVICE),
         )
         async def barman_cron(
             input: EmptyModel, context: Context, config: ConfigDependency
@@ -124,6 +111,7 @@ class Barman:
         barman_backup_workflow = hatchet.workflow(
             name="{}-backup".format(cls.SERVICE),
             input_validator=HatchetBarmanBackupModel,
+            default_additional_metadata=label.build_labels(cls.SERVICE),
         )
 
         @barman_backup_workflow.task(

@@ -5,7 +5,7 @@ from typing import Any, Self
 from hatchet_sdk import Hatchet, Worker
 from hatchet_sdk.clients.rest.models.workflow import Workflow as WorkflowData
 from hatchet_sdk.runnables.workflow import BaseWorkflow
-from homelab_hatchet_tool.worker import NAMESPACE_SEPARATOR
+from homelab_hatchet_tool.label import NAMESPACE_SEPARATOR
 from homelab_pydantic import add_namespace
 
 logger = logging.getLogger("workflow")

@@ -4,13 +4,13 @@ from typing import Any, ClassVar, Self
 
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow
+from homelab_hatchet_tool import label
 from homelab_hatchet_tool.config import Config, ConfigDependency
 from homelab_hatchet_tool.docker import Docker
 from homelab_hatchet_tool.docker.model.run import (
     DockerContainerRunConfig,
     DockerContainerRunModel,
 )
-from homelab_hatchet_tool.worker import label
 from homelab_pydantic import AbsolutePath, HomelabBaseModel, add_namespace, docker
 
 logger = logging.getLogger("restic")
@@ -116,6 +116,7 @@ class Restic:
         restic_backup_workflow = hatchet.workflow(
             name="{}-backup".format(cls.SERVICE),
             input_validator=HatchetResticBackupModel,
+            default_additional_metadata=label.build_labels(cls.SERVICE),
         )
 
         @restic_backup_workflow.task(
@@ -132,10 +133,6 @@ class Restic:
             name="backup",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[restic_backup_load_config],
-            desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
-            ],
         )
         async def restic_backup(
             input: HatchetResticBackupModel, context: Context
@@ -144,7 +141,12 @@ class Restic:
             await docker_run_model_workflow.aio_run_many(
                 [
                     docker_run_model_workflow.create_bulk_run_item(
-                        restic_config.build_backup_model(profile), key=profile
+                        restic_config.build_backup_model(profile),
+                        key=profile,
+                        desired_worker_labels=[
+                            label.DESIRED_HOST_LABEL,
+                            label.DESIRED_DOCKER_LABEL,
+                        ],
                     )
                     for profile in restic_config.resolve_profiles(input.profiles)
                 ]

@@ -7,9 +7,9 @@ from typing import ClassVar
 
 import watchfiles
 from hatchet_sdk import Hatchet, Worker
+from homelab_hatchet_tool import label
 from homelab_hatchet_tool.config import Config
 from homelab_hatchet_tool.schedule.model import ScheduleConfig
-from homelab_hatchet_tool.worker import NAMESPACE_SEPARATOR, label
 from homelab_pydantic import add_namespace
 from pydantic import ValidationError
 
@@ -21,15 +21,7 @@ logger = logging.getLogger("schedule")
 
 @dataclasses.dataclass
 class ScheduleLoader:
-    SOURCE_LABEL: ClassVar[str] = "schedule-source"
-    SOURCE_VALUE: ClassVar[str] = "provisioned"
-
-    NAMESPACE_LABEL: ClassVar[str] = "schedule-namespace"
-
-    METADATA: ClassVar[dict[str, str]] = {
-        SOURCE_LABEL: SOURCE_VALUE,
-        label.HOST_LABEL: label.HOST_VALUE,
-    }
+    METADATA: ClassVar[dict[str, str]] = label.build_labels(None)
 
     workflow_loader: WorkflowLoader
 
@@ -63,7 +55,7 @@ class ScheduleLoader:
                 logger.warning("Expecting a named schedule, got {}".format(schedule))
                 continue
 
-            namespace = str((schedule.additional_metadata or {})[self.NAMESPACE_LABEL])
+            namespace = str((schedule.additional_metadata or {})[label.SERVICE_LABEL])
             self.schedules[namespace].root[schedule.name][schedule.cron] = (
                 ScheduleWorkflow(
                     id=schedule.metadata.id,
@@ -114,7 +106,7 @@ class ScheduleLoader:
                 full_name = add_namespace(
                     self.namespace,
                     add_namespace(namespace, name),
-                    separator=NAMESPACE_SEPARATOR,
+                    separator=label.NAMESPACE_SEPARATOR,
                 )
 
                 workflow = self.workflow_loader[config.workflow]
@@ -164,8 +156,7 @@ class ScheduleLoader:
                             full_name,
                             expression,
                             input=input,
-                            additional_metadata=self.METADATA
-                            | {self.NAMESPACE_LABEL: namespace},
+                            additional_metadata=label.build_labels(namespace),
                         ).metadata.id
                         new_schedule = ScheduleWorkflow(
                             id=schedule_id, workflow=workflow.name, input=config.input
