@@ -2,6 +2,7 @@ import logging
 import sys
 
 from hatchet_sdk import logger as hatchet_logger
+from hatchet_sdk.opentelemetry.instrumentor import HatchetInstrumentor
 from homelab_hatchet_tool.config import Config
 
 
@@ -17,6 +18,4 @@ def logger(config: Config) -> logging.Logger:
 
 
 def otel() -> None:
-    # TODO: enable this after https://github.com/hatchet-dev/hatchet/pull/3847
-    # HatchetInstrumentor().instrument()
-    return
+    HatchetInstrumentor().instrument()

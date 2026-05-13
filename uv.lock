@@ -724,7 +724,7 @@ wheels = [
 
 [[package]]
 name = "hatchet-sdk"
-version = "1.33.3"
+version = "1.33.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -739,9 +739,9 @@ dependencies = [
     { name = "typing-inspection" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fc/27/2f1105161d320ccd9d65a1f289a3991bee6a11d65ac357596e60a0527919/hatchet_sdk-1.33.3.tar.gz", hash = "sha256:c88de9ad02dc20ae3896d18d28c472b52748d0a4810fce043d7dba3e7c8148a6", size = 4547, upload-time = "2026-04-30T00:43:40.459Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/3b/75c527bbe9ddcca0991b5f48c7abedebfb2418df0b0f5b054519af05ac54/hatchet_sdk-1.33.5.tar.gz", hash = "sha256:b53d49514bf9d49ca727e1610776cdf86a7c3e9d05b519b0218cd2bb8c648551", size = 4555, upload-time = "2026-05-12T15:12:26.926Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/22/a3/8f32f80aa7eee12d0ff0f264e0d08cbf6df3d2303c0a119ab8ee6a0c3c9f/hatchet_sdk-1.33.3-py3-none-any.whl", hash = "sha256:4962dd30273a9699915ddd3cae9150787f41aa301748ef773e9cbf3ac49221d3", size = 622056, upload-time = "2026-04-30T00:43:42.316Z" },
+    { url = "https://files.pythonhosted.org/packages/da/2c/cc26b351842de55441e113a6e622f749cbcd1329ceff1cd3de0650f86904/hatchet_sdk-1.33.5-py3-none-any.whl", hash = "sha256:7cde10c1d475219fe8a91e68a639c3c5cd3c70df53bbcc24a9e4789246800f51", size = 622032, upload-time = "2026-05-12T15:12:28.83Z" },
 ]
 
 [package.optional-dependencies]
@@ -1273,7 +1273,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.33.2" },
+    { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.33.5" },
     { name = "homelab-hatchet-tool", editable = "image/hatchet/worker/homelab-hatchet-tool" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "watchfiles", specifier = ">=1.1.1" },
