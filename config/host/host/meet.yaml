@@ -115,8 +115,16 @@ services:
               database: 1
           - valkey:
             envs:
-              env: DJANGO_CELERY_BROKER_URL
-              database: 0
+              env: CELERY_BROKER_URL
+              database: 1
+          - valkey:
+            envs:
+              env: CELERY_RESULT_BACKEND
+              database: 1
+          - valkey:
+            envs:
+              env: TASK_TRACKER_REDIS_URL
+              database: 1
         hosts:
           - record: solar
             hostname: livekit
@@ -243,6 +251,7 @@ services:
           RESOURCE_DEFAULT_ACCESS_LEVEL: restricted
           SIGNUP_NEW_USER_TO_MARKETING_EMAIL: false
           ROOM_TELEPHONY_ENABLED: false
+          CELERY_ENABLED: true
       migrate:
         oneshot: true
         depends-on: [backend]
