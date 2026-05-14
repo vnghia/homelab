@@ -74,7 +74,7 @@ class ResticGlobalProfileResource(
                 }
                 | {
                     group: {"profiles": profiles}
-                    for group, profiles in restic_service.service_database_profiles.items()
+                    for group, profiles in restic_service.database_groups.items()
                 },
             },
             permission=restic_service.user,

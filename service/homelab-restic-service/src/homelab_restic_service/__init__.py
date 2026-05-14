@@ -1,7 +1,6 @@
 import functools
 import operator
 from collections import defaultdict
-from pathlib import PosixPath
 
 from homelab_backup.config import BackupHostConfig
 from homelab_backup.model.database import ServiceDatabaseBackupProfileModel
@@ -16,13 +15,15 @@ from homelab_docker.resource.file import FileResource
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_docker.resource.service import ServiceWithConfigResourceBase
 from homelab_litestream_service import LitestreamService
-from homelab_pydantic import DatabaseType, RelativePath
+from homelab_pydantic import DatabaseType
 from pulumi import ComponentResource, Output, ResourceOptions
 
 from .config import ResticConfig
 from .config.volume import ResticVolumeConfig
 from .model.profile import ResticProfileModel
 from .model.profile.database import ResticProfileDatabaseModel
+from .resource.profile import ResticProfileResource
+from .resource.profile.database import ResticProfileDatabaseResource
 from .resource.profile.global_ import ResticGlobalProfileResource
 
 
@@ -110,7 +111,6 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             )
             self.export_repositories.append(Output.from_input(repository_profile))
 
-        self.database_configs: list[ResticVolumeConfig] = []
         self.volume_configs: list[ResticVolumeConfig] = []
 
         for (
@@ -131,7 +131,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 )
 
         self.service_groups: defaultdict[str, list[str]] = defaultdict(list)
-        self.profiles = []
+        self.profiles: list[ResticProfileResource] = []
 
         for volume in sorted(self.volume_configs, key=lambda x: x.name):
             profile = ResticProfileModel(volume=volume).build_resource(
@@ -143,26 +143,20 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         self.service_database_groups: defaultdict[
             str, defaultdict[DatabaseType, list[ServiceDatabaseBackupProfileModel]]
         ] = defaultdict(lambda: defaultdict(list))
-        self.database_profiles = []
+        self.database_profiles: list[ResticProfileDatabaseResource] = []
 
         for service, names in barman_service.service_maps.items():
             for map_name in names:
                 profile = ResticProfileDatabaseModel(
-                    type_=DatabaseType.POSTGRES, name=map_name.full, service=service
+                    type_=DatabaseType.POSTGRES,
+                    name=map_name.full,
+                    service=service,
+                    volume=map_name.backup,
                 ).build_resource(opts=self.child_opts, restic_service=self)
                 self.database_profiles.append(profile)
                 self.service_database_groups[profile.volume.service][
                     profile.type_
                 ].append(ServiceDatabaseBackupProfileModel(profile.volume.name))
-
-                self.database_configs.append(
-                    self.build_database_config(
-                        map_name.backup,
-                        service,
-                        DatabaseType.POSTGRES,
-                        RelativePath(PosixPath(map_name.full)),
-                    )
-                )
 
         for (
             name,
@@ -175,32 +169,25 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 name="{}-{}".format(name, DatabaseType.SQLITE),
                 service=service,
                 path=name,
+                volume=sqlite_backup_args.volume.name,
             ).build_resource(opts=self.child_opts, restic_service=self)
             self.database_profiles.append(profile)
             self.service_database_groups[profile.volume.service][profile.type_].append(
                 ServiceDatabaseBackupProfileModel(profile.volume.name, name)
             )
 
-            self.database_configs.append(
-                self.build_database_config(
-                    sqlite_backup_args.volume.name,
-                    service,
-                    DatabaseType.SQLITE,
-                    RelativePath(PosixPath(name)),
-                )
-            )
-
-        self.service_database_profiles: dict[str, list[str]] = {
+        self.database_groups: dict[str, list[str]] = {
             self.get_database_group(service): functools.reduce(
                 operator.iadd,
                 [
                     [profile.name for profile in profiles]
-                    for profiles in service_database_args.values()
+                    for profiles in service_database_group.values()
                 ],
                 [],
             )
-            for service, service_database_args in self.service_database_groups.items()
+            for service, service_database_group in self.service_database_groups.items()
         }
+
         self.global_ = ResticGlobalProfileResource(
             opts=self.child_opts, restic_service=self
         )
@@ -212,7 +199,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                     self.get_file_group(service): profiles
                     for service, profiles in self.service_groups.items()
                 }
-                | self.service_database_profiles,
+                | self.database_groups,
                 "profiles": {
                     config.name: {
                         "volume": self.extractor_args.host.docker.volume.volumes[
@@ -220,7 +207,16 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                         ].resource.name,
                         "path": config.path,
                     }
-                    for config in self.volume_configs + self.database_configs
+                    for config in self.volume_configs
+                }
+                | {
+                    profile.volume.name: {
+                        "volume": self.extractor_args.host.docker.volume.volumes[
+                            profile.model.volume
+                        ].resource.name,
+                        "path": profile.volume.path,
+                    }
+                    for profile in self.database_profiles
                 },
             },
         }
@@ -254,16 +250,3 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
     @classmethod
     def get_database_group(cls, service: str) -> str:
         return "{}-database".format(service)
-
-    def build_database_config(
-        self, name: str, service: str, type: DatabaseType, path: RelativePath
-    ) -> ResticVolumeConfig:
-        return ResticVolumeConfig(
-            repository=self.default_repository,
-            name=name,
-            service=service,
-            model=self.extractor_args.host_model.docker.volumes.local.get(
-                name, ResticProfileModel.DEFAULT_VOLUME_MODEL
-            ),
-            relative=RelativePath(PosixPath(type)) / path,
-        )

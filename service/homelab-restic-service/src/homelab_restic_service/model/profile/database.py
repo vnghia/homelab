@@ -15,6 +15,7 @@ class ResticProfileDatabaseModel(HomelabBaseModel):
     name: str
     service: str
     path: str | RelativePath | None = None
+    volume: str
 
     def build_resource(
         self,

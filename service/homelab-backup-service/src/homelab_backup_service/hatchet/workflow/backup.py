@@ -2,6 +2,7 @@ from typing import Any, ClassVar, Self
 
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow
+from homelab_barman_service.hatchet.workflow import barman
 from homelab_hatchet_tool import label
 from homelab_hatchet_tool.config import Config, ConfigDependency
 from homelab_hatchet_tool.docker import Docker
@@ -85,6 +86,64 @@ class Backup:
                         ],
                     )
                     for profile in backup_config.profiles
+                ]
+            )
+
+        @backup_service_workflow.task(
+            name="load-postgres-config",
+            desired_worker_labels=[label.DESIRED_HOST_LABEL],
+        )
+        async def backup_service_load_postgres_config(
+            input: HatchetBackupServiceModel,
+            context: Context,
+            config: ConfigDependency,
+        ) -> barman.HatchetBarmanContainerConfig:
+            return await barman.HatchetBarmanContainerConfig.load(config)
+
+        @backup_service_workflow.task(
+            name="backup-service-{}-database".format(DatabaseType.POSTGRES),
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            parents=[backup_service_load_config, backup_service_load_postgres_config],
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
+        )
+        async def backup_service_postgres_database(
+            input: HatchetBackupServiceModel, context: Context
+        ) -> None:
+            backup_config = context.task_output(backup_service_load_config)
+            barman_config = context.task_output(backup_service_load_postgres_config)
+            for profile in backup_config.databases[DatabaseType.POSTGRES]:
+                await barman_config.backup(context, profile)
+
+        # TODO: Use durable_task after worker affinity is stable
+        @backup_service_workflow.task(
+            name="backup-service-{}-database-file".format(DatabaseType.POSTGRES),
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            parents=[
+                backup_service_load_config,
+                backup_service_load_restic_config,
+                backup_service_postgres_database,
+            ],
+        )
+        async def backup_service_postgres_database_file(
+            input: HatchetBackupServiceModel, context: Context
+        ) -> None:
+            backup_config = context.task_output(backup_service_load_config)
+            restic_config = context.task_output(backup_service_load_restic_config)
+
+            await docker_run_model_workflow.aio_run_many(
+                [
+                    docker_run_model_workflow.create_bulk_run_item(
+                        restic_config.build_backup_model(profile),
+                        key=profile,
+                        desired_worker_labels=[
+                            label.DESIRED_HOST_LABEL,
+                            label.DESIRED_DOCKER_LABEL,
+                        ],
+                    )
+                    for profile in backup_config.databases[DatabaseType.POSTGRES]
                 ]
             )
 
