@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 
 from homelab_docker.extract.global_ import GlobalExtractor

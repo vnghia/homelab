@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import dataclasses
 import typing
 from pathlib import PosixPath
@@ -140,49 +138,51 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 )
 
             container = container_model.model_merge(
-                ContainerModel(
-                    delete_before_replace=True,
-                    image=ContainerImageModelConfig(
-                        self.type.get_short_name_version(self.model.image, version)
-                    ),
-                    volumes=ContainerVolumesConfig(
-                        {
-                            full_name: ContainerVolumeConfig(
-                                GlobalExtract.from_simple(
-                                    self.config.dir.data.as_posix()
-                                )
-                            )
-                        }
-                        | (
+                ContainerModel.model_validate(
+                    {
+                        "delete_before_replace": True,
+                        "image": ContainerImageModelConfig(
+                            self.type.get_short_name_version(self.model.image, version)
+                        ),
+                        "volumes": ContainerVolumesConfig(
                             {
-                                self.get_full_name_version_tmp(
-                                    version
-                                ): ContainerVolumeConfig(
+                                full_name: ContainerVolumeConfig(
                                     GlobalExtract.from_simple(
-                                        self.config.dir.tmp.as_posix()
+                                        self.config.dir.data.as_posix()
                                     )
                                 )
                             }
-                            if self.config.dir.tmp
-                            else {}
-                        )
-                        | (
-                            {
-                                self.full_name_initdb: ContainerVolumeConfig(
-                                    ContainerVolumeFullConfig(
-                                        path=GlobalExtract.from_simple(
-                                            self.config.dir.initdb.as_posix()
-                                        ),
-                                        read_only=True,
+                            | (
+                                {
+                                    self.get_full_name_version_tmp(
+                                        version
+                                    ): ContainerVolumeConfig(
+                                        GlobalExtract.from_simple(
+                                            self.config.dir.tmp.as_posix()
+                                        )
                                     )
-                                )
-                            }
-                            if self.config.dir.initdb
-                            else {}
-                        )
-                    ),
-                    user=ContainerUserConfig(type_user),
-                    envs=envs,
+                                }
+                                if self.config.dir.tmp
+                                else {}
+                            )
+                            | (
+                                {
+                                    self.full_name_initdb: ContainerVolumeConfig(
+                                        ContainerVolumeFullConfig(
+                                            path=GlobalExtract.from_simple(
+                                                self.config.dir.initdb.as_posix()
+                                            ),
+                                            read_only=True,
+                                        )
+                                    )
+                                }
+                                if self.config.dir.initdb
+                                else {}
+                            )
+                        ),
+                        "user": ContainerUserConfig(type_user),
+                        "envs": envs,
+                    }
                 )
             )
             self.containers[version] = DatabaseContainerArgs(

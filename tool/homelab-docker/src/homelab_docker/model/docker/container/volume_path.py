@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 from pathlib import PosixPath
 
@@ -20,10 +18,10 @@ class ContainerVolumePath(HomelabBaseModel):
         return path / self.path if self.path else path
 
     def __truediv__(self, path: str | RelativePath) -> ContainerVolumePath:
-        return self.__replace__(path=self.path / path)
+        return self.model_copy(update={"path": self.path / path})
 
     def with_suffix(self, suffix: str) -> ContainerVolumePath:
-        return self.__replace__(path=self.path.with_suffix(suffix))
+        return self.model_copy(update={"path": self.path.with_suffix(suffix)})
 
     def __json__(self) -> str:
         raise TypeError("Could not serialize {} to JSON".format(self))

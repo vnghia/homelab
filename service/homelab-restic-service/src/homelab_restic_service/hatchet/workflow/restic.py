@@ -1,4 +1,3 @@
-import copy
 import logging
 from typing import Any, ClassVar, Self
 
@@ -17,18 +16,22 @@ logger = logging.getLogger("restic")
 
 
 class HatchetResticProfileModel(HomelabBaseModel):
+    VOLUME_OPTIONS: ClassVar[docker.schema.ModelMountVolumeOptions] = (
+        docker.schema.ModelMountVolumeOptions.model_validate({"no_copy": True})
+    )
+
     volume: str
     path: AbsolutePath
 
     def to_mount(self, read_only: bool) -> docker.schema.ModelMount:
-        return docker.schema.ModelMount.model_construct(
-            type="volume",
-            target=self.path.as_posix(),
-            source=self.volume,
-            read_only=read_only,
-            volume_options=docker.schema.ModelMountVolumeOptions.model_construct(
-                no_copy=True
-            ),
+        return docker.schema.ModelMount.model_validate(
+            {
+                "type": "volume",
+                "target": self.path.as_posix(),
+                "source": self.volume,
+                "read_only": read_only,
+                "volume_options": self.VOLUME_OPTIONS,
+            }
         )
 
 
@@ -82,20 +85,22 @@ class HatchetResticModelConfig(HomelabBaseModel):
         self, profile: str, read_only: bool, cmd: list[str]
     ) -> docker.ContainerCreationModel:
         profile_mount = self.restic.profiles[profile].to_mount(read_only)
-        return copy.replace(
-            self.model,
-            host_config=(
-                copy.replace(
-                    self.model.host_config,
-                    mounts=[*(self.model.host_config.mounts or []), profile_mount],
+        return self.model.model_copy(
+            update={
+                "host_config": self.model.host_config.model_copy(
+                    update={
+                        "mounts": [
+                            *(self.model.host_config.mounts or []),
+                            profile_mount,
+                        ],
+                    }
                 )
                 if self.model.host_config
-                else docker.schema.ModelHostConfig.model_construct(
-                    mounts=[profile_mount]
-                )
-            ),
-            cmd=cmd,
-            labels={},
+                else docker.schema.ModelHostConfig.model_validate(
+                    {"mounts": [profile_mount]}
+                ),
+                "cmd": cmd,
+            }
         )
 
     def build_backup_model(self, profile: str) -> DockerContainerRunModel:

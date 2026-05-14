@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pathlib import PosixPath
 
 from homelab_backup.config import BackupHostConfig

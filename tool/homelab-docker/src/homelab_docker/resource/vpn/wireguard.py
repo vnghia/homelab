@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 
 from homelab_pydantic import HomelabRootModel
@@ -29,6 +27,8 @@ class VpnWireguardModelBuilder(HomelabRootModel[VpnWireguardModel]):
                     GlobalExtractor(address).extract_str(extractor_args)
                     for address in root.addresses
                 ]
-            ).apply(",".join),
+            )
+            .apply(",".join)
+            .apply(str),
             "VPN_TYPE": Output.from_input("wireguard"),
         }

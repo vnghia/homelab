@@ -89,8 +89,8 @@ class HomelabServiceConfigDict[T](HomelabRootModel[dict[str | None, T]]):
     NONE_KEY: ClassVar[str]
 
     @model_validator(mode="after")
-    def set_none_key(self) -> Self:
-        return self.model_construct(
+    def set_none_key(self) -> HomelabServiceConfigDict[T]:
+        return self.__class__.model_construct(
             root={
                 None if key == self.NONE_KEY else key: model
                 for key, model in self.root.items()

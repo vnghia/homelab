@@ -1,5 +1,3 @@
-from typing import Self
-
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 from ..service import ServiceExtract
@@ -32,8 +30,10 @@ class HostExtract(
             return root
         return HostExtractFull(extract=root)
 
-    def with_service(self, service: str, force: bool) -> Self:
+    def with_service(self, service: str, force: bool) -> HostExtract:
         full = self.to_full()
         if not force:
             service = full.service or service
-        return self.model_construct(full.__replace__(service=service))
+        return self.__class__.model_construct(
+            full.model_copy(update={"service": service})
+        )

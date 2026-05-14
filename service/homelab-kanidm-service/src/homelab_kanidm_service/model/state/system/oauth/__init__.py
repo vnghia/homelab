@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 
 from homelab_extract import GlobalExtract
@@ -27,9 +25,13 @@ class KanidmStateSystemOauthModel(HomelabBaseModel):
     def build(
         self, openid_group: str, kanidm_state: KanidmStateConfig
     ) -> KanidmStateSystemOauthModel:
-        return self.__replace__(
-            scope_maps=self.scope_maps | {openid_group: ["openid", "email", "profile"]},
-            claim_maps={
-                key: model.build(kanidm_state) for key, model in self.claim_maps.items()
-            },
+        return self.model_copy(
+            update={
+                "scope_maps": self.scope_maps
+                | {openid_group: ["openid", "email", "profile"]},
+                "claim_maps": {
+                    key: model.build(kanidm_state)
+                    for key, model in self.claim_maps.items()
+                },
+            }
         )

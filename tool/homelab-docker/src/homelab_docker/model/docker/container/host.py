@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 from enum import StrEnum, auto
 from typing import ClassVar, Self
@@ -34,9 +32,11 @@ class ContainerHostFullConfig(HomelabBaseModel):
         )
 
     def with_service(self, service: str, force: bool) -> ContainerHostFullConfig:
-        return self.__replace__(
-            host=self.host.with_service(service, force),
-            ip=self.ip.with_service(service, force),
+        return self.model_copy(
+            update={
+                "host": self.host.with_service(service, force),
+                "ip": self.ip.with_service(service, force),
+            }
         )
 
 
@@ -74,8 +74,12 @@ class ContainerHostHostConfig(HomelabBaseModel):
         )
 
     def with_service(self, service: str, force: bool) -> ContainerHostHostConfig:
-        return self.__replace__(
-            hostname=GlobalExtract.with_service_nullable(self.hostname, service, force),
+        return self.model_copy(
+            update={
+                "hostname": GlobalExtract.with_service_nullable(
+                    self.hostname, service, force
+                )
+            }
         )
 
 

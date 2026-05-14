@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 
 from homelab_extract.list_ import GlobalExtractListSource

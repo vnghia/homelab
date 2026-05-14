@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from pathlib import PosixPath
-from typing import Iterator
+from typing import Generator
 
 import docker
 from docker.models import containers, images
@@ -29,7 +29,7 @@ class DockerClient:
     @contextmanager
     def volume_container(
         self, volume: str, command: list[str] | None = None
-    ) -> Iterator[Container]:
+    ) -> Generator[Container]:
         container = self.containers.create(
             image=self.UTILITY_IMAGE,
             command=command,

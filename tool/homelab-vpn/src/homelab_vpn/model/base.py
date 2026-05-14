@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabServiceConfigDict
 from pydantic import PositiveInt

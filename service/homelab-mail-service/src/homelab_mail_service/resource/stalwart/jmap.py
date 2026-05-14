@@ -151,7 +151,9 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
 
     def delete(self, id: str) -> None:
         if self.singleton:
-            self.__replace__(data={}).update(self.SINGLETON_ID, olds=self.data)
+            self.model_copy(update={"data": {}}).update(
+                self.SINGLETON_ID, olds=self.data
+            )
             return
 
         with httpx.Client(

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pulumi
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor

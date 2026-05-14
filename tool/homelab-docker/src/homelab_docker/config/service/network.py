@@ -1,7 +1,3 @@
-from __future__ import annotations
-
-from typing import Self
-
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 from homelab_vpn.config.service import ServiceVpnConfig
@@ -17,10 +13,12 @@ class ServiceNetworkEgressHostConfig(HomelabBaseModel):
     hostnames: list[GlobalExtract]
 
     def with_service(self, service: str, force: bool) -> ServiceNetworkEgressHostConfig:
-        return self.__replace__(
-            hostnames=[
-                hostname.with_service(service, force) for hostname in self.hostnames
-            ],
+        return self.model_copy(
+            update={
+                "hostnames": [
+                    hostname.with_service(service, force) for hostname in self.hostnames
+                ],
+            }
         )
 
 
@@ -29,12 +27,13 @@ class ServiceNetworkEgressFullConfig(HomelabBaseModel):
     ip: GlobalExtract | None
     proxied: bool
 
-    def with_service(self, service: str, force: bool) -> Self:
-        return self.model_construct(
-            address=[
+    def with_service(self, service: str, force: bool) -> ServiceNetworkEgressFullConfig:
+        return self.__class__.model_construct(
+            addresses=[
                 address.with_service(service, force) for address in self.addresses
             ],
             ip=GlobalExtract.with_service_nullable(self.ip, service, force),
+            proxied=self.proxied,
         )
 
 
@@ -65,9 +64,11 @@ class ServiceNetworkEgressDomainConfig(
             )
         return root
 
-    def with_service(self, service: str) -> Self:
+    def with_service(self, service: str) -> ServiceNetworkEgressDomainConfig:
         root = self.root
-        return self.model_construct(root.with_service(service, False) if root else root)
+        return self.__class__.model_construct(
+            root.with_service(service, False) if root else root
+        )
 
 
 class ServiceNetworkBridgeConfig(ContainerBridgeNetworkConfig):

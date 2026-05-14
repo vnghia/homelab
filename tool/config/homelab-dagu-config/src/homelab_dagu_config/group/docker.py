@@ -46,7 +46,9 @@ class DaguDagDockerGroupConfig(HomelabBaseModel):
     def build_models(self, *, extractor_args: ExtractorArgs) -> dict[str, DaguDagModel]:
         global_dag = self.dag
         return {
-            name: model.__replace__(dag=global_dag.model_merge(model.dag)).build_model(
+            name: model.model_copy(
+                update={"dag": global_dag.model_merge(model.dag)}
+            ).build_model(
                 name,
                 extractor_args=extractor_args,
                 docker_executor=DaguDagStepDockerExecutorModel(self.executor.model),

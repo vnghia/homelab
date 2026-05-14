@@ -46,7 +46,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "mypy>=1.20.2",
+    "mypy>=2.1.0",
     "datamodel-code-generator[http]>=0.28.1",
     "ruff>=0.9.6",
     "dtach>=0.31.2",
@@ -104,6 +104,19 @@ members = ["tool/homelab-*", "tool/config/homelab-*", "service/homelab-*"]
 [tool.mypy]
 strict = true
 exclude = "sdks|image/.*/homelab-pydantic"
+plugins = ["pydantic.mypy"]
+
+follow_imports = "silent"
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+no_implicit_reexport = true
+disallow_untyped_defs = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
 
 [[tool.mypy.overrides]]
 module = ["json_fix.*", "pykeepass.*"]
@@ -149,6 +162,7 @@ ignore = [
 "pydantic.RootModel".msg = "Use homelab_pydantic.HomelabRootModel instead"
 
 [tool.pyrefly]
+min-severity = "warn"
 preset = "strict"
 project-excludes = ["**/sdks*", "**/image/*/homelab-pydantic*"]
 disable-project-excludes-heuristics = true

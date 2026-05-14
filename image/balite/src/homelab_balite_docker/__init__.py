@@ -32,8 +32,7 @@ class Settings(BaseSettings):
 
 @app.command()
 def backup(profiles: list[str]) -> None:
-    # TODO: Enable type checking after we have better support for Pydantic __replace__
-    settings = Settings()  # type: ignore
+    settings = Settings()
 
     for profile in profiles:
         for volume, path in settings.get_paths(profile):
@@ -47,8 +46,7 @@ def backup(profiles: list[str]) -> None:
 
 @app.command()
 def restore(profiles: list[str]) -> None:
-    # TODO: Enable type checking after we have better support for Pydantic __replace__
-    settings = Settings()  # type: ignore
+    settings = Settings()
 
     for profile in profiles:
         for volume, path in settings.get_paths(profile):

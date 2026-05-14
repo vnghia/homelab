@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Self
 
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
@@ -54,11 +52,13 @@ class GlobalExtract(
             return root
         return GlobalExtractFull(extract=root)
 
-    def with_service(self, service: str, force: bool) -> Self:
+    def with_service(self, service: str, force: bool) -> GlobalExtract:
         full = self.to_full()
         if isinstance(full.extract, HostExtract):
-            full = full.__replace__(extract=full.extract.with_service(service, force))
-        return self.model_construct(full)
+            full = full.model_copy(
+                update={"extract": full.extract.with_service(service, force)}
+            )
+        return self.__class__.model_construct(full)
 
     @classmethod
     def with_service_nullable(

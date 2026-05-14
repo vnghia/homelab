@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 from typing import Self
 
@@ -66,7 +64,7 @@ class ContainerPortRangeConfig(HomelabBaseModel):
     def with_service(self, service: str, force: bool) -> ContainerPortRangeConfig:
         internal = self.with_port_service(self.internal, service, force)
         external = self.with_port_service(self.external, service, force)
-        return self.__replace__(internal=internal, external=external)
+        return self.model_copy(update={"internal": internal, "external": external})
 
 
 class ContainerPortsConfig(
@@ -99,7 +97,7 @@ class ContainerPortsConfig(
     def __or__(self, rhs: ContainerPortsConfig) -> ContainerPortsConfig:
         return ContainerPortsConfig(self.root | rhs.root)
 
-    def with_service(self, service: str, force: bool) -> Self:
-        return self.model_construct(
+    def with_service(self, service: str, force: bool) -> ContainerPortsConfig:
+        return self.__class__.model_construct(
             {k: v.with_service(service, force) for k, v in self.root.items()}
         )

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import hashlib
 import io
 import tarfile
@@ -127,12 +125,14 @@ class FileVolumeProxy:
                     file = tar.extractfile(member)
                     if not file:
                         raise KeyError("tar member {} not found".format(name))
-                    return props.__replace__(
-                        data=file.read().decode(),
-                        permission=FilePermissionModel(
-                            mode=member.mode,
-                            owner=UidGidModel(uid=member.uid, gid=member.gid),
-                        ),
+                    return props.model_copy(
+                        update={
+                            "data": file.read().decode(),
+                            "permission": FilePermissionModel(
+                                mode=member.mode,
+                                owner=UidGidModel(uid=member.uid, gid=member.gid),
+                            ),
+                        }
                     )
             except NotFound:
                 return None

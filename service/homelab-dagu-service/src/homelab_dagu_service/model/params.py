@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from homelab_dagu_config.model import DaguDagModel
 from homelab_dagu_config.model.params import DaguDagParamsModel
 from homelab_dagu_config.model.step.precondition import (

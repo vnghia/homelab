@@ -143,8 +143,8 @@ class TraefikFile(ComponentResource):
                     service
                 )
             ) and service_dynamic:
-                traefik_service_config = traefik_service_config.__replace__(
-                    dynamic=traefik_service_config.dynamic | service_dynamic
+                traefik_service_config = traefik_service_config.model_copy(
+                    update={"dynamic": traefik_service_config.dynamic | service_dynamic}
                 )
             elif service_dynamic:
                 traefik_service_config = TraefikServiceConfig(

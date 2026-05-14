@@ -26,9 +26,9 @@ class KeepassEntryResource(ComponentResource):
         self.password = self.model.password.to_password(
             opts=self.child_opts, plain_args=self.plain_args
         )
-        self.hostname = self.model.hostname.__replace__(scheme="https").to_url(
-            self.plain_args
-        )
+        self.hostname = self.model.hostname.model_copy(
+            update={"scheme": "https"}
+        ).to_url(self.plain_args)
 
         self.register_outputs({})
 

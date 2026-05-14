@@ -1,4 +1,3 @@
-import copy
 import logging
 
 import aiofiles
@@ -50,21 +49,25 @@ class DockerContainerRunConfig(HomelabBaseModel):
             )
 
             if isinstance(self.overwrite, DockerContainerRunOverwriteModel):
-                creation = copy.replace(
-                    creation,
-                    cmd=self.overwrite.command or creation.cmd,
-                    entrypoint=self.overwrite.entrypoint or creation.entrypoint,
+                creation = creation.model_copy(
+                    update={
+                        "cmd": self.overwrite.command or creation.cmd,
+                        "entrypoint": self.overwrite.entrypoint or creation.entrypoint,
+                    }
                 )
             elif isinstance(self.overwrite, DockerContainerRunOverwriteDebugModel):
-                creation = copy.replace(
-                    creation,
-                    host_config=(
-                        copy.replace(creation.host_config, init=True)
-                        if creation.host_config
-                        else docker.schema.ModelHostConfig.model_construct(init=True)
-                    ),
-                    cmd=[self.overwrite.debug],
-                    entrypoint=["sleep"],
+                creation = creation.model_copy(
+                    update={
+                        "host_config": (
+                            creation.host_config.model_copy(update={"init": True})
+                            if creation.host_config
+                            else docker.schema.ModelHostConfig.model_validate(
+                                {"init": True}
+                            )
+                        ),
+                        "cmd": [self.overwrite.debug],
+                        "entrypoint": ["sleep"],
+                    }
                 )
 
             return DockerContainerRunModel(

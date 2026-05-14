@@ -107,8 +107,8 @@ class DaguServiceConfigBuilder(HomelabRootModel[DaguServiceConfig]):
                                 ),
                                 executor=DaguDagStepExecutorModel(
                                     DaguDagStepDockerExecutorModel(
-                                        executor_config.run_executor.__replace__(
-                                            entrypoint=[]
+                                        executor_config.run_executor.model_copy(
+                                            update={"entrypoint": []}
                                         )
                                     )
                                 ),

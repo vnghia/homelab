@@ -21,16 +21,11 @@ class ContainerTmpfsConfig(HomelabRootModel[AbsolutePath | ContainerTmpfsFullCon
         )
 
         option = ",".join(
-            list(
-                filter(
-                    bool,
-                    [
-                        ("exec" if root.exec else "noexec"),
-                        ("uid={}".format(user.uid)),
-                        ("gid={}".format(user.gid)),
-                    ],
-                )
-            )
+            [
+                ("exec" if root.exec else "noexec"),
+                ("uid={}".format(user.uid)),
+                ("gid={}".format(user.gid)),
+            ]
         )
 
         return (self.to_path(), option)

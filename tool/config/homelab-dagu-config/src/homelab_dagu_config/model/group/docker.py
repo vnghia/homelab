@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 
 from homelab_docker.extract import ExtractorArgs
@@ -31,17 +29,19 @@ class DaguDagDockerGroupModel(HomelabBaseModel):
     ) -> DaguDagModel:
         from ..step import DaguDagStepModel
 
-        return self.dag.__replace__(
-            name=name,
-            path="{}-{}".format(extractor_args.service.name(), name),
-            steps=[
-                DaguDagStepModel(
-                    name=name,
-                    run=DaguDagStepRunModel(
-                        command_config.prefix + self.command + command_config.suffix
-                    ),
-                    executor=DaguDagStepExecutorModel(docker_executor),
-                    continue_on=self.continue_on,
-                )
-            ],
+        return self.dag.model_copy(
+            update={
+                "name": name,
+                "path": "{}-{}".format(extractor_args.service.name(), name),
+                "steps": [
+                    DaguDagStepModel(
+                        name=name,
+                        run=DaguDagStepRunModel(
+                            command_config.prefix + self.command + command_config.suffix
+                        ),
+                        executor=DaguDagStepExecutorModel(docker_executor),
+                        continue_on=self.continue_on,
+                    )
+                ],
+            }
         )

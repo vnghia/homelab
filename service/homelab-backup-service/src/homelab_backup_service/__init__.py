@@ -116,18 +116,18 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                             depends=[],
                         )
                     )
-                service_model = self.DEFAULT_BACKUP_MODEL.__replace__(
-                    volume=volume_model or self.DEFAULT_VOLUME_BACKUP_MODEL
+                service_model = self.DEFAULT_BACKUP_MODEL.model_copy(
+                    update={"volume": volume_model or self.DEFAULT_VOLUME_BACKUP_MODEL}
                 )
             if service in restic_service.service_database_groups:
-                service_model = (
-                    service_model or self.DEFAULT_BACKUP_MODEL
-                ).__replace__(
-                    databases={
-                        type_: ",".join([profile.backup for profile in profiles])
-                        for type_, profiles in restic_service.service_database_groups[
-                            service
-                        ].items()
+                service_model = (service_model or self.DEFAULT_BACKUP_MODEL).model_copy(
+                    update={
+                        "databases": {
+                            type_: ",".join([profile.backup for profile in profiles])
+                            for type_, profiles in restic_service.service_database_groups[
+                                service
+                            ].items()
+                        }
                     }
                 )
 

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 
 from homelab_extract.plain import GlobalPlainExtractSource, PlainArgs

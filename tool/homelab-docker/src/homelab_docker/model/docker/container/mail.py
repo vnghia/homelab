@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 
 from homelab_mail.model import MailCredentialEnvKey, MailKey

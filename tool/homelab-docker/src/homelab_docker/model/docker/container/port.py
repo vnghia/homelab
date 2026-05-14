@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 from enum import StrEnum, auto
 from typing import ClassVar, Literal, Self
@@ -48,7 +46,7 @@ class ContainerPortConfig(HomelabBaseModel):
         internal = self.extract_port(self.internal, extractor_args)
         external = self.extract_port(self.external, extractor_args)
         return Output.all(internal=internal, external=external).apply(
-            lambda kwargs: self.__replace__(**kwargs)
+            lambda kwargs: self.model_copy(update=kwargs)
         )
 
     def ensure_type(self) -> tuple[PositiveInt, PositiveInt]:
@@ -90,4 +88,4 @@ class ContainerPortConfig(HomelabBaseModel):
     def with_service(self, service: str, force: bool) -> ContainerPortConfig:
         internal = self.with_port_service(self.internal, service, force)
         external = self.with_port_service(self.external, service, force)
-        return self.__replace__(internal=internal, external=external)
+        return self.model_copy(update={"internal": internal, "external": external})

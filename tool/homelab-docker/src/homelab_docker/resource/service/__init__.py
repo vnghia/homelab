@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections import defaultdict
 from typing import cast
 
@@ -242,8 +240,8 @@ class ServiceResourceBase(ComponentResource):
             vpn_containers: dict[str | None, ContainerModel] = {
                 vpn.VPN_CONTAINER: self.extractor_args.host_model.services[
                     host_vpn_config.service
-                ][host_vpn_config.container].__replace__(
-                    active=True, ports=ContainerPortsConfig.default()
+                ][host_vpn_config.container].model_copy(
+                    update={"active": True, "ports": ContainerPortsConfig.default()}
                 )
             }
             self.container_models = vpn_containers | self.container_models

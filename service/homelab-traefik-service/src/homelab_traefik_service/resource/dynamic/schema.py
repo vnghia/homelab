@@ -2,7 +2,6 @@
 #   filename:  https://json.schemastore.org/traefik-v3-file-provider.json
 #   timestamp: 2025-02-16T16:24:04+00:00
 
-from __future__ import annotations
 
 from typing import Any
 

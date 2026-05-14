@@ -65,13 +65,15 @@ class DatabaseConfig(HomelabRootModel[dict[DatabaseType, DatabaseTypeConfig]]):
         return cls({})
 
     @model_validator(mode="after")
-    def set_images_none_key(self) -> Self:
-        return self.model_construct(
+    def set_images_none_key(self) -> DatabaseConfig:
+        return self.__class__.model_construct(
             {
-                type_: config.__replace__(
-                    images={
-                        type_.get_key(name): model
-                        for name, model in config.images.items()
+                type_: config.model_copy(
+                    update={
+                        "images": {
+                            type_.get_key(name): model
+                            for name, model in config.images.items()
+                        }
                     }
                 )
                 for type_, config in self.root.items()

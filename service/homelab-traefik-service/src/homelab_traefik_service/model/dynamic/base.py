@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import abc
 import operator
 import typing
@@ -145,7 +143,9 @@ class TraefikDynamicBaseModelBuilder[T: TraefikDynamicBaseModel](HomelabRootMode
             data[self.TYPE]["services"] = TraefikDynamicServiceFullModelBuilder(
                 service_full
                 if service_full.port is not None
-                else service_full.__replace__(port=entrypoint_config.root.port)
+                else service_full.model_copy(
+                    update={"port": entrypoint_config.root.port}
+                )
             ).to_service(self.TYPE, router_name, server_transport_name, extractor_args)
 
         middlewares: dict[str, Any] = reduce(

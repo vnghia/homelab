@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
 
@@ -29,30 +27,34 @@ class KanidmStateConfig(HomelabBaseModel):
             else:
                 user_members.append(member_extract)
 
-        return self.__replace__(
-            persons=KanidmStatePersonConfig(
-                {
-                    username: model.__replace__(
-                        mail_addresses=[
-                            "{}@{}".format(username, domain),
-                            *model.mail_addresses,
-                        ]
-                    )
-                    for username, model in self.persons.root.items()
-                }
-            ),
-            groups=KanidmStateGroupConfig(
-                self.groups.root
-                | {openid_group: KanidmStateGroupModel(members=openid_members)}
-                | {admin_group: KanidmStateGroupModel(members=admin_members)}
-                | {user_group: KanidmStateGroupModel(members=user_members)}
-            ),
-            systems=KanidmStateSystemConfig(
-                oauth2=KanidmStateSystemOauthConfig(
+        return self.model_copy(
+            update={
+                "persons": KanidmStatePersonConfig(
                     {
-                        system: model.build(openid_group, self)
-                        for system, model in self.systems.oauth2.root.items()
+                        username: model.model_copy(
+                            update={
+                                "mail_addresses": [
+                                    "{}@{}".format(username, domain),
+                                    *model.mail_addresses,
+                                ]
+                            }
+                        )
+                        for username, model in self.persons.root.items()
                     }
-                )
-            ),
+                ),
+                "groups": KanidmStateGroupConfig(
+                    self.groups.root
+                    | {openid_group: KanidmStateGroupModel(members=openid_members)}
+                    | {admin_group: KanidmStateGroupModel(members=admin_members)}
+                    | {user_group: KanidmStateGroupModel(members=user_members)}
+                ),
+                "systems": KanidmStateSystemConfig(
+                    oauth2=KanidmStateSystemOauthConfig(
+                        {
+                            system: model.build(openid_group, self)
+                            for system, model in self.systems.oauth2.root.items()
+                        }
+                    )
+                ),
+            }
         )
