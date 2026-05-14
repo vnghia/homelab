@@ -64,7 +64,7 @@ class HomelabRootModel[T](RootModel[T]):
         validation_error_cause=True,
     )
 
-    root: T
+    root: T  # pyrefly: ignore [bad-override]
 
     @model_validator(mode="before")
     @classmethod

@@ -1,3 +1,5 @@
+from typing import Self
+
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
 
 
@@ -7,7 +9,9 @@ class ContainerInheritFullConfig(HomelabBaseModel):
 
 
 class ContainerInheritConfig(HomelabRootModel[str | None | ContainerInheritFullConfig]):
-    root: str | ContainerInheritFullConfig | None = None
+    @classmethod
+    def default(cls) -> Self:
+        return cls(None)
 
     def to_full(self) -> ContainerInheritFullConfig:
         root = self.root

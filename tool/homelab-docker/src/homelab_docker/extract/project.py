@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalProjectSourceExtractor(ExtractorBase[GlobalExtractProjectSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> dict[str, Any]:
         return {
             k.removeprefix("pulumi."): v

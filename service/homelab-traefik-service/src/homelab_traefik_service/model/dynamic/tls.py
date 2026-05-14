@@ -42,7 +42,7 @@ class TraefikDynamicTlsModelBuilder(HomelabRootModel[TraefikDynamicTlsModel]):
                 }
             }
             if root.mtls
-            else {}
+            else {}  # pyrefly: ignore [implicit-any-empty-container]
         )
 
         return {

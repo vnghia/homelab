@@ -24,11 +24,14 @@ class ContainerEnvSourceExtractor(ExtractorBase[ContainerExtractEnvSource]):
             raise ValueError("Env {} is disabled".format(root.env))
         return GlobalExtractor(env)
 
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
         return self.get_env(extractor_args).extract_str(extractor_args)
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.get_env(extractor_args).extract_path(extractor_args)
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         return self.get_env(extractor_args).extract_volume_path(extractor_args)

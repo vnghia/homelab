@@ -14,9 +14,11 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalPlainSourceExtractor(ExtractorBase[GlobalPlainExtractSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
         return self.root.extract_str(extractor_args.plain_args)
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         result = self.extract_str(extractor_args)
         if not isinstance(result, str):

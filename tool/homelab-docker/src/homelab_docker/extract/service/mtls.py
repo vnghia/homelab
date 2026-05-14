@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
 
 
 class ServiceMTlsSourceExtractor(ExtractorBase[ServiceExtractMTlsSource]):
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> Output[str] | dict[str, Output[str]]:

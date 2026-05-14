@@ -1,4 +1,4 @@
-from typing import Any
+import functools
 
 from homelab_extract import GlobalExtract
 from homelab_pydantic import HomelabBaseModel
@@ -28,20 +28,15 @@ class ServiceModel(HomelabBaseModel):
     secrets: SecretConfig | None = None
     keepasses: ServiceKeepassConfig | None = None
     network: ServiceNetworkConfig = ServiceNetworkConfig()
-    user: ServiceUserConfig = ServiceUserConfig()
+    user: ServiceUserConfig = ServiceUserConfig.default()
     container_: ContainerModel | None = Field(None, alias="container")
     containers_: dict[str, ContainerModel] = Field({}, alias="containers")
 
-    _containers: dict[str | None, ContainerModel]
-
-    def model_post_init(self, context: Any, /) -> None:
-        self._containers = (
-            {None: self.container_} if self.container_ else {}
-        ) | self.containers_
-
-    @property
+    @functools.cached_property
     def containers(self) -> dict[str | None, ContainerModel]:
-        return self._containers
+        return ({None: self.container_} if self.container_ else {}) | {
+            key or None: value for key, value in self.containers_.items()
+        }
 
     def __getitem__(self, key: str | None) -> ContainerModel:
         return self.containers[key]

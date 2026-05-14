@@ -146,7 +146,7 @@ class Docker:
         logger.debug(instance)
 
         exec_id = instance.id[:7]
-        async with instance.start(timeout=None, detach=False) as stream:
+        async with instance.start(timeout=None, detach=False) as stream:  # pyrefly: ignore [bad-context-manager]
             while message := (await stream.read_out()):
                 # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
                 logger.info(

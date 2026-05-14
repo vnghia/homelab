@@ -93,6 +93,7 @@ class KanidmStateProvider(ResourceProvider):
 
     serialize_as_secret_always = True
 
+    @typing.override
     def create(self, props: dict[str, Any]) -> CreateResult:
         kanidm_props = KanidmStateProviderProps(**props)
         kanidm_props.provision()
@@ -100,18 +101,22 @@ class KanidmStateProvider(ResourceProvider):
             id_=self.RESOURCE_ID, outs=kanidm_props.model_dump(mode="json")
         )
 
-    def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
-        kanidm_olds = KanidmStateProviderProps(**olds)
+    @typing.override
+    def diff(
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
+    ) -> DiffResult:
+        kanidm_olds = KanidmStateProviderProps(**_olds)
         try:
-            kanidm_news = KanidmStateProviderProps(**news)
+            kanidm_news = KanidmStateProviderProps(**_news)
             return DiffResult(changes=kanidm_olds != kanidm_news)
         except ValidationError:
             return DiffResult(changes=True)
 
+    @typing.override
     def update(
-        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
     ) -> UpdateResult:
-        kanidm_props = KanidmStateProviderProps(**news)
+        kanidm_props = KanidmStateProviderProps(**_news)
         kanidm_props.provision()
         return UpdateResult(outs=kanidm_props.model_dump(mode="json"))
 

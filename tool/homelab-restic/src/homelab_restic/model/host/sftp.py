@@ -1,3 +1,4 @@
+import typing
 from pathlib import PosixPath
 from typing import ClassVar
 
@@ -14,5 +15,6 @@ class ResticSftpHost(ResticHostBase):
     user: str
     prefix: AbsolutePath = AbsolutePath(PosixPath("/"))
 
+    @typing.override
     def build_prefix(self, plain_args: PlainArgs) -> str:
         return "//{}@{}/{}/".format(self.user, self.sftp, self.prefix.as_posix())

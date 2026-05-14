@@ -60,7 +60,9 @@ class DatabaseTypeConfig(HomelabBaseModel):
 
 
 class DatabaseConfig(HomelabRootModel[dict[DatabaseType, DatabaseTypeConfig]]):
-    root: dict[DatabaseType, DatabaseTypeConfig] = {}
+    @classmethod
+    def default(cls) -> Self:
+        return cls({})
 
     @model_validator(mode="after")
     def set_images_none_key(self) -> Self:

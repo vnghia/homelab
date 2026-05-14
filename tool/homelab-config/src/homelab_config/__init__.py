@@ -1,3 +1,4 @@
+import functools
 from typing import Any, Self, Type
 
 import deepmerge
@@ -23,17 +24,14 @@ class HostConfig[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBase
 
     _service_model: HostServiceModelConfig
 
-    def model_post_init(self, context: Any, /) -> None:
-        self._service_model = HostServiceModelConfig(
+    @functools.cached_property
+    def service_model(self) -> HostServiceModelConfig:
+        return HostServiceModelConfig(
             {
                 "sun": self.sun.service_model("sun"),
                 "earth": self.earth.service_model("earth"),
             }
         )
-
-    @property
-    def service_model(self) -> HostServiceModelConfig:
-        return self._service_model
 
 
 class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseModel):

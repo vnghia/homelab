@@ -52,7 +52,7 @@ class TraefikStaticConfigResource(
                     exclude_unset=True
                 )
                 if "grpc" not in otlp:
-                    otlp["grpc"] = {}
+                    otlp["grpc"] = {}  # pyrefly: ignore [implicit-any-empty-container]
             else:
                 otlp = {"grpc": {}}
 

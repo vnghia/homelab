@@ -63,7 +63,7 @@ class TraefikEntrypointHttpModel(HomelabBaseModel):
                     .apply(int)
                 }
                 if self.http3
-                else {}
+                else {}  # pyrefly: ignore [implicit-any-empty-container]
             )
         } | ({"http": http} if http else {})
 

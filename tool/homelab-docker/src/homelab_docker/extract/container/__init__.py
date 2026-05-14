@@ -39,11 +39,14 @@ class ContainerExtractor(ExtractorBase[ContainerExtract]):
             return ContainerPortSourceExtractor(root)
         return ContainerVolumeSourceExtractor(root)
 
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
         return self.extractor.extract_str(extractor_args)
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.extractor.extract_path(extractor_args)
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         return self.extractor.extract_volume_path(extractor_args)

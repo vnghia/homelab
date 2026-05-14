@@ -1,4 +1,5 @@
 import re
+import typing
 from typing import Any, ClassVar
 
 from homelab_docker.client import DockerClient
@@ -37,6 +38,7 @@ class KanidmPasswordProviderProps(HomelabBaseModel):
 class KanidmPasswordProvider(ResourceProvider):
     serialize_as_secret_always = True
 
+    @typing.override
     def create(self, props: dict[str, Any]) -> CreateResult:
         kanidm_props = KanidmPasswordProviderProps(**props)
         password = kanidm_props.recover_account()
@@ -45,11 +47,12 @@ class KanidmPasswordProvider(ResourceProvider):
             outs=kanidm_props.model_dump(mode="json") | {"password": password},
         )
 
+    @typing.override
     def update(
-        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
     ) -> UpdateResult:
-        password = olds.pop("password")
-        kanidm_news = KanidmPasswordProviderProps(**news)
+        password = _olds.pop("password")
+        kanidm_news = KanidmPasswordProviderProps(**_news)
         return UpdateResult(
             outs=kanidm_news.model_dump(mode="json") | {"password": password},
         )

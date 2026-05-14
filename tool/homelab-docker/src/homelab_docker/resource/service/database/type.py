@@ -4,6 +4,7 @@ import dataclasses
 import typing
 from pathlib import PosixPath
 
+import pulumi_random as random
 from homelab_extract import GlobalExtract
 from homelab_extract.container import ContainerExtract
 from homelab_extract.container.volume import ContainerExtractVolumeSource
@@ -70,7 +71,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
         )
         self.database = self.service_name
 
-        self.superuser_password = None
+        self.superuser_password: random.RandomPassword | None = None
         superuser_password_env = {}
         if self.config.env.superuser_password:
             self.superuser_password = SecretPasswordModel(special=False).build_resource(
@@ -225,7 +226,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
             host=self.get_full_name_version(version),
             port=self.config.port,
             superuser_password=self.superuser_password.result
-            if self.superuser_password
+            if self.superuser_password is not None
             else None,
         )
 

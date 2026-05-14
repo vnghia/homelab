@@ -12,5 +12,6 @@ if typing.TYPE_CHECKING:
 
 
 class ServiceCertSourceExtractor(ExtractorBase[ServiceExtractCertSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         return extractor_args.service.secret.get_cert(self.root.cert).cert_pem

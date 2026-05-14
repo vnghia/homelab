@@ -37,7 +37,15 @@ class MailCredentialArgs:
                 if env.password_template
                 else self.password,
             }
-            | ({env.username: self.username or self.address} if env.username else {})
+            | (
+                {
+                    env.username: self.username
+                    if self.username is not None
+                    else self.address
+                }
+                if env.username
+                else {}
+            )
         )
 
 

@@ -13,6 +13,7 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalDictSourceExtractor(ExtractorBase[GlobalExtractDictSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> dict[Output[str], Any]:
         from .global_ import GlobalExtractor
 

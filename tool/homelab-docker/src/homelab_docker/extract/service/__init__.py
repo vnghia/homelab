@@ -79,6 +79,7 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
             return ServiceVolumeSourceExtractor(root)
         return ServiceVpnSourceExtractor(root)
 
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> (
@@ -91,9 +92,11 @@ class ServiceSourceExtractor(ExtractorBase[ServiceExtractSource]):
     ):
         return self.extractor.extract_str(extractor_args)
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.extractor.extract_path(extractor_args)
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         return self.extractor.extract_volume_path(extractor_args)
 
@@ -129,6 +132,7 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
             )
         )
 
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> (
@@ -152,12 +156,13 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
             else:
                 result_path = value_path.as_posix()
             return result_path
-        except (TypeError, ValidationError):
+        except TypeError, ValidationError:
             result_str = extractor.extract_str(extractor_args)
             if transformer:
                 result_str = transformer.transform_string(result_str)
             return result_str
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         extractor = self.extractor
         transformer = self.transfomer
@@ -168,6 +173,7 @@ class ServiceFullExtractor(ExtractorBase[ServiceExtractFull]):
             value = transformer.transform_path(value)
         return value
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         extractor = self.extractor
         transformer = self.transfomer
@@ -197,6 +203,7 @@ class ServiceExtractor(ExtractorBase[ServiceExtract]):
     ) -> ServiceSourceExtractor | ServiceFullExtractor:
         return self.get_extractor(self.root)
 
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> (
@@ -209,8 +216,10 @@ class ServiceExtractor(ExtractorBase[ServiceExtract]):
     ):
         return self.extractor.extract_str(extractor_args)
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.extractor.extract_path(extractor_args)
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         return self.extractor.extract_volume_path(extractor_args)

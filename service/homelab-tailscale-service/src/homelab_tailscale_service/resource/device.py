@@ -77,6 +77,7 @@ class TailscaleDeviceResourceProvider(ResourceProvider):
 
     serialize_as_secret_always = False
 
+    @typing.override
     def create(self, props: dict[str, Any]) -> CreateResult:
         tailscale_props = TailscaleDeviceProviderProps(**props)
         return CreateResult(
@@ -86,18 +87,22 @@ class TailscaleDeviceResourceProvider(ResourceProvider):
             ),
         )
 
-    def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
-        tailscale_olds = TailscaleDeviceProviderProps(**olds)
+    @typing.override
+    def diff(
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
+    ) -> DiffResult:
+        tailscale_olds = TailscaleDeviceProviderProps(**_olds)
         try:
-            tailscale_news = TailscaleDeviceProviderProps(**news)
+            tailscale_news = TailscaleDeviceProviderProps(**_news)
             return DiffResult(changes=tailscale_olds != tailscale_news)
         except ValidationError:
             return DiffResult(changes=True)
 
+    @typing.override
     def update(
-        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
     ) -> UpdateResult:
-        tailscale_props = TailscaleDeviceProviderProps(**news)
+        tailscale_props = TailscaleDeviceProviderProps(**_news)
         return UpdateResult(
             outs=TailscaleClient.device(tailscale_props.hostname).model_dump(
                 mode="json"

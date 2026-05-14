@@ -26,6 +26,7 @@ class TraefikDynamicHttpModelBuilder(
 ):
     TYPE: ClassVar[TraefikDynamicType] = TraefikDynamicType.HTTP
 
+    @typing.override
     def build_rule(
         self,
         record: str,
@@ -57,6 +58,7 @@ class TraefikDynamicHttpModelBuilder(
             )
         ).apply(" && ".join)
 
+    @typing.override
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
@@ -75,6 +77,7 @@ class TraefikDynamicHttpModelBuilder(
 
         return (tls, tls_router)
 
+    @typing.override
     def build_servers_transports(
         self,
         server_name: str,
@@ -83,6 +86,7 @@ class TraefikDynamicHttpModelBuilder(
     ) -> tuple[str, dict[str, Any]] | None:
         return None
 
+    @typing.override
     def build_service_middlewares(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> list[TraefikDynamicMiddlewareModel]:

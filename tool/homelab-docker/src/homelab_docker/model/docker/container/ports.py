@@ -74,7 +74,9 @@ class ContainerPortsConfig(
 ):
     model_config = ConfigDict(frozen=False)
 
-    root: dict[str, ContainerPortRangeConfig | ContainerPortConfig] = {}
+    @classmethod
+    def default(cls) -> Self:
+        return cls({})
 
     def to_args(
         self, extractor_args: ExtractorArgs, build_args: ContainerModelBuildArgs
@@ -96,10 +98,6 @@ class ContainerPortsConfig(
 
     def __or__(self, rhs: ContainerPortsConfig) -> ContainerPortsConfig:
         return ContainerPortsConfig(self.root | rhs.root)
-
-    def __ior__(self, rhs: ContainerPortsConfig) -> ContainerPortsConfig:
-        self.root |= rhs.root
-        return self
 
     def with_service(self, service: str, force: bool) -> Self:
         return self.model_construct(

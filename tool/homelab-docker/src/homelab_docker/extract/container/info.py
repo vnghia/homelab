@@ -16,6 +16,7 @@ if typing.TYPE_CHECKING:
 
 
 class ContainerInfoSourceExtractor(ExtractorBase[ContainerExtractInfoSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> str | Output[str]:
         cinfo = self.root.cinfo
         match cinfo:
@@ -40,10 +41,11 @@ class ContainerInfoSourceExtractor(ExtractorBase[ContainerExtractInfoSource]):
                         network.service or extractor_args.service.name(),
                         network.container,
                     )
-                if isinstance(network, ContainerNetworkModeConfig):
-                    match network.mode:
-                        case ContainerNetworkMode.HOST:
-                            return ContainerHostModeConfig.LOCALHOST_IP
+                if (
+                    isinstance(network, ContainerNetworkModeConfig)
+                    and network.mode == ContainerNetworkMode.HOST
+                ):
+                    return ContainerHostModeConfig.LOCALHOST_IP
                 return extractor_args.service.container_full_names[
                     extractor_args.container.key
                 ]

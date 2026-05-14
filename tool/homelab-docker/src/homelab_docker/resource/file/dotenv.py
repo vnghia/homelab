@@ -1,3 +1,4 @@
+import typing
 from typing import Mapping
 
 from homelab_pydantic import HomelabRootModel
@@ -12,6 +13,7 @@ from .config import ConfigDumper, ConfigFileResource
 
 class DotenvDumper(ConfigDumper[HomelabRootModel[dict[str, str]]]):
     @classmethod
+    @typing.override
     def dumps(cls, data: HomelabRootModel[dict[str, str]]) -> str:
         return (
             "\n".join(
@@ -22,6 +24,7 @@ class DotenvDumper(ConfigDumper[HomelabRootModel[dict[str, str]]]):
         )
 
     @staticmethod
+    @typing.override
     def suffix() -> str:
         return ".env"
 

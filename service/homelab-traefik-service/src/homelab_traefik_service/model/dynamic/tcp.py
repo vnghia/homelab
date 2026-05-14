@@ -21,6 +21,7 @@ class TraefikDynamicTcpModelBuilder(
 ):
     TYPE: ClassVar[TraefikDynamicType] = TraefikDynamicType.TCP
 
+    @typing.override
     def build_rule(
         self,
         record: str,
@@ -46,6 +47,7 @@ class TraefikDynamicTcpModelBuilder(
             lambda hosts: " || ".join(["HostSNI(`{}`)".format(host) for host in hosts])
         )
 
+    @typing.override
     def build_tls(
         self, traefik_service: TraefikService, extractor_args: ExtractorArgs
     ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
@@ -64,6 +66,7 @@ class TraefikDynamicTcpModelBuilder(
             else None,
         )
 
+    @typing.override
     def build_servers_transports(
         self,
         server_name: str,

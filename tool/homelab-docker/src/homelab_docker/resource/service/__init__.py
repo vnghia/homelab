@@ -243,7 +243,7 @@ class ServiceResourceBase(ComponentResource):
                 vpn.VPN_CONTAINER: self.extractor_args.host_model.services[
                     host_vpn_config.service
                 ][host_vpn_config.container].__replace__(
-                    active=True, ports=ContainerPortsConfig()
+                    active=True, ports=ContainerPortsConfig.default()
                 )
             }
             self.container_models = vpn_containers | self.container_models
@@ -279,7 +279,7 @@ class ServiceResourceBase(ComponentResource):
         if not model.active:
             return None
 
-        depends_on = []
+        depends_on: list[Resource] = []
         for depend_on in model.depends_on:
             container = self.build_container(depend_on)
             if container:

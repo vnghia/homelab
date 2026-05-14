@@ -151,6 +151,7 @@ ignore = [
 [tool.pyrefly]
 preset = "strict"
 project-excludes = ["**/sdks*", "**/image/*/homelab-pydantic*"]
+disable-project-excludes-heuristics = true
 ignore-missing-imports = ["json_fix.*", "pykeepass.*"]
 search-path = [
     "image/balite/src",

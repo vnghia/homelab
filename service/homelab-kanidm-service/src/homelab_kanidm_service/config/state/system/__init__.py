@@ -4,4 +4,4 @@ from .oauth import KanidmStateSystemOauthConfig
 
 
 class KanidmStateSystemConfig(HomelabBaseModel):
-    oauth2: KanidmStateSystemOauthConfig = KanidmStateSystemOauthConfig()
+    oauth2: KanidmStateSystemOauthConfig = KanidmStateSystemOauthConfig.default()

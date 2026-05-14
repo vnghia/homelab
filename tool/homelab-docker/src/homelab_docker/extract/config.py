@@ -13,6 +13,7 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalConfigSourceExtractor(ExtractorBase[GlobalExtractConfigSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         from ..resource.file.config import TomlDumper, YamlDumper
         from .global_ import GlobalExtractor

@@ -11,8 +11,8 @@ from .system.oauth import KanidmStateSystemOauthConfig
 
 
 class KanidmStateConfig(HomelabBaseModel):
-    groups: KanidmStateGroupConfig = KanidmStateGroupConfig()
-    persons: KanidmStatePersonConfig = KanidmStatePersonConfig()
+    groups: KanidmStateGroupConfig = KanidmStateGroupConfig.default()
+    persons: KanidmStatePersonConfig = KanidmStatePersonConfig.default()
     systems: KanidmStateSystemConfig = KanidmStateSystemConfig()
 
     def build(

@@ -76,6 +76,7 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
             return GlobalSecretSourceExtractor(root)
         return GlobalVariableSourceExtractor(root)
 
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> (
@@ -88,9 +89,11 @@ class GlobalSourceExtractor(ExtractorBase[GlobalExtractSource]):
     ):
         return self.extractor.extract_str(extractor_args)
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.extractor.extract_path(extractor_args)
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         return self.extractor.extract_volume_path(extractor_args)
 
@@ -113,6 +116,7 @@ class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
     def extractor_args(self, extractor_args: ExtractorArgs) -> ExtractorArgs:
         return extractor_args.with_host(extractor_args.get_host(self.root.host))
 
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> (
@@ -133,11 +137,12 @@ class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
                     extractor.extract_path(extractor_args)
                 ).as_posix()
                 return transformer.transform_string(value_path)
-            except (TypeError, ValidationError):
+            except TypeError, ValidationError:
                 value_str = extractor.extract_str(extractor_args)
                 return transformer.transform_string(value_str)
         return extractor.extract_str(extractor_args)
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         extractor = self.extractor
         transformer = self.transformer
@@ -145,6 +150,7 @@ class GlobalFullExtractor(ExtractorBase[GlobalExtractFull]):
 
         return transformer.transform_path(extractor.extract_path(extractor_args))
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         extractor = self.extractor
         transformer = self.transformer
@@ -175,6 +181,7 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
     ) -> GlobalSourceExtractor | GlobalFullExtractor:
         return self.get_extractor(self.root)
 
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         return ExtractTransformer(ExtractTransform()).transform_string(
             self.extractor.extract_str(extractor_args)
@@ -194,9 +201,11 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
             return ExtractTransformer(ExtractTransform()).transform_string(value)
         return value
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.extractor.extract_path(extractor_args)
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         return self.extractor.extract_volume_path(extractor_args)
 
@@ -206,7 +215,7 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
             try:
                 extract = GlobalExtract(**data)
                 return cls(extract).extract_str_explicit_transform(extractor_args)
-            except (ValidationError, ValueError):
+            except ValidationError, ValueError:
                 return {
                     key: cls.extract_recursively(value, extractor_args)
                     for key, value in data.items()

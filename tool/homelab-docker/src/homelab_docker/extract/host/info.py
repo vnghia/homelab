@@ -11,6 +11,7 @@ if typing.TYPE_CHECKING:
 
 
 class HostInfoSourceExtractor(ExtractorBase[HostExtractInfoSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> str:
         hinfo = self.root.hinfo
         host = extractor_args.host_model

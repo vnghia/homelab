@@ -1,6 +1,7 @@
 import abc
 import configparser
 import io
+import typing
 from typing import Any, ClassVar, Generic, Mapping, TypeVar
 
 import jsonschema
@@ -58,26 +59,31 @@ class ConfigDumper(Generic[T]):
 
 class JsonDumper(ConfigDumper[T]):
     @classmethod
+    @typing.override
     def dumps_any(cls, data: Any) -> str:
         return orjson.dumps(data).decode()
 
     @staticmethod
+    @typing.override
     def suffix() -> str:
         return ".json"
 
 
 class TomlDumper(ConfigDumper[T]):
     @classmethod
+    @typing.override
     def dumps_any(cls, data: Any) -> str:
         return rtoml.dumps(data, none_value=None)
 
     @staticmethod
+    @typing.override
     def suffix() -> str:
         return ".toml"
 
 
 class IniDumper(ConfigDumper[T]):
     @classmethod
+    @typing.override
     def dumps_any(cls, data: Any) -> str:
         parser = configparser.ConfigParser()
         for name, section in data.items():
@@ -91,16 +97,19 @@ class IniDumper(ConfigDumper[T]):
         return config_content.read()
 
     @staticmethod
+    @typing.override
     def suffix() -> str:
         return ".conf"
 
 
 class YamlDumper(ConfigDumper[T]):
     @classmethod
+    @typing.override
     def dumps_any(cls, data: Any) -> str:
         return yaml_rs.dumps(data)
 
     @staticmethod
+    @typing.override
     def suffix() -> str:
         return ".yaml"
 

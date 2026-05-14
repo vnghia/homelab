@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 import typing
+from typing import Self
 
 from homelab_pydantic import HomelabRootModel
 
@@ -11,7 +10,9 @@ if typing.TYPE_CHECKING:
 
 
 class ServiceUserConfig(HomelabRootModel[str | None | UidGidModel]):
-    root: str | UidGidModel | None = None
+    @classmethod
+    def default(cls) -> Self:
+        return cls(None)
 
     def model(self, users: UidGidConfig) -> UidGidModel:
         root = self.root

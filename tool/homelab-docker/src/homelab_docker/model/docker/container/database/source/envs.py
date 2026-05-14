@@ -19,6 +19,7 @@ class ContainerDatabaseSourceEnvs(ContainerDatabaseSourceEnvsBase):
 
     superuser_password: str | None = None
 
+    @typing.override
     def to_envs(self, model: ContainerDatabaseSourceModel) -> dict[str, Output[str]]:
         database_env = {}
         if self.database:

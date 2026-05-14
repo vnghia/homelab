@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import typing
 from enum import StrEnum, auto
+from typing import Self
 
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
@@ -171,11 +172,9 @@ class ContainerNetworkConfig(
         | ContainerNetworkModeConfig
     ]
 ):
-    root: (
-        ContainerCommonNetworkConfig
-        | ContainerNetworkContainerConfig
-        | ContainerNetworkModeConfig
-    ) = ContainerCommonNetworkConfig()
+    @classmethod
+    def default(cls) -> Self:
+        return cls(ContainerCommonNetworkConfig())
 
     def to_args(
         self,

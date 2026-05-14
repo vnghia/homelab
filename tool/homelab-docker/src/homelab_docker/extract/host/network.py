@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
 
 
 class HostNetworkSourceExtractor(ExtractorBase[HostExtractNetworkSource]):
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> list[Output[str]] | Output[str]:

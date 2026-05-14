@@ -8,7 +8,6 @@ from homelab_dagu_config.model.step import DaguDagStepModel
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.dotenv import DotenvFileResource
 from homelab_pydantic import HomelabRootModel
-from pulumi import Input
 
 from .run import DaguDagStepRunModelBuilder
 from .script import DaguDagStepScriptModelBuilder
@@ -24,7 +23,7 @@ class DaguDagStepModelBuilder(HomelabRootModel[DaguDagStepModel]):
         dagu_service: DaguService,
         extractor_args: ExtractorArgs,
         dotenvs: list[DotenvFileResource] | None,
-    ) -> dict[str, Input[Any]]:
+    ) -> dict[str, Any]:
         root = self.root
 
         return (

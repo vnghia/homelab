@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import os
 import re
+import typing
 from contextlib import contextmanager
-from typing import Any, ClassVar, Iterator, Self
+from typing import Any, ClassVar, Generator, Self
 from uuid import UUID
 
 import pulumi
@@ -86,7 +87,7 @@ class KeepassProviderProps(HomelabBaseModel):
             pulumi.log.warn(
                 "Pulumi unknown output encountered with {}.".format(cls.__name__)
             )
-            return {}
+            return {}  # pyrefly: ignore [implicit-any-empty-container]
         return handler(data)
 
 
@@ -144,7 +145,7 @@ class Keepass:
         for index, url in enumerate(props.urls):
             entry.set_custom_property(props.URL_PREFIX + str(index + 1), str(url))
         for index, app in enumerate(props.apps):
-            entry.set_custom_property(props.APP_PREFIX + str(index + 1), str(app))
+            entry.set_custom_property(props.APP_PREFIX + str(index + 1), app)
 
         self.props.entry_ids[title] = entry.uuid
 
@@ -172,7 +173,7 @@ class Keepass:
         for index, url in enumerate(props.urls):
             entry.set_custom_property(props.URL_PREFIX + str(index + 1), str(url))
         for index, app in enumerate(props.apps):
-            entry.set_custom_property(props.APP_PREFIX + str(index + 1), str(app))
+            entry.set_custom_property(props.APP_PREFIX + str(index + 1), app)
 
     def upsert_props(self) -> None:
         for title, entry_props in self.props.entries.items():
@@ -193,7 +194,7 @@ class Keepass:
 
     @classmethod
     @contextmanager
-    def open(cls, props: KeepassProviderProps) -> Iterator[Self]:
+    def open(cls, props: KeepassProviderProps) -> Generator[Self]:
         filename = os.environ.get("KEEPASS_DATABASE")
         if filename:
             keepass = cls(filename, props)
@@ -208,6 +209,7 @@ class KeepassProvider(ResourceProvider):
 
     serialize_as_secret_always = False
 
+    @typing.override
     def create(self, props: dict[str, Any]) -> CreateResult:
         keepass_props = KeepassProviderProps(**props)
         with Keepass.open(keepass_props) as keepass:
@@ -216,22 +218,27 @@ class KeepassProvider(ResourceProvider):
             id_=self.RESOURCE_ID, outs=keepass_props.model_dump(mode="json")
         )
 
-    def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
-        keepass_olds = KeepassProviderProps(**olds)
-        keepass_news = KeepassProviderProps(**news)
+    @typing.override
+    def diff(
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
+    ) -> DiffResult:
+        keepass_olds = KeepassProviderProps(**_olds)
+        keepass_news = KeepassProviderProps(**_news)
         return DiffResult(
             changes=(keepass_olds.entry_ids.keys() != keepass_news.entries.keys())
             or (keepass_olds.entries != keepass_news.entries)
         )
 
+    @typing.override
     def update(
-        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
     ) -> UpdateResult:
-        keepass_props = KeepassProviderProps(**news)
+        keepass_props = KeepassProviderProps(**_news)
         with Keepass.open(keepass_props) as keepass:
             keepass.upsert_props()
         return UpdateResult(outs=keepass_props.model_dump(mode="json"))
 
+    @typing.override
     def read(self, id_: str, props: dict[str, Any]) -> ReadResult:
         keepass_props = KeepassProviderProps(**props)
         with Keepass.open(keepass_props) as keepass:

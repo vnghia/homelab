@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import typing
 from typing import Any, ClassVar
 
 from homelab_pydantic import HomelabBaseModel
@@ -49,6 +50,7 @@ class ResticRepositoryProviderProps(HomelabBaseModel):
 class ResticRepositoryProvider(ResourceProvider):
     serialize_as_secret_always = False
 
+    @typing.override
     def create(self, props: dict[str, Any]) -> CreateResult:
         restic_props = ResticRepositoryProviderProps(**props)
         if not restic_props.exist():

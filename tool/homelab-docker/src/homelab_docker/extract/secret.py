@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalSecretSourceExtractor(ExtractorBase[GlobalExtractSecretSource]):
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> Output[str] | random.RandomPassword:

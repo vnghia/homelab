@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalKvSourceExtractor(ExtractorBase[GlobalExtractKvSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> dict[str, Output[str]]:
         from .global_ import GlobalExtractor
 

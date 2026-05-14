@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
 
 
 class ServiceVpnSourceExtractor(ExtractorBase[ServiceExtractVpnSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         return Output.from_input(
             str(

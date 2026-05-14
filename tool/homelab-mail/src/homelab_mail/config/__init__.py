@@ -21,6 +21,6 @@ class MailAddressConfig(HomelabBaseModel):
 
 class MailConfig(HomelabBaseModel):
     address: MailAddressConfig
-    relay: MailRelayConfig = MailRelayConfig()
-    custom: MailCredentialConfig = MailCredentialConfig()
-    notification: NotificationConfig = NotificationConfig()
+    relay: MailRelayConfig = MailRelayConfig.default()
+    custom: MailCredentialConfig = MailCredentialConfig.default()
+    notification: NotificationConfig = NotificationConfig.default()

@@ -59,7 +59,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
 
         self.domain = self.extractor_args.host.network.config.records[
             self.config.record
-        ]._domain
+        ].domain
         self.state = KanidmStateResource(
             opts=self.child_opts.merge(
                 ResourceOptions(depends_on=[self.container.resource])

@@ -6,6 +6,6 @@ from .string import ExtractTransformString
 
 
 class ExtractTransform(HomelabBaseModel):
-    path: ExtractTransformPath = ExtractTransformPath()
+    path: ExtractTransformPath = ExtractTransformPath.default()
     string: ExtractTransformString = ExtractTransformString()
     secret: ExtractTransformSecret | None = None

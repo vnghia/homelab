@@ -12,6 +12,6 @@ class DockerConfig(HomelabBaseModel):
     platform: Platform
     network: NetworkConfig
     images: ImageConfig = ImageConfig()
-    database: DatabaseConfig = DatabaseConfig()
-    plugins: PluginConfig = PluginConfig()
+    database: DatabaseConfig = DatabaseConfig.default()
+    plugins: PluginConfig = PluginConfig.default()
     volumes: VolumeConfig = VolumeConfig()

@@ -7,6 +7,7 @@ from typing import ClassVar
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.docker import DockerContainerCreationModelResource
 from homelab_hatchet_config import HatchetServiceConfig
+from homelab_hatchet_config.model.task.schedule import HatchetTaskScheduleArgs
 from homelab_pydantic import ROOT_PATH, HomelabRootModel
 from pulumi import ResourceOptions
 
@@ -62,8 +63,8 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         root = self.root
         service = extractor_args.service
 
-        tasks_defs = []
-        schedules = {}
+        tasks_defs: list[ast.AsyncFunctionDef] = []
+        schedules: dict[str | None, HatchetTaskScheduleArgs] = {}
 
         for task_name, task_model in root.task.root.items():
             result = HatchetTaskModelBuilder(task_model).build_resources(

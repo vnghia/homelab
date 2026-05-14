@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from functools import cached_property
 from pathlib import PosixPath
+from typing import Self
 
 import pulumi_docker as docker
 from homelab_extract import GlobalExtract
@@ -83,7 +84,9 @@ class ContainerVolumeConfig(
 
 
 class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]]):
-    root: dict[str, ContainerVolumeConfig] = {}
+    @classmethod
+    def default(cls) -> Self:
+        return cls({})
 
     def __getitem__(self, key: str) -> ContainerVolumeConfig:
         return self.root[key]

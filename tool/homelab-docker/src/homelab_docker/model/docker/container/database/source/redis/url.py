@@ -1,3 +1,5 @@
+import typing
+
 from pulumi import Output
 from pydantic import NonNegativeInt
 
@@ -9,6 +11,7 @@ class ContainerDatabaseRedisSourceUrlEnvs(ContainerDatabaseSourceEnvsBase):
     scheme: str = "redis"
     database: NonNegativeInt | None = 0
 
+    @typing.override
     def to_envs(self, model: ContainerDatabaseSourceModel) -> dict[str, Output[str]]:
         return {
             self.env: model.__replace__(

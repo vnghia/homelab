@@ -13,14 +13,17 @@ if typing.TYPE_CHECKING:
 
 
 class ContainerVolumeSourceExtractor(ExtractorBase[ContainerExtractVolumeSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> str:
         return self.extract_path(extractor_args).as_posix()
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return extractor_args.container_model.volumes[self.root.volume].to_path(
             extractor_args
         )
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         from ...model.docker.container.volume_path import ContainerVolumePath
 

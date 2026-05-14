@@ -169,21 +169,24 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
 
 
 class MailStalwartJmapProvider(ResourceProvider):
+    @typing.override
     def create(self, props: dict[str, Any]) -> CreateResult:
         jmap_props = MailStalwartJmapProviderProps(**props)
         id, _ = jmap_props.create()
         return CreateResult(id_=id, outs=jmap_props.model_dump(mode="json"))
 
+    @typing.override
     def update(
-        self, id: str, olds: dict[str, Any], news: dict[str, Any]
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
     ) -> UpdateResult:
-        jmap_olds = MailStalwartJmapProviderProps(**olds)
-        jmap_news = MailStalwartJmapProviderProps(**news)
-        jmap_news.update(id, jmap_olds.data)
+        jmap_olds = MailStalwartJmapProviderProps(**_olds)
+        jmap_news = MailStalwartJmapProviderProps(**_news)
+        jmap_news.update(_id, jmap_olds.data)
         return UpdateResult(outs=jmap_news.model_dump(mode="json"))
 
-    def delete(self, id: str, props: dict[str, Any]) -> None:
-        MailStalwartJmapProviderProps(**props).delete(id)
+    @typing.override
+    def delete(self, _id: str, _props: dict[str, Any]) -> None:
+        MailStalwartJmapProviderProps(**_props).delete(_id)
 
 
 class MailStalwartJmapResource(Resource, module="stalwart", name="Jmap"):

@@ -23,6 +23,7 @@ class GlobalVariableSourceExtractor(ExtractorBase[GlobalExtractVariableSource]):
             extractor_args.global_resource.variables[self.root.gvariable]
         )
 
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> (
@@ -36,8 +37,10 @@ class GlobalVariableSourceExtractor(ExtractorBase[GlobalExtractVariableSource]):
             extractor_args
         )
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.get_variable(extractor_args).extract_path(extractor_args)
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         return self.get_variable(extractor_args).extract_volume_path(extractor_args)

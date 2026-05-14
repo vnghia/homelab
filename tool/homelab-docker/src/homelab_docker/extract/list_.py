@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalListSourceExtractor(ExtractorBase[GlobalExtractListSource]):
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> list[Output[str]]:
         from .global_ import GlobalExtractor
 

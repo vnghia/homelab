@@ -27,6 +27,7 @@ class ContainerPortSourceExtractor(ExtractorBase[ContainerExtractPortSource]):
             return Output.from_input(str(port))
         return GlobalExtractor(port).extract_str(extractor_args)
 
+    @typing.override
     def extract_str(self, extractor_args: ExtractorArgs) -> Output[str]:
         root = self.root
         port = extractor_args.container_model.ports.root[root.port]

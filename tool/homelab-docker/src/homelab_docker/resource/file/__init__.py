@@ -158,30 +158,37 @@ class FileVolumeProxy:
 class FileProvider(ResourceProvider):
     serialize_as_secret_always = False
 
+    @typing.override
     def create(self, props: dict[str, Any]) -> CreateResult:
         file_props = FileProviderProps(**props)
         FileVolumeProxy.create_file(file_props)
         return CreateResult(id_=file_props.id_, outs=file_props.model_dump(mode="json"))
 
-    def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
-        file_olds = FileProviderProps(**olds)
-        file_news = FileProviderProps(**news)
+    @typing.override
+    def diff(
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
+    ) -> DiffResult:
+        file_olds = FileProviderProps(**_olds)
+        file_news = FileProviderProps(**_news)
         return DiffResult(changes=file_olds != file_news)
 
+    @typing.override
     def update(
-        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
     ) -> UpdateResult:
-        file_olds = FileProviderProps(**olds)
-        file_news = FileProviderProps(**news)
+        file_olds = FileProviderProps(**_olds)
+        file_news = FileProviderProps(**_news)
         if file_olds.location != file_news.location:
             FileVolumeProxy.delete_file(file_olds)
         FileVolumeProxy.create_file(file_news)
         return UpdateResult(outs=file_news.model_dump(mode="json"))
 
-    def delete(self, _id: str, props: dict[str, Any]) -> None:
-        file_props = FileProviderProps(**props)
+    @typing.override
+    def delete(self, _id: str, _props: dict[str, Any]) -> None:
+        file_props = FileProviderProps(**_props)
         FileVolumeProxy.delete_file(file_props)
 
+    @typing.override
     def read(self, id_: str, props: dict[str, Any]) -> ReadResult:
         file_props = FileProviderProps(**props)
         read_props = FileVolumeProxy.read_file(file_props)

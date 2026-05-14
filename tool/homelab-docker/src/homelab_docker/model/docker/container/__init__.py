@@ -59,7 +59,7 @@ if typing.TYPE_CHECKING:
 class ContainerNetworkModelBuildArgs:
     hosts: list[ContainerHostConfig] = dataclasses.field(default_factory=list)
     ports: ContainerPortsConfig = dataclasses.field(
-        default_factory=ContainerPortsConfig
+        default_factory=ContainerPortsConfig.default
     )
     bridges: dict[str, ContainerBridgeNetworkArgs] = dataclasses.field(
         default_factory=dict
@@ -114,7 +114,7 @@ class ContainerModel(HomelabBaseModel):
     oneshot: bool = False
     depends_on: list[str | None] = []
     delete_before_replace: bool = False
-    inherit: ContainerInheritConfig = ContainerInheritConfig()
+    inherit: ContainerInheritConfig = ContainerInheritConfig.default()
 
     raw_image: ContainerImageModelConfig | None = Field(None, alias="image")
 
@@ -133,9 +133,9 @@ class ContainerModel(HomelabBaseModel):
     log: ContainerLogConfig | None = None
     mails: list[ContainerMailConfig] | None = None
     memory: ContainerMemoryConfig = ContainerMemoryConfig()
-    network: ContainerNetworkConfig = ContainerNetworkConfig()
+    network: ContainerNetworkConfig = ContainerNetworkConfig.default()
     observability: ContainerObservabilityConfig | None = None
-    ports: ContainerPortsConfig = ContainerPortsConfig()
+    ports: ContainerPortsConfig = ContainerPortsConfig.default()
     pid: str | None = None
     privileged: bool | None = None
     read_only: bool = True
@@ -146,7 +146,7 @@ class ContainerModel(HomelabBaseModel):
     sysctls: dict[str, str] | None = None
     tmpfs: list[ContainerTmpfsConfig] | None = None
     user: ContainerUserConfig | None = None
-    volumes: ContainerVolumesConfig = ContainerVolumesConfig()
+    volumes: ContainerVolumesConfig = ContainerVolumesConfig.default()
     wait: bool = True
     wait_timeout: PositiveInt | None = None
 
@@ -204,9 +204,7 @@ class ContainerModel(HomelabBaseModel):
     ) -> list[str] | None:
         from ....config.user import UidGidConfig
 
-        group_adds = []
-        if self.group_adds:
-            group_adds = self.group_adds
+        group_adds = self.group_adds or []
         if self.docker_socket and not user.is_root:
             group_adds.append(UidGidConfig.DOCKER_KEY)
 

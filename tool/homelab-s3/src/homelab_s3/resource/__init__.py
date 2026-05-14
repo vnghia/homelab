@@ -28,7 +28,11 @@ class S3CredentialArgs:
                 env.key_id: self.key_id,
                 env.access_key: self.access_key,
             }
-            | ({env.region: Output.from_input(self.region)} if self.region else {})
+            | (
+                {env.region: Output.from_input(self.region)}
+                if self.region is not None
+                else {}
+            )
             | (
                 {env.endpoint: Output.from_input(str(self.endpoint))}
                 if self.endpoint

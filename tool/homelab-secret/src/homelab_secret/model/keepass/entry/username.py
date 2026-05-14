@@ -1,3 +1,5 @@
+from typing import Self
+
 from homelab_extract.plain import GlobalPlainExtractSource, PlainArgs
 from homelab_extract.plain.hostname import GlobalPlainExtractHostnameSource
 from homelab_pydantic import HomelabBaseModel, HomelabRootModel
@@ -45,11 +47,9 @@ class KeepassEntryUsernameModel(
         | GlobalPlainExtractSource
     ]
 ):
-    root: (
-        KeepassEntryUsernameEmailModel
-        | KeepassEntryUsernameUsernameModel
-        | GlobalPlainExtractSource
-    ) = KeepassEntryUsernameUsernameModel()
+    @classmethod
+    def default(cls) -> Self:
+        return cls(KeepassEntryUsernameUsernameModel())
 
     def to_username(self, opts: ResourceOptions, plain_args: PlainArgs) -> Output[str]:
         root = self.root

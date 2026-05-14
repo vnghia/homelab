@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.extract.global_ import GlobalExtractor
 from homelab_docker.model.docker.container import ContainerNetworkModelBuildArgs
@@ -21,7 +23,7 @@ from .resource.stalwart import MailStalwartResource
 
 
 class MailService(ExtraService[MailConfig]):
-    STALWART_CONTAINER = None
+    STALWART_CONTAINER: ClassVar[str | None] = None
 
     def __init__(
         self,

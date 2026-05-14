@@ -21,6 +21,7 @@ class GlobalContextSourceExtractor(ExtractorBase[GlobalExtractContextSource]):
 
         return GlobalExtractor(extractor_args.context[self.root.gcontext])
 
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> (
@@ -34,8 +35,10 @@ class GlobalContextSourceExtractor(ExtractorBase[GlobalExtractContextSource]):
             extractor_args
         )
 
+    @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         return self.get_context(extractor_args).extract_path(extractor_args)
 
+    @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
         return self.get_context(extractor_args).extract_volume_path(extractor_args)

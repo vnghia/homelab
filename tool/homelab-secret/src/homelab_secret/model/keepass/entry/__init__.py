@@ -15,8 +15,8 @@ if typing.TYPE_CHECKING:
 
 
 class KeepassEntryModel(HomelabBaseModel):
-    username: KeepassEntryUsernameModel = KeepassEntryUsernameModel()
-    password: KeepassEntryPasswordModel = KeepassEntryPasswordModel()
+    username: KeepassEntryUsernameModel = KeepassEntryUsernameModel.default()
+    password: KeepassEntryPasswordModel = KeepassEntryPasswordModel.default()
     hostname: GlobalPlainExtractHostnameSource
     urls: list[GlobalPlainExtractSource] = []
     apps: list[str] = []

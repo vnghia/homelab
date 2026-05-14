@@ -1,3 +1,4 @@
+import typing
 from typing import Any
 
 from bidict import bidict
@@ -40,6 +41,7 @@ class HomelabSequenceProviderProps(HomelabBaseModel):
 class HomelabSequenceProvider(ResourceProvider):
     serialize_as_secret_always = False
 
+    @typing.override
     def create(self, props: dict[str, Any]) -> CreateResult:
         order_props = HomelabSequenceProviderProps(**props)
         order_props.fill()
@@ -47,17 +49,21 @@ class HomelabSequenceProvider(ResourceProvider):
             id_=order_props.id, outs=order_props.model_dump(mode="json")
         )
 
-    def diff(self, _id: str, olds: dict[str, Any], news: dict[str, Any]) -> DiffResult:
-        order_olds = HomelabSequenceProviderProps(**olds)
-        order_news = HomelabSequenceProviderProps(**news)
+    @typing.override
+    def diff(
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
+    ) -> DiffResult:
+        order_olds = HomelabSequenceProviderProps(**_olds)
+        order_news = HomelabSequenceProviderProps(**_news)
         return DiffResult(changes=order_olds.names != order_news.names)
 
+    @typing.override
     def update(
-        self, _id: str, olds: dict[str, Any], news: dict[str, Any]
+        self, _id: str, _olds: dict[str, Any], _news: dict[str, Any]
     ) -> UpdateResult:
-        order_olds = HomelabSequenceProviderProps(**olds)
-        news["sequence"] = order_olds.sequence
-        order_news = HomelabSequenceProviderProps(**news)
+        order_olds = HomelabSequenceProviderProps(**_olds)
+        _news["sequence"] = order_olds.sequence
+        order_news = HomelabSequenceProviderProps(**_news)
         order_news.fill()
         return UpdateResult(outs=order_news.model_dump(mode="json"))
 

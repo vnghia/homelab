@@ -1,5 +1,4 @@
 import typing
-from typing import Any
 
 from homelab_docker.extract import ExtractorArgs
 from homelab_pydantic import HomelabBaseModel
@@ -20,12 +19,8 @@ class TraefikRecordConfig(HomelabBaseModel):
         TraefikDynamicType, list[TraefikRecordMiddlewareModel]
     ] = {}
 
-    _external_middlewares: dict[TraefikDynamicType, list[str]]
-    _internal_middlewares: dict[TraefikDynamicType, list[str]]
-
-    def model_post_init(self, context: Any, /) -> None:
-        self._external_middlewares = {}
-        self._internal_middlewares = {}
+    _external_middlewares: dict[TraefikDynamicType, list[str]] = {}
+    _internal_middlewares: dict[TraefikDynamicType, list[str]] = {}
 
     def build_middlewares(
         self,

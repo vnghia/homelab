@@ -5,4 +5,4 @@ from homelab_secret.config import SecretConfig
 
 class GlobalConfig(HomelabBaseModel):
     variables: dict[str, GlobalExtract] = {}
-    secrets: SecretConfig = SecretConfig()
+    secrets: SecretConfig = SecretConfig.default()

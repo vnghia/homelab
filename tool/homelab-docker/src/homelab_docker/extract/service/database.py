@@ -13,6 +13,7 @@ if typing.TYPE_CHECKING:
 
 
 class ServiceDatabaseSourceExtractor(ExtractorBase[ServiceExtractDatabaseSource]):
+    @typing.override
     def extract_str(
         self, extractor_args: ExtractorArgs
     ) -> Output[str] | dict[str, Output[str]]:
