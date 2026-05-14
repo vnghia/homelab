@@ -39,9 +39,11 @@ class Config(BaseSettings):
     def dependency(cls, input: EmptyModel, ctx: Context) -> Self:
         return cls.load()
 
-    async def load_service[T: HomelabBaseModel](self, service: str, type: type[T]) -> T:
+    async def load_service[T: HomelabBaseModel](
+        self, service: str, key: str | None, type: type[T]
+    ) -> T:
         async with aiofiles.open(
-            (self.config_dir / service).with_suffix(".json")
+            (self.config_dir / service / (key or service)).with_suffix(".json")
         ) as file:
             return type.model_validate_json(await file.read())
 

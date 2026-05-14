@@ -31,13 +31,16 @@ class HatchetBarmanBackupModel(HomelabBaseModel):
 
 class HatchetBarmanContainerConfig(HomelabBaseModel):
     BARMAN: ClassVar[str] = "barman"
+    CONFIG_KEY: ClassVar[None] = None
 
     name: str
     profiles: dict[str, str]
 
     @classmethod
     async def load(cls, config: Config) -> Self:
-        raw_config = await config.load_service(cls.BARMAN, HatchetBarmanConfig)
+        raw_config = await config.load_service(
+            cls.BARMAN, cls.CONFIG_KEY, HatchetBarmanConfig
+        )
         return cls(
             name=(await DockerContainerNameConfig(service=cls.BARMAN).load(config))[
                 raw_config.container

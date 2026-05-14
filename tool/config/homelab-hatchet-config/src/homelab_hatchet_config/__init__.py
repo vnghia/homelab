@@ -9,12 +9,16 @@ class HatchetTaskConfig(HomelabServiceConfigDict[HatchetTaskModel]):
     NONE_KEY = "task"
 
 
-class HatchetServiceConfig(HomelabBaseModel):
+class HatchetServiceConfigModel(HomelabServiceConfigDict[Json]):
     model_config = ConfigDict(frozen=False)
 
+    NONE_KEY = "config"
+
+
+class HatchetServiceConfig(HomelabBaseModel):
     docker: HatchetServiceDockerConfig = HatchetServiceDockerConfig()
     task: HatchetTaskConfig = HatchetTaskConfig({})
-    config: Json = {}
+    config: HatchetServiceConfigModel = HatchetServiceConfigModel({})
 
     def __bool__(self) -> bool:
         return bool(self.docker) or bool(self.task) or bool(self.config)

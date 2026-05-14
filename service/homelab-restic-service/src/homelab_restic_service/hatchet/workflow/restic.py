@@ -52,13 +52,16 @@ class HatchetResticBackupModel(HomelabBaseModel):
 
 class HatchetResticModelConfig(HomelabBaseModel):
     RESTIC: ClassVar[str] = "restic"
+    CONFIG_KEY: ClassVar[str | None] = None
 
     model: docker.ContainerCreationModel
     restic: HatchetResticModel
 
     @classmethod
     async def load(cls, config: Config) -> Self:
-        raw_config = await config.load_service(cls.RESTIC, HatchetResticConfig)
+        raw_config = await config.load_service(
+            cls.RESTIC, cls.CONFIG_KEY, HatchetResticConfig
+        )
         model = await DockerContainerRunConfig(
             service=cls.RESTIC, container=raw_config.container
         ).load(config)

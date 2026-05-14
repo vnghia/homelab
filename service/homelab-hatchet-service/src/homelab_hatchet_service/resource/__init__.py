@@ -25,6 +25,7 @@ class HatchetServiceConfigResource(
 
     def __init__(
         self,
+        resource_name: str | None,
         config: Json,
         *,
         opts: ResourceOptions,
@@ -32,10 +33,14 @@ class HatchetServiceConfigResource(
         extractor_args: ExtractorArgs,
     ) -> None:
         service = extractor_args.service
+        resource_name = resource_name or service.name()
+
         super().__init__(
-            service.name(),
+            resource_name,
             opts=opts,
-            volume_path=hatchet_service.get_config_volume_path(service.name()),
+            volume_path=hatchet_service.get_config_volume_path(
+                service.name(), resource_name
+            ),
             data=GlobalExtractor.extract_recursively(config, extractor_args),
             permission=hatchet_service.user,
             extractor_args=hatchet_service.extractor_args,

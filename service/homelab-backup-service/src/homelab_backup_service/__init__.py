@@ -353,28 +353,30 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                 tags=[self.name()],
             )
 
-        self.config.hatchet.config = HatchetBackupConfig(
-            services={
-                service: HatchetBackupModel(
-                    profiles=service_group
-                    if (service_group := restic_service.service_groups.get(service))
-                    else [],
-                    databases={
-                        service_database_group_type: [
-                            service_database.name
-                            for service_database in service_database_group_model
-                        ]
-                        for service_database_group_type, service_database_group_model in service_database_group.items()
-                    }
-                    if (
-                        service_database_group
-                        := restic_service.service_database_groups.get(service)
+        self.config.hatchet.config.root = {
+            HatchetBackupConfig.CONFIG_KEY: HatchetBackupConfig(
+                services={
+                    service: HatchetBackupModel(
+                        profiles=service_group
+                        if (service_group := restic_service.service_groups.get(service))
+                        else [],
+                        databases={
+                            service_database_group_type: [
+                                service_database.name
+                                for service_database in service_database_group_model
+                            ]
+                            for service_database_group_type, service_database_group_model in service_database_group.items()
+                        }
+                        if (
+                            service_database_group
+                            := restic_service.service_database_groups.get(service)
+                        )
+                        else {},
                     )
-                    else {},
-                )
-                for service in self.extractor_args.services
-            }
-        ).model_dump(mode="json")
+                    for service in self.extractor_args.services
+                }
+            ).model_dump(mode="json")
+        }
 
         self.register_outputs({})
 

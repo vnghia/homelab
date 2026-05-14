@@ -15,6 +15,7 @@ from pulumi import Output, ResourceOptions
 from pydantic import PositiveInt
 
 from .config import BarmanConfig
+from .hatchet.workflow.barman import HatchetBarmanContainerConfig
 from .resource import BarmanConfigFileResource
 
 
@@ -111,7 +112,12 @@ class BarmanService(ServiceWithConfigResourceBase[BarmanConfig]):
         self.options[None].add_volumes(self.server_volumes)
         self.options[None].add_volumes(self.pgdata_volumes)
 
-        self.config.hatchet.config = {"container": None, "profiles": self.profiles}
+        self.config.hatchet.config.root = {
+            HatchetBarmanContainerConfig.CONFIG_KEY: {
+                "container": None,
+                "profiles": self.profiles,
+            }
+        }
 
         self.build_containers()
 

@@ -17,12 +17,13 @@ class HatchetBackupModel(HomelabBaseModel):
 
 class HatchetBackupConfig(HomelabBaseModel):
     BACKUP: ClassVar[str] = "backup"
+    CONFIG_KEY: ClassVar[str | None] = None
 
     services: dict[str, HatchetBackupModel]
 
     @classmethod
     async def load(cls, config: Config) -> Self:
-        return await config.load_service(cls.BACKUP, cls)
+        return await config.load_service(cls.BACKUP, cls.CONFIG_KEY, cls)
 
 
 class HatchetBackupServiceModel(HomelabBaseModel):

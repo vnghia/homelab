@@ -82,8 +82,10 @@ class HatchetService(ExtraService[HatchetConfig]):
     def get_schedule_volume_path(self, name: str) -> ContainerVolumePath:
         return self.schedule_dir_volume_path / name
 
-    def get_config_volume_path(self, service: str) -> ContainerVolumePath:
-        return self.config_dir_volume_path / service
+    def get_config_volume_path(
+        self, service: str, name: str | None
+    ) -> ContainerVolumePath:
+        return self.config_dir_volume_path / service / (name or service)
 
     @classmethod
     def get_service_config(

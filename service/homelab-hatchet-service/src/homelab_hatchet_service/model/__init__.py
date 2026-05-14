@@ -98,9 +98,10 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                         ast.parse(workflow_file.read())
                     )
 
-        if root.config:
+        for key, config in root.config.root.items():
             HatchetServiceConfigResource(
-                root.config,
+                key,
+                config,
                 opts=opts,
                 hatchet_service=hatchet_service,
                 extractor_args=extractor_args,

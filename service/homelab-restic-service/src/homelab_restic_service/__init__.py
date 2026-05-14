@@ -20,6 +20,7 @@ from pulumi import ComponentResource, Output, ResourceOptions
 
 from .config import ResticConfig
 from .config.volume import ResticVolumeConfig
+from .hatchet.workflow.restic import HatchetResticModelConfig
 from .model.profile import ResticProfileModel
 from .model.profile.database import ResticProfileDatabaseModel
 from .resource.profile import ResticProfileResource
@@ -192,33 +193,35 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             opts=self.child_opts, restic_service=self
         )
 
-        self.config.hatchet.config = {
-            "container": None,
-            "restic": {
-                "groups": {
-                    self.get_file_group(service): profiles
-                    for service, profiles in self.service_groups.items()
-                }
-                | self.database_groups,
-                "profiles": {
-                    config.name: {
-                        "volume": self.extractor_args.host.docker.volume.volumes[
-                            config.name
-                        ].resource.name,
-                        "path": config.path,
+        self.config.hatchet.config.root = {
+            HatchetResticModelConfig.CONFIG_KEY: {
+                "container": None,
+                "restic": {
+                    "groups": {
+                        self.get_file_group(service): profiles
+                        for service, profiles in self.service_groups.items()
                     }
-                    for config in self.volume_configs
-                }
-                | {
-                    profile.volume.name: {
-                        "volume": self.extractor_args.host.docker.volume.volumes[
-                            profile.model.volume
-                        ].resource.name,
-                        "path": profile.volume.path,
+                    | self.database_groups,
+                    "profiles": {
+                        config.name: {
+                            "volume": self.extractor_args.host.docker.volume.volumes[
+                                config.name
+                            ].resource.name,
+                            "path": config.path,
+                        }
+                        for config in self.volume_configs
                     }
-                    for profile in self.database_profiles
+                    | {
+                        profile.volume.name: {
+                            "volume": self.extractor_args.host.docker.volume.volumes[
+                                profile.model.volume
+                            ].resource.name,
+                            "path": profile.volume.path,
+                        }
+                        for profile in self.database_profiles
+                    },
                 },
-            },
+            }
         }
 
         self.exports[self.REPOSITORY_PROFILE_EXPORT_KEY] = self.export_repositories
