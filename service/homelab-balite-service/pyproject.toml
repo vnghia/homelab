@@ -8,6 +8,7 @@ dependencies = [
     "homelab-backup",
     "homelab-docker",
     "homelab-dagu-config",
+    "homelab-hatchet-config",
     "pulumi>=3.148.0",
     "homelab-extract",
     "orjson>=3.11.5",

@@ -38,6 +38,10 @@ services:
                 - restore
                 - param:
                     type: backup
+      hatchet:
+        docker:
+          models:
+            - null
     network:
       bridge:
     container:
