@@ -34,8 +34,6 @@ class Backup:
 
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
-        docker_run_model_workflow = Docker.docker_run_model_workflow()
-
         backup_service_workflow = hatchet.workflow(
             name="{}-service".format(cls.SERVICE),
             input_validator=HatchetBackupServiceModel,
@@ -74,20 +72,7 @@ class Backup:
         ) -> None:
             backup_config = context.task_output(backup_service_load_config)
             restic_config = context.task_output(backup_service_load_restic_config)
-
-            await docker_run_model_workflow.aio_run_many(
-                [
-                    docker_run_model_workflow.create_bulk_run_item(
-                        restic_config.build_backup_model(profile),
-                        key=profile,
-                        desired_worker_labels=[
-                            label.DESIRED_HOST_LABEL,
-                            label.DESIRED_DOCKER_LABEL,
-                        ],
-                    )
-                    for profile in backup_config.profiles
-                ]
-            )
+            await restic.Restic.backup_profiles(restic_config, backup_config.profiles)
 
         @backup_service_workflow.task(
             name="load-postgres-config",
@@ -114,8 +99,9 @@ class Backup:
         ) -> None:
             backup_config = context.task_output(backup_service_load_config)
             barman_config = context.task_output(backup_service_load_postgres_config)
-            for profile in backup_config.databases[DatabaseType.POSTGRES]:
-                await barman_config.backup(context, profile)
+            return await barman.Barman.backup_profiles(
+                barman_config, backup_config.databases[DatabaseType.POSTGRES]
+            )
 
         # TODO: Use durable_task after worker affinity is stable
         @backup_service_workflow.task(
@@ -132,19 +118,8 @@ class Backup:
         ) -> None:
             backup_config = context.task_output(backup_service_load_config)
             restic_config = context.task_output(backup_service_load_restic_config)
-
-            await docker_run_model_workflow.aio_run_many(
-                [
-                    docker_run_model_workflow.create_bulk_run_item(
-                        restic_config.build_backup_model(profile),
-                        key=profile,
-                        desired_worker_labels=[
-                            label.DESIRED_HOST_LABEL,
-                            label.DESIRED_DOCKER_LABEL,
-                        ],
-                    )
-                    for profile in backup_config.databases[DatabaseType.POSTGRES]
-                ]
+            await restic.Restic.backup_profiles(
+                restic_config, backup_config.databases[DatabaseType.POSTGRES]
             )
 
         return [backup_service_workflow]

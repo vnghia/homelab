@@ -110,9 +110,27 @@ class Restic:
     SERVICE = HatchetResticModelConfig.RESTIC
 
     @classmethod
-    def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
+    async def backup_profiles(
+        cls, restic_config: HatchetResticModelConfig, profiles: list[str]
+    ) -> None:
         docker_run_model_workflow = Docker.docker_run_model_workflow()
+        await docker_run_model_workflow.aio_run_many(
+            [
+                docker_run_model_workflow.create_bulk_run_item(
+                    restic_config.build_backup_model(profile),
+                    key=profile,
+                    additional_metadata=label.build_labels(cls.SERVICE),
+                    desired_worker_labels=[
+                        label.DESIRED_HOST_LABEL,
+                        label.DESIRED_DOCKER_LABEL,
+                    ],
+                )
+                for profile in profiles
+            ]
+        )
 
+    @classmethod
+    def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         restic_backup_workflow = hatchet.workflow(
             name="{}-backup".format(cls.SERVICE),
             input_validator=HatchetResticBackupModel,
@@ -138,18 +156,8 @@ class Restic:
             input: HatchetResticBackupModel, context: Context
         ) -> None:
             restic_config = context.task_output(restic_backup_load_config)
-            await docker_run_model_workflow.aio_run_many(
-                [
-                    docker_run_model_workflow.create_bulk_run_item(
-                        restic_config.build_backup_model(profile),
-                        key=profile,
-                        desired_worker_labels=[
-                            label.DESIRED_HOST_LABEL,
-                            label.DESIRED_DOCKER_LABEL,
-                        ],
-                    )
-                    for profile in restic_config.resolve_profiles(input.profiles)
-                ]
+            await cls.backup_profiles(
+                restic_config, restic_config.resolve_profiles(input.profiles)
             )
 
         return [restic_backup_workflow]
