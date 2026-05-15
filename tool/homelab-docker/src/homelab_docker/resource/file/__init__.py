@@ -116,6 +116,8 @@ class FileVolumeProxy:
                 (stream, stat) = container.get_archive(
                     (cls.WORKING_DIR / props.location.path).as_posix()
                 )
+                if not stat:
+                    raise RuntimeError("Get archive does not return file stat")
                 for chunk in stream:
                     tar_file.write(chunk)
                 tar_file.seek(0)

@@ -20,15 +20,17 @@ class KanidmPasswordProviderProps(HomelabBaseModel):
     config_path: str
 
     def recover_account(self) -> str:
-        result: str = (
+        raw_result = (
             DockerClient(self.docker_host)
             .containers.get(self.container)
             .exec_run(
                 ["kanidmd", "recover-account", "-c", self.config_path, self.account]
             )
-            .output.decode()
         )
-        result = result.replace("\n", " ")
+        if not isinstance(raw_result.output, bytes):
+            raise RuntimeError("Exec should return bytes in non-stream mode")
+
+        result = raw_result.output.decode().replace("\n", " ")
         match = self.PASSWORD_PATTERN.match(result)
         if not match:
             raise ValueError("Could not extract password from log: {}".format(result))
