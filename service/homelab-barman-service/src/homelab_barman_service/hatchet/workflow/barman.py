@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 from typing import Any, ClassVar, Self
 
@@ -71,6 +72,9 @@ class HatchetBarmanBackupModel(HomelabBaseModel):
 
 class Barman:
     SERVICE = HatchetBarmanContainerConfig.BARMAN
+
+    SCHEDULE_TIMEOUT = datetime.timedelta(hours=6)
+    CONCURRENCY = 5
 
     _barman_backup_workflow: Standalone[HatchetBarmanBackupModel, None] | None = None
 
@@ -160,8 +164,9 @@ class Barman:
         @hatchet.task(
             name="{}-backup".format(cls.SERVICE),
             input_validator=HatchetBarmanBackupModel,
+            schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=5,
+            concurrency=cls.CONCURRENCY,
             desired_worker_labels=[
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,

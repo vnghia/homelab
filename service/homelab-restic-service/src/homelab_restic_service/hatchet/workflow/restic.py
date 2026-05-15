@@ -1,3 +1,4 @@
+import datetime
 import logging
 from typing import Any, ClassVar, Self
 
@@ -114,6 +115,9 @@ class HatchetResticBackupModel(HomelabBaseModel):
 class Restic:
     SERVICE = HatchetResticModelConfig.RESTIC
 
+    SCHEDULE_TIMEOUT = datetime.timedelta(hours=6)
+    CONCURRENCY = 5
+
     _restic_backup_workflow: Standalone[HatchetResticBackupModel, None] | None
 
     @classmethod
@@ -144,7 +148,7 @@ class Restic:
                     ],
                 )
                 for profile in profiles
-            ]
+            ],
         )
 
     @classmethod
@@ -152,8 +156,9 @@ class Restic:
         @hatchet.task(
             name="{}-backup".format(cls.SERVICE),
             input_validator=HatchetResticBackupModel,
+            schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=5,
+            concurrency=cls.CONCURRENCY,
             desired_worker_labels=[
                 label.DESIRED_HOST_LABEL,
                 label.DESIRED_DOCKER_LABEL,
