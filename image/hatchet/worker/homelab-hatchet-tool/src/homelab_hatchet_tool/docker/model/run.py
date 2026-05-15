@@ -1,7 +1,7 @@
 import logging
 
 import aiofiles
-from homelab_pydantic import HomelabBaseModel, add_namespace, docker
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel, add_namespace, docker
 
 from ...config import Config
 
@@ -75,3 +75,9 @@ class DockerContainerRunConfig(HomelabBaseModel):
                 name=self.name,
                 name_prefix=self.name_prefix or add_namespace(self.service, self.name),
             )
+
+
+class DockerContainerRunInput(
+    HomelabRootModel[DockerContainerRunModel | DockerContainerRunConfig]
+):
+    pass

@@ -1,7 +1,7 @@
 import logging
 
 import aiofiles
-from homelab_pydantic import HomelabBaseModel, docker
+from homelab_pydantic import HomelabBaseModel, HomelabRootModel, docker
 
 from ...config import Config
 from .name import DockerContainerNameConfig
@@ -36,3 +36,9 @@ class DockerContainerExecConfig(HomelabBaseModel):
             ]
 
             return DockerContainerExecModel(exec=exec, name=name)
+
+
+class DockerContainerExecInput(
+    HomelabRootModel[DockerContainerExecModel | DockerContainerExecConfig]
+):
+    pass
