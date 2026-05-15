@@ -2,7 +2,7 @@ import logging
 from typing import Any, ClassVar, Self
 
 from hatchet_sdk import Context, Hatchet
-from hatchet_sdk.runnables.workflow import BaseWorkflow
+from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
 from homelab_hatchet_tool import label
 from homelab_hatchet_tool.config import Config, ConfigDependency
 from homelab_hatchet_tool.docker import Docker
@@ -43,14 +43,6 @@ class HatchetResticModel(HomelabBaseModel):
 class HatchetResticConfig(HomelabBaseModel):
     container: str | None
     restic: HatchetResticModel
-
-
-class HatchetResticBackupModel(HomelabBaseModel):
-    profiles: list[str]
-
-    @classmethod
-    def build_cmd(cls, profile: str) -> list[str]:
-        return ["-n", profile, "backup"]
 
 
 class HatchetResticModelConfig(HomelabBaseModel):
@@ -103,31 +95,49 @@ class HatchetResticModelConfig(HomelabBaseModel):
             }
         )
 
+    @classmethod
+    def build_backup_cmd(cls, profile: str) -> list[str]:
+        return ["-n", profile, "backup"]
+
     def build_backup_model(self, profile: str) -> DockerContainerRunModel:
         return DockerContainerRunModel(
-            creation=self.build_model(
-                profile,
-                True,
-                HatchetResticBackupModel.build_cmd(profile),
-            ),
+            creation=self.build_model(profile, True, self.build_backup_cmd(profile)),
             name_prefix=add_namespace(self.RESTIC, profile),
         )
+
+
+class HatchetResticBackupModel(HomelabBaseModel):
+    profiles: str | list[str]
+    restic: HatchetResticModelConfig | None = None
 
 
 class Restic:
     SERVICE = HatchetResticModelConfig.RESTIC
 
+    _restic_backup_workflow: Standalone[HatchetResticBackupModel, None] | None
+
+    @classmethod
+    def restic_backup_workflow(
+        cls,
+    ) -> Standalone[HatchetResticBackupModel, None]:
+        if not cls._restic_backup_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._restic_backup_workflow
+
     @classmethod
     async def backup_profiles(
         cls, restic_config: HatchetResticModelConfig, profiles: list[str]
     ) -> None:
-        docker_run_model_workflow = Docker.docker_run_model_workflow()
-        await docker_run_model_workflow.aio_run_many(
+        restic_backup_workflow = cls.restic_backup_workflow()
+        await restic_backup_workflow.aio_run_many(
             [
-                docker_run_model_workflow.create_bulk_run_item(
-                    restic_config.build_backup_model(profile),
+                restic_backup_workflow.create_bulk_run_item(
+                    HatchetResticBackupModel(profiles=profile, restic=restic_config),
                     key=profile,
-                    additional_metadata=label.build_labels(cls.SERVICE),
+                    additional_metadata=label.build_labels(cls.SERVICE)
+                    | {"{}-profile".format(cls.SERVICE): profile},
                     desired_worker_labels=[
                         label.DESIRED_HOST_LABEL,
                         label.DESIRED_DOCKER_LABEL,
@@ -139,36 +149,34 @@ class Restic:
 
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
-        restic_backup_workflow = hatchet.workflow(
+        @hatchet.task(
             name="{}-backup".format(cls.SERVICE),
             input_validator=HatchetResticBackupModel,
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            concurrency=5,
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
             default_additional_metadata=label.build_labels(cls.SERVICE),
         )
-
-        @restic_backup_workflow.task(
-            name="load-config",
-            desired_worker_labels=[label.DESIRED_HOST_LABEL],
-        )
-        async def restic_backup_load_config(
-            input: HatchetResticBackupModel, context: Context, config: ConfigDependency
-        ) -> HatchetResticModelConfig:
-            return await HatchetResticModelConfig.load(config)
-
-        # TODO: Use durable_task after worker affinity is stable
-        @restic_backup_workflow.task(
-            name="backup",
-            execution_timeout=Docker.DOCKER_TIMEOUT,
-            parents=[restic_backup_load_config],
-        )
         async def restic_backup(
-            input: HatchetResticBackupModel, context: Context
+            input: HatchetResticBackupModel, context: Context, config: ConfigDependency
         ) -> None:
-            restic_config = context.task_output(restic_backup_load_config)
-            await cls.backup_profiles(
+            restic_config = input.restic or (
+                await HatchetResticModelConfig.load(config)
+            )
+            if isinstance(input.profiles, str):
+                return await Docker.run_container(
+                    context, restic_config.build_backup_model(input.profiles)
+                )
+            return await cls.backup_profiles(
                 restic_config, restic_config.resolve_profiles(input.profiles)
             )
 
-        return [restic_backup_workflow]
+        cls._restic_backup_workflow = restic_backup
+
+        return [cls._restic_backup_workflow]
 
 
 build_workflows = Restic.build_workflows
