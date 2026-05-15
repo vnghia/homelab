@@ -353,28 +353,28 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                 tags=[self.name()],
             )
 
+        self.hatchet_backup_service_config: dict[str, HatchetBackupServiceModel] = {}
+        for service in self.extractor_args.services:
+            service_group = restic_service.service_groups.get(service)
+            service_database_group = restic_service.service_database_groups.get(service)
+            if not service_group and not service_database_group:
+                continue
+            self.hatchet_backup_service_config[service] = HatchetBackupServiceModel(
+                profiles=service_group or [],
+                databases={
+                    service_database_group_type: {
+                        service_database.backup: service_database.name
+                        for service_database in service_database_group_model
+                    }
+                    for service_database_group_type, service_database_group_model in service_database_group.items()
+                }
+                if service_database_group
+                else {},
+            )
+
         self.config.hatchet.config.root = {
             HatchetBackupConfig.CONFIG_KEY: HatchetBackupConfig(
-                services={
-                    service: HatchetBackupServiceModel(
-                        profiles=service_group
-                        if (service_group := restic_service.service_groups.get(service))
-                        else [],
-                        databases={
-                            service_database_group_type: {
-                                service_database.backup: service_database.name
-                                for service_database in service_database_group_model
-                            }
-                            for service_database_group_type, service_database_group_model in service_database_group.items()
-                        }
-                        if (
-                            service_database_group
-                            := restic_service.service_database_groups.get(service)
-                        )
-                        else {},
-                    )
-                    for service in self.extractor_args.services
-                }
+                services=self.hatchet_backup_service_config
             ).model_dump(mode="json")
         }
 
