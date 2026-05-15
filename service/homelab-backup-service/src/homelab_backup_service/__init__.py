@@ -361,10 +361,10 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
                         if (service_group := restic_service.service_groups.get(service))
                         else [],
                         databases={
-                            service_database_group_type: [
-                                service_database.name
+                            service_database_group_type: {
+                                service_database.backup: service_database.name
                                 for service_database in service_database_group_model
-                            ]
+                            }
                             for service_database_group_type, service_database_group_model in service_database_group.items()
                         }
                         if (
