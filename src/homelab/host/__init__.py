@@ -161,7 +161,6 @@ class HostBaseNoConfig(HostResourceBase):
         self.backup = BackupService(
             self.host_services_config.backup,
             opts=self.child_opts,
-            dagu_service=self.dagu,
             restic_service=self.restic,
             extractor_args=self.extractor_args,
         )
