@@ -7,7 +7,10 @@ from typing import ClassVar
 from homelab_docker.extract import ExtractorArgs
 from homelab_docker.resource.file.docker import DockerContainerCreationModelResource
 from homelab_hatchet_config import HatchetServiceConfig
-from homelab_hatchet_config.model.task.schedule import HatchetTaskScheduleArgs
+from homelab_hatchet_config.model.scheduler import (
+    HatchetServiceSchedulerConfig,
+    HatchetServiceSchedulerModel,
+)
 from homelab_pydantic import ROOT_PATH, HomelabRootModel
 from pulumi import ResourceOptions
 
@@ -54,7 +57,6 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         extractor_args: ExtractorArgs,
     ) -> None:
         from ..resource import (
-            HatchetScheduleResource,
             HatchetSchedulerResource,
             HatchetServiceConfigResource,
             HatchetWorkflowResource,
@@ -65,7 +67,7 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         service = extractor_args.service
 
         tasks_defs: list[ast.AsyncFunctionDef] = []
-        schedules: dict[str | None, HatchetTaskScheduleArgs] = {}
+        schedulers: dict[str | None, HatchetServiceSchedulerModel] = {}
 
         for task_name, task_model in root.task.root.items():
             result = HatchetTaskModelBuilder(task_model).build_resources(
@@ -74,7 +76,7 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
             if isinstance(result, ast.AsyncFunctionDef):
                 tasks_defs.append(result)
             else:
-                schedules[task_name] = result
+                schedulers[task_name] = result
 
         for docker_container_creation in (
             hatchet_service.docker_container_creation_resources[service.name()]
@@ -136,19 +138,10 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
                 extractor_args=extractor_args,
             )
 
-        if schedules:
-            HatchetScheduleResource(
-                None,
-                schedules,
-                opts=opts,
-                hatchet_service=hatchet_service,
-                extractor_args=extractor_args,
-            )
-
-        if root.scheduler:
+        if root.scheduler or schedulers:
             HatchetSchedulerResource(
                 None,
-                root.scheduler,
+                HatchetServiceSchedulerConfig(root.scheduler.root | schedulers),
                 opts=opts,
                 hatchet_service=hatchet_service,
                 extractor_args=extractor_args,

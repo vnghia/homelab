@@ -4,7 +4,6 @@ from homelab_hatchet_tool.config import Config
 from homelab_hatchet_tool.docker import Docker
 
 from . import setup
-from .schedule.loader import ScheduleLoader
 from .scheduler import Scheduler
 from .workflow.loader import WorkflowLoader
 from .workflow.types import Workflow
@@ -39,8 +38,5 @@ def main() -> None:
         hatchet, worker, config, namespace, static_workflows
     )
     workflow_loader.watch()
-
-    schedule_loader = ScheduleLoader(workflow_loader)
-    schedule_loader.watch()
 
     worker.start()

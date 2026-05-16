@@ -11,7 +11,7 @@ from homelab_hatchet_config.model.task.docker import (
     HatchetTaskDockerModel,
     HatchetTaskDockerRunModel,
 )
-from homelab_hatchet_config.model.task.schedule import HatchetTaskWorkflowInputArgs
+from homelab_hatchet_config.model.task.scheduler import HatchetTaskWorkflowInputArgs
 from homelab_hatchet_tool.docker import Docker
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions

@@ -2,8 +2,8 @@ import ast
 import typing
 
 from homelab_docker.extract import ExtractorArgs
+from homelab_hatchet_config.model.scheduler import HatchetServiceSchedulerModel
 from homelab_hatchet_config.model.task import HatchetTaskModel
-from homelab_hatchet_config.model.task.schedule import HatchetTaskScheduleArgs
 from homelab_pydantic import HomelabRootModel
 from pulumi import ResourceOptions
 
@@ -21,7 +21,7 @@ class HatchetTaskModelBuilder(HomelabRootModel[HatchetTaskModel]):
         opts: ResourceOptions,
         hatchet_service: HatchetService,
         extractor_args: ExtractorArgs,
-    ) -> ast.AsyncFunctionDef | HatchetTaskScheduleArgs:
+    ) -> ast.AsyncFunctionDef | HatchetServiceSchedulerModel:
         root = self.root.root
         task = HatchetTaskDockerModelBuilder(root).build_resources(
             task_name, opts, hatchet_service, extractor_args
@@ -44,7 +44,7 @@ class HatchetTaskModelBuilder(HomelabRootModel[HatchetTaskModel]):
                 )
             return result
 
-        return HatchetTaskScheduleArgs(
+        return HatchetServiceSchedulerModel(
             workflow=task.workflow,
             input=task.input,
             schedules=root.schedules,

@@ -1,13 +1,11 @@
-from typing import Any
-
-from homelab_pydantic import HomelabBaseModel, HomelabServiceConfigDict
+from homelab_pydantic import HomelabBaseModel, HomelabServiceConfigDict, Json
 from pydantic import ConfigDict
 
 
 class HatchetServiceSchedulerModel(HomelabBaseModel):
     workflow: str
     schedules: list[str]
-    input: Any | None
+    input: Json | None
 
 
 class HatchetServiceSchedulerConfig(
