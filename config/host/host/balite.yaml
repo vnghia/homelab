@@ -15,29 +15,6 @@ docker:
 services:
   balite:
     config:
-      dagu:
-        docker:
-          executor:
-            run:
-              model:
-          dag:
-            params:
-              types:
-                backup:
-            tags: ["backup"]
-          dags:
-            backup:
-              command:
-                - homelab-balite
-                - backup
-                - param:
-                    type: backup
-            restore:
-              command:
-                - homelab-balite
-                - restore
-                - param:
-                    type: backup
       hatchet:
         docker:
           models:
