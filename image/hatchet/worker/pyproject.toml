@@ -7,6 +7,8 @@ dependencies = [
     "homelab-hatchet-tool",
     "watchfiles>=1.1.1",
     "pydantic>=2.10.6",
+    "croniter>=6.2.2",
+    "python-dateutil>=2.9.0.post0",
 ]
 
 [build-system]

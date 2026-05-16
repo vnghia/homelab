@@ -55,6 +55,7 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
     ) -> None:
         from ..resource import (
             HatchetScheduleResource,
+            HatchetSchedulerResource,
             HatchetServiceConfigResource,
             HatchetWorkflowResource,
         )
@@ -139,6 +140,15 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
             HatchetScheduleResource(
                 None,
                 schedules,
+                opts=opts,
+                hatchet_service=hatchet_service,
+                extractor_args=extractor_args,
+            )
+
+        if root.scheduler:
+            HatchetSchedulerResource(
+                None,
+                root.scheduler,
                 opts=opts,
                 hatchet_service=hatchet_service,
                 extractor_args=extractor_args,

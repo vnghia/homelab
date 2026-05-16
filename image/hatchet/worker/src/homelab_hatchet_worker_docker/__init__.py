@@ -5,6 +5,7 @@ from homelab_hatchet_tool.docker import Docker
 
 from . import setup
 from .schedule.loader import ScheduleLoader
+from .scheduler import Scheduler
 from .workflow.loader import WorkflowLoader
 from .workflow.types import Workflow
 
@@ -29,6 +30,8 @@ def main() -> None:
     namespace = label.HOST_VALUE
     static_workflows = Workflow.register_models(
         hatchet, worker, namespace, Docker.build_workflows(hatchet)
+    ) | Workflow.register_models(
+        hatchet, worker, namespace, Scheduler.build_workflows(hatchet, config)
     )
     logger.info("Staic workflows: {}".format(static_workflows))
 

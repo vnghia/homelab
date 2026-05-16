@@ -3,6 +3,7 @@ import logging
 import sys
 import threading
 from pathlib import Path
+from typing import ClassVar, Self
 
 import watchfiles
 from hatchet_sdk import Hatchet, Worker
@@ -16,6 +17,8 @@ logger = logging.getLogger("workflow")
 
 @dataclasses.dataclass
 class WorkflowLoader:
+    _instance: ClassVar[Self | None] = None
+
     hatchet: Hatchet
     worker: Worker
     config: Config
@@ -23,6 +26,10 @@ class WorkflowLoader:
     static_workflows: dict[str, Workflow]
 
     def __post_init__(self) -> None:
+        if self._instance:
+            raise RuntimeError("Workflow loader should have only one instance")
+        self.__class__._instance = self
+
         sys.path.append(self.config.workflow_dir.as_posix())
         for path in self.config.workflow_dir.glob("*.py"):
             WorkflowModule.load(self.hatchet, self.worker, self.namespace, path)
@@ -45,6 +52,12 @@ class WorkflowLoader:
                     )
                 )
                 self.hatchet.workflows.delete(workflow_data.metadata.id)
+
+    @classmethod
+    def instance(cls) -> Self:
+        if not cls._instance:
+            raise RuntimeError("Instance has to be set before")
+        return cls._instance
 
     def watch(self) -> None:
         def _watch() -> None:

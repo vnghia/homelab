@@ -8,6 +8,7 @@ from homelab_docker.resource.file.config import (
     JsonDefaultModel,
     JsonDumper,
 )
+from homelab_hatchet_config.model.scheduler import HatchetServiceSchedulerConfig
 from homelab_hatchet_config.model.task.schedule import HatchetTaskScheduleArgs
 from homelab_hatchet_tool.schedule.model import ScheduleConfig
 from homelab_pydantic import Json
@@ -95,6 +96,43 @@ class HatchetScheduleResource(
                     "input": value.input,
                 }
                 for key, value in schedules.items()
+            },
+            permission=hatchet_service.user,
+            extractor_args=hatchet_service.extractor_args,
+        )
+
+
+class HatchetSchedulerResource(
+    ConfigFileResource[ScheduleConfig], module="hatchet", name="Scheduler"
+):
+    validator = ScheduleConfig
+    dumper = JsonDumper[ScheduleConfig]
+
+    def __init__(
+        self,
+        resource_name: str | None,
+        scheduler: HatchetServiceSchedulerConfig,
+        *,
+        opts: ResourceOptions,
+        hatchet_service: HatchetService,
+        extractor_args: ExtractorArgs,
+    ) -> None:
+        resource_name = resource_name or extractor_args.service.name()
+        super().__init__(
+            resource_name,
+            opts=opts,
+            volume_path=hatchet_service.get_scheduler_volume_path(resource_name),
+            data={
+                (key or ScheduleConfig.NONE_KEY): {
+                    "workflow": value.workflow,
+                    "schedules": value.schedules,
+                    "input": GlobalExtractor.extract_recursively(
+                        value.input, extractor_args
+                    )
+                    if value.input
+                    else None,
+                }
+                for key, value in scheduler.root.items()
             },
             permission=hatchet_service.user,
             extractor_args=hatchet_service.extractor_args,

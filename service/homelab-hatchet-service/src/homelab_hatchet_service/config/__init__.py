@@ -8,3 +8,4 @@ class HatchetConfig(ExtraConfig):
     docker_dir: GlobalExtract
     schedule_dir: GlobalExtract
     config_dir: GlobalExtract
+    scheduler_dir: GlobalExtract

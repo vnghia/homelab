@@ -29,6 +29,9 @@ class Config(BaseSettings):
     schedule_dir: Path = CONFIG_PATH_PREFIX / "schedule"
     config_dir: Path = CONFIG_PATH_PREFIX / "config"
 
+    scheduler_dir: Path = CONFIG_PATH_PREFIX / "scheduler"
+    scheduler_cron: list[str] = ["*/30 * * * *"]
+
     @classmethod
     def load(cls) -> Self:
         if not cls.instance:

@@ -467,6 +467,18 @@ wheels = [
 ]
 
 [[package]]
+name = "croniter"
+version = "6.2.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "python-dateutil" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/df/de/5832661ed55107b8a09af3f0a2e71e0957226a59eb1dcf0a445cce6daf20/croniter-6.2.2.tar.gz", hash = "sha256:ba60832a5ec8e12e51b8691c3309a113d1cf6526bdf1a48150ce8ec7a532d0ab", size = 113762, upload-time = "2026-03-15T08:43:48.112Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d0/39/783980e78cb92c2d7bdb1fc7dbc86e94ccc6d58224d76a7f1f51b6c51e30/croniter-6.2.2-py3-none-any.whl", hash = "sha256:a5d17b1060974d36251ea4faf388233eca8acf0d09cbd92d35f4c4ac8f279960", size = 45422, upload-time = "2026-03-15T08:43:46.626Z" },
+]
+
+[[package]]
 name = "cryptography"
 version = "48.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -839,6 +851,8 @@ dev = [
     { name = "pyrefly" },
     { name = "ruff" },
     { name = "types-aiofiles" },
+    { name = "types-croniter" },
+    { name = "types-python-dateutil" },
 ]
 
 [package.metadata]
@@ -885,6 +899,8 @@ dev = [
     { name = "pyrefly", specifier = ">=0.64.1" },
     { name = "ruff", specifier = ">=0.9.6" },
     { name = "types-aiofiles", specifier = ">=25.1.0.20260409" },
+    { name = "types-croniter", specifier = ">=6.2.2.20260508" },
+    { name = "types-python-dateutil", specifier = ">=2.9.0.20260508" },
 ]
 
 [[package]]
@@ -1307,17 +1323,21 @@ name = "homelab-hatchet-worker-docker"
 version = "0.1.0"
 source = { directory = "image/hatchet/worker" }
 dependencies = [
+    { name = "croniter" },
     { name = "hatchet-sdk", extra = ["otel"] },
     { name = "homelab-hatchet-tool" },
     { name = "pydantic" },
+    { name = "python-dateutil" },
     { name = "watchfiles" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "croniter", specifier = ">=6.2.2" },
     { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.33.5" },
     { name = "homelab-hatchet-tool", editable = "image/hatchet/worker/homelab-hatchet-tool" },
     { name = "pydantic", specifier = ">=2.10.6" },
+    { name = "python-dateutil", specifier = ">=2.9.0.post0" },
     { name = "watchfiles", specifier = ">=1.1.1" },
 ]
 
@@ -3181,6 +3201,15 @@ wheels = [
 ]
 
 [[package]]
+name = "types-croniter"
+version = "6.2.2.20260508"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/e0/06272cc8dea1d0f0599a150c81e44c4f21270d40cfd10117c2e4fbfa1503/types_croniter-6.2.2.20260508.tar.gz", hash = "sha256:fdbe8984b4a490b2ea446a308fb4d1998214312c90e4b09d6271bc4fa0456e7e", size = 12077, upload-time = "2026-05-08T04:46:30.761Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/23/86/856e2b7795d74ce30e685390ccb61ce0a075b6e4111e88c49fafaca8ed0d/types_croniter-6.2.2.20260508-py3-none-any.whl", hash = "sha256:9038aa3fa264ef16a4e1034f8f8a1fcc7d73da4c56ed1f508e008abab8773bad", size = 9732, upload-time = "2026-05-08T04:46:29.738Z" },
+]
+
+[[package]]
 name = "types-docker"
 version = "7.1.0.20260512"
 source = { registry = "https://pypi.org/simple" }
@@ -3225,6 +3254,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/e6/e4/c6a3db57e1559ecd588cb8df809a6e29cbc9d8bd52b5357d0f6853cd5930/types_pexpect-4.9.0.20260508.tar.gz", hash = "sha256:1729c05eb86c3f2bf76652576fb9f632921b3392ed951a681f3b4457d78af198", size = 13513, upload-time = "2026-05-08T04:49:24.117Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a1/20/8592e3e3ceb6147101a8803cda4be5433da83a56dc562b8dc1c55e9ccbe3/types_pexpect-4.9.0.20260508-py3-none-any.whl", hash = "sha256:a215c07a3d317597b5dcf6ed6892c683a20c8488b2cd37001c885497928a8bdf", size = 17077, upload-time = "2026-05-08T04:49:22.811Z" },
+]
+
+[[package]]
+name = "types-python-dateutil"
+version = "2.9.0.20260508"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/9b/ee1674cbe9ec50bb824f35a5dc0ce5fd1f1b6196ba1213e3fe6f33b4ce32/types_python_dateutil-2.9.0.20260508.tar.gz", hash = "sha256:596a6d63d81f587bf04c8254fb78df9d2344e915ce67948d7400512e3a6206d5", size = 17033, upload-time = "2026-05-08T04:47:08.248Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/db/7c/1788ff10edf56031d74ad3fba40947e0e8b82e3a529b30e6b7d71c191dec/types_python_dateutil-2.9.0.20260508-py3-none-any.whl", hash = "sha256:bfc6fd2d81aa86e5ac97206a64304f6bd247426eedbca9b98619bbc48c6a1c10", size = 18425, upload-time = "2026-05-08T04:47:07.207Z" },
 ]
 
 [[package]]
