@@ -37,4 +37,4 @@ services:
       plugins:
         sablier:
           name: github.com/sablierapp/sablier-traefik-plugin
-          version: "v1.1.0"
+          version: "v1.3.0"
