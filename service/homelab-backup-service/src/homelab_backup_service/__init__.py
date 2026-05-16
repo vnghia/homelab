@@ -378,6 +378,20 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
             ).model_dump(mode="json")
         }
 
+        self.config.hatchet.scheduler.root = {
+            frequency: HatchetServiceSchedulerModel(
+                workflow=Backup.BACKUP_SERVICES,
+                schedules=[self.config.schedule[frequency]],
+                input={
+                    "services": [
+                        GlobalExtractor(service).extract_str(extractor_args)
+                        for service in services
+                    ]
+                },
+            )
+            for frequency, services in self.frequency_configs.items()
+        }
+
         self.register_outputs({})
 
     @classmethod
