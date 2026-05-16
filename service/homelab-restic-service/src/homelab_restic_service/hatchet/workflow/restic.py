@@ -172,9 +172,10 @@ class Restic:
                 await HatchetResticModelConfig.load(config)
             )
             if isinstance(input.profiles, str):
-                return await Docker.run_container(
+                await Docker.run_container(
                     context, restic_config.build_backup_model(input.profiles)
                 )
+                return None
             return await cls.backup_profiles(
                 restic_config, restic_config.resolve_profiles(input.profiles)
             )

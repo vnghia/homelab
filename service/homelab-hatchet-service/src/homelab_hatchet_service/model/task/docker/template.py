@@ -15,7 +15,7 @@ async def run(_: EmptyModel, context: Context, config: ConfigDependency) -> None
     service = "#service"
     container = "#container"
     name = "#name"
-    return await Docker.run_container(
+    await Docker.run_container(
         context,
         await DockerContainerRunConfig(
             service=service, container=container, name=name
@@ -29,7 +29,7 @@ async def run(_: EmptyModel, context: Context, config: ConfigDependency) -> None
 async def exec(_: EmptyModel, context: Context, config: ConfigDependency) -> None:
     service = "#service"
     exec = "#exec"
-    return await Docker.exec_container(
+    await Docker.exec_container(
         context,
         await DockerContainerExecConfig(service=service, exec=exec).load(config),
     )

@@ -81,3 +81,8 @@ class DockerContainerRunInput(
     HomelabRootModel[DockerContainerRunModel | DockerContainerRunConfig]
 ):
     pass
+
+
+class DockerContainerRunOutput(HomelabBaseModel):
+    name: str
+    logs: list[str]

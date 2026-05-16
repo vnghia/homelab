@@ -42,3 +42,8 @@ class DockerContainerExecInput(
     HomelabRootModel[DockerContainerExecModel | DockerContainerExecConfig]
 ):
     pass
+
+
+class DockerContainerExecOutput(HomelabBaseModel):
+    id: str
+    logs: list[str]

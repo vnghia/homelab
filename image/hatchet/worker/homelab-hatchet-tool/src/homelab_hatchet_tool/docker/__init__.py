@@ -10,8 +10,16 @@ from homelab_pydantic import add_namespace, docker
 
 from .. import label
 from ..config import ConfigDependency
-from .model.exec import DockerContainerExecInput, DockerContainerExecModel
-from .model.run import DockerContainerRunInput, DockerContainerRunModel
+from .model.exec import (
+    DockerContainerExecInput,
+    DockerContainerExecModel,
+    DockerContainerExecOutput,
+)
+from .model.run import (
+    DockerContainerRunInput,
+    DockerContainerRunModel,
+    DockerContainerRunOutput,
+)
 
 logger = logging.getLogger("docker")
 
@@ -56,9 +64,11 @@ class Docker:
         cls,
         context: Context,
         model: DockerContainerRunModel,
+        *,
         stdout: bool = True,
         stderr: bool = True,
-    ) -> None:
+        stream: bool = True,
+    ) -> DockerContainerRunOutput:
         container = await cls().client.containers.create(
             model.creation.model_dump(mode="json", by_alias=True, exclude_unset=True),
             name=model.name
@@ -73,21 +83,26 @@ class Docker:
         container_inspect = docker.schema.ModelContainerInspectResponse.model_validate(
             await container.show()
         )
-        container_name = (
-            container_inspect.name.removeprefix("/") if container_inspect.name else None
-        )
+        if not container_inspect.name:
+            raise RuntimeError("Container name can not be null")
+        container_name = container_inspect.name.removeprefix("/")
         logger.info("Running container {}".format(container_name))
         logger.debug(container_inspect)
 
         try:
             await container.start()
 
-            async for logs in container.log(
+            logs: list[str] = []
+            async for raw_log in container.log(
                 stdout=stdout, stderr=stderr, follow=True, timeout=None
             ):
                 # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
-                for line in logs.splitlines():
-                    logger.info("[{}] - {}".format(container_name, line))
+                lines = raw_log.splitlines()
+                logs += lines
+
+                if stream:
+                    for line in lines:
+                        logger.info("[{}] - {}".format(container_name, line))
 
             exit_status = docker.schema.ModelContainerWaitResponse.model_validate(
                 await container.wait(timeout=None)
@@ -99,6 +114,8 @@ class Docker:
                         await container.show()
                     ),
                 )
+
+            return DockerContainerRunOutput(name=container_name, logs=logs)
         finally:
             await container.delete(force=True, v=True)
 
@@ -107,9 +124,11 @@ class Docker:
         cls,
         context: Context,
         model: DockerContainerExecModel,
+        *,
         stdout: bool = True,
         stderr: bool = True,
-    ) -> None:
+        stream: bool = True,
+    ) -> DockerContainerExecOutput:
         logger.debug(model)
         logger.info("Execing container {}".format(model.name))
 
@@ -121,14 +140,19 @@ class Docker:
         logger.debug(instance)
 
         exec_id = instance.id[:7]
-        async with instance.start(timeout=None, detach=False) as stream:  # pyrefly: ignore [bad-context-manager]
-            while message := (await stream.read_out()):
-                # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
-                logger.info(
-                    "[{}] - [{}] - {}".format(
-                        model.name, exec_id, message.data.decode()
-                    )
-                )
+
+        logs: list[str] = []
+        async with instance.start(timeout=None, detach=False) as log_stream:  # pyrefly: ignore [bad-context-manager]
+            while message := (await log_stream.read_out()):
+                lines = message.data.decode().splitlines()
+                logs += lines
+
+                if stream:
+                    for line in lines:
+                        # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
+                        logger.info(
+                            "[{}] - [{}] - {}".format(model.name, exec_id, line)
+                        )
 
         if (
             status_code := int((await instance.inspect())["ExitCode"])
@@ -138,6 +162,8 @@ class Docker:
                     model.name, exec_id, status_code
                 )
             )
+
+        return DockerContainerExecOutput(id=instance.id, logs=logs)
 
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
@@ -154,7 +180,7 @@ class Docker:
             input: DockerContainerRunInput, context: Context, config: ConfigDependency
         ) -> None:
             root = input.root
-            return await cls.run_container(
+            await cls.run_container(
                 context,
                 root
                 if isinstance(root, DockerContainerRunModel)
@@ -174,7 +200,7 @@ class Docker:
             input: DockerContainerExecInput, context: Context, config: ConfigDependency
         ) -> None:
             root = input.root
-            return await cls.exec_container(
+            await cls.exec_container(
                 context,
                 root
                 if isinstance(root, DockerContainerExecModel)

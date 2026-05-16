@@ -176,9 +176,10 @@ class Balite:
                 await HatchetBaliteModelConfig.load(config)
             )
             if isinstance(input.profiles, str):
-                return await Docker.run_container(
+                await Docker.run_container(
                     context, balite_config.build_backup_model(input.profiles)
                 )
+                return None
             return await cls.backup_profiles(
                 balite_config, balite_config.resolve_profiles(input.profiles)
             )
