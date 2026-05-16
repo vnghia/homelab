@@ -4,6 +4,6 @@ services:
       schedule:
         daily: "0 3 * * *"
         weekly: "0 3 * * mon"
-        monthly: "0 3 1 * *"
+        monthly: "0 3 1-7 * mon" # first monday of the month
     network:
       bridge:
