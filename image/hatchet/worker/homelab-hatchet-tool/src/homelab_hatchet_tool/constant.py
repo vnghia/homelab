@@ -27,6 +27,8 @@ SOURCE_VALUE = "provisioned"
 
 SERVICE_LABEL = "service"
 
+INPUT_ALL = "all"
+
 
 def build_labels(service: str | None) -> dict[str, str]:
     return {HOST_LABEL: HOST_VALUE, SOURCE_LABEL: SOURCE_VALUE} | (

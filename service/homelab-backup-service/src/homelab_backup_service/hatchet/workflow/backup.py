@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Literal, Self
+from typing import Any, ClassVar, Self
 
 from hatchet_sdk import Context, DurableContext, Hatchet, ParentCondition
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Workflow
@@ -39,7 +39,7 @@ class HatchetBackupModel(HomelabBaseModel):
 
 
 class HatchetBackupServicesModel(HomelabBaseModel):
-    services: Literal["all"] | list[str]
+    services: list[str]
 
 
 class Backup:
@@ -299,7 +299,7 @@ class Backup:
                 backup_config,
                 (
                     list(backup_config.services.keys())
-                    if input.services == "all"
+                    if input.services[0] == constant.INPUT_ALL
                     else input.services
                 ),
             )
