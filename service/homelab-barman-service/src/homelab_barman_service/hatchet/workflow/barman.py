@@ -99,7 +99,7 @@ class Barman:
         backup: HatchetBarmanBackupModel,
     ) -> None:
         container_name = barman_config.profiles[profile]
-        container = await Docker().client.containers.get(container_name)
+        container = await Docker.client().containers.get(container_name)
         container_is_not_running = (
             container_state.status
             if (

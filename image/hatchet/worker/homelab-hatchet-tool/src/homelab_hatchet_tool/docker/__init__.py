@@ -33,11 +33,16 @@ class Docker:
     DOCKER_EXEC_CONFIG_TASK = "docker-exec-config"
     DOCKER_EXEC_MODEL_TASK = "docker-exec-model"
 
+    _client: aiodocker.Docker | None = None
+
     _docker_run_workflow: Standalone[DockerContainerRunInput, None] | None = None
     _docker_exec_workflow: Standalone[DockerContainerExecInput, None] | None = None
 
-    def __init__(self) -> None:
-        self.client = aiodocker.Docker()
+    @classmethod
+    def client(cls) -> aiodocker.Docker:
+        if not cls._client:
+            cls._client = aiodocker.Docker()
+        return cls._client
 
     @classmethod
     def docker_run_workflow(cls) -> Standalone[DockerContainerRunInput, None]:
@@ -69,7 +74,7 @@ class Docker:
         stderr: bool = True,
         stream: bool = True,
     ) -> DockerContainerRunOutput:
-        container = await cls().client.containers.create(
+        container = await cls.client().containers.create(
             model.creation.model_dump(mode="json", by_alias=True, exclude_unset=True),
             name=model.name
             or (
@@ -133,8 +138,8 @@ class Docker:
         logger.info("Execing container {}".format(model.name))
 
         instance = (
-            await cls()
-            .client.containers.container(model.name)
+            await cls.client()
+            .containers.container(model.name)
             .exec(cmd=model.exec.command, stdout=stdout, stderr=stderr, tty=False)
         )
         logger.debug(instance)
