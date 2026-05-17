@@ -20,6 +20,8 @@ def main() -> None:
     worker = hatchet.worker(
         label.HOST_VALUE
         + ((label.NAMESPACE_SEPARATOR + config.name) if config.name else ""),
+        slots=config.slots,
+        durable_slots=config.durable_slots,
         labels={
             label.HOST_LABEL: label.HOST_VALUE,
             label.DOCKER_LABEL: label.DOCKER_VALUE,

@@ -5,6 +5,7 @@ from typing import Annotated, ClassVar, Self
 import aiofiles
 from hatchet_sdk import Context, Depends, EmptyModel
 from homelab_pydantic import HomelabBaseModel
+from pydantic import PositiveInt
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,7 +24,11 @@ class Config(BaseSettings):
     log_level: str = "INFO"
 
     host: str = socket.gethostname()
+
     name: str | None = None
+    slots: PositiveInt = 100
+    durable_slots: PositiveInt = 1000
+
     workflow_dir: Path = CONFIG_PATH_PREFIX / "workflow"
     docker_dir: Path = CONFIG_PATH_PREFIX / "docker"
     schedule_dir: Path = CONFIG_PATH_PREFIX / "schedule"
