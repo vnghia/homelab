@@ -47,6 +47,11 @@ class HatchetBarmanContainerConfig(HomelabBaseModel):
             profiles=raw_config.profiles,
         )
 
+    def resolve_profiles(self, keys: Iterable[str]) -> set[str]:
+        if constant.INPUT_ALL in keys:
+            return set(self.profiles.keys())
+        return set(keys)
+
     def build_cron_model(self) -> DockerContainerExecModel:
         return DockerContainerExecModel(
             exec=docker.ContainerExecModel(
@@ -64,10 +69,13 @@ class HatchetBarmanContainerConfig(HomelabBaseModel):
         )
 
 
-class HatchetBarmanBackupInputModel(HomelabBaseModel):
-    profiles: str | list[str]
-    backup: HatchetBarmanBackupModel = HatchetBarmanBackupModel()
+class HatchetBarmanBaseInputModel(HomelabBaseModel):
+    profiles: str | set[str]
     barman: HatchetBarmanContainerConfig | None = None
+
+
+class HatchetBarmanBackupInputModel(HatchetBarmanBaseInputModel):
+    backup: HatchetBarmanBackupModel = HatchetBarmanBackupModel()
 
 
 class Barman:
@@ -198,7 +206,9 @@ class Barman:
                     context, barman_config, input.profiles, input.backup
                 )
             return await cls.backup_profiles(
-                barman_config, input.profiles, input.backup
+                barman_config,
+                barman_config.resolve_profiles(input.profiles),
+                input.backup,
             )
 
         cls._barman_backup_workflow = barman_backup

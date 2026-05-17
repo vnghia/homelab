@@ -49,7 +49,7 @@ class HatchetBaliteProfileModel(HomelabBaseModel):
 
 
 class HatchetBaliteModel(HomelabBaseModel):
-    groups: dict[str, list[str]]
+    groups: dict[str, set[str]]
     profiles: dict[str, HatchetBaliteProfileModel]
 
 
@@ -81,13 +81,16 @@ class HatchetBaliteModelConfig(HomelabBaseModel):
         ).load(config)
         return cls(model=model.creation, balite=raw_config.balite)
 
-    def resolve_profiles(self, keys: list[str]) -> list[str]:
-        profiles: list[str] = []
+    def resolve_profiles(self, keys: Iterable[str]) -> set[str]:
+        if constant.INPUT_ALL in keys:
+            return set(self.balite.profiles.keys())
+
+        profiles: set[str] = set()
         for key in keys:
             if key in self.balite.profiles:
-                profiles.append(key)
+                profiles.add(key)
             elif key in self.balite.groups:
-                profiles += self.resolve_profiles(self.balite.groups[key])
+                profiles |= self.resolve_profiles(self.balite.groups[key])
             else:
                 logger.error("Could not resolve balite key {}".format(key))
         return profiles
@@ -120,10 +123,13 @@ class HatchetBaliteModelConfig(HomelabBaseModel):
         )
 
 
-class HatchetBaliteBackupInputModel(HomelabBaseModel):
-    profiles: str | list[str]
-    backup: HatchetBaliteBackupModel = HatchetBaliteBackupModel()
+class HatchetBaliteBaseInputModel(HomelabBaseModel):
+    profiles: str | set[str]
     balite: HatchetBaliteModelConfig | None = None
+
+
+class HatchetBaliteBackupInputModel(HatchetBaliteBaseInputModel):
+    backup: HatchetBaliteBackupModel = HatchetBaliteBackupModel()
 
 
 class Balite:

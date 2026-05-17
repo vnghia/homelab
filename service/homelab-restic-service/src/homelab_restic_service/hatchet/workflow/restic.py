@@ -38,7 +38,7 @@ class HatchetResticProfileModel(HomelabBaseModel):
 
 
 class HatchetResticModel(HomelabBaseModel):
-    groups: dict[str, list[str]]
+    groups: dict[str, set[str]]
     profiles: dict[str, HatchetResticProfileModel]
 
 
@@ -97,24 +97,30 @@ class HatchetResticModelConfig(HomelabBaseModel):
         ).load(config)
         return cls(model=model.creation, restic=raw_config.restic)
 
-    def resolve_profiles(self, keys: list[str]) -> list[str]:
-        profiles: list[str] = []
+    def resolve_profiles(self, keys: Iterable[str]) -> set[str]:
+        if constant.INPUT_ALL in keys:
+            return set(self.restic.profiles.keys())
+
+        profiles: set[str] = set()
         for key in keys:
             if key in self.restic.profiles:
-                profiles.append(key)
+                profiles.add(key)
             elif key in self.restic.groups:
-                profiles += self.resolve_profiles(self.restic.groups[key])
+                profiles |= self.resolve_profiles(self.restic.groups[key])
             else:
                 logger.error("Could not resolve restic key {}".format(key))
         return profiles
 
-    def resolve_repositories(self, keys: list[str]) -> set[str]:
+    def resolve_repositories(self, keys: Iterable[str]) -> set[str]:
+        if constant.INPUT_ALL in keys:
+            return self.resolve_repositories(self.restic.profiles.keys())
+
         repositories: set[str] = set()
         for key in keys:
             if key in self.restic.profiles:
                 repositories.add(self.restic.profiles[key].repository)
             elif key in self.restic.groups:
-                repositories.update(self.resolve_repositories(self.restic.groups[key]))
+                repositories |= self.resolve_repositories(self.restic.groups[key])
             else:
                 logger.error("Could not resolve restic key {}".format(key))
         return repositories
@@ -180,28 +186,25 @@ class HatchetResticModelConfig(HomelabBaseModel):
         )
 
 
-class HatchetResticBackupInputModel(HomelabBaseModel):
-    profiles: str | list[str]
+class HatchetResticBaseInputModel(HomelabBaseModel):
+    profiles: str | set[str]
+    restic: HatchetResticModelConfig | None = None
+
+
+class HatchetResticBackupInputModel(HatchetResticBaseInputModel):
     backup: HatchetResticBackupModel = HatchetResticBackupModel()
-    restic: HatchetResticModelConfig | None = None
 
 
-class HatchetResticCheckInputModel(HomelabBaseModel):
-    profiles: str | list[str]
+class HatchetResticCheckInputModel(HatchetResticBaseInputModel):
     check: HatchetResticCheckModel = HatchetResticCheckModel()
-    restic: HatchetResticModelConfig | None = None
 
 
-class HatchetResticForgetInputModel(HomelabBaseModel):
-    profiles: str | list[str]
+class HatchetResticForgetInputModel(HatchetResticBaseInputModel):
     forget: HatchetResticForgetModel = HatchetResticForgetModel()
-    restic: HatchetResticModelConfig | None = None
 
 
-class HatchetResticPruneInputModel(HomelabBaseModel):
-    profiles: str | list[str]
+class HatchetResticPruneInputModel(HatchetResticBaseInputModel):
     prune: HatchetResticPruneModel = HatchetResticPruneModel()
-    restic: HatchetResticModelConfig | None = None
 
 
 class Restic:
