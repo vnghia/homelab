@@ -12,7 +12,6 @@ dependencies = [
     "homelab-litestream-service",
     "pulumi>=3.150.0",
     "homelab-extract",
-    "homelab-dagu-config",
     "homelab-hatchet-config",
     "pydantic>=2.10.6",
 ]
