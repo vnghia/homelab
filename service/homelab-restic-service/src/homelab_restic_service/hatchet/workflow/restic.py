@@ -173,7 +173,7 @@ class HatchetResticModelConfig(HomelabBaseModel):
         self, profile: str, model: HatchetResticForgetModel
     ) -> DockerContainerRunModel:
         return DockerContainerRunModel(
-            creation=self.build_model(None, True, model.build_cmd(profile)),
+            creation=self.build_model(profile, True, model.build_cmd(profile)),
             name_prefix=add_namespace(self.RESTIC, profile),
         )
 
@@ -401,7 +401,7 @@ class Restic:
             input_validator=HatchetResticCheckInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=cls.CONCURRENCY,
+            concurrency=1,
             desired_worker_labels=[
                 constant.DESIRED_HOST_LABEL,
                 constant.DESIRED_DOCKER_LABEL,
@@ -435,7 +435,7 @@ class Restic:
             input_validator=HatchetResticForgetInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=cls.CONCURRENCY,
+            concurrency=1,
             desired_worker_labels=[
                 constant.DESIRED_HOST_LABEL,
                 constant.DESIRED_DOCKER_LABEL,
@@ -467,7 +467,7 @@ class Restic:
             input_validator=HatchetResticPruneInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=cls.CONCURRENCY,
+            concurrency=1,
             desired_worker_labels=[
                 constant.DESIRED_HOST_LABEL,
                 constant.DESIRED_DOCKER_LABEL,
@@ -496,6 +496,42 @@ class Restic:
                 input.prune,
             )
 
+        @hatchet.task(
+            name="{}-forget-prune-check".format(cls.SERVICE),
+            input_validator=HatchetResticBaseInputModel,
+            schedule_timeout=cls.SCHEDULE_TIMEOUT,
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            concurrency=1,
+            desired_worker_labels=[
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
+            ],
+            default_additional_metadata=constant.build_labels(cls.SERVICE),
+        )
+        async def restic_forget_prune_check(
+            input: HatchetResticBaseInputModel,
+            context: Context,
+            config: ConfigDependency,
+        ) -> None:
+            restic_config = input.restic or (
+                await HatchetResticModelConfig.load(config)
+            )
+
+            profiles = restic_config.resolve_profiles(
+                [input.profiles] if isinstance(input.profiles, str) else input.profiles
+            )
+            repositories = restic_config.resolve_repositories(profiles)
+
+            await cls.forget_profiles(
+                restic_config, profiles, HatchetResticForgetModel(prune=False)
+            )
+            await cls.prune_profiles(
+                restic_config, repositories, HatchetResticPruneModel()
+            )
+            await cls.check_profiles(
+                restic_config, repositories, HatchetResticCheckModel(read_data=False)
+            )
+
         cls._restic_backup_workflow = restic_backup
         cls._restic_check_workflow = restic_check
         cls._restic_forget_workflow = restic_forget
@@ -506,6 +542,7 @@ class Restic:
             cls._restic_check_workflow,
             cls._restic_forget_workflow,
             cls._restic_prune_workflow,
+            restic_forget_prune_check,
         ]
 
 

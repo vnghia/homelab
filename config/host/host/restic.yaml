@@ -22,37 +22,6 @@ services:
         env: RESTIC_CACHE_DIR
       hostname:
         hvariable: FULL_HOSTNAME
-      dagu:
-        docker:
-          executor:
-            run:
-              model:
-          dag:
-            params:
-              types:
-                backup: null
-                snapshot: null
-            tags: ["backup"]
-          command:
-            prefix:
-              - "-n"
-              - param:
-                  type: backup
-          dags:
-            snapshots:
-              command: ["snapshots"]
-            backup:
-              command: ["backup"]
-            ls:
-              command:
-                - "ls"
-                - param:
-                    type: snapshot
-            restore:
-              command:
-                - "restore"
-                - param:
-                    type: snapshot
       hatchet:
         docker:
           models:
