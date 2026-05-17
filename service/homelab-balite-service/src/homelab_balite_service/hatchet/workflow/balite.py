@@ -3,7 +3,7 @@ from typing import Any, ClassVar, Iterable, Self
 
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
-from homelab_hatchet_tool import label
+from homelab_hatchet_tool import constant
 from homelab_hatchet_tool.config import Config, ConfigDependency
 from homelab_hatchet_tool.docker import Docker
 from homelab_hatchet_tool.docker.model.run import (
@@ -154,11 +154,11 @@ class Balite:
                         profiles=profile, backup=backup, balite=balite_config
                     ),
                     key=profile,
-                    additional_metadata=label.build_labels(cls.SERVICE)
+                    additional_metadata=constant.build_labels(cls.SERVICE)
                     | {"{}-profile".format(cls.SERVICE): profile},
                     desired_worker_labels=[
-                        label.DESIRED_HOST_LABEL,
-                        label.DESIRED_DOCKER_LABEL,
+                        constant.DESIRED_HOST_LABEL,
+                        constant.DESIRED_DOCKER_LABEL,
                     ],
                 )
                 for profile in profiles
@@ -173,10 +173,10 @@ class Balite:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=5,
             desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
             ],
-            default_additional_metadata=label.build_labels(cls.SERVICE),
+            default_additional_metadata=constant.build_labels(cls.SERVICE),
         )
         async def balite_backup(
             input: HatchetBaliteBackupInputModel,

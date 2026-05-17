@@ -1,5 +1,5 @@
 from hatchet_sdk import ClientConfig, Hatchet
-from homelab_hatchet_tool import label
+from homelab_hatchet_tool import constant
 from homelab_hatchet_tool.config import Config
 from homelab_hatchet_tool.docker import Docker
 
@@ -18,17 +18,17 @@ hatchet = Hatchet(config=ClientConfig(debug=config.log_level == "DEBUG", logger=
 def main() -> None:
     logger.info(config.model_dump_json())
     worker = hatchet.worker(
-        label.HOST_VALUE
-        + ((label.NAMESPACE_SEPARATOR + config.name) if config.name else ""),
+        constant.HOST_VALUE
+        + ((constant.NAMESPACE_SEPARATOR + config.name) if config.name else ""),
         slots=config.slots,
         durable_slots=config.durable_slots,
         labels={
-            label.HOST_LABEL: label.HOST_VALUE,
-            label.DOCKER_LABEL: label.DOCKER_VALUE,
+            constant.HOST_LABEL: constant.HOST_VALUE,
+            constant.DOCKER_LABEL: constant.DOCKER_VALUE,
         },
     )
 
-    namespace = label.HOST_VALUE
+    namespace = constant.HOST_VALUE
     static_workflows = Workflow.register_models(
         hatchet, worker, namespace, Docker.build_workflows(hatchet)
     ) | Workflow.register_models(

@@ -4,7 +4,7 @@ from typing import Any, ClassVar, Iterable, Self
 
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
-from homelab_hatchet_tool import label
+from homelab_hatchet_tool import constant
 from homelab_hatchet_tool.config import Config, ConfigDependency
 from homelab_hatchet_tool.docker import Docker
 from homelab_hatchet_tool.docker.model.run import (
@@ -270,11 +270,11 @@ class Restic:
                         profiles=profile, backup=backup, restic=restic_config
                     ),
                     key=profile,
-                    additional_metadata=label.build_labels(cls.SERVICE)
+                    additional_metadata=constant.build_labels(cls.SERVICE)
                     | {"{}-profile".format(cls.SERVICE): profile},
                     desired_worker_labels=[
-                        label.DESIRED_HOST_LABEL,
-                        label.DESIRED_DOCKER_LABEL,
+                        constant.DESIRED_HOST_LABEL,
+                        constant.DESIRED_DOCKER_LABEL,
                     ],
                 )
                 for profile in profiles
@@ -296,11 +296,11 @@ class Restic:
                         profiles=profile, check=check, restic=restic_config
                     ),
                     key=profile,
-                    additional_metadata=label.build_labels(cls.SERVICE)
+                    additional_metadata=constant.build_labels(cls.SERVICE)
                     | {"{}-profile".format(cls.SERVICE): profile},
                     desired_worker_labels=[
-                        label.DESIRED_HOST_LABEL,
-                        label.DESIRED_DOCKER_LABEL,
+                        constant.DESIRED_HOST_LABEL,
+                        constant.DESIRED_DOCKER_LABEL,
                     ],
                 )
                 for profile in profiles
@@ -322,11 +322,11 @@ class Restic:
                         profiles=profile, forget=forget, restic=restic_config
                     ),
                     key=profile,
-                    additional_metadata=label.build_labels(cls.SERVICE)
+                    additional_metadata=constant.build_labels(cls.SERVICE)
                     | {"{}-profile".format(cls.SERVICE): profile},
                     desired_worker_labels=[
-                        label.DESIRED_HOST_LABEL,
-                        label.DESIRED_DOCKER_LABEL,
+                        constant.DESIRED_HOST_LABEL,
+                        constant.DESIRED_DOCKER_LABEL,
                     ],
                 )
                 for profile in profiles
@@ -348,11 +348,11 @@ class Restic:
                         profiles=profile, prune=prune, restic=restic_config
                     ),
                     key=profile,
-                    additional_metadata=label.build_labels(cls.SERVICE)
+                    additional_metadata=constant.build_labels(cls.SERVICE)
                     | {"{}-profile".format(cls.SERVICE): profile},
                     desired_worker_labels=[
-                        label.DESIRED_HOST_LABEL,
-                        label.DESIRED_DOCKER_LABEL,
+                        constant.DESIRED_HOST_LABEL,
+                        constant.DESIRED_DOCKER_LABEL,
                     ],
                 )
                 for profile in profiles
@@ -368,10 +368,10 @@ class Restic:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=cls.CONCURRENCY,
             desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
             ],
-            default_additional_metadata=label.build_labels(cls.SERVICE),
+            default_additional_metadata=constant.build_labels(cls.SERVICE),
         )
         async def restic_backup(
             input: HatchetResticBackupInputModel,
@@ -400,10 +400,10 @@ class Restic:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=cls.CONCURRENCY,
             desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
             ],
-            default_additional_metadata=label.build_labels(cls.SERVICE),
+            default_additional_metadata=constant.build_labels(cls.SERVICE),
         )
         async def restic_check(
             input: HatchetResticCheckInputModel,
@@ -434,10 +434,10 @@ class Restic:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=cls.CONCURRENCY,
             desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
             ],
-            default_additional_metadata=label.build_labels(cls.SERVICE),
+            default_additional_metadata=constant.build_labels(cls.SERVICE),
         )
         async def restic_forget(
             input: HatchetResticForgetInputModel,
@@ -466,10 +466,10 @@ class Restic:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=cls.CONCURRENCY,
             desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
             ],
-            default_additional_metadata=label.build_labels(cls.SERVICE),
+            default_additional_metadata=constant.build_labels(cls.SERVICE),
         )
         async def restic_prune(
             input: HatchetResticPruneInputModel,

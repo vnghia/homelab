@@ -9,7 +9,7 @@ from dateutil import tz
 from hatchet_sdk import Context, EmptyModel, Hatchet
 from hatchet_sdk.clients.rest.models.scheduled_run_status import ScheduledRunStatus
 from hatchet_sdk.runnables.workflow import BaseWorkflow
-from homelab_hatchet_tool import label
+from homelab_hatchet_tool import constant
 from homelab_hatchet_tool.config import Config, ConfigDependency
 from homelab_hatchet_tool.schedule.model import ScheduleConfig
 from homelab_pydantic import add_namespace
@@ -23,7 +23,7 @@ class Scheduler:
     NAME = "scheduler"
     LABEL_NAME = "{}-name".format(NAME)
 
-    METADATA = label.build_labels(None)
+    METADATA = constant.build_labels(None)
 
     @classmethod
     def build_workflows(
@@ -33,8 +33,8 @@ class Scheduler:
             name=cls.NAME,
             on_crons=config.scheduler_cron,
             concurrency=1,
-            desired_worker_labels=[label.DESIRED_HOST_LABEL],
-            default_additional_metadata=label.build_labels(cls.NAME),
+            desired_worker_labels=[constant.DESIRED_HOST_LABEL],
+            default_additional_metadata=constant.build_labels(cls.NAME),
         )
         async def scheduler(
             input: EmptyModel, context: Context, config: ConfigDependency

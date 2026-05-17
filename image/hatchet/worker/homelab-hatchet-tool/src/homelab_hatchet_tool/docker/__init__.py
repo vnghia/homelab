@@ -8,7 +8,7 @@ from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
 from homelab_pydantic import add_namespace, docker
 
-from .. import label
+from .. import constant
 from ..config import ConfigDependency
 from .model.exec import (
     DockerContainerExecInput,
@@ -176,8 +176,8 @@ class Docker:
             name=cls.DOCKER_RUN_CONFIG_TASK,
             input_validator=DockerContainerRunInput,
             desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
             ],
             execution_timeout=cls.DOCKER_TIMEOUT,
         )
@@ -196,8 +196,8 @@ class Docker:
             name=cls.DOCKER_EXEC_CONFIG_TASK,
             input_validator=DockerContainerExecInput,
             desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
             ],
             execution_timeout=cls.DOCKER_TIMEOUT,
         )
