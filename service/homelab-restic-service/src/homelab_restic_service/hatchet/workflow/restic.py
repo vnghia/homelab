@@ -38,6 +38,7 @@ class HatchetResticProfileModel(HomelabBaseModel):
 
 
 class HatchetResticModel(HomelabBaseModel):
+    repositories: set[str]
     groups: dict[str, set[str]]
     profiles: dict[str, HatchetResticProfileModel]
 
@@ -113,11 +114,13 @@ class HatchetResticModelConfig(HomelabBaseModel):
 
     def resolve_repositories(self, keys: Iterable[str]) -> set[str]:
         if constant.INPUT_ALL in keys:
-            return self.resolve_repositories(self.restic.profiles.keys())
+            return self.restic.repositories
 
         repositories: set[str] = set()
         for key in keys:
-            if key in self.restic.profiles:
+            if key in self.restic.repositories:
+                repositories.add(key)
+            elif key in self.restic.profiles:
                 repositories.add(self.restic.profiles[key].repository)
             elif key in self.restic.groups:
                 repositories |= self.resolve_repositories(self.restic.groups[key])
@@ -165,7 +168,7 @@ class HatchetResticModelConfig(HomelabBaseModel):
         self, profile: str, model: HatchetResticCheckModel
     ) -> DockerContainerRunModel:
         return DockerContainerRunModel(
-            creation=self.build_model(profile, True, model.build_cmd(profile)),
+            creation=self.build_model(None, True, model.build_cmd(profile)),
             name_prefix=add_namespace(self.RESTIC, profile),
         )
 

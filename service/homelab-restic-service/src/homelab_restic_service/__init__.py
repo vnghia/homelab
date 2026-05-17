@@ -199,6 +199,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             HatchetResticModelConfig.CONFIG_KEY: {
                 "container": None,
                 "restic": {
+                    "repositories": list(self.repository_names.values()),
                     "groups": {
                         self.get_file_group(service): profiles
                         for service, profiles in self.service_groups.items()
