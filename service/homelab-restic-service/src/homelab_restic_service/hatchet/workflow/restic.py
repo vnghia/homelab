@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Any, ClassVar, Self
+from typing import Any, ClassVar, Iterable, Self
 
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
@@ -218,7 +218,7 @@ class Restic:
     async def backup_profiles(
         cls,
         restic_config: HatchetResticModelConfig,
-        profiles: list[str],
+        profiles: Iterable[str],
         backup: HatchetResticBackupModel,
     ) -> None:
         restic_backup_workflow = cls.restic_backup_workflow()
@@ -244,7 +244,7 @@ class Restic:
     async def forget_profiles(
         cls,
         restic_config: HatchetResticModelConfig,
-        profiles: list[str],
+        profiles: Iterable[str],
         forget: HatchetResticForgetModel,
     ) -> None:
         restic_forget_workflow = cls.restic_forget_workflow()
@@ -270,7 +270,7 @@ class Restic:
     async def prune_profiles(
         cls,
         restic_config: HatchetResticModelConfig,
-        profiles: list[str],
+        profiles: Iterable[str],
         prune: HatchetResticPruneModel,
     ) -> None:
         restic_prune_workflow = cls.restic_prune_workflow()
@@ -388,7 +388,7 @@ class Restic:
                 restic_config,
                 # Because pruning is a repository-wise operations,
                 # we need to run it on a repository basic.
-                list(restic_config.resolve_repositories(input.profiles)),
+                restic_config.resolve_repositories(input.profiles),
                 input.prune,
             )
 

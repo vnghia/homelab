@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 import logging
-from typing import Any, ClassVar, Self
+from typing import Any, ClassVar, Iterable, Self
 
 from hatchet_sdk import Context, EmptyModel, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
@@ -133,7 +133,7 @@ class Barman:
     async def backup_profiles(
         cls,
         barman_config: HatchetBarmanContainerConfig,
-        profiles: list[str],
+        profiles: Iterable[str],
         backup: HatchetBarmanBackupModel,
     ) -> None:
         barman_backup_workflow = cls.barman_backup_workflow()

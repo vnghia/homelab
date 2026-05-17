@@ -1,5 +1,5 @@
 import logging
-from typing import Any, ClassVar, Self
+from typing import Any, ClassVar, Iterable, Self
 
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
@@ -143,7 +143,7 @@ class Balite:
     async def backup_profiles(
         cls,
         balite_config: HatchetBaliteModelConfig,
-        profiles: list[str],
+        profiles: Iterable[str],
         backup: HatchetBaliteBackupModel,
     ) -> None:
         balite_backup_workflow = cls.balite_backup_workflow()
