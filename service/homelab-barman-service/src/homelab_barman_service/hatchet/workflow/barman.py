@@ -73,6 +73,9 @@ class HatchetBarmanBaseInputModel(HomelabBaseModel):
     profiles: str | set[str]
     barman: HatchetBarmanContainerConfig | None = None
 
+    def iterable(self) -> set[str]:
+        return {self.profiles} if isinstance(self.profiles, str) else self.profiles
+
 
 class HatchetBarmanBackupInputModel(HatchetBarmanBaseInputModel):
     backup: HatchetBarmanBackupModel = HatchetBarmanBackupModel()
@@ -201,13 +204,13 @@ class Barman:
             barman_config = input.barman or (
                 await HatchetBarmanContainerConfig.load(config)
             )
-            if isinstance(input.profiles, str):
+            if isinstance(input.profiles, str) and input.barman:
                 return await cls.backup_profile(
                     context, barman_config, input.profiles, input.backup
                 )
             return await cls.backup_profiles(
                 barman_config,
-                barman_config.resolve_profiles(input.profiles),
+                barman_config.resolve_profiles(input.iterable()),
                 input.backup,
             )
 

@@ -282,7 +282,7 @@ class Backup:
                 cls.RESTIC_DEFAULT_BACKUP,
             )
 
-        @hatchet.durable_task(
+        @hatchet.task(
             name=cls.BACKUP_SERVICES,
             input_validator=HatchetBackupServicesModel,
             execution_timeout=Docker.DOCKER_TIMEOUT,
@@ -291,7 +291,7 @@ class Backup:
         )
         async def backup_services(
             input: HatchetBackupServicesModel,
-            context: DurableContext,
+            context: Context,
             config: ConfigDependency,
         ) -> None:
             backup_config = await HatchetBackupConfig.load(config)

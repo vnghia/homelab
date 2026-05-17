@@ -127,6 +127,9 @@ class HatchetBaliteBaseInputModel(HomelabBaseModel):
     profiles: str | set[str]
     balite: HatchetBaliteModelConfig | None = None
 
+    def iterable(self) -> set[str]:
+        return {self.profiles} if isinstance(self.profiles, str) else self.profiles
+
 
 class HatchetBaliteBackupInputModel(HatchetBaliteBaseInputModel):
     backup: HatchetBaliteBackupModel = HatchetBaliteBackupModel()
@@ -192,7 +195,7 @@ class Balite:
             balite_config = input.balite or (
                 await HatchetBaliteModelConfig.load(config)
             )
-            if isinstance(input.profiles, str):
+            if isinstance(input.profiles, str) and input.balite:
                 await Docker.run_container(
                     context,
                     balite_config.build_backup_model(input.profiles, input.backup),
@@ -200,7 +203,7 @@ class Balite:
                 return None
             return await cls.backup_profiles(
                 balite_config,
-                balite_config.resolve_profiles(input.profiles),
+                balite_config.resolve_profiles(input.iterable()),
                 input.backup,
             )
 

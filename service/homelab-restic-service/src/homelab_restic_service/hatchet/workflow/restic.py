@@ -193,6 +193,9 @@ class HatchetResticBaseInputModel(HomelabBaseModel):
     profiles: str | set[str]
     restic: HatchetResticModelConfig | None = None
 
+    def iterable(self) -> set[str]:
+        return {self.profiles} if isinstance(self.profiles, str) else self.profiles
+
 
 class HatchetResticBackupInputModel(HatchetResticBaseInputModel):
     backup: HatchetResticBackupModel = HatchetResticBackupModel()
@@ -387,7 +390,7 @@ class Restic:
             restic_config = input.restic or (
                 await HatchetResticModelConfig.load(config)
             )
-            if isinstance(input.profiles, str):
+            if isinstance(input.profiles, str) and input.restic:
                 await Docker.run_container(
                     context,
                     restic_config.build_backup_model(input.profiles, input.backup),
@@ -395,7 +398,7 @@ class Restic:
                 return None
             return await cls.backup_profiles(
                 restic_config,
-                restic_config.resolve_profiles(input.profiles),
+                restic_config.resolve_profiles(input.iterable()),
                 input.backup,
             )
 
@@ -419,7 +422,7 @@ class Restic:
             restic_config = input.restic or (
                 await HatchetResticModelConfig.load(config)
             )
-            if isinstance(input.profiles, str):
+            if isinstance(input.profiles, str) and input.restic:
                 await Docker.run_container(
                     context,
                     restic_config.build_check_model(input.profiles, input.check),
@@ -429,7 +432,7 @@ class Restic:
                 restic_config,
                 # Because checking is a repository-wise operations,
                 # we need to run it on a repository basic.
-                restic_config.resolve_repositories(input.profiles),
+                restic_config.resolve_repositories(input.iterable()),
                 input.check,
             )
 
@@ -453,7 +456,7 @@ class Restic:
             restic_config = input.restic or (
                 await HatchetResticModelConfig.load(config)
             )
-            if isinstance(input.profiles, str):
+            if isinstance(input.profiles, str) and input.restic:
                 await Docker.run_container(
                     context,
                     restic_config.build_forget_model(input.profiles, input.forget),
@@ -461,7 +464,7 @@ class Restic:
                 return None
             return await cls.forget_profiles(
                 restic_config,
-                restic_config.resolve_profiles(input.profiles),
+                restic_config.resolve_profiles(input.iterable()),
                 input.forget,
             )
 
@@ -485,7 +488,7 @@ class Restic:
             restic_config = input.restic or (
                 await HatchetResticModelConfig.load(config)
             )
-            if isinstance(input.profiles, str):
+            if isinstance(input.profiles, str) and input.restic:
                 await Docker.run_container(
                     context,
                     restic_config.build_prune_model(input.profiles, input.prune),
@@ -495,7 +498,7 @@ class Restic:
                 restic_config,
                 # Because pruning is a repository-wise operations,
                 # we need to run it on a repository basic.
-                restic_config.resolve_repositories(input.profiles),
+                restic_config.resolve_repositories(input.iterable()),
                 input.prune,
             )
 
@@ -520,9 +523,7 @@ class Restic:
                 await HatchetResticModelConfig.load(config)
             )
 
-            profiles = restic_config.resolve_profiles(
-                [input.profiles] if isinstance(input.profiles, str) else input.profiles
-            )
+            profiles = restic_config.resolve_profiles(input.iterable())
             repositories = restic_config.resolve_repositories(profiles)
 
             await cls.forget_profiles(
