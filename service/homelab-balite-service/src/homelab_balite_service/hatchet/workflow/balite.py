@@ -54,13 +54,18 @@ class HatchetBaliteModel(HomelabBaseModel):
 
 
 class HatchetBaliteConfig(HomelabBaseModel):
+    BALITE_CMD: ClassVar[str] = "homelab-balite"
     container: str | None
     balite: HatchetBaliteModel
 
 
+class HatchetBaliteBackupModel(HomelabBaseModel):
+    def build_backup_cmd(self, profile: str) -> list[str]:
+        return [HatchetBaliteConfig.BALITE_CMD, "backup", profile]
+
+
 class HatchetBaliteModelConfig(HomelabBaseModel):
     BALITE: ClassVar[str] = "balite"
-    BALITE_CMD: ClassVar[str] = "homelab-balite"
     CONFIG_KEY: ClassVar[str | None] = None
 
     model: docker.ContainerCreationModel
@@ -106,29 +111,28 @@ class HatchetBaliteModelConfig(HomelabBaseModel):
             }
         )
 
-    @classmethod
-    def build_backup_cmd(cls, profile: str) -> list[str]:
-        return [cls.BALITE_CMD, "backup", profile]
-
-    def build_backup_model(self, profile: str) -> DockerContainerRunModel:
+    def build_backup_model(
+        self, profile: str, model: HatchetBaliteBackupModel
+    ) -> DockerContainerRunModel:
         return DockerContainerRunModel(
-            creation=self.build_model(profile, True, self.build_backup_cmd(profile)),
+            creation=self.build_model(profile, True, model.build_backup_cmd(profile)),
             name_prefix=add_namespace(self.BALITE, profile),
         )
 
 
-class HatchetBaliteBackupModel(HomelabBaseModel):
+class HatchetBaliteBackupInputModel(HomelabBaseModel):
     profiles: str | list[str]
+    backup: HatchetBaliteBackupModel = HatchetBaliteBackupModel()
     balite: HatchetBaliteModelConfig | None = None
 
 
 class Balite:
     SERVICE = HatchetBaliteModelConfig.BALITE
 
-    _balite_backup_workflow: Standalone[HatchetBaliteBackupModel, None] | None
+    _balite_backup_workflow: Standalone[HatchetBaliteBackupInputModel, None] | None
 
     @classmethod
-    def balite_backup_workflow(cls) -> Standalone[HatchetBaliteBackupModel, None]:
+    def balite_backup_workflow(cls) -> Standalone[HatchetBaliteBackupInputModel, None]:
         if not cls._balite_backup_workflow:
             raise RuntimeError(
                 "Please call `build_workflows` at least once before accesing this function"
@@ -137,13 +141,18 @@ class Balite:
 
     @classmethod
     async def backup_profiles(
-        cls, balite_config: HatchetBaliteModelConfig, profiles: list[str]
+        cls,
+        balite_config: HatchetBaliteModelConfig,
+        profiles: list[str],
+        backup: HatchetBaliteBackupModel,
     ) -> None:
         balite_backup_workflow = cls.balite_backup_workflow()
         await balite_backup_workflow.aio_run_many(
             [
                 balite_backup_workflow.create_bulk_run_item(
-                    HatchetBaliteBackupModel(profiles=profile, balite=balite_config),
+                    HatchetBaliteBackupInputModel(
+                        profiles=profile, backup=backup, balite=balite_config
+                    ),
                     key=profile,
                     additional_metadata=label.build_labels(cls.SERVICE)
                     | {"{}-profile".format(cls.SERVICE): profile},
@@ -160,7 +169,7 @@ class Balite:
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         @hatchet.task(
             name="{}-backup".format(cls.SERVICE),
-            input_validator=HatchetBaliteBackupModel,
+            input_validator=HatchetBaliteBackupInputModel,
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=5,
             desired_worker_labels=[
@@ -170,18 +179,23 @@ class Balite:
             default_additional_metadata=label.build_labels(cls.SERVICE),
         )
         async def balite_backup(
-            input: HatchetBaliteBackupModel, context: Context, config: ConfigDependency
+            input: HatchetBaliteBackupInputModel,
+            context: Context,
+            config: ConfigDependency,
         ) -> None:
             balite_config = input.balite or (
                 await HatchetBaliteModelConfig.load(config)
             )
             if isinstance(input.profiles, str):
                 await Docker.run_container(
-                    context, balite_config.build_backup_model(input.profiles)
+                    context,
+                    balite_config.build_backup_model(input.profiles, input.backup),
                 )
                 return None
             return await cls.backup_profiles(
-                balite_config, balite_config.resolve_profiles(input.profiles)
+                balite_config,
+                balite_config.resolve_profiles(input.profiles),
+                input.backup,
             )
 
         cls._balite_backup_workflow = balite_backup

@@ -17,9 +17,15 @@ logger = logging.getLogger("barman")
 
 class HatchetBarmanConfig(HomelabBaseModel):
     BARMAN: ClassVar[str] = "barman"
+    BARMAN_CMD: ClassVar[str] = BARMAN
 
     container: str | None
     profiles: dict[str, str]
+
+
+class HatchetBarmanBackupModel(HomelabBaseModel):
+    def build_backup_cmd(self, profile: str) -> list[str]:
+        return [HatchetBarmanConfig.BARMAN_CMD, "backup", "--wait", profile]
 
 
 class HatchetBarmanContainerConfig(HomelabBaseModel):
@@ -44,29 +50,23 @@ class HatchetBarmanContainerConfig(HomelabBaseModel):
     def build_cron_model(self) -> DockerContainerExecModel:
         return DockerContainerExecModel(
             exec=docker.ContainerExecModel(
-                command=[self.BARMAN, "cron", "--keep-descriptors"]
+                command=[HatchetBarmanConfig.BARMAN_CMD, "cron", "--keep-descriptors"]
             ),
             name=self.name,
         )
 
-    @classmethod
-    def build_backup_cmd(cls, profile: str) -> list[str]:
-        return [cls.BARMAN, "backup", "--wait", profile]
-
-    def build_backup_model(self, profile: str) -> DockerContainerExecModel:
+    def build_backup_model(
+        self, profile: str, model: HatchetBarmanBackupModel
+    ) -> DockerContainerExecModel:
         return DockerContainerExecModel(
-            exec=docker.ContainerExecModel(command=self.build_backup_cmd(profile)),
+            exec=docker.ContainerExecModel(command=model.build_backup_cmd(profile)),
             name=self.name,
         )
 
 
-class HatchetBarmanBackupProfileModel(HomelabBaseModel):
-    profile: str
-    barman: HatchetBarmanContainerConfig
-
-
-class HatchetBarmanBackupModel(HomelabBaseModel):
+class HatchetBarmanBackupInputModel(HomelabBaseModel):
     profiles: str | list[str]
+    backup: HatchetBarmanBackupModel = HatchetBarmanBackupModel()
     barman: HatchetBarmanContainerConfig | None = None
 
 
@@ -76,12 +76,14 @@ class Barman:
     SCHEDULE_TIMEOUT = datetime.timedelta(hours=6)
     CONCURRENCY = 5
 
-    _barman_backup_workflow: Standalone[HatchetBarmanBackupModel, None] | None = None
+    _barman_backup_workflow: Standalone[HatchetBarmanBackupInputModel, None] | None = (
+        None
+    )
 
     @classmethod
     def barman_backup_workflow(
         cls,
-    ) -> Standalone[HatchetBarmanBackupModel, None]:
+    ) -> Standalone[HatchetBarmanBackupInputModel, None]:
         if not cls._barman_backup_workflow:
             raise RuntimeError(
                 "Please call `build_workflows` at least once before accesing this function"
@@ -90,9 +92,13 @@ class Barman:
 
     @classmethod
     async def backup_profile(
-        cls, context: Context, model: HatchetBarmanBackupProfileModel
+        cls,
+        context: Context,
+        barman_config: HatchetBarmanContainerConfig,
+        profile: str,
+        backup: HatchetBarmanBackupModel,
     ) -> None:
-        container_name = model.barman.profiles[model.profile]
+        container_name = barman_config.profiles[profile]
         container = await Docker().client.containers.get(container_name)
         container_is_not_running = (
             container_state.status
@@ -111,9 +117,10 @@ class Barman:
                 )
                 await container.start()
                 await asyncio.sleep(30)
-                await Docker.exec_container(context, model.barman.build_cron_model())
+                await Docker.exec_container(context, barman_config.build_cron_model())
             await Docker.exec_container(
-                context, model.barman.build_backup_model(model.profile)
+                context,
+                barman_config.build_backup_model(profile, backup),
             )
         finally:
             if container_is_not_running:
@@ -124,13 +131,18 @@ class Barman:
 
     @classmethod
     async def backup_profiles(
-        cls, barman_config: HatchetBarmanContainerConfig, profiles: list[str]
+        cls,
+        barman_config: HatchetBarmanContainerConfig,
+        profiles: list[str],
+        backup: HatchetBarmanBackupModel,
     ) -> None:
         barman_backup_workflow = cls.barman_backup_workflow()
         await barman_backup_workflow.aio_run_many(
             [
                 barman_backup_workflow.create_bulk_run_item(
-                    HatchetBarmanBackupModel(profiles=profile, barman=barman_config),
+                    HatchetBarmanBackupInputModel(
+                        profiles=profile, backup=backup, barman=barman_config
+                    ),
                     key=profile,
                     additional_metadata=label.build_labels(cls.SERVICE)
                     | {"{}-profile".format(cls.SERVICE): profile},
@@ -163,7 +175,7 @@ class Barman:
 
         @hatchet.task(
             name="{}-backup".format(cls.SERVICE),
-            input_validator=HatchetBarmanBackupModel,
+            input_validator=HatchetBarmanBackupInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=cls.CONCURRENCY,
@@ -174,19 +186,20 @@ class Barman:
             default_additional_metadata=label.build_labels(cls.SERVICE),
         )
         async def barman_backup(
-            input: HatchetBarmanBackupModel, context: Context, config: ConfigDependency
+            input: HatchetBarmanBackupInputModel,
+            context: Context,
+            config: ConfigDependency,
         ) -> None:
             barman_config = input.barman or (
                 await HatchetBarmanContainerConfig.load(config)
             )
             if isinstance(input.profiles, str):
                 return await cls.backup_profile(
-                    context,
-                    HatchetBarmanBackupProfileModel(
-                        profile=input.profiles, barman=barman_config
-                    ),
+                    context, barman_config, input.profiles, input.backup
                 )
-            return await cls.backup_profiles(barman_config, input.profiles)
+            return await cls.backup_profiles(
+                barman_config, input.profiles, input.backup
+            )
 
         cls._barman_backup_workflow = barman_backup
 

@@ -46,6 +46,16 @@ class Backup:
     SERVICE = HatchetBackupConfig.BACKUP
     BACKUP_SERVICES = "{}-services".format(SERVICE)
 
+    RESTIC_DEFAULT_BACKUP: ClassVar[restic.HatchetResticBackupModel] = (
+        restic.HatchetResticBackupModel()
+    )
+    BARMAN_DEFAULT_BACKUP: ClassVar[barman.HatchetBarmanBackupModel] = (
+        barman.HatchetBarmanBackupModel()
+    )
+    BALITE_DEFAULT_BACKUP: ClassVar[balite.HatchetBaliteBackupModel] = (
+        balite.HatchetBaliteBackupModel()
+    )
+
     _backup_workflow: Workflow[HatchetBackupModel] | None
 
     @classmethod
@@ -127,7 +137,9 @@ class Backup:
         async def backup_file(input: HatchetBackupModel, context: Context) -> None:
             backup_config = context.task_output(backup_load_config)
             restic_config = context.task_output(backup_load_restic_config)
-            await restic.Restic.backup_profiles(restic_config, backup_config.profiles)
+            await restic.Restic.backup_profiles(
+                restic_config, backup_config.profiles, cls.RESTIC_DEFAULT_BACKUP
+            )
 
         @backup_workflow.task(
             name="load-{}-config".format(DatabaseType.POSTGRES),
@@ -172,6 +184,7 @@ class Backup:
             return await barman.Barman.backup_profiles(
                 barman_config,
                 backup_config.get_database_profiles(DatabaseType.POSTGRES),
+                cls.BARMAN_DEFAULT_BACKUP,
             )
 
         # TODO: Use durable_task after worker affinity is stable
@@ -200,6 +213,7 @@ class Backup:
             await restic.Restic.backup_profiles(
                 restic_config,
                 backup_config.get_database_file_profiles(DatabaseType.POSTGRES),
+                cls.RESTIC_DEFAULT_BACKUP,
             )
 
         @backup_workflow.task(
@@ -243,7 +257,9 @@ class Backup:
             backup_config = context.task_output(backup_load_config)
             balite_config = context.task_output(backup_load_sqlite_config)
             return await balite.Balite.backup_profiles(
-                balite_config, backup_config.get_database_profiles(DatabaseType.SQLITE)
+                balite_config,
+                backup_config.get_database_profiles(DatabaseType.SQLITE),
+                cls.BALITE_DEFAULT_BACKUP,
             )
 
         # TODO: Use durable_task after worker affinity is stable
@@ -272,6 +288,7 @@ class Backup:
             await restic.Restic.backup_profiles(
                 restic_config,
                 backup_config.get_database_file_profiles(DatabaseType.SQLITE),
+                cls.RESTIC_DEFAULT_BACKUP,
             )
 
         @hatchet.task(

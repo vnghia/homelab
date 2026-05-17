@@ -46,6 +46,11 @@ class HatchetResticConfig(HomelabBaseModel):
     restic: HatchetResticModel
 
 
+class HatchetResticBackupModel(HomelabBaseModel):
+    def build_backup_cmd(self, profile: str) -> list[str]:
+        return ["-n", profile, "backup"]
+
+
 class HatchetResticModelConfig(HomelabBaseModel):
     RESTIC: ClassVar[str] = "restic"
     CONFIG_KEY: ClassVar[str | None] = None
@@ -96,19 +101,18 @@ class HatchetResticModelConfig(HomelabBaseModel):
             }
         )
 
-    @classmethod
-    def build_backup_cmd(cls, profile: str) -> list[str]:
-        return ["-n", profile, "backup"]
-
-    def build_backup_model(self, profile: str) -> DockerContainerRunModel:
+    def build_backup_model(
+        self, profile: str, model: HatchetResticBackupModel
+    ) -> DockerContainerRunModel:
         return DockerContainerRunModel(
-            creation=self.build_model(profile, True, self.build_backup_cmd(profile)),
+            creation=self.build_model(profile, True, model.build_backup_cmd(profile)),
             name_prefix=add_namespace(self.RESTIC, profile),
         )
 
 
-class HatchetResticBackupModel(HomelabBaseModel):
+class HatchetResticBackupInputModel(HomelabBaseModel):
     profiles: str | list[str]
+    backup: HatchetResticBackupModel = HatchetResticBackupModel()
     restic: HatchetResticModelConfig | None = None
 
 
@@ -118,12 +122,12 @@ class Restic:
     SCHEDULE_TIMEOUT = datetime.timedelta(hours=6)
     CONCURRENCY = 5
 
-    _restic_backup_workflow: Standalone[HatchetResticBackupModel, None] | None
+    _restic_backup_workflow: Standalone[HatchetResticBackupInputModel, None] | None
 
     @classmethod
     def restic_backup_workflow(
         cls,
-    ) -> Standalone[HatchetResticBackupModel, None]:
+    ) -> Standalone[HatchetResticBackupInputModel, None]:
         if not cls._restic_backup_workflow:
             raise RuntimeError(
                 "Please call `build_workflows` at least once before accesing this function"
@@ -132,13 +136,18 @@ class Restic:
 
     @classmethod
     async def backup_profiles(
-        cls, restic_config: HatchetResticModelConfig, profiles: list[str]
+        cls,
+        restic_config: HatchetResticModelConfig,
+        profiles: list[str],
+        backup: HatchetResticBackupModel,
     ) -> None:
         restic_backup_workflow = cls.restic_backup_workflow()
         await restic_backup_workflow.aio_run_many(
             [
                 restic_backup_workflow.create_bulk_run_item(
-                    HatchetResticBackupModel(profiles=profile, restic=restic_config),
+                    HatchetResticBackupInputModel(
+                        profiles=profile, backup=backup, restic=restic_config
+                    ),
                     key=profile,
                     additional_metadata=label.build_labels(cls.SERVICE)
                     | {"{}-profile".format(cls.SERVICE): profile},
@@ -155,7 +164,7 @@ class Restic:
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         @hatchet.task(
             name="{}-backup".format(cls.SERVICE),
-            input_validator=HatchetResticBackupModel,
+            input_validator=HatchetResticBackupInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=cls.CONCURRENCY,
@@ -166,18 +175,23 @@ class Restic:
             default_additional_metadata=label.build_labels(cls.SERVICE),
         )
         async def restic_backup(
-            input: HatchetResticBackupModel, context: Context, config: ConfigDependency
+            input: HatchetResticBackupInputModel,
+            context: Context,
+            config: ConfigDependency,
         ) -> None:
             restic_config = input.restic or (
                 await HatchetResticModelConfig.load(config)
             )
             if isinstance(input.profiles, str):
                 await Docker.run_container(
-                    context, restic_config.build_backup_model(input.profiles)
+                    context,
+                    restic_config.build_backup_model(input.profiles, input.backup),
                 )
                 return None
             return await cls.backup_profiles(
-                restic_config, restic_config.resolve_profiles(input.profiles)
+                restic_config,
+                restic_config.resolve_profiles(input.profiles),
+                input.backup,
             )
 
         cls._restic_backup_workflow = restic_backup
