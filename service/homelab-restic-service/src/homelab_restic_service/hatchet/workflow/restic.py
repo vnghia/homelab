@@ -52,11 +52,27 @@ class HatchetResticBackupModel(HomelabBaseModel):
         return ["-n", profile, "backup"]
 
 
+class HatchetResticCheckModel(HomelabBaseModel):
+    read_data: bool | str = False
+
+    def build_cmd(self, profile: str) -> list[str]:
+        return [
+            "-n",
+            profile,
+            "check",
+            (
+                "--read-data={}".format(str(self.read_data).lower())
+                if isinstance(self.read_data, bool)
+                else "--read-data-subset={}".format(self.read_data)
+            ),
+        ]
+
+
 class HatchetResticForgetModel(HomelabBaseModel):
     prune: bool = False
 
     def build_cmd(self, profile: str) -> list[str]:
-        return ["-n", profile, "forget", "--prune={}".format(self.prune)]
+        return ["-n", profile, "forget", "--prune={}".format(str(self.prune).lower())]
 
 
 class HatchetResticPruneModel(HomelabBaseModel):
@@ -139,6 +155,14 @@ class HatchetResticModelConfig(HomelabBaseModel):
             name_prefix=add_namespace(self.RESTIC, profile),
         )
 
+    def build_check_model(
+        self, profile: str, model: HatchetResticCheckModel
+    ) -> DockerContainerRunModel:
+        return DockerContainerRunModel(
+            creation=self.build_model(profile, True, model.build_cmd(profile)),
+            name_prefix=add_namespace(self.RESTIC, profile),
+        )
+
     def build_forget_model(
         self, profile: str, model: HatchetResticForgetModel
     ) -> DockerContainerRunModel:
@@ -162,6 +186,12 @@ class HatchetResticBackupInputModel(HomelabBaseModel):
     restic: HatchetResticModelConfig | None = None
 
 
+class HatchetResticCheckInputModel(HomelabBaseModel):
+    profiles: str | list[str]
+    check: HatchetResticCheckModel = HatchetResticCheckModel()
+    restic: HatchetResticModelConfig | None = None
+
+
 class HatchetResticForgetInputModel(HomelabBaseModel):
     profiles: str | list[str]
     forget: HatchetResticForgetModel = HatchetResticForgetModel()
@@ -181,6 +211,7 @@ class Restic:
     CONCURRENCY = 5
 
     _restic_backup_workflow: Standalone[HatchetResticBackupInputModel, None] | None
+    _restic_check_workflow: Standalone[HatchetResticCheckInputModel, None] | None
     _restic_forget_workflow: Standalone[HatchetResticForgetInputModel, None] | None
     _restic_prune_workflow: Standalone[HatchetResticPruneInputModel, None] | None
 
@@ -193,6 +224,16 @@ class Restic:
                 "Please call `build_workflows` at least once before accesing this function"
             )
         return cls._restic_backup_workflow
+
+    @classmethod
+    def restic_check_workflow(
+        cls,
+    ) -> Standalone[HatchetResticCheckInputModel, None]:
+        if not cls._restic_check_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._restic_check_workflow
 
     @classmethod
     def restic_forget_workflow(
@@ -227,6 +268,32 @@ class Restic:
                 restic_backup_workflow.create_bulk_run_item(
                     HatchetResticBackupInputModel(
                         profiles=profile, backup=backup, restic=restic_config
+                    ),
+                    key=profile,
+                    additional_metadata=label.build_labels(cls.SERVICE)
+                    | {"{}-profile".format(cls.SERVICE): profile},
+                    desired_worker_labels=[
+                        label.DESIRED_HOST_LABEL,
+                        label.DESIRED_DOCKER_LABEL,
+                    ],
+                )
+                for profile in profiles
+            ],
+        )
+
+    @classmethod
+    async def check_profiles(
+        cls,
+        restic_config: HatchetResticModelConfig,
+        profiles: Iterable[str],
+        check: HatchetResticCheckModel,
+    ) -> None:
+        restic_check_workflow = cls.restic_check_workflow()
+        await restic_check_workflow.aio_run_many(
+            [
+                restic_check_workflow.create_bulk_run_item(
+                    HatchetResticCheckInputModel(
+                        profiles=profile, check=check, restic=restic_config
                     ),
                     key=profile,
                     additional_metadata=label.build_labels(cls.SERVICE)
@@ -327,6 +394,40 @@ class Restic:
             )
 
         @hatchet.task(
+            name="{}-check".format(cls.SERVICE),
+            input_validator=HatchetResticCheckInputModel,
+            schedule_timeout=cls.SCHEDULE_TIMEOUT,
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            concurrency=cls.CONCURRENCY,
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
+            default_additional_metadata=label.build_labels(cls.SERVICE),
+        )
+        async def restic_check(
+            input: HatchetResticCheckInputModel,
+            context: Context,
+            config: ConfigDependency,
+        ) -> None:
+            restic_config = input.restic or (
+                await HatchetResticModelConfig.load(config)
+            )
+            if isinstance(input.profiles, str):
+                await Docker.run_container(
+                    context,
+                    restic_config.build_check_model(input.profiles, input.check),
+                )
+                return None
+            return await cls.check_profiles(
+                restic_config,
+                # Because checking is a repository-wise operations,
+                # we need to run it on a repository basic.
+                restic_config.resolve_repositories(input.profiles),
+                input.check,
+            )
+
+        @hatchet.task(
             name="{}-forget".format(cls.SERVICE),
             input_validator=HatchetResticForgetInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
@@ -393,11 +494,13 @@ class Restic:
             )
 
         cls._restic_backup_workflow = restic_backup
+        cls._restic_check_workflow = restic_check
         cls._restic_forget_workflow = restic_forget
         cls._restic_prune_workflow = restic_prune
 
         return [
             cls._restic_backup_workflow,
+            cls._restic_check_workflow,
             cls._restic_forget_workflow,
             cls._restic_prune_workflow,
         ]
