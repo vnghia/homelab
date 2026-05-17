@@ -1,6 +1,6 @@
 from typing import Any, ClassVar, Literal, Self
 
-from hatchet_sdk import Context, Hatchet, ParentCondition
+from hatchet_sdk import Context, DurableContext, Hatchet, ParentCondition
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Workflow
 from homelab_balite_service.hatchet.workflow import balite
 from homelab_barman_service.hatchet.workflow import barman
@@ -122,8 +122,7 @@ class Backup:
         ) -> restic.HatchetResticModelConfig:
             return await restic.HatchetResticModelConfig.load(config)
 
-        # TODO: Use durable_task after worker affinity is stable
-        @backup_workflow.task(
+        @backup_workflow.durable_task(
             name="backup-file",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_load_config, backup_load_restic_config],
@@ -134,7 +133,9 @@ class Backup:
                 )
             ],
         )
-        async def backup_file(input: HatchetBackupModel, context: Context) -> None:
+        async def backup_file(
+            input: HatchetBackupModel, context: DurableContext
+        ) -> None:
             backup_config = context.task_output(backup_load_config)
             restic_config = context.task_output(backup_load_restic_config)
             await restic.Restic.backup_profiles(
@@ -159,14 +160,10 @@ class Backup:
         ) -> barman.HatchetBarmanContainerConfig:
             return await barman.HatchetBarmanContainerConfig.load(config)
 
-        @backup_workflow.task(
+        @backup_workflow.durable_task(
             name="backup-{}-database".format(DatabaseType.POSTGRES),
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_load_config, backup_load_postgres_config],
-            desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
-            ],
             skip_if=[
                 ParentCondition(
                     parent=backup_load_config,
@@ -177,7 +174,7 @@ class Backup:
             ],
         )
         async def backup_postgres_database(
-            input: HatchetBackupModel, context: Context
+            input: HatchetBackupModel, context: DurableContext
         ) -> None:
             backup_config = context.task_output(backup_load_config)
             barman_config = context.task_output(backup_load_postgres_config)
@@ -187,8 +184,7 @@ class Backup:
                 cls.BARMAN_DEFAULT_BACKUP,
             )
 
-        # TODO: Use durable_task after worker affinity is stable
-        @backup_workflow.task(
+        @backup_workflow.durable_task(
             name="backup-{}-database-file".format(DatabaseType.POSTGRES),
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[
@@ -206,7 +202,7 @@ class Backup:
             ],
         )
         async def backup_postgres_database_file(
-            input: HatchetBackupModel, context: Context
+            input: HatchetBackupModel, context: DurableContext
         ) -> None:
             backup_config = context.task_output(backup_load_config)
             restic_config = context.task_output(backup_load_restic_config)
@@ -234,14 +230,10 @@ class Backup:
         ) -> balite.HatchetBaliteModelConfig:
             return await balite.HatchetBaliteModelConfig.load(config)
 
-        @backup_workflow.task(
+        @backup_workflow.durable_task(
             name="backup-{}-database".format(DatabaseType.SQLITE),
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_load_config, backup_load_sqlite_config],
-            desired_worker_labels=[
-                label.DESIRED_HOST_LABEL,
-                label.DESIRED_DOCKER_LABEL,
-            ],
             skip_if=[
                 ParentCondition(
                     parent=backup_load_config,
@@ -252,7 +244,7 @@ class Backup:
             ],
         )
         async def backup_sqlite_database(
-            input: HatchetBackupModel, context: Context
+            input: HatchetBackupModel, context: DurableContext
         ) -> None:
             backup_config = context.task_output(backup_load_config)
             balite_config = context.task_output(backup_load_sqlite_config)
@@ -262,8 +254,7 @@ class Backup:
                 cls.BALITE_DEFAULT_BACKUP,
             )
 
-        # TODO: Use durable_task after worker affinity is stable
-        @backup_workflow.task(
+        @backup_workflow.durable_task(
             name="backup-{}-database-file".format(DatabaseType.SQLITE),
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[
@@ -281,7 +272,7 @@ class Backup:
             ],
         )
         async def backup_sqlite_database_file(
-            input: HatchetBackupModel, context: Context
+            input: HatchetBackupModel, context: DurableContext
         ) -> None:
             backup_config = context.task_output(backup_load_config)
             restic_config = context.task_output(backup_load_restic_config)
@@ -291,7 +282,7 @@ class Backup:
                 cls.RESTIC_DEFAULT_BACKUP,
             )
 
-        @hatchet.task(
+        @hatchet.durable_task(
             name=cls.BACKUP_SERVICES,
             input_validator=HatchetBackupServicesModel,
             execution_timeout=Docker.DOCKER_TIMEOUT,
@@ -300,7 +291,7 @@ class Backup:
         )
         async def backup_services(
             input: HatchetBackupServicesModel,
-            context: Context,
+            context: DurableContext,
             config: ConfigDependency,
         ) -> None:
             backup_config = await HatchetBackupConfig.load(config)
