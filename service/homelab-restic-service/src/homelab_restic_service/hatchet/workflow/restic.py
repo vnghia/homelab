@@ -47,8 +47,20 @@ class HatchetResticConfig(HomelabBaseModel):
 
 
 class HatchetResticBackupModel(HomelabBaseModel):
-    def build_backup_cmd(self, profile: str) -> list[str]:
+    def build_cmd(self, profile: str) -> list[str]:
         return ["-n", profile, "backup"]
+
+
+class HatchetResticForgetModel(HomelabBaseModel):
+    prune: bool = False
+
+    def build_cmd(self, profile: str) -> list[str]:
+        return ["-n", profile, "forget", "--prune={}".format(self.prune)]
+
+
+class HatchetResticPruneModel(HomelabBaseModel):
+    def build_cmd(self, profile: str) -> list[str]:
+        return ["-n", profile, "prune"]
 
 
 class HatchetResticModelConfig(HomelabBaseModel):
@@ -80,32 +92,54 @@ class HatchetResticModelConfig(HomelabBaseModel):
         return profiles
 
     def build_model(
-        self, profile: str, read_only: bool, cmd: list[str]
+        self, profile: str | None, read_only: bool, cmd: list[str]
     ) -> docker.ContainerCreationModel:
-        profile_mount = self.restic.profiles[profile].to_mount(read_only)
+        profile_mount = (
+            self.restic.profiles[profile].to_mount(read_only) if profile else None
+        )
         return self.model.model_copy(
-            update={
-                "host_config": self.model.host_config.model_copy(
-                    update={
-                        "mounts": [
-                            *(self.model.host_config.mounts or []),
-                            profile_mount,
-                        ],
-                    }
-                )
-                if self.model.host_config
-                else docker.schema.ModelHostConfig.model_validate(
-                    {"mounts": [profile_mount]}
-                ),
-                "cmd": cmd,
-            }
+            update={"cmd": cmd}
+            | (
+                {
+                    "host_config": self.model.host_config.model_copy(
+                        update={
+                            "mounts": [
+                                *(self.model.host_config.mounts or []),
+                                profile_mount,
+                            ],
+                        }
+                    )
+                    if self.model.host_config
+                    else docker.schema.ModelHostConfig.model_validate(
+                        {"mounts": [profile_mount]}
+                    )
+                }
+                if profile_mount
+                else {}
+            )
         )
 
     def build_backup_model(
         self, profile: str, model: HatchetResticBackupModel
     ) -> DockerContainerRunModel:
         return DockerContainerRunModel(
-            creation=self.build_model(profile, True, model.build_backup_cmd(profile)),
+            creation=self.build_model(profile, True, model.build_cmd(profile)),
+            name_prefix=add_namespace(self.RESTIC, profile),
+        )
+
+    def build_forget_model(
+        self, profile: str, model: HatchetResticForgetModel
+    ) -> DockerContainerRunModel:
+        return DockerContainerRunModel(
+            creation=self.build_model(None, True, model.build_cmd(profile)),
+            name_prefix=add_namespace(self.RESTIC, profile),
+        )
+
+    def build_prune_model(
+        self, profile: str, model: HatchetResticPruneModel
+    ) -> DockerContainerRunModel:
+        return DockerContainerRunModel(
+            creation=self.build_model(None, True, model.build_cmd(profile)),
             name_prefix=add_namespace(self.RESTIC, profile),
         )
 
@@ -116,6 +150,18 @@ class HatchetResticBackupInputModel(HomelabBaseModel):
     restic: HatchetResticModelConfig | None = None
 
 
+class HatchetResticForgetInputModel(HomelabBaseModel):
+    profiles: str | list[str]
+    forget: HatchetResticForgetModel = HatchetResticForgetModel()
+    restic: HatchetResticModelConfig | None = None
+
+
+class HatchetResticPruneInputModel(HomelabBaseModel):
+    profiles: str | list[str]
+    prune: HatchetResticPruneModel = HatchetResticPruneModel()
+    restic: HatchetResticModelConfig | None = None
+
+
 class Restic:
     SERVICE = HatchetResticModelConfig.RESTIC
 
@@ -123,6 +169,8 @@ class Restic:
     CONCURRENCY = 5
 
     _restic_backup_workflow: Standalone[HatchetResticBackupInputModel, None] | None
+    _restic_forget_workflow: Standalone[HatchetResticForgetInputModel, None] | None
+    _restic_prune_workflow: Standalone[HatchetResticPruneInputModel, None] | None
 
     @classmethod
     def restic_backup_workflow(
@@ -133,6 +181,26 @@ class Restic:
                 "Please call `build_workflows` at least once before accesing this function"
             )
         return cls._restic_backup_workflow
+
+    @classmethod
+    def restic_forget_workflow(
+        cls,
+    ) -> Standalone[HatchetResticForgetInputModel, None]:
+        if not cls._restic_forget_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._restic_forget_workflow
+
+    @classmethod
+    def restic_prune_workflow(
+        cls,
+    ) -> Standalone[HatchetResticPruneInputModel, None]:
+        if not cls._restic_prune_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._restic_prune_workflow
 
     @classmethod
     async def backup_profiles(
@@ -147,6 +215,58 @@ class Restic:
                 restic_backup_workflow.create_bulk_run_item(
                     HatchetResticBackupInputModel(
                         profiles=profile, backup=backup, restic=restic_config
+                    ),
+                    key=profile,
+                    additional_metadata=label.build_labels(cls.SERVICE)
+                    | {"{}-profile".format(cls.SERVICE): profile},
+                    desired_worker_labels=[
+                        label.DESIRED_HOST_LABEL,
+                        label.DESIRED_DOCKER_LABEL,
+                    ],
+                )
+                for profile in profiles
+            ],
+        )
+
+    @classmethod
+    async def forget_profiles(
+        cls,
+        restic_config: HatchetResticModelConfig,
+        profiles: list[str],
+        forget: HatchetResticForgetModel,
+    ) -> None:
+        restic_forget_workflow = cls.restic_forget_workflow()
+        await restic_forget_workflow.aio_run_many(
+            [
+                restic_forget_workflow.create_bulk_run_item(
+                    HatchetResticForgetInputModel(
+                        profiles=profile, forget=forget, restic=restic_config
+                    ),
+                    key=profile,
+                    additional_metadata=label.build_labels(cls.SERVICE)
+                    | {"{}-profile".format(cls.SERVICE): profile},
+                    desired_worker_labels=[
+                        label.DESIRED_HOST_LABEL,
+                        label.DESIRED_DOCKER_LABEL,
+                    ],
+                )
+                for profile in profiles
+            ],
+        )
+
+    @classmethod
+    async def prune_profiles(
+        cls,
+        restic_config: HatchetResticModelConfig,
+        profiles: list[str],
+        prune: HatchetResticPruneModel,
+    ) -> None:
+        restic_prune_workflow = cls.restic_prune_workflow()
+        await restic_prune_workflow.aio_run_many(
+            [
+                restic_prune_workflow.create_bulk_run_item(
+                    HatchetResticPruneInputModel(
+                        profiles=profile, prune=prune, restic=restic_config
                     ),
                     key=profile,
                     additional_metadata=label.build_labels(cls.SERVICE)
@@ -194,9 +314,79 @@ class Restic:
                 input.backup,
             )
 
-        cls._restic_backup_workflow = restic_backup
+        @hatchet.task(
+            name="{}-forget".format(cls.SERVICE),
+            input_validator=HatchetResticForgetInputModel,
+            schedule_timeout=cls.SCHEDULE_TIMEOUT,
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            concurrency=cls.CONCURRENCY,
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
+            default_additional_metadata=label.build_labels(cls.SERVICE),
+        )
+        async def restic_forget(
+            input: HatchetResticForgetInputModel,
+            context: Context,
+            config: ConfigDependency,
+        ) -> None:
+            restic_config = input.restic or (
+                await HatchetResticModelConfig.load(config)
+            )
+            if isinstance(input.profiles, str):
+                await Docker.run_container(
+                    context,
+                    restic_config.build_forget_model(input.profiles, input.forget),
+                )
+                return None
+            return await cls.forget_profiles(
+                restic_config,
+                restic_config.resolve_profiles(input.profiles),
+                input.forget,
+            )
 
-        return [cls._restic_backup_workflow]
+        @hatchet.task(
+            name="{}-prune".format(cls.SERVICE),
+            input_validator=HatchetResticPruneInputModel,
+            schedule_timeout=cls.SCHEDULE_TIMEOUT,
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            concurrency=cls.CONCURRENCY,
+            desired_worker_labels=[
+                label.DESIRED_HOST_LABEL,
+                label.DESIRED_DOCKER_LABEL,
+            ],
+            default_additional_metadata=label.build_labels(cls.SERVICE),
+        )
+        async def restic_prune(
+            input: HatchetResticPruneInputModel,
+            context: Context,
+            config: ConfigDependency,
+        ) -> None:
+            restic_config = input.restic or (
+                await HatchetResticModelConfig.load(config)
+            )
+            if isinstance(input.profiles, str):
+                await Docker.run_container(
+                    context,
+                    restic_config.build_prune_model(input.profiles, input.prune),
+                )
+                return None
+            return await cls.prune_profiles(
+                restic_config,
+                restic_config.resolve_profiles(input.profiles),
+                input.prune,
+            )
+
+        cls._restic_backup_workflow = restic_backup
+        cls._restic_forget_workflow = restic_forget
+        cls._restic_prune_workflow = restic_prune
+
+        return [
+            cls._restic_backup_workflow,
+            cls._restic_forget_workflow,
+            cls._restic_prune_workflow,
+        ]
 
 
 build_workflows = Restic.build_workflows
