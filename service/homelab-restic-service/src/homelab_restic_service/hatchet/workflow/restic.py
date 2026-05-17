@@ -21,6 +21,7 @@ class HatchetResticProfileModel(HomelabBaseModel):
         docker.schema.ModelMountVolumeOptions.model_validate({"no_copy": True})
     )
 
+    repository: str
     volume: str
     path: AbsolutePath
 
@@ -90,6 +91,17 @@ class HatchetResticModelConfig(HomelabBaseModel):
             else:
                 logger.error("Could not resolve restic key {}".format(key))
         return profiles
+
+    def resolve_repositories(self, keys: list[str]) -> set[str]:
+        repositories: set[str] = set()
+        for key in keys:
+            if key in self.restic.profiles:
+                repositories.add(self.restic.profiles[key].repository)
+            elif key in self.restic.groups:
+                repositories.update(self.resolve_repositories(self.restic.groups[key]))
+            else:
+                logger.error("Could not resolve restic key {}".format(key))
+        return repositories
 
     def build_model(
         self, profile: str | None, read_only: bool, cmd: list[str]
@@ -374,7 +386,9 @@ class Restic:
                 return None
             return await cls.prune_profiles(
                 restic_config,
-                restic_config.resolve_profiles(input.profiles),
+                # Because pruning is a repository-wise operations,
+                # we need to run it on a repository basic.
+                list(restic_config.resolve_repositories(input.profiles)),
                 input.prune,
             )
 

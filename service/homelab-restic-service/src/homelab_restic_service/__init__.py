@@ -53,7 +53,8 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             self.config.configuration_dir
         ).extract_volume_path(self.extractor_args)
 
-        self.repositores = {}
+        self.repositories = {}
+        self.repository_names: dict[str, str] = {}
         self.export_repositories = []
         for name, resource in self.backup_resource.restic.restic.items():
             repository_opts = ResourceOptions(
@@ -95,7 +96,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
             )
 
             repository_profile = self.get_repository_profile_name(name)
-            self.repositores[repository_profile] = (
+            self.repositories[repository_profile] = (
                 {
                     "inherit": self.DEFAULT_PROFILE_NAME,
                     "repository-file": repository_file.to_path(self.extractor_args),
@@ -110,6 +111,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                 )
                 | ({"pack-size": resource.pack_size} if resource.pack_size else {})
             )
+            self.repository_names[name] = repository_profile
             self.export_repositories.append(Output.from_input(repository_profile))
 
         self.volume_configs: list[ResticVolumeConfig] = []
@@ -204,6 +206,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                     | self.database_groups,
                     "profiles": {
                         config.name: {
+                            "repository": self.repository_names[config.repository],
                             "volume": self.extractor_args.host.docker.volume.volumes[
                                 config.name
                             ].resource.name,
@@ -213,6 +216,9 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
                     }
                     | {
                         profile.volume.name: {
+                            "repository": self.repository_names[
+                                profile.volume.repository
+                            ],
                             "volume": self.extractor_args.host.docker.volume.volumes[
                                 profile.model.volume
                             ].resource.name,

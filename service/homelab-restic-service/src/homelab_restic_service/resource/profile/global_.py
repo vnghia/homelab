@@ -64,7 +64,7 @@ class ResticGlobalProfileResource(
                         "restore": {"verify": True} | snapshot_options,
                     }
                 }
-                | restic_service.repositores,
+                | restic_service.repositories,
                 "groups": {"all": {"profiles": all_profiles_name}}
                 | {
                     service: {"profiles": profiles}
