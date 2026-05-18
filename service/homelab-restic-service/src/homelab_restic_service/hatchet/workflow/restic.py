@@ -2,7 +2,12 @@ import datetime
 import logging
 from typing import Any, ClassVar, Iterable, Self
 
-from hatchet_sdk import Context, Hatchet
+from hatchet_sdk import (
+    ConcurrencyExpression,
+    ConcurrencyLimitStrategy,
+    Context,
+    Hatchet,
+)
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
 from homelab_hatchet_tool import constant
 from homelab_hatchet_tool.config import Config, ConfigDependency
@@ -375,7 +380,20 @@ class Restic:
             input_validator=HatchetResticBackupInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=cls.CONCURRENCY,
+            concurrency=[
+                ConcurrencyExpression(
+                    expression='"restic-host-%s".format([additional_metadata.{}])'.format(
+                        constant.HOST_LABEL
+                    ),
+                    max_runs=cls.CONCURRENCY,
+                    limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
+                ),
+                ConcurrencyExpression(
+                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-backup-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    max_runs=cls.CONCURRENCY,
+                    limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
+                ),
+            ],
             desired_worker_labels=[
                 constant.DESIRED_HOST_LABEL,
                 constant.DESIRED_DOCKER_LABEL,
@@ -407,7 +425,13 @@ class Restic:
             input_validator=HatchetResticCheckInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=1,
+            concurrency=[
+                ConcurrencyExpression(
+                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-check-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    max_runs=1,
+                    limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
+                )
+            ],
             desired_worker_labels=[
                 constant.DESIRED_HOST_LABEL,
                 constant.DESIRED_DOCKER_LABEL,
@@ -441,7 +465,13 @@ class Restic:
             input_validator=HatchetResticForgetInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=1,
+            concurrency=[
+                ConcurrencyExpression(
+                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-forget-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    max_runs=1,
+                    limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
+                )
+            ],
             desired_worker_labels=[
                 constant.DESIRED_HOST_LABEL,
                 constant.DESIRED_DOCKER_LABEL,
@@ -473,7 +503,13 @@ class Restic:
             input_validator=HatchetResticPruneInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
-            concurrency=1,
+            concurrency=[
+                ConcurrencyExpression(
+                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-prune-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    max_runs=1,
+                    limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
+                )
+            ],
             desired_worker_labels=[
                 constant.DESIRED_HOST_LABEL,
                 constant.DESIRED_DOCKER_LABEL,
