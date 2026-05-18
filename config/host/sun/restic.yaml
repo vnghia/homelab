@@ -16,5 +16,4 @@ services:
             workflow: restic-forget-prune-check
             schedules:
               - "0 7 * * sun" # 7am every sunday
-            input:
-              profiles: [all]
+            input: null

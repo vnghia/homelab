@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import logging
 from typing import Any, ClassVar, Iterable, Self
@@ -6,6 +7,7 @@ from hatchet_sdk import (
     ConcurrencyExpression,
     ConcurrencyLimitStrategy,
     Context,
+    EmptyModel,
     Hatchet,
 )
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
@@ -220,6 +222,7 @@ class HatchetResticPruneInputModel(HatchetResticBaseInputModel):
 
 class Restic:
     SERVICE = HatchetResticModelConfig.RESTIC
+    RESTIC_FORGET = "{}-forget".format(SERVICE)
 
     SCHEDULE_TIMEOUT = datetime.timedelta(hours=6)
     CONCURRENCY = 5
@@ -461,7 +464,7 @@ class Restic:
             )
 
         @hatchet.task(
-            name="{}-forget".format(cls.SERVICE),
+            name=cls.RESTIC_FORGET,
             input_validator=HatchetResticForgetInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
@@ -540,7 +543,6 @@ class Restic:
 
         @hatchet.task(
             name="{}-forget-prune-check".format(cls.SERVICE),
-            input_validator=HatchetResticBaseInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=1,
@@ -551,25 +553,43 @@ class Restic:
             default_additional_metadata=constant.build_labels(cls.SERVICE),
         )
         async def restic_forget_prune_check(
-            input: HatchetResticBaseInputModel,
+            input: EmptyModel,
             context: Context,
             config: ConfigDependency,
         ) -> None:
-            restic_config = input.restic or (
-                await HatchetResticModelConfig.load(config)
-            )
+            profiles = {constant.INPUT_ALL}
+            for host in config.hosts:
+                await hatchet.stubs.workflow(
+                    name=add_namespace(
+                        host,
+                        cls.RESTIC_FORGET,
+                        separator=constant.NAMESPACE_SEPARATOR,
+                    ),
+                    input_validator=HatchetResticForgetInputModel,
+                ).aio_run(
+                    input=HatchetResticForgetInputModel(
+                        profiles=profiles,
+                        forget=HatchetResticForgetModel(prune=False),
+                    )
+                )
 
-            profiles = restic_config.resolve_profiles(input.iterable())
-            repositories = restic_config.resolve_repositories(profiles)
+            restic_config = await HatchetResticModelConfig.load(config)
 
-            await cls.forget_profiles(
-                restic_config, profiles, HatchetResticForgetModel(prune=False)
-            )
-            await cls.prune_profiles(
-                restic_config, repositories, HatchetResticPruneModel()
-            )
-            await cls.check_profiles(
-                restic_config, repositories, HatchetResticCheckModel(read_data=False)
+            async def restic_prune_and_check(repository: str) -> None:
+                await cls.prune_profiles(
+                    restic_config, {repository}, HatchetResticPruneModel()
+                )
+                await cls.check_profiles(
+                    restic_config,
+                    {repository},
+                    HatchetResticCheckModel(read_data=False),
+                )
+
+            await asyncio.gather(
+                *[
+                    restic_prune_and_check(repository)
+                    for repository in restic_config.restic.repositories
+                ]
             )
 
         cls._restic_backup_workflow = restic_backup
