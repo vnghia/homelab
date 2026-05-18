@@ -5,8 +5,8 @@ from typing import Annotated, ClassVar, Self
 import aiofiles
 from hatchet_sdk import Context, Depends, EmptyModel
 from homelab_pydantic import HomelabBaseModel
-from pydantic import PositiveInt
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import PositiveInt, field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Config(BaseSettings):
@@ -24,6 +24,7 @@ class Config(BaseSettings):
     log_level: str = "INFO"
 
     host: str = socket.gethostname()
+    hosts: Annotated[list[str], NoDecode] = []
 
     name: str | None = None
     slots: PositiveInt = 100
@@ -35,7 +36,25 @@ class Config(BaseSettings):
     config_dir: Path = CONFIG_PATH_PREFIX / "config"
 
     scheduler_dir: Path = CONFIG_PATH_PREFIX / "scheduler"
-    scheduler_cron: list[str] = ["*/30 * * * *"]
+    scheduler_cron: Annotated[list[str], NoDecode] = ["*/30 * * * *"]
+
+    @field_validator("hosts", mode="before")
+    @classmethod
+    def decode_hosts(cls, value: str | list[str]) -> list[str]:
+        return (
+            [host.strip() for host in value.split(",")]
+            if isinstance(value, str)
+            else value
+        )
+
+    @field_validator("scheduler_cron", mode="before")
+    @classmethod
+    def decode_scheduler_cron(cls, value: str) -> list[str]:
+        return (
+            [cron.strip() for cron in value.split(",")]
+            if isinstance(value, str)
+            else value
+        )
 
     @classmethod
     def load(cls) -> Self:

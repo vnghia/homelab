@@ -25,6 +25,11 @@ class HatchetService(ExtraService[HatchetConfig]):
         extractor_args: ExtractorArgs,
     ) -> None:
         super().__init__(model, opts=opts, extractor_args=extractor_args)
+
+        self.options[self.config.worker].envs = {
+            "HATCHET_WORKER_HOSTS": ",".join(list(extractor_args.host.HOSTS))
+        }
+
         self.build(None)
 
         self.docker_container_creation_resources: dict[str, set[str | None]] = (
