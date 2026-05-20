@@ -30,8 +30,7 @@ class HostResourceBase(ComponentResource):
         self.model = config[name]
 
         self.docker_host = self.model.access.ssh
-        self.docker_client = DockerClient(self.docker_host)
-        self.docker_client.pull_utility_image()
+        self._docker_client: DockerClient | None = None
 
         self.service_users = {
             service_name: service_model.user.model(self.model.users)
@@ -68,6 +67,13 @@ class HostResourceBase(ComponentResource):
         )
 
         self.HOSTS[self.name] = self
+
+    @property
+    def docker_client(self) -> DockerClient:
+        if not self._docker_client:
+            self._docker_client = DockerClient(self.docker_host)
+            self._docker_client.pull_utility_image()
+        return self._docker_client
 
     @property
     def name(self) -> str:
