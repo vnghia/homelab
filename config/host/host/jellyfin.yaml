@@ -3,7 +3,7 @@ docker:
     remote:
       jellyfin:
         repo: ghcr.io/jellyfin/jellyfin
-        tag: "10.11.8"
+        tag: "10.11.9"
   volumes:
     local:
       jellyfin-data:
