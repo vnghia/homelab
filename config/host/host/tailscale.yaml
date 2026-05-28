@@ -3,7 +3,7 @@ docker:
     remote:
       tailscale:
         repo: ghcr.io/tailscale/tailscale
-        tag: "v1.96.5"
+        tag: "v1.98.3"
   volumes:
     local:
       tailscale-data: {}
