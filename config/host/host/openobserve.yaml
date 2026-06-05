@@ -56,7 +56,11 @@ services:
         bridge:
           direct: {}
       s3:
+        key:
+          type: b2
+          name: openobserve
         env:
+          bucket: ZO_S3_BUCKET_NAME
           key-id: ZO_S3_ACCESS_KEY
           access-key: ZO_S3_SECRET_KEY
           region: ZO_S3_REGION_NAME
