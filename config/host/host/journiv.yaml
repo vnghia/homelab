@@ -83,6 +83,10 @@ services:
           hostname: kanidm
         - record: solar
           hostname: immich
+      log:
+        driver: json-file
+        opts:
+          max-size: "20m"
       volumes:
         journiv-data: /data
       tmpfs:

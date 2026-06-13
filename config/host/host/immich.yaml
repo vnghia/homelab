@@ -97,6 +97,10 @@ services:
       hosts:
         - record: solar
           hostname: kanidm
+      log:
+        driver: json-file
+        opts:
+          max-size: "20m"
       envs:
         IMMICH_PORT: 2283
         IMMICH_MEDIA_LOCATION:

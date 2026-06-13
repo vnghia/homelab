@@ -81,6 +81,10 @@ services:
       image: grafana
       hosts:
         - gvariable: MAIL_HOST
+      log:
+        driver: json-file
+        opts:
+          max-size: "20m"
       mails:
         - key:
             type: notification
