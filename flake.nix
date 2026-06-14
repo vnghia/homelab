@@ -16,11 +16,12 @@
     in
     {
       devShells.${system}.default = pkgs.mkShell {
-        packages = [
-          pkgs.pulumi-bin
-          pkgs.docker-client
-          pkgs.kanidm_1_10
-          pkgs.kanidm-provision
+        packages = with pkgs; [
+          pulumi-bin
+          docker-client
+          kanidm_1_10
+          kanidm-provision
+          restic
         ];
       };
     };
