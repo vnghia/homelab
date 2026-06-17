@@ -10,6 +10,7 @@ from homelab_pydantic import add_namespace, docker
 
 from .. import constant
 from ..config import ConfigDependency
+from ..log import log_to_server
 from .model.exec import (
     DockerContainerExecInput,
     DockerContainerExecModel,
@@ -101,13 +102,12 @@ class Docker:
             async for raw_log in container.log(
                 stdout=stdout, stderr=stderr, follow=True, timeout=None
             ):
-                # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
                 lines = raw_log.splitlines()
                 logs += lines
 
                 if stream:
                     for line in lines:
-                        logger.info("[{}] - {}".format(container_name, line))
+                        log_to_server(context, line)
 
             exit_status = docker.schema.ModelContainerWaitResponse.model_validate(
                 await container.wait(timeout=None)
@@ -154,10 +154,7 @@ class Docker:
 
                 if stream:
                     for line in lines:
-                        # TODO: use AsyncLogSender after https://github.com/hatchet-dev/hatchet/issues/3805
-                        logger.info(
-                            "[{}] - [{}] - {}".format(model.name, exec_id, line)
-                        )
+                        log_to_server(context, line)
 
         if (
             status_code := int((await instance.inspect())["ExitCode"])
