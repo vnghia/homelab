@@ -75,6 +75,7 @@ services:
           vpn: {}
       tmpfs:
         - /tmp
+        - /usr/local/share/nltk_data
       volumes:
         owebui-data: /app/backend/data
       envs:
