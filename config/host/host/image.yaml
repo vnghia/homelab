@@ -12,4 +12,4 @@ docker:
         tag: "0.11.17-python3.14-alpine"
       curl:
         repo: alpine/curl
-        tag: "8.19.0"
+        tag: "8.20.0"
