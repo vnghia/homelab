@@ -71,6 +71,10 @@ class S3Resource(ComponentResource):
         self.ovh = OvhResource(config.ovh, opts=self.child_opts)
 
         self.credentials = S3Credentials(
-            root={S3Type.CUSTOM: self.custom, S3Type.B2: self.b2.credentials}
+            root={
+                S3Type.CUSTOM: self.custom,
+                S3Type.B2: self.b2.credentials,
+                S3Type.OVH: self.ovh.credentials,
+            }
         )
         self.register_outputs({})

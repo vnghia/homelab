@@ -6,6 +6,7 @@ from homelab_pydantic import HomelabBaseModel
 class S3Type(StrEnum):
     CUSTOM = auto()
     B2 = auto()
+    OVH = auto()
 
 
 class S3Key(HomelabBaseModel):
