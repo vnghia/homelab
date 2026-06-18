@@ -1541,6 +1541,7 @@ dependencies = [
     { name = "homelab-pydantic" },
     { name = "pulumi" },
     { name = "pulumi-b2" },
+    { name = "pulumi-ovh" },
     { name = "pydantic" },
 ]
 
@@ -1549,6 +1550,7 @@ requires-dist = [
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pulumi-b2", directory = "sdks/b2" },
+    { name = "pulumi-ovh", specifier = ">=2.13.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
@@ -2524,6 +2526,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/76/31/9b9e9fe7c4fea6f0f5fcfa37110888b9c772cfb15ef1740ba6338a936378/pulumi_docker_build-0.0.15.tar.gz", hash = "sha256:a6301d9c1bfc749a3bce37280ef60c3f9a3dc767f89b62e99edf24ec46de0a6e", size = 38723, upload-time = "2025-10-17T11:03:54.948Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/77/2a/cbbd2bf07f2082e6187d52c463166a522f1960aaf7d34bf59a57e7a51327/pulumi_docker_build-0.0.15-py3-none-any.whl", hash = "sha256:6121e09e6ccdbc8c60695631e7f3d7da22a6188a9ccba16ec3b37dc449d6c45e", size = 43384, upload-time = "2025-10-17T11:03:52.891Z" },
+]
+
+[[package]]
+name = "pulumi-ovh"
+version = "2.13.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "parver" },
+    { name = "pulumi" },
+    { name = "semver" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e5/b3/65827de1b8d9a9a7c11799c9217d07a41f9bfd1fd20a161642c65a6f1ef2/pulumi_ovh-2.13.0.tar.gz", hash = "sha256:127a6d77b36ed14c2ec884e3193695e9ef2fcb008f762f7f8af04ff4979777cd", size = 530415, upload-time = "2026-04-13T07:36:14.122Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ef/3f/47b0d9c035357031efe3330cf4ca95ae2e31b1166cd7b72878dbec08e4bd/pulumi_ovh-2.13.0-py3-none-any.whl", hash = "sha256:767714476de794a6f8050951e66fc58115617ed21370bbea3f655e19909663a3", size = 948447, upload-time = "2026-04-13T07:36:12.946Z" },
 ]
 
 [[package]]

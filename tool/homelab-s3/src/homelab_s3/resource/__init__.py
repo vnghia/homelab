@@ -7,6 +7,7 @@ from pydantic import HttpUrl
 from ..config import S3Config
 from ..model import S3CredentialEnvKey, S3Key, S3Type
 from .b2 import B2Resource
+from .ovh import OvhResource
 
 
 @dataclasses.dataclass
@@ -67,6 +68,7 @@ class S3Resource(ComponentResource):
             for k, v in config.custom.root.items()
         }
         self.b2 = B2Resource(config.b2, opts=self.child_opts)
+        self.ovh = OvhResource(config.ovh, opts=self.child_opts)
 
         self.credentials = S3Credentials(
             root={S3Type.CUSTOM: self.custom, S3Type.B2: self.b2.credentials}

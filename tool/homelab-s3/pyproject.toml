@@ -8,6 +8,7 @@ dependencies = [
     "pydantic>=2.10.6",
     "pulumi>=3.148.0",
     "pulumi-b2",
+    "pulumi-ovh>=2.13.0",
 ]
 
 [build-system]

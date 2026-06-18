@@ -2,8 +2,10 @@ from homelab_pydantic import HomelabBaseModel
 
 from .b2 import B2Config
 from .credential import S3CredentialConfig
+from .ovh import OvhConfig
 
 
 class S3Config(HomelabBaseModel):
     custom: S3CredentialConfig = S3CredentialConfig.default()
     b2: B2Config = B2Config.default()
+    ovh: OvhConfig = OvhConfig.default()
