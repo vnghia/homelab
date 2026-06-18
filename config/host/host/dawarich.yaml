@@ -24,7 +24,6 @@ services:
                 record: solar
                 scheme: https
               prefer-short-username: true
-              allow-insecure-client-disable-pkce: true
   dawarich:
     variables:
       PORT: 3000
@@ -132,6 +131,7 @@ services:
           svariable: REDIRECT_URL
         OIDC_PROVIDER_NAME: Kanidm
         OIDC_AUTO_REGISTER: true
+        OIDC_PKCE_ENABLED: true
         ALLOW_EMAIL_PASSWORD_REGISTRATION: false
     containers:
       worker:
