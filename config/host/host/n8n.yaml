@@ -99,6 +99,9 @@ services:
             transform:
               string:
                 template: "http://localhost:{value}/healthz"
+      hosts:
+        - record: solar
+          hostname: kanidm
       network:
         bridge:
           vpn: {}
