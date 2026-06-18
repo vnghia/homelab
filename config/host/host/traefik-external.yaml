@@ -36,10 +36,10 @@ services:
               logLevel: "info"
               logFormat: "json"
               logBannedRequests: false
+              logStatusDetailHeader: X-Geoblock-Remediation
               databaseAutoUpdate: true
               databaseAutoUpdateDir:
                 extract:
                   volume: traefik-data
                 transform:
                   path: ip2database
-              remediationHeadersCustomName: X-Geoblock-Remediation
