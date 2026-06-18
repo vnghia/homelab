@@ -4,7 +4,7 @@ restic:
     main:
       host:
         s3:
-          type: b2
+          type: ovh
           name: restic
       password:
         protect: true
