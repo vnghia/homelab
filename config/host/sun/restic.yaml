@@ -6,12 +6,11 @@ services:
           check-read-data:
             workflow: restic-check
             schedules:
-              - "0 5 8-14 * sat" # 5am the second saturday of the month
-              - "0 5 22-28 * sat" # 5am the fourth saturday of the month
+              - "0 5 * * sat" # 5am every saturday
             input:
               profiles: [all]
               check:
-                read-data: 2T
+                read-data: 2.5T
           forget-prune-check:
             workflow: restic-forget-prune-check
             schedules:
