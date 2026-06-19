@@ -83,6 +83,13 @@ services:
         docker:
           names:
             - null
+        scheduler:
+          check:
+            workflow: barman-check
+            schedules:
+              - "0 5 * * mon" # 5am every monday
+              - "0 5 * * thu" # 5am every thursday
+            input: null
     container:
       delete-before-replace: true
       image:
