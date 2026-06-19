@@ -36,49 +36,6 @@ services:
       retention-policy: RECOVERY WINDOW OF 3 DAYS
       backup-compression: zstd
       compression: zstd
-      dagu:
-        docker:
-          executor:
-            exec:
-              container:
-          dag:
-            params:
-              types:
-                backup:
-            tags: ["backup"]
-          command:
-            prefix: ["barman"]
-            suffix:
-              - param:
-                  type: backup
-          dags:
-            check:
-              dag:
-                schedule: "0 5 */3 * *"
-              command: ["check"]
-            backup:
-              command: ["backup", "--wait"]
-            switch-wal:
-              command: ["switch-wal", "--force", "--archive"]
-        dag:
-          restore:
-            name: restore
-            path: barman-restore
-            params:
-              types:
-                backup: null
-                snapshot: null
-            tags: ["backup"]
-            steps:
-              - name: restore
-                executor:
-                  container:
-                run:
-                  - "restore"
-                  - param:
-                      type: backup
-                  - param:
-                      type: snapshot
       hatchet:
         docker:
           names:

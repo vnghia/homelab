@@ -29,6 +29,13 @@ class HatchetBarmanBackupModel(HomelabBaseModel):
         return [HatchetBarmanConfig.BARMAN_CMD, "backup", "--wait", profile]
 
 
+class HatchetBarmanRestoreModel(HomelabBaseModel):
+    snapshot: str = "auto"
+
+    def build_cmd(self, profile: str) -> list[str]:
+        return ["restore", profile, self.snapshot]
+
+
 class HatchetBarmanCheckModel(HomelabBaseModel):
     def build_cmd(self, profile: str) -> list[str]:
         return [HatchetBarmanConfig.BARMAN_CMD, "check", profile]
@@ -74,6 +81,14 @@ class HatchetBarmanContainerConfig(HomelabBaseModel):
             name=self.name,
         )
 
+    def build_restore_model(
+        self, profile: str, model: HatchetBarmanRestoreModel
+    ) -> DockerContainerExecModel:
+        return DockerContainerExecModel(
+            exec=docker.ContainerExecModel(command=model.build_cmd(profile)),
+            name=self.name,
+        )
+
     def build_check_model(
         self, profile: str, model: HatchetBarmanCheckModel
     ) -> DockerContainerExecModel:
@@ -95,6 +110,10 @@ class HatchetBarmanBackupInputModel(HatchetBarmanBaseInputModel):
     backup: HatchetBarmanBackupModel = HatchetBarmanBackupModel()
 
 
+class HatchetBarmanRestoreInputModel(HatchetBarmanBaseInputModel):
+    restore: HatchetBarmanRestoreModel = HatchetBarmanRestoreModel()
+
+
 class HatchetBarmanCheckInputModel(HatchetBarmanBaseInputModel):
     check: HatchetBarmanCheckModel = HatchetBarmanCheckModel()
 
@@ -109,6 +128,9 @@ class Barman:
         None
     )
     _barman_check_workflow: Standalone[HatchetBarmanCheckInputModel, None] | None = None
+    _barman_restore_workflow: (
+        Standalone[HatchetBarmanRestoreInputModel, None] | None
+    ) = None
 
     @classmethod
     def barman_backup_workflow(
@@ -129,6 +151,16 @@ class Barman:
                 "Please call `build_workflows` at least once before accesing this function"
             )
         return cls._barman_check_workflow
+
+    @classmethod
+    def barman_restore_workflow(
+        cls,
+    ) -> Standalone[HatchetBarmanRestoreInputModel, None]:
+        if not cls._barman_restore_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._barman_restore_workflow
 
     @staticmethod
     @contextlib.asynccontextmanager
@@ -203,6 +235,32 @@ class Barman:
                 )
                 for profile in profiles
             ]
+        )
+
+    @classmethod
+    async def restore_profiles(
+        cls,
+        barman_config: HatchetBarmanContainerConfig,
+        profiles: Iterable[str],
+        restore: HatchetBarmanRestoreModel,
+    ) -> None:
+        barman_restore_workflow = cls.barman_restore_workflow()
+        await barman_restore_workflow.aio_run_many(
+            [
+                barman_restore_workflow.create_bulk_run_item(
+                    HatchetBarmanRestoreInputModel(
+                        profiles=profile, restore=restore, barman=barman_config
+                    ),
+                    key=profile,
+                    additional_metadata=constant.build_labels(cls.SERVICE)
+                    | {"{}-profile".format(cls.SERVICE): profile},
+                    desired_worker_labels=[
+                        constant.DESIRED_HOST_LABEL,
+                        constant.DESIRED_DOCKER_LABEL,
+                    ],
+                )
+                for profile in profiles
+            ],
         )
 
     @classmethod
@@ -294,6 +352,38 @@ class Barman:
             )
 
         @hatchet.task(
+            name="{}-restore".format(cls.SERVICE),
+            input_validator=HatchetBarmanRestoreInputModel,
+            schedule_timeout=cls.SCHEDULE_TIMEOUT,
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            concurrency=cls.CONCURRENCY,
+            desired_worker_labels=[
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
+            ],
+            default_additional_metadata=constant.build_labels(cls.SERVICE),
+        )
+        async def barman_restore(
+            input: HatchetBarmanRestoreInputModel,
+            context: Context,
+            config: ConfigDependency,
+        ) -> None:
+            barman_config = input.barman or (
+                await HatchetBarmanContainerConfig.load(config)
+            )
+            if isinstance(input.profiles, str) and input.barman:
+                await Docker.exec_container(
+                    context,
+                    barman_config.build_restore_model(input.profiles, input.restore),
+                )
+                return None
+            return await cls.restore_profiles(
+                barman_config,
+                barman_config.resolve_profiles(input.iterable()),
+                input.restore,
+            )
+
+        @hatchet.task(
             name="{}-check".format(cls.SERVICE),
             input_validator=HatchetBarmanCheckInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
@@ -324,9 +414,15 @@ class Barman:
             )
 
         cls._barman_backup_workflow = barman_backup
+        cls._barman_restore_workflow = barman_restore
         cls._barman_check_workflow = barman_check
 
-        return [barman_cron, cls._barman_backup_workflow, cls._barman_check_workflow]
+        return [
+            barman_cron,
+            cls._barman_backup_workflow,
+            cls._barman_restore_workflow,
+            cls._barman_check_workflow,
+        ]
 
 
 build_workflows = Barman.build_workflows
