@@ -65,6 +65,8 @@ services:
           access-key: ZO_S3_SECRET_KEY
           region: ZO_S3_REGION_NAME
           endpoint: ZO_S3_SERVER_URL
+      tmpfs:
+        - /tmp
       volumes:
         openobserve-data: /data/openobserve
       envs:
