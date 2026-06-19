@@ -5,7 +5,6 @@ from homelab_backup.resource import BackupResource
 from homelab_backup_service import BackupService
 from homelab_balite_service import BaliteService
 from homelab_barman_service import BarmanService
-from homelab_dagu_service import DaguService
 from homelab_docker.config.host import HostServiceModelConfig
 from homelab_docker.model.service import ServiceWithConfigModel
 from homelab_docker.resource.host import HostResourceBase

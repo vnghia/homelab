@@ -14,11 +14,9 @@ dependencies = [
     "homelab-s3",
     "homelab-extract",
     "homelab-traefik-config",
-    "homelab-dagu-config",
     "homelab-hatchet-config",
     "homelab-tailscale-service",
     "homelab-traefik-service",
-    "homelab-dagu-service",
     "homelab-vector-service",
     "homelab-backup-service",
     "homelab-barman-service",
@@ -75,7 +73,6 @@ homelab-s3 = { workspace = true }
 homelab-secret = { workspace = true }
 homelab-vpn = { workspace = true }
 
-homelab-dagu-config = { workspace = true }
 homelab-hatchet-config = { workspace = true }
 homelab-traefik-config = { workspace = true }
 
@@ -83,7 +80,6 @@ homelab-backup-service = { workspace = true }
 homelab-balite-service = { workspace = true }
 homelab-litestream-service = { workspace = true }
 homelab-barman-service = { workspace = true }
-homelab-dagu-service = { workspace = true }
 homelab-extra-service = { workspace = true }
 homelab-hatchet-service = { workspace = true }
 homelab-kanidm-service = { workspace = true }

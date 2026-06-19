@@ -1,9 +1,9 @@
 from typing import Any
 
-from homelab_dagu_config import DaguServiceConfigBase
 from homelab_extract import GlobalExtract
+from homelab_hatchet_config import HatchetServiceConfigBase
 
 
-class LitestreamConfig(DaguServiceConfigBase):
+class LitestreamConfig(HatchetServiceConfigBase):
     path: GlobalExtract
     global_: Any

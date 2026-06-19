@@ -5,7 +5,6 @@ authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.14.4"
 dependencies = [
     "homelab-docker",
-    "homelab-dagu-config",
     "homelab-hatchet-config",
     "homelab-traefik-config",
     "pulumi>=3.148.0",
