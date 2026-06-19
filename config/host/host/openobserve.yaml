@@ -82,9 +82,15 @@ services:
           secret: salt
         ZO_DATA_DIR:
           volume: openobserve-data
+        ZO_MAX_FILE_SIZE_ON_DISK: 1024
+        ZO_MAX_FILE_SIZE_IN_MEMORY: 512
+        ZO_MAX_FILE_RETENTION_TIME: 300
+        ZO_FILE_PUSH_INTERVAL: 30
+        ZO_FILE_MOVE_THREAD_NUM: 8
         ZO_WIDENING_SCHEMA_EVOLUTION: false
         ZO_LOCAL_MODE: true
         ZO_LOCAL_MODE_STORAGE: s3
+        ZO_COMPACT_MAX_FILE_SIZE: 2048
         ZO_COMPACT_FAST_MODE: false
         ZO_HTTP_PORT:
           svariable: HTTP_PORT
