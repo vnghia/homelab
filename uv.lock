@@ -923,12 +923,13 @@ name = "homelab-backup-service"
 version = "0.1.0"
 source = { editable = "service/homelab-backup-service" }
 dependencies = [
+    { name = "hatchet-sdk" },
     { name = "homelab-backup" },
     { name = "homelab-balite-service" },
     { name = "homelab-barman-service" },
     { name = "homelab-docker" },
-    { name = "homelab-extract" },
     { name = "homelab-hatchet-config" },
+    { name = "homelab-hatchet-tool" },
     { name = "homelab-pydantic" },
     { name = "homelab-restic" },
     { name = "homelab-restic-service" },
@@ -938,12 +939,13 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "hatchet-sdk", specifier = ">=1.33.2" },
     { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-balite-service", editable = "service/homelab-balite-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
     { name = "homelab-docker", editable = "tool/homelab-docker" },
-    { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-hatchet-config", editable = "tool/config/homelab-hatchet-config" },
+    { name = "homelab-hatchet-tool" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "homelab-restic", editable = "tool/homelab-restic" },
     { name = "homelab-restic-service", editable = "service/homelab-restic-service" },
@@ -975,10 +977,11 @@ name = "homelab-balite-service"
 version = "0.1.0"
 source = { editable = "service/homelab-balite-service" }
 dependencies = [
+    { name = "hatchet-sdk" },
     { name = "homelab-backup" },
     { name = "homelab-docker" },
-    { name = "homelab-extract" },
     { name = "homelab-hatchet-config" },
+    { name = "homelab-hatchet-tool" },
     { name = "homelab-pydantic" },
     { name = "orjson" },
     { name = "pulumi" },
@@ -986,10 +989,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "hatchet-sdk", specifier = ">=1.33.2" },
     { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-docker", editable = "tool/homelab-docker" },
-    { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-hatchet-config", editable = "tool/config/homelab-hatchet-config" },
+    { name = "homelab-hatchet-tool" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "orjson", specifier = ">=3.11.5" },
     { name = "pulumi", specifier = ">=3.148.0" },
@@ -1000,10 +1004,12 @@ name = "homelab-barman-service"
 version = "0.1.0"
 source = { editable = "service/homelab-barman-service" }
 dependencies = [
+    { name = "hatchet-sdk" },
     { name = "homelab-backup" },
     { name = "homelab-docker" },
     { name = "homelab-extract" },
     { name = "homelab-hatchet-config" },
+    { name = "homelab-hatchet-tool" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
     { name = "pydantic" },
@@ -1011,10 +1017,12 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "hatchet-sdk", specifier = ">=1.33.2" },
     { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-hatchet-config", editable = "tool/config/homelab-hatchet-config" },
+    { name = "homelab-hatchet-tool" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -1197,13 +1205,19 @@ version = "0.1.0"
 source = { editable = "tool/config/homelab-hatchet-config" }
 dependencies = [
     { name = "homelab-docker" },
+    { name = "homelab-extract" },
     { name = "homelab-pydantic" },
+    { name = "pulumi" },
+    { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "homelab-docker", editable = "tool/homelab-docker" },
+    { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
+    { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pydantic", specifier = ">=2.10.6" },
 ]
 
 [[package]]
@@ -1318,6 +1332,7 @@ dependencies = [
     { name = "homelab-backup" },
     { name = "homelab-docker" },
     { name = "homelab-extract" },
+    { name = "homelab-hatchet-config" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
 ]
@@ -1327,6 +1342,7 @@ requires-dist = [
     { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-extract", editable = "tool/homelab-extract" },
+    { name = "homelab-hatchet-config", editable = "tool/config/homelab-hatchet-config" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.148.0" },
 ]
@@ -1443,12 +1459,14 @@ name = "homelab-restic-service"
 version = "0.1.0"
 source = { editable = "service/homelab-restic-service" }
 dependencies = [
+    { name = "hatchet-sdk" },
     { name = "homelab-backup" },
     { name = "homelab-balite-service" },
     { name = "homelab-barman-service" },
     { name = "homelab-docker" },
     { name = "homelab-extract" },
     { name = "homelab-hatchet-config" },
+    { name = "homelab-hatchet-tool" },
     { name = "homelab-litestream-service" },
     { name = "homelab-pydantic" },
     { name = "pulumi" },
@@ -1457,12 +1475,14 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "hatchet-sdk", specifier = ">=1.33.2" },
     { name = "homelab-backup", editable = "tool/homelab-backup" },
     { name = "homelab-balite-service", editable = "service/homelab-balite-service" },
     { name = "homelab-barman-service", editable = "service/homelab-barman-service" },
     { name = "homelab-docker", editable = "tool/homelab-docker" },
     { name = "homelab-extract", editable = "tool/homelab-extract" },
     { name = "homelab-hatchet-config", editable = "tool/config/homelab-hatchet-config" },
+    { name = "homelab-hatchet-tool" },
     { name = "homelab-litestream-service", editable = "service/homelab-litestream-service" },
     { name = "homelab-pydantic", editable = "tool/homelab-pydantic" },
     { name = "pulumi", specifier = ">=3.150.0" },

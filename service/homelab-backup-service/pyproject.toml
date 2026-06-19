@@ -11,10 +11,11 @@ dependencies = [
     "homelab-restic-service",
     "pulumi>=3.148.0",
     "pydantic>=2.10.6",
-    "homelab-extract",
     "homelab-hatchet-config",
     "homelab-restic",
     "homelab-balite-service",
+    "homelab-hatchet-tool",
+    "hatchet-sdk>=1.33.2",
 ]
 
 [build-system]

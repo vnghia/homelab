@@ -13,7 +13,9 @@ dependencies = [
     "pulumi>=3.150.0",
     "homelab-extract",
     "homelab-hatchet-config",
+    "homelab-hatchet-tool",
     "pydantic>=2.10.6",
+    "hatchet-sdk>=1.33.2",
 ]
 
 [build-system]

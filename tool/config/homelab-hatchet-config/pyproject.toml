@@ -3,7 +3,13 @@ name = "homelab-hatchet-config"
 version = "0.1.0"
 authors = [{ name = "Vo Van Nghia", email = "git@vnghia.com" }]
 requires-python = ">=3.14.4"
-dependencies = ["homelab-pydantic", "homelab-docker"]
+dependencies = [
+    "homelab-pydantic",
+    "homelab-docker",
+    "homelab-extract",
+    "pulumi>=3.148.0",
+    "pydantic>=2.10.6",
+]
 
 [build-system]
 requires = ["uv_build"]

@@ -9,8 +9,9 @@ dependencies = [
     "homelab-docker",
     "homelab-hatchet-config",
     "pulumi>=3.148.0",
-    "homelab-extract",
     "orjson>=3.11.5",
+    "homelab-hatchet-tool",
+    "hatchet-sdk>=1.33.2",
 ]
 
 [build-system]
