@@ -7,17 +7,13 @@ from pulumi import ComponentResource, ResourceOptions
 class HatchetFile(ComponentResource):
     RESOURCE_NAME = HatchetService.name()
 
-    def __init__(
-        self, opts: ResourceOptions, hatchet_service: HatchetService | None
-    ) -> None:
+    def __init__(self, opts: ResourceOptions, hatchet_service: HatchetService) -> None:
         super().__init__(self.RESOURCE_NAME, self.RESOURCE_NAME, None, opts=opts)
         self.child_opts = ResourceOptions(parent=self)
         self.hatchet_service = hatchet_service
 
     def build_one(self, service: ServiceResourceBase) -> None:
-        if self.hatchet_service and (
-            hatchet_service_config := self.hatchet_service.get_service_config(service)
-        ):
+        if hatchet_service_config := self.hatchet_service.get_service_config(service):
             service_opts = ResourceOptions(
                 parent=ComponentResource(
                     service.name(), service.name(), None, opts=self.child_opts

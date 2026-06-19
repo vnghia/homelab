@@ -33,31 +33,7 @@ services:
           svolume: docker-proxy-mtls
         transform:
           path: server.pem
-    config:
-      dagu:
-        docker:
-          executor:
-            run:
-              model: cli
-          dags:
-            start:
-              dag:
-                params:
-                  main:
-                    CONTAINERS: ""
-              command:
-                - "docker"
-                - "start"
-                - param: CONTAINERS
-            stop:
-              dag:
-                params:
-                  main:
-                    CONTAINERS: ""
-              command:
-                - "docker"
-                - "stop"
-                - param: CONTAINERS
+    config: {}
     files:
       ca:
         path:

@@ -1,7 +1,6 @@
 from homelab_backup_service.config import BackupConfig
 from homelab_balite_service.config import BaliteConfig
 from homelab_barman_service.config import BarmanConfig
-from homelab_dagu_service.config import DaguConfig
 from homelab_docker.config.service import ServiceConfigBase
 from homelab_docker.model.service import ServiceModel, ServiceWithConfigModel
 from homelab_hatchet_service.config import HatchetConfig
@@ -15,8 +14,7 @@ class HostServiceConfig(ServiceConfigBase):
     tailscale: ServiceModel | None = None
     traefik: ServiceWithConfigModel[TraefikConfig]
     vector: ServiceWithConfigModel[VectorConfig]
-    dagu: ServiceWithConfigModel[DaguConfig]
-    hatchet: ServiceWithConfigModel[HatchetConfig] | None = None
+    hatchet: ServiceWithConfigModel[HatchetConfig]
     backup: ServiceWithConfigModel[BackupConfig]
     barman: ServiceWithConfigModel[BarmanConfig]
     balite: ServiceWithConfigModel[BaliteConfig]

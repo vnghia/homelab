@@ -16,5 +16,3 @@ records:
         routable: false
       dozzle:
         routable: false
-      dagu:
-        routable: false

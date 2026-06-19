@@ -61,40 +61,6 @@ services:
               scheme: https
               port:
                 svariable: PORT
-      dagu:
-        depends-on: [docker]
-        dag:
-          pre-backup-volume:
-            name: pre-backup-volume
-            path: kanidm-pre-backup-volume
-            tags: ["backup"]
-            steps:
-              - name: stop-container
-                run:
-                  service: docker
-                  dag: stop
-                  params:
-                    main:
-                      CONTAINERS:
-                        cinfo: name
-              - name: create-backup
-                executor:
-                  model:
-                run:
-                  - "/sbin/kanidmd"
-                  - "database"
-                  - "backup"
-                  - "-c"
-                  - svariable: CONFIG
-                  - svariable: BACKUP
-              - name: start-container
-                run:
-                  service: docker
-                  dag: start
-                  params:
-                    main:
-                      CONTAINERS:
-                        cinfo: name
     files:
       key:
         path:

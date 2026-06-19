@@ -82,22 +82,11 @@ class HostBaseNoConfig(HostResourceBase):
             extractor_args=self.extractor_args,
         )
 
-    def build_dagu_service(self) -> None:
-        self.dagu = DaguService(
-            self.host_services_config.dagu,
+    def build_hatchet_service(self) -> None:
+        self.hatchet = HatchetService(
+            self.host_services_config.hatchet,
             opts=self.child_opts,
             extractor_args=self.extractor_args,
-        )
-
-    def build_hatchet_service(self) -> None:
-        self.hatchet = (
-            HatchetService(
-                self.host_services_config.hatchet,
-                opts=self.child_opts,
-                extractor_args=self.extractor_args,
-            )
-            if self.host_services_config.hatchet
-            else None
         )
 
     def build_extra_service(self, service: str) -> None:
@@ -178,14 +167,10 @@ class HostBaseNoConfig(HostResourceBase):
 
         for name, host in cls.HOST_BASES.items():
             if name != SunHost.instance_name():
-                host.build_dagu_service()
                 host.build_hatchet_service()
 
             for service in host.extra_services_config:
                 host.build_extra_service(service)
-
-        # Building Dagu service on Sun host last since it depends on Dagu API tokens of other hosts.
-        sun_instance.build_dagu_service()
 
         for host in cls.HOST_BASES.values():
             host.build_final_services_before_file()
