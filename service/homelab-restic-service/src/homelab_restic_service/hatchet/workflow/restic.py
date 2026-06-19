@@ -60,6 +60,13 @@ class HatchetResticBackupModel(HomelabBaseModel):
         return ["-n", profile, "backup"]
 
 
+class HatchetResticRestoreModel(HomelabBaseModel):
+    snapshot: str = "latest"
+
+    def build_cmd(self, profile: str) -> list[str]:
+        return ["-n", profile, "restore", self.snapshot]
+
+
 class HatchetResticCheckModel(HomelabBaseModel):
     read_data: bool | str = False
 
@@ -171,6 +178,14 @@ class HatchetResticModelConfig(HomelabBaseModel):
             name_prefix=add_namespace(self.RESTIC, profile),
         )
 
+    def build_restore_model(
+        self, profile: str, model: HatchetResticRestoreModel
+    ) -> DockerContainerRunModel:
+        return DockerContainerRunModel(
+            creation=self.build_model(profile, False, model.build_cmd(profile)),
+            name_prefix=add_namespace(self.RESTIC, profile),
+        )
+
     def build_check_model(
         self, profile: str, model: HatchetResticCheckModel
     ) -> DockerContainerRunModel:
@@ -208,6 +223,10 @@ class HatchetResticBackupInputModel(HatchetResticBaseInputModel):
     backup: HatchetResticBackupModel = HatchetResticBackupModel()
 
 
+class HatchetResticRestoreInputModel(HatchetResticBaseInputModel):
+    restore: HatchetResticRestoreModel = HatchetResticRestoreModel()
+
+
 class HatchetResticCheckInputModel(HatchetResticBaseInputModel):
     check: HatchetResticCheckModel = HatchetResticCheckModel()
 
@@ -228,6 +247,7 @@ class Restic:
     CONCURRENCY = 5
 
     _restic_backup_workflow: Standalone[HatchetResticBackupInputModel, None] | None
+    _restic_restore_workflow: Standalone[HatchetResticRestoreInputModel, None] | None
     _restic_check_workflow: Standalone[HatchetResticCheckInputModel, None] | None
     _restic_forget_workflow: Standalone[HatchetResticForgetInputModel, None] | None
     _restic_prune_workflow: Standalone[HatchetResticPruneInputModel, None] | None
@@ -241,6 +261,16 @@ class Restic:
                 "Please call `build_workflows` at least once before accesing this function"
             )
         return cls._restic_backup_workflow
+
+    @classmethod
+    def restic_restore_workflow(
+        cls,
+    ) -> Standalone[HatchetResticRestoreInputModel, None]:
+        if not cls._restic_restore_workflow:
+            raise RuntimeError(
+                "Please call `build_workflows` at least once before accesing this function"
+            )
+        return cls._restic_restore_workflow
 
     @classmethod
     def restic_check_workflow(
@@ -285,6 +315,32 @@ class Restic:
                 restic_backup_workflow.create_bulk_run_item(
                     HatchetResticBackupInputModel(
                         profiles=profile, backup=backup, restic=restic_config
+                    ),
+                    key=profile,
+                    additional_metadata=constant.build_labels(cls.SERVICE)
+                    | {"{}-profile".format(cls.SERVICE): profile},
+                    desired_worker_labels=[
+                        constant.DESIRED_HOST_LABEL,
+                        constant.DESIRED_DOCKER_LABEL,
+                    ],
+                )
+                for profile in profiles
+            ],
+        )
+
+    @classmethod
+    async def restore_profiles(
+        cls,
+        restic_config: HatchetResticModelConfig,
+        profiles: Iterable[str],
+        restore: HatchetResticRestoreModel,
+    ) -> None:
+        restic_restore_workflow = cls.restic_restore_workflow()
+        await restic_restore_workflow.aio_run_many(
+            [
+                restic_restore_workflow.create_bulk_run_item(
+                    HatchetResticRestoreInputModel(
+                        profiles=profile, restore=restore, restic=restic_config
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
@@ -421,6 +477,44 @@ class Restic:
                 restic_config,
                 restic_config.resolve_profiles(input.iterable()),
                 input.backup,
+            )
+
+        @hatchet.task(
+            name="{}-restore".format(cls.SERVICE),
+            input_validator=HatchetResticRestoreInputModel,
+            schedule_timeout=cls.SCHEDULE_TIMEOUT,
+            execution_timeout=Docker.DOCKER_TIMEOUT,
+            concurrency=[
+                ConcurrencyExpression(
+                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-restore-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    max_runs=cls.CONCURRENCY,
+                    limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
+                ),
+            ],
+            desired_worker_labels=[
+                constant.DESIRED_HOST_LABEL,
+                constant.DESIRED_DOCKER_LABEL,
+            ],
+            default_additional_metadata=constant.build_labels(cls.SERVICE),
+        )
+        async def restic_restore(
+            input: HatchetResticRestoreInputModel,
+            context: Context,
+            config: ConfigDependency,
+        ) -> None:
+            restic_config = input.restic or (
+                await HatchetResticModelConfig.load(config)
+            )
+            if isinstance(input.profiles, str) and input.restic:
+                await Docker.run_container(
+                    context,
+                    restic_config.build_restore_model(input.profiles, input.restore),
+                )
+                return None
+            return await cls.restore_profiles(
+                restic_config,
+                restic_config.resolve_profiles(input.iterable()),
+                input.restore,
             )
 
         @hatchet.task(
@@ -593,12 +687,14 @@ class Restic:
             )
 
         cls._restic_backup_workflow = restic_backup
+        cls._restic_restore_workflow = restic_restore
         cls._restic_check_workflow = restic_check
         cls._restic_forget_workflow = restic_forget
         cls._restic_prune_workflow = restic_prune
 
         return [
             cls._restic_backup_workflow,
+            cls._restic_restore_workflow,
             cls._restic_check_workflow,
             cls._restic_forget_workflow,
             cls._restic_prune_workflow,
