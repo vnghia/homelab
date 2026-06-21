@@ -53,6 +53,7 @@ dev = [
     "pyrefly>=0.64.1",
     "types-croniter>=6.2.2.20260508",
     "types-python-dateutil>=2.9.0.20260508",
+    "basedpyright>=1.39.8",
 ]
 
 [tool.uv]
