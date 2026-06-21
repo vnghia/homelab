@@ -46,7 +46,8 @@ services:
             schedules:
               - "0 5 * * mon" # 5am every monday
               - "0 5 * * thu" # 5am every thursday
-            input: null
+            input:
+              profiles: all
     container:
       delete-before-replace: true
       image:

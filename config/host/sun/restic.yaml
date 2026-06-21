@@ -3,14 +3,22 @@ services:
     config:
       hatchet:
         scheduler:
-          check-read-data:
+          check-read-data-main:
             workflow: restic-check
             schedules:
               - "0 5 * * sat" # 5am every saturday
             input:
-              profiles: [all]
+              profiles: "repository-main"
               check:
-                read-data: 2.5T
+                read-data: true
+          check-read-data-iso:
+            workflow: restic-check
+            schedules:
+              - "0 5 * * sat" # 5am every saturday
+            input:
+              profiles: "repository-iso"
+              check:
+                read-data: 2T
           forget-prune-check:
             workflow: restic-forget-prune-check
             schedules:
