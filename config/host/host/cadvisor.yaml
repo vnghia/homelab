@@ -3,7 +3,7 @@ docker:
     remote:
       cadvisor:
         repo: ghcr.io/google/cadvisor
-        tag: "v0.60.1"
+        tag: "v0.60.2"
 services:
   cadvisor:
     variables:
