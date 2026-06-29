@@ -3,7 +3,7 @@ docker:
     remote:
       browser:
         repo: ghcr.io/browserless/chromium
-        tag: "v2.48.3"
+        tag: "v2.54.2"
 services:
   browser:
     variables:
