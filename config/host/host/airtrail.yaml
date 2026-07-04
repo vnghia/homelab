@@ -28,7 +28,6 @@ services:
                 record: solar
                 scheme: https
               prefer-short-username: true
-              allow-insecure-client-disable-pkce: true
   airtrail:
     variables:
       PORT: 3000
