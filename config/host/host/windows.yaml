@@ -3,7 +3,7 @@ docker:
     remote:
       windows:
         repo: ghcr.io/dockur/windows
-        tag: "5.16"
+        tag: "6.00"
     build:
       wintele:
         context:
