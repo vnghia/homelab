@@ -448,7 +448,7 @@ class Restic:
                     limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
                 ),
                 ConcurrencyExpression(
-                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-backup-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    expression=r"""(type(input.profiles) == string && has(input.restic) && input.restic != null) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-backup-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
                     max_runs=cls.CONCURRENCY,
                     limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
                 ),
@@ -486,7 +486,7 @@ class Restic:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=[
                 ConcurrencyExpression(
-                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-restore-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    expression=r"""(type(input.profiles) == string && has(input.restic) && input.restic != null) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-restore-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
                     max_runs=cls.CONCURRENCY,
                     limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
                 ),
@@ -524,7 +524,7 @@ class Restic:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=[
                 ConcurrencyExpression(
-                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-check-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    expression=r"""(type(input.profiles) == string && has(input.restic) && input.restic != null) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-check-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
                     max_runs=1,
                     limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
                 )
@@ -564,7 +564,7 @@ class Restic:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=[
                 ConcurrencyExpression(
-                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-forget-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    expression=r"""(type(input.profiles) == string && has(input.restic) && input.restic != null) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-forget-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
                     max_runs=1,
                     limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
                 )
@@ -602,7 +602,7 @@ class Restic:
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=[
                 ConcurrencyExpression(
-                    expression=r"""(type(input.profiles) == string && has(input.restic)) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-prune-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
+                    expression=r"""(type(input.profiles) == string && has(input.restic) && input.restic != null) ? ("restic-%s".format([input.profiles in input.restic.restic.profiles ? input.restic.restic.profiles[input.profiles].repository : input.profiles])) : "restic-prune-spawn-%s".format([type(input.profiles) == list ? input.profiles.join("-") : input.profiles])""",
                     max_runs=1,
                     limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
                 )
