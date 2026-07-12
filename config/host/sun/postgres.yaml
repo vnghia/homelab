@@ -17,4 +17,4 @@ docker:
         pgvector:
           "17":
             repo: pgvector/pgvector
-            tag: "0.8.4-pg17"
+            tag: "0.8.5-pg17"
