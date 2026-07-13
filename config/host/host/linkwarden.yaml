@@ -25,7 +25,7 @@ services:
                     scheme: https
                   transform:
                     string:
-                      template: "{value}/api/v1/auth/callback/authentik"
+                      template: "{value}/api/v1/auth/callback/oidc"
               origin-landing:
                 hostname: linkwarden
                 record: solar
@@ -100,18 +100,18 @@ services:
           secret: meilisearch-key
         NEXT_PUBLIC_DISABLE_REGISTRATION: true
         NEXT_PUBLIC_CREDENTIALS_ENABLED: false
-        NEXT_PUBLIC_AUTHENTIK_ENABLED: true
-        AUTHENTIK_CUSTOM_NAME: Kanidm
-        AUTHENTIK_ISSUER:
+        NEXT_PUBLIC_OIDC_ENABLED: true
+        OIDC_CUSTOM_NAME: Kanidm
+        OIDC_WELLKNOWN_URL:
           extract:
             hostname: kanidm
             record: solar
             scheme: https
           transform:
             string:
-              template: "{value}/oauth2/openid/linkwarden"
-        AUTHENTIK_CLIENT_ID: linkwarden
-        AUTHENTIK_CLIENT_SECRET:
+              template: "{value}/oauth2/openid/linkwarden/.well-known/openid-configuration"
+        OIDC_CLIENT_ID: linkwarden
+        OIDC_CLIENT_SECRET:
           service: kanidm
           extract:
             export: linkwarden
