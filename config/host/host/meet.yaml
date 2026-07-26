@@ -235,6 +235,7 @@ services:
           OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION: false
           USER_OIDC_FIELDS_TO_FULLNAME: name
           USER_OIDC_FIELD_TO_SHORTNAME: preferred_username
+          AUTHENTICATED_PARTICIPANTS_CAN_EDIT_DISPLAY_NAME: false
           ALLOW_UNREGISTERED_ROOMS: false
           LIVEKIT_API_URL:
             hostname: livekit
