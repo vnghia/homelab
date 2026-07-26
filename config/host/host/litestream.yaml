@@ -3,7 +3,7 @@ docker:
     remote:
       litestream:
         repo: litestream/litestream
-        tag: "0.5.14"
+        tag: "0.5.15"
   volumes:
     local:
       litestream-config:
