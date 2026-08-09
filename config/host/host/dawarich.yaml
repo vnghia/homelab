@@ -95,6 +95,10 @@ services:
         - record: solar
           hostname: kanidm
       entrypoint: ["web-entrypoint.sh"]
+      log:
+        driver: json-file
+        opts:
+          max-size: "20m"
       network:
         bridge:
           vpn: {}
