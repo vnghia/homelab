@@ -3,7 +3,7 @@ docker:
     remote:
       immich-server:
         repo: ghcr.io/immich-app/immich-server
-        tag: "v3.0.3"
+        tag: "v3.1.0"
       immich-machine-learning:
         repo: ghcr.io/immich-app/immich-machine-learning
         tag:
