@@ -6,7 +6,7 @@ docker:
     remote:
       gluetun:
         repo: ghcr.io/qdm12/gluetun
-        tag: "v3.41.1"
+        tag: "v3.41.3"
 services:
   gluetun:
     config: {}
