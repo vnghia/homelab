@@ -3,7 +3,7 @@ docker:
     remote:
       meilisearch:
         repo: getmeili/meilisearch
-        tag: "v1.50.0"
+        tag: "v1.53.1"
 services:
   meilisearch:
     config: {}
