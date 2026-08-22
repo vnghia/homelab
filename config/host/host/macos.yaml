@@ -3,7 +3,7 @@ docker:
     remote:
       macos:
         repo: ghcr.io/dockur/macos
-        tag: "3.05"
+        tag: "3.12"
   volumes:
     local:
       macos-storage: {}
