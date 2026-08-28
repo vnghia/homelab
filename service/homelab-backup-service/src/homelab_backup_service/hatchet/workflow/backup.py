@@ -1,6 +1,6 @@
 from typing import Any, ClassVar, Self
 
-from hatchet_sdk import Context, DurableContext, Hatchet, ParentCondition
+from hatchet_sdk import Context, Hatchet, ParentCondition
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Workflow
 from homelab_balite_service.hatchet.workflow import balite
 from homelab_barman_service.hatchet.workflow import barman
@@ -122,7 +122,7 @@ class Backup:
         ) -> restic.HatchetResticModelConfig:
             return await restic.HatchetResticModelConfig.load(config)
 
-        @backup_workflow.durable_task(
+        @backup_workflow.task(
             name="backup-file",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_load_config, backup_load_restic_config],
@@ -133,9 +133,7 @@ class Backup:
                 )
             ],
         )
-        async def backup_file(
-            input: HatchetBackupModel, context: DurableContext
-        ) -> None:
+        async def backup_file(input: HatchetBackupModel, context: Context) -> None:
             backup_config = context.task_output(backup_load_config)
             restic_config = context.task_output(backup_load_restic_config)
             await restic.Restic.backup_profiles(
@@ -160,7 +158,7 @@ class Backup:
         ) -> barman.HatchetBarmanContainerConfig:
             return await barman.HatchetBarmanContainerConfig.load(config)
 
-        @backup_workflow.durable_task(
+        @backup_workflow.task(
             name="backup-{}-database".format(DatabaseType.POSTGRES),
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_load_config, backup_load_postgres_config],
@@ -174,7 +172,7 @@ class Backup:
             ],
         )
         async def backup_postgres_database(
-            input: HatchetBackupModel, context: DurableContext
+            input: HatchetBackupModel, context: Context
         ) -> None:
             backup_config = context.task_output(backup_load_config)
             barman_config = context.task_output(backup_load_postgres_config)
@@ -184,7 +182,7 @@ class Backup:
                 cls.BARMAN_DEFAULT_BACKUP,
             )
 
-        @backup_workflow.durable_task(
+        @backup_workflow.task(
             name="backup-{}-database-file".format(DatabaseType.POSTGRES),
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[
@@ -202,7 +200,7 @@ class Backup:
             ],
         )
         async def backup_postgres_database_file(
-            input: HatchetBackupModel, context: DurableContext
+            input: HatchetBackupModel, context: Context
         ) -> None:
             backup_config = context.task_output(backup_load_config)
             restic_config = context.task_output(backup_load_restic_config)
@@ -230,7 +228,7 @@ class Backup:
         ) -> balite.HatchetBaliteModelConfig:
             return await balite.HatchetBaliteModelConfig.load(config)
 
-        @backup_workflow.durable_task(
+        @backup_workflow.task(
             name="backup-{}-database".format(DatabaseType.SQLITE),
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_load_config, backup_load_sqlite_config],
@@ -244,7 +242,7 @@ class Backup:
             ],
         )
         async def backup_sqlite_database(
-            input: HatchetBackupModel, context: DurableContext
+            input: HatchetBackupModel, context: Context
         ) -> None:
             backup_config = context.task_output(backup_load_config)
             balite_config = context.task_output(backup_load_sqlite_config)
@@ -254,7 +252,7 @@ class Backup:
                 cls.BALITE_DEFAULT_BACKUP,
             )
 
-        @backup_workflow.durable_task(
+        @backup_workflow.task(
             name="backup-{}-database-file".format(DatabaseType.SQLITE),
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[
@@ -272,7 +270,7 @@ class Backup:
             ],
         )
         async def backup_sqlite_database_file(
-            input: HatchetBackupModel, context: DurableContext
+            input: HatchetBackupModel, context: Context
         ) -> None:
             backup_config = context.task_output(backup_load_config)
             restic_config = context.task_output(backup_load_restic_config)
