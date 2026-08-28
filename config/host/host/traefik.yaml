@@ -3,7 +3,7 @@ docker:
     remote:
       traefik:
         repo: traefik
-        tag: "v3.7.9"
+        tag: "v3.7.12"
   network:
     proxy:
       service: traefik
