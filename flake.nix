@@ -17,7 +17,6 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
-          pulumi-bin
           docker-client
           kanidm_1_10
           kanidm-provision
