@@ -3,7 +3,7 @@ docker:
     remote:
       sablier:
         repo: ghcr.io/sablierapp/sablier
-        tag: "1.16.1"
+        tag: "1.18.0"
 services:
   sablier:
     variables:
