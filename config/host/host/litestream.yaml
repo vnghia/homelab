@@ -38,5 +38,9 @@ services:
         - "replicate"
         - "--config"
         - svariable: CONFIG_PATH
+      log:
+        driver: json-file
+        opts:
+          max-size: "20m"
       volumes:
         litestream-config: /etc/litestream/
