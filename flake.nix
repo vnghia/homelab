@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-26.05";
+      url = "github:nixos/nixpkgs/nixos-unstable";
     };
   };
 
@@ -17,8 +17,11 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
+          pulumi
+          uv
+
           docker-client
-          kanidm_1_10
+          kanidm_1_11
           kanidm-provision
           restic
         ];
