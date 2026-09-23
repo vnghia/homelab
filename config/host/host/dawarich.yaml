@@ -6,6 +6,7 @@ docker:
         tag: "1.15.2"
   volumes:
     local:
+      dawarich-public: {}
       dawarich-storage: {}
 services:
   kanidm:
@@ -107,6 +108,7 @@ services:
         - /var/app/tmp/cache
         - /var/app/tmp/sockets
       volumes:
+        dawarich-public: /var/app/public
         dawarich-storage: /var/app/storage
       envs:
         SELF_HOSTED: true
