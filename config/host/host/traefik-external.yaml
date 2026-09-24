@@ -15,7 +15,7 @@ services:
       plugins:
         geoblock:
           name: github.com/david-garcia-garcia/traefik-geoblock
-          version: "v1.1.4"
+          version: "v1.2.1"
           unsafe: true
       traefik:
         dynamic:
