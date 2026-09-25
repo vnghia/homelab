@@ -18,6 +18,7 @@
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
           pulumi
+          pulumiPackages.pulumi-python
           uv
 
           docker-client
