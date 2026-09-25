@@ -22,7 +22,7 @@ services:
                     scheme: https
                   transform:
                     string:
-                      template: "{value}/api/auth/oauth2/callback/custom"
+                      template: "{value}/api/auth/callback/custom"
               origin-landing:
                 hostname: rxresume
                 record: solar
@@ -72,7 +72,7 @@ services:
           - record: solar
             hostname: owebui
         volumes:
-          job-rxresume-data: /app/apps/web/data
+          job-rxresume-data: /app/data
         envs:
           APP_URL:
             record: solar
