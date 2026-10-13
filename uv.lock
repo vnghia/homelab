@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14.4"
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -751,6 +751,20 @@ wheels = [
 ]
 
 [[package]]
+name = "grpcio-status"
+version = "1.80.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "googleapis-common-protos" },
+    { name = "grpcio" },
+    { name = "protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b1/ed/105f619bdd00cb47a49aa2feea6232ea2bbb04199d52a22cc6a7d603b5cb/grpcio_status-1.80.0.tar.gz", hash = "sha256:df73802a4c89a3ea88aa2aff971e886fccce162bc2e6511408b3d67a144381cd", size = 13901, upload-time = "2026-03-30T08:54:34.784Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/76/80/58cd2dfc19a07d022abe44bde7c365627f6c7cb6f692ada6c65ca437d09a/grpcio_status-1.80.0-py3-none-any.whl", hash = "sha256:4b56990363af50dbf2c2ebb80f1967185c07d87aa25aa2bea45ddb75fc181dbe", size = 14638, upload-time = "2026-03-30T08:54:01.569Z" },
+]
+
+[[package]]
 name = "grpcio-tools"
 version = "1.80.0"
 source = { registry = "https://pypi.org/simple" }
@@ -784,11 +798,12 @@ wheels = [
 
 [[package]]
 name = "hatchet-sdk"
-version = "1.33.5"
+version = "1.42.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
     { name = "grpcio" },
+    { name = "grpcio-status" },
     { name = "grpcio-tools" },
     { name = "prometheus-client" },
     { name = "protobuf" },
@@ -799,9 +814,9 @@ dependencies = [
     { name = "typing-inspection" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e6/3b/75c527bbe9ddcca0991b5f48c7abedebfb2418df0b0f5b054519af05ac54/hatchet_sdk-1.33.5.tar.gz", hash = "sha256:b53d49514bf9d49ca727e1610776cdf86a7c3e9d05b519b0218cd2bb8c648551", size = 4555, upload-time = "2026-05-12T15:12:26.926Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7c/25/cb96453cda34fa3d2803fc93b91aa57c2ad5c1412ce62c7a8de3dc60a146/hatchet_sdk-1.42.1.tar.gz", hash = "sha256:9d99766cc8f4f8bbd181122f86efb2403669b956336ba967aa3545884f69e569", size = 5357, upload-time = "2026-10-09T19:05:56.901Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/da/2c/cc26b351842de55441e113a6e622f749cbcd1329ceff1cd3de0650f86904/hatchet_sdk-1.33.5-py3-none-any.whl", hash = "sha256:7cde10c1d475219fe8a91e68a639c3c5cd3c70df53bbcc24a9e4789246800f51", size = 622032, upload-time = "2026-05-12T15:12:28.83Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/3d/5f21ee4b7ebf3e484f1c67251653893dc5361d90bea92306c33bf50511ee/hatchet_sdk-1.42.1-py3-none-any.whl", hash = "sha256:da9b111aac64fb678f371b92862f48f475631994ba2340ebea28c94de21a61fd", size = 673310, upload-time = "2026-10-09T19:05:58.326Z" },
 ]
 
 [package.optional-dependencies]
@@ -1296,7 +1311,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "croniter", specifier = ">=6.2.2" },
-    { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.33.5" },
+    { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.42.1" },
     { name = "homelab-hatchet-tool", editable = "image/hatchet/worker/homelab-hatchet-tool" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
