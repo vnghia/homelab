@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14.4"
 
 [manifest]
@@ -442,7 +442,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "croniter", specifier = ">=6.2.2" },
-    { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.33.5" },
+    { name = "hatchet-sdk", extras = ["otel"], specifier = ">=1.42.1" },
     { name = "homelab-hatchet-tool", editable = "homelab-hatchet-tool" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
