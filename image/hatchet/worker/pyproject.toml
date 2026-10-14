@@ -9,6 +9,7 @@ dependencies = [
     "pydantic>=2.10.6",
     "croniter>=6.2.2",
     "python-dateutil>=2.9.0.post0",
+    "pip-system-certs>=5.3",
 ]
 
 [build-system]
