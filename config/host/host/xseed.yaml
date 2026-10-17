@@ -41,9 +41,15 @@ services:
             container:
             extract:
               volume: qbittorrent-downloads
-        qbittorrent-starr:
+        starr-movies-torrents:
           service: qbittorrent
           extract:
             container:
             extract:
-              volume: qbittorrent-starr
+              volume: starr-movies-torrents
+        starr-shows-torrents:
+          service: qbittorrent
+          extract:
+            container:
+            extract:
+              volume: starr-shows-torrents

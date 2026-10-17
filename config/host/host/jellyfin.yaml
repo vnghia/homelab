@@ -14,8 +14,6 @@ docker:
       jellyfin-config: {}
       jellyfin-cache: {}
       jellyfin-log: {}
-      jellyfin-starr:
-        backup: false
       jellyfin-downloads:
         backup: false
 services:
@@ -80,11 +78,14 @@ services:
         jellyfin-data: /mnt/jellyfin/data
         jellyfin-log: /mnt/jellyfin/log
         jellyfin-cache: /mnt/jellyfin/cache
-        jellyfin-starr:
-          path: /starr/media
-          read-only: true
         jellyfin-downloads:
           path: /downloads/media
+          read-only: true
+        starr-movies-media:
+          path: /media/movies/starr/media
+          read-only: true
+        starr-shows-media:
+          path: /media/shows/starr/media
           read-only: true
       tmpfs:
         - /tmp/jellyfin

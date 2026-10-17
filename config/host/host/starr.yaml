@@ -15,15 +15,22 @@ docker:
         tag: "1.6.2"
   volumes:
     local:
-      starr-data:
+      starr-movies:
         backup:
           repository: iso
+      starr-movies-media:
+        backup: false
       starr-radarr-config:
         backup:
           sqlite:
             dbs:
               - logs.db
               - radarr.db
+      starr-shows:
+        backup:
+          repository: iso
+      starr-shows-media:
+        backup: false
       starr-sonarr-config:
         backup:
           sqlite:
@@ -109,7 +116,7 @@ services:
           - path: /run
             exec: true
         volumes:
-          starr-data: /starr
+          starr-movies: /media/movies/starr
           starr-radarr-config: /config
         envs:
           S6_READ_ONLY_ROOT: 1
@@ -124,7 +131,7 @@ services:
           - path: /run
             exec: true
         volumes:
-          starr-data: /starr
+          starr-shows: /media/shows/starr
           starr-sonarr-config: /config
         envs:
           S6_READ_ONLY_ROOT: 1
@@ -153,7 +160,8 @@ services:
             exec: true
           - /tmp
         volumes:
-          starr-data: /starr
+          starr-movies-media: /media/movies/starr/media
+          starr-shows-media: /media/shows/starr/media
           starr-bazarr-config: /config
         envs:
           S6_READ_ONLY_ROOT: 1

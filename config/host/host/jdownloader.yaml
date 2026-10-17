@@ -27,7 +27,6 @@ services:
         jdownloader-config: /jdownloader/cfg
         jdownloader-logs: /jdownloader/logs
         jdownloader-downloads: /jdownloader/downloads/external
-        jdownloader-starr: /jdownloader/downloads/starr
       envs:
         JD_EMAIL:
         JD_PASSWORD:
