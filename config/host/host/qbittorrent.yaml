@@ -10,6 +10,9 @@ docker:
       qbittorrent-downloads:
         backup:
           repository: iso
+      qbittorrent-games:
+        backup:
+          repository: iso
       starr-movies-torrents:
         backup: false
       starr-shows-torrents:
@@ -43,6 +46,7 @@ services:
       volumes:
         qbittorrent-config: /config
         qbittorrent-downloads: /downloads
+        qbittorrent-games: /media/games/sources/torrents
         starr-movies-torrents: /media/movies/starr/sources/torrents
         starr-shows-torrents: /media/shows/starr/sources/torrents
       envs:
