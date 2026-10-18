@@ -8,10 +8,15 @@ docker:
     local:
       jdownloader-config: {}
       jdownloader-logs: {}
-      jdownloader-downloads:
-        backup: false
-      jdownloader-starr:
-        backup: false
+      jdownloader-musics:
+        backup:
+          repository: iso
+      jdownloader-movies:
+        backup:
+          repository: iso
+      jdownloader-shows:
+        backup:
+          repository: iso
 services:
   jdownloader:
     config: {}
@@ -26,7 +31,9 @@ services:
       volumes:
         jdownloader-config: /jdownloader/cfg
         jdownloader-logs: /jdownloader/logs
-        jdownloader-downloads: /jdownloader/downloads/external
+        jdownloader-musics: /media/musics
+        jdownloader-movies: /media/movies
+        jdownloader-shows: /media/shows
       envs:
         JD_EMAIL:
         JD_PASSWORD:
