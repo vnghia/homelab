@@ -35,12 +35,6 @@ services:
         - hostname: starr-prowlarr
       volumes:
         xseed-config: /config
-        qbittorrent-archives:
-          service: qbittorrent
-          extract:
-            container:
-            extract:
-              volume: qbittorrent-archives
         qbittorrent-games:
           service: qbittorrent
           extract:
