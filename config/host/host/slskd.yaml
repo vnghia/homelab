@@ -54,6 +54,8 @@ services:
         slskd-download: /mnt/download
         slskd-incomplete: /mnt/incomplete
         slskd-tmp: /tmp
+        nghe-musics:
+          env: SLSKD_SHARED_DIR
       envs:
         DOTNET_BUNDLE_EXTRACT_BASE_DIR:
           extract:
@@ -65,7 +67,12 @@ services:
         SLSKD_INCOMPLETE_DIR:
           volume: slskd-incomplete
         SLSKD_REMOTE_FILE_MANAGEMENT: true
-        SLSKD_SHARED_DIR: /mnt/share
+        SLSKD_SHARED_DIR:
+          service: nghe
+          extract:
+            container:
+            extract:
+              volume: nghe-musics
         SLSKD_SLSK_USERNAME:
         SLSKD_SLSK_PASSWORD:
         SLSKD_SLSK_LISTEN_PORT:

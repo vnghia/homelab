@@ -6,6 +6,7 @@ docker:
         tag: "0.14.2"
   volumes:
     local:
+      nghe-musics: {}
       nghe-music: {}
       nghe-cache: {}
 services:
@@ -36,6 +37,9 @@ services:
       volumes:
         nghe-music:
           path: /music
+          read-only: true
+        nghe-musics:
+          path: /media/musics/media
           read-only: true
         nghe-cache: /tmp/nghe
       envs:
