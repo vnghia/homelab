@@ -3,7 +3,7 @@ docker:
     remote:
       alpine:
         repo: alpine
-        tag: "3.24.2"
+        tag: "3.24.3"
       python-alpine:
         repo: python
         tag: "3.14.7-alpine3.23"
