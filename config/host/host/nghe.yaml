@@ -31,14 +31,7 @@ services:
         - postgres:
           envs:
             env: NGHE__DATABASE__URL
-      healthcheck:
-        tests:
-          - "CMD"
-          - "/app/nghe"
-          - "cli"
-          - "rest"
-          - "system"
-          - "health"
+      healthcheck: {}
       network:
         bridge:
           direct: {}
