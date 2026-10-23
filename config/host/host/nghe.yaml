@@ -3,7 +3,7 @@ docker:
     remote:
       nghe:
         repo: ghcr.io/vnghia/nghe
-        tag: "0.14.3"
+        tag: "0.15.0"
   volumes:
     local:
       nghe-musics: {}
@@ -18,7 +18,7 @@ services:
             record: solar
             service:
               port:
-                env: NGHE_SERVER__PORT
+                env: NGHE__SERVER__PORT
     databases:
       postgres:
         postgres: {}
@@ -30,7 +30,15 @@ services:
       databases:
         - postgres:
           envs:
-            env: NGHE_DATABASE__URL
+            env: NGHE__DATABASE__URL
+      healthcheck:
+        tests:
+          - "CMD"
+          - "/app/nghe"
+          - "cli"
+          - "rest"
+          - "system"
+          - "health"
       network:
         bridge:
           direct: {}
@@ -43,16 +51,16 @@ services:
           read-only: true
         nghe-cache: /tmp/nghe
       envs:
-        NGHE_SERVER__PORT: 3000
-        NGHE_DATABASE__KEY:
+        NGHE__SERVER__PORT: 3000
+        NGHE__DATABASE__KEY:
           extract:
             secret: key
           transform:
             secret:
               encode: hex
-        NGHE_LOG__TIME: false
-        NGHE_LOG__FORMAT: json
-        NGHE_S3__ENABLE: true
-        NGHE_INTEGRATION__SPOTIFY__ID:
-        NGHE_INTEGRATION__SPOTIFY__SECRET:
-        NGHE_INTEGRATION__LASTFM__KEY:
+        NGHE__LOG__TIME: false
+        NGHE__LOG__FORMAT: json
+        NGHE__S3__ENABLE: true
+        NGHE__INTEGRATION__SPOTIFY__ID:
+        NGHE__INTEGRATION__SPOTIFY__SECRET:
+        NGHE__INTEGRATION__LASTFM__KEY:
