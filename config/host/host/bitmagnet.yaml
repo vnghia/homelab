@@ -3,7 +3,7 @@ docker:
     remote:
       bitmagnet:
         repo: ghcr.io/bitmagnet-io/bitmagnet
-        tag: "v0.10.0"
+        tag: "v0.10.1"
 services:
   bitmagnet:
     variables:
