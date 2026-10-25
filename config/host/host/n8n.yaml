@@ -132,7 +132,7 @@ services:
           hostname: n8n
           record: solar
           scheme: https
-        WEBHOOK_URL:
+        N8N_WEBHOOK_URL:
           hostname: n8n
           record: solar
           scheme: https
