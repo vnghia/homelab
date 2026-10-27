@@ -79,14 +79,14 @@ class Scheduler:
                     ).rows
                     if scheduled_workflows:
                         for scheduled_workflow in scheduled_workflows:
-                            if scheduled_workflow.trigger_at != next_run:
+                            if scheduled_workflow.trigger_at < next_run:
                                 await hatchet.scheduled.aio_delete(
                                     scheduled_id=scheduled_workflow.metadata.id
                                 )
                             else:
                                 logger.info(
                                     "Already scheduled workflow {} next run at {}".format(
-                                        workflow.name, next_run
+                                        workflow.name, scheduled_workflow.trigger_at
                                     )
                                 )
                                 need_schedule = False
