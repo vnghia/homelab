@@ -56,11 +56,11 @@ class BucketCorsRuleArgsDict(TypedDict):
     """
     This specifies the maximum number of seconds that a browser may cache the response to a preflight request.
     """
-    allowed_headers: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    allowed_headers: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     If present, this is a list of headers that are allowed in a pre-flight OPTIONS's request's Access-Control-Request-Headers header value.
     """
-    expose_headers: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    expose_headers: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     If present, this is a list of headers that may be exposed to an application inside the client.
     """
@@ -72,8 +72,8 @@ class BucketCorsRuleArgs:
                  allowed_origins: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]],
                  cors_rule_name: pulumi.Input[_builtins.str],
                  max_age_seconds: pulumi.Input[_builtins.float],
-                 allowed_headers: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 expose_headers: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 allowed_headers: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 expose_headers: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] allowed_operations: A list specifying which operations the rule allows.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] allowed_origins: A non-empty list specifying which origins the rule covers.
@@ -141,47 +141,47 @@ class BucketCorsRuleArgs:
 
     @_builtins.property
     @pulumi.getter(name="allowedHeaders")
-    def allowed_headers(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def allowed_headers(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         If present, this is a list of headers that are allowed in a pre-flight OPTIONS's request's Access-Control-Request-Headers header value.
         """
         return pulumi.get(self, "allowed_headers")
 
     @allowed_headers.setter
-    def allowed_headers(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def allowed_headers(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "allowed_headers", value)
 
     @_builtins.property
     @pulumi.getter(name="exposeHeaders")
-    def expose_headers(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def expose_headers(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         If present, this is a list of headers that may be exposed to an application inside the client.
         """
         return pulumi.get(self, "expose_headers")
 
     @expose_headers.setter
-    def expose_headers(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def expose_headers(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "expose_headers", value)
 
 
 class BucketDefaultServerSideEncryptionArgsDict(TypedDict):
-    algorithm: NotRequired[pulumi.Input[_builtins.str]]
+    algorithm: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Server-side encryption algorithm. AES256 is the only one supported.
     """
-    mode: NotRequired[pulumi.Input[_builtins.str]]
+    mode: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
-    Server-side encryption mode.
+    Server-side encryption mode. SSE-B2 is the only supported bucket default.
     """
 
 @pulumi.input_type
 class BucketDefaultServerSideEncryptionArgs:
     def __init__(__self__, *,
-                 algorithm: Optional[pulumi.Input[_builtins.str]] = None,
-                 mode: Optional[pulumi.Input[_builtins.str]] = None):
+                 algorithm: pulumi.Input[Optional[_builtins.str]] = None,
+                 mode: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] algorithm: Server-side encryption algorithm. AES256 is the only one supported.
-        :param pulumi.Input[_builtins.str] mode: Server-side encryption mode.
+        :param pulumi.Input[_builtins.str] mode: Server-side encryption mode. SSE-B2 is the only supported bucket default.
         """
         if algorithm is not None:
             pulumi.set(__self__, "algorithm", algorithm)
@@ -190,35 +190,35 @@ class BucketDefaultServerSideEncryptionArgs:
 
     @_builtins.property
     @pulumi.getter
-    def algorithm(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def algorithm(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Server-side encryption algorithm. AES256 is the only one supported.
         """
         return pulumi.get(self, "algorithm")
 
     @algorithm.setter
-    def algorithm(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def algorithm(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "algorithm", value)
 
     @_builtins.property
     @pulumi.getter
-    def mode(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def mode(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
-        Server-side encryption mode.
+        Server-side encryption mode. SSE-B2 is the only supported bucket default.
         """
         return pulumi.get(self, "mode")
 
     @mode.setter
-    def mode(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def mode(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "mode", value)
 
 
 class BucketFileLockConfigurationArgsDict(TypedDict):
-    default_retention: NotRequired[pulumi.Input['BucketFileLockConfigurationDefaultRetentionArgsDict']]
+    default_retention: NotRequired[pulumi.Input[Optional['BucketFileLockConfigurationDefaultRetentionArgsDict']]]
     """
     Default retention settings for files uploaded to this bucket.
     """
-    is_file_lock_enabled: NotRequired[pulumi.Input[_builtins.bool]]
+    is_file_lock_enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
     """
     If present, the boolean value specifies whether bucket is File Lock-enabled. Defaults to <span pulumi-lang-nodejs="`false`" pulumi-lang-dotnet="`False`" pulumi-lang-go="`false`" pulumi-lang-python="`false`" pulumi-lang-yaml="`false`" pulumi-lang-java="`false`">`false`</span>. **Modifying this attribute will force creation of a new resource.**
     """
@@ -226,8 +226,8 @@ class BucketFileLockConfigurationArgsDict(TypedDict):
 @pulumi.input_type
 class BucketFileLockConfigurationArgs:
     def __init__(__self__, *,
-                 default_retention: Optional[pulumi.Input['BucketFileLockConfigurationDefaultRetentionArgs']] = None,
-                 is_file_lock_enabled: Optional[pulumi.Input[_builtins.bool]] = None):
+                 default_retention: pulumi.Input[Optional['BucketFileLockConfigurationDefaultRetentionArgs']] = None,
+                 is_file_lock_enabled: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         :param pulumi.Input['BucketFileLockConfigurationDefaultRetentionArgs'] default_retention: Default retention settings for files uploaded to this bucket.
         :param pulumi.Input[_builtins.bool] is_file_lock_enabled: If present, the boolean value specifies whether bucket is File Lock-enabled. Defaults to <span pulumi-lang-nodejs="`false`" pulumi-lang-dotnet="`False`" pulumi-lang-go="`false`" pulumi-lang-python="`false`" pulumi-lang-yaml="`false`" pulumi-lang-java="`false`">`false`</span>. **Modifying this attribute will force creation of a new resource.**
@@ -239,26 +239,26 @@ class BucketFileLockConfigurationArgs:
 
     @_builtins.property
     @pulumi.getter(name="defaultRetention")
-    def default_retention(self) -> Optional[pulumi.Input['BucketFileLockConfigurationDefaultRetentionArgs']]:
+    def default_retention(self) -> pulumi.Input[Optional['BucketFileLockConfigurationDefaultRetentionArgs']]:
         """
         Default retention settings for files uploaded to this bucket.
         """
         return pulumi.get(self, "default_retention")
 
     @default_retention.setter
-    def default_retention(self, value: Optional[pulumi.Input['BucketFileLockConfigurationDefaultRetentionArgs']]):
+    def default_retention(self, value: pulumi.Input[Optional['BucketFileLockConfigurationDefaultRetentionArgs']]):
         pulumi.set(self, "default_retention", value)
 
     @_builtins.property
     @pulumi.getter(name="isFileLockEnabled")
-    def is_file_lock_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def is_file_lock_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         If present, the boolean value specifies whether bucket is File Lock-enabled. Defaults to <span pulumi-lang-nodejs="`false`" pulumi-lang-dotnet="`False`" pulumi-lang-go="`false`" pulumi-lang-python="`false`" pulumi-lang-yaml="`false`" pulumi-lang-java="`false`">`false`</span>. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "is_file_lock_enabled")
 
     @is_file_lock_enabled.setter
-    def is_file_lock_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def is_file_lock_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "is_file_lock_enabled", value)
 
 
@@ -267,7 +267,7 @@ class BucketFileLockConfigurationDefaultRetentionArgsDict(TypedDict):
     """
     Default retention mode (compliance|governance|none).
     """
-    period: NotRequired[pulumi.Input['BucketFileLockConfigurationDefaultRetentionPeriodArgsDict']]
+    period: NotRequired[pulumi.Input[Optional['BucketFileLockConfigurationDefaultRetentionPeriodArgsDict']]]
     """
     How long for to make files immutable.
     """
@@ -276,7 +276,7 @@ class BucketFileLockConfigurationDefaultRetentionArgsDict(TypedDict):
 class BucketFileLockConfigurationDefaultRetentionArgs:
     def __init__(__self__, *,
                  mode: pulumi.Input[_builtins.str],
-                 period: Optional[pulumi.Input['BucketFileLockConfigurationDefaultRetentionPeriodArgs']] = None):
+                 period: pulumi.Input[Optional['BucketFileLockConfigurationDefaultRetentionPeriodArgs']] = None):
         """
         :param pulumi.Input[_builtins.str] mode: Default retention mode (compliance|governance|none).
         :param pulumi.Input['BucketFileLockConfigurationDefaultRetentionPeriodArgs'] period: How long for to make files immutable.
@@ -299,14 +299,14 @@ class BucketFileLockConfigurationDefaultRetentionArgs:
 
     @_builtins.property
     @pulumi.getter
-    def period(self) -> Optional[pulumi.Input['BucketFileLockConfigurationDefaultRetentionPeriodArgs']]:
+    def period(self) -> pulumi.Input[Optional['BucketFileLockConfigurationDefaultRetentionPeriodArgs']]:
         """
         How long for to make files immutable.
         """
         return pulumi.get(self, "period")
 
     @period.setter
-    def period(self, value: Optional[pulumi.Input['BucketFileLockConfigurationDefaultRetentionPeriodArgs']]):
+    def period(self, value: pulumi.Input[Optional['BucketFileLockConfigurationDefaultRetentionPeriodArgs']]):
         pulumi.set(self, "period", value)
 
 
@@ -358,29 +358,29 @@ class BucketFileLockConfigurationDefaultRetentionPeriodArgs:
 
 
 class BucketFileVersionServerSideEncryptionArgsDict(TypedDict):
-    algorithm: NotRequired[pulumi.Input[_builtins.str]]
+    algorithm: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Server-side encryption algorithm. AES256 is the only one supported.
     """
-    key: NotRequired[pulumi.Input['BucketFileVersionServerSideEncryptionKeyArgsDict']]
+    key: NotRequired[pulumi.Input[Optional['BucketFileVersionServerSideEncryptionKeyArgsDict']]]
     """
     Key used in SSE-C mode.
     """
-    mode: NotRequired[pulumi.Input[_builtins.str]]
+    mode: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
-    Server-side encryption mode.
+    Server-side encryption mode. SSE-B2 and SSE-C are supported.
     """
 
 @pulumi.input_type
 class BucketFileVersionServerSideEncryptionArgs:
     def __init__(__self__, *,
-                 algorithm: Optional[pulumi.Input[_builtins.str]] = None,
-                 key: Optional[pulumi.Input['BucketFileVersionServerSideEncryptionKeyArgs']] = None,
-                 mode: Optional[pulumi.Input[_builtins.str]] = None):
+                 algorithm: pulumi.Input[Optional[_builtins.str]] = None,
+                 key: pulumi.Input[Optional['BucketFileVersionServerSideEncryptionKeyArgs']] = None,
+                 mode: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] algorithm: Server-side encryption algorithm. AES256 is the only one supported.
         :param pulumi.Input['BucketFileVersionServerSideEncryptionKeyArgs'] key: Key used in SSE-C mode.
-        :param pulumi.Input[_builtins.str] mode: Server-side encryption mode.
+        :param pulumi.Input[_builtins.str] mode: Server-side encryption mode. SSE-B2 and SSE-C are supported.
         """
         if algorithm is not None:
             pulumi.set(__self__, "algorithm", algorithm)
@@ -391,47 +391,47 @@ class BucketFileVersionServerSideEncryptionArgs:
 
     @_builtins.property
     @pulumi.getter
-    def algorithm(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def algorithm(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Server-side encryption algorithm. AES256 is the only one supported.
         """
         return pulumi.get(self, "algorithm")
 
     @algorithm.setter
-    def algorithm(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def algorithm(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "algorithm", value)
 
     @_builtins.property
     @pulumi.getter
-    def key(self) -> Optional[pulumi.Input['BucketFileVersionServerSideEncryptionKeyArgs']]:
+    def key(self) -> pulumi.Input[Optional['BucketFileVersionServerSideEncryptionKeyArgs']]:
         """
         Key used in SSE-C mode.
         """
         return pulumi.get(self, "key")
 
     @key.setter
-    def key(self, value: Optional[pulumi.Input['BucketFileVersionServerSideEncryptionKeyArgs']]):
+    def key(self, value: pulumi.Input[Optional['BucketFileVersionServerSideEncryptionKeyArgs']]):
         pulumi.set(self, "key", value)
 
     @_builtins.property
     @pulumi.getter
-    def mode(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def mode(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
-        Server-side encryption mode.
+        Server-side encryption mode. SSE-B2 and SSE-C are supported.
         """
         return pulumi.get(self, "mode")
 
     @mode.setter
-    def mode(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def mode(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "mode", value)
 
 
 class BucketFileVersionServerSideEncryptionKeyArgsDict(TypedDict):
-    key_id: NotRequired[pulumi.Input[_builtins.str]]
+    key_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Key identifier stored in file info metadata.
     """
-    secret_b64: NotRequired[pulumi.Input[_builtins.str]]
+    secret_b64: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Secret key value, in standard Base 64 encoding (RFC 4648).
     """
@@ -439,8 +439,8 @@ class BucketFileVersionServerSideEncryptionKeyArgsDict(TypedDict):
 @pulumi.input_type
 class BucketFileVersionServerSideEncryptionKeyArgs:
     def __init__(__self__, *,
-                 key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 secret_b64: Optional[pulumi.Input[_builtins.str]] = None):
+                 key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 secret_b64: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] key_id: Key identifier stored in file info metadata.
         :param pulumi.Input[_builtins.str] secret_b64: Secret key value, in standard Base 64 encoding (RFC 4648).
@@ -452,26 +452,26 @@ class BucketFileVersionServerSideEncryptionKeyArgs:
 
     @_builtins.property
     @pulumi.getter(name="keyId")
-    def key_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def key_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Key identifier stored in file info metadata.
         """
         return pulumi.get(self, "key_id")
 
     @key_id.setter
-    def key_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def key_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "key_id", value)
 
     @_builtins.property
     @pulumi.getter(name="secretB64")
-    def secret_b64(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def secret_b64(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Secret key value, in standard Base 64 encoding (RFC 4648).
         """
         return pulumi.get(self, "secret_b64")
 
     @secret_b64.setter
-    def secret_b64(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def secret_b64(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "secret_b64", value)
 
 
@@ -480,15 +480,15 @@ class BucketLifecycleRuleArgsDict(TypedDict):
     """
     It specifies which files in the bucket it applies to.
     """
-    days_from_hiding_to_deleting: NotRequired[pulumi.Input[_builtins.float]]
+    days_from_hiding_to_deleting: NotRequired[pulumi.Input[Optional[_builtins.float]]]
     """
     It says how long to keep file versions that are not the current version.
     """
-    days_from_starting_to_canceling_unfinished_large_files: NotRequired[pulumi.Input[_builtins.float]]
+    days_from_starting_to_canceling_unfinished_large_files: NotRequired[pulumi.Input[Optional[_builtins.float]]]
     """
     It cancels any unfinished large file versions after a given number of days.
     """
-    days_from_uploading_to_hiding: NotRequired[pulumi.Input[_builtins.float]]
+    days_from_uploading_to_hiding: NotRequired[pulumi.Input[Optional[_builtins.float]]]
     """
     It causes files to be hidden automatically after the given number of days.
     """
@@ -497,9 +497,9 @@ class BucketLifecycleRuleArgsDict(TypedDict):
 class BucketLifecycleRuleArgs:
     def __init__(__self__, *,
                  file_name_prefix: pulumi.Input[_builtins.str],
-                 days_from_hiding_to_deleting: Optional[pulumi.Input[_builtins.float]] = None,
-                 days_from_starting_to_canceling_unfinished_large_files: Optional[pulumi.Input[_builtins.float]] = None,
-                 days_from_uploading_to_hiding: Optional[pulumi.Input[_builtins.float]] = None):
+                 days_from_hiding_to_deleting: pulumi.Input[Optional[_builtins.float]] = None,
+                 days_from_starting_to_canceling_unfinished_large_files: pulumi.Input[Optional[_builtins.float]] = None,
+                 days_from_uploading_to_hiding: pulumi.Input[Optional[_builtins.float]] = None):
         """
         :param pulumi.Input[_builtins.str] file_name_prefix: It specifies which files in the bucket it applies to.
         :param pulumi.Input[_builtins.float] days_from_hiding_to_deleting: It says how long to keep file versions that are not the current version.
@@ -528,38 +528,38 @@ class BucketLifecycleRuleArgs:
 
     @_builtins.property
     @pulumi.getter(name="daysFromHidingToDeleting")
-    def days_from_hiding_to_deleting(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def days_from_hiding_to_deleting(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         It says how long to keep file versions that are not the current version.
         """
         return pulumi.get(self, "days_from_hiding_to_deleting")
 
     @days_from_hiding_to_deleting.setter
-    def days_from_hiding_to_deleting(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def days_from_hiding_to_deleting(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "days_from_hiding_to_deleting", value)
 
     @_builtins.property
     @pulumi.getter(name="daysFromStartingToCancelingUnfinishedLargeFiles")
-    def days_from_starting_to_canceling_unfinished_large_files(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def days_from_starting_to_canceling_unfinished_large_files(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         It cancels any unfinished large file versions after a given number of days.
         """
         return pulumi.get(self, "days_from_starting_to_canceling_unfinished_large_files")
 
     @days_from_starting_to_canceling_unfinished_large_files.setter
-    def days_from_starting_to_canceling_unfinished_large_files(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def days_from_starting_to_canceling_unfinished_large_files(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "days_from_starting_to_canceling_unfinished_large_files", value)
 
     @_builtins.property
     @pulumi.getter(name="daysFromUploadingToHiding")
-    def days_from_uploading_to_hiding(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def days_from_uploading_to_hiding(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         It causes files to be hidden automatically after the given number of days.
         """
         return pulumi.get(self, "days_from_uploading_to_hiding")
 
     @days_from_uploading_to_hiding.setter
-    def days_from_uploading_to_hiding(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def days_from_uploading_to_hiding(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "days_from_uploading_to_hiding", value)
 
 
@@ -576,19 +576,19 @@ class BucketNotificationRulesNotificationRuleArgsDict(TypedDict):
     """
     The target configuration for the event notification rule.
     """
-    is_enabled: NotRequired[pulumi.Input[_builtins.bool]]
+    is_enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
     """
     Whether the event notification rule is enabled. Defaults to <span pulumi-lang-nodejs="`true`" pulumi-lang-dotnet="`True`" pulumi-lang-go="`true`" pulumi-lang-python="`true`" pulumi-lang-yaml="`true`" pulumi-lang-java="`true`">`true`</span>.
     """
-    is_suspended: NotRequired[pulumi.Input[_builtins.bool]]
+    is_suspended: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
     """
     Whether the event notification rule is suspended.
     """
-    object_name_prefix: NotRequired[pulumi.Input[_builtins.str]]
+    object_name_prefix: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Specifies which object(s) in the bucket the event notification rule applies to.
     """
-    suspension_reason: NotRequired[pulumi.Input[_builtins.str]]
+    suspension_reason: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     A brief description of why the event notification rule was suspended.
     """
@@ -599,10 +599,10 @@ class BucketNotificationRulesNotificationRuleArgs:
                  event_types: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]],
                  name: pulumi.Input[_builtins.str],
                  target_configuration: pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationArgs'],
-                 is_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 is_suspended: Optional[pulumi.Input[_builtins.bool]] = None,
-                 object_name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-                 suspension_reason: Optional[pulumi.Input[_builtins.str]] = None):
+                 is_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 is_suspended: pulumi.Input[Optional[_builtins.bool]] = None,
+                 object_name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 suspension_reason: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] event_types: The list of event types for the event notification rule.
         :param pulumi.Input[_builtins.str] name: A name for the event notification rule. The name must be unique among the bucket's notification rules.
@@ -662,50 +662,50 @@ class BucketNotificationRulesNotificationRuleArgs:
 
     @_builtins.property
     @pulumi.getter(name="isEnabled")
-    def is_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def is_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the event notification rule is enabled. Defaults to <span pulumi-lang-nodejs="`true`" pulumi-lang-dotnet="`True`" pulumi-lang-go="`true`" pulumi-lang-python="`true`" pulumi-lang-yaml="`true`" pulumi-lang-java="`true`">`true`</span>.
         """
         return pulumi.get(self, "is_enabled")
 
     @is_enabled.setter
-    def is_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def is_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "is_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="isSuspended")
-    def is_suspended(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def is_suspended(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the event notification rule is suspended.
         """
         return pulumi.get(self, "is_suspended")
 
     @is_suspended.setter
-    def is_suspended(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def is_suspended(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "is_suspended", value)
 
     @_builtins.property
     @pulumi.getter(name="objectNamePrefix")
-    def object_name_prefix(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def object_name_prefix(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Specifies which object(s) in the bucket the event notification rule applies to.
         """
         return pulumi.get(self, "object_name_prefix")
 
     @object_name_prefix.setter
-    def object_name_prefix(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def object_name_prefix(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "object_name_prefix", value)
 
     @_builtins.property
     @pulumi.getter(name="suspensionReason")
-    def suspension_reason(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def suspension_reason(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         A brief description of why the event notification rule was suspended.
         """
         return pulumi.get(self, "suspension_reason")
 
     @suspension_reason.setter
-    def suspension_reason(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def suspension_reason(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "suspension_reason", value)
 
 
@@ -718,11 +718,11 @@ class BucketNotificationRulesNotificationRuleTargetConfigurationArgsDict(TypedDi
     """
     The URL for the webhook.
     """
-    custom_headers: NotRequired[pulumi.Input[Sequence[pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationCustomHeaderArgsDict']]]]
+    custom_headers: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationCustomHeaderArgsDict']]]]]
     """
     When present, additional header name/value pairs to be sent on the webhook invocation.
     """
-    hmac_sha256_signing_secret: NotRequired[pulumi.Input[_builtins.str]]
+    hmac_sha256_signing_secret: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The signing secret for use in verifying the X-Bz-Event-Notification-Signature.
     """
@@ -732,8 +732,8 @@ class BucketNotificationRulesNotificationRuleTargetConfigurationArgs:
     def __init__(__self__, *,
                  target_type: pulumi.Input[_builtins.str],
                  url: pulumi.Input[_builtins.str],
-                 custom_headers: Optional[pulumi.Input[Sequence[pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationCustomHeaderArgs']]]] = None,
-                 hmac_sha256_signing_secret: Optional[pulumi.Input[_builtins.str]] = None):
+                 custom_headers: pulumi.Input[Optional[Sequence[pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationCustomHeaderArgs']]]] = None,
+                 hmac_sha256_signing_secret: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] target_type: The type of the target configuration, currently "webhook" only.
         :param pulumi.Input[_builtins.str] url: The URL for the webhook.
@@ -773,26 +773,26 @@ class BucketNotificationRulesNotificationRuleTargetConfigurationArgs:
 
     @_builtins.property
     @pulumi.getter(name="customHeaders")
-    def custom_headers(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationCustomHeaderArgs']]]]:
+    def custom_headers(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationCustomHeaderArgs']]]]:
         """
         When present, additional header name/value pairs to be sent on the webhook invocation.
         """
         return pulumi.get(self, "custom_headers")
 
     @custom_headers.setter
-    def custom_headers(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationCustomHeaderArgs']]]]):
+    def custom_headers(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['BucketNotificationRulesNotificationRuleTargetConfigurationCustomHeaderArgs']]]]):
         pulumi.set(self, "custom_headers", value)
 
     @_builtins.property
     @pulumi.getter(name="hmacSha256SigningSecret")
-    def hmac_sha256_signing_secret(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def hmac_sha256_signing_secret(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The signing secret for use in verifying the X-Bz-Event-Notification-Signature.
         """
         return pulumi.get(self, "hmac_sha256_signing_secret")
 
     @hmac_sha256_signing_secret.setter
-    def hmac_sha256_signing_secret(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def hmac_sha256_signing_secret(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "hmac_sha256_signing_secret", value)
 
 

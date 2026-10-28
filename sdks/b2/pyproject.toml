@@ -1,10 +1,10 @@
 [project]
   name = "pulumi_b2"
   description = "A Pulumi provider dynamically bridged from b2."
-  dependencies = ["parver>=0.2.1", "pulumi>=3.165.0,<4.0.0", "semver>=2.8.1", "typing-extensions>=4.11,<5; python_version < \"3.11\""]
+  dependencies = ["packaging>=24.0", "pulumi>=3.247.0,<4.0.0", "semver>=2.8.1", "typing-extensions>=4.11,<5; python_version < \"3.11\""]
   readme = "README.md"
   requires-python = ">=3.9"
-  version = "0.12.1"
+  version = "0.14.1"
   [project.urls]
     Repository = "https://github.com/backblaze/terraform-provider-b2"
 

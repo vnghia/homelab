@@ -139,7 +139,7 @@ def get_account_info(id: Optional[_builtins.str] = None,
         id=pulumi.get(__ret__, 'id'),
         recommended_part_size=pulumi.get(__ret__, 'recommended_part_size'),
         s3_api_url=pulumi.get(__ret__, 's3_api_url'))
-def get_account_info_output(id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_account_info_output(id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                             opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetAccountInfoResult]:
     """
     Use this data source to access information about an existing resource.

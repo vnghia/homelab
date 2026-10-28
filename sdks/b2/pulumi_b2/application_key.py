@@ -21,10 +21,11 @@ class ApplicationKeyArgs:
     def __init__(__self__, *,
                  capabilities: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]],
                  key_name: pulumi.Input[_builtins.str],
-                 b2_application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 name_prefix: Optional[pulumi.Input[_builtins.str]] = None):
+                 b2_application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_ids: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 valid_duration_in_seconds: pulumi.Input[Optional[_builtins.float]] = None):
         """
         The set of arguments for constructing a ApplicationKey resource.
 
@@ -33,6 +34,7 @@ class ApplicationKeyArgs:
         :param pulumi.Input[_builtins.str] bucket_id: When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] name_prefix: When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[_builtins.float] valid_duration_in_seconds: When provided, the key will expire after the given number of seconds, and will have expirationTimestamp set. Value must be a positive integer, and must be less than 1000 days (in seconds). **Modifying this attribute will force creation of a new resource.**
         """
         pulumi.set(__self__, "capabilities", capabilities)
         pulumi.set(__self__, "key_name", key_name)
@@ -47,6 +49,8 @@ class ApplicationKeyArgs:
             pulumi.set(__self__, "bucket_ids", bucket_ids)
         if name_prefix is not None:
             pulumi.set(__self__, "name_prefix", name_prefix)
+        if valid_duration_in_seconds is not None:
+            pulumi.set(__self__, "valid_duration_in_seconds", valid_duration_in_seconds)
 
     @_builtins.property
     @pulumi.getter
@@ -74,63 +78,77 @@ class ApplicationKeyArgs:
 
     @_builtins.property
     @pulumi.getter(name="b2ApplicationKeyId")
-    def b2_application_key_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def b2_application_key_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "b2_application_key_id")
 
     @b2_application_key_id.setter
-    def b2_application_key_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def b2_application_key_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "b2_application_key_id", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketId")
     @_utilities.deprecated("""Deprecated""")
-    def bucket_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_id")
 
     @bucket_id.setter
-    def bucket_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket_id", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketIds")
-    def bucket_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def bucket_ids(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_ids")
 
     @bucket_ids.setter
-    def bucket_ids(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def bucket_ids(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "bucket_ids", value)
 
     @_builtins.property
     @pulumi.getter(name="namePrefix")
-    def name_prefix(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name_prefix(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "name_prefix")
 
     @name_prefix.setter
-    def name_prefix(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name_prefix(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name_prefix", value)
+
+    @_builtins.property
+    @pulumi.getter(name="validDurationInSeconds")
+    def valid_duration_in_seconds(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        When provided, the key will expire after the given number of seconds, and will have expirationTimestamp set. Value must be a positive integer, and must be less than 1000 days (in seconds). **Modifying this attribute will force creation of a new resource.**
+        """
+        return pulumi.get(self, "valid_duration_in_seconds")
+
+    @valid_duration_in_seconds.setter
+    def valid_duration_in_seconds(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "valid_duration_in_seconds", value)
 
 
 @pulumi.input_type
 class _ApplicationKeyState:
     def __init__(__self__, *,
-                 application_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 b2_application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 capabilities: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 key_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-                 options: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 application_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 b2_application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_ids: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 capabilities: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 expiration_timestamp: pulumi.Input[Optional[_builtins.float]] = None,
+                 key_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 options: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 valid_duration_in_seconds: pulumi.Input[Optional[_builtins.float]] = None):
         """
         Input properties used for looking up and filtering ApplicationKey resources.
 
@@ -139,9 +157,11 @@ class _ApplicationKeyState:
         :param pulumi.Input[_builtins.str] bucket_id: When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] capabilities: A set of strings, each one naming a capability the key has. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[_builtins.float] expiration_timestamp: When present, says when this key will expire, in milliseconds since 1970.
         :param pulumi.Input[_builtins.str] key_name: The name of the key. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] name_prefix: When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] options: List of application key options.
+        :param pulumi.Input[_builtins.float] valid_duration_in_seconds: When provided, the key will expire after the given number of seconds, and will have expirationTimestamp set. Value must be a positive integer, and must be less than 1000 days (in seconds). **Modifying this attribute will force creation of a new resource.**
         """
         if application_key is not None:
             pulumi.set(__self__, "application_key", application_key)
@@ -158,118 +178,146 @@ class _ApplicationKeyState:
             pulumi.set(__self__, "bucket_ids", bucket_ids)
         if capabilities is not None:
             pulumi.set(__self__, "capabilities", capabilities)
+        if expiration_timestamp is not None:
+            pulumi.set(__self__, "expiration_timestamp", expiration_timestamp)
         if key_name is not None:
             pulumi.set(__self__, "key_name", key_name)
         if name_prefix is not None:
             pulumi.set(__self__, "name_prefix", name_prefix)
         if options is not None:
             pulumi.set(__self__, "options", options)
+        if valid_duration_in_seconds is not None:
+            pulumi.set(__self__, "valid_duration_in_seconds", valid_duration_in_seconds)
 
     @_builtins.property
     @pulumi.getter(name="applicationKey")
-    def application_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def application_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The key.
         """
         return pulumi.get(self, "application_key")
 
     @application_key.setter
-    def application_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def application_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "application_key", value)
 
     @_builtins.property
     @pulumi.getter(name="applicationKeyId")
-    def application_key_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def application_key_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID of the newly created key.
         """
         return pulumi.get(self, "application_key_id")
 
     @application_key_id.setter
-    def application_key_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def application_key_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "application_key_id", value)
 
     @_builtins.property
     @pulumi.getter(name="b2ApplicationKeyId")
-    def b2_application_key_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def b2_application_key_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "b2_application_key_id")
 
     @b2_application_key_id.setter
-    def b2_application_key_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def b2_application_key_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "b2_application_key_id", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketId")
     @_utilities.deprecated("""Deprecated""")
-    def bucket_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_id")
 
     @bucket_id.setter
-    def bucket_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket_id", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketIds")
-    def bucket_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def bucket_ids(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_ids")
 
     @bucket_ids.setter
-    def bucket_ids(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def bucket_ids(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "bucket_ids", value)
 
     @_builtins.property
     @pulumi.getter
-    def capabilities(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def capabilities(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         A set of strings, each one naming a capability the key has. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "capabilities")
 
     @capabilities.setter
-    def capabilities(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def capabilities(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "capabilities", value)
 
     @_builtins.property
+    @pulumi.getter(name="expirationTimestamp")
+    def expiration_timestamp(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        When present, says when this key will expire, in milliseconds since 1970.
+        """
+        return pulumi.get(self, "expiration_timestamp")
+
+    @expiration_timestamp.setter
+    def expiration_timestamp(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "expiration_timestamp", value)
+
+    @_builtins.property
     @pulumi.getter(name="keyName")
-    def key_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def key_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the key. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "key_name")
 
     @key_name.setter
-    def key_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def key_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "key_name", value)
 
     @_builtins.property
     @pulumi.getter(name="namePrefix")
-    def name_prefix(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name_prefix(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "name_prefix")
 
     @name_prefix.setter
-    def name_prefix(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name_prefix(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name_prefix", value)
 
     @_builtins.property
     @pulumi.getter
-    def options(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def options(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         List of application key options.
         """
         return pulumi.get(self, "options")
 
     @options.setter
-    def options(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def options(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "options", value)
+
+    @_builtins.property
+    @pulumi.getter(name="validDurationInSeconds")
+    def valid_duration_in_seconds(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        When provided, the key will expire after the given number of seconds, and will have expirationTimestamp set. Value must be a positive integer, and must be less than 1000 days (in seconds). **Modifying this attribute will force creation of a new resource.**
+        """
+        return pulumi.get(self, "valid_duration_in_seconds")
+
+    @valid_duration_in_seconds.setter
+    def valid_duration_in_seconds(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "valid_duration_in_seconds", value)
 
 
 @pulumi.type_token("b2:index/applicationKey:ApplicationKey")
@@ -278,12 +326,13 @@ class ApplicationKey(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 b2_application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 capabilities: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 key_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
+                 b2_application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_ids: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 capabilities: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 key_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 valid_duration_in_seconds: pulumi.Input[Optional[_builtins.float]] = None,
                  __props__=None):
         """
         Create a ApplicationKey resource with the given unique name, props, and options.
@@ -295,6 +344,7 @@ class ApplicationKey(pulumi.CustomResource):
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] capabilities: A set of strings, each one naming a capability the key has. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] key_name: The name of the key. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] name_prefix: When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[_builtins.float] valid_duration_in_seconds: When provided, the key will expire after the given number of seconds, and will have expirationTimestamp set. Value must be a positive integer, and must be less than 1000 days (in seconds). **Modifying this attribute will force creation of a new resource.**
         """
         ...
     @overload
@@ -320,12 +370,13 @@ class ApplicationKey(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 b2_application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 capabilities: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 key_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
+                 b2_application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_ids: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 capabilities: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 key_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 valid_duration_in_seconds: pulumi.Input[Optional[_builtins.float]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -345,8 +396,10 @@ class ApplicationKey(pulumi.CustomResource):
                 raise TypeError("Missing required property 'key_name'")
             __props__.__dict__["key_name"] = key_name
             __props__.__dict__["name_prefix"] = name_prefix
+            __props__.__dict__["valid_duration_in_seconds"] = valid_duration_in_seconds
             __props__.__dict__["application_key"] = None
             __props__.__dict__["application_key_id"] = None
+            __props__.__dict__["expiration_timestamp"] = None
             __props__.__dict__["options"] = None
         secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["applicationKey"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
@@ -361,15 +414,17 @@ class ApplicationKey(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            application_key: Optional[pulumi.Input[_builtins.str]] = None,
-            application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-            b2_application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-            bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-            bucket_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            capabilities: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            key_name: Optional[pulumi.Input[_builtins.str]] = None,
-            name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-            options: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None) -> 'ApplicationKey':
+            application_key: pulumi.Input[Optional[_builtins.str]] = None,
+            application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+            b2_application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+            bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+            bucket_ids: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            capabilities: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            expiration_timestamp: pulumi.Input[Optional[_builtins.float]] = None,
+            key_name: pulumi.Input[Optional[_builtins.str]] = None,
+            name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+            options: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            valid_duration_in_seconds: pulumi.Input[Optional[_builtins.float]] = None) -> 'ApplicationKey':
         """
         Get an existing ApplicationKey resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
@@ -382,9 +437,11 @@ class ApplicationKey(pulumi.CustomResource):
         :param pulumi.Input[_builtins.str] bucket_id: When present, restricts access to one bucket. Conflicts with <span pulumi-lang-nodejs="`bucketIds`" pulumi-lang-dotnet="`BucketIds`" pulumi-lang-go="`bucketIds`" pulumi-lang-python="`bucket_ids`" pulumi-lang-yaml="`bucketIds`" pulumi-lang-java="`bucketIds`">`bucket_ids`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] bucket_ids: When provided, the new key can only access the specified buckets. Conflicts with <span pulumi-lang-nodejs="`bucketId`" pulumi-lang-dotnet="`BucketId`" pulumi-lang-go="`bucketId`" pulumi-lang-python="`bucket_id`" pulumi-lang-yaml="`bucketId`" pulumi-lang-java="`bucketId`">`bucket_id`</span>. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] capabilities: A set of strings, each one naming a capability the key has. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[_builtins.float] expiration_timestamp: When present, says when this key will expire, in milliseconds since 1970.
         :param pulumi.Input[_builtins.str] key_name: The name of the key. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] name_prefix: When present, restricts access to files whose names start with the prefix. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] options: List of application key options.
+        :param pulumi.Input[_builtins.float] valid_duration_in_seconds: When provided, the key will expire after the given number of seconds, and will have expirationTimestamp set. Value must be a positive integer, and must be less than 1000 days (in seconds). **Modifying this attribute will force creation of a new resource.**
         """
         opts = pulumi.ResourceOptions.merge(opts, pulumi.ResourceOptions(id=id))
 
@@ -396,9 +453,11 @@ class ApplicationKey(pulumi.CustomResource):
         __props__.__dict__["bucket_id"] = bucket_id
         __props__.__dict__["bucket_ids"] = bucket_ids
         __props__.__dict__["capabilities"] = capabilities
+        __props__.__dict__["expiration_timestamp"] = expiration_timestamp
         __props__.__dict__["key_name"] = key_name
         __props__.__dict__["name_prefix"] = name_prefix
         __props__.__dict__["options"] = options
+        __props__.__dict__["valid_duration_in_seconds"] = valid_duration_in_seconds
         return ApplicationKey(resource_name, opts=opts, __props__=__props__)
 
     @_builtins.property
@@ -448,6 +507,14 @@ class ApplicationKey(pulumi.CustomResource):
         return pulumi.get(self, "capabilities")
 
     @_builtins.property
+    @pulumi.getter(name="expirationTimestamp")
+    def expiration_timestamp(self) -> pulumi.Output[_builtins.float]:
+        """
+        When present, says when this key will expire, in milliseconds since 1970.
+        """
+        return pulumi.get(self, "expiration_timestamp")
+
+    @_builtins.property
     @pulumi.getter(name="keyName")
     def key_name(self) -> pulumi.Output[_builtins.str]:
         """
@@ -470,4 +537,12 @@ class ApplicationKey(pulumi.CustomResource):
         List of application key options.
         """
         return pulumi.get(self, "options")
+
+    @_builtins.property
+    @pulumi.getter(name="validDurationInSeconds")
+    def valid_duration_in_seconds(self) -> pulumi.Output[Optional[_builtins.float]]:
+        """
+        When provided, the key will expire after the given number of seconds, and will have expirationTimestamp set. Value must be a positive integer, and must be less than 1000 days (in seconds). **Modifying this attribute will force creation of a new resource.**
+        """
+        return pulumi.get(self, "valid_duration_in_seconds")
 

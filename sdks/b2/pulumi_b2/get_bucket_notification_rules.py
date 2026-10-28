@@ -81,8 +81,8 @@ def get_bucket_notification_rules(bucket_id: Optional[_builtins.str] = None,
         bucket_id=pulumi.get(__ret__, 'bucket_id'),
         id=pulumi.get(__ret__, 'id'),
         notification_rules=pulumi.get(__ret__, 'notification_rules'))
-def get_bucket_notification_rules_output(bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                                         id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_bucket_notification_rules_output(bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                                         id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                                          opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetBucketNotificationRulesResult]:
     """
     Use this data source to access information about an existing resource.

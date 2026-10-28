@@ -104,10 +104,10 @@ def get_bucket_file_signed_url(bucket_id: Optional[_builtins.str] = None,
         file_name=pulumi.get(__ret__, 'file_name'),
         id=pulumi.get(__ret__, 'id'),
         signed_url=pulumi.get(__ret__, 'signed_url'))
-def get_bucket_file_signed_url_output(bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                                      duration: Optional[pulumi.Input[Optional[_builtins.float]]] = None,
-                                      file_name: Optional[pulumi.Input[_builtins.str]] = None,
-                                      id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_bucket_file_signed_url_output(bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                                      duration: pulumi.Input[Optional[Optional[_builtins.float]]] = None,
+                                      file_name: pulumi.Input[Optional[_builtins.str]] = None,
+                                      id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                                       opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetBucketFileSignedUrlResult]:
     """
     Use this data source to access information about an existing resource.

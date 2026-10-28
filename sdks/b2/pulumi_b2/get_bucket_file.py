@@ -105,10 +105,10 @@ def get_bucket_file(bucket_id: Optional[_builtins.str] = None,
         file_versions=pulumi.get(__ret__, 'file_versions'),
         id=pulumi.get(__ret__, 'id'),
         show_versions=pulumi.get(__ret__, 'show_versions'))
-def get_bucket_file_output(bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                           file_name: Optional[pulumi.Input[_builtins.str]] = None,
-                           id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                           show_versions: Optional[pulumi.Input[Optional[_builtins.bool]]] = None,
+def get_bucket_file_output(bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                           file_name: pulumi.Input[Optional[_builtins.str]] = None,
+                           id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                           show_versions: pulumi.Input[Optional[Optional[_builtins.bool]]] = None,
                            opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetBucketFileResult]:
     """
     Use this data source to access information about an existing resource.

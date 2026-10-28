@@ -1043,6 +1043,7 @@ dependencies = [
     { name = "json-fix" },
     { name = "loguru" },
     { name = "pulumi" },
+    { name = "pulumi-b2" },
     { name = "pulumiverse-grafana" },
 ]
 
@@ -1090,6 +1091,7 @@ requires-dist = [
     { name = "json-fix", specifier = ">=1.0.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pulumi", specifier = ">=3.148.0" },
+    { name = "pulumi-b2", directory = "sdks/b2" },
     { name = "pulumiverse-grafana", specifier = ">=2.25.1" },
 ]
 
@@ -2931,18 +2933,18 @@ wheels = [
 
 [[package]]
 name = "pulumi-b2"
-version = "0.12.1"
+version = "0.14.1"
 source = { directory = "sdks/b2" }
 dependencies = [
-    { name = "parver" },
+    { name = "packaging" },
     { name = "pulumi" },
     { name = "semver" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "parver", specifier = ">=0.2.1" },
-    { name = "pulumi", specifier = ">=3.165.0,<4.0.0" },
+    { name = "packaging", specifier = ">=24.0" },
+    { name = "pulumi", specifier = ">=3.247.0,<4.0.0" },
     { name = "semver", specifier = ">=2.8.1" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.11,<5" },
 ]

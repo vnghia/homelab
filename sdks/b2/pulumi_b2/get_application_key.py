@@ -26,7 +26,7 @@ class GetApplicationKeyResult:
     """
     A collection of values returned by getApplicationKey.
     """
-    def __init__(__self__, application_key_id=None, bucket_id=None, bucket_ids=None, capabilities=None, id=None, key_name=None, name_prefix=None, options=None):
+    def __init__(__self__, application_key_id=None, bucket_id=None, bucket_ids=None, capabilities=None, expiration_timestamp=None, id=None, key_name=None, name_prefix=None, options=None):
         if application_key_id and not isinstance(application_key_id, str):
             raise TypeError("Expected argument 'application_key_id' to be a str")
         pulumi.set(__self__, "application_key_id", application_key_id)
@@ -39,6 +39,9 @@ class GetApplicationKeyResult:
         if capabilities and not isinstance(capabilities, list):
             raise TypeError("Expected argument 'capabilities' to be a list")
         pulumi.set(__self__, "capabilities", capabilities)
+        if expiration_timestamp and not isinstance(expiration_timestamp, float):
+            raise TypeError("Expected argument 'expiration_timestamp' to be a float")
+        pulumi.set(__self__, "expiration_timestamp", expiration_timestamp)
         if id and not isinstance(id, str):
             raise TypeError("Expected argument 'id' to be a str")
         pulumi.set(__self__, "id", id)
@@ -74,6 +77,11 @@ class GetApplicationKeyResult:
         return pulumi.get(self, "capabilities")
 
     @_builtins.property
+    @pulumi.getter(name="expirationTimestamp")
+    def expiration_timestamp(self) -> _builtins.float:
+        return pulumi.get(self, "expiration_timestamp")
+
+    @_builtins.property
     @pulumi.getter
     def id(self) -> _builtins.str:
         return pulumi.get(self, "id")
@@ -104,6 +112,7 @@ class AwaitableGetApplicationKeyResult(GetApplicationKeyResult):
             bucket_id=self.bucket_id,
             bucket_ids=self.bucket_ids,
             capabilities=self.capabilities,
+            expiration_timestamp=self.expiration_timestamp,
             id=self.id,
             key_name=self.key_name,
             name_prefix=self.name_prefix,
@@ -112,7 +121,6 @@ class AwaitableGetApplicationKeyResult(GetApplicationKeyResult):
 
 def get_application_key(id: Optional[_builtins.str] = None,
                         key_name: Optional[_builtins.str] = None,
-                        name_prefix: Optional[_builtins.str] = None,
                         opts: Optional[pulumi.InvokeOptions] = None) -> AwaitableGetApplicationKeyResult:
     """
     Use this data source to access information about an existing resource.
@@ -120,7 +128,6 @@ def get_application_key(id: Optional[_builtins.str] = None,
     __args__ = dict()
     __args__['id'] = id
     __args__['keyName'] = key_name
-    __args__['namePrefix'] = name_prefix
     opts = pulumi.InvokeOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
     __ret__ = pulumi.runtime.invoke('b2:index/getApplicationKey:getApplicationKey', __args__, opts=opts, typ=GetApplicationKeyResult, package_ref=_utilities.get_package()).value
 
@@ -129,13 +136,13 @@ def get_application_key(id: Optional[_builtins.str] = None,
         bucket_id=pulumi.get(__ret__, 'bucket_id'),
         bucket_ids=pulumi.get(__ret__, 'bucket_ids'),
         capabilities=pulumi.get(__ret__, 'capabilities'),
+        expiration_timestamp=pulumi.get(__ret__, 'expiration_timestamp'),
         id=pulumi.get(__ret__, 'id'),
         key_name=pulumi.get(__ret__, 'key_name'),
         name_prefix=pulumi.get(__ret__, 'name_prefix'),
         options=pulumi.get(__ret__, 'options'))
-def get_application_key_output(id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                               key_name: Optional[pulumi.Input[_builtins.str]] = None,
-                               name_prefix: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_application_key_output(id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                               key_name: pulumi.Input[Optional[_builtins.str]] = None,
                                opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetApplicationKeyResult]:
     """
     Use this data source to access information about an existing resource.
@@ -143,7 +150,6 @@ def get_application_key_output(id: Optional[pulumi.Input[Optional[_builtins.str]
     __args__ = dict()
     __args__['id'] = id
     __args__['keyName'] = key_name
-    __args__['namePrefix'] = name_prefix
     opts = pulumi.InvokeOutputOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
     __ret__ = pulumi.runtime.invoke_output('b2:index/getApplicationKey:getApplicationKey', __args__, opts=opts, typ=GetApplicationKeyResult, package_ref=_utilities.get_package())
     return __ret__.apply(lambda __response__: GetApplicationKeyResult(
@@ -151,6 +157,7 @@ def get_application_key_output(id: Optional[pulumi.Input[Optional[_builtins.str]
         bucket_id=pulumi.get(__response__, 'bucket_id'),
         bucket_ids=pulumi.get(__response__, 'bucket_ids'),
         capabilities=pulumi.get(__response__, 'capabilities'),
+        expiration_timestamp=pulumi.get(__response__, 'expiration_timestamp'),
         id=pulumi.get(__response__, 'id'),
         key_name=pulumi.get(__response__, 'key_name'),
         name_prefix=pulumi.get(__response__, 'name_prefix'),

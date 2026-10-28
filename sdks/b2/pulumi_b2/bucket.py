@@ -23,18 +23,18 @@ class BucketArgs:
     def __init__(__self__, *,
                  bucket_name: pulumi.Input[_builtins.str],
                  bucket_type: pulumi.Input[_builtins.str],
-                 b2_bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 cors_rules: Optional[pulumi.Input[Sequence[pulumi.Input['BucketCorsRuleArgs']]]] = None,
-                 default_server_side_encryption: Optional[pulumi.Input['BucketDefaultServerSideEncryptionArgs']] = None,
-                 file_lock_configurations: Optional[pulumi.Input[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]] = None,
-                 lifecycle_rules: Optional[pulumi.Input[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]] = None):
+                 b2_bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 cors_rules: pulumi.Input[Optional[Sequence[pulumi.Input['BucketCorsRuleArgs']]]] = None,
+                 default_server_side_encryption: pulumi.Input[Optional['BucketDefaultServerSideEncryptionArgs']] = None,
+                 file_lock_configurations: pulumi.Input[Optional[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]] = None,
+                 lifecycle_rules: pulumi.Input[Optional[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]] = None):
         """
         The set of arguments for constructing a Bucket resource.
 
         :param pulumi.Input[_builtins.str] bucket_name: The name of the bucket. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] bucket_type: The bucket type. Either 'allPublic', meaning that files in this bucket can be downloaded by anybody, or 'allPrivate'.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] bucket_info: User-defined information to be stored with the bucket.
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] bucket_info: User-defined information to be stored with the bucket. B2 converts keys to lower case, so they are stored and returned in lower case. Each key can be up to 50 bytes long, keys starting with 'b2-' are reserved, and all values together can take up to 10000 bytes.
         :param pulumi.Input[Sequence[pulumi.Input['BucketCorsRuleArgs']]] cors_rules: The initial list of CORS rules for this bucket.
         :param pulumi.Input['BucketDefaultServerSideEncryptionArgs'] default_server_side_encryption: The default server-side encryption settings for this bucket.
         :param pulumi.Input[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]] file_lock_configurations: File lock enabled flag, and default retention settings.
@@ -81,95 +81,95 @@ class BucketArgs:
 
     @_builtins.property
     @pulumi.getter(name="b2BucketId")
-    def b2_bucket_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def b2_bucket_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "b2_bucket_id")
 
     @b2_bucket_id.setter
-    def b2_bucket_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def b2_bucket_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "b2_bucket_id", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketInfo")
-    def bucket_info(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def bucket_info(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
-        User-defined information to be stored with the bucket.
+        User-defined information to be stored with the bucket. B2 converts keys to lower case, so they are stored and returned in lower case. Each key can be up to 50 bytes long, keys starting with 'b2-' are reserved, and all values together can take up to 10000 bytes.
         """
         return pulumi.get(self, "bucket_info")
 
     @bucket_info.setter
-    def bucket_info(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def bucket_info(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "bucket_info", value)
 
     @_builtins.property
     @pulumi.getter(name="corsRules")
-    def cors_rules(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['BucketCorsRuleArgs']]]]:
+    def cors_rules(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['BucketCorsRuleArgs']]]]:
         """
         The initial list of CORS rules for this bucket.
         """
         return pulumi.get(self, "cors_rules")
 
     @cors_rules.setter
-    def cors_rules(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['BucketCorsRuleArgs']]]]):
+    def cors_rules(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['BucketCorsRuleArgs']]]]):
         pulumi.set(self, "cors_rules", value)
 
     @_builtins.property
     @pulumi.getter(name="defaultServerSideEncryption")
-    def default_server_side_encryption(self) -> Optional[pulumi.Input['BucketDefaultServerSideEncryptionArgs']]:
+    def default_server_side_encryption(self) -> pulumi.Input[Optional['BucketDefaultServerSideEncryptionArgs']]:
         """
         The default server-side encryption settings for this bucket.
         """
         return pulumi.get(self, "default_server_side_encryption")
 
     @default_server_side_encryption.setter
-    def default_server_side_encryption(self, value: Optional[pulumi.Input['BucketDefaultServerSideEncryptionArgs']]):
+    def default_server_side_encryption(self, value: pulumi.Input[Optional['BucketDefaultServerSideEncryptionArgs']]):
         pulumi.set(self, "default_server_side_encryption", value)
 
     @_builtins.property
     @pulumi.getter(name="fileLockConfigurations")
-    def file_lock_configurations(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]]:
+    def file_lock_configurations(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]]:
         """
         File lock enabled flag, and default retention settings.
         """
         return pulumi.get(self, "file_lock_configurations")
 
     @file_lock_configurations.setter
-    def file_lock_configurations(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]]):
+    def file_lock_configurations(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]]):
         pulumi.set(self, "file_lock_configurations", value)
 
     @_builtins.property
     @pulumi.getter(name="lifecycleRules")
-    def lifecycle_rules(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]]:
+    def lifecycle_rules(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]]:
         """
         The initial list of lifecycle rules for this bucket.
         """
         return pulumi.get(self, "lifecycle_rules")
 
     @lifecycle_rules.setter
-    def lifecycle_rules(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]]):
+    def lifecycle_rules(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]]):
         pulumi.set(self, "lifecycle_rules", value)
 
 
 @pulumi.input_type
 class _BucketState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 b2_bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 bucket_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 cors_rules: Optional[pulumi.Input[Sequence[pulumi.Input['BucketCorsRuleArgs']]]] = None,
-                 default_server_side_encryption: Optional[pulumi.Input['BucketDefaultServerSideEncryptionArgs']] = None,
-                 file_lock_configurations: Optional[pulumi.Input[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]] = None,
-                 lifecycle_rules: Optional[pulumi.Input[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]] = None,
-                 options: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 revision: Optional[pulumi.Input[_builtins.float]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 b2_bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 bucket_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 cors_rules: pulumi.Input[Optional[Sequence[pulumi.Input['BucketCorsRuleArgs']]]] = None,
+                 default_server_side_encryption: pulumi.Input[Optional['BucketDefaultServerSideEncryptionArgs']] = None,
+                 file_lock_configurations: pulumi.Input[Optional[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]] = None,
+                 lifecycle_rules: pulumi.Input[Optional[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]] = None,
+                 options: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 revision: pulumi.Input[Optional[_builtins.float]] = None):
         """
         Input properties used for looking up and filtering Bucket resources.
 
         :param pulumi.Input[_builtins.str] account_id: Account ID that the bucket belongs to.
         :param pulumi.Input[_builtins.str] bucket_id: The ID of the bucket.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] bucket_info: User-defined information to be stored with the bucket.
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] bucket_info: User-defined information to be stored with the bucket. B2 converts keys to lower case, so they are stored and returned in lower case. Each key can be up to 50 bytes long, keys starting with 'b2-' are reserved, and all values together can take up to 10000 bytes.
         :param pulumi.Input[_builtins.str] bucket_name: The name of the bucket. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] bucket_type: The bucket type. Either 'allPublic', meaning that files in this bucket can be downloaded by anybody, or 'allPrivate'.
         :param pulumi.Input[Sequence[pulumi.Input['BucketCorsRuleArgs']]] cors_rules: The initial list of CORS rules for this bucket.
@@ -206,143 +206,143 @@ class _BucketState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID that the bucket belongs to.
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="b2BucketId")
-    def b2_bucket_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def b2_bucket_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "b2_bucket_id")
 
     @b2_bucket_id.setter
-    def b2_bucket_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def b2_bucket_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "b2_bucket_id", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketId")
-    def bucket_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID of the bucket.
         """
         return pulumi.get(self, "bucket_id")
 
     @bucket_id.setter
-    def bucket_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket_id", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketInfo")
-    def bucket_info(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def bucket_info(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
-        User-defined information to be stored with the bucket.
+        User-defined information to be stored with the bucket. B2 converts keys to lower case, so they are stored and returned in lower case. Each key can be up to 50 bytes long, keys starting with 'b2-' are reserved, and all values together can take up to 10000 bytes.
         """
         return pulumi.get(self, "bucket_info")
 
     @bucket_info.setter
-    def bucket_info(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def bucket_info(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "bucket_info", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketName")
-    def bucket_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the bucket. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_name")
 
     @bucket_name.setter
-    def bucket_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket_name", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketType")
-    def bucket_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The bucket type. Either 'allPublic', meaning that files in this bucket can be downloaded by anybody, or 'allPrivate'.
         """
         return pulumi.get(self, "bucket_type")
 
     @bucket_type.setter
-    def bucket_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket_type", value)
 
     @_builtins.property
     @pulumi.getter(name="corsRules")
-    def cors_rules(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['BucketCorsRuleArgs']]]]:
+    def cors_rules(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['BucketCorsRuleArgs']]]]:
         """
         The initial list of CORS rules for this bucket.
         """
         return pulumi.get(self, "cors_rules")
 
     @cors_rules.setter
-    def cors_rules(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['BucketCorsRuleArgs']]]]):
+    def cors_rules(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['BucketCorsRuleArgs']]]]):
         pulumi.set(self, "cors_rules", value)
 
     @_builtins.property
     @pulumi.getter(name="defaultServerSideEncryption")
-    def default_server_side_encryption(self) -> Optional[pulumi.Input['BucketDefaultServerSideEncryptionArgs']]:
+    def default_server_side_encryption(self) -> pulumi.Input[Optional['BucketDefaultServerSideEncryptionArgs']]:
         """
         The default server-side encryption settings for this bucket.
         """
         return pulumi.get(self, "default_server_side_encryption")
 
     @default_server_side_encryption.setter
-    def default_server_side_encryption(self, value: Optional[pulumi.Input['BucketDefaultServerSideEncryptionArgs']]):
+    def default_server_side_encryption(self, value: pulumi.Input[Optional['BucketDefaultServerSideEncryptionArgs']]):
         pulumi.set(self, "default_server_side_encryption", value)
 
     @_builtins.property
     @pulumi.getter(name="fileLockConfigurations")
-    def file_lock_configurations(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]]:
+    def file_lock_configurations(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]]:
         """
         File lock enabled flag, and default retention settings.
         """
         return pulumi.get(self, "file_lock_configurations")
 
     @file_lock_configurations.setter
-    def file_lock_configurations(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]]):
+    def file_lock_configurations(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['BucketFileLockConfigurationArgs']]]]):
         pulumi.set(self, "file_lock_configurations", value)
 
     @_builtins.property
     @pulumi.getter(name="lifecycleRules")
-    def lifecycle_rules(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]]:
+    def lifecycle_rules(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]]:
         """
         The initial list of lifecycle rules for this bucket.
         """
         return pulumi.get(self, "lifecycle_rules")
 
     @lifecycle_rules.setter
-    def lifecycle_rules(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]]):
+    def lifecycle_rules(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['BucketLifecycleRuleArgs']]]]):
         pulumi.set(self, "lifecycle_rules", value)
 
     @_builtins.property
     @pulumi.getter
-    def options(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def options(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         List of bucket options.
         """
         return pulumi.get(self, "options")
 
     @options.setter
-    def options(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def options(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "options", value)
 
     @_builtins.property
     @pulumi.getter
-    def revision(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def revision(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Bucket revision.
         """
         return pulumi.get(self, "revision")
 
     @revision.setter
-    def revision(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def revision(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "revision", value)
 
 
@@ -352,27 +352,27 @@ class Bucket(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 b2_bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 bucket_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 cors_rules: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict']]]]] = None,
-                 default_server_side_encryption: Optional[pulumi.Input[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict']]] = None,
-                 file_lock_configurations: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict']]]]] = None,
-                 lifecycle_rules: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict']]]]] = None,
+                 b2_bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 bucket_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 cors_rules: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict', 'outputs.BucketCorsRule']]]]] = None,
+                 default_server_side_encryption: pulumi.Input[Optional[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict', 'outputs.BucketDefaultServerSideEncryption']]] = None,
+                 file_lock_configurations: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict', 'outputs.BucketFileLockConfiguration']]]]] = None,
+                 lifecycle_rules: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict', 'outputs.BucketLifecycleRule']]]]] = None,
                  __props__=None):
         """
         Create a Bucket resource with the given unique name, props, and options.
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] bucket_info: User-defined information to be stored with the bucket.
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] bucket_info: User-defined information to be stored with the bucket. B2 converts keys to lower case, so they are stored and returned in lower case. Each key can be up to 50 bytes long, keys starting with 'b2-' are reserved, and all values together can take up to 10000 bytes.
         :param pulumi.Input[_builtins.str] bucket_name: The name of the bucket. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] bucket_type: The bucket type. Either 'allPublic', meaning that files in this bucket can be downloaded by anybody, or 'allPrivate'.
-        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict']]]] cors_rules: The initial list of CORS rules for this bucket.
-        :param pulumi.Input[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict']] default_server_side_encryption: The default server-side encryption settings for this bucket.
-        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict']]]] file_lock_configurations: File lock enabled flag, and default retention settings.
-        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict']]]] lifecycle_rules: The initial list of lifecycle rules for this bucket.
+        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict', 'outputs.BucketCorsRule']]]] cors_rules: The initial list of CORS rules for this bucket.
+        :param pulumi.Input[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict', 'outputs.BucketDefaultServerSideEncryption']] default_server_side_encryption: The default server-side encryption settings for this bucket.
+        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict', 'outputs.BucketFileLockConfiguration']]]] file_lock_configurations: File lock enabled flag, and default retention settings.
+        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict', 'outputs.BucketLifecycleRule']]]] lifecycle_rules: The initial list of lifecycle rules for this bucket.
         """
         ...
     @overload
@@ -398,14 +398,14 @@ class Bucket(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 b2_bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 bucket_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 cors_rules: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict']]]]] = None,
-                 default_server_side_encryption: Optional[pulumi.Input[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict']]] = None,
-                 file_lock_configurations: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict']]]]] = None,
-                 lifecycle_rules: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict']]]]] = None,
+                 b2_bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 bucket_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 cors_rules: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict', 'outputs.BucketCorsRule']]]]] = None,
+                 default_server_side_encryption: pulumi.Input[Optional[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict', 'outputs.BucketDefaultServerSideEncryption']]] = None,
+                 file_lock_configurations: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict', 'outputs.BucketFileLockConfiguration']]]]] = None,
+                 lifecycle_rules: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict', 'outputs.BucketLifecycleRule']]]]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -442,18 +442,18 @@ class Bucket(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            b2_bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-            bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-            bucket_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-            bucket_name: Optional[pulumi.Input[_builtins.str]] = None,
-            bucket_type: Optional[pulumi.Input[_builtins.str]] = None,
-            cors_rules: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict']]]]] = None,
-            default_server_side_encryption: Optional[pulumi.Input[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict']]] = None,
-            file_lock_configurations: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict']]]]] = None,
-            lifecycle_rules: Optional[pulumi.Input[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict']]]]] = None,
-            options: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            revision: Optional[pulumi.Input[_builtins.float]] = None) -> 'Bucket':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            b2_bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+            bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+            bucket_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+            bucket_name: pulumi.Input[Optional[_builtins.str]] = None,
+            bucket_type: pulumi.Input[Optional[_builtins.str]] = None,
+            cors_rules: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict', 'outputs.BucketCorsRule']]]]] = None,
+            default_server_side_encryption: pulumi.Input[Optional[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict', 'outputs.BucketDefaultServerSideEncryption']]] = None,
+            file_lock_configurations: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict', 'outputs.BucketFileLockConfiguration']]]]] = None,
+            lifecycle_rules: pulumi.Input[Optional[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict', 'outputs.BucketLifecycleRule']]]]] = None,
+            options: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            revision: pulumi.Input[Optional[_builtins.float]] = None) -> 'Bucket':
         """
         Get an existing Bucket resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
@@ -463,13 +463,13 @@ class Bucket(pulumi.CustomResource):
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID that the bucket belongs to.
         :param pulumi.Input[_builtins.str] bucket_id: The ID of the bucket.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] bucket_info: User-defined information to be stored with the bucket.
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] bucket_info: User-defined information to be stored with the bucket. B2 converts keys to lower case, so they are stored and returned in lower case. Each key can be up to 50 bytes long, keys starting with 'b2-' are reserved, and all values together can take up to 10000 bytes.
         :param pulumi.Input[_builtins.str] bucket_name: The name of the bucket. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] bucket_type: The bucket type. Either 'allPublic', meaning that files in this bucket can be downloaded by anybody, or 'allPrivate'.
-        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict']]]] cors_rules: The initial list of CORS rules for this bucket.
-        :param pulumi.Input[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict']] default_server_side_encryption: The default server-side encryption settings for this bucket.
-        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict']]]] file_lock_configurations: File lock enabled flag, and default retention settings.
-        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict']]]] lifecycle_rules: The initial list of lifecycle rules for this bucket.
+        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketCorsRuleArgs', 'BucketCorsRuleArgsDict', 'outputs.BucketCorsRule']]]] cors_rules: The initial list of CORS rules for this bucket.
+        :param pulumi.Input[Union['BucketDefaultServerSideEncryptionArgs', 'BucketDefaultServerSideEncryptionArgsDict', 'outputs.BucketDefaultServerSideEncryption']] default_server_side_encryption: The default server-side encryption settings for this bucket.
+        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketFileLockConfigurationArgs', 'BucketFileLockConfigurationArgsDict', 'outputs.BucketFileLockConfiguration']]]] file_lock_configurations: File lock enabled flag, and default retention settings.
+        :param pulumi.Input[Sequence[pulumi.Input[Union['BucketLifecycleRuleArgs', 'BucketLifecycleRuleArgsDict', 'outputs.BucketLifecycleRule']]]] lifecycle_rules: The initial list of lifecycle rules for this bucket.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] options: List of bucket options.
         :param pulumi.Input[_builtins.float] revision: Bucket revision.
         """
@@ -516,7 +516,7 @@ class Bucket(pulumi.CustomResource):
     @pulumi.getter(name="bucketInfo")
     def bucket_info(self) -> pulumi.Output[Optional[Mapping[str, _builtins.str]]]:
         """
-        User-defined information to be stored with the bucket.
+        User-defined information to be stored with the bucket. B2 converts keys to lower case, so they are stored and returned in lower case. Each key can be up to 50 bytes long, keys starting with 'b2-' are reserved, and all values together can take up to 10000 bytes.
         """
         return pulumi.get(self, "bucket_info")
 

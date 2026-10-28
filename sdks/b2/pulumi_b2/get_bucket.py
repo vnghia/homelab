@@ -171,8 +171,8 @@ def get_bucket(bucket_name: Optional[_builtins.str] = None,
         lifecycle_rules=pulumi.get(__ret__, 'lifecycle_rules'),
         options=pulumi.get(__ret__, 'options'),
         revision=pulumi.get(__ret__, 'revision'))
-def get_bucket_output(bucket_name: Optional[pulumi.Input[_builtins.str]] = None,
-                      id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_bucket_output(bucket_name: pulumi.Input[Optional[_builtins.str]] = None,
+                      id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                       opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetBucketResult]:
     """
     Use this data source to access information about an existing resource.

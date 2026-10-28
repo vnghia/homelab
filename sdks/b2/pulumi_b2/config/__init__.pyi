@@ -16,7 +16,7 @@ from .. import _utilities
 
 applicationKey: Optional[str]
 """
-B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-dotnet="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-go="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-python="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-yaml="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-java="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`">`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`</span>.
+B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-dotnet="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-go="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-python="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-yaml="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-java="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`">`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`</span>.
 """
 
 applicationKeyId: Optional[str]

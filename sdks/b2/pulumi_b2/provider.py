@@ -19,13 +19,13 @@ __all__ = ['ProviderArgs', 'Provider']
 @pulumi.input_type
 class ProviderArgs:
     def __init__(__self__, *,
-                 application_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 endpoint: Optional[pulumi.Input[_builtins.str]] = None):
+                 application_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 endpoint: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a Provider resource.
 
-        :param pulumi.Input[_builtins.str] application_key: B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-dotnet="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-go="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-python="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-yaml="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-java="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`">`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`</span>.
+        :param pulumi.Input[_builtins.str] application_key: B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-dotnet="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-go="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-python="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-yaml="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-java="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`">`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`</span>.
         :param pulumi.Input[_builtins.str] application_key_id: B2 Application Key ID (B2_APPLICATION_KEY_ID env). Defaults to <span pulumi-lang-nodejs="`b9c685bc94f8`" pulumi-lang-dotnet="`B9c685bc94f8`" pulumi-lang-go="`b9c685bc94f8`" pulumi-lang-python="`b9c685bc94f8`" pulumi-lang-yaml="`b9c685bc94f8`" pulumi-lang-java="`b9c685bc94f8`">`b9c685bc94f8`</span>.
         :param pulumi.Input[_builtins.str] endpoint: B2 endpoint - the string 'production' or a custom B2 API URL (B2_ENDPOINT env). You should not need to set this unless you work at Backblaze. Defaults to <span pulumi-lang-nodejs="`production`" pulumi-lang-dotnet="`Production`" pulumi-lang-go="`production`" pulumi-lang-python="`production`" pulumi-lang-yaml="`production`" pulumi-lang-java="`production`">`production`</span>.
         """
@@ -38,38 +38,38 @@ class ProviderArgs:
 
     @_builtins.property
     @pulumi.getter(name="applicationKey")
-    def application_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def application_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
-        B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-dotnet="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-go="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-python="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-yaml="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-java="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`">`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`</span>.
+        B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-dotnet="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-go="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-python="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-yaml="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-java="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`">`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`</span>.
         """
         return pulumi.get(self, "application_key")
 
     @application_key.setter
-    def application_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def application_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "application_key", value)
 
     @_builtins.property
     @pulumi.getter(name="applicationKeyId")
-    def application_key_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def application_key_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         B2 Application Key ID (B2_APPLICATION_KEY_ID env). Defaults to <span pulumi-lang-nodejs="`b9c685bc94f8`" pulumi-lang-dotnet="`B9c685bc94f8`" pulumi-lang-go="`b9c685bc94f8`" pulumi-lang-python="`b9c685bc94f8`" pulumi-lang-yaml="`b9c685bc94f8`" pulumi-lang-java="`b9c685bc94f8`">`b9c685bc94f8`</span>.
         """
         return pulumi.get(self, "application_key_id")
 
     @application_key_id.setter
-    def application_key_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def application_key_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "application_key_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def endpoint(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def endpoint(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         B2 endpoint - the string 'production' or a custom B2 API URL (B2_ENDPOINT env). You should not need to set this unless you work at Backblaze. Defaults to <span pulumi-lang-nodejs="`production`" pulumi-lang-dotnet="`Production`" pulumi-lang-go="`production`" pulumi-lang-python="`production`" pulumi-lang-yaml="`production`" pulumi-lang-java="`production`">`production`</span>.
         """
         return pulumi.get(self, "endpoint")
 
     @endpoint.setter
-    def endpoint(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def endpoint(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "endpoint", value)
 
 
@@ -79,9 +79,9 @@ class Provider(pulumi.ProviderResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 application_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 endpoint: Optional[pulumi.Input[_builtins.str]] = None,
+                 application_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 endpoint: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         The provider type for the b2 package. By default, resources use package-wide configuration
@@ -92,7 +92,7 @@ class Provider(pulumi.ProviderResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[_builtins.str] application_key: B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-dotnet="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-go="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-python="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-yaml="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-java="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`">`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`</span>.
+        :param pulumi.Input[_builtins.str] application_key: B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-dotnet="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-go="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-python="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-yaml="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-java="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`">`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`</span>.
         :param pulumi.Input[_builtins.str] application_key_id: B2 Application Key ID (B2_APPLICATION_KEY_ID env). Defaults to <span pulumi-lang-nodejs="`b9c685bc94f8`" pulumi-lang-dotnet="`B9c685bc94f8`" pulumi-lang-go="`b9c685bc94f8`" pulumi-lang-python="`b9c685bc94f8`" pulumi-lang-yaml="`b9c685bc94f8`" pulumi-lang-java="`b9c685bc94f8`">`b9c685bc94f8`</span>.
         :param pulumi.Input[_builtins.str] endpoint: B2 endpoint - the string 'production' or a custom B2 API URL (B2_ENDPOINT env). You should not need to set this unless you work at Backblaze. Defaults to <span pulumi-lang-nodejs="`production`" pulumi-lang-dotnet="`Production`" pulumi-lang-go="`production`" pulumi-lang-python="`production`" pulumi-lang-yaml="`production`" pulumi-lang-java="`production`">`production`</span>.
         """
@@ -124,9 +124,9 @@ class Provider(pulumi.ProviderResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 application_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 application_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 endpoint: Optional[pulumi.Input[_builtins.str]] = None,
+                 application_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 application_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 endpoint: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -152,7 +152,7 @@ class Provider(pulumi.ProviderResource):
     @pulumi.getter(name="applicationKey")
     def application_key(self) -> pulumi.Output[Optional[_builtins.str]]:
         """
-        B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-dotnet="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-go="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-python="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-yaml="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`" pulumi-lang-java="`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`">`0038c7cc9f8c79ebb7750eb2bd74dae32bccbf3e88`</span>.
+        B2 Application Key (B2_APPLICATION_KEY env). Defaults to <span pulumi-lang-nodejs="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-dotnet="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-go="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-python="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-yaml="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`" pulumi-lang-java="`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`">`0034f6720ffbf3e22c7103688ad469021c76ad4dc1`</span>.
         """
         return pulumi.get(self, "application_key")
 

@@ -153,7 +153,7 @@ class BucketDefaultServerSideEncryption(dict):
                  mode: Optional[_builtins.str] = None):
         """
         :param _builtins.str algorithm: Server-side encryption algorithm. AES256 is the only one supported.
-        :param _builtins.str mode: Server-side encryption mode.
+        :param _builtins.str mode: Server-side encryption mode. SSE-B2 is the only supported bucket default.
         """
         if algorithm is not None:
             pulumi.set(__self__, "algorithm", algorithm)
@@ -172,7 +172,7 @@ class BucketDefaultServerSideEncryption(dict):
     @pulumi.getter
     def mode(self) -> Optional[_builtins.str]:
         """
-        Server-side encryption mode.
+        Server-side encryption mode. SSE-B2 is the only supported bucket default.
         """
         return pulumi.get(self, "mode")
 
@@ -295,7 +295,7 @@ class BucketFileVersionServerSideEncryption(dict):
         """
         :param _builtins.str algorithm: Server-side encryption algorithm. AES256 is the only one supported.
         :param 'BucketFileVersionServerSideEncryptionKeyArgs' key: Key used in SSE-C mode.
-        :param _builtins.str mode: Server-side encryption mode.
+        :param _builtins.str mode: Server-side encryption mode. SSE-B2 and SSE-C are supported.
         """
         if algorithm is not None:
             pulumi.set(__self__, "algorithm", algorithm)
@@ -324,7 +324,7 @@ class BucketFileVersionServerSideEncryption(dict):
     @pulumi.getter
     def mode(self) -> Optional[_builtins.str]:
         """
-        Server-side encryption mode.
+        Server-side encryption mode. SSE-B2 and SSE-C are supported.
         """
         return pulumi.get(self, "mode")
 

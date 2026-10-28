@@ -24,10 +24,10 @@ class BucketFileVersionArgs:
                  bucket_id: pulumi.Input[_builtins.str],
                  file_name: pulumi.Input[_builtins.str],
                  source: pulumi.Input[_builtins.str],
-                 bucket_file_version_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 content_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 file_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 server_side_encryption: Optional[pulumi.Input['BucketFileVersionServerSideEncryptionArgs']] = None):
+                 bucket_file_version_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 content_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 file_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 server_side_encryption: pulumi.Input[Optional['BucketFileVersionServerSideEncryptionArgs']] = None):
         """
         The set of arguments for constructing a BucketFileVersion resource.
 
@@ -35,7 +35,7 @@ class BucketFileVersionArgs:
         :param pulumi.Input[_builtins.str] file_name: The name of the B2 file. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] source: Path to the local file. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] content_type: Content type. If not set, it will be set based on the file extension. **Modifying this attribute will force creation of a new resource.**
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] file_info: The custom information that is uploaded with the file. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] file_info: The custom information that is uploaded with the file. B2 converts keys to lower case, so they are stored and returned in lower case. B2 also adds 'sse_c_key_id' to files uploaded in SSE-C mode, and 'large_file_sha1' to large files. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input['BucketFileVersionServerSideEncryptionArgs'] server_side_encryption: Server-side encryption settings. **Modifying this attribute will force creation of a new resource.**
         """
         pulumi.set(__self__, "bucket_id", bucket_id)
@@ -88,66 +88,66 @@ class BucketFileVersionArgs:
 
     @_builtins.property
     @pulumi.getter(name="bucketFileVersionId")
-    def bucket_file_version_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket_file_version_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "bucket_file_version_id")
 
     @bucket_file_version_id.setter
-    def bucket_file_version_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket_file_version_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket_file_version_id", value)
 
     @_builtins.property
     @pulumi.getter(name="contentType")
-    def content_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def content_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Content type. If not set, it will be set based on the file extension. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "content_type")
 
     @content_type.setter
-    def content_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def content_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "content_type", value)
 
     @_builtins.property
     @pulumi.getter(name="fileInfo")
-    def file_info(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def file_info(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
-        The custom information that is uploaded with the file. **Modifying this attribute will force creation of a new resource.**
+        The custom information that is uploaded with the file. B2 converts keys to lower case, so they are stored and returned in lower case. B2 also adds 'sse_c_key_id' to files uploaded in SSE-C mode, and 'large_file_sha1' to large files. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "file_info")
 
     @file_info.setter
-    def file_info(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def file_info(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "file_info", value)
 
     @_builtins.property
     @pulumi.getter(name="serverSideEncryption")
-    def server_side_encryption(self) -> Optional[pulumi.Input['BucketFileVersionServerSideEncryptionArgs']]:
+    def server_side_encryption(self) -> pulumi.Input[Optional['BucketFileVersionServerSideEncryptionArgs']]:
         """
         Server-side encryption settings. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "server_side_encryption")
 
     @server_side_encryption.setter
-    def server_side_encryption(self, value: Optional[pulumi.Input['BucketFileVersionServerSideEncryptionArgs']]):
+    def server_side_encryption(self, value: pulumi.Input[Optional['BucketFileVersionServerSideEncryptionArgs']]):
         pulumi.set(self, "server_side_encryption", value)
 
 
 @pulumi.input_type
 class _BucketFileVersionState:
     def __init__(__self__, *,
-                 action: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_file_version_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 content_md5: Optional[pulumi.Input[_builtins.str]] = None,
-                 content_sha1: Optional[pulumi.Input[_builtins.str]] = None,
-                 content_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 file_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 file_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 file_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 server_side_encryption: Optional[pulumi.Input['BucketFileVersionServerSideEncryptionArgs']] = None,
-                 size: Optional[pulumi.Input[_builtins.float]] = None,
-                 source: Optional[pulumi.Input[_builtins.str]] = None,
-                 upload_timestamp: Optional[pulumi.Input[_builtins.float]] = None):
+                 action: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_file_version_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 content_md5: pulumi.Input[Optional[_builtins.str]] = None,
+                 content_sha1: pulumi.Input[Optional[_builtins.str]] = None,
+                 content_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 file_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 file_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 file_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 server_side_encryption: pulumi.Input[Optional['BucketFileVersionServerSideEncryptionArgs']] = None,
+                 size: pulumi.Input[Optional[_builtins.float]] = None,
+                 source: pulumi.Input[Optional[_builtins.str]] = None,
+                 upload_timestamp: pulumi.Input[Optional[_builtins.float]] = None):
         """
         Input properties used for looking up and filtering BucketFileVersion resources.
 
@@ -157,7 +157,7 @@ class _BucketFileVersionState:
         :param pulumi.Input[_builtins.str] content_sha1: SHA1 hash of the content.
         :param pulumi.Input[_builtins.str] content_type: Content type. If not set, it will be set based on the file extension. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] file_id: The unique identifier for this version of this file.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] file_info: The custom information that is uploaded with the file. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] file_info: The custom information that is uploaded with the file. B2 converts keys to lower case, so they are stored and returned in lower case. B2 also adds 'sse_c_key_id' to files uploaded in SSE-C mode, and 'large_file_sha1' to large files. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] file_name: The name of the B2 file. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input['BucketFileVersionServerSideEncryptionArgs'] server_side_encryption: Server-side encryption settings. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.float] size: The file size.
@@ -193,155 +193,155 @@ class _BucketFileVersionState:
 
     @_builtins.property
     @pulumi.getter
-    def action(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def action(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         One of 'start', 'upload', 'hide', 'folder', or other values added in the future.
         """
         return pulumi.get(self, "action")
 
     @action.setter
-    def action(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def action(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "action", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketFileVersionId")
-    def bucket_file_version_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket_file_version_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "bucket_file_version_id")
 
     @bucket_file_version_id.setter
-    def bucket_file_version_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket_file_version_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket_file_version_id", value)
 
     @_builtins.property
     @pulumi.getter(name="bucketId")
-    def bucket_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID of the bucket. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "bucket_id")
 
     @bucket_id.setter
-    def bucket_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket_id", value)
 
     @_builtins.property
     @pulumi.getter(name="contentMd5")
-    def content_md5(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def content_md5(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         MD5 sum of the content.
         """
         return pulumi.get(self, "content_md5")
 
     @content_md5.setter
-    def content_md5(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def content_md5(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "content_md5", value)
 
     @_builtins.property
     @pulumi.getter(name="contentSha1")
-    def content_sha1(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def content_sha1(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         SHA1 hash of the content.
         """
         return pulumi.get(self, "content_sha1")
 
     @content_sha1.setter
-    def content_sha1(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def content_sha1(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "content_sha1", value)
 
     @_builtins.property
     @pulumi.getter(name="contentType")
-    def content_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def content_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Content type. If not set, it will be set based on the file extension. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "content_type")
 
     @content_type.setter
-    def content_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def content_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "content_type", value)
 
     @_builtins.property
     @pulumi.getter(name="fileId")
-    def file_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def file_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The unique identifier for this version of this file.
         """
         return pulumi.get(self, "file_id")
 
     @file_id.setter
-    def file_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def file_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "file_id", value)
 
     @_builtins.property
     @pulumi.getter(name="fileInfo")
-    def file_info(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def file_info(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
-        The custom information that is uploaded with the file. **Modifying this attribute will force creation of a new resource.**
+        The custom information that is uploaded with the file. B2 converts keys to lower case, so they are stored and returned in lower case. B2 also adds 'sse_c_key_id' to files uploaded in SSE-C mode, and 'large_file_sha1' to large files. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "file_info")
 
     @file_info.setter
-    def file_info(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def file_info(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "file_info", value)
 
     @_builtins.property
     @pulumi.getter(name="fileName")
-    def file_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def file_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the B2 file. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "file_name")
 
     @file_name.setter
-    def file_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def file_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "file_name", value)
 
     @_builtins.property
     @pulumi.getter(name="serverSideEncryption")
-    def server_side_encryption(self) -> Optional[pulumi.Input['BucketFileVersionServerSideEncryptionArgs']]:
+    def server_side_encryption(self) -> pulumi.Input[Optional['BucketFileVersionServerSideEncryptionArgs']]:
         """
         Server-side encryption settings. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "server_side_encryption")
 
     @server_side_encryption.setter
-    def server_side_encryption(self, value: Optional[pulumi.Input['BucketFileVersionServerSideEncryptionArgs']]):
+    def server_side_encryption(self, value: pulumi.Input[Optional['BucketFileVersionServerSideEncryptionArgs']]):
         pulumi.set(self, "server_side_encryption", value)
 
     @_builtins.property
     @pulumi.getter
-    def size(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def size(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The file size.
         """
         return pulumi.get(self, "size")
 
     @size.setter
-    def size(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def size(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "size", value)
 
     @_builtins.property
     @pulumi.getter
-    def source(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def source(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Path to the local file. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "source")
 
     @source.setter
-    def source(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def source(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "source", value)
 
     @_builtins.property
     @pulumi.getter(name="uploadTimestamp")
-    def upload_timestamp(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def upload_timestamp(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         This is a UTC time when this file was uploaded.
         """
         return pulumi.get(self, "upload_timestamp")
 
     @upload_timestamp.setter
-    def upload_timestamp(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def upload_timestamp(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "upload_timestamp", value)
 
 
@@ -351,13 +351,13 @@ class BucketFileVersion(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 bucket_file_version_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 content_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 file_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 file_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 server_side_encryption: Optional[pulumi.Input[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict']]] = None,
-                 source: Optional[pulumi.Input[_builtins.str]] = None,
+                 bucket_file_version_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 content_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 file_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 file_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 server_side_encryption: pulumi.Input[Optional[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict', 'outputs.BucketFileVersionServerSideEncryption']]] = None,
+                 source: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a BucketFileVersion resource with the given unique name, props, and options.
@@ -366,9 +366,9 @@ class BucketFileVersion(pulumi.CustomResource):
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] bucket_id: The ID of the bucket. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] content_type: Content type. If not set, it will be set based on the file extension. **Modifying this attribute will force creation of a new resource.**
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] file_info: The custom information that is uploaded with the file. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] file_info: The custom information that is uploaded with the file. B2 converts keys to lower case, so they are stored and returned in lower case. B2 also adds 'sse_c_key_id' to files uploaded in SSE-C mode, and 'large_file_sha1' to large files. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] file_name: The name of the B2 file. **Modifying this attribute will force creation of a new resource.**
-        :param pulumi.Input[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict']] server_side_encryption: Server-side encryption settings. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict', 'outputs.BucketFileVersionServerSideEncryption']] server_side_encryption: Server-side encryption settings. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] source: Path to the local file. **Modifying this attribute will force creation of a new resource.**
         """
         ...
@@ -395,13 +395,13 @@ class BucketFileVersion(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 bucket_file_version_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 content_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 file_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 file_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 server_side_encryption: Optional[pulumi.Input[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict']]] = None,
-                 source: Optional[pulumi.Input[_builtins.str]] = None,
+                 bucket_file_version_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 content_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 file_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 file_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 server_side_encryption: pulumi.Input[Optional[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict', 'outputs.BucketFileVersionServerSideEncryption']]] = None,
+                 source: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -441,19 +441,19 @@ class BucketFileVersion(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            action: Optional[pulumi.Input[_builtins.str]] = None,
-            bucket_file_version_id: Optional[pulumi.Input[_builtins.str]] = None,
-            bucket_id: Optional[pulumi.Input[_builtins.str]] = None,
-            content_md5: Optional[pulumi.Input[_builtins.str]] = None,
-            content_sha1: Optional[pulumi.Input[_builtins.str]] = None,
-            content_type: Optional[pulumi.Input[_builtins.str]] = None,
-            file_id: Optional[pulumi.Input[_builtins.str]] = None,
-            file_info: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-            file_name: Optional[pulumi.Input[_builtins.str]] = None,
-            server_side_encryption: Optional[pulumi.Input[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict']]] = None,
-            size: Optional[pulumi.Input[_builtins.float]] = None,
-            source: Optional[pulumi.Input[_builtins.str]] = None,
-            upload_timestamp: Optional[pulumi.Input[_builtins.float]] = None) -> 'BucketFileVersion':
+            action: pulumi.Input[Optional[_builtins.str]] = None,
+            bucket_file_version_id: pulumi.Input[Optional[_builtins.str]] = None,
+            bucket_id: pulumi.Input[Optional[_builtins.str]] = None,
+            content_md5: pulumi.Input[Optional[_builtins.str]] = None,
+            content_sha1: pulumi.Input[Optional[_builtins.str]] = None,
+            content_type: pulumi.Input[Optional[_builtins.str]] = None,
+            file_id: pulumi.Input[Optional[_builtins.str]] = None,
+            file_info: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+            file_name: pulumi.Input[Optional[_builtins.str]] = None,
+            server_side_encryption: pulumi.Input[Optional[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict', 'outputs.BucketFileVersionServerSideEncryption']]] = None,
+            size: pulumi.Input[Optional[_builtins.float]] = None,
+            source: pulumi.Input[Optional[_builtins.str]] = None,
+            upload_timestamp: pulumi.Input[Optional[_builtins.float]] = None) -> 'BucketFileVersion':
         """
         Get an existing BucketFileVersion resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
@@ -467,9 +467,9 @@ class BucketFileVersion(pulumi.CustomResource):
         :param pulumi.Input[_builtins.str] content_sha1: SHA1 hash of the content.
         :param pulumi.Input[_builtins.str] content_type: Content type. If not set, it will be set based on the file extension. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] file_id: The unique identifier for this version of this file.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] file_info: The custom information that is uploaded with the file. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] file_info: The custom information that is uploaded with the file. B2 converts keys to lower case, so they are stored and returned in lower case. B2 also adds 'sse_c_key_id' to files uploaded in SSE-C mode, and 'large_file_sha1' to large files. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.str] file_name: The name of the B2 file. **Modifying this attribute will force creation of a new resource.**
-        :param pulumi.Input[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict']] server_side_encryption: Server-side encryption settings. **Modifying this attribute will force creation of a new resource.**
+        :param pulumi.Input[Union['BucketFileVersionServerSideEncryptionArgs', 'BucketFileVersionServerSideEncryptionArgsDict', 'outputs.BucketFileVersionServerSideEncryption']] server_side_encryption: Server-side encryption settings. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.float] size: The file size.
         :param pulumi.Input[_builtins.str] source: Path to the local file. **Modifying this attribute will force creation of a new resource.**
         :param pulumi.Input[_builtins.float] upload_timestamp: This is a UTC time when this file was uploaded.
@@ -550,7 +550,7 @@ class BucketFileVersion(pulumi.CustomResource):
     @pulumi.getter(name="fileInfo")
     def file_info(self) -> pulumi.Output[Mapping[str, _builtins.str]]:
         """
-        The custom information that is uploaded with the file. **Modifying this attribute will force creation of a new resource.**
+        The custom information that is uploaded with the file. B2 converts keys to lower case, so they are stored and returned in lower case. B2 also adds 'sse_c_key_id' to files uploaded in SSE-C mode, and 'large_file_sha1' to large files. **Modifying this attribute will force creation of a new resource.**
         """
         return pulumi.get(self, "file_info")
 
