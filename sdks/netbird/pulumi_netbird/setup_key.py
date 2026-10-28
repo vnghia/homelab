@@ -19,25 +19,25 @@ __all__ = ['SetupKeyArgs', 'SetupKey']
 @pulumi.input_type
 class SetupKeyArgs:
     def __init__(__self__, *,
-                 allow_extra_dns_labels: Optional[pulumi.Input[_builtins.bool]] = None,
-                 auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 ephemeral: Optional[pulumi.Input[_builtins.bool]] = None,
-                 expiry_seconds: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 revoked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 usage_limit: Optional[pulumi.Input[_builtins.float]] = None):
+                 allow_extra_dns_labels: pulumi.Input[Optional[_builtins.bool]] = None,
+                 auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 ephemeral: pulumi.Input[Optional[_builtins.bool]] = None,
+                 expiry_seconds: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 revoked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 usage_limit: pulumi.Input[Optional[_builtins.float]] = None):
         """
         The set of arguments for constructing a SetupKey resource.
 
         :param pulumi.Input[_builtins.bool] allow_extra_dns_labels: Allow extra DNS labels to be added to the peer
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] auto_groups: List of groups to automatically assign to peers created through this setup key
         :param pulumi.Input[_builtins.bool] ephemeral: Indicate that the peer will be ephemeral or not, ephemeral peers are deleted after 10 minutes of inactivity
-        :param pulumi.Input[_builtins.float] expiry_seconds: Expiry time in seconds (0 is unlimited)
+        :param pulumi.Input[_builtins.float] expiry_seconds: Expiry time in seconds (0 is unlimited). The API reports an absolute expiry date and no creation date, so this value cannot be read back and an imported key adopts whatever the configuration says.
         :param pulumi.Input[_builtins.str] name: SetupKey Name
         :param pulumi.Input[_builtins.bool] revoked: Set to true to revoke setup key
         :param pulumi.Input[_builtins.str] type: Setup Key type (one-off or reusable)
-        :param pulumi.Input[_builtins.float] usage_limit: Maximum number of times SetupKey can be used (0 for unlimited)
+        :param pulumi.Input[_builtins.float] usage_limit: Maximum number of times SetupKey can be used (0 for unlimited). A one-off key is always limited to 1 by the server, so leave this unset for one-off keys.
         """
         if allow_extra_dns_labels is not None:
             pulumi.set(__self__, "allow_extra_dns_labels", allow_extra_dns_labels)
@@ -58,119 +58,119 @@ class SetupKeyArgs:
 
     @_builtins.property
     @pulumi.getter(name="allowExtraDnsLabels")
-    def allow_extra_dns_labels(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def allow_extra_dns_labels(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allow extra DNS labels to be added to the peer
         """
         return pulumi.get(self, "allow_extra_dns_labels")
 
     @allow_extra_dns_labels.setter
-    def allow_extra_dns_labels(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def allow_extra_dns_labels(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "allow_extra_dns_labels", value)
 
     @_builtins.property
     @pulumi.getter(name="autoGroups")
-    def auto_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def auto_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         List of groups to automatically assign to peers created through this setup key
         """
         return pulumi.get(self, "auto_groups")
 
     @auto_groups.setter
-    def auto_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def auto_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "auto_groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def ephemeral(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def ephemeral(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate that the peer will be ephemeral or not, ephemeral peers are deleted after 10 minutes of inactivity
         """
         return pulumi.get(self, "ephemeral")
 
     @ephemeral.setter
-    def ephemeral(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def ephemeral(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "ephemeral", value)
 
     @_builtins.property
     @pulumi.getter(name="expirySeconds")
-    def expiry_seconds(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def expiry_seconds(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
-        Expiry time in seconds (0 is unlimited)
+        Expiry time in seconds (0 is unlimited). The API reports an absolute expiry date and no creation date, so this value cannot be read back and an imported key adopts whatever the configuration says.
         """
         return pulumi.get(self, "expiry_seconds")
 
     @expiry_seconds.setter
-    def expiry_seconds(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def expiry_seconds(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "expiry_seconds", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         SetupKey Name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def revoked(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def revoked(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Set to true to revoke setup key
         """
         return pulumi.get(self, "revoked")
 
     @revoked.setter
-    def revoked(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def revoked(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "revoked", value)
 
     @_builtins.property
     @pulumi.getter
-    def type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Setup Key type (one-off or reusable)
         """
         return pulumi.get(self, "type")
 
     @type.setter
-    def type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "type", value)
 
     @_builtins.property
     @pulumi.getter(name="usageLimit")
-    def usage_limit(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def usage_limit(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
-        Maximum number of times SetupKey can be used (0 for unlimited)
+        Maximum number of times SetupKey can be used (0 for unlimited). A one-off key is always limited to 1 by the server, so leave this unset for one-off keys.
         """
         return pulumi.get(self, "usage_limit")
 
     @usage_limit.setter
-    def usage_limit(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def usage_limit(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "usage_limit", value)
 
 
 @pulumi.input_type
 class _SetupKeyState:
     def __init__(__self__, *,
-                 allow_extra_dns_labels: Optional[pulumi.Input[_builtins.bool]] = None,
-                 auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 ephemeral: Optional[pulumi.Input[_builtins.bool]] = None,
-                 expires: Optional[pulumi.Input[_builtins.str]] = None,
-                 expiry_seconds: Optional[pulumi.Input[_builtins.float]] = None,
-                 key: Optional[pulumi.Input[_builtins.str]] = None,
-                 last_used: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 revoked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 state: Optional[pulumi.Input[_builtins.str]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 updated_at: Optional[pulumi.Input[_builtins.str]] = None,
-                 usage_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 used_times: Optional[pulumi.Input[_builtins.float]] = None,
-                 valid: Optional[pulumi.Input[_builtins.bool]] = None):
+                 allow_extra_dns_labels: pulumi.Input[Optional[_builtins.bool]] = None,
+                 auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 ephemeral: pulumi.Input[Optional[_builtins.bool]] = None,
+                 expires: pulumi.Input[Optional[_builtins.str]] = None,
+                 expiry_seconds: pulumi.Input[Optional[_builtins.float]] = None,
+                 key: pulumi.Input[Optional[_builtins.str]] = None,
+                 last_used: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 revoked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 state: pulumi.Input[Optional[_builtins.str]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 updated_at: pulumi.Input[Optional[_builtins.str]] = None,
+                 usage_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 used_times: pulumi.Input[Optional[_builtins.float]] = None,
+                 valid: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         Input properties used for looking up and filtering SetupKey resources.
 
@@ -178,7 +178,7 @@ class _SetupKeyState:
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] auto_groups: List of groups to automatically assign to peers created through this setup key
         :param pulumi.Input[_builtins.bool] ephemeral: Indicate that the peer will be ephemeral or not, ephemeral peers are deleted after 10 minutes of inactivity
         :param pulumi.Input[_builtins.str] expires: SetupKey Expiration Date
-        :param pulumi.Input[_builtins.float] expiry_seconds: Expiry time in seconds (0 is unlimited)
+        :param pulumi.Input[_builtins.float] expiry_seconds: Expiry time in seconds (0 is unlimited). The API reports an absolute expiry date and no creation date, so this value cannot be read back and an imported key adopts whatever the configuration says.
         :param pulumi.Input[_builtins.str] key: Plaintext setup key
         :param pulumi.Input[_builtins.str] last_used: Last usage time
         :param pulumi.Input[_builtins.str] name: SetupKey Name
@@ -186,7 +186,7 @@ class _SetupKeyState:
         :param pulumi.Input[_builtins.str] state: Setup key state (valid or expired)
         :param pulumi.Input[_builtins.str] type: Setup Key type (one-off or reusable)
         :param pulumi.Input[_builtins.str] updated_at: Creation timestamp
-        :param pulumi.Input[_builtins.float] usage_limit: Maximum number of times SetupKey can be used (0 for unlimited)
+        :param pulumi.Input[_builtins.float] usage_limit: Maximum number of times SetupKey can be used (0 for unlimited). A one-off key is always limited to 1 by the server, so leave this unset for one-off keys.
         :param pulumi.Input[_builtins.float] used_times: Number of times Setup Key was used
         :param pulumi.Input[_builtins.bool] valid: True if setup key can be used to create more Peers
         """
@@ -223,182 +223,182 @@ class _SetupKeyState:
 
     @_builtins.property
     @pulumi.getter(name="allowExtraDnsLabels")
-    def allow_extra_dns_labels(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def allow_extra_dns_labels(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allow extra DNS labels to be added to the peer
         """
         return pulumi.get(self, "allow_extra_dns_labels")
 
     @allow_extra_dns_labels.setter
-    def allow_extra_dns_labels(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def allow_extra_dns_labels(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "allow_extra_dns_labels", value)
 
     @_builtins.property
     @pulumi.getter(name="autoGroups")
-    def auto_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def auto_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         List of groups to automatically assign to peers created through this setup key
         """
         return pulumi.get(self, "auto_groups")
 
     @auto_groups.setter
-    def auto_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def auto_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "auto_groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def ephemeral(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def ephemeral(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate that the peer will be ephemeral or not, ephemeral peers are deleted after 10 minutes of inactivity
         """
         return pulumi.get(self, "ephemeral")
 
     @ephemeral.setter
-    def ephemeral(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def ephemeral(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "ephemeral", value)
 
     @_builtins.property
     @pulumi.getter
-    def expires(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def expires(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         SetupKey Expiration Date
         """
         return pulumi.get(self, "expires")
 
     @expires.setter
-    def expires(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def expires(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "expires", value)
 
     @_builtins.property
     @pulumi.getter(name="expirySeconds")
-    def expiry_seconds(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def expiry_seconds(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
-        Expiry time in seconds (0 is unlimited)
+        Expiry time in seconds (0 is unlimited). The API reports an absolute expiry date and no creation date, so this value cannot be read back and an imported key adopts whatever the configuration says.
         """
         return pulumi.get(self, "expiry_seconds")
 
     @expiry_seconds.setter
-    def expiry_seconds(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def expiry_seconds(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "expiry_seconds", value)
 
     @_builtins.property
     @pulumi.getter
-    def key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Plaintext setup key
         """
         return pulumi.get(self, "key")
 
     @key.setter
-    def key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "key", value)
 
     @_builtins.property
     @pulumi.getter(name="lastUsed")
-    def last_used(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def last_used(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Last usage time
         """
         return pulumi.get(self, "last_used")
 
     @last_used.setter
-    def last_used(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def last_used(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "last_used", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         SetupKey Name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def revoked(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def revoked(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Set to true to revoke setup key
         """
         return pulumi.get(self, "revoked")
 
     @revoked.setter
-    def revoked(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def revoked(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "revoked", value)
 
     @_builtins.property
     @pulumi.getter
-    def state(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def state(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Setup key state (valid or expired)
         """
         return pulumi.get(self, "state")
 
     @state.setter
-    def state(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def state(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "state", value)
 
     @_builtins.property
     @pulumi.getter
-    def type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Setup Key type (one-off or reusable)
         """
         return pulumi.get(self, "type")
 
     @type.setter
-    def type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "type", value)
 
     @_builtins.property
     @pulumi.getter(name="updatedAt")
-    def updated_at(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated_at(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Creation timestamp
         """
         return pulumi.get(self, "updated_at")
 
     @updated_at.setter
-    def updated_at(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated_at(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated_at", value)
 
     @_builtins.property
     @pulumi.getter(name="usageLimit")
-    def usage_limit(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def usage_limit(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
-        Maximum number of times SetupKey can be used (0 for unlimited)
+        Maximum number of times SetupKey can be used (0 for unlimited). A one-off key is always limited to 1 by the server, so leave this unset for one-off keys.
         """
         return pulumi.get(self, "usage_limit")
 
     @usage_limit.setter
-    def usage_limit(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def usage_limit(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "usage_limit", value)
 
     @_builtins.property
     @pulumi.getter(name="usedTimes")
-    def used_times(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def used_times(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Number of times Setup Key was used
         """
         return pulumi.get(self, "used_times")
 
     @used_times.setter
-    def used_times(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def used_times(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "used_times", value)
 
     @_builtins.property
     @pulumi.getter
-    def valid(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def valid(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         True if setup key can be used to create more Peers
         """
         return pulumi.get(self, "valid")
 
     @valid.setter
-    def valid(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def valid(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "valid", value)
 
 
@@ -408,14 +408,14 @@ class SetupKey(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 allow_extra_dns_labels: Optional[pulumi.Input[_builtins.bool]] = None,
-                 auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 ephemeral: Optional[pulumi.Input[_builtins.bool]] = None,
-                 expiry_seconds: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 revoked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 usage_limit: Optional[pulumi.Input[_builtins.float]] = None,
+                 allow_extra_dns_labels: pulumi.Input[Optional[_builtins.bool]] = None,
+                 auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 ephemeral: pulumi.Input[Optional[_builtins.bool]] = None,
+                 expiry_seconds: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 revoked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 usage_limit: pulumi.Input[Optional[_builtins.float]] = None,
                  __props__=None):
         """
         Create a SetupKey resource with the given unique name, props, and options.
@@ -425,11 +425,11 @@ class SetupKey(pulumi.CustomResource):
         :param pulumi.Input[_builtins.bool] allow_extra_dns_labels: Allow extra DNS labels to be added to the peer
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] auto_groups: List of groups to automatically assign to peers created through this setup key
         :param pulumi.Input[_builtins.bool] ephemeral: Indicate that the peer will be ephemeral or not, ephemeral peers are deleted after 10 minutes of inactivity
-        :param pulumi.Input[_builtins.float] expiry_seconds: Expiry time in seconds (0 is unlimited)
+        :param pulumi.Input[_builtins.float] expiry_seconds: Expiry time in seconds (0 is unlimited). The API reports an absolute expiry date and no creation date, so this value cannot be read back and an imported key adopts whatever the configuration says.
         :param pulumi.Input[_builtins.str] name: SetupKey Name
         :param pulumi.Input[_builtins.bool] revoked: Set to true to revoke setup key
         :param pulumi.Input[_builtins.str] type: Setup Key type (one-off or reusable)
-        :param pulumi.Input[_builtins.float] usage_limit: Maximum number of times SetupKey can be used (0 for unlimited)
+        :param pulumi.Input[_builtins.float] usage_limit: Maximum number of times SetupKey can be used (0 for unlimited). A one-off key is always limited to 1 by the server, so leave this unset for one-off keys.
         """
         ...
     @overload
@@ -455,14 +455,14 @@ class SetupKey(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 allow_extra_dns_labels: Optional[pulumi.Input[_builtins.bool]] = None,
-                 auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 ephemeral: Optional[pulumi.Input[_builtins.bool]] = None,
-                 expiry_seconds: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 revoked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 usage_limit: Optional[pulumi.Input[_builtins.float]] = None,
+                 allow_extra_dns_labels: pulumi.Input[Optional[_builtins.bool]] = None,
+                 auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 ephemeral: pulumi.Input[Optional[_builtins.bool]] = None,
+                 expiry_seconds: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 revoked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 usage_limit: pulumi.Input[Optional[_builtins.float]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -500,21 +500,21 @@ class SetupKey(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            allow_extra_dns_labels: Optional[pulumi.Input[_builtins.bool]] = None,
-            auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            ephemeral: Optional[pulumi.Input[_builtins.bool]] = None,
-            expires: Optional[pulumi.Input[_builtins.str]] = None,
-            expiry_seconds: Optional[pulumi.Input[_builtins.float]] = None,
-            key: Optional[pulumi.Input[_builtins.str]] = None,
-            last_used: Optional[pulumi.Input[_builtins.str]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            revoked: Optional[pulumi.Input[_builtins.bool]] = None,
-            state: Optional[pulumi.Input[_builtins.str]] = None,
-            type: Optional[pulumi.Input[_builtins.str]] = None,
-            updated_at: Optional[pulumi.Input[_builtins.str]] = None,
-            usage_limit: Optional[pulumi.Input[_builtins.float]] = None,
-            used_times: Optional[pulumi.Input[_builtins.float]] = None,
-            valid: Optional[pulumi.Input[_builtins.bool]] = None) -> 'SetupKey':
+            allow_extra_dns_labels: pulumi.Input[Optional[_builtins.bool]] = None,
+            auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            ephemeral: pulumi.Input[Optional[_builtins.bool]] = None,
+            expires: pulumi.Input[Optional[_builtins.str]] = None,
+            expiry_seconds: pulumi.Input[Optional[_builtins.float]] = None,
+            key: pulumi.Input[Optional[_builtins.str]] = None,
+            last_used: pulumi.Input[Optional[_builtins.str]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            revoked: pulumi.Input[Optional[_builtins.bool]] = None,
+            state: pulumi.Input[Optional[_builtins.str]] = None,
+            type: pulumi.Input[Optional[_builtins.str]] = None,
+            updated_at: pulumi.Input[Optional[_builtins.str]] = None,
+            usage_limit: pulumi.Input[Optional[_builtins.float]] = None,
+            used_times: pulumi.Input[Optional[_builtins.float]] = None,
+            valid: pulumi.Input[Optional[_builtins.bool]] = None) -> 'SetupKey':
         """
         Get an existing SetupKey resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
@@ -526,7 +526,7 @@ class SetupKey(pulumi.CustomResource):
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] auto_groups: List of groups to automatically assign to peers created through this setup key
         :param pulumi.Input[_builtins.bool] ephemeral: Indicate that the peer will be ephemeral or not, ephemeral peers are deleted after 10 minutes of inactivity
         :param pulumi.Input[_builtins.str] expires: SetupKey Expiration Date
-        :param pulumi.Input[_builtins.float] expiry_seconds: Expiry time in seconds (0 is unlimited)
+        :param pulumi.Input[_builtins.float] expiry_seconds: Expiry time in seconds (0 is unlimited). The API reports an absolute expiry date and no creation date, so this value cannot be read back and an imported key adopts whatever the configuration says.
         :param pulumi.Input[_builtins.str] key: Plaintext setup key
         :param pulumi.Input[_builtins.str] last_used: Last usage time
         :param pulumi.Input[_builtins.str] name: SetupKey Name
@@ -534,7 +534,7 @@ class SetupKey(pulumi.CustomResource):
         :param pulumi.Input[_builtins.str] state: Setup key state (valid or expired)
         :param pulumi.Input[_builtins.str] type: Setup Key type (one-off or reusable)
         :param pulumi.Input[_builtins.str] updated_at: Creation timestamp
-        :param pulumi.Input[_builtins.float] usage_limit: Maximum number of times SetupKey can be used (0 for unlimited)
+        :param pulumi.Input[_builtins.float] usage_limit: Maximum number of times SetupKey can be used (0 for unlimited). A one-off key is always limited to 1 by the server, so leave this unset for one-off keys.
         :param pulumi.Input[_builtins.float] used_times: Number of times Setup Key was used
         :param pulumi.Input[_builtins.bool] valid: True if setup key can be used to create more Peers
         """
@@ -595,7 +595,7 @@ class SetupKey(pulumi.CustomResource):
     @pulumi.getter(name="expirySeconds")
     def expiry_seconds(self) -> pulumi.Output[_builtins.float]:
         """
-        Expiry time in seconds (0 is unlimited)
+        Expiry time in seconds (0 is unlimited). The API reports an absolute expiry date and no creation date, so this value cannot be read back and an imported key adopts whatever the configuration says.
         """
         return pulumi.get(self, "expiry_seconds")
 
@@ -659,7 +659,7 @@ class SetupKey(pulumi.CustomResource):
     @pulumi.getter(name="usageLimit")
     def usage_limit(self) -> pulumi.Output[_builtins.float]:
         """
-        Maximum number of times SetupKey can be used (0 for unlimited)
+        Maximum number of times SetupKey can be used (0 for unlimited). A one-off key is always limited to 1 by the server, so leave this unset for one-off keys.
         """
         return pulumi.get(self, "usage_limit")
 

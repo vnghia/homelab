@@ -21,17 +21,17 @@ class RouteArgs:
     def __init__(__self__, *,
                  groups: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]],
                  network_id: pulumi.Input[_builtins.str],
-                 access_control_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 keep_route: Optional[pulumi.Input[_builtins.bool]] = None,
-                 masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-                 metric: Optional[pulumi.Input[_builtins.float]] = None,
-                 network: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 skip_auto_apply: Optional[pulumi.Input[_builtins.bool]] = None):
+                 access_control_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 keep_route: pulumi.Input[Optional[_builtins.bool]] = None,
+                 masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+                 metric: pulumi.Input[Optional[_builtins.float]] = None,
+                 network: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 skip_auto_apply: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         The set of arguments for constructing a Route resource.
 
@@ -100,154 +100,154 @@ class RouteArgs:
 
     @_builtins.property
     @pulumi.getter(name="accessControlGroups")
-    def access_control_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def access_control_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Access control group identifier associated with route.
         """
         return pulumi.get(self, "access_control_groups")
 
     @access_control_groups.setter
-    def access_control_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def access_control_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "access_control_groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Route description
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter
-    def domains(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def domains(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Domain list to be dynamically resolved. Max of 32 domains can be added per route configuration. Conflicts with network
         """
         return pulumi.get(self, "domains")
 
     @domains.setter
-    def domains(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def domains(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "domains", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Route status
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="keepRoute")
-    def keep_route(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def keep_route(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate if the route should be kept after a domain doesn't resolve that IP anymore
         """
         return pulumi.get(self, "keep_route")
 
     @keep_route.setter
-    def keep_route(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def keep_route(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "keep_route", value)
 
     @_builtins.property
     @pulumi.getter
-    def masquerade(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def masquerade(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate if peer should masquerade traffic to this route's prefix
         """
         return pulumi.get(self, "masquerade")
 
     @masquerade.setter
-    def masquerade(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def masquerade(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "masquerade", value)
 
     @_builtins.property
     @pulumi.getter
-    def metric(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def metric(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Route metric number. Lowest number has higher priority
         """
         return pulumi.get(self, "metric")
 
     @metric.setter
-    def metric(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def metric(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "metric", value)
 
     @_builtins.property
     @pulumi.getter
-    def network(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def network(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Network range in CIDR format, Conflicts with domains
         """
         return pulumi.get(self, "network")
 
     @network.setter
-    def network(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def network(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "network", value)
 
     @_builtins.property
     @pulumi.getter
-    def peer(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def peer(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Identifier associated with route. This property can not be set together with peer_groups
         """
         return pulumi.get(self, "peer")
 
     @peer.setter
-    def peer(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def peer(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "peer", value)
 
     @_builtins.property
     @pulumi.getter(name="peerGroups")
-    def peer_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def peer_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Peers Group Identifier associated with route. This property can not be set together with peer
         """
         return pulumi.get(self, "peer_groups")
 
     @peer_groups.setter
-    def peer_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def peer_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "peer_groups", value)
 
     @_builtins.property
     @pulumi.getter(name="skipAutoApply")
-    def skip_auto_apply(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def skip_auto_apply(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate if this exit node route (0.0.0.0/0) should skip auto-application for client routing
         """
         return pulumi.get(self, "skip_auto_apply")
 
     @skip_auto_apply.setter
-    def skip_auto_apply(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def skip_auto_apply(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "skip_auto_apply", value)
 
 
 @pulumi.input_type
 class _RouteState:
     def __init__(__self__, *,
-                 access_control_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 keep_route: Optional[pulumi.Input[_builtins.bool]] = None,
-                 masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-                 metric: Optional[pulumi.Input[_builtins.float]] = None,
-                 network: Optional[pulumi.Input[_builtins.str]] = None,
-                 network_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 network_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 skip_auto_apply: Optional[pulumi.Input[_builtins.bool]] = None):
+                 access_control_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 keep_route: pulumi.Input[Optional[_builtins.bool]] = None,
+                 masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+                 metric: pulumi.Input[Optional[_builtins.float]] = None,
+                 network: pulumi.Input[Optional[_builtins.str]] = None,
+                 network_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 network_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 skip_auto_apply: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         Input properties used for looking up and filtering Route resources.
 
@@ -297,170 +297,170 @@ class _RouteState:
 
     @_builtins.property
     @pulumi.getter(name="accessControlGroups")
-    def access_control_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def access_control_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Access control group identifier associated with route.
         """
         return pulumi.get(self, "access_control_groups")
 
     @access_control_groups.setter
-    def access_control_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def access_control_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "access_control_groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Route description
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter
-    def domains(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def domains(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Domain list to be dynamically resolved. Max of 32 domains can be added per route configuration. Conflicts with network
         """
         return pulumi.get(self, "domains")
 
     @domains.setter
-    def domains(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def domains(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "domains", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Route status
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Group IDs containing routing peers
         """
         return pulumi.get(self, "groups")
 
     @groups.setter
-    def groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "groups", value)
 
     @_builtins.property
     @pulumi.getter(name="keepRoute")
-    def keep_route(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def keep_route(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate if the route should be kept after a domain doesn't resolve that IP anymore
         """
         return pulumi.get(self, "keep_route")
 
     @keep_route.setter
-    def keep_route(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def keep_route(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "keep_route", value)
 
     @_builtins.property
     @pulumi.getter
-    def masquerade(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def masquerade(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate if peer should masquerade traffic to this route's prefix
         """
         return pulumi.get(self, "masquerade")
 
     @masquerade.setter
-    def masquerade(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def masquerade(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "masquerade", value)
 
     @_builtins.property
     @pulumi.getter
-    def metric(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def metric(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Route metric number. Lowest number has higher priority
         """
         return pulumi.get(self, "metric")
 
     @metric.setter
-    def metric(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def metric(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "metric", value)
 
     @_builtins.property
     @pulumi.getter
-    def network(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def network(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Network range in CIDR format, Conflicts with domains
         """
         return pulumi.get(self, "network")
 
     @network.setter
-    def network(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def network(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "network", value)
 
     @_builtins.property
     @pulumi.getter(name="networkId")
-    def network_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def network_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Route network identifier, to group HA routes
         """
         return pulumi.get(self, "network_id")
 
     @network_id.setter
-    def network_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def network_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "network_id", value)
 
     @_builtins.property
     @pulumi.getter(name="networkType")
-    def network_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def network_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Domain or IPv4
         """
         return pulumi.get(self, "network_type")
 
     @network_type.setter
-    def network_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def network_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "network_type", value)
 
     @_builtins.property
     @pulumi.getter
-    def peer(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def peer(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Identifier associated with route. This property can not be set together with peer_groups
         """
         return pulumi.get(self, "peer")
 
     @peer.setter
-    def peer(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def peer(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "peer", value)
 
     @_builtins.property
     @pulumi.getter(name="peerGroups")
-    def peer_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def peer_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Peers Group Identifier associated with route. This property can not be set together with peer
         """
         return pulumi.get(self, "peer_groups")
 
     @peer_groups.setter
-    def peer_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def peer_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "peer_groups", value)
 
     @_builtins.property
     @pulumi.getter(name="skipAutoApply")
-    def skip_auto_apply(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def skip_auto_apply(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate if this exit node route (0.0.0.0/0) should skip auto-application for client routing
         """
         return pulumi.get(self, "skip_auto_apply")
 
     @skip_auto_apply.setter
-    def skip_auto_apply(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def skip_auto_apply(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "skip_auto_apply", value)
 
 
@@ -470,19 +470,19 @@ class Route(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 access_control_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 keep_route: Optional[pulumi.Input[_builtins.bool]] = None,
-                 masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-                 metric: Optional[pulumi.Input[_builtins.float]] = None,
-                 network: Optional[pulumi.Input[_builtins.str]] = None,
-                 network_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 skip_auto_apply: Optional[pulumi.Input[_builtins.bool]] = None,
+                 access_control_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 keep_route: pulumi.Input[Optional[_builtins.bool]] = None,
+                 masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+                 metric: pulumi.Input[Optional[_builtins.float]] = None,
+                 network: pulumi.Input[Optional[_builtins.str]] = None,
+                 network_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 skip_auto_apply: pulumi.Input[Optional[_builtins.bool]] = None,
                  __props__=None):
         """
         Create a Route resource with the given unique name, props, and options.
@@ -527,19 +527,19 @@ class Route(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 access_control_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 keep_route: Optional[pulumi.Input[_builtins.bool]] = None,
-                 masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-                 metric: Optional[pulumi.Input[_builtins.float]] = None,
-                 network: Optional[pulumi.Input[_builtins.str]] = None,
-                 network_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 skip_auto_apply: Optional[pulumi.Input[_builtins.bool]] = None,
+                 access_control_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 keep_route: pulumi.Input[Optional[_builtins.bool]] = None,
+                 masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+                 metric: pulumi.Input[Optional[_builtins.float]] = None,
+                 network: pulumi.Input[Optional[_builtins.str]] = None,
+                 network_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 skip_auto_apply: pulumi.Input[Optional[_builtins.bool]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -578,20 +578,20 @@ class Route(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            access_control_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            description: Optional[pulumi.Input[_builtins.str]] = None,
-            domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            keep_route: Optional[pulumi.Input[_builtins.bool]] = None,
-            masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-            metric: Optional[pulumi.Input[_builtins.float]] = None,
-            network: Optional[pulumi.Input[_builtins.str]] = None,
-            network_id: Optional[pulumi.Input[_builtins.str]] = None,
-            network_type: Optional[pulumi.Input[_builtins.str]] = None,
-            peer: Optional[pulumi.Input[_builtins.str]] = None,
-            peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            skip_auto_apply: Optional[pulumi.Input[_builtins.bool]] = None) -> 'Route':
+            access_control_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            description: pulumi.Input[Optional[_builtins.str]] = None,
+            domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            keep_route: pulumi.Input[Optional[_builtins.bool]] = None,
+            masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+            metric: pulumi.Input[Optional[_builtins.float]] = None,
+            network: pulumi.Input[Optional[_builtins.str]] = None,
+            network_id: pulumi.Input[Optional[_builtins.str]] = None,
+            network_type: pulumi.Input[Optional[_builtins.str]] = None,
+            peer: pulumi.Input[Optional[_builtins.str]] = None,
+            peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            skip_auto_apply: pulumi.Input[Optional[_builtins.bool]] = None) -> 'Route':
         """
         Get an existing Route resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

@@ -21,13 +21,13 @@ __all__ = ['PostureCheckArgs', 'PostureCheck']
 @pulumi.input_type
 class PostureCheckArgs:
     def __init__(__self__, *,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 geo_location_check: Optional[pulumi.Input['PostureCheckGeoLocationCheckArgs']] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 netbird_version_check: Optional[pulumi.Input['PostureCheckNetbirdVersionCheckArgs']] = None,
-                 os_version_check: Optional[pulumi.Input['PostureCheckOsVersionCheckArgs']] = None,
-                 peer_network_range_check: Optional[pulumi.Input['PostureCheckPeerNetworkRangeCheckArgs']] = None,
-                 process_checks: Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]] = None):
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 geo_location_check: pulumi.Input[Optional['PostureCheckGeoLocationCheckArgs']] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 netbird_version_check: pulumi.Input[Optional['PostureCheckNetbirdVersionCheckArgs']] = None,
+                 os_version_check: pulumi.Input[Optional['PostureCheckOsVersionCheckArgs']] = None,
+                 peer_network_range_check: pulumi.Input[Optional['PostureCheckPeerNetworkRangeCheckArgs']] = None,
+                 process_checks: pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]] = None):
         """
         The set of arguments for constructing a PostureCheck resource.
 
@@ -51,84 +51,84 @@ class PostureCheckArgs:
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         PostureCheck description
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter(name="geoLocationCheck")
-    def geo_location_check(self) -> Optional[pulumi.Input['PostureCheckGeoLocationCheckArgs']]:
+    def geo_location_check(self) -> pulumi.Input[Optional['PostureCheckGeoLocationCheckArgs']]:
         return pulumi.get(self, "geo_location_check")
 
     @geo_location_check.setter
-    def geo_location_check(self, value: Optional[pulumi.Input['PostureCheckGeoLocationCheckArgs']]):
+    def geo_location_check(self, value: pulumi.Input[Optional['PostureCheckGeoLocationCheckArgs']]):
         pulumi.set(self, "geo_location_check", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         PostureCheck Name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="netbirdVersionCheck")
-    def netbird_version_check(self) -> Optional[pulumi.Input['PostureCheckNetbirdVersionCheckArgs']]:
+    def netbird_version_check(self) -> pulumi.Input[Optional['PostureCheckNetbirdVersionCheckArgs']]:
         return pulumi.get(self, "netbird_version_check")
 
     @netbird_version_check.setter
-    def netbird_version_check(self, value: Optional[pulumi.Input['PostureCheckNetbirdVersionCheckArgs']]):
+    def netbird_version_check(self, value: pulumi.Input[Optional['PostureCheckNetbirdVersionCheckArgs']]):
         pulumi.set(self, "netbird_version_check", value)
 
     @_builtins.property
     @pulumi.getter(name="osVersionCheck")
-    def os_version_check(self) -> Optional[pulumi.Input['PostureCheckOsVersionCheckArgs']]:
+    def os_version_check(self) -> pulumi.Input[Optional['PostureCheckOsVersionCheckArgs']]:
         return pulumi.get(self, "os_version_check")
 
     @os_version_check.setter
-    def os_version_check(self, value: Optional[pulumi.Input['PostureCheckOsVersionCheckArgs']]):
+    def os_version_check(self, value: pulumi.Input[Optional['PostureCheckOsVersionCheckArgs']]):
         pulumi.set(self, "os_version_check", value)
 
     @_builtins.property
     @pulumi.getter(name="peerNetworkRangeCheck")
-    def peer_network_range_check(self) -> Optional[pulumi.Input['PostureCheckPeerNetworkRangeCheckArgs']]:
+    def peer_network_range_check(self) -> pulumi.Input[Optional['PostureCheckPeerNetworkRangeCheckArgs']]:
         return pulumi.get(self, "peer_network_range_check")
 
     @peer_network_range_check.setter
-    def peer_network_range_check(self, value: Optional[pulumi.Input['PostureCheckPeerNetworkRangeCheckArgs']]):
+    def peer_network_range_check(self, value: pulumi.Input[Optional['PostureCheckPeerNetworkRangeCheckArgs']]):
         pulumi.set(self, "peer_network_range_check", value)
 
     @_builtins.property
     @pulumi.getter(name="processChecks")
-    def process_checks(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]]:
+    def process_checks(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]]:
         return pulumi.get(self, "process_checks")
 
     @process_checks.setter
-    def process_checks(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]]):
+    def process_checks(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]]):
         pulumi.set(self, "process_checks", value)
 
 
 @pulumi.input_type
 class _PostureCheckState:
     def __init__(__self__, *,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 geo_location_check: Optional[pulumi.Input['PostureCheckGeoLocationCheckArgs']] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 netbird_version_check: Optional[pulumi.Input['PostureCheckNetbirdVersionCheckArgs']] = None,
-                 os_version_check: Optional[pulumi.Input['PostureCheckOsVersionCheckArgs']] = None,
-                 peer_network_range_check: Optional[pulumi.Input['PostureCheckPeerNetworkRangeCheckArgs']] = None,
-                 process_checks: Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]] = None):
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 geo_location_check: pulumi.Input[Optional['PostureCheckGeoLocationCheckArgs']] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 netbird_version_check: pulumi.Input[Optional['PostureCheckNetbirdVersionCheckArgs']] = None,
+                 os_version_check: pulumi.Input[Optional['PostureCheckOsVersionCheckArgs']] = None,
+                 peer_network_range_check: pulumi.Input[Optional['PostureCheckPeerNetworkRangeCheckArgs']] = None,
+                 process_checks: pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]] = None):
         """
         Input properties used for looking up and filtering PostureCheck resources.
 
@@ -152,71 +152,71 @@ class _PostureCheckState:
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         PostureCheck description
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter(name="geoLocationCheck")
-    def geo_location_check(self) -> Optional[pulumi.Input['PostureCheckGeoLocationCheckArgs']]:
+    def geo_location_check(self) -> pulumi.Input[Optional['PostureCheckGeoLocationCheckArgs']]:
         return pulumi.get(self, "geo_location_check")
 
     @geo_location_check.setter
-    def geo_location_check(self, value: Optional[pulumi.Input['PostureCheckGeoLocationCheckArgs']]):
+    def geo_location_check(self, value: pulumi.Input[Optional['PostureCheckGeoLocationCheckArgs']]):
         pulumi.set(self, "geo_location_check", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         PostureCheck Name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="netbirdVersionCheck")
-    def netbird_version_check(self) -> Optional[pulumi.Input['PostureCheckNetbirdVersionCheckArgs']]:
+    def netbird_version_check(self) -> pulumi.Input[Optional['PostureCheckNetbirdVersionCheckArgs']]:
         return pulumi.get(self, "netbird_version_check")
 
     @netbird_version_check.setter
-    def netbird_version_check(self, value: Optional[pulumi.Input['PostureCheckNetbirdVersionCheckArgs']]):
+    def netbird_version_check(self, value: pulumi.Input[Optional['PostureCheckNetbirdVersionCheckArgs']]):
         pulumi.set(self, "netbird_version_check", value)
 
     @_builtins.property
     @pulumi.getter(name="osVersionCheck")
-    def os_version_check(self) -> Optional[pulumi.Input['PostureCheckOsVersionCheckArgs']]:
+    def os_version_check(self) -> pulumi.Input[Optional['PostureCheckOsVersionCheckArgs']]:
         return pulumi.get(self, "os_version_check")
 
     @os_version_check.setter
-    def os_version_check(self, value: Optional[pulumi.Input['PostureCheckOsVersionCheckArgs']]):
+    def os_version_check(self, value: pulumi.Input[Optional['PostureCheckOsVersionCheckArgs']]):
         pulumi.set(self, "os_version_check", value)
 
     @_builtins.property
     @pulumi.getter(name="peerNetworkRangeCheck")
-    def peer_network_range_check(self) -> Optional[pulumi.Input['PostureCheckPeerNetworkRangeCheckArgs']]:
+    def peer_network_range_check(self) -> pulumi.Input[Optional['PostureCheckPeerNetworkRangeCheckArgs']]:
         return pulumi.get(self, "peer_network_range_check")
 
     @peer_network_range_check.setter
-    def peer_network_range_check(self, value: Optional[pulumi.Input['PostureCheckPeerNetworkRangeCheckArgs']]):
+    def peer_network_range_check(self, value: pulumi.Input[Optional['PostureCheckPeerNetworkRangeCheckArgs']]):
         pulumi.set(self, "peer_network_range_check", value)
 
     @_builtins.property
     @pulumi.getter(name="processChecks")
-    def process_checks(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]]:
+    def process_checks(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]]:
         return pulumi.get(self, "process_checks")
 
     @process_checks.setter
-    def process_checks(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]]):
+    def process_checks(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckProcessCheckArgs']]]]):
         pulumi.set(self, "process_checks", value)
 
 
@@ -226,13 +226,13 @@ class PostureCheck(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 geo_location_check: Optional[pulumi.Input[Union['PostureCheckGeoLocationCheckArgs', 'PostureCheckGeoLocationCheckArgsDict']]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 netbird_version_check: Optional[pulumi.Input[Union['PostureCheckNetbirdVersionCheckArgs', 'PostureCheckNetbirdVersionCheckArgsDict']]] = None,
-                 os_version_check: Optional[pulumi.Input[Union['PostureCheckOsVersionCheckArgs', 'PostureCheckOsVersionCheckArgsDict']]] = None,
-                 peer_network_range_check: Optional[pulumi.Input[Union['PostureCheckPeerNetworkRangeCheckArgs', 'PostureCheckPeerNetworkRangeCheckArgsDict']]] = None,
-                 process_checks: Optional[pulumi.Input[Sequence[pulumi.Input[Union['PostureCheckProcessCheckArgs', 'PostureCheckProcessCheckArgsDict']]]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 geo_location_check: pulumi.Input[Optional[Union['PostureCheckGeoLocationCheckArgs', 'PostureCheckGeoLocationCheckArgsDict', 'outputs.PostureCheckGeoLocationCheck']]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 netbird_version_check: pulumi.Input[Optional[Union['PostureCheckNetbirdVersionCheckArgs', 'PostureCheckNetbirdVersionCheckArgsDict', 'outputs.PostureCheckNetbirdVersionCheck']]] = None,
+                 os_version_check: pulumi.Input[Optional[Union['PostureCheckOsVersionCheckArgs', 'PostureCheckOsVersionCheckArgsDict', 'outputs.PostureCheckOsVersionCheck']]] = None,
+                 peer_network_range_check: pulumi.Input[Optional[Union['PostureCheckPeerNetworkRangeCheckArgs', 'PostureCheckPeerNetworkRangeCheckArgsDict', 'outputs.PostureCheckPeerNetworkRangeCheck']]] = None,
+                 process_checks: pulumi.Input[Optional[Sequence[pulumi.Input[Union['PostureCheckProcessCheckArgs', 'PostureCheckProcessCheckArgsDict', 'outputs.PostureCheckProcessCheck']]]]] = None,
                  __props__=None):
         """
         Create a PostureCheck resource with the given unique name, props, and options.
@@ -266,13 +266,13 @@ class PostureCheck(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 geo_location_check: Optional[pulumi.Input[Union['PostureCheckGeoLocationCheckArgs', 'PostureCheckGeoLocationCheckArgsDict']]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 netbird_version_check: Optional[pulumi.Input[Union['PostureCheckNetbirdVersionCheckArgs', 'PostureCheckNetbirdVersionCheckArgsDict']]] = None,
-                 os_version_check: Optional[pulumi.Input[Union['PostureCheckOsVersionCheckArgs', 'PostureCheckOsVersionCheckArgsDict']]] = None,
-                 peer_network_range_check: Optional[pulumi.Input[Union['PostureCheckPeerNetworkRangeCheckArgs', 'PostureCheckPeerNetworkRangeCheckArgsDict']]] = None,
-                 process_checks: Optional[pulumi.Input[Sequence[pulumi.Input[Union['PostureCheckProcessCheckArgs', 'PostureCheckProcessCheckArgsDict']]]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 geo_location_check: pulumi.Input[Optional[Union['PostureCheckGeoLocationCheckArgs', 'PostureCheckGeoLocationCheckArgsDict', 'outputs.PostureCheckGeoLocationCheck']]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 netbird_version_check: pulumi.Input[Optional[Union['PostureCheckNetbirdVersionCheckArgs', 'PostureCheckNetbirdVersionCheckArgsDict', 'outputs.PostureCheckNetbirdVersionCheck']]] = None,
+                 os_version_check: pulumi.Input[Optional[Union['PostureCheckOsVersionCheckArgs', 'PostureCheckOsVersionCheckArgsDict', 'outputs.PostureCheckOsVersionCheck']]] = None,
+                 peer_network_range_check: pulumi.Input[Optional[Union['PostureCheckPeerNetworkRangeCheckArgs', 'PostureCheckPeerNetworkRangeCheckArgsDict', 'outputs.PostureCheckPeerNetworkRangeCheck']]] = None,
+                 process_checks: pulumi.Input[Optional[Sequence[pulumi.Input[Union['PostureCheckProcessCheckArgs', 'PostureCheckProcessCheckArgsDict', 'outputs.PostureCheckProcessCheck']]]]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -300,13 +300,13 @@ class PostureCheck(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            description: Optional[pulumi.Input[_builtins.str]] = None,
-            geo_location_check: Optional[pulumi.Input[Union['PostureCheckGeoLocationCheckArgs', 'PostureCheckGeoLocationCheckArgsDict']]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            netbird_version_check: Optional[pulumi.Input[Union['PostureCheckNetbirdVersionCheckArgs', 'PostureCheckNetbirdVersionCheckArgsDict']]] = None,
-            os_version_check: Optional[pulumi.Input[Union['PostureCheckOsVersionCheckArgs', 'PostureCheckOsVersionCheckArgsDict']]] = None,
-            peer_network_range_check: Optional[pulumi.Input[Union['PostureCheckPeerNetworkRangeCheckArgs', 'PostureCheckPeerNetworkRangeCheckArgsDict']]] = None,
-            process_checks: Optional[pulumi.Input[Sequence[pulumi.Input[Union['PostureCheckProcessCheckArgs', 'PostureCheckProcessCheckArgsDict']]]]] = None) -> 'PostureCheck':
+            description: pulumi.Input[Optional[_builtins.str]] = None,
+            geo_location_check: pulumi.Input[Optional[Union['PostureCheckGeoLocationCheckArgs', 'PostureCheckGeoLocationCheckArgsDict', 'outputs.PostureCheckGeoLocationCheck']]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            netbird_version_check: pulumi.Input[Optional[Union['PostureCheckNetbirdVersionCheckArgs', 'PostureCheckNetbirdVersionCheckArgsDict', 'outputs.PostureCheckNetbirdVersionCheck']]] = None,
+            os_version_check: pulumi.Input[Optional[Union['PostureCheckOsVersionCheckArgs', 'PostureCheckOsVersionCheckArgsDict', 'outputs.PostureCheckOsVersionCheck']]] = None,
+            peer_network_range_check: pulumi.Input[Optional[Union['PostureCheckPeerNetworkRangeCheckArgs', 'PostureCheckPeerNetworkRangeCheckArgsDict', 'outputs.PostureCheckPeerNetworkRangeCheck']]] = None,
+            process_checks: pulumi.Input[Optional[Sequence[pulumi.Input[Union['PostureCheckProcessCheckArgs', 'PostureCheckProcessCheckArgsDict', 'outputs.PostureCheckProcessCheck']]]]] = None) -> 'PostureCheck':
         """
         Get an existing PostureCheck resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

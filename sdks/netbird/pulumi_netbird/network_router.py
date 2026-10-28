@@ -20,11 +20,11 @@ __all__ = ['NetworkRouterArgs', 'NetworkRouter']
 class NetworkRouterArgs:
     def __init__(__self__, *,
                  network_id: pulumi.Input[_builtins.str],
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-                 metric: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+                 metric: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         The set of arguments for constructing a NetworkRouter resource.
 
@@ -61,74 +61,74 @@ class NetworkRouterArgs:
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Network router status
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def masquerade(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def masquerade(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate if peer should masquerade traffic to this route's prefix
         """
         return pulumi.get(self, "masquerade")
 
     @masquerade.setter
-    def masquerade(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def masquerade(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "masquerade", value)
 
     @_builtins.property
     @pulumi.getter
-    def metric(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def metric(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Route metric number. Lowest number has higher priority
         """
         return pulumi.get(self, "metric")
 
     @metric.setter
-    def metric(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def metric(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "metric", value)
 
     @_builtins.property
     @pulumi.getter
-    def peer(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def peer(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Identifier associated with route. This property can not be set together with peer_groups
         """
         return pulumi.get(self, "peer")
 
     @peer.setter
-    def peer(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def peer(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "peer", value)
 
     @_builtins.property
     @pulumi.getter(name="peerGroups")
-    def peer_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def peer_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Peers Group Identifier associated with route. This property can not be set together with peer
         """
         return pulumi.get(self, "peer_groups")
 
     @peer_groups.setter
-    def peer_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def peer_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "peer_groups", value)
 
 
 @pulumi.input_type
 class _NetworkRouterState:
     def __init__(__self__, *,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-                 metric: Optional[pulumi.Input[_builtins.float]] = None,
-                 network_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+                 metric: pulumi.Input[Optional[_builtins.float]] = None,
+                 network_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         Input properties used for looking up and filtering NetworkRouter resources.
 
@@ -154,74 +154,74 @@ class _NetworkRouterState:
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Network router status
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def masquerade(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def masquerade(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicate if peer should masquerade traffic to this route's prefix
         """
         return pulumi.get(self, "masquerade")
 
     @masquerade.setter
-    def masquerade(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def masquerade(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "masquerade", value)
 
     @_builtins.property
     @pulumi.getter
-    def metric(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def metric(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Route metric number. Lowest number has higher priority
         """
         return pulumi.get(self, "metric")
 
     @metric.setter
-    def metric(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def metric(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "metric", value)
 
     @_builtins.property
     @pulumi.getter(name="networkId")
-    def network_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def network_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The unique identifier of a network
         """
         return pulumi.get(self, "network_id")
 
     @network_id.setter
-    def network_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def network_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "network_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def peer(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def peer(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Identifier associated with route. This property can not be set together with peer_groups
         """
         return pulumi.get(self, "peer")
 
     @peer.setter
-    def peer(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def peer(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "peer", value)
 
     @_builtins.property
     @pulumi.getter(name="peerGroups")
-    def peer_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def peer_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Peers Group Identifier associated with route. This property can not be set together with peer
         """
         return pulumi.get(self, "peer_groups")
 
     @peer_groups.setter
-    def peer_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def peer_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "peer_groups", value)
 
 
@@ -231,12 +231,12 @@ class NetworkRouter(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-                 metric: Optional[pulumi.Input[_builtins.float]] = None,
-                 network_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+                 metric: pulumi.Input[Optional[_builtins.float]] = None,
+                 network_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  __props__=None):
         """
         Create a NetworkRouter resource with the given unique name, props, and options.
@@ -274,12 +274,12 @@ class NetworkRouter(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-                 metric: Optional[pulumi.Input[_builtins.float]] = None,
-                 network_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+                 metric: pulumi.Input[Optional[_builtins.float]] = None,
+                 network_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -308,12 +308,12 @@ class NetworkRouter(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            masquerade: Optional[pulumi.Input[_builtins.bool]] = None,
-            metric: Optional[pulumi.Input[_builtins.float]] = None,
-            network_id: Optional[pulumi.Input[_builtins.str]] = None,
-            peer: Optional[pulumi.Input[_builtins.str]] = None,
-            peer_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None) -> 'NetworkRouter':
+            enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            masquerade: pulumi.Input[Optional[_builtins.bool]] = None,
+            metric: pulumi.Input[Optional[_builtins.float]] = None,
+            network_id: pulumi.Input[Optional[_builtins.str]] = None,
+            peer: pulumi.Input[Optional[_builtins.str]] = None,
+            peer_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None) -> 'NetworkRouter':
         """
         Get an existing NetworkRouter resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

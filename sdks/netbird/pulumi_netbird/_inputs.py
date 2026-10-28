@@ -15,6 +15,16 @@ else:
 from . import _utilities
 
 __all__ = [
+    'AgentNetworkGuardrailModelAllowlistArgs',
+    'AgentNetworkGuardrailModelAllowlistArgsDict',
+    'AgentNetworkGuardrailPromptCaptureArgs',
+    'AgentNetworkGuardrailPromptCaptureArgsDict',
+    'AgentNetworkPolicyBudgetLimitArgs',
+    'AgentNetworkPolicyBudgetLimitArgsDict',
+    'AgentNetworkPolicyTokenLimitArgs',
+    'AgentNetworkPolicyTokenLimitArgsDict',
+    'AgentNetworkProviderModelArgs',
+    'AgentNetworkProviderModelArgsDict',
     'NameserverGroupNameserverArgs',
     'NameserverGroupNameserverArgsDict',
     'PolicyRuleArgs',
@@ -37,10 +47,14 @@ __all__ = [
     'PostureCheckPeerNetworkRangeCheckArgsDict',
     'PostureCheckProcessCheckArgs',
     'PostureCheckProcessCheckArgsDict',
+    'ReverseProxyServiceAccessRestrictionsArgs',
+    'ReverseProxyServiceAccessRestrictionsArgsDict',
     'ReverseProxyServiceAuthArgs',
     'ReverseProxyServiceAuthArgsDict',
     'ReverseProxyServiceAuthBearerAuthArgs',
     'ReverseProxyServiceAuthBearerAuthArgsDict',
+    'ReverseProxyServiceAuthHeaderAuthArgs',
+    'ReverseProxyServiceAuthHeaderAuthArgsDict',
     'ReverseProxyServiceAuthLinkAuthArgs',
     'ReverseProxyServiceAuthLinkAuthArgsDict',
     'ReverseProxyServiceAuthPasswordAuthArgs',
@@ -49,6 +63,8 @@ __all__ = [
     'ReverseProxyServiceAuthPinAuthArgsDict',
     'ReverseProxyServiceTargetArgs',
     'ReverseProxyServiceTargetArgsDict',
+    'ReverseProxyServiceTargetOptionsArgs',
+    'ReverseProxyServiceTargetOptionsArgsDict',
     'GetPolicyRuleArgs',
     'GetPolicyRuleArgsDict',
     'GetPolicyRuleDestinationResourceArgs',
@@ -59,16 +75,357 @@ __all__ = [
     'GetPolicyRuleSourceResourceArgsDict',
 ]
 
+class AgentNetworkGuardrailModelAllowlistArgsDict(TypedDict):
+    models: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]
+    """
+    Allowed catalog model IDs
+    """
+    enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether the model allowlist check is active
+    """
+
+@pulumi.input_type
+class AgentNetworkGuardrailModelAllowlistArgs:
+    def __init__(__self__, *,
+                 models: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]],
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None):
+        """
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] models: Allowed catalog model IDs
+        :param pulumi.Input[_builtins.bool] enabled: Whether the model allowlist check is active
+        """
+        pulumi.set(__self__, "models", models)
+        if enabled is not None:
+            pulumi.set(__self__, "enabled", enabled)
+
+    @_builtins.property
+    @pulumi.getter
+    def models(self) -> pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]:
+        """
+        Allowed catalog model IDs
+        """
+        return pulumi.get(self, "models")
+
+    @models.setter
+    def models(self, value: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]):
+        pulumi.set(self, "models", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
+        """
+        Whether the model allowlist check is active
+        """
+        return pulumi.get(self, "enabled")
+
+    @enabled.setter
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
+        pulumi.set(self, "enabled", value)
+
+
+class AgentNetworkGuardrailPromptCaptureArgsDict(TypedDict):
+    enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether prompt capture is enabled for this guardrail
+    """
+    redact_pii: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether captured prompts have PII redacted
+    """
+
+@pulumi.input_type
+class AgentNetworkGuardrailPromptCaptureArgs:
+    def __init__(__self__, *,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 redact_pii: pulumi.Input[Optional[_builtins.bool]] = None):
+        """
+        :param pulumi.Input[_builtins.bool] enabled: Whether prompt capture is enabled for this guardrail
+        :param pulumi.Input[_builtins.bool] redact_pii: Whether captured prompts have PII redacted
+        """
+        if enabled is not None:
+            pulumi.set(__self__, "enabled", enabled)
+        if redact_pii is not None:
+            pulumi.set(__self__, "redact_pii", redact_pii)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
+        """
+        Whether prompt capture is enabled for this guardrail
+        """
+        return pulumi.get(self, "enabled")
+
+    @enabled.setter
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
+        pulumi.set(self, "enabled", value)
+
+    @_builtins.property
+    @pulumi.getter(name="redactPii")
+    def redact_pii(self) -> pulumi.Input[Optional[_builtins.bool]]:
+        """
+        Whether captured prompts have PII redacted
+        """
+        return pulumi.get(self, "redact_pii")
+
+    @redact_pii.setter
+    def redact_pii(self, value: pulumi.Input[Optional[_builtins.bool]]):
+        pulumi.set(self, "redact_pii", value)
+
+
+class AgentNetworkPolicyBudgetLimitArgsDict(TypedDict):
+    enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether the budget limit is enforced
+    """
+    group_cap_usd: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    USD allowed per source group per window (0 = uncapped)
+    """
+    user_cap_usd: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    USD allowed per user per window (0 = uncapped)
+    """
+    window_seconds: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    Reset frequency in seconds (minimum 60 when enabled)
+    """
+
+@pulumi.input_type
+class AgentNetworkPolicyBudgetLimitArgs:
+    def __init__(__self__, *,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 group_cap_usd: pulumi.Input[Optional[_builtins.float]] = None,
+                 user_cap_usd: pulumi.Input[Optional[_builtins.float]] = None,
+                 window_seconds: pulumi.Input[Optional[_builtins.float]] = None):
+        """
+        :param pulumi.Input[_builtins.bool] enabled: Whether the budget limit is enforced
+        :param pulumi.Input[_builtins.float] group_cap_usd: USD allowed per source group per window (0 = uncapped)
+        :param pulumi.Input[_builtins.float] user_cap_usd: USD allowed per user per window (0 = uncapped)
+        :param pulumi.Input[_builtins.float] window_seconds: Reset frequency in seconds (minimum 60 when enabled)
+        """
+        if enabled is not None:
+            pulumi.set(__self__, "enabled", enabled)
+        if group_cap_usd is not None:
+            pulumi.set(__self__, "group_cap_usd", group_cap_usd)
+        if user_cap_usd is not None:
+            pulumi.set(__self__, "user_cap_usd", user_cap_usd)
+        if window_seconds is not None:
+            pulumi.set(__self__, "window_seconds", window_seconds)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
+        """
+        Whether the budget limit is enforced
+        """
+        return pulumi.get(self, "enabled")
+
+    @enabled.setter
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
+        pulumi.set(self, "enabled", value)
+
+    @_builtins.property
+    @pulumi.getter(name="groupCapUsd")
+    def group_cap_usd(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        USD allowed per source group per window (0 = uncapped)
+        """
+        return pulumi.get(self, "group_cap_usd")
+
+    @group_cap_usd.setter
+    def group_cap_usd(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "group_cap_usd", value)
+
+    @_builtins.property
+    @pulumi.getter(name="userCapUsd")
+    def user_cap_usd(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        USD allowed per user per window (0 = uncapped)
+        """
+        return pulumi.get(self, "user_cap_usd")
+
+    @user_cap_usd.setter
+    def user_cap_usd(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "user_cap_usd", value)
+
+    @_builtins.property
+    @pulumi.getter(name="windowSeconds")
+    def window_seconds(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        Reset frequency in seconds (minimum 60 when enabled)
+        """
+        return pulumi.get(self, "window_seconds")
+
+    @window_seconds.setter
+    def window_seconds(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "window_seconds", value)
+
+
+class AgentNetworkPolicyTokenLimitArgsDict(TypedDict):
+    enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether the token limit is enforced
+    """
+    group_cap: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    Tokens allowed per source group per window (0 = uncapped)
+    """
+    user_cap: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    Tokens allowed per individual user per window (0 = uncapped)
+    """
+    window_seconds: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    Reset frequency in seconds (minimum 60 when enabled)
+    """
+
+@pulumi.input_type
+class AgentNetworkPolicyTokenLimitArgs:
+    def __init__(__self__, *,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 group_cap: pulumi.Input[Optional[_builtins.float]] = None,
+                 user_cap: pulumi.Input[Optional[_builtins.float]] = None,
+                 window_seconds: pulumi.Input[Optional[_builtins.float]] = None):
+        """
+        :param pulumi.Input[_builtins.bool] enabled: Whether the token limit is enforced
+        :param pulumi.Input[_builtins.float] group_cap: Tokens allowed per source group per window (0 = uncapped)
+        :param pulumi.Input[_builtins.float] user_cap: Tokens allowed per individual user per window (0 = uncapped)
+        :param pulumi.Input[_builtins.float] window_seconds: Reset frequency in seconds (minimum 60 when enabled)
+        """
+        if enabled is not None:
+            pulumi.set(__self__, "enabled", enabled)
+        if group_cap is not None:
+            pulumi.set(__self__, "group_cap", group_cap)
+        if user_cap is not None:
+            pulumi.set(__self__, "user_cap", user_cap)
+        if window_seconds is not None:
+            pulumi.set(__self__, "window_seconds", window_seconds)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
+        """
+        Whether the token limit is enforced
+        """
+        return pulumi.get(self, "enabled")
+
+    @enabled.setter
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
+        pulumi.set(self, "enabled", value)
+
+    @_builtins.property
+    @pulumi.getter(name="groupCap")
+    def group_cap(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        Tokens allowed per source group per window (0 = uncapped)
+        """
+        return pulumi.get(self, "group_cap")
+
+    @group_cap.setter
+    def group_cap(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "group_cap", value)
+
+    @_builtins.property
+    @pulumi.getter(name="userCap")
+    def user_cap(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        Tokens allowed per individual user per window (0 = uncapped)
+        """
+        return pulumi.get(self, "user_cap")
+
+    @user_cap.setter
+    def user_cap(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "user_cap", value)
+
+    @_builtins.property
+    @pulumi.getter(name="windowSeconds")
+    def window_seconds(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        Reset frequency in seconds (minimum 60 when enabled)
+        """
+        return pulumi.get(self, "window_seconds")
+
+    @window_seconds.setter
+    def window_seconds(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "window_seconds", value)
+
+
+class AgentNetworkProviderModelArgsDict(TypedDict):
+    id: pulumi.Input[_builtins.str]
+    """
+    Model identifier (e.g. `gpt-4o-mini`)
+    """
+    input_per1k: pulumi.Input[_builtins.float]
+    """
+    Cost per 1k input tokens in USD
+    """
+    output_per1k: pulumi.Input[_builtins.float]
+    """
+    Cost per 1k output tokens in USD
+    """
+
+@pulumi.input_type
+class AgentNetworkProviderModelArgs:
+    def __init__(__self__, *,
+                 id: pulumi.Input[_builtins.str],
+                 input_per1k: pulumi.Input[_builtins.float],
+                 output_per1k: pulumi.Input[_builtins.float]):
+        """
+        :param pulumi.Input[_builtins.str] id: Model identifier (e.g. `gpt-4o-mini`)
+        :param pulumi.Input[_builtins.float] input_per1k: Cost per 1k input tokens in USD
+        :param pulumi.Input[_builtins.float] output_per1k: Cost per 1k output tokens in USD
+        """
+        pulumi.set(__self__, "id", id)
+        pulumi.set(__self__, "input_per1k", input_per1k)
+        pulumi.set(__self__, "output_per1k", output_per1k)
+
+    @_builtins.property
+    @pulumi.getter
+    def id(self) -> pulumi.Input[_builtins.str]:
+        """
+        Model identifier (e.g. `gpt-4o-mini`)
+        """
+        return pulumi.get(self, "id")
+
+    @id.setter
+    def id(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "id", value)
+
+    @_builtins.property
+    @pulumi.getter(name="inputPer1k")
+    def input_per1k(self) -> pulumi.Input[_builtins.float]:
+        """
+        Cost per 1k input tokens in USD
+        """
+        return pulumi.get(self, "input_per1k")
+
+    @input_per1k.setter
+    def input_per1k(self, value: pulumi.Input[_builtins.float]):
+        pulumi.set(self, "input_per1k", value)
+
+    @_builtins.property
+    @pulumi.getter(name="outputPer1k")
+    def output_per1k(self) -> pulumi.Input[_builtins.float]:
+        """
+        Cost per 1k output tokens in USD
+        """
+        return pulumi.get(self, "output_per1k")
+
+    @output_per1k.setter
+    def output_per1k(self, value: pulumi.Input[_builtins.float]):
+        pulumi.set(self, "output_per1k", value)
+
+
 class NameserverGroupNameserverArgsDict(TypedDict):
     ip: pulumi.Input[_builtins.str]
     """
     Nameserver IP
     """
-    ns_type: NotRequired[pulumi.Input[_builtins.str]]
+    ns_type: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Nameserver Type
     """
-    port: NotRequired[pulumi.Input[_builtins.float]]
+    port: NotRequired[pulumi.Input[Optional[_builtins.float]]]
     """
     Nameserver Port
     """
@@ -77,8 +434,8 @@ class NameserverGroupNameserverArgsDict(TypedDict):
 class NameserverGroupNameserverArgs:
     def __init__(__self__, *,
                  ip: pulumi.Input[_builtins.str],
-                 ns_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 port: Optional[pulumi.Input[_builtins.float]] = None):
+                 ns_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 port: pulumi.Input[Optional[_builtins.float]] = None):
         """
         :param pulumi.Input[_builtins.str] ip: Nameserver IP
         :param pulumi.Input[_builtins.str] ns_type: Nameserver Type
@@ -104,26 +461,26 @@ class NameserverGroupNameserverArgs:
 
     @_builtins.property
     @pulumi.getter(name="nsType")
-    def ns_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def ns_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Nameserver Type
         """
         return pulumi.get(self, "ns_type")
 
     @ns_type.setter
-    def ns_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def ns_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "ns_type", value)
 
     @_builtins.property
     @pulumi.getter
-    def port(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def port(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Nameserver Port
         """
         return pulumi.get(self, "port")
 
     @port.setter
-    def port(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def port(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "port", value)
 
 
@@ -132,55 +489,55 @@ class PolicyRuleArgsDict(TypedDict):
     """
     Policy Name
     """
-    action: NotRequired[pulumi.Input[_builtins.str]]
+    action: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Policy Rule Action (accept|drop)
     """
-    authorized_groups: NotRequired[pulumi.Input[Mapping[str, pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]]]
+    authorized_groups: NotRequired[pulumi.Input[Optional[Mapping[str, pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]]]]
     """
     Map of source group IDs to a list of local users authorized for SSH access. Keys must be group IDs present in <span pulumi-lang-nodejs="`sources`" pulumi-lang-dotnet="`Sources`" pulumi-lang-go="`sources`" pulumi-lang-python="`sources`" pulumi-lang-yaml="`sources`" pulumi-lang-java="`sources`">`sources`</span>. If not set, all local users are permitted. Only applicable when protocol is `netbird-ssh`.
     """
-    bidirectional: NotRequired[pulumi.Input[_builtins.bool]]
+    bidirectional: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
     """
     Policy Rule Bidirectional
     """
-    description: NotRequired[pulumi.Input[_builtins.str]]
+    description: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Policy description
     """
-    destination_resource: NotRequired[pulumi.Input['PolicyRuleDestinationResourceArgsDict']]
+    destination_resource: NotRequired[pulumi.Input[Optional['PolicyRuleDestinationResourceArgsDict']]]
     """
     Policy Rule Destination Resource (mutually exclusive with destinations)
     """
-    destinations: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    destinations: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     Policy Rule Destination Groups (mutually exclusive with destination_resource)
     """
-    enabled: NotRequired[pulumi.Input[_builtins.bool]]
+    enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
     """
     Policy Rule Enabled
     """
-    id: NotRequired[pulumi.Input[_builtins.str]]
+    id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Policy ID
     """
-    port_ranges: NotRequired[pulumi.Input[Sequence[pulumi.Input['PolicyRulePortRangeArgsDict']]]]
+    port_ranges: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input['PolicyRulePortRangeArgsDict']]]]]
     """
     Policy Rule Port Ranges (mutually exclusive with ports)
     """
-    ports: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    ports: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     Policy Rule Ports (mutually exclusive with port_ranges)
     """
-    protocol: NotRequired[pulumi.Input[_builtins.str]]
+    protocol: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Policy Rule Protocol (tcp|udp|icmp|all|netbird-ssh)
     """
-    source_resource: NotRequired[pulumi.Input['PolicyRuleSourceResourceArgsDict']]
+    source_resource: NotRequired[pulumi.Input[Optional['PolicyRuleSourceResourceArgsDict']]]
     """
     Policy Rule Source Resource (mutually exclusive with sources)
     """
-    sources: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    sources: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     Policy Rule Source Groups (mutually exclusive with source_resource)
     """
@@ -189,19 +546,19 @@ class PolicyRuleArgsDict(TypedDict):
 class PolicyRuleArgs:
     def __init__(__self__, *,
                  name: pulumi.Input[_builtins.str],
-                 action: Optional[pulumi.Input[_builtins.str]] = None,
-                 authorized_groups: Optional[pulumi.Input[Mapping[str, pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]]] = None,
-                 bidirectional: Optional[pulumi.Input[_builtins.bool]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 destination_resource: Optional[pulumi.Input['PolicyRuleDestinationResourceArgs']] = None,
-                 destinations: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 id: Optional[pulumi.Input[_builtins.str]] = None,
-                 port_ranges: Optional[pulumi.Input[Sequence[pulumi.Input['PolicyRulePortRangeArgs']]]] = None,
-                 ports: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 protocol: Optional[pulumi.Input[_builtins.str]] = None,
-                 source_resource: Optional[pulumi.Input['PolicyRuleSourceResourceArgs']] = None,
-                 sources: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 action: pulumi.Input[Optional[_builtins.str]] = None,
+                 authorized_groups: pulumi.Input[Optional[Mapping[str, pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]]] = None,
+                 bidirectional: pulumi.Input[Optional[_builtins.bool]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 destination_resource: pulumi.Input[Optional['PolicyRuleDestinationResourceArgs']] = None,
+                 destinations: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 id: pulumi.Input[Optional[_builtins.str]] = None,
+                 port_ranges: pulumi.Input[Optional[Sequence[pulumi.Input['PolicyRulePortRangeArgs']]]] = None,
+                 ports: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 protocol: pulumi.Input[Optional[_builtins.str]] = None,
+                 source_resource: pulumi.Input[Optional['PolicyRuleSourceResourceArgs']] = None,
+                 sources: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         :param pulumi.Input[_builtins.str] name: Policy Name
         :param pulumi.Input[_builtins.str] action: Policy Rule Action (accept|drop)
@@ -260,158 +617,158 @@ class PolicyRuleArgs:
 
     @_builtins.property
     @pulumi.getter
-    def action(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def action(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Policy Rule Action (accept|drop)
         """
         return pulumi.get(self, "action")
 
     @action.setter
-    def action(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def action(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "action", value)
 
     @_builtins.property
     @pulumi.getter(name="authorizedGroups")
-    def authorized_groups(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]]]:
+    def authorized_groups(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]]]:
         """
         Map of source group IDs to a list of local users authorized for SSH access. Keys must be group IDs present in <span pulumi-lang-nodejs="`sources`" pulumi-lang-dotnet="`Sources`" pulumi-lang-go="`sources`" pulumi-lang-python="`sources`" pulumi-lang-yaml="`sources`" pulumi-lang-java="`sources`">`sources`</span>. If not set, all local users are permitted. Only applicable when protocol is `netbird-ssh`.
         """
         return pulumi.get(self, "authorized_groups")
 
     @authorized_groups.setter
-    def authorized_groups(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]]]):
+    def authorized_groups(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]]]):
         pulumi.set(self, "authorized_groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def bidirectional(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def bidirectional(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Policy Rule Bidirectional
         """
         return pulumi.get(self, "bidirectional")
 
     @bidirectional.setter
-    def bidirectional(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def bidirectional(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "bidirectional", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Policy description
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter(name="destinationResource")
-    def destination_resource(self) -> Optional[pulumi.Input['PolicyRuleDestinationResourceArgs']]:
+    def destination_resource(self) -> pulumi.Input[Optional['PolicyRuleDestinationResourceArgs']]:
         """
         Policy Rule Destination Resource (mutually exclusive with destinations)
         """
         return pulumi.get(self, "destination_resource")
 
     @destination_resource.setter
-    def destination_resource(self, value: Optional[pulumi.Input['PolicyRuleDestinationResourceArgs']]):
+    def destination_resource(self, value: pulumi.Input[Optional['PolicyRuleDestinationResourceArgs']]):
         pulumi.set(self, "destination_resource", value)
 
     @_builtins.property
     @pulumi.getter
-    def destinations(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def destinations(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Policy Rule Destination Groups (mutually exclusive with destination_resource)
         """
         return pulumi.get(self, "destinations")
 
     @destinations.setter
-    def destinations(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def destinations(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "destinations", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Policy Rule Enabled
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Policy ID
         """
         return pulumi.get(self, "id")
 
     @id.setter
-    def id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "id", value)
 
     @_builtins.property
     @pulumi.getter(name="portRanges")
-    def port_ranges(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['PolicyRulePortRangeArgs']]]]:
+    def port_ranges(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['PolicyRulePortRangeArgs']]]]:
         """
         Policy Rule Port Ranges (mutually exclusive with ports)
         """
         return pulumi.get(self, "port_ranges")
 
     @port_ranges.setter
-    def port_ranges(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['PolicyRulePortRangeArgs']]]]):
+    def port_ranges(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['PolicyRulePortRangeArgs']]]]):
         pulumi.set(self, "port_ranges", value)
 
     @_builtins.property
     @pulumi.getter
-    def ports(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def ports(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Policy Rule Ports (mutually exclusive with port_ranges)
         """
         return pulumi.get(self, "ports")
 
     @ports.setter
-    def ports(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def ports(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "ports", value)
 
     @_builtins.property
     @pulumi.getter
-    def protocol(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def protocol(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Policy Rule Protocol (tcp|udp|icmp|all|netbird-ssh)
         """
         return pulumi.get(self, "protocol")
 
     @protocol.setter
-    def protocol(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def protocol(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "protocol", value)
 
     @_builtins.property
     @pulumi.getter(name="sourceResource")
-    def source_resource(self) -> Optional[pulumi.Input['PolicyRuleSourceResourceArgs']]:
+    def source_resource(self) -> pulumi.Input[Optional['PolicyRuleSourceResourceArgs']]:
         """
         Policy Rule Source Resource (mutually exclusive with sources)
         """
         return pulumi.get(self, "source_resource")
 
     @source_resource.setter
-    def source_resource(self, value: Optional[pulumi.Input['PolicyRuleSourceResourceArgs']]):
+    def source_resource(self, value: pulumi.Input[Optional['PolicyRuleSourceResourceArgs']]):
         pulumi.set(self, "source_resource", value)
 
     @_builtins.property
     @pulumi.getter
-    def sources(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def sources(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Policy Rule Source Groups (mutually exclusive with source_resource)
         """
         return pulumi.get(self, "sources")
 
     @sources.setter
-    def sources(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def sources(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "sources", value)
 
 
@@ -509,14 +866,14 @@ class PolicyRuleSourceResourceArgs:
 
 
 class PostureCheckGeoLocationCheckArgsDict(TypedDict):
-    action: NotRequired[pulumi.Input[_builtins.str]]
-    locations: NotRequired[pulumi.Input[Sequence[pulumi.Input['PostureCheckGeoLocationCheckLocationArgsDict']]]]
+    action: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    locations: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckGeoLocationCheckLocationArgsDict']]]]]
 
 @pulumi.input_type
 class PostureCheckGeoLocationCheckArgs:
     def __init__(__self__, *,
-                 action: Optional[pulumi.Input[_builtins.str]] = None,
-                 locations: Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckGeoLocationCheckLocationArgs']]]] = None):
+                 action: pulumi.Input[Optional[_builtins.str]] = None,
+                 locations: pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckGeoLocationCheckLocationArgs']]]] = None):
         if action is not None:
             pulumi.set(__self__, "action", action)
         if locations is not None:
@@ -524,32 +881,32 @@ class PostureCheckGeoLocationCheckArgs:
 
     @_builtins.property
     @pulumi.getter
-    def action(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def action(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "action")
 
     @action.setter
-    def action(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def action(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "action", value)
 
     @_builtins.property
     @pulumi.getter
-    def locations(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckGeoLocationCheckLocationArgs']]]]:
+    def locations(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckGeoLocationCheckLocationArgs']]]]:
         return pulumi.get(self, "locations")
 
     @locations.setter
-    def locations(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['PostureCheckGeoLocationCheckLocationArgs']]]]):
+    def locations(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['PostureCheckGeoLocationCheckLocationArgs']]]]):
         pulumi.set(self, "locations", value)
 
 
 class PostureCheckGeoLocationCheckLocationArgsDict(TypedDict):
     country_code: pulumi.Input[_builtins.str]
-    city_name: NotRequired[pulumi.Input[_builtins.str]]
+    city_name: NotRequired[pulumi.Input[Optional[_builtins.str]]]
 
 @pulumi.input_type
 class PostureCheckGeoLocationCheckLocationArgs:
     def __init__(__self__, *,
                  country_code: pulumi.Input[_builtins.str],
-                 city_name: Optional[pulumi.Input[_builtins.str]] = None):
+                 city_name: pulumi.Input[Optional[_builtins.str]] = None):
         pulumi.set(__self__, "country_code", country_code)
         if city_name is not None:
             pulumi.set(__self__, "city_name", city_name)
@@ -565,49 +922,49 @@ class PostureCheckGeoLocationCheckLocationArgs:
 
     @_builtins.property
     @pulumi.getter(name="cityName")
-    def city_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def city_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "city_name")
 
     @city_name.setter
-    def city_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def city_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "city_name", value)
 
 
 class PostureCheckNetbirdVersionCheckArgsDict(TypedDict):
-    min_version: NotRequired[pulumi.Input[_builtins.str]]
+    min_version: NotRequired[pulumi.Input[Optional[_builtins.str]]]
 
 @pulumi.input_type
 class PostureCheckNetbirdVersionCheckArgs:
     def __init__(__self__, *,
-                 min_version: Optional[pulumi.Input[_builtins.str]] = None):
+                 min_version: pulumi.Input[Optional[_builtins.str]] = None):
         if min_version is not None:
             pulumi.set(__self__, "min_version", min_version)
 
     @_builtins.property
     @pulumi.getter(name="minVersion")
-    def min_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def min_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "min_version")
 
     @min_version.setter
-    def min_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def min_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "min_version", value)
 
 
 class PostureCheckOsVersionCheckArgsDict(TypedDict):
-    android_min_version: NotRequired[pulumi.Input[_builtins.str]]
-    darwin_min_version: NotRequired[pulumi.Input[_builtins.str]]
-    ios_min_version: NotRequired[pulumi.Input[_builtins.str]]
-    linux_min_kernel_version: NotRequired[pulumi.Input[_builtins.str]]
-    windows_min_kernel_version: NotRequired[pulumi.Input[_builtins.str]]
+    android_min_version: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    darwin_min_version: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    ios_min_version: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    linux_min_kernel_version: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    windows_min_kernel_version: NotRequired[pulumi.Input[Optional[_builtins.str]]]
 
 @pulumi.input_type
 class PostureCheckOsVersionCheckArgs:
     def __init__(__self__, *,
-                 android_min_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 darwin_min_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 ios_min_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 linux_min_kernel_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 windows_min_kernel_version: Optional[pulumi.Input[_builtins.str]] = None):
+                 android_min_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 darwin_min_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 ios_min_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 linux_min_kernel_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 windows_min_kernel_version: pulumi.Input[Optional[_builtins.str]] = None):
         if android_min_version is not None:
             pulumi.set(__self__, "android_min_version", android_min_version)
         if darwin_min_version is not None:
@@ -621,59 +978,59 @@ class PostureCheckOsVersionCheckArgs:
 
     @_builtins.property
     @pulumi.getter(name="androidMinVersion")
-    def android_min_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def android_min_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "android_min_version")
 
     @android_min_version.setter
-    def android_min_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def android_min_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "android_min_version", value)
 
     @_builtins.property
     @pulumi.getter(name="darwinMinVersion")
-    def darwin_min_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def darwin_min_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "darwin_min_version")
 
     @darwin_min_version.setter
-    def darwin_min_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def darwin_min_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "darwin_min_version", value)
 
     @_builtins.property
     @pulumi.getter(name="iosMinVersion")
-    def ios_min_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def ios_min_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "ios_min_version")
 
     @ios_min_version.setter
-    def ios_min_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def ios_min_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "ios_min_version", value)
 
     @_builtins.property
     @pulumi.getter(name="linuxMinKernelVersion")
-    def linux_min_kernel_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def linux_min_kernel_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "linux_min_kernel_version")
 
     @linux_min_kernel_version.setter
-    def linux_min_kernel_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def linux_min_kernel_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "linux_min_kernel_version", value)
 
     @_builtins.property
     @pulumi.getter(name="windowsMinKernelVersion")
-    def windows_min_kernel_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def windows_min_kernel_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "windows_min_kernel_version")
 
     @windows_min_kernel_version.setter
-    def windows_min_kernel_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def windows_min_kernel_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "windows_min_kernel_version", value)
 
 
 class PostureCheckPeerNetworkRangeCheckArgsDict(TypedDict):
-    action: NotRequired[pulumi.Input[_builtins.str]]
-    ranges: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    action: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    ranges: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
 
 @pulumi.input_type
 class PostureCheckPeerNetworkRangeCheckArgs:
     def __init__(__self__, *,
-                 action: Optional[pulumi.Input[_builtins.str]] = None,
-                 ranges: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 action: pulumi.Input[Optional[_builtins.str]] = None,
+                 ranges: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         if action is not None:
             pulumi.set(__self__, "action", action)
         if ranges is not None:
@@ -681,34 +1038,34 @@ class PostureCheckPeerNetworkRangeCheckArgs:
 
     @_builtins.property
     @pulumi.getter
-    def action(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def action(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "action")
 
     @action.setter
-    def action(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def action(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "action", value)
 
     @_builtins.property
     @pulumi.getter
-    def ranges(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def ranges(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         return pulumi.get(self, "ranges")
 
     @ranges.setter
-    def ranges(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def ranges(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "ranges", value)
 
 
 class PostureCheckProcessCheckArgsDict(TypedDict):
-    linux_path: NotRequired[pulumi.Input[_builtins.str]]
-    mac_path: NotRequired[pulumi.Input[_builtins.str]]
-    windows_path: NotRequired[pulumi.Input[_builtins.str]]
+    linux_path: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    mac_path: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    windows_path: NotRequired[pulumi.Input[Optional[_builtins.str]]]
 
 @pulumi.input_type
 class PostureCheckProcessCheckArgs:
     def __init__(__self__, *,
-                 linux_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 mac_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 windows_path: Optional[pulumi.Input[_builtins.str]] = None):
+                 linux_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 mac_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 windows_path: pulumi.Input[Optional[_builtins.str]] = None):
         if linux_path is not None:
             pulumi.set(__self__, "linux_path", linux_path)
         if mac_path is not None:
@@ -718,46 +1075,139 @@ class PostureCheckProcessCheckArgs:
 
     @_builtins.property
     @pulumi.getter(name="linuxPath")
-    def linux_path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def linux_path(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "linux_path")
 
     @linux_path.setter
-    def linux_path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def linux_path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "linux_path", value)
 
     @_builtins.property
     @pulumi.getter(name="macPath")
-    def mac_path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def mac_path(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "mac_path")
 
     @mac_path.setter
-    def mac_path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def mac_path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "mac_path", value)
 
     @_builtins.property
     @pulumi.getter(name="windowsPath")
-    def windows_path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def windows_path(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "windows_path")
 
     @windows_path.setter
-    def windows_path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def windows_path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "windows_path", value)
 
 
+class ReverseProxyServiceAccessRestrictionsArgsDict(TypedDict):
+    allowed_cidrs: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    CIDR allowlist
+    """
+    allowed_countries: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    ISO 3166-1 alpha-2 country codes to allow
+    """
+    blocked_cidrs: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    CIDR blocklist
+    """
+    blocked_countries: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    ISO 3166-1 alpha-2 country codes to block
+    """
+
+@pulumi.input_type
+class ReverseProxyServiceAccessRestrictionsArgs:
+    def __init__(__self__, *,
+                 allowed_cidrs: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 allowed_countries: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 blocked_cidrs: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 blocked_countries: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
+        """
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] allowed_cidrs: CIDR allowlist
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] allowed_countries: ISO 3166-1 alpha-2 country codes to allow
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] blocked_cidrs: CIDR blocklist
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] blocked_countries: ISO 3166-1 alpha-2 country codes to block
+        """
+        if allowed_cidrs is not None:
+            pulumi.set(__self__, "allowed_cidrs", allowed_cidrs)
+        if allowed_countries is not None:
+            pulumi.set(__self__, "allowed_countries", allowed_countries)
+        if blocked_cidrs is not None:
+            pulumi.set(__self__, "blocked_cidrs", blocked_cidrs)
+        if blocked_countries is not None:
+            pulumi.set(__self__, "blocked_countries", blocked_countries)
+
+    @_builtins.property
+    @pulumi.getter(name="allowedCidrs")
+    def allowed_cidrs(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        CIDR allowlist
+        """
+        return pulumi.get(self, "allowed_cidrs")
+
+    @allowed_cidrs.setter
+    def allowed_cidrs(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "allowed_cidrs", value)
+
+    @_builtins.property
+    @pulumi.getter(name="allowedCountries")
+    def allowed_countries(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        ISO 3166-1 alpha-2 country codes to allow
+        """
+        return pulumi.get(self, "allowed_countries")
+
+    @allowed_countries.setter
+    def allowed_countries(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "allowed_countries", value)
+
+    @_builtins.property
+    @pulumi.getter(name="blockedCidrs")
+    def blocked_cidrs(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        CIDR blocklist
+        """
+        return pulumi.get(self, "blocked_cidrs")
+
+    @blocked_cidrs.setter
+    def blocked_cidrs(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "blocked_cidrs", value)
+
+    @_builtins.property
+    @pulumi.getter(name="blockedCountries")
+    def blocked_countries(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        ISO 3166-1 alpha-2 country codes to block
+        """
+        return pulumi.get(self, "blocked_countries")
+
+    @blocked_countries.setter
+    def blocked_countries(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "blocked_countries", value)
+
+
 class ReverseProxyServiceAuthArgsDict(TypedDict):
-    bearer_auth: NotRequired[pulumi.Input['ReverseProxyServiceAuthBearerAuthArgsDict']]
+    bearer_auth: NotRequired[pulumi.Input[Optional['ReverseProxyServiceAuthBearerAuthArgsDict']]]
     """
     Bearer token authentication
     """
-    link_auth: NotRequired[pulumi.Input['ReverseProxyServiceAuthLinkAuthArgsDict']]
+    header_auths: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input['ReverseProxyServiceAuthHeaderAuthArgsDict']]]]]
+    """
+    Static header-value authentication rules
+    """
+    link_auth: NotRequired[pulumi.Input[Optional['ReverseProxyServiceAuthLinkAuthArgsDict']]]
     """
     Link authentication
     """
-    password_auth: NotRequired[pulumi.Input['ReverseProxyServiceAuthPasswordAuthArgsDict']]
+    password_auth: NotRequired[pulumi.Input[Optional['ReverseProxyServiceAuthPasswordAuthArgsDict']]]
     """
     Password authentication
     """
-    pin_auth: NotRequired[pulumi.Input['ReverseProxyServiceAuthPinAuthArgsDict']]
+    pin_auth: NotRequired[pulumi.Input[Optional['ReverseProxyServiceAuthPinAuthArgsDict']]]
     """
     PIN authentication
     """
@@ -765,18 +1215,22 @@ class ReverseProxyServiceAuthArgsDict(TypedDict):
 @pulumi.input_type
 class ReverseProxyServiceAuthArgs:
     def __init__(__self__, *,
-                 bearer_auth: Optional[pulumi.Input['ReverseProxyServiceAuthBearerAuthArgs']] = None,
-                 link_auth: Optional[pulumi.Input['ReverseProxyServiceAuthLinkAuthArgs']] = None,
-                 password_auth: Optional[pulumi.Input['ReverseProxyServiceAuthPasswordAuthArgs']] = None,
-                 pin_auth: Optional[pulumi.Input['ReverseProxyServiceAuthPinAuthArgs']] = None):
+                 bearer_auth: pulumi.Input[Optional['ReverseProxyServiceAuthBearerAuthArgs']] = None,
+                 header_auths: pulumi.Input[Optional[Sequence[pulumi.Input['ReverseProxyServiceAuthHeaderAuthArgs']]]] = None,
+                 link_auth: pulumi.Input[Optional['ReverseProxyServiceAuthLinkAuthArgs']] = None,
+                 password_auth: pulumi.Input[Optional['ReverseProxyServiceAuthPasswordAuthArgs']] = None,
+                 pin_auth: pulumi.Input[Optional['ReverseProxyServiceAuthPinAuthArgs']] = None):
         """
         :param pulumi.Input['ReverseProxyServiceAuthBearerAuthArgs'] bearer_auth: Bearer token authentication
+        :param pulumi.Input[Sequence[pulumi.Input['ReverseProxyServiceAuthHeaderAuthArgs']]] header_auths: Static header-value authentication rules
         :param pulumi.Input['ReverseProxyServiceAuthLinkAuthArgs'] link_auth: Link authentication
         :param pulumi.Input['ReverseProxyServiceAuthPasswordAuthArgs'] password_auth: Password authentication
         :param pulumi.Input['ReverseProxyServiceAuthPinAuthArgs'] pin_auth: PIN authentication
         """
         if bearer_auth is not None:
             pulumi.set(__self__, "bearer_auth", bearer_auth)
+        if header_auths is not None:
+            pulumi.set(__self__, "header_auths", header_auths)
         if link_auth is not None:
             pulumi.set(__self__, "link_auth", link_auth)
         if password_auth is not None:
@@ -786,56 +1240,68 @@ class ReverseProxyServiceAuthArgs:
 
     @_builtins.property
     @pulumi.getter(name="bearerAuth")
-    def bearer_auth(self) -> Optional[pulumi.Input['ReverseProxyServiceAuthBearerAuthArgs']]:
+    def bearer_auth(self) -> pulumi.Input[Optional['ReverseProxyServiceAuthBearerAuthArgs']]:
         """
         Bearer token authentication
         """
         return pulumi.get(self, "bearer_auth")
 
     @bearer_auth.setter
-    def bearer_auth(self, value: Optional[pulumi.Input['ReverseProxyServiceAuthBearerAuthArgs']]):
+    def bearer_auth(self, value: pulumi.Input[Optional['ReverseProxyServiceAuthBearerAuthArgs']]):
         pulumi.set(self, "bearer_auth", value)
 
     @_builtins.property
+    @pulumi.getter(name="headerAuths")
+    def header_auths(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['ReverseProxyServiceAuthHeaderAuthArgs']]]]:
+        """
+        Static header-value authentication rules
+        """
+        return pulumi.get(self, "header_auths")
+
+    @header_auths.setter
+    def header_auths(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['ReverseProxyServiceAuthHeaderAuthArgs']]]]):
+        pulumi.set(self, "header_auths", value)
+
+    @_builtins.property
     @pulumi.getter(name="linkAuth")
-    def link_auth(self) -> Optional[pulumi.Input['ReverseProxyServiceAuthLinkAuthArgs']]:
+    def link_auth(self) -> pulumi.Input[Optional['ReverseProxyServiceAuthLinkAuthArgs']]:
         """
         Link authentication
         """
         return pulumi.get(self, "link_auth")
 
     @link_auth.setter
-    def link_auth(self, value: Optional[pulumi.Input['ReverseProxyServiceAuthLinkAuthArgs']]):
+    def link_auth(self, value: pulumi.Input[Optional['ReverseProxyServiceAuthLinkAuthArgs']]):
         pulumi.set(self, "link_auth", value)
 
     @_builtins.property
     @pulumi.getter(name="passwordAuth")
-    def password_auth(self) -> Optional[pulumi.Input['ReverseProxyServiceAuthPasswordAuthArgs']]:
+    def password_auth(self) -> pulumi.Input[Optional['ReverseProxyServiceAuthPasswordAuthArgs']]:
         """
         Password authentication
         """
         return pulumi.get(self, "password_auth")
 
     @password_auth.setter
-    def password_auth(self, value: Optional[pulumi.Input['ReverseProxyServiceAuthPasswordAuthArgs']]):
+    def password_auth(self, value: pulumi.Input[Optional['ReverseProxyServiceAuthPasswordAuthArgs']]):
         pulumi.set(self, "password_auth", value)
 
     @_builtins.property
     @pulumi.getter(name="pinAuth")
-    def pin_auth(self) -> Optional[pulumi.Input['ReverseProxyServiceAuthPinAuthArgs']]:
+    def pin_auth(self) -> pulumi.Input[Optional['ReverseProxyServiceAuthPinAuthArgs']]:
         """
         PIN authentication
         """
         return pulumi.get(self, "pin_auth")
 
     @pin_auth.setter
-    def pin_auth(self, value: Optional[pulumi.Input['ReverseProxyServiceAuthPinAuthArgs']]):
+    def pin_auth(self, value: pulumi.Input[Optional['ReverseProxyServiceAuthPinAuthArgs']]):
         pulumi.set(self, "pin_auth", value)
 
 
 class ReverseProxyServiceAuthBearerAuthArgsDict(TypedDict):
     enabled: pulumi.Input[_builtins.bool]
-    distribution_groups: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    distribution_groups: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     List of group IDs that can use bearer auth
     """
@@ -844,7 +1310,7 @@ class ReverseProxyServiceAuthBearerAuthArgsDict(TypedDict):
 class ReverseProxyServiceAuthBearerAuthArgs:
     def __init__(__self__, *,
                  enabled: pulumi.Input[_builtins.bool],
-                 distribution_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 distribution_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] distribution_groups: List of group IDs that can use bearer auth
         """
@@ -863,15 +1329,74 @@ class ReverseProxyServiceAuthBearerAuthArgs:
 
     @_builtins.property
     @pulumi.getter(name="distributionGroups")
-    def distribution_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def distribution_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         List of group IDs that can use bearer auth
         """
         return pulumi.get(self, "distribution_groups")
 
     @distribution_groups.setter
-    def distribution_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def distribution_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "distribution_groups", value)
+
+
+class ReverseProxyServiceAuthHeaderAuthArgsDict(TypedDict):
+    enabled: pulumi.Input[_builtins.bool]
+    header: pulumi.Input[_builtins.str]
+    """
+    HTTP header name to check
+    """
+    value: pulumi.Input[_builtins.str]
+    """
+    Expected header value
+    """
+
+@pulumi.input_type
+class ReverseProxyServiceAuthHeaderAuthArgs:
+    def __init__(__self__, *,
+                 enabled: pulumi.Input[_builtins.bool],
+                 header: pulumi.Input[_builtins.str],
+                 value: pulumi.Input[_builtins.str]):
+        """
+        :param pulumi.Input[_builtins.str] header: HTTP header name to check
+        :param pulumi.Input[_builtins.str] value: Expected header value
+        """
+        pulumi.set(__self__, "enabled", enabled)
+        pulumi.set(__self__, "header", header)
+        pulumi.set(__self__, "value", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> pulumi.Input[_builtins.bool]:
+        return pulumi.get(self, "enabled")
+
+    @enabled.setter
+    def enabled(self, value: pulumi.Input[_builtins.bool]):
+        pulumi.set(self, "enabled", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def header(self) -> pulumi.Input[_builtins.str]:
+        """
+        HTTP header name to check
+        """
+        return pulumi.get(self, "header")
+
+    @header.setter
+    def header(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "header", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def value(self) -> pulumi.Input[_builtins.str]:
+        """
+        Expected header value
+        """
+        return pulumi.get(self, "value")
+
+    @value.setter
+    def value(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "value", value)
 
 
 class ReverseProxyServiceAuthLinkAuthArgsDict(TypedDict):
@@ -895,13 +1420,13 @@ class ReverseProxyServiceAuthLinkAuthArgs:
 
 class ReverseProxyServiceAuthPasswordAuthArgsDict(TypedDict):
     enabled: pulumi.Input[_builtins.bool]
-    password: NotRequired[pulumi.Input[_builtins.str]]
+    password: NotRequired[pulumi.Input[Optional[_builtins.str]]]
 
 @pulumi.input_type
 class ReverseProxyServiceAuthPasswordAuthArgs:
     def __init__(__self__, *,
                  enabled: pulumi.Input[_builtins.bool],
-                 password: Optional[pulumi.Input[_builtins.str]] = None):
+                 password: pulumi.Input[Optional[_builtins.str]] = None):
         pulumi.set(__self__, "enabled", enabled)
         if password is not None:
             pulumi.set(__self__, "password", password)
@@ -917,23 +1442,23 @@ class ReverseProxyServiceAuthPasswordAuthArgs:
 
     @_builtins.property
     @pulumi.getter
-    def password(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def password(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "password")
 
     @password.setter
-    def password(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def password(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "password", value)
 
 
 class ReverseProxyServiceAuthPinAuthArgsDict(TypedDict):
     enabled: pulumi.Input[_builtins.bool]
-    pin: NotRequired[pulumi.Input[_builtins.str]]
+    pin: NotRequired[pulumi.Input[Optional[_builtins.str]]]
 
 @pulumi.input_type
 class ReverseProxyServiceAuthPinAuthArgs:
     def __init__(__self__, *,
                  enabled: pulumi.Input[_builtins.bool],
-                 pin: Optional[pulumi.Input[_builtins.str]] = None):
+                 pin: pulumi.Input[Optional[_builtins.str]] = None):
         pulumi.set(__self__, "enabled", enabled)
         if pin is not None:
             pulumi.set(__self__, "pin", pin)
@@ -949,11 +1474,11 @@ class ReverseProxyServiceAuthPinAuthArgs:
 
     @_builtins.property
     @pulumi.getter
-    def pin(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def pin(self) -> pulumi.Input[Optional[_builtins.str]]:
         return pulumi.get(self, "pin")
 
     @pin.setter
-    def pin(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def pin(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "pin", value)
 
 
@@ -964,7 +1489,7 @@ class ReverseProxyServiceTargetArgsDict(TypedDict):
     """
     protocol: pulumi.Input[_builtins.str]
     """
-    Protocol to use when connecting to the backend (http, https)
+    Protocol to use when connecting to the backend (http, https for HTTP mode; tcp, udp for L4 mode)
     """
     target_id: pulumi.Input[_builtins.str]
     """
@@ -974,15 +1499,19 @@ class ReverseProxyServiceTargetArgsDict(TypedDict):
     """
     Target type (peer, host, domain, subnet)
     """
-    enabled: NotRequired[pulumi.Input[_builtins.bool]]
+    enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
     """
     Whether this target is enabled
     """
-    host: NotRequired[pulumi.Input[_builtins.str]]
+    host: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Backend IP or domain for this target. If omitted, the API resolves it from the target peer.
     """
-    path: NotRequired[pulumi.Input[_builtins.str]]
+    options: NotRequired[pulumi.Input[Optional['ReverseProxyServiceTargetOptionsArgsDict']]]
+    """
+    Per-target options
+    """
+    path: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     URL path prefix for this target. Defaults to "/" if omitted.
     """
@@ -994,16 +1523,18 @@ class ReverseProxyServiceTargetArgs:
                  protocol: pulumi.Input[_builtins.str],
                  target_id: pulumi.Input[_builtins.str],
                  target_type: pulumi.Input[_builtins.str],
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 host: Optional[pulumi.Input[_builtins.str]] = None,
-                 path: Optional[pulumi.Input[_builtins.str]] = None):
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 host: pulumi.Input[Optional[_builtins.str]] = None,
+                 options: pulumi.Input[Optional['ReverseProxyServiceTargetOptionsArgs']] = None,
+                 path: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.float] port: Backend port for this target (0 for scheme default)
-        :param pulumi.Input[_builtins.str] protocol: Protocol to use when connecting to the backend (http, https)
+        :param pulumi.Input[_builtins.str] protocol: Protocol to use when connecting to the backend (http, https for HTTP mode; tcp, udp for L4 mode)
         :param pulumi.Input[_builtins.str] target_id: Target ID (resource or peer ID)
         :param pulumi.Input[_builtins.str] target_type: Target type (peer, host, domain, subnet)
         :param pulumi.Input[_builtins.bool] enabled: Whether this target is enabled
         :param pulumi.Input[_builtins.str] host: Backend IP or domain for this target. If omitted, the API resolves it from the target peer.
+        :param pulumi.Input['ReverseProxyServiceTargetOptionsArgs'] options: Per-target options
         :param pulumi.Input[_builtins.str] path: URL path prefix for this target. Defaults to "/" if omitted.
         """
         pulumi.set(__self__, "port", port)
@@ -1014,6 +1545,8 @@ class ReverseProxyServiceTargetArgs:
             pulumi.set(__self__, "enabled", enabled)
         if host is not None:
             pulumi.set(__self__, "host", host)
+        if options is not None:
+            pulumi.set(__self__, "options", options)
         if path is not None:
             pulumi.set(__self__, "path", path)
 
@@ -1033,7 +1566,7 @@ class ReverseProxyServiceTargetArgs:
     @pulumi.getter
     def protocol(self) -> pulumi.Input[_builtins.str]:
         """
-        Protocol to use when connecting to the backend (http, https)
+        Protocol to use when connecting to the backend (http, https for HTTP mode; tcp, udp for L4 mode)
         """
         return pulumi.get(self, "protocol")
 
@@ -1067,39 +1600,180 @@ class ReverseProxyServiceTargetArgs:
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether this target is enabled
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def host(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def host(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Backend IP or domain for this target. If omitted, the API resolves it from the target peer.
         """
         return pulumi.get(self, "host")
 
     @host.setter
-    def host(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def host(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "host", value)
 
     @_builtins.property
     @pulumi.getter
-    def path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def options(self) -> pulumi.Input[Optional['ReverseProxyServiceTargetOptionsArgs']]:
+        """
+        Per-target options
+        """
+        return pulumi.get(self, "options")
+
+    @options.setter
+    def options(self, value: pulumi.Input[Optional['ReverseProxyServiceTargetOptionsArgs']]):
+        pulumi.set(self, "options", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def path(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         URL path prefix for this target. Defaults to "/" if omitted.
         """
         return pulumi.get(self, "path")
 
     @path.setter
-    def path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "path", value)
+
+
+class ReverseProxyServiceTargetOptionsArgsDict(TypedDict):
+    custom_headers: NotRequired[pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]]
+    """
+    Extra headers sent to the backend (HTTP only). Marked sensitive since values commonly carry credentials, e.g. an `Authorization` header.
+    """
+    path_rewrite: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    Controls how the request path is rewritten before forwarding. Default strips the matched prefix. "preserve" keeps the full original path. (HTTP only)
+    """
+    proxy_protocol: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Send PROXY Protocol v2 header to this backend (TCP/TLS only)
+    """
+    request_timeout: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    Per-target response timeout as a Go duration string (e.g. "30s", "2m")
+    """
+    session_idle_timeout: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    Idle timeout before a UDP session is reaped, as a Go duration string (e.g. "30s", "2m"). Maximum 10m. (UDP only)
+    """
+    skip_tls_verify: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Skip TLS certificate verification for this backend (HTTPS targets only)
+    """
+
+@pulumi.input_type
+class ReverseProxyServiceTargetOptionsArgs:
+    def __init__(__self__, *,
+                 custom_headers: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 path_rewrite: pulumi.Input[Optional[_builtins.str]] = None,
+                 proxy_protocol: pulumi.Input[Optional[_builtins.bool]] = None,
+                 request_timeout: pulumi.Input[Optional[_builtins.str]] = None,
+                 session_idle_timeout: pulumi.Input[Optional[_builtins.str]] = None,
+                 skip_tls_verify: pulumi.Input[Optional[_builtins.bool]] = None):
+        """
+        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] custom_headers: Extra headers sent to the backend (HTTP only). Marked sensitive since values commonly carry credentials, e.g. an `Authorization` header.
+        :param pulumi.Input[_builtins.str] path_rewrite: Controls how the request path is rewritten before forwarding. Default strips the matched prefix. "preserve" keeps the full original path. (HTTP only)
+        :param pulumi.Input[_builtins.bool] proxy_protocol: Send PROXY Protocol v2 header to this backend (TCP/TLS only)
+        :param pulumi.Input[_builtins.str] request_timeout: Per-target response timeout as a Go duration string (e.g. "30s", "2m")
+        :param pulumi.Input[_builtins.str] session_idle_timeout: Idle timeout before a UDP session is reaped, as a Go duration string (e.g. "30s", "2m"). Maximum 10m. (UDP only)
+        :param pulumi.Input[_builtins.bool] skip_tls_verify: Skip TLS certificate verification for this backend (HTTPS targets only)
+        """
+        if custom_headers is not None:
+            pulumi.set(__self__, "custom_headers", custom_headers)
+        if path_rewrite is not None:
+            pulumi.set(__self__, "path_rewrite", path_rewrite)
+        if proxy_protocol is not None:
+            pulumi.set(__self__, "proxy_protocol", proxy_protocol)
+        if request_timeout is not None:
+            pulumi.set(__self__, "request_timeout", request_timeout)
+        if session_idle_timeout is not None:
+            pulumi.set(__self__, "session_idle_timeout", session_idle_timeout)
+        if skip_tls_verify is not None:
+            pulumi.set(__self__, "skip_tls_verify", skip_tls_verify)
+
+    @_builtins.property
+    @pulumi.getter(name="customHeaders")
+    def custom_headers(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
+        """
+        Extra headers sent to the backend (HTTP only). Marked sensitive since values commonly carry credentials, e.g. an `Authorization` header.
+        """
+        return pulumi.get(self, "custom_headers")
+
+    @custom_headers.setter
+    def custom_headers(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "custom_headers", value)
+
+    @_builtins.property
+    @pulumi.getter(name="pathRewrite")
+    def path_rewrite(self) -> pulumi.Input[Optional[_builtins.str]]:
+        """
+        Controls how the request path is rewritten before forwarding. Default strips the matched prefix. "preserve" keeps the full original path. (HTTP only)
+        """
+        return pulumi.get(self, "path_rewrite")
+
+    @path_rewrite.setter
+    def path_rewrite(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "path_rewrite", value)
+
+    @_builtins.property
+    @pulumi.getter(name="proxyProtocol")
+    def proxy_protocol(self) -> pulumi.Input[Optional[_builtins.bool]]:
+        """
+        Send PROXY Protocol v2 header to this backend (TCP/TLS only)
+        """
+        return pulumi.get(self, "proxy_protocol")
+
+    @proxy_protocol.setter
+    def proxy_protocol(self, value: pulumi.Input[Optional[_builtins.bool]]):
+        pulumi.set(self, "proxy_protocol", value)
+
+    @_builtins.property
+    @pulumi.getter(name="requestTimeout")
+    def request_timeout(self) -> pulumi.Input[Optional[_builtins.str]]:
+        """
+        Per-target response timeout as a Go duration string (e.g. "30s", "2m")
+        """
+        return pulumi.get(self, "request_timeout")
+
+    @request_timeout.setter
+    def request_timeout(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "request_timeout", value)
+
+    @_builtins.property
+    @pulumi.getter(name="sessionIdleTimeout")
+    def session_idle_timeout(self) -> pulumi.Input[Optional[_builtins.str]]:
+        """
+        Idle timeout before a UDP session is reaped, as a Go duration string (e.g. "30s", "2m"). Maximum 10m. (UDP only)
+        """
+        return pulumi.get(self, "session_idle_timeout")
+
+    @session_idle_timeout.setter
+    def session_idle_timeout(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "session_idle_timeout", value)
+
+    @_builtins.property
+    @pulumi.getter(name="skipTlsVerify")
+    def skip_tls_verify(self) -> pulumi.Input[Optional[_builtins.bool]]:
+        """
+        Skip TLS certificate verification for this backend (HTTPS targets only)
+        """
+        return pulumi.get(self, "skip_tls_verify")
+
+    @skip_tls_verify.setter
+    def skip_tls_verify(self, value: pulumi.Input[Optional[_builtins.bool]]):
+        pulumi.set(self, "skip_tls_verify", value)
 
 
 class GetPolicyRuleArgsDict(TypedDict):

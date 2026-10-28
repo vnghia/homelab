@@ -23,12 +23,12 @@ class NameserverGroupArgs:
     def __init__(__self__, *,
                  groups: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]],
                  nameservers: pulumi.Input[Sequence[pulumi.Input['NameserverGroupNameserverArgs']]],
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 primary: Optional[pulumi.Input[_builtins.bool]] = None,
-                 search_domains_enabled: Optional[pulumi.Input[_builtins.bool]] = None):
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 primary: pulumi.Input[Optional[_builtins.bool]] = None,
+                 search_domains_enabled: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         The set of arguments for constructing a NameserverGroup resource.
 
@@ -82,88 +82,88 @@ class NameserverGroupArgs:
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Description of the nameserver group
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter
-    def domains(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def domains(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Match domain list. It should be empty only if primary is true.
         """
         return pulumi.get(self, "domains")
 
     @domains.setter
-    def domains(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def domains(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "domains", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Nameserver group status
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of nameserver group
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def primary(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def primary(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Defines if a nameserver group is primary that resolves all domains. It should be true only if domains list is empty.
         """
         return pulumi.get(self, "primary")
 
     @primary.setter
-    def primary(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def primary(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "primary", value)
 
     @_builtins.property
     @pulumi.getter(name="searchDomainsEnabled")
-    def search_domains_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def search_domains_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Search domain status for match domains. It should be true only if domains list is not empty.
         """
         return pulumi.get(self, "search_domains_enabled")
 
     @search_domains_enabled.setter
-    def search_domains_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def search_domains_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "search_domains_enabled", value)
 
 
 @pulumi.input_type
 class _NameserverGroupState:
     def __init__(__self__, *,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 nameservers: Optional[pulumi.Input[Sequence[pulumi.Input['NameserverGroupNameserverArgs']]]] = None,
-                 primary: Optional[pulumi.Input[_builtins.bool]] = None,
-                 search_domains_enabled: Optional[pulumi.Input[_builtins.bool]] = None):
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 nameservers: pulumi.Input[Optional[Sequence[pulumi.Input['NameserverGroupNameserverArgs']]]] = None,
+                 primary: pulumi.Input[Optional[_builtins.bool]] = None,
+                 search_domains_enabled: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         Input properties used for looking up and filtering NameserverGroup resources.
 
@@ -195,98 +195,98 @@ class _NameserverGroupState:
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Description of the nameserver group
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter
-    def domains(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def domains(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Match domain list. It should be empty only if primary is true.
         """
         return pulumi.get(self, "domains")
 
     @domains.setter
-    def domains(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def domains(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "domains", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Nameserver group status
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Distribution group IDs that defines group of peers that will use this nameserver group
         """
         return pulumi.get(self, "groups")
 
     @groups.setter
-    def groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of nameserver group
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def nameservers(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['NameserverGroupNameserverArgs']]]]:
+    def nameservers(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['NameserverGroupNameserverArgs']]]]:
         """
         Nameserver list
         """
         return pulumi.get(self, "nameservers")
 
     @nameservers.setter
-    def nameservers(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['NameserverGroupNameserverArgs']]]]):
+    def nameservers(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['NameserverGroupNameserverArgs']]]]):
         pulumi.set(self, "nameservers", value)
 
     @_builtins.property
     @pulumi.getter
-    def primary(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def primary(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Defines if a nameserver group is primary that resolves all domains. It should be true only if domains list is empty.
         """
         return pulumi.get(self, "primary")
 
     @primary.setter
-    def primary(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def primary(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "primary", value)
 
     @_builtins.property
     @pulumi.getter(name="searchDomainsEnabled")
-    def search_domains_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def search_domains_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Search domain status for match domains. It should be true only if domains list is not empty.
         """
         return pulumi.get(self, "search_domains_enabled")
 
     @search_domains_enabled.setter
-    def search_domains_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def search_domains_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "search_domains_enabled", value)
 
 
@@ -296,14 +296,14 @@ class NameserverGroup(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 nameservers: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict']]]]] = None,
-                 primary: Optional[pulumi.Input[_builtins.bool]] = None,
-                 search_domains_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 nameservers: pulumi.Input[Optional[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict', 'outputs.NameserverGroupNameserver']]]]] = None,
+                 primary: pulumi.Input[Optional[_builtins.bool]] = None,
+                 search_domains_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
                  __props__=None):
         """
         Create a NameserverGroup resource with the given unique name, props, and options.
@@ -315,7 +315,7 @@ class NameserverGroup(pulumi.CustomResource):
         :param pulumi.Input[_builtins.bool] enabled: Nameserver group status
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] groups: Distribution group IDs that defines group of peers that will use this nameserver group
         :param pulumi.Input[_builtins.str] name: Name of nameserver group
-        :param pulumi.Input[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict']]]] nameservers: Nameserver list
+        :param pulumi.Input[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict', 'outputs.NameserverGroupNameserver']]]] nameservers: Nameserver list
         :param pulumi.Input[_builtins.bool] primary: Defines if a nameserver group is primary that resolves all domains. It should be true only if domains list is empty.
         :param pulumi.Input[_builtins.bool] search_domains_enabled: Search domain status for match domains. It should be true only if domains list is not empty.
         """
@@ -343,14 +343,14 @@ class NameserverGroup(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 nameservers: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict']]]]] = None,
-                 primary: Optional[pulumi.Input[_builtins.bool]] = None,
-                 search_domains_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 nameservers: pulumi.Input[Optional[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict', 'outputs.NameserverGroupNameserver']]]]] = None,
+                 primary: pulumi.Input[Optional[_builtins.bool]] = None,
+                 search_domains_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -383,14 +383,14 @@ class NameserverGroup(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            description: Optional[pulumi.Input[_builtins.str]] = None,
-            domains: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            nameservers: Optional[pulumi.Input[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict']]]]] = None,
-            primary: Optional[pulumi.Input[_builtins.bool]] = None,
-            search_domains_enabled: Optional[pulumi.Input[_builtins.bool]] = None) -> 'NameserverGroup':
+            description: pulumi.Input[Optional[_builtins.str]] = None,
+            domains: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            nameservers: pulumi.Input[Optional[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict', 'outputs.NameserverGroupNameserver']]]]] = None,
+            primary: pulumi.Input[Optional[_builtins.bool]] = None,
+            search_domains_enabled: pulumi.Input[Optional[_builtins.bool]] = None) -> 'NameserverGroup':
         """
         Get an existing NameserverGroup resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
@@ -403,7 +403,7 @@ class NameserverGroup(pulumi.CustomResource):
         :param pulumi.Input[_builtins.bool] enabled: Nameserver group status
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] groups: Distribution group IDs that defines group of peers that will use this nameserver group
         :param pulumi.Input[_builtins.str] name: Name of nameserver group
-        :param pulumi.Input[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict']]]] nameservers: Nameserver list
+        :param pulumi.Input[Sequence[pulumi.Input[Union['NameserverGroupNameserverArgs', 'NameserverGroupNameserverArgsDict', 'outputs.NameserverGroupNameserver']]]] nameservers: Nameserver list
         :param pulumi.Input[_builtins.bool] primary: Defines if a nameserver group is primary that resolves all domains. It should be true only if domains list is empty.
         :param pulumi.Input[_builtins.bool] search_domains_enabled: Search domain status for match domains. It should be true only if domains list is not empty.
         """

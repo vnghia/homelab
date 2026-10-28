@@ -7,10 +7,17 @@ from . import _utilities
 import typing
 # Export this package's modules as members:
 from .account_settings import *
+from .agent_network_guardrail import *
+from .agent_network_policy import *
+from .agent_network_provider import *
+from .agent_network_settings import *
 from .dns_record import *
 from .dns_settings import *
 from .dns_zone import *
 from .get_account_settings import *
+from .get_agent_network_guardrail import *
+from .get_agent_network_policy import *
+from .get_agent_network_provider import *
 from .get_dns_record import *
 from .get_dns_settings import *
 from .get_dns_zone import *
@@ -68,6 +75,38 @@ _utilities.register(
   "fqn": "pulumi_netbird",
   "classes": {
    "netbird:index/accountSettings:AccountSettings": "AccountSettings"
+  }
+ },
+ {
+  "pkg": "netbird",
+  "mod": "index/agentNetworkGuardrail",
+  "fqn": "pulumi_netbird",
+  "classes": {
+   "netbird:index/agentNetworkGuardrail:AgentNetworkGuardrail": "AgentNetworkGuardrail"
+  }
+ },
+ {
+  "pkg": "netbird",
+  "mod": "index/agentNetworkPolicy",
+  "fqn": "pulumi_netbird",
+  "classes": {
+   "netbird:index/agentNetworkPolicy:AgentNetworkPolicy": "AgentNetworkPolicy"
+  }
+ },
+ {
+  "pkg": "netbird",
+  "mod": "index/agentNetworkProvider",
+  "fqn": "pulumi_netbird",
+  "classes": {
+   "netbird:index/agentNetworkProvider:AgentNetworkProvider": "AgentNetworkProvider"
+  }
+ },
+ {
+  "pkg": "netbird",
+  "mod": "index/agentNetworkSettings",
+  "fqn": "pulumi_netbird",
+  "classes": {
+   "netbird:index/agentNetworkSettings:AgentNetworkSettings": "AgentNetworkSettings"
   }
  },
  {

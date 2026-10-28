@@ -20,11 +20,11 @@ __all__ = ['UserArgs', 'User']
 class UserArgs:
     def __init__(__self__, *,
                  is_service_user: pulumi.Input[_builtins.bool],
-                 auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 email: Optional[pulumi.Input[_builtins.str]] = None,
-                 is_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 role: Optional[pulumi.Input[_builtins.str]] = None):
+                 auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 email: pulumi.Input[Optional[_builtins.str]] = None,
+                 is_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 role: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a User resource.
 
@@ -61,78 +61,78 @@ class UserArgs:
 
     @_builtins.property
     @pulumi.getter(name="autoGroups")
-    def auto_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def auto_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Group IDs to auto-assign to peers registered by this user
         """
         return pulumi.get(self, "auto_groups")
 
     @auto_groups.setter
-    def auto_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def auto_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "auto_groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def email(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def email(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User Email
         """
         return pulumi.get(self, "email")
 
     @email.setter
-    def email(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def email(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "email", value)
 
     @_builtins.property
     @pulumi.getter(name="isBlocked")
-    def is_blocked(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def is_blocked(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         If set to true then user is blocked and can't use the system
         """
         return pulumi.get(self, "is_blocked")
 
     @is_blocked.setter
-    def is_blocked(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def is_blocked(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "is_blocked", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User Name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def role(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def role(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User's NetBird account role (owner|admin|user|billing_admin|auditor|network_admin).
         """
         return pulumi.get(self, "role")
 
     @role.setter
-    def role(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def role(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "role", value)
 
 
 @pulumi.input_type
 class _UserState:
     def __init__(__self__, *,
-                 auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 email: Optional[pulumi.Input[_builtins.str]] = None,
-                 is_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 is_current: Optional[pulumi.Input[_builtins.bool]] = None,
-                 is_service_user: Optional[pulumi.Input[_builtins.bool]] = None,
-                 issued: Optional[pulumi.Input[_builtins.str]] = None,
-                 last_login: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 role: Optional[pulumi.Input[_builtins.str]] = None,
-                 status: Optional[pulumi.Input[_builtins.str]] = None):
+                 auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 email: pulumi.Input[Optional[_builtins.str]] = None,
+                 is_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 is_current: pulumi.Input[Optional[_builtins.bool]] = None,
+                 is_service_user: pulumi.Input[Optional[_builtins.bool]] = None,
+                 issued: pulumi.Input[Optional[_builtins.str]] = None,
+                 last_login: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 role: pulumi.Input[Optional[_builtins.str]] = None,
+                 status: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering User resources.
 
@@ -145,7 +145,7 @@ class _UserState:
         :param pulumi.Input[_builtins.str] last_login: User Last Login timedate
         :param pulumi.Input[_builtins.str] name: User Name
         :param pulumi.Input[_builtins.str] role: User's NetBird account role (owner|admin|user|billing_admin|auditor|network_admin).
-        :param pulumi.Input[_builtins.str] status: User status (active or invited)
+        :param pulumi.Input[_builtins.str] status: User status (active, invited or blocked)
         """
         if auto_groups is not None:
             pulumi.set(__self__, "auto_groups", auto_groups)
@@ -170,122 +170,122 @@ class _UserState:
 
     @_builtins.property
     @pulumi.getter(name="autoGroups")
-    def auto_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def auto_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Group IDs to auto-assign to peers registered by this user
         """
         return pulumi.get(self, "auto_groups")
 
     @auto_groups.setter
-    def auto_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def auto_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "auto_groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def email(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def email(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User Email
         """
         return pulumi.get(self, "email")
 
     @email.setter
-    def email(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def email(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "email", value)
 
     @_builtins.property
     @pulumi.getter(name="isBlocked")
-    def is_blocked(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def is_blocked(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         If set to true then user is blocked and can't use the system
         """
         return pulumi.get(self, "is_blocked")
 
     @is_blocked.setter
-    def is_blocked(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def is_blocked(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "is_blocked", value)
 
     @_builtins.property
     @pulumi.getter(name="isCurrent")
-    def is_current(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def is_current(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Set to true if the caller user is the same as the resource user
         """
         return pulumi.get(self, "is_current")
 
     @is_current.setter
-    def is_current(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def is_current(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "is_current", value)
 
     @_builtins.property
     @pulumi.getter(name="isServiceUser")
-    def is_service_user(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def is_service_user(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         If set to true, creates a Service Account User
         """
         return pulumi.get(self, "is_service_user")
 
     @is_service_user.setter
-    def is_service_user(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def is_service_user(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "is_service_user", value)
 
     @_builtins.property
     @pulumi.getter
-    def issued(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def issued(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User issue method
         """
         return pulumi.get(self, "issued")
 
     @issued.setter
-    def issued(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def issued(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "issued", value)
 
     @_builtins.property
     @pulumi.getter(name="lastLogin")
-    def last_login(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def last_login(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User Last Login timedate
         """
         return pulumi.get(self, "last_login")
 
     @last_login.setter
-    def last_login(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def last_login(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "last_login", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User Name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def role(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def role(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User's NetBird account role (owner|admin|user|billing_admin|auditor|network_admin).
         """
         return pulumi.get(self, "role")
 
     @role.setter
-    def role(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def role(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "role", value)
 
     @_builtins.property
     @pulumi.getter
-    def status(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def status(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
-        User status (active or invited)
+        User status (active, invited or blocked)
         """
         return pulumi.get(self, "status")
 
     @status.setter
-    def status(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def status(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "status", value)
 
 
@@ -295,12 +295,12 @@ class User(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 email: Optional[pulumi.Input[_builtins.str]] = None,
-                 is_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 is_service_user: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 role: Optional[pulumi.Input[_builtins.str]] = None,
+                 auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 email: pulumi.Input[Optional[_builtins.str]] = None,
+                 is_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 is_service_user: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 role: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a User resource with the given unique name, props, and options.
@@ -338,12 +338,12 @@ class User(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 email: Optional[pulumi.Input[_builtins.str]] = None,
-                 is_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 is_service_user: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 role: Optional[pulumi.Input[_builtins.str]] = None,
+                 auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 email: pulumi.Input[Optional[_builtins.str]] = None,
+                 is_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 is_service_user: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 role: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -376,16 +376,16 @@ class User(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            auto_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            email: Optional[pulumi.Input[_builtins.str]] = None,
-            is_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-            is_current: Optional[pulumi.Input[_builtins.bool]] = None,
-            is_service_user: Optional[pulumi.Input[_builtins.bool]] = None,
-            issued: Optional[pulumi.Input[_builtins.str]] = None,
-            last_login: Optional[pulumi.Input[_builtins.str]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            role: Optional[pulumi.Input[_builtins.str]] = None,
-            status: Optional[pulumi.Input[_builtins.str]] = None) -> 'User':
+            auto_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            email: pulumi.Input[Optional[_builtins.str]] = None,
+            is_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+            is_current: pulumi.Input[Optional[_builtins.bool]] = None,
+            is_service_user: pulumi.Input[Optional[_builtins.bool]] = None,
+            issued: pulumi.Input[Optional[_builtins.str]] = None,
+            last_login: pulumi.Input[Optional[_builtins.str]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            role: pulumi.Input[Optional[_builtins.str]] = None,
+            status: pulumi.Input[Optional[_builtins.str]] = None) -> 'User':
         """
         Get an existing User resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
@@ -402,7 +402,7 @@ class User(pulumi.CustomResource):
         :param pulumi.Input[_builtins.str] last_login: User Last Login timedate
         :param pulumi.Input[_builtins.str] name: User Name
         :param pulumi.Input[_builtins.str] role: User's NetBird account role (owner|admin|user|billing_admin|auditor|network_admin).
-        :param pulumi.Input[_builtins.str] status: User status (active or invited)
+        :param pulumi.Input[_builtins.str] status: User status (active, invited or blocked)
         """
         opts = pulumi.ResourceOptions.merge(opts, pulumi.ResourceOptions(id=id))
 
@@ -496,7 +496,7 @@ class User(pulumi.CustomResource):
     @pulumi.getter
     def status(self) -> pulumi.Output[_builtins.str]:
         """
-        User status (active or invited)
+        User status (active, invited or blocked)
         """
         return pulumi.get(self, "status")
 

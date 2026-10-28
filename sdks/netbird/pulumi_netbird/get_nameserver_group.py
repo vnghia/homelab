@@ -141,8 +141,8 @@ def get_nameserver_group(id: Optional[_builtins.str] = None,
         nameservers=pulumi.get(__ret__, 'nameservers'),
         primary=pulumi.get(__ret__, 'primary'),
         search_domains_enabled=pulumi.get(__ret__, 'search_domains_enabled'))
-def get_nameserver_group_output(id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                                name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_nameserver_group_output(id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                                name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                                 opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetNameserverGroupResult]:
     """
     Use this data source to access information about an existing resource.

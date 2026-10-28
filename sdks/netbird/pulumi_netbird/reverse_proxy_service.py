@@ -24,17 +24,23 @@ class ReverseProxyServiceArgs:
                  auth: pulumi.Input['ReverseProxyServiceAuthArgs'],
                  domain: pulumi.Input[_builtins.str],
                  targets: pulumi.Input[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]],
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 pass_host_header: Optional[pulumi.Input[_builtins.bool]] = None,
-                 rewrite_redirects: Optional[pulumi.Input[_builtins.bool]] = None):
+                 access_restrictions: pulumi.Input[Optional['ReverseProxyServiceAccessRestrictionsArgs']] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 listen_port: pulumi.Input[Optional[_builtins.float]] = None,
+                 mode: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 pass_host_header: pulumi.Input[Optional[_builtins.bool]] = None,
+                 rewrite_redirects: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         The set of arguments for constructing a ReverseProxyService resource.
 
         :param pulumi.Input['ReverseProxyServiceAuthArgs'] auth: Authentication configuration
         :param pulumi.Input[_builtins.str] domain: Domain for the service
         :param pulumi.Input[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]] targets: List of target backends for this service
+        :param pulumi.Input['ReverseProxyServiceAccessRestrictionsArgs'] access_restrictions: Connection-level access restrictions based on IP or geography
         :param pulumi.Input[_builtins.bool] enabled: Whether the service is enabled
+        :param pulumi.Input[_builtins.float] listen_port: Port the proxy listens on (L4/TLS only). Set to 0 for auto-assignment.
+        :param pulumi.Input[_builtins.str] mode: Service mode: "http" for L7 reverse proxy, "tcp"/"udp"/"tls" for L4 passthrough
         :param pulumi.Input[_builtins.str] name: Service name
         :param pulumi.Input[_builtins.bool] pass_host_header: When true, the original client Host header is passed through to the backend
         :param pulumi.Input[_builtins.bool] rewrite_redirects: When true, Location headers in backend responses are rewritten to replace the backend address with the public-facing domain
@@ -42,8 +48,14 @@ class ReverseProxyServiceArgs:
         pulumi.set(__self__, "auth", auth)
         pulumi.set(__self__, "domain", domain)
         pulumi.set(__self__, "targets", targets)
+        if access_restrictions is not None:
+            pulumi.set(__self__, "access_restrictions", access_restrictions)
         if enabled is not None:
             pulumi.set(__self__, "enabled", enabled)
+        if listen_port is not None:
+            pulumi.set(__self__, "listen_port", listen_port)
+        if mode is not None:
+            pulumi.set(__self__, "mode", mode)
         if name is not None:
             pulumi.set(__self__, "name", name)
         if pass_host_header is not None:
@@ -88,87 +100,139 @@ class ReverseProxyServiceArgs:
         pulumi.set(self, "targets", value)
 
     @_builtins.property
+    @pulumi.getter(name="accessRestrictions")
+    def access_restrictions(self) -> pulumi.Input[Optional['ReverseProxyServiceAccessRestrictionsArgs']]:
+        """
+        Connection-level access restrictions based on IP or geography
+        """
+        return pulumi.get(self, "access_restrictions")
+
+    @access_restrictions.setter
+    def access_restrictions(self, value: pulumi.Input[Optional['ReverseProxyServiceAccessRestrictionsArgs']]):
+        pulumi.set(self, "access_restrictions", value)
+
+    @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the service is enabled
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
+    @pulumi.getter(name="listenPort")
+    def listen_port(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        Port the proxy listens on (L4/TLS only). Set to 0 for auto-assignment.
+        """
+        return pulumi.get(self, "listen_port")
+
+    @listen_port.setter
+    def listen_port(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "listen_port", value)
+
+    @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def mode(self) -> pulumi.Input[Optional[_builtins.str]]:
+        """
+        Service mode: "http" for L7 reverse proxy, "tcp"/"udp"/"tls" for L4 passthrough
+        """
+        return pulumi.get(self, "mode")
+
+    @mode.setter
+    def mode(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "mode", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Service name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="passHostHeader")
-    def pass_host_header(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def pass_host_header(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         When true, the original client Host header is passed through to the backend
         """
         return pulumi.get(self, "pass_host_header")
 
     @pass_host_header.setter
-    def pass_host_header(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def pass_host_header(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "pass_host_header", value)
 
     @_builtins.property
     @pulumi.getter(name="rewriteRedirects")
-    def rewrite_redirects(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def rewrite_redirects(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         When true, Location headers in backend responses are rewritten to replace the backend address with the public-facing domain
         """
         return pulumi.get(self, "rewrite_redirects")
 
     @rewrite_redirects.setter
-    def rewrite_redirects(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def rewrite_redirects(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "rewrite_redirects", value)
 
 
 @pulumi.input_type
 class _ReverseProxyServiceState:
     def __init__(__self__, *,
-                 auth: Optional[pulumi.Input['ReverseProxyServiceAuthArgs']] = None,
-                 domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 pass_host_header: Optional[pulumi.Input[_builtins.bool]] = None,
-                 proxy_cluster: Optional[pulumi.Input[_builtins.str]] = None,
-                 rewrite_redirects: Optional[pulumi.Input[_builtins.bool]] = None,
-                 targets: Optional[pulumi.Input[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]]] = None):
+                 access_restrictions: pulumi.Input[Optional['ReverseProxyServiceAccessRestrictionsArgs']] = None,
+                 auth: pulumi.Input[Optional['ReverseProxyServiceAuthArgs']] = None,
+                 domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 listen_port: pulumi.Input[Optional[_builtins.float]] = None,
+                 mode: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 pass_host_header: pulumi.Input[Optional[_builtins.bool]] = None,
+                 port_auto_assigned: pulumi.Input[Optional[_builtins.bool]] = None,
+                 proxy_cluster: pulumi.Input[Optional[_builtins.str]] = None,
+                 rewrite_redirects: pulumi.Input[Optional[_builtins.bool]] = None,
+                 targets: pulumi.Input[Optional[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]]] = None):
         """
         Input properties used for looking up and filtering ReverseProxyService resources.
 
+        :param pulumi.Input['ReverseProxyServiceAccessRestrictionsArgs'] access_restrictions: Connection-level access restrictions based on IP or geography
         :param pulumi.Input['ReverseProxyServiceAuthArgs'] auth: Authentication configuration
         :param pulumi.Input[_builtins.str] domain: Domain for the service
         :param pulumi.Input[_builtins.bool] enabled: Whether the service is enabled
+        :param pulumi.Input[_builtins.float] listen_port: Port the proxy listens on (L4/TLS only). Set to 0 for auto-assignment.
+        :param pulumi.Input[_builtins.str] mode: Service mode: "http" for L7 reverse proxy, "tcp"/"udp"/"tls" for L4 passthrough
         :param pulumi.Input[_builtins.str] name: Service name
         :param pulumi.Input[_builtins.bool] pass_host_header: When true, the original client Host header is passed through to the backend
+        :param pulumi.Input[_builtins.bool] port_auto_assigned: Whether the listen port was auto-assigned by the server
         :param pulumi.Input[_builtins.str] proxy_cluster: The proxy cluster handling this service (derived from domain)
         :param pulumi.Input[_builtins.bool] rewrite_redirects: When true, Location headers in backend responses are rewritten to replace the backend address with the public-facing domain
         :param pulumi.Input[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]] targets: List of target backends for this service
         """
+        if access_restrictions is not None:
+            pulumi.set(__self__, "access_restrictions", access_restrictions)
         if auth is not None:
             pulumi.set(__self__, "auth", auth)
         if domain is not None:
             pulumi.set(__self__, "domain", domain)
         if enabled is not None:
             pulumi.set(__self__, "enabled", enabled)
+        if listen_port is not None:
+            pulumi.set(__self__, "listen_port", listen_port)
+        if mode is not None:
+            pulumi.set(__self__, "mode", mode)
         if name is not None:
             pulumi.set(__self__, "name", name)
         if pass_host_header is not None:
             pulumi.set(__self__, "pass_host_header", pass_host_header)
+        if port_auto_assigned is not None:
+            pulumi.set(__self__, "port_auto_assigned", port_auto_assigned)
         if proxy_cluster is not None:
             pulumi.set(__self__, "proxy_cluster", proxy_cluster)
         if rewrite_redirects is not None:
@@ -177,99 +241,147 @@ class _ReverseProxyServiceState:
             pulumi.set(__self__, "targets", targets)
 
     @_builtins.property
+    @pulumi.getter(name="accessRestrictions")
+    def access_restrictions(self) -> pulumi.Input[Optional['ReverseProxyServiceAccessRestrictionsArgs']]:
+        """
+        Connection-level access restrictions based on IP or geography
+        """
+        return pulumi.get(self, "access_restrictions")
+
+    @access_restrictions.setter
+    def access_restrictions(self, value: pulumi.Input[Optional['ReverseProxyServiceAccessRestrictionsArgs']]):
+        pulumi.set(self, "access_restrictions", value)
+
+    @_builtins.property
     @pulumi.getter
-    def auth(self) -> Optional[pulumi.Input['ReverseProxyServiceAuthArgs']]:
+    def auth(self) -> pulumi.Input[Optional['ReverseProxyServiceAuthArgs']]:
         """
         Authentication configuration
         """
         return pulumi.get(self, "auth")
 
     @auth.setter
-    def auth(self, value: Optional[pulumi.Input['ReverseProxyServiceAuthArgs']]):
+    def auth(self, value: pulumi.Input[Optional['ReverseProxyServiceAuthArgs']]):
         pulumi.set(self, "auth", value)
 
     @_builtins.property
     @pulumi.getter
-    def domain(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def domain(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Domain for the service
         """
         return pulumi.get(self, "domain")
 
     @domain.setter
-    def domain(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def domain(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "domain", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the service is enabled
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
+    @pulumi.getter(name="listenPort")
+    def listen_port(self) -> pulumi.Input[Optional[_builtins.float]]:
+        """
+        Port the proxy listens on (L4/TLS only). Set to 0 for auto-assignment.
+        """
+        return pulumi.get(self, "listen_port")
+
+    @listen_port.setter
+    def listen_port(self, value: pulumi.Input[Optional[_builtins.float]]):
+        pulumi.set(self, "listen_port", value)
+
+    @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def mode(self) -> pulumi.Input[Optional[_builtins.str]]:
+        """
+        Service mode: "http" for L7 reverse proxy, "tcp"/"udp"/"tls" for L4 passthrough
+        """
+        return pulumi.get(self, "mode")
+
+    @mode.setter
+    def mode(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "mode", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Service name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="passHostHeader")
-    def pass_host_header(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def pass_host_header(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         When true, the original client Host header is passed through to the backend
         """
         return pulumi.get(self, "pass_host_header")
 
     @pass_host_header.setter
-    def pass_host_header(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def pass_host_header(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "pass_host_header", value)
 
     @_builtins.property
+    @pulumi.getter(name="portAutoAssigned")
+    def port_auto_assigned(self) -> pulumi.Input[Optional[_builtins.bool]]:
+        """
+        Whether the listen port was auto-assigned by the server
+        """
+        return pulumi.get(self, "port_auto_assigned")
+
+    @port_auto_assigned.setter
+    def port_auto_assigned(self, value: pulumi.Input[Optional[_builtins.bool]]):
+        pulumi.set(self, "port_auto_assigned", value)
+
+    @_builtins.property
     @pulumi.getter(name="proxyCluster")
-    def proxy_cluster(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def proxy_cluster(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The proxy cluster handling this service (derived from domain)
         """
         return pulumi.get(self, "proxy_cluster")
 
     @proxy_cluster.setter
-    def proxy_cluster(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def proxy_cluster(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "proxy_cluster", value)
 
     @_builtins.property
     @pulumi.getter(name="rewriteRedirects")
-    def rewrite_redirects(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def rewrite_redirects(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         When true, Location headers in backend responses are rewritten to replace the backend address with the public-facing domain
         """
         return pulumi.get(self, "rewrite_redirects")
 
     @rewrite_redirects.setter
-    def rewrite_redirects(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def rewrite_redirects(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "rewrite_redirects", value)
 
     @_builtins.property
     @pulumi.getter
-    def targets(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]]]:
+    def targets(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]]]:
         """
         List of target backends for this service
         """
         return pulumi.get(self, "targets")
 
     @targets.setter
-    def targets(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]]]):
+    def targets(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['ReverseProxyServiceTargetArgs']]]]):
         pulumi.set(self, "targets", value)
 
 
@@ -279,26 +391,32 @@ class ReverseProxyService(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 auth: Optional[pulumi.Input[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict']]] = None,
-                 domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 pass_host_header: Optional[pulumi.Input[_builtins.bool]] = None,
-                 rewrite_redirects: Optional[pulumi.Input[_builtins.bool]] = None,
-                 targets: Optional[pulumi.Input[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict']]]]] = None,
+                 access_restrictions: pulumi.Input[Optional[Union['ReverseProxyServiceAccessRestrictionsArgs', 'ReverseProxyServiceAccessRestrictionsArgsDict', 'outputs.ReverseProxyServiceAccessRestrictions']]] = None,
+                 auth: pulumi.Input[Optional[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict', 'outputs.ReverseProxyServiceAuth']]] = None,
+                 domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 listen_port: pulumi.Input[Optional[_builtins.float]] = None,
+                 mode: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 pass_host_header: pulumi.Input[Optional[_builtins.bool]] = None,
+                 rewrite_redirects: pulumi.Input[Optional[_builtins.bool]] = None,
+                 targets: pulumi.Input[Optional[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict', 'outputs.ReverseProxyServiceTarget']]]]] = None,
                  __props__=None):
         """
         Create a ReverseProxyService resource with the given unique name, props, and options.
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict']] auth: Authentication configuration
+        :param pulumi.Input[Union['ReverseProxyServiceAccessRestrictionsArgs', 'ReverseProxyServiceAccessRestrictionsArgsDict', 'outputs.ReverseProxyServiceAccessRestrictions']] access_restrictions: Connection-level access restrictions based on IP or geography
+        :param pulumi.Input[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict', 'outputs.ReverseProxyServiceAuth']] auth: Authentication configuration
         :param pulumi.Input[_builtins.str] domain: Domain for the service
         :param pulumi.Input[_builtins.bool] enabled: Whether the service is enabled
+        :param pulumi.Input[_builtins.float] listen_port: Port the proxy listens on (L4/TLS only). Set to 0 for auto-assignment.
+        :param pulumi.Input[_builtins.str] mode: Service mode: "http" for L7 reverse proxy, "tcp"/"udp"/"tls" for L4 passthrough
         :param pulumi.Input[_builtins.str] name: Service name
         :param pulumi.Input[_builtins.bool] pass_host_header: When true, the original client Host header is passed through to the backend
         :param pulumi.Input[_builtins.bool] rewrite_redirects: When true, Location headers in backend responses are rewritten to replace the backend address with the public-facing domain
-        :param pulumi.Input[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict']]]] targets: List of target backends for this service
+        :param pulumi.Input[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict', 'outputs.ReverseProxyServiceTarget']]]] targets: List of target backends for this service
         """
         ...
     @overload
@@ -324,13 +442,16 @@ class ReverseProxyService(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 auth: Optional[pulumi.Input[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict']]] = None,
-                 domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 pass_host_header: Optional[pulumi.Input[_builtins.bool]] = None,
-                 rewrite_redirects: Optional[pulumi.Input[_builtins.bool]] = None,
-                 targets: Optional[pulumi.Input[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict']]]]] = None,
+                 access_restrictions: pulumi.Input[Optional[Union['ReverseProxyServiceAccessRestrictionsArgs', 'ReverseProxyServiceAccessRestrictionsArgsDict', 'outputs.ReverseProxyServiceAccessRestrictions']]] = None,
+                 auth: pulumi.Input[Optional[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict', 'outputs.ReverseProxyServiceAuth']]] = None,
+                 domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 listen_port: pulumi.Input[Optional[_builtins.float]] = None,
+                 mode: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 pass_host_header: pulumi.Input[Optional[_builtins.bool]] = None,
+                 rewrite_redirects: pulumi.Input[Optional[_builtins.bool]] = None,
+                 targets: pulumi.Input[Optional[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict', 'outputs.ReverseProxyServiceTarget']]]]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -340,6 +461,7 @@ class ReverseProxyService(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = ReverseProxyServiceArgs.__new__(ReverseProxyServiceArgs)
 
+            __props__.__dict__["access_restrictions"] = access_restrictions
             if auth is None and not opts.urn:
                 raise TypeError("Missing required property 'auth'")
             __props__.__dict__["auth"] = auth
@@ -347,12 +469,15 @@ class ReverseProxyService(pulumi.CustomResource):
                 raise TypeError("Missing required property 'domain'")
             __props__.__dict__["domain"] = domain
             __props__.__dict__["enabled"] = enabled
+            __props__.__dict__["listen_port"] = listen_port
+            __props__.__dict__["mode"] = mode
             __props__.__dict__["name"] = name
             __props__.__dict__["pass_host_header"] = pass_host_header
             __props__.__dict__["rewrite_redirects"] = rewrite_redirects
             if targets is None and not opts.urn:
                 raise TypeError("Missing required property 'targets'")
             __props__.__dict__["targets"] = targets
+            __props__.__dict__["port_auto_assigned"] = None
             __props__.__dict__["proxy_cluster"] = None
         super(ReverseProxyService, __self__).__init__(
             'netbird:index/reverseProxyService:ReverseProxyService',
@@ -365,14 +490,18 @@ class ReverseProxyService(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            auth: Optional[pulumi.Input[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict']]] = None,
-            domain: Optional[pulumi.Input[_builtins.str]] = None,
-            enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            pass_host_header: Optional[pulumi.Input[_builtins.bool]] = None,
-            proxy_cluster: Optional[pulumi.Input[_builtins.str]] = None,
-            rewrite_redirects: Optional[pulumi.Input[_builtins.bool]] = None,
-            targets: Optional[pulumi.Input[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict']]]]] = None) -> 'ReverseProxyService':
+            access_restrictions: pulumi.Input[Optional[Union['ReverseProxyServiceAccessRestrictionsArgs', 'ReverseProxyServiceAccessRestrictionsArgsDict', 'outputs.ReverseProxyServiceAccessRestrictions']]] = None,
+            auth: pulumi.Input[Optional[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict', 'outputs.ReverseProxyServiceAuth']]] = None,
+            domain: pulumi.Input[Optional[_builtins.str]] = None,
+            enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            listen_port: pulumi.Input[Optional[_builtins.float]] = None,
+            mode: pulumi.Input[Optional[_builtins.str]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            pass_host_header: pulumi.Input[Optional[_builtins.bool]] = None,
+            port_auto_assigned: pulumi.Input[Optional[_builtins.bool]] = None,
+            proxy_cluster: pulumi.Input[Optional[_builtins.str]] = None,
+            rewrite_redirects: pulumi.Input[Optional[_builtins.bool]] = None,
+            targets: pulumi.Input[Optional[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict', 'outputs.ReverseProxyServiceTarget']]]]] = None) -> 'ReverseProxyService':
         """
         Get an existing ReverseProxyService resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
@@ -380,28 +509,44 @@ class ReverseProxyService(pulumi.CustomResource):
         :param str resource_name: The unique name of the resulting resource.
         :param pulumi.Input[str] id: The unique provider ID of the resource to lookup.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict']] auth: Authentication configuration
+        :param pulumi.Input[Union['ReverseProxyServiceAccessRestrictionsArgs', 'ReverseProxyServiceAccessRestrictionsArgsDict', 'outputs.ReverseProxyServiceAccessRestrictions']] access_restrictions: Connection-level access restrictions based on IP or geography
+        :param pulumi.Input[Union['ReverseProxyServiceAuthArgs', 'ReverseProxyServiceAuthArgsDict', 'outputs.ReverseProxyServiceAuth']] auth: Authentication configuration
         :param pulumi.Input[_builtins.str] domain: Domain for the service
         :param pulumi.Input[_builtins.bool] enabled: Whether the service is enabled
+        :param pulumi.Input[_builtins.float] listen_port: Port the proxy listens on (L4/TLS only). Set to 0 for auto-assignment.
+        :param pulumi.Input[_builtins.str] mode: Service mode: "http" for L7 reverse proxy, "tcp"/"udp"/"tls" for L4 passthrough
         :param pulumi.Input[_builtins.str] name: Service name
         :param pulumi.Input[_builtins.bool] pass_host_header: When true, the original client Host header is passed through to the backend
+        :param pulumi.Input[_builtins.bool] port_auto_assigned: Whether the listen port was auto-assigned by the server
         :param pulumi.Input[_builtins.str] proxy_cluster: The proxy cluster handling this service (derived from domain)
         :param pulumi.Input[_builtins.bool] rewrite_redirects: When true, Location headers in backend responses are rewritten to replace the backend address with the public-facing domain
-        :param pulumi.Input[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict']]]] targets: List of target backends for this service
+        :param pulumi.Input[Sequence[pulumi.Input[Union['ReverseProxyServiceTargetArgs', 'ReverseProxyServiceTargetArgsDict', 'outputs.ReverseProxyServiceTarget']]]] targets: List of target backends for this service
         """
         opts = pulumi.ResourceOptions.merge(opts, pulumi.ResourceOptions(id=id))
 
         __props__ = _ReverseProxyServiceState.__new__(_ReverseProxyServiceState)
 
+        __props__.__dict__["access_restrictions"] = access_restrictions
         __props__.__dict__["auth"] = auth
         __props__.__dict__["domain"] = domain
         __props__.__dict__["enabled"] = enabled
+        __props__.__dict__["listen_port"] = listen_port
+        __props__.__dict__["mode"] = mode
         __props__.__dict__["name"] = name
         __props__.__dict__["pass_host_header"] = pass_host_header
+        __props__.__dict__["port_auto_assigned"] = port_auto_assigned
         __props__.__dict__["proxy_cluster"] = proxy_cluster
         __props__.__dict__["rewrite_redirects"] = rewrite_redirects
         __props__.__dict__["targets"] = targets
         return ReverseProxyService(resource_name, opts=opts, __props__=__props__)
+
+    @_builtins.property
+    @pulumi.getter(name="accessRestrictions")
+    def access_restrictions(self) -> pulumi.Output[Optional['outputs.ReverseProxyServiceAccessRestrictions']]:
+        """
+        Connection-level access restrictions based on IP or geography
+        """
+        return pulumi.get(self, "access_restrictions")
 
     @_builtins.property
     @pulumi.getter
@@ -428,6 +573,22 @@ class ReverseProxyService(pulumi.CustomResource):
         return pulumi.get(self, "enabled")
 
     @_builtins.property
+    @pulumi.getter(name="listenPort")
+    def listen_port(self) -> pulumi.Output[_builtins.float]:
+        """
+        Port the proxy listens on (L4/TLS only). Set to 0 for auto-assignment.
+        """
+        return pulumi.get(self, "listen_port")
+
+    @_builtins.property
+    @pulumi.getter
+    def mode(self) -> pulumi.Output[_builtins.str]:
+        """
+        Service mode: "http" for L7 reverse proxy, "tcp"/"udp"/"tls" for L4 passthrough
+        """
+        return pulumi.get(self, "mode")
+
+    @_builtins.property
     @pulumi.getter
     def name(self) -> pulumi.Output[_builtins.str]:
         """
@@ -442,6 +603,14 @@ class ReverseProxyService(pulumi.CustomResource):
         When true, the original client Host header is passed through to the backend
         """
         return pulumi.get(self, "pass_host_header")
+
+    @_builtins.property
+    @pulumi.getter(name="portAutoAssigned")
+    def port_auto_assigned(self) -> pulumi.Output[_builtins.bool]:
+        """
+        Whether the listen port was auto-assigned by the server
+        """
+        return pulumi.get(self, "port_auto_assigned")
 
     @_builtins.property
     @pulumi.getter(name="proxyCluster")

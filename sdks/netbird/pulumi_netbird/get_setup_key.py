@@ -190,8 +190,8 @@ def get_setup_key(id: Optional[_builtins.str] = None,
         usage_limit=pulumi.get(__ret__, 'usage_limit'),
         used_times=pulumi.get(__ret__, 'used_times'),
         valid=pulumi.get(__ret__, 'valid'))
-def get_setup_key_output(id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                         name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_setup_key_output(id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                         name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                          opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetSetupKeyResult]:
     """
     Use this data source to access information about an existing resource.

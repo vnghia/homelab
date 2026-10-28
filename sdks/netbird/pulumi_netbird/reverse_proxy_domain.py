@@ -58,10 +58,10 @@ class ReverseProxyDomainArgs:
 @pulumi.input_type
 class _ReverseProxyDomainState:
     def __init__(__self__, *,
-                 domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 target_cluster: Optional[pulumi.Input[_builtins.str]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 validated: Optional[pulumi.Input[_builtins.bool]] = None):
+                 domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 target_cluster: pulumi.Input[Optional[_builtins.str]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 validated: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         Input properties used for looking up and filtering ReverseProxyDomain resources.
 
@@ -81,50 +81,50 @@ class _ReverseProxyDomainState:
 
     @_builtins.property
     @pulumi.getter
-    def domain(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def domain(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Domain name
         """
         return pulumi.get(self, "domain")
 
     @domain.setter
-    def domain(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def domain(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "domain", value)
 
     @_builtins.property
     @pulumi.getter(name="targetCluster")
-    def target_cluster(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def target_cluster(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The proxy cluster this domain should be validated against
         """
         return pulumi.get(self, "target_cluster")
 
     @target_cluster.setter
-    def target_cluster(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def target_cluster(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "target_cluster", value)
 
     @_builtins.property
     @pulumi.getter
-    def type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Type of reverse proxy domain (free, custom)
         """
         return pulumi.get(self, "type")
 
     @type.setter
-    def type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "type", value)
 
     @_builtins.property
     @pulumi.getter
-    def validated(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def validated(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the domain has been validated
         """
         return pulumi.get(self, "validated")
 
     @validated.setter
-    def validated(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def validated(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "validated", value)
 
 
@@ -134,8 +134,8 @@ class ReverseProxyDomain(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 target_cluster: Optional[pulumi.Input[_builtins.str]] = None,
+                 domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 target_cluster: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a ReverseProxyDomain resource with the given unique name, props, and options.
@@ -169,8 +169,8 @@ class ReverseProxyDomain(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 target_cluster: Optional[pulumi.Input[_builtins.str]] = None,
+                 domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 target_cluster: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -199,10 +199,10 @@ class ReverseProxyDomain(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            domain: Optional[pulumi.Input[_builtins.str]] = None,
-            target_cluster: Optional[pulumi.Input[_builtins.str]] = None,
-            type: Optional[pulumi.Input[_builtins.str]] = None,
-            validated: Optional[pulumi.Input[_builtins.bool]] = None) -> 'ReverseProxyDomain':
+            domain: pulumi.Input[Optional[_builtins.str]] = None,
+            target_cluster: pulumi.Input[Optional[_builtins.str]] = None,
+            type: pulumi.Input[Optional[_builtins.str]] = None,
+            validated: pulumi.Input[Optional[_builtins.bool]] = None) -> 'ReverseProxyDomain':
         """
         Get an existing ReverseProxyDomain resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

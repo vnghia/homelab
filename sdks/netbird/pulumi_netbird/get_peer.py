@@ -302,9 +302,9 @@ def get_peer(id: Optional[_builtins.str] = None,
         ui_version=pulumi.get(__ret__, 'ui_version'),
         user_id=pulumi.get(__ret__, 'user_id'),
         version=pulumi.get(__ret__, 'version'))
-def get_peer_output(id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                    ip: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                    name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_peer_output(id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                    ip: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                    name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                     opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetPeerResult]:
     """
     Use this data source to access information about an existing resource.

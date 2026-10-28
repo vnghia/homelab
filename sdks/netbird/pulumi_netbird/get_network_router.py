@@ -120,8 +120,8 @@ def get_network_router(id: Optional[_builtins.str] = None,
         network_id=pulumi.get(__ret__, 'network_id'),
         peer=pulumi.get(__ret__, 'peer'),
         peer_groups=pulumi.get(__ret__, 'peer_groups'))
-def get_network_router_output(id: Optional[pulumi.Input[_builtins.str]] = None,
-                              network_id: Optional[pulumi.Input[_builtins.str]] = None,
+def get_network_router_output(id: pulumi.Input[Optional[_builtins.str]] = None,
+                              network_id: pulumi.Input[Optional[_builtins.str]] = None,
                               opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetNetworkRouterResult]:
     """
     Use this data source to access information about an existing resource.

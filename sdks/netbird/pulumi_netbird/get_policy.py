@@ -95,7 +95,7 @@ class AwaitableGetPolicyResult(GetPolicyResult):
 
 def get_policy(id: Optional[_builtins.str] = None,
                name: Optional[_builtins.str] = None,
-               rules: Optional[Sequence[Union['GetPolicyRuleArgs', 'GetPolicyRuleArgsDict']]] = None,
+               rules: Optional[Sequence[Union['GetPolicyRuleArgs', 'GetPolicyRuleArgsDict', 'outputs.GetPolicyRuleResult']]] = None,
                opts: Optional[pulumi.InvokeOptions] = None) -> AwaitableGetPolicyResult:
     """
     Use this data source to access information about an existing resource.
@@ -114,9 +114,9 @@ def get_policy(id: Optional[_builtins.str] = None,
         name=pulumi.get(__ret__, 'name'),
         rules=pulumi.get(__ret__, 'rules'),
         source_posture_checks=pulumi.get(__ret__, 'source_posture_checks'))
-def get_policy_output(id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                      name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                      rules: Optional[pulumi.Input[Optional[Sequence[Union['GetPolicyRuleArgs', 'GetPolicyRuleArgsDict']]]]] = None,
+def get_policy_output(id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                      name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                      rules: pulumi.Input[Optional[Optional[Sequence[Union['GetPolicyRuleArgs', 'GetPolicyRuleArgsDict', 'outputs.GetPolicyRuleResult']]]]] = None,
                       opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetPolicyResult]:
     """
     Use this data source to access information about an existing resource.

@@ -16,6 +16,11 @@ from . import _utilities
 from . import outputs
 
 __all__ = [
+    'AgentNetworkGuardrailModelAllowlist',
+    'AgentNetworkGuardrailPromptCapture',
+    'AgentNetworkPolicyBudgetLimit',
+    'AgentNetworkPolicyTokenLimit',
+    'AgentNetworkProviderModel',
     'NameserverGroupNameserver',
     'PolicyRule',
     'PolicyRuleDestinationResource',
@@ -27,12 +32,20 @@ __all__ = [
     'PostureCheckOsVersionCheck',
     'PostureCheckPeerNetworkRangeCheck',
     'PostureCheckProcessCheck',
+    'ReverseProxyServiceAccessRestrictions',
     'ReverseProxyServiceAuth',
     'ReverseProxyServiceAuthBearerAuth',
+    'ReverseProxyServiceAuthHeaderAuth',
     'ReverseProxyServiceAuthLinkAuth',
     'ReverseProxyServiceAuthPasswordAuth',
     'ReverseProxyServiceAuthPinAuth',
     'ReverseProxyServiceTarget',
+    'ReverseProxyServiceTargetOptions',
+    'GetAgentNetworkGuardrailModelAllowlistResult',
+    'GetAgentNetworkGuardrailPromptCaptureResult',
+    'GetAgentNetworkPolicyBudgetLimitResult',
+    'GetAgentNetworkPolicyTokenLimitResult',
+    'GetAgentNetworkProviderModelResult',
     'GetNameserverGroupNameserverResult',
     'GetPolicyRuleResult',
     'GetPolicyRuleDestinationResourceResult',
@@ -45,13 +58,305 @@ __all__ = [
     'GetPostureCheckPeerNetworkRangeCheckResult',
     'GetPostureCheckProcessCheckResult',
     'GetReverseProxyClustersClusterResult',
+    'GetReverseProxyServiceAccessRestrictionsResult',
     'GetReverseProxyServiceAuthResult',
     'GetReverseProxyServiceAuthBearerAuthResult',
+    'GetReverseProxyServiceAuthHeaderAuthResult',
     'GetReverseProxyServiceAuthLinkAuthResult',
     'GetReverseProxyServiceAuthPasswordAuthResult',
     'GetReverseProxyServiceAuthPinAuthResult',
     'GetReverseProxyServiceTargetResult',
+    'GetReverseProxyServiceTargetOptionsResult',
 ]
+
+@pulumi.output_type
+class AgentNetworkGuardrailModelAllowlist(dict):
+    def __init__(__self__, *,
+                 models: Sequence[_builtins.str],
+                 enabled: Optional[_builtins.bool] = None):
+        """
+        :param Sequence[_builtins.str] models: Allowed catalog model IDs
+        :param _builtins.bool enabled: Whether the model allowlist check is active
+        """
+        pulumi.set(__self__, "models", models)
+        if enabled is not None:
+            pulumi.set(__self__, "enabled", enabled)
+
+    @_builtins.property
+    @pulumi.getter
+    def models(self) -> Sequence[_builtins.str]:
+        """
+        Allowed catalog model IDs
+        """
+        return pulumi.get(self, "models")
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> Optional[_builtins.bool]:
+        """
+        Whether the model allowlist check is active
+        """
+        return pulumi.get(self, "enabled")
+
+
+@pulumi.output_type
+class AgentNetworkGuardrailPromptCapture(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "redactPii":
+            suggest = "redact_pii"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in AgentNetworkGuardrailPromptCapture. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        AgentNetworkGuardrailPromptCapture.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        AgentNetworkGuardrailPromptCapture.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 enabled: Optional[_builtins.bool] = None,
+                 redact_pii: Optional[_builtins.bool] = None):
+        """
+        :param _builtins.bool enabled: Whether prompt capture is enabled for this guardrail
+        :param _builtins.bool redact_pii: Whether captured prompts have PII redacted
+        """
+        if enabled is not None:
+            pulumi.set(__self__, "enabled", enabled)
+        if redact_pii is not None:
+            pulumi.set(__self__, "redact_pii", redact_pii)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> Optional[_builtins.bool]:
+        """
+        Whether prompt capture is enabled for this guardrail
+        """
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter(name="redactPii")
+    def redact_pii(self) -> Optional[_builtins.bool]:
+        """
+        Whether captured prompts have PII redacted
+        """
+        return pulumi.get(self, "redact_pii")
+
+
+@pulumi.output_type
+class AgentNetworkPolicyBudgetLimit(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "groupCapUsd":
+            suggest = "group_cap_usd"
+        elif key == "userCapUsd":
+            suggest = "user_cap_usd"
+        elif key == "windowSeconds":
+            suggest = "window_seconds"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in AgentNetworkPolicyBudgetLimit. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        AgentNetworkPolicyBudgetLimit.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        AgentNetworkPolicyBudgetLimit.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 enabled: Optional[_builtins.bool] = None,
+                 group_cap_usd: Optional[_builtins.float] = None,
+                 user_cap_usd: Optional[_builtins.float] = None,
+                 window_seconds: Optional[_builtins.float] = None):
+        """
+        :param _builtins.bool enabled: Whether the budget limit is enforced
+        :param _builtins.float group_cap_usd: USD allowed per source group per window (0 = uncapped)
+        :param _builtins.float user_cap_usd: USD allowed per user per window (0 = uncapped)
+        :param _builtins.float window_seconds: Reset frequency in seconds (minimum 60 when enabled)
+        """
+        if enabled is not None:
+            pulumi.set(__self__, "enabled", enabled)
+        if group_cap_usd is not None:
+            pulumi.set(__self__, "group_cap_usd", group_cap_usd)
+        if user_cap_usd is not None:
+            pulumi.set(__self__, "user_cap_usd", user_cap_usd)
+        if window_seconds is not None:
+            pulumi.set(__self__, "window_seconds", window_seconds)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> Optional[_builtins.bool]:
+        """
+        Whether the budget limit is enforced
+        """
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter(name="groupCapUsd")
+    def group_cap_usd(self) -> Optional[_builtins.float]:
+        """
+        USD allowed per source group per window (0 = uncapped)
+        """
+        return pulumi.get(self, "group_cap_usd")
+
+    @_builtins.property
+    @pulumi.getter(name="userCapUsd")
+    def user_cap_usd(self) -> Optional[_builtins.float]:
+        """
+        USD allowed per user per window (0 = uncapped)
+        """
+        return pulumi.get(self, "user_cap_usd")
+
+    @_builtins.property
+    @pulumi.getter(name="windowSeconds")
+    def window_seconds(self) -> Optional[_builtins.float]:
+        """
+        Reset frequency in seconds (minimum 60 when enabled)
+        """
+        return pulumi.get(self, "window_seconds")
+
+
+@pulumi.output_type
+class AgentNetworkPolicyTokenLimit(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "groupCap":
+            suggest = "group_cap"
+        elif key == "userCap":
+            suggest = "user_cap"
+        elif key == "windowSeconds":
+            suggest = "window_seconds"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in AgentNetworkPolicyTokenLimit. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        AgentNetworkPolicyTokenLimit.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        AgentNetworkPolicyTokenLimit.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 enabled: Optional[_builtins.bool] = None,
+                 group_cap: Optional[_builtins.float] = None,
+                 user_cap: Optional[_builtins.float] = None,
+                 window_seconds: Optional[_builtins.float] = None):
+        """
+        :param _builtins.bool enabled: Whether the token limit is enforced
+        :param _builtins.float group_cap: Tokens allowed per source group per window (0 = uncapped)
+        :param _builtins.float user_cap: Tokens allowed per individual user per window (0 = uncapped)
+        :param _builtins.float window_seconds: Reset frequency in seconds (minimum 60 when enabled)
+        """
+        if enabled is not None:
+            pulumi.set(__self__, "enabled", enabled)
+        if group_cap is not None:
+            pulumi.set(__self__, "group_cap", group_cap)
+        if user_cap is not None:
+            pulumi.set(__self__, "user_cap", user_cap)
+        if window_seconds is not None:
+            pulumi.set(__self__, "window_seconds", window_seconds)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> Optional[_builtins.bool]:
+        """
+        Whether the token limit is enforced
+        """
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter(name="groupCap")
+    def group_cap(self) -> Optional[_builtins.float]:
+        """
+        Tokens allowed per source group per window (0 = uncapped)
+        """
+        return pulumi.get(self, "group_cap")
+
+    @_builtins.property
+    @pulumi.getter(name="userCap")
+    def user_cap(self) -> Optional[_builtins.float]:
+        """
+        Tokens allowed per individual user per window (0 = uncapped)
+        """
+        return pulumi.get(self, "user_cap")
+
+    @_builtins.property
+    @pulumi.getter(name="windowSeconds")
+    def window_seconds(self) -> Optional[_builtins.float]:
+        """
+        Reset frequency in seconds (minimum 60 when enabled)
+        """
+        return pulumi.get(self, "window_seconds")
+
+
+@pulumi.output_type
+class AgentNetworkProviderModel(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "inputPer1k":
+            suggest = "input_per1k"
+        elif key == "outputPer1k":
+            suggest = "output_per1k"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in AgentNetworkProviderModel. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        AgentNetworkProviderModel.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        AgentNetworkProviderModel.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 id: _builtins.str,
+                 input_per1k: _builtins.float,
+                 output_per1k: _builtins.float):
+        """
+        :param _builtins.str id: Model identifier (e.g. `gpt-4o-mini`)
+        :param _builtins.float input_per1k: Cost per 1k input tokens in USD
+        :param _builtins.float output_per1k: Cost per 1k output tokens in USD
+        """
+        pulumi.set(__self__, "id", id)
+        pulumi.set(__self__, "input_per1k", input_per1k)
+        pulumi.set(__self__, "output_per1k", output_per1k)
+
+    @_builtins.property
+    @pulumi.getter
+    def id(self) -> _builtins.str:
+        """
+        Model identifier (e.g. `gpt-4o-mini`)
+        """
+        return pulumi.get(self, "id")
+
+    @_builtins.property
+    @pulumi.getter(name="inputPer1k")
+    def input_per1k(self) -> _builtins.float:
+        """
+        Cost per 1k input tokens in USD
+        """
+        return pulumi.get(self, "input_per1k")
+
+    @_builtins.property
+    @pulumi.getter(name="outputPer1k")
+    def output_per1k(self) -> _builtins.float:
+        """
+        Cost per 1k output tokens in USD
+        """
+        return pulumi.get(self, "output_per1k")
+
 
 @pulumi.output_type
 class NameserverGroupNameserver(dict):
@@ -598,12 +903,92 @@ class PostureCheckProcessCheck(dict):
 
 
 @pulumi.output_type
+class ReverseProxyServiceAccessRestrictions(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "allowedCidrs":
+            suggest = "allowed_cidrs"
+        elif key == "allowedCountries":
+            suggest = "allowed_countries"
+        elif key == "blockedCidrs":
+            suggest = "blocked_cidrs"
+        elif key == "blockedCountries":
+            suggest = "blocked_countries"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in ReverseProxyServiceAccessRestrictions. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        ReverseProxyServiceAccessRestrictions.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        ReverseProxyServiceAccessRestrictions.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 allowed_cidrs: Optional[Sequence[_builtins.str]] = None,
+                 allowed_countries: Optional[Sequence[_builtins.str]] = None,
+                 blocked_cidrs: Optional[Sequence[_builtins.str]] = None,
+                 blocked_countries: Optional[Sequence[_builtins.str]] = None):
+        """
+        :param Sequence[_builtins.str] allowed_cidrs: CIDR allowlist
+        :param Sequence[_builtins.str] allowed_countries: ISO 3166-1 alpha-2 country codes to allow
+        :param Sequence[_builtins.str] blocked_cidrs: CIDR blocklist
+        :param Sequence[_builtins.str] blocked_countries: ISO 3166-1 alpha-2 country codes to block
+        """
+        if allowed_cidrs is not None:
+            pulumi.set(__self__, "allowed_cidrs", allowed_cidrs)
+        if allowed_countries is not None:
+            pulumi.set(__self__, "allowed_countries", allowed_countries)
+        if blocked_cidrs is not None:
+            pulumi.set(__self__, "blocked_cidrs", blocked_cidrs)
+        if blocked_countries is not None:
+            pulumi.set(__self__, "blocked_countries", blocked_countries)
+
+    @_builtins.property
+    @pulumi.getter(name="allowedCidrs")
+    def allowed_cidrs(self) -> Optional[Sequence[_builtins.str]]:
+        """
+        CIDR allowlist
+        """
+        return pulumi.get(self, "allowed_cidrs")
+
+    @_builtins.property
+    @pulumi.getter(name="allowedCountries")
+    def allowed_countries(self) -> Optional[Sequence[_builtins.str]]:
+        """
+        ISO 3166-1 alpha-2 country codes to allow
+        """
+        return pulumi.get(self, "allowed_countries")
+
+    @_builtins.property
+    @pulumi.getter(name="blockedCidrs")
+    def blocked_cidrs(self) -> Optional[Sequence[_builtins.str]]:
+        """
+        CIDR blocklist
+        """
+        return pulumi.get(self, "blocked_cidrs")
+
+    @_builtins.property
+    @pulumi.getter(name="blockedCountries")
+    def blocked_countries(self) -> Optional[Sequence[_builtins.str]]:
+        """
+        ISO 3166-1 alpha-2 country codes to block
+        """
+        return pulumi.get(self, "blocked_countries")
+
+
+@pulumi.output_type
 class ReverseProxyServiceAuth(dict):
     @staticmethod
     def __key_warning(key: str):
         suggest = None
         if key == "bearerAuth":
             suggest = "bearer_auth"
+        elif key == "headerAuths":
+            suggest = "header_auths"
         elif key == "linkAuth":
             suggest = "link_auth"
         elif key == "passwordAuth":
@@ -624,17 +1009,21 @@ class ReverseProxyServiceAuth(dict):
 
     def __init__(__self__, *,
                  bearer_auth: Optional['outputs.ReverseProxyServiceAuthBearerAuth'] = None,
+                 header_auths: Optional[Sequence['outputs.ReverseProxyServiceAuthHeaderAuth']] = None,
                  link_auth: Optional['outputs.ReverseProxyServiceAuthLinkAuth'] = None,
                  password_auth: Optional['outputs.ReverseProxyServiceAuthPasswordAuth'] = None,
                  pin_auth: Optional['outputs.ReverseProxyServiceAuthPinAuth'] = None):
         """
         :param 'ReverseProxyServiceAuthBearerAuthArgs' bearer_auth: Bearer token authentication
+        :param Sequence['ReverseProxyServiceAuthHeaderAuthArgs'] header_auths: Static header-value authentication rules
         :param 'ReverseProxyServiceAuthLinkAuthArgs' link_auth: Link authentication
         :param 'ReverseProxyServiceAuthPasswordAuthArgs' password_auth: Password authentication
         :param 'ReverseProxyServiceAuthPinAuthArgs' pin_auth: PIN authentication
         """
         if bearer_auth is not None:
             pulumi.set(__self__, "bearer_auth", bearer_auth)
+        if header_auths is not None:
+            pulumi.set(__self__, "header_auths", header_auths)
         if link_auth is not None:
             pulumi.set(__self__, "link_auth", link_auth)
         if password_auth is not None:
@@ -649,6 +1038,14 @@ class ReverseProxyServiceAuth(dict):
         Bearer token authentication
         """
         return pulumi.get(self, "bearer_auth")
+
+    @_builtins.property
+    @pulumi.getter(name="headerAuths")
+    def header_auths(self) -> Optional[Sequence['outputs.ReverseProxyServiceAuthHeaderAuth']]:
+        """
+        Static header-value authentication rules
+        """
+        return pulumi.get(self, "header_auths")
 
     @_builtins.property
     @pulumi.getter(name="linkAuth")
@@ -716,6 +1113,42 @@ class ReverseProxyServiceAuthBearerAuth(dict):
         List of group IDs that can use bearer auth
         """
         return pulumi.get(self, "distribution_groups")
+
+
+@pulumi.output_type
+class ReverseProxyServiceAuthHeaderAuth(dict):
+    def __init__(__self__, *,
+                 enabled: _builtins.bool,
+                 header: _builtins.str,
+                 value: _builtins.str):
+        """
+        :param _builtins.str header: HTTP header name to check
+        :param _builtins.str value: Expected header value
+        """
+        pulumi.set(__self__, "enabled", enabled)
+        pulumi.set(__self__, "header", header)
+        pulumi.set(__self__, "value", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> _builtins.bool:
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter
+    def header(self) -> _builtins.str:
+        """
+        HTTP header name to check
+        """
+        return pulumi.get(self, "header")
+
+    @_builtins.property
+    @pulumi.getter
+    def value(self) -> _builtins.str:
+        """
+        Expected header value
+        """
+        return pulumi.get(self, "value")
 
 
 @pulumi.output_type
@@ -798,14 +1231,16 @@ class ReverseProxyServiceTarget(dict):
                  target_type: _builtins.str,
                  enabled: Optional[_builtins.bool] = None,
                  host: Optional[_builtins.str] = None,
+                 options: Optional['outputs.ReverseProxyServiceTargetOptions'] = None,
                  path: Optional[_builtins.str] = None):
         """
         :param _builtins.float port: Backend port for this target (0 for scheme default)
-        :param _builtins.str protocol: Protocol to use when connecting to the backend (http, https)
+        :param _builtins.str protocol: Protocol to use when connecting to the backend (http, https for HTTP mode; tcp, udp for L4 mode)
         :param _builtins.str target_id: Target ID (resource or peer ID)
         :param _builtins.str target_type: Target type (peer, host, domain, subnet)
         :param _builtins.bool enabled: Whether this target is enabled
         :param _builtins.str host: Backend IP or domain for this target. If omitted, the API resolves it from the target peer.
+        :param 'ReverseProxyServiceTargetOptionsArgs' options: Per-target options
         :param _builtins.str path: URL path prefix for this target. Defaults to "/" if omitted.
         """
         pulumi.set(__self__, "port", port)
@@ -816,6 +1251,8 @@ class ReverseProxyServiceTarget(dict):
             pulumi.set(__self__, "enabled", enabled)
         if host is not None:
             pulumi.set(__self__, "host", host)
+        if options is not None:
+            pulumi.set(__self__, "options", options)
         if path is not None:
             pulumi.set(__self__, "path", path)
 
@@ -831,7 +1268,7 @@ class ReverseProxyServiceTarget(dict):
     @pulumi.getter
     def protocol(self) -> _builtins.str:
         """
-        Protocol to use when connecting to the backend (http, https)
+        Protocol to use when connecting to the backend (http, https for HTTP mode; tcp, udp for L4 mode)
         """
         return pulumi.get(self, "protocol")
 
@@ -869,11 +1306,269 @@ class ReverseProxyServiceTarget(dict):
 
     @_builtins.property
     @pulumi.getter
+    def options(self) -> Optional['outputs.ReverseProxyServiceTargetOptions']:
+        """
+        Per-target options
+        """
+        return pulumi.get(self, "options")
+
+    @_builtins.property
+    @pulumi.getter
     def path(self) -> Optional[_builtins.str]:
         """
         URL path prefix for this target. Defaults to "/" if omitted.
         """
         return pulumi.get(self, "path")
+
+
+@pulumi.output_type
+class ReverseProxyServiceTargetOptions(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "customHeaders":
+            suggest = "custom_headers"
+        elif key == "pathRewrite":
+            suggest = "path_rewrite"
+        elif key == "proxyProtocol":
+            suggest = "proxy_protocol"
+        elif key == "requestTimeout":
+            suggest = "request_timeout"
+        elif key == "sessionIdleTimeout":
+            suggest = "session_idle_timeout"
+        elif key == "skipTlsVerify":
+            suggest = "skip_tls_verify"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in ReverseProxyServiceTargetOptions. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        ReverseProxyServiceTargetOptions.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        ReverseProxyServiceTargetOptions.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 custom_headers: Optional[Mapping[str, _builtins.str]] = None,
+                 path_rewrite: Optional[_builtins.str] = None,
+                 proxy_protocol: Optional[_builtins.bool] = None,
+                 request_timeout: Optional[_builtins.str] = None,
+                 session_idle_timeout: Optional[_builtins.str] = None,
+                 skip_tls_verify: Optional[_builtins.bool] = None):
+        """
+        :param Mapping[str, _builtins.str] custom_headers: Extra headers sent to the backend (HTTP only). Marked sensitive since values commonly carry credentials, e.g. an `Authorization` header.
+        :param _builtins.str path_rewrite: Controls how the request path is rewritten before forwarding. Default strips the matched prefix. "preserve" keeps the full original path. (HTTP only)
+        :param _builtins.bool proxy_protocol: Send PROXY Protocol v2 header to this backend (TCP/TLS only)
+        :param _builtins.str request_timeout: Per-target response timeout as a Go duration string (e.g. "30s", "2m")
+        :param _builtins.str session_idle_timeout: Idle timeout before a UDP session is reaped, as a Go duration string (e.g. "30s", "2m"). Maximum 10m. (UDP only)
+        :param _builtins.bool skip_tls_verify: Skip TLS certificate verification for this backend (HTTPS targets only)
+        """
+        if custom_headers is not None:
+            pulumi.set(__self__, "custom_headers", custom_headers)
+        if path_rewrite is not None:
+            pulumi.set(__self__, "path_rewrite", path_rewrite)
+        if proxy_protocol is not None:
+            pulumi.set(__self__, "proxy_protocol", proxy_protocol)
+        if request_timeout is not None:
+            pulumi.set(__self__, "request_timeout", request_timeout)
+        if session_idle_timeout is not None:
+            pulumi.set(__self__, "session_idle_timeout", session_idle_timeout)
+        if skip_tls_verify is not None:
+            pulumi.set(__self__, "skip_tls_verify", skip_tls_verify)
+
+    @_builtins.property
+    @pulumi.getter(name="customHeaders")
+    def custom_headers(self) -> Optional[Mapping[str, _builtins.str]]:
+        """
+        Extra headers sent to the backend (HTTP only). Marked sensitive since values commonly carry credentials, e.g. an `Authorization` header.
+        """
+        return pulumi.get(self, "custom_headers")
+
+    @_builtins.property
+    @pulumi.getter(name="pathRewrite")
+    def path_rewrite(self) -> Optional[_builtins.str]:
+        """
+        Controls how the request path is rewritten before forwarding. Default strips the matched prefix. "preserve" keeps the full original path. (HTTP only)
+        """
+        return pulumi.get(self, "path_rewrite")
+
+    @_builtins.property
+    @pulumi.getter(name="proxyProtocol")
+    def proxy_protocol(self) -> Optional[_builtins.bool]:
+        """
+        Send PROXY Protocol v2 header to this backend (TCP/TLS only)
+        """
+        return pulumi.get(self, "proxy_protocol")
+
+    @_builtins.property
+    @pulumi.getter(name="requestTimeout")
+    def request_timeout(self) -> Optional[_builtins.str]:
+        """
+        Per-target response timeout as a Go duration string (e.g. "30s", "2m")
+        """
+        return pulumi.get(self, "request_timeout")
+
+    @_builtins.property
+    @pulumi.getter(name="sessionIdleTimeout")
+    def session_idle_timeout(self) -> Optional[_builtins.str]:
+        """
+        Idle timeout before a UDP session is reaped, as a Go duration string (e.g. "30s", "2m"). Maximum 10m. (UDP only)
+        """
+        return pulumi.get(self, "session_idle_timeout")
+
+    @_builtins.property
+    @pulumi.getter(name="skipTlsVerify")
+    def skip_tls_verify(self) -> Optional[_builtins.bool]:
+        """
+        Skip TLS certificate verification for this backend (HTTPS targets only)
+        """
+        return pulumi.get(self, "skip_tls_verify")
+
+
+@pulumi.output_type
+class GetAgentNetworkGuardrailModelAllowlistResult(dict):
+    def __init__(__self__, *,
+                 enabled: _builtins.bool,
+                 models: Sequence[_builtins.str]):
+        pulumi.set(__self__, "enabled", enabled)
+        pulumi.set(__self__, "models", models)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> _builtins.bool:
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter
+    def models(self) -> Sequence[_builtins.str]:
+        return pulumi.get(self, "models")
+
+
+@pulumi.output_type
+class GetAgentNetworkGuardrailPromptCaptureResult(dict):
+    def __init__(__self__, *,
+                 enabled: _builtins.bool,
+                 redact_pii: _builtins.bool):
+        pulumi.set(__self__, "enabled", enabled)
+        pulumi.set(__self__, "redact_pii", redact_pii)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> _builtins.bool:
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter(name="redactPii")
+    def redact_pii(self) -> _builtins.bool:
+        return pulumi.get(self, "redact_pii")
+
+
+@pulumi.output_type
+class GetAgentNetworkPolicyBudgetLimitResult(dict):
+    def __init__(__self__, *,
+                 enabled: _builtins.bool,
+                 group_cap_usd: _builtins.float,
+                 user_cap_usd: _builtins.float,
+                 window_seconds: _builtins.float):
+        pulumi.set(__self__, "enabled", enabled)
+        pulumi.set(__self__, "group_cap_usd", group_cap_usd)
+        pulumi.set(__self__, "user_cap_usd", user_cap_usd)
+        pulumi.set(__self__, "window_seconds", window_seconds)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> _builtins.bool:
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter(name="groupCapUsd")
+    def group_cap_usd(self) -> _builtins.float:
+        return pulumi.get(self, "group_cap_usd")
+
+    @_builtins.property
+    @pulumi.getter(name="userCapUsd")
+    def user_cap_usd(self) -> _builtins.float:
+        return pulumi.get(self, "user_cap_usd")
+
+    @_builtins.property
+    @pulumi.getter(name="windowSeconds")
+    def window_seconds(self) -> _builtins.float:
+        return pulumi.get(self, "window_seconds")
+
+
+@pulumi.output_type
+class GetAgentNetworkPolicyTokenLimitResult(dict):
+    def __init__(__self__, *,
+                 enabled: _builtins.bool,
+                 group_cap: _builtins.float,
+                 user_cap: _builtins.float,
+                 window_seconds: _builtins.float):
+        pulumi.set(__self__, "enabled", enabled)
+        pulumi.set(__self__, "group_cap", group_cap)
+        pulumi.set(__self__, "user_cap", user_cap)
+        pulumi.set(__self__, "window_seconds", window_seconds)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> _builtins.bool:
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter(name="groupCap")
+    def group_cap(self) -> _builtins.float:
+        return pulumi.get(self, "group_cap")
+
+    @_builtins.property
+    @pulumi.getter(name="userCap")
+    def user_cap(self) -> _builtins.float:
+        return pulumi.get(self, "user_cap")
+
+    @_builtins.property
+    @pulumi.getter(name="windowSeconds")
+    def window_seconds(self) -> _builtins.float:
+        return pulumi.get(self, "window_seconds")
+
+
+@pulumi.output_type
+class GetAgentNetworkProviderModelResult(dict):
+    def __init__(__self__, *,
+                 id: _builtins.str,
+                 input_per1k: _builtins.float,
+                 output_per1k: _builtins.float):
+        """
+        :param _builtins.str id: Model identifier
+        :param _builtins.float input_per1k: Cost per 1k input tokens in USD
+        :param _builtins.float output_per1k: Cost per 1k output tokens in USD
+        """
+        pulumi.set(__self__, "id", id)
+        pulumi.set(__self__, "input_per1k", input_per1k)
+        pulumi.set(__self__, "output_per1k", output_per1k)
+
+    @_builtins.property
+    @pulumi.getter
+    def id(self) -> _builtins.str:
+        """
+        Model identifier
+        """
+        return pulumi.get(self, "id")
+
+    @_builtins.property
+    @pulumi.getter(name="inputPer1k")
+    def input_per1k(self) -> _builtins.float:
+        """
+        Cost per 1k input tokens in USD
+        """
+        return pulumi.get(self, "input_per1k")
+
+    @_builtins.property
+    @pulumi.getter(name="outputPer1k")
+    def output_per1k(self) -> _builtins.float:
+        """
+        Cost per 1k output tokens in USD
+        """
+        return pulumi.get(self, "output_per1k")
 
 
 @pulumi.output_type
@@ -1299,19 +1994,73 @@ class GetReverseProxyClustersClusterResult(dict):
 
 
 @pulumi.output_type
+class GetReverseProxyServiceAccessRestrictionsResult(dict):
+    def __init__(__self__, *,
+                 allowed_cidrs: Sequence[_builtins.str],
+                 allowed_countries: Sequence[_builtins.str],
+                 blocked_cidrs: Sequence[_builtins.str],
+                 blocked_countries: Sequence[_builtins.str]):
+        """
+        :param Sequence[_builtins.str] allowed_cidrs: CIDR allowlist
+        :param Sequence[_builtins.str] allowed_countries: ISO 3166-1 alpha-2 country codes to allow
+        :param Sequence[_builtins.str] blocked_cidrs: CIDR blocklist
+        :param Sequence[_builtins.str] blocked_countries: ISO 3166-1 alpha-2 country codes to block
+        """
+        pulumi.set(__self__, "allowed_cidrs", allowed_cidrs)
+        pulumi.set(__self__, "allowed_countries", allowed_countries)
+        pulumi.set(__self__, "blocked_cidrs", blocked_cidrs)
+        pulumi.set(__self__, "blocked_countries", blocked_countries)
+
+    @_builtins.property
+    @pulumi.getter(name="allowedCidrs")
+    def allowed_cidrs(self) -> Sequence[_builtins.str]:
+        """
+        CIDR allowlist
+        """
+        return pulumi.get(self, "allowed_cidrs")
+
+    @_builtins.property
+    @pulumi.getter(name="allowedCountries")
+    def allowed_countries(self) -> Sequence[_builtins.str]:
+        """
+        ISO 3166-1 alpha-2 country codes to allow
+        """
+        return pulumi.get(self, "allowed_countries")
+
+    @_builtins.property
+    @pulumi.getter(name="blockedCidrs")
+    def blocked_cidrs(self) -> Sequence[_builtins.str]:
+        """
+        CIDR blocklist
+        """
+        return pulumi.get(self, "blocked_cidrs")
+
+    @_builtins.property
+    @pulumi.getter(name="blockedCountries")
+    def blocked_countries(self) -> Sequence[_builtins.str]:
+        """
+        ISO 3166-1 alpha-2 country codes to block
+        """
+        return pulumi.get(self, "blocked_countries")
+
+
+@pulumi.output_type
 class GetReverseProxyServiceAuthResult(dict):
     def __init__(__self__, *,
                  bearer_auth: 'outputs.GetReverseProxyServiceAuthBearerAuthResult',
+                 header_auths: Sequence['outputs.GetReverseProxyServiceAuthHeaderAuthResult'],
                  link_auth: 'outputs.GetReverseProxyServiceAuthLinkAuthResult',
                  password_auth: 'outputs.GetReverseProxyServiceAuthPasswordAuthResult',
                  pin_auth: 'outputs.GetReverseProxyServiceAuthPinAuthResult'):
         """
         :param 'GetReverseProxyServiceAuthBearerAuthArgs' bearer_auth: Bearer token authentication
+        :param Sequence['GetReverseProxyServiceAuthHeaderAuthArgs'] header_auths: Static header-value authentication rules
         :param 'GetReverseProxyServiceAuthLinkAuthArgs' link_auth: Link authentication
         :param 'GetReverseProxyServiceAuthPasswordAuthArgs' password_auth: Password authentication
         :param 'GetReverseProxyServiceAuthPinAuthArgs' pin_auth: PIN authentication
         """
         pulumi.set(__self__, "bearer_auth", bearer_auth)
+        pulumi.set(__self__, "header_auths", header_auths)
         pulumi.set(__self__, "link_auth", link_auth)
         pulumi.set(__self__, "password_auth", password_auth)
         pulumi.set(__self__, "pin_auth", pin_auth)
@@ -1323,6 +2072,14 @@ class GetReverseProxyServiceAuthResult(dict):
         Bearer token authentication
         """
         return pulumi.get(self, "bearer_auth")
+
+    @_builtins.property
+    @pulumi.getter(name="headerAuths")
+    def header_auths(self) -> Sequence['outputs.GetReverseProxyServiceAuthHeaderAuthResult']:
+        """
+        Static header-value authentication rules
+        """
+        return pulumi.get(self, "header_auths")
 
     @_builtins.property
     @pulumi.getter(name="linkAuth")
@@ -1372,6 +2129,42 @@ class GetReverseProxyServiceAuthBearerAuthResult(dict):
     @pulumi.getter
     def enabled(self) -> _builtins.bool:
         return pulumi.get(self, "enabled")
+
+
+@pulumi.output_type
+class GetReverseProxyServiceAuthHeaderAuthResult(dict):
+    def __init__(__self__, *,
+                 enabled: _builtins.bool,
+                 header: _builtins.str,
+                 value: _builtins.str):
+        """
+        :param _builtins.str header: HTTP header name to check
+        :param _builtins.str value: Expected header value
+        """
+        pulumi.set(__self__, "enabled", enabled)
+        pulumi.set(__self__, "header", header)
+        pulumi.set(__self__, "value", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def enabled(self) -> _builtins.bool:
+        return pulumi.get(self, "enabled")
+
+    @_builtins.property
+    @pulumi.getter
+    def header(self) -> _builtins.str:
+        """
+        HTTP header name to check
+        """
+        return pulumi.get(self, "header")
+
+    @_builtins.property
+    @pulumi.getter
+    def value(self) -> _builtins.str:
+        """
+        Expected header value
+        """
+        return pulumi.get(self, "value")
 
 
 @pulumi.output_type
@@ -1429,6 +2222,7 @@ class GetReverseProxyServiceTargetResult(dict):
     def __init__(__self__, *,
                  enabled: _builtins.bool,
                  host: _builtins.str,
+                 options: 'outputs.GetReverseProxyServiceTargetOptionsResult',
                  path: _builtins.str,
                  port: _builtins.float,
                  protocol: _builtins.str,
@@ -1437,14 +2231,16 @@ class GetReverseProxyServiceTargetResult(dict):
         """
         :param _builtins.bool enabled: Whether this target is enabled
         :param _builtins.str host: Backend IP or domain for this target
+        :param 'GetReverseProxyServiceTargetOptionsArgs' options: Per-target options
         :param _builtins.str path: URL path prefix for this target
         :param _builtins.float port: Backend port for this target
-        :param _builtins.str protocol: Protocol to use when connecting to the backend (http, https)
+        :param _builtins.str protocol: Protocol to use when connecting to the backend (http, https for HTTP mode; tcp, udp for L4 mode)
         :param _builtins.str target_id: Target ID (resource or peer ID)
         :param _builtins.str target_type: Target type (peer, host, domain, subnet)
         """
         pulumi.set(__self__, "enabled", enabled)
         pulumi.set(__self__, "host", host)
+        pulumi.set(__self__, "options", options)
         pulumi.set(__self__, "path", path)
         pulumi.set(__self__, "port", port)
         pulumi.set(__self__, "protocol", protocol)
@@ -1469,6 +2265,14 @@ class GetReverseProxyServiceTargetResult(dict):
 
     @_builtins.property
     @pulumi.getter
+    def options(self) -> 'outputs.GetReverseProxyServiceTargetOptionsResult':
+        """
+        Per-target options
+        """
+        return pulumi.get(self, "options")
+
+    @_builtins.property
+    @pulumi.getter
     def path(self) -> _builtins.str:
         """
         URL path prefix for this target
@@ -1487,7 +2291,7 @@ class GetReverseProxyServiceTargetResult(dict):
     @pulumi.getter
     def protocol(self) -> _builtins.str:
         """
-        Protocol to use when connecting to the backend (http, https)
+        Protocol to use when connecting to the backend (http, https for HTTP mode; tcp, udp for L4 mode)
         """
         return pulumi.get(self, "protocol")
 
@@ -1506,5 +2310,78 @@ class GetReverseProxyServiceTargetResult(dict):
         Target type (peer, host, domain, subnet)
         """
         return pulumi.get(self, "target_type")
+
+
+@pulumi.output_type
+class GetReverseProxyServiceTargetOptionsResult(dict):
+    def __init__(__self__, *,
+                 custom_headers: Mapping[str, _builtins.str],
+                 path_rewrite: _builtins.str,
+                 proxy_protocol: _builtins.bool,
+                 request_timeout: _builtins.str,
+                 session_idle_timeout: _builtins.str,
+                 skip_tls_verify: _builtins.bool):
+        """
+        :param Mapping[str, _builtins.str] custom_headers: Extra headers sent to the backend (HTTP only). Marked sensitive since values commonly carry credentials, e.g. an `Authorization` header.
+        :param _builtins.str path_rewrite: Controls how the request path is rewritten before forwarding (HTTP only)
+        :param _builtins.bool proxy_protocol: Send PROXY Protocol v2 header to this backend (TCP/TLS only)
+        :param _builtins.str request_timeout: Per-target response timeout as a Go duration string
+        :param _builtins.str session_idle_timeout: Idle timeout before a UDP session is reaped (UDP only)
+        :param _builtins.bool skip_tls_verify: Skip TLS certificate verification for this backend (HTTPS targets only)
+        """
+        pulumi.set(__self__, "custom_headers", custom_headers)
+        pulumi.set(__self__, "path_rewrite", path_rewrite)
+        pulumi.set(__self__, "proxy_protocol", proxy_protocol)
+        pulumi.set(__self__, "request_timeout", request_timeout)
+        pulumi.set(__self__, "session_idle_timeout", session_idle_timeout)
+        pulumi.set(__self__, "skip_tls_verify", skip_tls_verify)
+
+    @_builtins.property
+    @pulumi.getter(name="customHeaders")
+    def custom_headers(self) -> Mapping[str, _builtins.str]:
+        """
+        Extra headers sent to the backend (HTTP only). Marked sensitive since values commonly carry credentials, e.g. an `Authorization` header.
+        """
+        return pulumi.get(self, "custom_headers")
+
+    @_builtins.property
+    @pulumi.getter(name="pathRewrite")
+    def path_rewrite(self) -> _builtins.str:
+        """
+        Controls how the request path is rewritten before forwarding (HTTP only)
+        """
+        return pulumi.get(self, "path_rewrite")
+
+    @_builtins.property
+    @pulumi.getter(name="proxyProtocol")
+    def proxy_protocol(self) -> _builtins.bool:
+        """
+        Send PROXY Protocol v2 header to this backend (TCP/TLS only)
+        """
+        return pulumi.get(self, "proxy_protocol")
+
+    @_builtins.property
+    @pulumi.getter(name="requestTimeout")
+    def request_timeout(self) -> _builtins.str:
+        """
+        Per-target response timeout as a Go duration string
+        """
+        return pulumi.get(self, "request_timeout")
+
+    @_builtins.property
+    @pulumi.getter(name="sessionIdleTimeout")
+    def session_idle_timeout(self) -> _builtins.str:
+        """
+        Idle timeout before a UDP session is reaped (UDP only)
+        """
+        return pulumi.get(self, "session_idle_timeout")
+
+    @_builtins.property
+    @pulumi.getter(name="skipTlsVerify")
+    def skip_tls_verify(self) -> _builtins.bool:
+        """
+        Skip TLS certificate verification for this backend (HTTPS targets only)
+        """
+        return pulumi.get(self, "skip_tls_verify")
 
 

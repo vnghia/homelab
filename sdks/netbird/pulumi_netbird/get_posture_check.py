@@ -131,8 +131,8 @@ def get_posture_check(id: Optional[_builtins.str] = None,
         os_version_check=pulumi.get(__ret__, 'os_version_check'),
         peer_network_range_check=pulumi.get(__ret__, 'peer_network_range_check'),
         process_checks=pulumi.get(__ret__, 'process_checks'))
-def get_posture_check_output(id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                             name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_posture_check_output(id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                             name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                              opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetPostureCheckResult]:
     """
     Use this data source to access information about an existing resource.

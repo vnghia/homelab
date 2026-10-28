@@ -20,11 +20,11 @@ __all__ = ['PeerArgs', 'Peer']
 class PeerArgs:
     def __init__(__self__, *,
                  peer_id: pulumi.Input[_builtins.str],
-                 approval_required: Optional[pulumi.Input[_builtins.bool]] = None,
-                 inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 ssh_enabled: Optional[pulumi.Input[_builtins.bool]] = None):
+                 approval_required: pulumi.Input[Optional[_builtins.bool]] = None,
+                 inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 ssh_enabled: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         The set of arguments for constructing a Peer resource.
 
@@ -61,93 +61,93 @@ class PeerArgs:
 
     @_builtins.property
     @pulumi.getter(name="approvalRequired")
-    def approval_required(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def approval_required(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicates whether peer needs approval
         """
         return pulumi.get(self, "approval_required")
 
     @approval_required.setter
-    def approval_required(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def approval_required(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "approval_required", value)
 
     @_builtins.property
     @pulumi.getter(name="inactivityExpirationEnabled")
-    def inactivity_expiration_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def inactivity_expiration_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enable inactivity expiration for peer
         """
         return pulumi.get(self, "inactivity_expiration_enabled")
 
     @inactivity_expiration_enabled.setter
-    def inactivity_expiration_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def inactivity_expiration_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "inactivity_expiration_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="loginExpirationEnabled")
-    def login_expiration_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def login_expiration_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicates whether login expiration is enabled for peer
         """
         return pulumi.get(self, "login_expiration_enabled")
 
     @login_expiration_enabled.setter
-    def login_expiration_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def login_expiration_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "login_expiration_enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="sshEnabled")
-    def ssh_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def ssh_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enable SSH to Peer
         """
         return pulumi.get(self, "ssh_enabled")
 
     @ssh_enabled.setter
-    def ssh_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def ssh_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "ssh_enabled", value)
 
 
 @pulumi.input_type
 class _PeerState:
     def __init__(__self__, *,
-                 approval_required: Optional[pulumi.Input[_builtins.bool]] = None,
-                 city_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 connected: Optional[pulumi.Input[_builtins.bool]] = None,
-                 connection_ip: Optional[pulumi.Input[_builtins.str]] = None,
-                 country_code: Optional[pulumi.Input[_builtins.str]] = None,
-                 dns_label: Optional[pulumi.Input[_builtins.str]] = None,
-                 extra_dns_labels: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 geoname_id: Optional[pulumi.Input[_builtins.float]] = None,
-                 groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 hostname: Optional[pulumi.Input[_builtins.str]] = None,
-                 inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 ip: Optional[pulumi.Input[_builtins.str]] = None,
-                 kernel_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 last_login: Optional[pulumi.Input[_builtins.str]] = None,
-                 last_seen: Optional[pulumi.Input[_builtins.str]] = None,
-                 login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 login_expired: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 os: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 serial_number: Optional[pulumi.Input[_builtins.str]] = None,
-                 ssh_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 ui_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 user_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 version: Optional[pulumi.Input[_builtins.str]] = None):
+                 approval_required: pulumi.Input[Optional[_builtins.bool]] = None,
+                 city_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 connected: pulumi.Input[Optional[_builtins.bool]] = None,
+                 connection_ip: pulumi.Input[Optional[_builtins.str]] = None,
+                 country_code: pulumi.Input[Optional[_builtins.str]] = None,
+                 dns_label: pulumi.Input[Optional[_builtins.str]] = None,
+                 extra_dns_labels: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 geoname_id: pulumi.Input[Optional[_builtins.float]] = None,
+                 groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 hostname: pulumi.Input[Optional[_builtins.str]] = None,
+                 inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 ip: pulumi.Input[Optional[_builtins.str]] = None,
+                 kernel_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 last_login: pulumi.Input[Optional[_builtins.str]] = None,
+                 last_seen: pulumi.Input[Optional[_builtins.str]] = None,
+                 login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 login_expired: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 os: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 serial_number: pulumi.Input[Optional[_builtins.str]] = None,
+                 ssh_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 ui_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 user_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 version: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering Peer resources.
 
@@ -230,302 +230,302 @@ class _PeerState:
 
     @_builtins.property
     @pulumi.getter(name="approvalRequired")
-    def approval_required(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def approval_required(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicates whether peer needs approval
         """
         return pulumi.get(self, "approval_required")
 
     @approval_required.setter
-    def approval_required(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def approval_required(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "approval_required", value)
 
     @_builtins.property
     @pulumi.getter(name="cityName")
-    def city_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def city_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer city name
         """
         return pulumi.get(self, "city_name")
 
     @city_name.setter
-    def city_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def city_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "city_name", value)
 
     @_builtins.property
     @pulumi.getter
-    def connected(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def connected(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Peer Connection Status
         """
         return pulumi.get(self, "connected")
 
     @connected.setter
-    def connected(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def connected(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "connected", value)
 
     @_builtins.property
     @pulumi.getter(name="connectionIp")
-    def connection_ip(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def connection_ip(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Public IP
         """
         return pulumi.get(self, "connection_ip")
 
     @connection_ip.setter
-    def connection_ip(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def connection_ip(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "connection_ip", value)
 
     @_builtins.property
     @pulumi.getter(name="countryCode")
-    def country_code(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def country_code(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer country code
         """
         return pulumi.get(self, "country_code")
 
     @country_code.setter
-    def country_code(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def country_code(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "country_code", value)
 
     @_builtins.property
     @pulumi.getter(name="dnsLabel")
-    def dns_label(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def dns_label(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer DNS Label
         """
         return pulumi.get(self, "dns_label")
 
     @dns_label.setter
-    def dns_label(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def dns_label(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "dns_label", value)
 
     @_builtins.property
     @pulumi.getter(name="extraDnsLabels")
-    def extra_dns_labels(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def extra_dns_labels(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Peer extra DNS Labels
         """
         return pulumi.get(self, "extra_dns_labels")
 
     @extra_dns_labels.setter
-    def extra_dns_labels(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def extra_dns_labels(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "extra_dns_labels", value)
 
     @_builtins.property
     @pulumi.getter(name="geonameId")
-    def geoname_id(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def geoname_id(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Peer Location ID
         """
         return pulumi.get(self, "geoname_id")
 
     @geoname_id.setter
-    def geoname_id(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def geoname_id(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "geoname_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Peer groups
         """
         return pulumi.get(self, "groups")
 
     @groups.setter
-    def groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "groups", value)
 
     @_builtins.property
     @pulumi.getter
-    def hostname(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def hostname(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer's HOSTNAME
         """
         return pulumi.get(self, "hostname")
 
     @hostname.setter
-    def hostname(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def hostname(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "hostname", value)
 
     @_builtins.property
     @pulumi.getter(name="inactivityExpirationEnabled")
-    def inactivity_expiration_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def inactivity_expiration_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enable inactivity expiration for peer
         """
         return pulumi.get(self, "inactivity_expiration_enabled")
 
     @inactivity_expiration_enabled.setter
-    def inactivity_expiration_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def inactivity_expiration_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "inactivity_expiration_enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def ip(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def ip(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer  IP
         """
         return pulumi.get(self, "ip")
 
     @ip.setter
-    def ip(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def ip(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "ip", value)
 
     @_builtins.property
     @pulumi.getter(name="kernelVersion")
-    def kernel_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def kernel_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Kernel Version
         """
         return pulumi.get(self, "kernel_version")
 
     @kernel_version.setter
-    def kernel_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def kernel_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "kernel_version", value)
 
     @_builtins.property
     @pulumi.getter(name="lastLogin")
-    def last_login(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def last_login(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Time of peer last login
         """
         return pulumi.get(self, "last_login")
 
     @last_login.setter
-    def last_login(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def last_login(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "last_login", value)
 
     @_builtins.property
     @pulumi.getter(name="lastSeen")
-    def last_seen(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def last_seen(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Last Seen timedate
         """
         return pulumi.get(self, "last_seen")
 
     @last_seen.setter
-    def last_seen(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def last_seen(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "last_seen", value)
 
     @_builtins.property
     @pulumi.getter(name="loginExpirationEnabled")
-    def login_expiration_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def login_expiration_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicates whether login expiration is enabled for peer
         """
         return pulumi.get(self, "login_expiration_enabled")
 
     @login_expiration_enabled.setter
-    def login_expiration_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def login_expiration_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "login_expiration_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="loginExpired")
-    def login_expired(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def login_expired(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Indicates whether peer login is expired
         """
         return pulumi.get(self, "login_expired")
 
     @login_expired.setter
-    def login_expired(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def login_expired(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "login_expired", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer Name
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def os(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def os(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer OS
         """
         return pulumi.get(self, "os")
 
     @os.setter
-    def os(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def os(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "os", value)
 
     @_builtins.property
     @pulumi.getter(name="peerId")
-    def peer_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def peer_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer ID
         """
         return pulumi.get(self, "peer_id")
 
     @peer_id.setter
-    def peer_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def peer_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "peer_id", value)
 
     @_builtins.property
     @pulumi.getter(name="serialNumber")
-    def serial_number(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def serial_number(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer device serial number
         """
         return pulumi.get(self, "serial_number")
 
     @serial_number.setter
-    def serial_number(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def serial_number(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "serial_number", value)
 
     @_builtins.property
     @pulumi.getter(name="sshEnabled")
-    def ssh_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def ssh_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enable SSH to Peer
         """
         return pulumi.get(self, "ssh_enabled")
 
     @ssh_enabled.setter
-    def ssh_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def ssh_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "ssh_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="uiVersion")
-    def ui_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def ui_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer  UI Version
         """
         return pulumi.get(self, "ui_version")
 
     @ui_version.setter
-    def ui_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def ui_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "ui_version", value)
 
     @_builtins.property
     @pulumi.getter(name="userId")
-    def user_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def user_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User ID of peer
         """
         return pulumi.get(self, "user_id")
 
     @user_id.setter
-    def user_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def user_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "user_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Peer  Version
         """
         return pulumi.get(self, "version")
 
     @version.setter
-    def version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "version", value)
 
 
@@ -535,12 +535,12 @@ class Peer(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 approval_required: Optional[pulumi.Input[_builtins.bool]] = None,
-                 inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 ssh_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
+                 approval_required: pulumi.Input[Optional[_builtins.bool]] = None,
+                 inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 ssh_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
                  __props__=None):
         """
         Create a Peer resource with the given unique name, props, and options.
@@ -578,12 +578,12 @@ class Peer(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 approval_required: Optional[pulumi.Input[_builtins.bool]] = None,
-                 inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 peer_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 ssh_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
+                 approval_required: pulumi.Input[Optional[_builtins.bool]] = None,
+                 inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 peer_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 ssh_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -631,31 +631,31 @@ class Peer(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            approval_required: Optional[pulumi.Input[_builtins.bool]] = None,
-            city_name: Optional[pulumi.Input[_builtins.str]] = None,
-            connected: Optional[pulumi.Input[_builtins.bool]] = None,
-            connection_ip: Optional[pulumi.Input[_builtins.str]] = None,
-            country_code: Optional[pulumi.Input[_builtins.str]] = None,
-            dns_label: Optional[pulumi.Input[_builtins.str]] = None,
-            extra_dns_labels: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            geoname_id: Optional[pulumi.Input[_builtins.float]] = None,
-            groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            hostname: Optional[pulumi.Input[_builtins.str]] = None,
-            inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            ip: Optional[pulumi.Input[_builtins.str]] = None,
-            kernel_version: Optional[pulumi.Input[_builtins.str]] = None,
-            last_login: Optional[pulumi.Input[_builtins.str]] = None,
-            last_seen: Optional[pulumi.Input[_builtins.str]] = None,
-            login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            login_expired: Optional[pulumi.Input[_builtins.bool]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            os: Optional[pulumi.Input[_builtins.str]] = None,
-            peer_id: Optional[pulumi.Input[_builtins.str]] = None,
-            serial_number: Optional[pulumi.Input[_builtins.str]] = None,
-            ssh_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            ui_version: Optional[pulumi.Input[_builtins.str]] = None,
-            user_id: Optional[pulumi.Input[_builtins.str]] = None,
-            version: Optional[pulumi.Input[_builtins.str]] = None) -> 'Peer':
+            approval_required: pulumi.Input[Optional[_builtins.bool]] = None,
+            city_name: pulumi.Input[Optional[_builtins.str]] = None,
+            connected: pulumi.Input[Optional[_builtins.bool]] = None,
+            connection_ip: pulumi.Input[Optional[_builtins.str]] = None,
+            country_code: pulumi.Input[Optional[_builtins.str]] = None,
+            dns_label: pulumi.Input[Optional[_builtins.str]] = None,
+            extra_dns_labels: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            geoname_id: pulumi.Input[Optional[_builtins.float]] = None,
+            groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            hostname: pulumi.Input[Optional[_builtins.str]] = None,
+            inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            ip: pulumi.Input[Optional[_builtins.str]] = None,
+            kernel_version: pulumi.Input[Optional[_builtins.str]] = None,
+            last_login: pulumi.Input[Optional[_builtins.str]] = None,
+            last_seen: pulumi.Input[Optional[_builtins.str]] = None,
+            login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            login_expired: pulumi.Input[Optional[_builtins.bool]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            os: pulumi.Input[Optional[_builtins.str]] = None,
+            peer_id: pulumi.Input[Optional[_builtins.str]] = None,
+            serial_number: pulumi.Input[Optional[_builtins.str]] = None,
+            ssh_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            ui_version: pulumi.Input[Optional[_builtins.str]] = None,
+            user_id: pulumi.Input[Optional[_builtins.str]] = None,
+            version: pulumi.Input[Optional[_builtins.str]] = None) -> 'Peer':
         """
         Get an existing Peer resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

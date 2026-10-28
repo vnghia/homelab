@@ -19,27 +19,27 @@ __all__ = ['AccountSettingsArgs', 'AccountSettings']
 @pulumi.input_type
 class AccountSettingsArgs:
     def __init__(__self__, *,
-                 auto_update_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 dns_domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 groups_propagation_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 jwt_allow_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 jwt_groups_claim_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 jwt_groups_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 lazy_connection_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 network_range: Optional[pulumi.Input[_builtins.str]] = None,
-                 network_traffic_logs_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 network_traffic_logs_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 network_traffic_packet_counter_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_approval_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_expose_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_expose_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 peer_inactivity_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer_inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_login_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer_login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 regular_users_view_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 routing_peer_dns_resolution_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 user_approval_required: Optional[pulumi.Input[_builtins.bool]] = None):
+                 auto_update_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 dns_domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 groups_propagation_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 jwt_allow_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 jwt_groups_claim_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 jwt_groups_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 lazy_connection_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 network_range: pulumi.Input[Optional[_builtins.str]] = None,
+                 network_traffic_logs_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 network_traffic_logs_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 network_traffic_packet_counter_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_approval_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_expose_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_expose_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 peer_inactivity_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer_inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_login_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer_login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 regular_users_view_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 routing_peer_dns_resolution_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 user_approval_required: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         The set of arguments for constructing a AccountSettings resource.
 
@@ -110,281 +110,281 @@ class AccountSettingsArgs:
 
     @_builtins.property
     @pulumi.getter(name="autoUpdateVersion")
-    def auto_update_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def auto_update_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Set Clients auto-update version. "latest", "disabled", or a specific version (e.g "0.64.5")
         """
         return pulumi.get(self, "auto_update_version")
 
     @auto_update_version.setter
-    def auto_update_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def auto_update_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "auto_update_version", value)
 
     @_builtins.property
     @pulumi.getter(name="dnsDomain")
-    def dns_domain(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def dns_domain(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Allows to define a custom DNS domain for the account
         """
         return pulumi.get(self, "dns_domain")
 
     @dns_domain.setter
-    def dns_domain(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def dns_domain(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "dns_domain", value)
 
     @_builtins.property
     @pulumi.getter(name="groupsPropagationEnabled")
-    def groups_propagation_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def groups_propagation_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allows propagate the new user auto groups to peers that belongs to the user
         """
         return pulumi.get(self, "groups_propagation_enabled")
 
     @groups_propagation_enabled.setter
-    def groups_propagation_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def groups_propagation_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "groups_propagation_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="jwtAllowGroups")
-    def jwt_allow_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def jwt_allow_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         List of groups to which users are allowed access
         """
         return pulumi.get(self, "jwt_allow_groups")
 
     @jwt_allow_groups.setter
-    def jwt_allow_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def jwt_allow_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "jwt_allow_groups", value)
 
     @_builtins.property
     @pulumi.getter(name="jwtGroupsClaimName")
-    def jwt_groups_claim_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def jwt_groups_claim_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the claim from which we extract groups names to add it to account groups.
         """
         return pulumi.get(self, "jwt_groups_claim_name")
 
     @jwt_groups_claim_name.setter
-    def jwt_groups_claim_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def jwt_groups_claim_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "jwt_groups_claim_name", value)
 
     @_builtins.property
     @pulumi.getter(name="jwtGroupsEnabled")
-    def jwt_groups_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def jwt_groups_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allows extract groups from JWT claim and add it to account groups.
         """
         return pulumi.get(self, "jwt_groups_enabled")
 
     @jwt_groups_enabled.setter
-    def jwt_groups_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def jwt_groups_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "jwt_groups_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="lazyConnectionEnabled")
-    def lazy_connection_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def lazy_connection_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables experimental lazy connection
         """
         return pulumi.get(self, "lazy_connection_enabled")
 
     @lazy_connection_enabled.setter
-    def lazy_connection_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def lazy_connection_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "lazy_connection_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="networkRange")
-    def network_range(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def network_range(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Allows to define a custom network range for the account in CIDR format
         """
         return pulumi.get(self, "network_range")
 
     @network_range.setter
-    def network_range(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def network_range(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "network_range", value)
 
     @_builtins.property
     @pulumi.getter(name="networkTrafficLogsEnabled")
-    def network_traffic_logs_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def network_traffic_logs_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables network traffic logging. If enabled, all network traffic events from peers will be stored.
         """
         return pulumi.get(self, "network_traffic_logs_enabled")
 
     @network_traffic_logs_enabled.setter
-    def network_traffic_logs_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def network_traffic_logs_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "network_traffic_logs_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="networkTrafficLogsGroups")
-    def network_traffic_logs_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def network_traffic_logs_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Limits traffic logging to these groups. If unset all peers are enabled.
         """
         return pulumi.get(self, "network_traffic_logs_groups")
 
     @network_traffic_logs_groups.setter
-    def network_traffic_logs_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def network_traffic_logs_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "network_traffic_logs_groups", value)
 
     @_builtins.property
     @pulumi.getter(name="networkTrafficPacketCounterEnabled")
-    def network_traffic_packet_counter_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def network_traffic_packet_counter_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables network traffic packet counter. If enabled, network packets and their size will be counted and reported. (This can have an slight impact on performance)
         """
         return pulumi.get(self, "network_traffic_packet_counter_enabled")
 
     @network_traffic_packet_counter_enabled.setter
-    def network_traffic_packet_counter_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def network_traffic_packet_counter_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "network_traffic_packet_counter_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="peerApprovalEnabled")
-    def peer_approval_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def peer_approval_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         (Cloud only) Enables or disables peer approval globally. If enabled, all peers added will be in pending state until approved by an admin.
         """
         return pulumi.get(self, "peer_approval_enabled")
 
     @peer_approval_enabled.setter
-    def peer_approval_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def peer_approval_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "peer_approval_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="peerExposeEnabled")
-    def peer_expose_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def peer_expose_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables peer expose. If enabled, peers can expose local services through the reverse proxy using the CLI.
         """
         return pulumi.get(self, "peer_expose_enabled")
 
     @peer_expose_enabled.setter
-    def peer_expose_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def peer_expose_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "peer_expose_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="peerExposeGroups")
-    def peer_expose_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def peer_expose_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Limits which peer groups are allowed to expose services. If empty, all peers are allowed when peer expose is enabled.
         """
         return pulumi.get(self, "peer_expose_groups")
 
     @peer_expose_groups.setter
-    def peer_expose_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def peer_expose_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "peer_expose_groups", value)
 
     @_builtins.property
     @pulumi.getter(name="peerInactivityExpiration")
-    def peer_inactivity_expiration(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def peer_inactivity_expiration(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Period of time of inactivity after which peer session expires (seconds).
         """
         return pulumi.get(self, "peer_inactivity_expiration")
 
     @peer_inactivity_expiration.setter
-    def peer_inactivity_expiration(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def peer_inactivity_expiration(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "peer_inactivity_expiration", value)
 
     @_builtins.property
     @pulumi.getter(name="peerInactivityExpirationEnabled")
-    def peer_inactivity_expiration_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def peer_inactivity_expiration_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables peer inactivity expiration globally. After peer's session has expired the user has to log in (authenticate). Applies only to peers that were added by a user (interactive SSO login).
         """
         return pulumi.get(self, "peer_inactivity_expiration_enabled")
 
     @peer_inactivity_expiration_enabled.setter
-    def peer_inactivity_expiration_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def peer_inactivity_expiration_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "peer_inactivity_expiration_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="peerLoginExpiration")
-    def peer_login_expiration(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def peer_login_expiration(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Period of time after which peer login expires (seconds).
         """
         return pulumi.get(self, "peer_login_expiration")
 
     @peer_login_expiration.setter
-    def peer_login_expiration(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def peer_login_expiration(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "peer_login_expiration", value)
 
     @_builtins.property
     @pulumi.getter(name="peerLoginExpirationEnabled")
-    def peer_login_expiration_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def peer_login_expiration_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables peer login expiration globally. After peer's login has expired the user has to log in (authenticate). Applies only to peers that were added by a user (interactive SSO login).
         """
         return pulumi.get(self, "peer_login_expiration_enabled")
 
     @peer_login_expiration_enabled.setter
-    def peer_login_expiration_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def peer_login_expiration_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "peer_login_expiration_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="regularUsersViewBlocked")
-    def regular_users_view_blocked(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def regular_users_view_blocked(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allows blocking regular users from viewing parts of the system.
         """
         return pulumi.get(self, "regular_users_view_blocked")
 
     @regular_users_view_blocked.setter
-    def regular_users_view_blocked(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def regular_users_view_blocked(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "regular_users_view_blocked", value)
 
     @_builtins.property
     @pulumi.getter(name="routingPeerDnsResolutionEnabled")
-    def routing_peer_dns_resolution_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def routing_peer_dns_resolution_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables DNS resolution on the routing peers
         """
         return pulumi.get(self, "routing_peer_dns_resolution_enabled")
 
     @routing_peer_dns_resolution_enabled.setter
-    def routing_peer_dns_resolution_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def routing_peer_dns_resolution_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "routing_peer_dns_resolution_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="userApprovalRequired")
-    def user_approval_required(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def user_approval_required(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables manual approval for new users joining via domain matching. When enabled, users are blocked with pending approval status until explicitly approved by an admin.
         """
         return pulumi.get(self, "user_approval_required")
 
     @user_approval_required.setter
-    def user_approval_required(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def user_approval_required(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "user_approval_required", value)
 
 
 @pulumi.input_type
 class _AccountSettingsState:
     def __init__(__self__, *,
-                 auto_update_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 dns_domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 groups_propagation_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 jwt_allow_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 jwt_groups_claim_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 jwt_groups_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 lazy_connection_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 network_range: Optional[pulumi.Input[_builtins.str]] = None,
-                 network_traffic_logs_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 network_traffic_logs_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 network_traffic_packet_counter_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_approval_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_expose_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_expose_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 peer_inactivity_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer_inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_login_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer_login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 regular_users_view_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 routing_peer_dns_resolution_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 user_approval_required: Optional[pulumi.Input[_builtins.bool]] = None):
+                 auto_update_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 dns_domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 groups_propagation_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 jwt_allow_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 jwt_groups_claim_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 jwt_groups_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 lazy_connection_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 network_range: pulumi.Input[Optional[_builtins.str]] = None,
+                 network_traffic_logs_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 network_traffic_logs_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 network_traffic_packet_counter_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_approval_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_expose_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_expose_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 peer_inactivity_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer_inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_login_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer_login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 regular_users_view_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 routing_peer_dns_resolution_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 user_approval_required: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         Input properties used for looking up and filtering AccountSettings resources.
 
@@ -455,254 +455,254 @@ class _AccountSettingsState:
 
     @_builtins.property
     @pulumi.getter(name="autoUpdateVersion")
-    def auto_update_version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def auto_update_version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Set Clients auto-update version. "latest", "disabled", or a specific version (e.g "0.64.5")
         """
         return pulumi.get(self, "auto_update_version")
 
     @auto_update_version.setter
-    def auto_update_version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def auto_update_version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "auto_update_version", value)
 
     @_builtins.property
     @pulumi.getter(name="dnsDomain")
-    def dns_domain(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def dns_domain(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Allows to define a custom DNS domain for the account
         """
         return pulumi.get(self, "dns_domain")
 
     @dns_domain.setter
-    def dns_domain(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def dns_domain(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "dns_domain", value)
 
     @_builtins.property
     @pulumi.getter(name="groupsPropagationEnabled")
-    def groups_propagation_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def groups_propagation_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allows propagate the new user auto groups to peers that belongs to the user
         """
         return pulumi.get(self, "groups_propagation_enabled")
 
     @groups_propagation_enabled.setter
-    def groups_propagation_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def groups_propagation_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "groups_propagation_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="jwtAllowGroups")
-    def jwt_allow_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def jwt_allow_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         List of groups to which users are allowed access
         """
         return pulumi.get(self, "jwt_allow_groups")
 
     @jwt_allow_groups.setter
-    def jwt_allow_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def jwt_allow_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "jwt_allow_groups", value)
 
     @_builtins.property
     @pulumi.getter(name="jwtGroupsClaimName")
-    def jwt_groups_claim_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def jwt_groups_claim_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the claim from which we extract groups names to add it to account groups.
         """
         return pulumi.get(self, "jwt_groups_claim_name")
 
     @jwt_groups_claim_name.setter
-    def jwt_groups_claim_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def jwt_groups_claim_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "jwt_groups_claim_name", value)
 
     @_builtins.property
     @pulumi.getter(name="jwtGroupsEnabled")
-    def jwt_groups_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def jwt_groups_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allows extract groups from JWT claim and add it to account groups.
         """
         return pulumi.get(self, "jwt_groups_enabled")
 
     @jwt_groups_enabled.setter
-    def jwt_groups_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def jwt_groups_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "jwt_groups_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="lazyConnectionEnabled")
-    def lazy_connection_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def lazy_connection_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables experimental lazy connection
         """
         return pulumi.get(self, "lazy_connection_enabled")
 
     @lazy_connection_enabled.setter
-    def lazy_connection_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def lazy_connection_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "lazy_connection_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="networkRange")
-    def network_range(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def network_range(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Allows to define a custom network range for the account in CIDR format
         """
         return pulumi.get(self, "network_range")
 
     @network_range.setter
-    def network_range(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def network_range(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "network_range", value)
 
     @_builtins.property
     @pulumi.getter(name="networkTrafficLogsEnabled")
-    def network_traffic_logs_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def network_traffic_logs_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables network traffic logging. If enabled, all network traffic events from peers will be stored.
         """
         return pulumi.get(self, "network_traffic_logs_enabled")
 
     @network_traffic_logs_enabled.setter
-    def network_traffic_logs_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def network_traffic_logs_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "network_traffic_logs_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="networkTrafficLogsGroups")
-    def network_traffic_logs_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def network_traffic_logs_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Limits traffic logging to these groups. If unset all peers are enabled.
         """
         return pulumi.get(self, "network_traffic_logs_groups")
 
     @network_traffic_logs_groups.setter
-    def network_traffic_logs_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def network_traffic_logs_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "network_traffic_logs_groups", value)
 
     @_builtins.property
     @pulumi.getter(name="networkTrafficPacketCounterEnabled")
-    def network_traffic_packet_counter_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def network_traffic_packet_counter_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables network traffic packet counter. If enabled, network packets and their size will be counted and reported. (This can have an slight impact on performance)
         """
         return pulumi.get(self, "network_traffic_packet_counter_enabled")
 
     @network_traffic_packet_counter_enabled.setter
-    def network_traffic_packet_counter_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def network_traffic_packet_counter_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "network_traffic_packet_counter_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="peerApprovalEnabled")
-    def peer_approval_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def peer_approval_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         (Cloud only) Enables or disables peer approval globally. If enabled, all peers added will be in pending state until approved by an admin.
         """
         return pulumi.get(self, "peer_approval_enabled")
 
     @peer_approval_enabled.setter
-    def peer_approval_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def peer_approval_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "peer_approval_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="peerExposeEnabled")
-    def peer_expose_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def peer_expose_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables peer expose. If enabled, peers can expose local services through the reverse proxy using the CLI.
         """
         return pulumi.get(self, "peer_expose_enabled")
 
     @peer_expose_enabled.setter
-    def peer_expose_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def peer_expose_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "peer_expose_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="peerExposeGroups")
-    def peer_expose_groups(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def peer_expose_groups(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Limits which peer groups are allowed to expose services. If empty, all peers are allowed when peer expose is enabled.
         """
         return pulumi.get(self, "peer_expose_groups")
 
     @peer_expose_groups.setter
-    def peer_expose_groups(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def peer_expose_groups(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "peer_expose_groups", value)
 
     @_builtins.property
     @pulumi.getter(name="peerInactivityExpiration")
-    def peer_inactivity_expiration(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def peer_inactivity_expiration(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Period of time of inactivity after which peer session expires (seconds).
         """
         return pulumi.get(self, "peer_inactivity_expiration")
 
     @peer_inactivity_expiration.setter
-    def peer_inactivity_expiration(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def peer_inactivity_expiration(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "peer_inactivity_expiration", value)
 
     @_builtins.property
     @pulumi.getter(name="peerInactivityExpirationEnabled")
-    def peer_inactivity_expiration_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def peer_inactivity_expiration_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables peer inactivity expiration globally. After peer's session has expired the user has to log in (authenticate). Applies only to peers that were added by a user (interactive SSO login).
         """
         return pulumi.get(self, "peer_inactivity_expiration_enabled")
 
     @peer_inactivity_expiration_enabled.setter
-    def peer_inactivity_expiration_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def peer_inactivity_expiration_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "peer_inactivity_expiration_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="peerLoginExpiration")
-    def peer_login_expiration(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def peer_login_expiration(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Period of time after which peer login expires (seconds).
         """
         return pulumi.get(self, "peer_login_expiration")
 
     @peer_login_expiration.setter
-    def peer_login_expiration(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def peer_login_expiration(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "peer_login_expiration", value)
 
     @_builtins.property
     @pulumi.getter(name="peerLoginExpirationEnabled")
-    def peer_login_expiration_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def peer_login_expiration_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables peer login expiration globally. After peer's login has expired the user has to log in (authenticate). Applies only to peers that were added by a user (interactive SSO login).
         """
         return pulumi.get(self, "peer_login_expiration_enabled")
 
     @peer_login_expiration_enabled.setter
-    def peer_login_expiration_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def peer_login_expiration_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "peer_login_expiration_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="regularUsersViewBlocked")
-    def regular_users_view_blocked(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def regular_users_view_blocked(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Allows blocking regular users from viewing parts of the system.
         """
         return pulumi.get(self, "regular_users_view_blocked")
 
     @regular_users_view_blocked.setter
-    def regular_users_view_blocked(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def regular_users_view_blocked(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "regular_users_view_blocked", value)
 
     @_builtins.property
     @pulumi.getter(name="routingPeerDnsResolutionEnabled")
-    def routing_peer_dns_resolution_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def routing_peer_dns_resolution_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables or disables DNS resolution on the routing peers
         """
         return pulumi.get(self, "routing_peer_dns_resolution_enabled")
 
     @routing_peer_dns_resolution_enabled.setter
-    def routing_peer_dns_resolution_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def routing_peer_dns_resolution_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "routing_peer_dns_resolution_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="userApprovalRequired")
-    def user_approval_required(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def user_approval_required(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enables manual approval for new users joining via domain matching. When enabled, users are blocked with pending approval status until explicitly approved by an admin.
         """
         return pulumi.get(self, "user_approval_required")
 
     @user_approval_required.setter
-    def user_approval_required(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def user_approval_required(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "user_approval_required", value)
 
 
@@ -712,27 +712,27 @@ class AccountSettings(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 auto_update_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 dns_domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 groups_propagation_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 jwt_allow_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 jwt_groups_claim_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 jwt_groups_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 lazy_connection_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 network_range: Optional[pulumi.Input[_builtins.str]] = None,
-                 network_traffic_logs_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 network_traffic_logs_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 network_traffic_packet_counter_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_approval_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_expose_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_expose_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 peer_inactivity_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer_inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_login_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer_login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 regular_users_view_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 routing_peer_dns_resolution_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 user_approval_required: Optional[pulumi.Input[_builtins.bool]] = None,
+                 auto_update_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 dns_domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 groups_propagation_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 jwt_allow_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 jwt_groups_claim_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 jwt_groups_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 lazy_connection_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 network_range: pulumi.Input[Optional[_builtins.str]] = None,
+                 network_traffic_logs_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 network_traffic_logs_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 network_traffic_packet_counter_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_approval_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_expose_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_expose_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 peer_inactivity_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer_inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_login_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer_login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 regular_users_view_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 routing_peer_dns_resolution_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 user_approval_required: pulumi.Input[Optional[_builtins.bool]] = None,
                  __props__=None):
         """
         Create a AccountSettings resource with the given unique name, props, and options.
@@ -785,27 +785,27 @@ class AccountSettings(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 auto_update_version: Optional[pulumi.Input[_builtins.str]] = None,
-                 dns_domain: Optional[pulumi.Input[_builtins.str]] = None,
-                 groups_propagation_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 jwt_allow_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 jwt_groups_claim_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 jwt_groups_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 lazy_connection_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 network_range: Optional[pulumi.Input[_builtins.str]] = None,
-                 network_traffic_logs_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 network_traffic_logs_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 network_traffic_packet_counter_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_approval_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_expose_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_expose_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 peer_inactivity_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer_inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 peer_login_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-                 peer_login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 regular_users_view_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-                 routing_peer_dns_resolution_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 user_approval_required: Optional[pulumi.Input[_builtins.bool]] = None,
+                 auto_update_version: pulumi.Input[Optional[_builtins.str]] = None,
+                 dns_domain: pulumi.Input[Optional[_builtins.str]] = None,
+                 groups_propagation_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 jwt_allow_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 jwt_groups_claim_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 jwt_groups_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 lazy_connection_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 network_range: pulumi.Input[Optional[_builtins.str]] = None,
+                 network_traffic_logs_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 network_traffic_logs_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 network_traffic_packet_counter_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_approval_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_expose_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_expose_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 peer_inactivity_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer_inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 peer_login_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+                 peer_login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 regular_users_view_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+                 routing_peer_dns_resolution_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 user_approval_required: pulumi.Input[Optional[_builtins.bool]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -847,27 +847,27 @@ class AccountSettings(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            auto_update_version: Optional[pulumi.Input[_builtins.str]] = None,
-            dns_domain: Optional[pulumi.Input[_builtins.str]] = None,
-            groups_propagation_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            jwt_allow_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            jwt_groups_claim_name: Optional[pulumi.Input[_builtins.str]] = None,
-            jwt_groups_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            lazy_connection_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            network_range: Optional[pulumi.Input[_builtins.str]] = None,
-            network_traffic_logs_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            network_traffic_logs_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            network_traffic_packet_counter_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            peer_approval_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            peer_expose_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            peer_expose_groups: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            peer_inactivity_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-            peer_inactivity_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            peer_login_expiration: Optional[pulumi.Input[_builtins.float]] = None,
-            peer_login_expiration_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            regular_users_view_blocked: Optional[pulumi.Input[_builtins.bool]] = None,
-            routing_peer_dns_resolution_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            user_approval_required: Optional[pulumi.Input[_builtins.bool]] = None) -> 'AccountSettings':
+            auto_update_version: pulumi.Input[Optional[_builtins.str]] = None,
+            dns_domain: pulumi.Input[Optional[_builtins.str]] = None,
+            groups_propagation_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            jwt_allow_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            jwt_groups_claim_name: pulumi.Input[Optional[_builtins.str]] = None,
+            jwt_groups_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            lazy_connection_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            network_range: pulumi.Input[Optional[_builtins.str]] = None,
+            network_traffic_logs_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            network_traffic_logs_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            network_traffic_packet_counter_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            peer_approval_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            peer_expose_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            peer_expose_groups: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            peer_inactivity_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+            peer_inactivity_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            peer_login_expiration: pulumi.Input[Optional[_builtins.float]] = None,
+            peer_login_expiration_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            regular_users_view_blocked: pulumi.Input[Optional[_builtins.bool]] = None,
+            routing_peer_dns_resolution_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            user_approval_required: pulumi.Input[Optional[_builtins.bool]] = None) -> 'AccountSettings':
         """
         Get an existing AccountSettings resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

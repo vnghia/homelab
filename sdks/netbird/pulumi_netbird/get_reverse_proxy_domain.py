@@ -104,10 +104,10 @@ def get_reverse_proxy_domain(domain: Optional[_builtins.str] = None,
         target_cluster=pulumi.get(__ret__, 'target_cluster'),
         type=pulumi.get(__ret__, 'type'),
         validated=pulumi.get(__ret__, 'validated'))
-def get_reverse_proxy_domain_output(domain: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                                    id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                                    type: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                                    validated: Optional[pulumi.Input[Optional[_builtins.bool]]] = None,
+def get_reverse_proxy_domain_output(domain: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                                    id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                                    type: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                                    validated: pulumi.Input[Optional[Optional[_builtins.bool]]] = None,
                                     opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetReverseProxyDomainResult]:
     """
     Use this data source to access information about an existing resource.

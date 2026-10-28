@@ -27,7 +27,10 @@ class GetReverseProxyServiceResult:
     """
     A collection of values returned by getReverseProxyService.
     """
-    def __init__(__self__, auth=None, domain=None, enabled=None, id=None, name=None, pass_host_header=None, proxy_cluster=None, rewrite_redirects=None, targets=None):
+    def __init__(__self__, access_restrictions=None, auth=None, domain=None, enabled=None, id=None, listen_port=None, mode=None, name=None, pass_host_header=None, port_auto_assigned=None, proxy_cluster=None, rewrite_redirects=None, targets=None):
+        if access_restrictions and not isinstance(access_restrictions, dict):
+            raise TypeError("Expected argument 'access_restrictions' to be a dict")
+        pulumi.set(__self__, "access_restrictions", access_restrictions)
         if auth and not isinstance(auth, dict):
             raise TypeError("Expected argument 'auth' to be a dict")
         pulumi.set(__self__, "auth", auth)
@@ -40,12 +43,21 @@ class GetReverseProxyServiceResult:
         if id and not isinstance(id, str):
             raise TypeError("Expected argument 'id' to be a str")
         pulumi.set(__self__, "id", id)
+        if listen_port and not isinstance(listen_port, float):
+            raise TypeError("Expected argument 'listen_port' to be a float")
+        pulumi.set(__self__, "listen_port", listen_port)
+        if mode and not isinstance(mode, str):
+            raise TypeError("Expected argument 'mode' to be a str")
+        pulumi.set(__self__, "mode", mode)
         if name and not isinstance(name, str):
             raise TypeError("Expected argument 'name' to be a str")
         pulumi.set(__self__, "name", name)
         if pass_host_header and not isinstance(pass_host_header, bool):
             raise TypeError("Expected argument 'pass_host_header' to be a bool")
         pulumi.set(__self__, "pass_host_header", pass_host_header)
+        if port_auto_assigned and not isinstance(port_auto_assigned, bool):
+            raise TypeError("Expected argument 'port_auto_assigned' to be a bool")
+        pulumi.set(__self__, "port_auto_assigned", port_auto_assigned)
         if proxy_cluster and not isinstance(proxy_cluster, str):
             raise TypeError("Expected argument 'proxy_cluster' to be a str")
         pulumi.set(__self__, "proxy_cluster", proxy_cluster)
@@ -55,6 +67,11 @@ class GetReverseProxyServiceResult:
         if targets and not isinstance(targets, list):
             raise TypeError("Expected argument 'targets' to be a list")
         pulumi.set(__self__, "targets", targets)
+
+    @_builtins.property
+    @pulumi.getter(name="accessRestrictions")
+    def access_restrictions(self) -> 'outputs.GetReverseProxyServiceAccessRestrictionsResult':
+        return pulumi.get(self, "access_restrictions")
 
     @_builtins.property
     @pulumi.getter
@@ -77,6 +94,16 @@ class GetReverseProxyServiceResult:
         return pulumi.get(self, "id")
 
     @_builtins.property
+    @pulumi.getter(name="listenPort")
+    def listen_port(self) -> _builtins.float:
+        return pulumi.get(self, "listen_port")
+
+    @_builtins.property
+    @pulumi.getter
+    def mode(self) -> _builtins.str:
+        return pulumi.get(self, "mode")
+
+    @_builtins.property
     @pulumi.getter
     def name(self) -> _builtins.str:
         return pulumi.get(self, "name")
@@ -85,6 +112,11 @@ class GetReverseProxyServiceResult:
     @pulumi.getter(name="passHostHeader")
     def pass_host_header(self) -> _builtins.bool:
         return pulumi.get(self, "pass_host_header")
+
+    @_builtins.property
+    @pulumi.getter(name="portAutoAssigned")
+    def port_auto_assigned(self) -> _builtins.bool:
+        return pulumi.get(self, "port_auto_assigned")
 
     @_builtins.property
     @pulumi.getter(name="proxyCluster")
@@ -108,12 +140,16 @@ class AwaitableGetReverseProxyServiceResult(GetReverseProxyServiceResult):
         if False:
             yield self
         return GetReverseProxyServiceResult(
+            access_restrictions=self.access_restrictions,
             auth=self.auth,
             domain=self.domain,
             enabled=self.enabled,
             id=self.id,
+            listen_port=self.listen_port,
+            mode=self.mode,
             name=self.name,
             pass_host_header=self.pass_host_header,
+            port_auto_assigned=self.port_auto_assigned,
             proxy_cluster=self.proxy_cluster,
             rewrite_redirects=self.rewrite_redirects,
             targets=self.targets)
@@ -134,18 +170,22 @@ def get_reverse_proxy_service(domain: Optional[_builtins.str] = None,
     __ret__ = pulumi.runtime.invoke('netbird:index/getReverseProxyService:getReverseProxyService', __args__, opts=opts, typ=GetReverseProxyServiceResult, package_ref=_utilities.get_package()).value
 
     return AwaitableGetReverseProxyServiceResult(
+        access_restrictions=pulumi.get(__ret__, 'access_restrictions'),
         auth=pulumi.get(__ret__, 'auth'),
         domain=pulumi.get(__ret__, 'domain'),
         enabled=pulumi.get(__ret__, 'enabled'),
         id=pulumi.get(__ret__, 'id'),
+        listen_port=pulumi.get(__ret__, 'listen_port'),
+        mode=pulumi.get(__ret__, 'mode'),
         name=pulumi.get(__ret__, 'name'),
         pass_host_header=pulumi.get(__ret__, 'pass_host_header'),
+        port_auto_assigned=pulumi.get(__ret__, 'port_auto_assigned'),
         proxy_cluster=pulumi.get(__ret__, 'proxy_cluster'),
         rewrite_redirects=pulumi.get(__ret__, 'rewrite_redirects'),
         targets=pulumi.get(__ret__, 'targets'))
-def get_reverse_proxy_service_output(domain: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                                     id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                                     name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_reverse_proxy_service_output(domain: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                                     id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                                     name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                                      opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetReverseProxyServiceResult]:
     """
     Use this data source to access information about an existing resource.
@@ -157,12 +197,16 @@ def get_reverse_proxy_service_output(domain: Optional[pulumi.Input[Optional[_bui
     opts = pulumi.InvokeOutputOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
     __ret__ = pulumi.runtime.invoke_output('netbird:index/getReverseProxyService:getReverseProxyService', __args__, opts=opts, typ=GetReverseProxyServiceResult, package_ref=_utilities.get_package())
     return __ret__.apply(lambda __response__: GetReverseProxyServiceResult(
+        access_restrictions=pulumi.get(__response__, 'access_restrictions'),
         auth=pulumi.get(__response__, 'auth'),
         domain=pulumi.get(__response__, 'domain'),
         enabled=pulumi.get(__response__, 'enabled'),
         id=pulumi.get(__response__, 'id'),
+        listen_port=pulumi.get(__response__, 'listen_port'),
+        mode=pulumi.get(__response__, 'mode'),
         name=pulumi.get(__response__, 'name'),
         pass_host_header=pulumi.get(__response__, 'pass_host_header'),
+        port_auto_assigned=pulumi.get(__response__, 'port_auto_assigned'),
         proxy_cluster=pulumi.get(__response__, 'proxy_cluster'),
         rewrite_redirects=pulumi.get(__response__, 'rewrite_redirects'),
         targets=pulumi.get(__response__, 'targets')))

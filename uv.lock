@@ -1043,7 +1043,6 @@ dependencies = [
     { name = "json-fix" },
     { name = "loguru" },
     { name = "pulumi" },
-    { name = "pulumi-b2" },
     { name = "pulumiverse-grafana" },
 ]
 
@@ -1091,7 +1090,6 @@ requires-dist = [
     { name = "json-fix", specifier = ">=1.0.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pulumi", specifier = ">=3.148.0" },
-    { name = "pulumi-b2", directory = "sdks/b2" },
     { name = "pulumiverse-grafana", specifier = ">=2.25.1" },
 ]
 
