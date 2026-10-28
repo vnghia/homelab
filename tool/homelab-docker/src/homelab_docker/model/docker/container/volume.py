@@ -164,11 +164,9 @@ class ContainerVolumesConfig(HomelabRootModel[dict[str, ContainerVolumeConfig]])
                 target=arg.target,
                 read_write=(
                     Output.from_input(arg.read_only).apply(
-                        lambda x: "ro" if x else "rw"
+                        lambda read_only: "ro" if read_only else "rw"
                     )
-                )
-                if arg.read_only is not None
-                else "rw",
+                ),
             )
 
         return [

@@ -55,27 +55,31 @@ class DockerContainerCreationModelResource(
                 "Type": mount_arg.type,
                 "ReadOnly": mount_arg.read_only,
                 "BindOptions": Output.from_input(mount_arg.bind_options).apply(
-                    lambda options: {"Propagation": options.propagation}
-                )
-                if mount_arg.bind_options
-                else None,
+                    lambda options: (
+                        {"Propagation": options.propagation} if options else None
+                    )
+                ),
                 "VolumeOptions": Output.from_input(mount_arg.volume_options).apply(
-                    lambda options: {
-                        "NoCopy": options.no_copy,
-                        "DriverConfig": options.driver_options,
-                        "Subpath": options.subpath,
-                    }
-                )
-                if mount_arg.volume_options
-                else None,
+                    lambda options: (
+                        {
+                            "NoCopy": options.no_copy,
+                            "DriverConfig": options.driver_options,
+                            "Subpath": options.subpath,
+                        }
+                        if options
+                        else None
+                    )
+                ),
                 "TmpfsOptions": Output.from_input(mount_arg.tmpfs_options).apply(
-                    lambda options: {
-                        "Mode": options.mode,
-                        "SizeBytes": options.size_bytes,
-                    }
-                )
-                if mount_arg.tmpfs_options
-                else None,
+                    lambda options: (
+                        {
+                            "Mode": options.mode,
+                            "SizeBytes": options.size_bytes,
+                        }
+                        if options
+                        else None
+                    )
+                ),
             }
             for mount_arg in model.volumes.to_args(
                 model.docker_socket, extractor_args, build_args

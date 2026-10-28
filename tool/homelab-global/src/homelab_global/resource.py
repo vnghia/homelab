@@ -56,10 +56,10 @@ class GlobalResource(ComponentResource):
             device.name.split(".", maxsplit=1)[0]: list(
                 map(IPvAnyAddressAdapter.validate_python, device.addresses)
             )
-            for device in tailscale.get_devices().devices
+            for device in (tailscale.get_devices().devices or [])
         }
 
         self.register_outputs({})
 
     def get_mesh_ip(self, host: str) -> list[IPvAnyAddress]:
-        return self.mesh_ips["{}-core".format(host)]
+        return self.mesh_ips[f"{host}-core"]
