@@ -21,7 +21,7 @@ class SecretMTlsCertModel(SecretBaseModel):
 
     @classmethod
     def get_resource_name(cls, t: str, resource_name: str) -> str:
-        return "{}-mtls-{}".format(resource_name, t)
+        return f"{resource_name}-mtls-{t}"
 
     @classmethod
     def build_key(
@@ -33,7 +33,7 @@ class SecretMTlsCertModel(SecretBaseModel):
         resource: SecretResource,
         plain_args: PlainArgs,
     ) -> tuple[str, tls.PrivateKey]:
-        full_key_name = cls.get_resource_name("{}-key".format(key_name), resource_name)
+        full_key_name = cls.get_resource_name(f"{key_name}-key", resource_name)
         key = SecretKeyModel(algorithm=algorithm).build_resource(
             key_name, opts, resource, plain_args
         )

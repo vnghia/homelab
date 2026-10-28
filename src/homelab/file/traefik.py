@@ -34,10 +34,10 @@ class TraefikFile(ComponentResource):
         self.traefik_service = traefik_service
 
     def get_egress_name(self, egress: str) -> str:
-        return "egress-{}".format(egress)
+        return f"egress-{egress}"
 
     def get_egress_proxy(self, type: NetworkEgressType) -> str:
-        return "egress-{}-proxy".format(type)
+        return f"egress-{type}-proxy"
 
     def build_service_dynamic(
         self, service: ServiceResourceBase

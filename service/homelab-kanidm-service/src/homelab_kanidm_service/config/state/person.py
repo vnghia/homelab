@@ -14,4 +14,4 @@ class KanidmStatePersonConfig(HomelabRootModel[dict[str, KanidmStatePersonModel]
 
     @classmethod
     def to_group_name(cls, person: str) -> str:
-        return "{}{}".format(cls.GROUP_PREFIX, person)
+        return f"{cls.GROUP_PREFIX}{person}"

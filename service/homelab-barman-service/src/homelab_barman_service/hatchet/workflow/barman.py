@@ -2,7 +2,8 @@ import asyncio
 import contextlib
 import datetime
 import logging
-from typing import Any, AsyncGenerator, ClassVar, Iterable, Self
+from collections.abc import AsyncGenerator, Iterable
+from typing import Any, ClassVar, Self
 
 from hatchet_sdk import Context, EmptyModel, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
@@ -181,9 +182,7 @@ class Barman:
 
         try:
             if container_is_not_running:
-                logger.info(
-                    "Starting container {} for barman operation".format(container_name)
-                )
+                logger.info(f"Starting container {container_name} for barman operation")
                 await container.start()
                 await asyncio.sleep(30)
                 await Docker.exec_container(context, barman_config.build_cron_model())
@@ -191,9 +190,7 @@ class Barman:
         finally:
             if container_is_not_running:
                 logger.info(
-                    "Stopping container {} after barman operation".format(
-                        container_name
-                    )
+                    f"Stopping container {container_name} after barman operation"
                 )
                 await container.stop()
 
@@ -227,7 +224,7 @@ class Barman:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -253,7 +250,7 @@ class Barman:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -293,7 +290,7 @@ class Barman:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -306,7 +303,7 @@ class Barman:
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         @hatchet.task(
-            name="{}-cron".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-cron",
             on_crons=["* * * * *"],
             concurrency=1,
             desired_worker_labels=[
@@ -322,7 +319,7 @@ class Barman:
             await Docker.exec_container(context, barman_config.build_cron_model())
 
         @hatchet.task(
-            name="{}-backup".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-backup",
             input_validator=HatchetBarmanBackupInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
@@ -352,7 +349,7 @@ class Barman:
             )
 
         @hatchet.task(
-            name="{}-restore".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-restore",
             input_validator=HatchetBarmanRestoreInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
@@ -384,7 +381,7 @@ class Barman:
             )
 
         @hatchet.task(
-            name="{}-check".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-check",
             input_validator=HatchetBarmanCheckInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,

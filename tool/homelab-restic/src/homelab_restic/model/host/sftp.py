@@ -17,4 +17,4 @@ class ResticSftpHost(ResticHostBase):
 
     @typing.override
     def build_prefix(self, plain_args: PlainArgs) -> str:
-        return "//{}@{}/{}/".format(self.user, self.sftp, self.prefix.as_posix())
+        return f"//{self.user}@{self.sftp}/{self.prefix.as_posix()}/"

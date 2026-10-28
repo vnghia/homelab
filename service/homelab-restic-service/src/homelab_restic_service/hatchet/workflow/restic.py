@@ -1,7 +1,8 @@
 import asyncio
 import datetime
 import logging
-from typing import Any, ClassVar, Iterable, Self
+from collections.abc import Iterable
+from typing import Any, ClassVar, Self
 
 from hatchet_sdk import (
     ConcurrencyExpression,
@@ -76,9 +77,9 @@ class HatchetResticCheckModel(HomelabBaseModel):
             profile,
             "check",
             (
-                "--read-data={}".format(str(self.read_data).lower())
+                f"--read-data={str(self.read_data).lower()}"
                 if isinstance(self.read_data, bool)
-                else "--read-data-subset={}".format(self.read_data)
+                else f"--read-data-subset={self.read_data}"
             ),
         ]
 
@@ -87,7 +88,7 @@ class HatchetResticForgetModel(HomelabBaseModel):
     prune: bool = False
 
     def build_cmd(self, profile: str) -> list[str]:
-        return ["-n", profile, "forget", "--prune={}".format(str(self.prune).lower())]
+        return ["-n", profile, "forget", f"--prune={str(self.prune).lower()}"]
 
 
 class HatchetResticPruneModel(HomelabBaseModel):
@@ -123,7 +124,7 @@ class HatchetResticModelConfig(HomelabBaseModel):
             elif key in self.restic.groups:
                 profiles |= self.resolve_profiles(self.restic.groups[key])
             else:
-                logger.error("Could not resolve restic key {}".format(key))
+                logger.error(f"Could not resolve restic key {key}")
         return profiles
 
     def resolve_repositories(self, keys: Iterable[str]) -> set[str]:
@@ -139,7 +140,7 @@ class HatchetResticModelConfig(HomelabBaseModel):
             elif key in self.restic.groups:
                 repositories |= self.resolve_repositories(self.restic.groups[key])
             else:
-                logger.error("Could not resolve restic key {}".format(key))
+                logger.error(f"Could not resolve restic key {key}")
         return repositories
 
     def build_model(
@@ -241,7 +242,7 @@ class HatchetResticPruneInputModel(HatchetResticBaseInputModel):
 
 class Restic:
     SERVICE = HatchetResticModelConfig.RESTIC
-    RESTIC_FORGET = "{}-forget".format(SERVICE)
+    RESTIC_FORGET = f"{SERVICE}-forget"
 
     SCHEDULE_TIMEOUT = datetime.timedelta(hours=6)
     CONCURRENCY = 5
@@ -318,7 +319,7 @@ class Restic:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -344,7 +345,7 @@ class Restic:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -370,7 +371,7 @@ class Restic:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -396,7 +397,7 @@ class Restic:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -422,7 +423,7 @@ class Restic:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -435,15 +436,13 @@ class Restic:
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         @hatchet.task(
-            name="{}-backup".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-backup",
             input_validator=HatchetResticBackupInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=[
                 ConcurrencyExpression(
-                    expression='"restic-host-%s".format([additional_metadata.{}])'.format(
-                        constant.HOST_LABEL
-                    ),
+                    expression=f'"restic-host-%s".format([additional_metadata.{constant.HOST_LABEL}])',
                     max_runs=cls.CONCURRENCY,
                     limit_strategy=ConcurrencyLimitStrategy.GROUP_ROUND_ROBIN,
                 ),
@@ -480,7 +479,7 @@ class Restic:
             )
 
         @hatchet.task(
-            name="{}-restore".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-restore",
             input_validator=HatchetResticRestoreInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
@@ -518,7 +517,7 @@ class Restic:
             )
 
         @hatchet.task(
-            name="{}-check".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-check",
             input_validator=HatchetResticCheckInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
@@ -596,7 +595,7 @@ class Restic:
             )
 
         @hatchet.task(
-            name="{}-prune".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-prune",
             input_validator=HatchetResticPruneInputModel,
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
@@ -636,7 +635,7 @@ class Restic:
             )
 
         @hatchet.task(
-            name="{}-forget-prune-check".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-forget-prune-check",
             schedule_timeout=cls.SCHEDULE_TIMEOUT,
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=1,

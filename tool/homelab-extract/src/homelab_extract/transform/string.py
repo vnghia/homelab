@@ -26,7 +26,7 @@ class ExtractTransformString(HomelabBaseModel):
         if self.capture:
             match = re.match(self.capture, value)
             if not match:
-                raise ValueError("Could not extract value from {}".format(value))
+                raise ValueError(f"Could not extract value from {value}")
             value = match[1]
 
         if self.template:

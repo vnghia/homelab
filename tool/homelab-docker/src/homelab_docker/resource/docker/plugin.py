@@ -26,5 +26,5 @@ class PluginResource(ComponentResource):
 
         export = {name: plugin.id for name, plugin in self.plugins.items()}
         for name, value in export.items():
-            pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
+            pulumi.export(f"{host}.{self.RESOURCE_NAME}.{name}", value)
         self.register_outputs(export)

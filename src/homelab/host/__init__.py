@@ -104,12 +104,12 @@ class HostBaseNoConfig(HostResourceBase):
             self.HOOK_DIR / service / "__init__"
         ).with_suffix(".py").exists():
             hook_module = importlib.import_module(
-                "homelab.{}.{}".format(self.HOOK_MODULE, service)
+                f"homelab.{self.HOOK_MODULE}.{service}"
             )
         else:
             hook_module = None
 
-        type("{}Service".format(service.capitalize()), (ExtraService,), {})(
+        type(f"{service.capitalize()}Service", (ExtraService,), {})(
             model, opts=self.child_opts, extractor_args=self.extractor_args
         ).build(hook_module)
 

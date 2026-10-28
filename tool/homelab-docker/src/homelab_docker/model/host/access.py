@@ -7,4 +7,4 @@ class HostAccessModel(HomelabBaseModel):
 
     @property
     def ssh(self) -> str:
-        return "ssh://{}@{}".format(self.user, self.address)
+        return f"ssh://{self.user}@{self.address}"

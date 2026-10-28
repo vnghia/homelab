@@ -47,9 +47,7 @@ class WorkflowLoader:
 
             if should_delete:
                 logger.info(
-                    "Deleting stale workflow {}:{}".format(
-                        workflow_data.name, workflow_data.metadata.id
-                    )
+                    f"Deleting stale workflow {workflow_data.name}:{workflow_data.metadata.id}"
                 )
                 self.hatchet.workflows.delete(workflow_data.metadata.id)
 
@@ -62,7 +60,7 @@ class WorkflowLoader:
     def watch(self) -> None:
         def _watch() -> None:
             workflow_dir = self.config.workflow_dir
-            logger.info("Watching for modules in {}".format(workflow_dir))
+            logger.info(f"Watching for modules in {workflow_dir}")
 
             for changes in watchfiles.watch(
                 workflow_dir,
@@ -94,4 +92,4 @@ class WorkflowLoader:
                 return module.workflows[key]
             if namespaced_key in module.workflows:
                 return module.workflows[namespaced_key]
-        raise KeyError("Workflow named {} not found".format(key))
+        raise KeyError(f"Workflow named {key} not found")

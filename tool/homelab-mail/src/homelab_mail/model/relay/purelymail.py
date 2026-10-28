@@ -22,7 +22,7 @@ class MailRelayPurelyMailModel(MailRelayBaseModel):
         self, key: str, opts: ResourceOptions, hostname: Hostname
     ) -> None:
         cloudflare.DnsRecord(
-            "purelymail-ownership-{}".format(key),
+            f"purelymail-ownership-{key}",
             opts=opts,
             zone_id=hostname.zone,
             name=hostname.name,
@@ -31,7 +31,7 @@ class MailRelayPurelyMailModel(MailRelayBaseModel):
             type="TXT",
         )
         cloudflare.DnsRecord(
-            "purelymail-spf-{}".format(key),
+            f"purelymail-spf-{key}",
             opts=opts,
             zone_id=hostname.zone,
             name=hostname.name,
@@ -41,7 +41,7 @@ class MailRelayPurelyMailModel(MailRelayBaseModel):
         )
         for i in range(1, 4):
             cloudflare.DnsRecord(
-                "purelymail-dkim-{}-{}".format(i, key),
+                f"purelymail-dkim-{i}-{key}",
                 opts=opts,
                 zone_id=hostname.zone,
                 name=self.DKIM_NAME_TEMPLATE.format(i=i) + "." + hostname.name,
@@ -50,7 +50,7 @@ class MailRelayPurelyMailModel(MailRelayBaseModel):
                 type="CNAME",
             )
         cloudflare.DnsRecord(
-            "purelymail-dmarc-{}".format(key),
+            f"purelymail-dmarc-{key}",
             opts=opts,
             zone_id=hostname.zone,
             name=self.DMARC_NAME + "." + hostname.name,

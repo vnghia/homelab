@@ -13,7 +13,7 @@ class RelativePath(HomelabRootModel[PosixPath]):
     def check_relative_path(self) -> Self:
         root = self.root
         if root.is_absolute():
-            raise ValueError("{} is not a relative path".format(root))
+            raise ValueError(f"{root} is not a relative path")
         return self
 
     def __truediv__(self, other: str | Self) -> Self:
@@ -44,7 +44,7 @@ class AbsolutePath(HomelabRootModel[PosixPath]):
     def check_absolute_path(self) -> Self:
         root = self.root
         if not root.is_absolute():
-            raise ValueError("{} is not an absolute path".format(root))
+            raise ValueError(f"{root} is not an absolute path")
         return self
 
     def __truediv__(self, other: str | RelativePath) -> Self:

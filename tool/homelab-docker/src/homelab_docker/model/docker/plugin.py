@@ -10,7 +10,7 @@ class PluginModel(HomelabBaseModel):
     tag: PlatformString
 
     def build_name(self, platform: Platform) -> str:
-        return "{}:{}".format(self.repo.to_str(platform), self.tag.to_str(platform))
+        return f"{self.repo.to_str(platform)}:{self.tag.to_str(platform)}"
 
     def build_resource(
         self,

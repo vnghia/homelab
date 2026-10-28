@@ -24,13 +24,13 @@ class ServiceVolumeSourceExtractor(ExtractorBase[ServiceExtractVolumeSource]):
     def extract_str(self, extractor_args: ExtractorArgs) -> str:
         if extractor_args._container:
             return self.to_container_extractor().extract_str(extractor_args)
-        raise TypeError("Could not extract str from {}".format(self.name))
+        raise TypeError(f"Could not extract str from {self.name}")
 
     @typing.override
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         if extractor_args._container:
             return self.to_container_extractor().extract_path(extractor_args)
-        raise TypeError("Could not extract path from {}".format(self.name))
+        raise TypeError(f"Could not extract path from {self.name}")
 
     @typing.override
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:

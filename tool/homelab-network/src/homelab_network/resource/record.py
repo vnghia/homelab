@@ -33,7 +33,7 @@ class RecordResource(ComponentResource):
             self.records = {
                 key: [
                     record.build_resource(
-                        "{}-{}-{}".format(name, key, key_ip),
+                        f"{name}-{key}-{key_ip}",
                         opts=self.child_opts,
                         zone_id=config.zone_id,
                         ip=ip,
@@ -48,7 +48,7 @@ class RecordResource(ComponentResource):
         self.local_records: defaultdict[IPvAnyAddress, set[str]] = defaultdict(set)
         for key, hostname in self.hostnames.items():
             value = hostname.value
-            pulumi.export("record.{}.{}".format(name, key), value)
+            pulumi.export(f"record.{name}.{key}", value)
             if config.local_ip:
                 for ip in config.local_ip.root.values():
                     self.local_records[ip].add(value)

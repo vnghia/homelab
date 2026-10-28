@@ -23,7 +23,7 @@ class TraefikEntrypointPortModel(HomelabBaseModel):
         return (
             GlobalExtractor(self.port)
             .extract_str(extractor_args)
-            .apply(lambda x: ":{}".format(int(x)))
+            .apply(lambda x: f":{int(x)}")
         )
 
 

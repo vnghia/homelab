@@ -21,7 +21,7 @@ logger = logging.getLogger("scheduler")
 
 class Scheduler:
     NAME = "scheduler"
-    LABEL_NAME = "{}-name".format(NAME)
+    LABEL_NAME = f"{NAME}-name"
 
     METADATA = constant.build_labels(None)
 
@@ -45,7 +45,7 @@ class Scheduler:
             for path in await asyncio.to_thread(
                 lambda: config.scheduler_dir.glob("*.json")
             ):
-                logger.info("Running scheduler for {}".format(path))
+                logger.info(f"Running scheduler for {path}")
                 async with aiofiles.open(path) as file:
                     schedule = ScheduleConfig.model_validate_json(await file.read())
 
@@ -85,21 +85,17 @@ class Scheduler:
                                 )
                             else:
                                 logger.info(
-                                    "Already scheduled workflow {} next run at {}".format(
-                                        workflow.name, scheduled_workflow.trigger_at
-                                    )
+                                    f"Already scheduled workflow {workflow.name} next run at {scheduled_workflow.trigger_at}"
                                 )
                                 need_schedule = False
 
                     if need_schedule:
                         logger.info(
-                            "Scheduling workflow {} next run at {}".format(
-                                workflow.name, next_run
-                            )
+                            f"Scheduling workflow {workflow.name} next run at {next_run}"
                         )
                         await hatchet.scheduled.aio_create(
                             workflow_name=workflow.name,
-                            trigger_at=next_run.astimezone(datetime.timezone.utc),
+                            trigger_at=next_run.astimezone(datetime.UTC),
                             input=workflow.model.input_validator.validate_python(
                                 model.input or {}
                             ).model_dump(mode="json"),

@@ -1,5 +1,6 @@
 import logging
-from typing import Any, ClassVar, Iterable, Self
+from collections.abc import Iterable
+from typing import Any, ClassVar, Self
 
 from hatchet_sdk import Context, Hatchet
 from hatchet_sdk.runnables.workflow import BaseWorkflow, Standalone
@@ -92,7 +93,7 @@ class HatchetBaliteModelConfig(HomelabBaseModel):
             elif key in self.balite.groups:
                 profiles |= self.resolve_profiles(self.balite.groups[key])
             else:
-                logger.error("Could not resolve balite key {}".format(key))
+                logger.error(f"Could not resolve balite key {key}")
         return profiles
 
     def build_model(
@@ -164,7 +165,7 @@ class Balite:
                     ),
                     key=profile,
                     additional_metadata=constant.build_labels(cls.SERVICE)
-                    | {"{}-profile".format(cls.SERVICE): profile},
+                    | {f"{cls.SERVICE}-profile": profile},
                     desired_worker_labels=[
                         constant.DESIRED_HOST_LABEL,
                         constant.DESIRED_DOCKER_LABEL,
@@ -177,7 +178,7 @@ class Balite:
     @classmethod
     def build_workflows(cls, hatchet: Hatchet) -> list[BaseWorkflow[Any]]:
         @hatchet.task(
-            name="{}-backup".format(cls.SERVICE),
+            name=f"{cls.SERVICE}-backup",
             input_validator=HatchetBaliteBackupInputModel,
             execution_timeout=Docker.DOCKER_TIMEOUT,
             concurrency=5,

@@ -19,7 +19,7 @@ class ContainerEnvSourceExtractor(ExtractorBase[ContainerExtractEnvSource]):
         root = self.root
         env = extractor_args.container_model.envs[root.env]
         if env is None:
-            raise ValueError("Env {} is disabled".format(root.env))
+            raise ValueError(f"Env {root.env} is disabled")
         return GlobalExtractor(env)
 
     @typing.override

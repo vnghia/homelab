@@ -35,7 +35,7 @@ class RecordModel(HomelabRootModel[str | RecordFullModel]):
             zone_id=zone_id,
             name=self.name,
             content=Output.from_input(ip).apply(str),
-            comment="record for {}".format(resource_name),
+            comment=f"record for {resource_name}",
             proxied=False,
             ttl=1,
             type=type_,

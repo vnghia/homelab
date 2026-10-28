@@ -92,7 +92,7 @@ class Docker:
         if not container_inspect.name:
             raise RuntimeError("Container name can not be null")
         container_name = container_inspect.name.removeprefix("/")
-        logger.info("Running container {}".format(container_name))
+        logger.info(f"Running container {container_name}")
         logger.debug(container_inspect)
 
         try:
@@ -135,7 +135,7 @@ class Docker:
         stream: bool = True,
     ) -> DockerContainerExecOutput:
         logger.debug(model)
-        logger.info("Execing container {}".format(model.name))
+        logger.info(f"Execing container {model.name}")
 
         instance = (
             await cls.client()
@@ -160,9 +160,7 @@ class Docker:
             status_code := int((await instance.inspect())["ExitCode"])
         ) and status_code > 0:
             raise RuntimeError(
-                "[{}] - [{}] - Exec exited with non-zero status code {}".format(
-                    model.name, exec_id, status_code
-                )
+                f"[{model.name}] - [{exec_id}] - Exec exited with non-zero status code {status_code}"
             )
 
         return DockerContainerExecOutput(id=instance.id, logs=logs)

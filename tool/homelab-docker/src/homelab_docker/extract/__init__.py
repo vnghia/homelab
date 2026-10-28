@@ -17,7 +17,7 @@ if typing.TYPE_CHECKING:
     from ..model.service import ServiceModel
     from ..resource.docker.container import ContainerResource
     from ..resource.host import HostResourceBase
-    from ..resource.service import ServiceResourceBase
+    from ..resource.service import ServiceResourceBase  # noqa: TC004
 
 
 @dataclasses.dataclass(frozen=True)
@@ -165,7 +165,7 @@ class ExtractorArgs:
     def get_service_resource(self, key: str | None) -> ServiceResourceBase:
         service = self.get_service(key)
         if not isinstance(service, ServiceResourceBase):
-            raise ValueError("Service is required for this extractor")
+            raise TypeError("Service is required for this extractor")
         return service
 
     def get_container(self, key: str | None) -> ContainerResource | ContainerModel:
@@ -274,10 +274,10 @@ class ExtractorBase(Protocol[T]):
         | dict[Output[str], Any]
         | list[Output[str]]
     ):
-        raise TypeError("Could not extract str from {}".format(self.name))
+        raise TypeError(f"Could not extract str from {self.name}")
 
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
-        raise TypeError("Could not extract path from {}".format(self.name))
+        raise TypeError(f"Could not extract path from {self.name}")
 
     def extract_volume_path(self, extractor_args: ExtractorArgs) -> ContainerVolumePath:
-        raise TypeError("Could not extract volume path from {}".format(self.name))
+        raise TypeError(f"Could not extract volume path from {self.name}")

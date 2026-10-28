@@ -18,7 +18,7 @@ class NotificationAccountArgs:
 
     @property
     def address(self) -> str:
-        return "{}@{}".format(self.username, self.domain)
+        return f"{self.username}@{self.domain}"
 
 
 class NotificationResource(ComponentResource):
@@ -46,7 +46,7 @@ class NotificationResource(ComponentResource):
             domain = hostnames[record][hostname]
             if model.relay:
                 config.relay.root[model.relay].build_resource(
-                    "{}-{}".format(self.RESOURCE_NAME, name), self.child_opts, domain
+                    f"{self.RESOURCE_NAME}-{name}", self.child_opts, domain
                 )
 
             account = NotificationAccountArgs(

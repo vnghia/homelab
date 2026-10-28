@@ -26,5 +26,5 @@ class GlobalIncludeSourceExtractor(ExtractorBase[GlobalExtractIncludeSource]):
                     return file.read().decode()
 
         if not isinstance(result, dict):
-            raise ValueError("Include extract must return a dictionary")
+            raise TypeError("Include extract must return a dictionary")
         return result

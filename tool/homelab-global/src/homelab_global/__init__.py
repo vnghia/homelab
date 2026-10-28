@@ -9,4 +9,4 @@ class ProjectArgs:
 
     @property
     def prefix(self) -> str:
-        return "{}-{}".format(self.name, self.stack)
+        return f"{self.name}-{self.stack}"

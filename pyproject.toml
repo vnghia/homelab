@@ -154,6 +154,7 @@ ignore = [
     "PLR0911",
     "PLC0415",
     "S104",
+    "PLR0917",
 ]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]

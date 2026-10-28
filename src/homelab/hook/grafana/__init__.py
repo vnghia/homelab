@@ -58,7 +58,7 @@ class Folder:
                     with open(config_path, "r+b") as config_file:
                         config = yaml_rs.load(config_file)
                         if not isinstance(config, dict):
-                            raise ValueError(
+                            raise TypeError(
                                 "Grafana config should contain only one object"
                             )
 
@@ -84,7 +84,7 @@ class Folder:
                     with open(config_path, "r+b") as config_file:
                         config = yaml_rs.load(config_file)
                         if not isinstance(config, dict):
-                            raise ValueError(
+                            raise TypeError(
                                 "Grafana config should contain only one object"
                             )
                         provision_alert_rule(

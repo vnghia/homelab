@@ -37,11 +37,11 @@ class TailscaleService(ServiceResourceBase):
         )
 
         pulumi.export(
-            "{}.tailscale.ipv4".format(self.extractor_args.host.name),
+            f"{self.extractor_args.host.name}.tailscale.ipv4",
             self.device.v4.apply(str),
         )
         pulumi.export(
-            "{}.tailscale.ipv6".format(self.extractor_args.host.name),
+            f"{self.extractor_args.host.name}.tailscale.ipv6",
             self.device.v6.apply(str),
         )
         self.register_outputs({})

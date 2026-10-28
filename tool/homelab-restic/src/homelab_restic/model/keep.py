@@ -10,9 +10,8 @@ class ResticKeepConfig(HomelabBaseModel):
 
     def to_forget_options(self) -> dict[str, NonNegativeInt | str]:
         return {
-            "keep-{}".format(timeframe): number
-            for timeframe, number in self.last.items()
+            f"keep-{timeframe}": number for timeframe, number in self.last.items()
         } | {
-            "keep-within-{}".format(timeframe): duration
+            f"keep-within-{timeframe}": duration
             for timeframe, duration in self.within.items()
         }

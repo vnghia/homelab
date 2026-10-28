@@ -12,7 +12,7 @@ def find[T: ast.stmt](module: ast.Module, type: type[T], name: str) -> T:
             result = stmt
             break
     if not result:
-        raise ValueError("Type {} name {} not found".format(type, name))
+        raise ValueError(f"Type {type} name {name} not found")
     return result
 
 

@@ -41,7 +41,7 @@ def backup(profiles: list[str]) -> None:
             destination.parent.mkdir(parents=True, exist_ok=True)
 
             sqlite_backup.sqlite_backup(source, destination)
-            logger.info("Backed up {} to {}".format(source, destination))
+            logger.info(f"Backed up {source} to {destination}")
 
 
 @app.command()
@@ -57,7 +57,7 @@ def restore(profiles: list[str]) -> None:
             )
 
             shutil.copyfile(destination, source)
-            logger.info("Restored {} to {}".format(destination, source))
+            logger.info(f"Restored {destination} to {source}")
 
 
 def main() -> None:

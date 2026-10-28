@@ -25,7 +25,7 @@ class WorkflowModule:
         cls, hatchet: Hatchet, worker: Worker, namespace: str | None, path: Path | str
     ) -> Self | None:
         path = Path(path).resolve(True)
-        logger.info("Loading module from {}".format(path))
+        logger.info(f"Loading module from {path}")
 
         if path in cls.instances:
             instance = cls.instances[path]
@@ -37,7 +37,7 @@ class WorkflowModule:
 
         if not hasattr(module, "build_workflows"):
             logger.warning(
-                "Module `{}` does not have `build_workflows` method".format(path.stem)
+                f"Module `{path.stem}` does not have `build_workflows` method"
             )
             return None
 
@@ -47,9 +47,7 @@ class WorkflowModule:
 
         for old_workflow in old_workflows.values():
             if old_workflow.name not in workflows:
-                logger.info(
-                    "Deleting workflow {}:{}".format(old_workflow.name, old_workflow.id)
-                )
+                logger.info(f"Deleting workflow {old_workflow.name}:{old_workflow.id}")
                 hatchet.workflows.delete(old_workflow.id)
 
         instance = cls(module=module, workflows=workflows)
@@ -59,10 +57,10 @@ class WorkflowModule:
     @classmethod
     def unload(cls, hatchet: Hatchet, path: Path | str) -> None:
         path = Path(path)
-        logger.info("Unloading module from {}".format(path))
+        logger.info(f"Unloading module from {path}")
 
         instance = cls.instances.pop(path)
         for workflow in instance.workflows.values():
-            logger.info("Deleting workflow {}:{}".format(workflow.name, workflow.id))
+            logger.info(f"Deleting workflow {workflow.name}:{workflow.id}")
             hatchet.workflows.delete(workflow.id)
         del sys.modules[path.stem]

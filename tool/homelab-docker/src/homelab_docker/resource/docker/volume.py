@@ -145,7 +145,7 @@ class VolumeResource(ComponentResource):
 
         for name, volume in self.volumes.items():
             pulumi.export(
-                "{}.{}.{}".format(host, self.RESOURCE_NAME, name),
+                f"{host}.{self.RESOURCE_NAME}.{name}",
                 volume.resource.name,
             )
 
@@ -155,7 +155,7 @@ class VolumeResource(ComponentResource):
         self.files[file.volume_path.volume].append(file)
 
     def get_sqlite_backup_volume_name(self, volume_name: str) -> str:
-        return "{}-sqlite-backup".format(volume_name)
+        return f"{volume_name}-sqlite-backup"
 
     def __getitem__(self, key: str) -> LocalVolumeResource:
         return self.volumes[key]

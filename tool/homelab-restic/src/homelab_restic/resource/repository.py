@@ -24,7 +24,7 @@ class ResticRepositoryProviderProps(HomelabBaseModel):
     def binary(self) -> str:
         binary = shutil.which(self.BINARY)
         if not binary:
-            raise ValueError("{} is not installed".format(self.BINARY))
+            raise ValueError(f"{self.BINARY} is not installed")
         return binary
 
     def run(

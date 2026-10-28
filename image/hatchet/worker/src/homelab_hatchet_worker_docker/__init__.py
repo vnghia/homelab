@@ -34,7 +34,7 @@ def main() -> None:
     ) | Workflow.register_models(
         hatchet, worker, namespace, Scheduler.build_workflows(hatchet, config)
     )
-    logger.info("Staic workflows: {}".format(static_workflows))
+    logger.info(f"Staic workflows: {static_workflows}")
 
     workflow_loader = WorkflowLoader(
         hatchet, worker, config, namespace, static_workflows

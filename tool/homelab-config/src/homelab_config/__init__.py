@@ -1,5 +1,5 @@
 import functools
-from typing import Any, Self, Type
+from typing import Any, Self
 
 import deepmerge
 import pulumi
@@ -53,12 +53,12 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
                 )
 
         return deepmerge.always_merger.merge(
-            data, pulumi.Config().get_object("stack-{}".format(key), {})
+            data, pulumi.Config().get_object(f"stack-{key}", {})
         )
 
     @classmethod
     def get_host_config(
-        cls, docker_type: Type[HostConfig[TSun, TEarth]]
+        cls, docker_type: type[HostConfig[TSun, TEarth]]
     ) -> HostConfig[TSun, TEarth]:
         key = "host"
 
@@ -90,12 +90,12 @@ class Config[TSun: ServiceConfigBase, TEarth: ServiceConfigBase](HomelabBaseMode
 
         return docker_type.model_validate(
             deepmerge.always_merger.merge(
-                config_data, pulumi.Config().get_object("stack-{}".format(key), {})
+                config_data, pulumi.Config().get_object(f"stack-{key}", {})
             )
         )
 
     @classmethod
-    def build(cls, host_type: Type[HostConfig[TSun, TEarth]]) -> Self:
+    def build(cls, host_type: type[HostConfig[TSun, TEarth]]) -> Self:
         return cls(
             host=cls.get_host_config(host_type),
             mail=MailConfig.model_validate(cls.get_key("mail")),

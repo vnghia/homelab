@@ -105,9 +105,7 @@ class NetworkResource(ComponentResource):
         self.build_service_networks(extractor_args)
 
         for value in self.bridge.values():
-            pulumi.export(
-                "{}.{}.{}".format(host, self.RESOURCE_NAME, value._name), value.name
-            )
+            pulumi.export(f"{host}.{self.RESOURCE_NAME}.{value._name}", value.name)
         self.register_outputs({})
 
     @classmethod
@@ -223,7 +221,7 @@ class NetworkResource(ComponentResource):
         return docker.ContainerNetworksAdvancedArgs(
             name=self.bridge[name].name,
             aliases=aliases,
-            driver_opts=["com.docker.network.endpoint.ifname={}".format(name)],
+            driver_opts=[f"com.docker.network.endpoint.ifname={name}"],
             gw_priority=gw_priority,
             ipv4_address=ipv4,
             ipv6_address=ipv6,

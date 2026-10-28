@@ -24,15 +24,11 @@ class HostNetworkSourceExtractor(ExtractorBase[HostExtractNetworkSource]):
                 if ipv4 := network_resource.proxy_option.bridges[network].ipv4:
                     return ipv4
                 raise ValueError(
-                    "Proxy static ipv4 is not available for this network {}".format(
-                        network
-                    )
+                    f"Proxy static ipv4 is not available for this network {network}"
                 )
             case HostNetworkInfoSource.PROXY6:
                 if ipv6 := network_resource.proxy_option.bridges[network].ipv6:
                     return ipv6
                 raise ValueError(
-                    "Proxy static ipv6 is not available for this network {}".format(
-                        network
-                    )
+                    f"Proxy static ipv6 is not available for this network {network}"
                 )

@@ -75,12 +75,12 @@ class BackupService(ServiceWithConfigResourceBase[BackupConfig]):
 
     @classmethod
     def get_extract_database_step(cls, type_: DatabaseType) -> str:
-        return "extract-database-{}".format(type_.value)
+        return f"extract-database-{type_.value}"
 
     @classmethod
     def get_extract_database_step_output(cls, type_: DatabaseType) -> str:
-        return "BACKUP_DATABASE_{}_CONFIG_OUTPUT".format(type_.value.upper())
+        return f"BACKUP_DATABASE_{type_.value.upper()}_CONFIG_OUTPUT"
 
     @classmethod
     def get_backup_database_step(cls, type_: DatabaseType) -> str:
-        return "backup-database-{}".format(type_.value)
+        return f"backup-database-{type_.value}"

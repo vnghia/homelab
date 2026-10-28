@@ -73,7 +73,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
         superuser_password_env = {}
         if self.config.env.superuser_password:
             self.superuser_password = SecretPasswordModel(special=False).build_resource(
-                "superuser-{}".format(self.short_name),
+                f"superuser-{self.short_name}",
                 opts=self.child_opts,
                 resource=None,
                 plain_args=extractor_args.plain_args,
@@ -90,7 +90,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
                 opts=self.child_opts,
                 volume_path=ContainerVolumePath(
                     volume=self.full_name_initdb,
-                    path=RelativePath(PosixPath("{:02}-{}".format(i, script.path))),
+                    path=RelativePath(PosixPath(f"{i:02}-{script.path}")),
                 ),
                 content=script.content,
                 permission=FilePermissionModel(
@@ -195,7 +195,7 @@ class ServiceDatabaseTypeResource(ComponentResource):
 
     @property
     def prefix(self) -> str:
-        return "{}-".format(self.name) if self.name else ""
+        return f"{self.name}-" if self.name else ""
 
     @property
     def short_name(self) -> str:

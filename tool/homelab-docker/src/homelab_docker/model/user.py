@@ -12,7 +12,7 @@ class UidGidModel(HomelabBaseModel):
     gid: NonNegativeInt = NOGROUP_GID
 
     def container(self) -> str:
-        return "{}:{}".format(self.uid, self.gid)
+        return f"{self.uid}:{self.gid}"
 
     @property
     def is_root(self) -> bool:

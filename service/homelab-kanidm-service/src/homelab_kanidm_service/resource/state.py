@@ -48,7 +48,7 @@ class KanidmStateProviderProps(HomelabBaseModel):
     def provision(self) -> None:
         binary = shutil.which(self.BINARY)
         if not binary:
-            raise ValueError("{} is not installed".format(self.BINARY))
+            raise ValueError(f"{self.BINARY} is not installed")
 
         with tempfile.NamedTemporaryFile(mode="w+b") as file:
             state = self.rename_key(self.state.model_dump(mode="json"), True)

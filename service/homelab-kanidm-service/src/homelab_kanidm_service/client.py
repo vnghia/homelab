@@ -17,7 +17,7 @@ class KanidmClient(HomelabBaseModel):
     def binary(self) -> str:
         binary = shutil.which(self.BINARY)
         if not binary:
-            raise ValueError("{} is not installed".format(self.BINARY))
+            raise ValueError(f"{self.BINARY} is not installed")
         return binary
 
     @property
@@ -31,13 +31,13 @@ class KanidmClient(HomelabBaseModel):
 
     def login(self, password: str) -> str:
         result = pexpect.run(
-            "{} login".format(self.binary),
+            f"{self.binary} login",
             events={"Enter password: ": password + "\n"},
             env=cast(os._Environ[str], self.env),
             encoding="utf-8",
         )
-        if "Login Success for {}@".format(self.ACCOUNT) not in result:
-            raise RuntimeError("Could not login to kanidm with log: {}".format(result))
+        if f"Login Success for {self.ACCOUNT}@" not in result:
+            raise RuntimeError(f"Could not login to kanidm with log: {result}")
         return self.ACCOUNT
 
     def extract_oauth_secret(self, system: str) -> str:

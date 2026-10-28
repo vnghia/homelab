@@ -28,12 +28,12 @@ class KanidmPasswordProviderProps(HomelabBaseModel):
             )
         )
         if not isinstance(raw_result.output, bytes):
-            raise RuntimeError("Exec should return bytes in non-stream mode")
+            raise TypeError("Exec should return bytes in non-stream mode")
 
         result = raw_result.output.decode().replace("\n", " ")
         match = self.PASSWORD_PATTERN.match(result)
         if not match:
-            raise ValueError("Could not extract password from log: {}".format(result))
+            raise ValueError(f"Could not extract password from log: {result}")
         return match[1]
 
 

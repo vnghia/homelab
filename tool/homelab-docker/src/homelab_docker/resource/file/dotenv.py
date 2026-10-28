@@ -1,5 +1,5 @@
 import typing
-from typing import Mapping
+from collections.abc import Mapping
 
 from homelab_pydantic import HomelabRootModel
 from pulumi import Input, ResourceOptions

@@ -22,12 +22,10 @@ class VectorEnrichmentTableResource(ComponentResource):
         super().__init__(self.RESOURCE_NAME, resource_name, None, opts)
         self.child_opts = ResourceOptions(parent=self)
 
-        self.path = (
-            vector_service.config_dir / "enrichment" / "{}.csv".format(resource_name)
-        )
+        self.path = vector_service.config_dir / "enrichment" / f"{resource_name}.csv"
 
         self.table = FileResource(
-            "{}-table".format(resource_name),
+            f"{resource_name}-table",
             opts=self.child_opts,
             volume_path=self.path,
             content=content,
@@ -38,7 +36,7 @@ class VectorEnrichmentTableResource(ComponentResource):
         from . import VectorConfigData, VectorConfigResource
 
         self.config = VectorConfigResource(
-            "{}-enrichment".format(resource_name),
+            f"{resource_name}-enrichment",
             opts=self.child_opts,
             config_data=VectorConfigData(
                 keys={},

@@ -29,5 +29,5 @@ class ExtractSecretTransformer(HomelabRootModel[ExtractTransformSecret]):
                 )
             case ExtractTransformSecretEncode.BCRYPT:
                 if not isinstance(value, random.RandomPassword):
-                    raise ValueError("Bcrypt transfomer requires password")
+                    raise TypeError("Bcrypt transfomer requires password")
                 return value.bcrypt_hash

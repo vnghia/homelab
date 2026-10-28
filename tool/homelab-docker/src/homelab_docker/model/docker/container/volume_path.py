@@ -24,4 +24,4 @@ class ContainerVolumePath(HomelabBaseModel):
         return self.model_copy(update={"path": self.path.with_suffix(suffix)})
 
     def __json__(self) -> str:
-        raise TypeError("Could not serialize {} to JSON".format(self))
+        raise TypeError(f"Could not serialize {self} to JSON")

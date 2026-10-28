@@ -29,9 +29,7 @@ class Workflow:
                 if row.name == model.name:
                     data = row
         if not data:
-            raise RuntimeError(
-                "Expecting workflow named {}, got {}".format(model.name, rows)
-            )
+            raise RuntimeError(f"Expecting workflow named {model.name}, got {rows}")
         return cls(data=data, model=model)
 
     @classmethod
@@ -43,17 +41,17 @@ class Workflow:
         model: Any,
     ) -> Self | None:
         if not isinstance(model, BaseWorkflow):
-            raise ValueError("Object {} is not a valid workflow".format(model))
+            raise TypeError(f"Object {model} is not a valid workflow")
         if model._config.name.startswith(NAMESPACE_SEPARATOR):
             model._config.name = model._config.name.removeprefix(NAMESPACE_SEPARATOR)
         else:
             model._config.name = cls.add_namespace(namespace, model._config.name)
-        logger.info("Registering workflow {}".format(model.name))
+        logger.info(f"Registering workflow {model.name}")
 
         try:
             worker.register_workflow(model)
-        except Exception as exception:
-            logger.exception(exception)
+        except Exception:
+            logger.exception(f"Can not register workflow {model}")
             return None
         return cls.from_model(hatchet, model)
 

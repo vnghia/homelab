@@ -34,7 +34,7 @@ class KanidmStateConfig(HomelabBaseModel):
                         username: model.model_copy(
                             update={
                                 "mail_addresses": [
-                                    "{}@{}".format(username, domain),
+                                    f"{username}@{domain}",
                                     *model.mail_addresses,
                                 ]
                             }

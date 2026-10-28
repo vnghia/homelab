@@ -37,18 +37,14 @@ class ContainerHealthCheckConfig(HomelabBaseModel):
                 return ["CMD-SHELL", " ".join(tests[1:]) + " || exit 1"]
             return tests
         raise ValueError(
-            "Healthcheck test must start with either CMD or CMD-SHELL, got {}".format(
-                test_type
-            )
+            f"Healthcheck test must start with either CMD or CMD-SHELL, got {test_type}"
         )
 
     @classmethod
     def to_second(cls, count: PositiveInt) -> str:
         if count < cls.SECONDS_IN_MINUTE:
-            return "{}s".format(count)
-        return "{}m{}s".format(
-            count // cls.SECONDS_IN_MINUTE, count % cls.SECONDS_IN_MINUTE
-        )
+            return f"{count}s"
+        return f"{count // cls.SECONDS_IN_MINUTE}m{count % cls.SECONDS_IN_MINUTE}s"
 
     def to_args(self, extractor_args: ExtractorArgs) -> docker.ContainerHealthcheckArgs:
         tests = (

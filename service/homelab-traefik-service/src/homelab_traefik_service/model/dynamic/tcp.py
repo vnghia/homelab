@@ -41,9 +41,7 @@ class TraefikDynamicTcpModelBuilder(
 
         return Output.all(
             *[GlobalExtractor(value).extract_str(extractor_args) for value in hostsni]
-        ).apply(
-            lambda hosts: " || ".join(["HostSNI(`{}`)".format(host) for host in hosts])
-        )
+        ).apply(lambda hosts: " || ".join([f"HostSNI(`{host}`)" for host in hosts]))
 
     @typing.override
     def build_tls(

@@ -7,4 +7,4 @@ if typing.TYPE_CHECKING:
 
 
 class GlobalExtractKvSource(HomelabBaseModel):
-    kv: dict[str, "GlobalExtract"]
+    kv: dict[str, GlobalExtract]

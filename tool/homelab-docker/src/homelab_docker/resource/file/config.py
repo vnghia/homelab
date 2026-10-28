@@ -2,7 +2,8 @@ import abc
 import configparser
 import io
 import typing
-from typing import Any, ClassVar, Generic, Mapping, TypeVar
+from collections.abc import Mapping
+from typing import Any, ClassVar, TypeVar
 
 import jsonschema
 import orjson
@@ -34,7 +35,7 @@ class JsonDefaultModel(HomelabRootModel[dict[str, Any]]):
         return data
 
 
-class ConfigDumper(Generic[T]):
+class ConfigDumper[T: BaseModel]:
     @classmethod
     @abc.abstractmethod
     def dumps_any(cls, data: Any) -> str: ...
@@ -114,7 +115,7 @@ class YamlDumper(ConfigDumper[T]):
         return ".yaml"
 
 
-class ConfigFileResource(Generic[T], FileResource):
+class ConfigFileResource[T: BaseModel](FileResource):
     validator: type[T]
     dumper: type[ConfigDumper[T]]
     suffix: str | None = None

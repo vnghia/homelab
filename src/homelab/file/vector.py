@@ -33,7 +33,7 @@ class VectorFile(ComponentResource):
                     ].container_full_names[network_config.container]
                 )
             self.container_network_modes.append(
-                "{},{}".format(service.container_full_names[container], network_mode)
+                f"{service.container_full_names[container]},{network_mode}"
             )
 
             if not model.observability:

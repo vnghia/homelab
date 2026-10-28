@@ -12,7 +12,7 @@ class FileLocationModel(HomelabBaseModel):
 
     @property
     def id_(self) -> str:
-        return "{}:{}".format(self.volume, self.path.as_posix())
+        return f"{self.volume}:{self.path.as_posix()}"
 
 
 class FilePermissionModel(HomelabBaseModel):

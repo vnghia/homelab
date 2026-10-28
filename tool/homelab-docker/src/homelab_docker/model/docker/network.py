@@ -32,7 +32,7 @@ class BridgeIpamNetworkModel(HomelabBaseModel):
     def ip(self, offset: int, ip_type: type[IPv6Address]) -> IPv6Address: ...
 
     def ip(
-        self, offset: int, ip_type: type[IPv4Address] | type[IPv6Address]
+        self, offset: int, ip_type: type[IPv4Address | IPv6Address]
     ) -> IPv4Address | IPv6Address:
         if offset > 0:
             return ip_type(self.gateway + offset)
@@ -51,7 +51,7 @@ class BridgeNetworkModel(HomelabBaseModel):
 
     @classmethod
     def get_bridge_name(cls, name: str) -> str:
-        return "{}-bridge".format(name)
+        return f"{name}-bridge"
 
     def build_resource(
         self,
@@ -62,7 +62,7 @@ class BridgeNetworkModel(HomelabBaseModel):
         ipam: list[Output[BridgeIpamNetworkModel]],
     ) -> docker.Network:
         options = self.options | {
-            "name": "br-{}".format(resource_name),
+            "name": f"br-{resource_name}",
         }
         if not self.icc:
             options["enable_icc"] = "false"
@@ -85,7 +85,5 @@ class BridgeNetworkModel(HomelabBaseModel):
                 docker.NetworkLabelArgs(label=k, value=v)
                 for k, v in (project_labels | self.labels).items()
             ],
-            options={
-                "com.docker.network.bridge.{}".format(k): v for k, v in options.items()
-            },
+            options={f"com.docker.network.bridge.{k}": v for k, v in options.items()},
         )

@@ -53,9 +53,7 @@ class MailStalwartResource(ComponentResource):
             stalwart_config.system.record
         ][stalwart_config.system.hostname].value
         self.default_domain = MailStalwartDomainResource(
-            "{}-{}".format(
-                stalwart_config.system.record, stalwart_config.system.hostname
-            ),
+            f"{stalwart_config.system.record}-{stalwart_config.system.hostname}",
             self.child_opts,
             mail_service,
             {
@@ -77,7 +75,7 @@ class MailStalwartResource(ComponentResource):
             stalwart_config.system.proxies
         ).extract_str_explicit_transform(mail_service.extractor_args)
         if not isinstance(proxies, list):
-            raise ValueError("Proxies config has to be a list")
+            raise TypeError("Proxies config has to be a list")
         MailStalwartSystemSettingsResource(
             "system",
             self.child_opts,
@@ -150,7 +148,7 @@ class MailStalwartResource(ComponentResource):
                 domain = self.domains[account.record][account.hostname]
             else:
                 domain = MailStalwartDomainResource(
-                    "{}-{}".format(account.record, account.hostname),
+                    f"{account.record}-{account.hostname}",
                     self.child_opts,
                     mail_service,
                     {
@@ -177,10 +175,10 @@ class MailStalwartResource(ComponentResource):
                 )
             ).extract_str_explicit_transform(mail_service.extractor_args)
             if not isinstance(allowed_ips, list):
-                raise RuntimeError(allowed_ips)
+                raise TypeError(allowed_ips)
 
             MailStalwartAccountResource(
-                "notification-{}".format(name),
+                f"notification-{name}",
                 self.child_opts,
                 mail_service,
                 {
@@ -202,7 +200,7 @@ class MailStalwartResource(ComponentResource):
 
             if account.relay:
                 self.relay_conditions[account.relay].append(
-                    "sender == '{}'".format(account.address)
+                    f"sender == '{account.address}'"
                 )
 
         MailStalwartMtaStageRcptResource(
@@ -213,8 +211,8 @@ class MailStalwartResource(ComponentResource):
                 "rewrite": {
                     "match": [
                         {
-                            "if": "rcpt == '{}'".format(addresses[0]),
-                            "then": "'{}'".format(addresses[1]),
+                            "if": f"rcpt == '{addresses[0]}'",
+                            "then": f"'{addresses[1]}'",
                         }
                         for person in kanidm_service.state.config.persons.root.values()
                         if (addresses := person.mail_addresses)
@@ -250,7 +248,7 @@ class MailStalwartResource(ComponentResource):
                 "route": {
                     "else": "false",
                     "match": [
-                        {"if": " || ".join(condition), "then": "'{}'".format(relay)}
+                        {"if": " || ".join(condition), "then": f"'{relay}'"}
                         for relay, condition in self.relay_conditions.items()
                     ],
                 }

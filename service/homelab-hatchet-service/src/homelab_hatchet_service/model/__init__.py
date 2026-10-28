@@ -32,9 +32,9 @@ class HatchetServiceBuilder(HomelabRootModel[HatchetServiceConfig]):
         return (
             ROOT_PATH
             / "service"
-            / "homelab-{}-service".format(service)
+            / f"homelab-{service}-service"
             / "src"
-            / "homelab_{}_service".format(service)
+            / f"homelab_{service}_service"
             / hatchet_service.name()
             / "workflow"
         )

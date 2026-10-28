@@ -1,6 +1,6 @@
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import PosixPath
-from typing import Generator
 
 import docker
 from docker.models import containers, images

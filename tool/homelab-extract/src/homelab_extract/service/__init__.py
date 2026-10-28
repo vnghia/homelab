@@ -54,6 +54,6 @@ class ServiceExtract(
         root = self.root
         if isinstance(root, ServiceExtractFull):
             if isinstance(root.container, ServiceContainerExtractFull):
-                raise ValueError("Context switching is required")
+                raise TypeError("Context switching is required")
             return root.container
         return None

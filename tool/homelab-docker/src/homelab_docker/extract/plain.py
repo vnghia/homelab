@@ -20,5 +20,5 @@ class GlobalPlainSourceExtractor(ExtractorBase[GlobalPlainExtractSource]):
     def extract_path(self, extractor_args: ExtractorArgs) -> AbsolutePath:
         result = self.extract_str(extractor_args)
         if not isinstance(result, str):
-            raise TypeError("Could not extract path from {}".format(self.name))
+            raise TypeError(f"Could not extract path from {self.name}")
         return AbsolutePath(PosixPath(result))

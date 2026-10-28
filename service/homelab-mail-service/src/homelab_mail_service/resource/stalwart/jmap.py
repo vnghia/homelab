@@ -57,9 +57,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
             if old_value := olds.get(new_key):
                 if type(old_value) is not type(new_value):
                     raise ValueError(
-                        "old ({}) and new ({}) value must have the same type".format(
-                            type(old_value), type(new_value)
-                        )
+                        f"old ({type(old_value)}) and new ({type(new_value)}) value must have the same type"
                     )
 
                 if old_value != new_value:
@@ -96,7 +94,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                     json={
                         "methodCalls": [
                             [
-                                "x:{}/set".format(self.type),
+                                f"x:{self.type}/set",
                                 {"create": {self.RESOURCE_KEY: data}},
                                 "c1",
                             ]
@@ -131,7 +129,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
                     "/jmap",
                     json={
                         "methodCalls": [
-                            ["x:{}/set".format(self.type), {"update": {id: diff}}, "c1"]
+                            [f"x:{self.type}/set", {"update": {id: diff}}, "c1"]
                         ],
                         "using": ["urn:ietf:params:jmap:core", "urn:stalwart:jmap"],
                     },
@@ -162,9 +160,7 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
             client.post(
                 "/jmap",
                 json={
-                    "methodCalls": [
-                        ["x:{}/set".format(self.type), {"destroy": [id]}, "c1"]
-                    ],
+                    "methodCalls": [[f"x:{self.type}/set", {"destroy": [id]}, "c1"]],
                     "using": ["urn:ietf:params:jmap:core", "urn:stalwart:jmap"],
                 },
             ).raise_for_status()

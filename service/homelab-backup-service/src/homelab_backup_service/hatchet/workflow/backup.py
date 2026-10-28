@@ -44,7 +44,7 @@ class HatchetBackupServicesModel(HomelabBaseModel):
 
 class Backup:
     SERVICE = HatchetBackupConfig.BACKUP
-    BACKUP_SERVICES = "{}-services".format(SERVICE)
+    BACKUP_SERVICES = f"{SERVICE}-services"
 
     RESTIC_DEFAULT_BACKUP: ClassVar[restic.HatchetResticBackupModel] = (
         restic.HatchetResticBackupModel()
@@ -141,14 +141,12 @@ class Backup:
             )
 
         @backup_workflow.task(
-            name="load-{}-config".format(DatabaseType.POSTGRES),
+            name=f"load-{DatabaseType.POSTGRES}-config",
             parents=[backup_load_config],
             skip_if=[
                 ParentCondition(
                     parent=backup_load_config,
-                    expression='!("{}" in output.databases)'.format(
-                        DatabaseType.POSTGRES
-                    ),
+                    expression=f'!("{DatabaseType.POSTGRES}" in output.databases)',
                 )
             ],
             desired_worker_labels=[constant.DESIRED_HOST_LABEL],
@@ -159,15 +157,13 @@ class Backup:
             return await barman.HatchetBarmanContainerConfig.load(config)
 
         @backup_workflow.task(
-            name="backup-{}-database".format(DatabaseType.POSTGRES),
+            name=f"backup-{DatabaseType.POSTGRES}-database",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_load_config, backup_load_postgres_config],
             skip_if=[
                 ParentCondition(
                     parent=backup_load_config,
-                    expression='!("{}" in output.databases)'.format(
-                        DatabaseType.POSTGRES
-                    ),
+                    expression=f'!("{DatabaseType.POSTGRES}" in output.databases)',
                 )
             ],
         )
@@ -183,7 +179,7 @@ class Backup:
             )
 
         @backup_workflow.task(
-            name="backup-{}-database-file".format(DatabaseType.POSTGRES),
+            name=f"backup-{DatabaseType.POSTGRES}-database-file",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[
                 backup_load_config,
@@ -193,9 +189,7 @@ class Backup:
             skip_if=[
                 ParentCondition(
                     parent=backup_load_config,
-                    expression='!("{}" in output.databases)'.format(
-                        DatabaseType.POSTGRES
-                    ),
+                    expression=f'!("{DatabaseType.POSTGRES}" in output.databases)',
                 )
             ],
         )
@@ -211,14 +205,12 @@ class Backup:
             )
 
         @backup_workflow.task(
-            name="load-{}-config".format(DatabaseType.SQLITE),
+            name=f"load-{DatabaseType.SQLITE}-config",
             parents=[backup_load_config],
             skip_if=[
                 ParentCondition(
                     parent=backup_load_config,
-                    expression='!("{}" in output.databases)'.format(
-                        DatabaseType.SQLITE
-                    ),
+                    expression=f'!("{DatabaseType.SQLITE}" in output.databases)',
                 )
             ],
             desired_worker_labels=[constant.DESIRED_HOST_LABEL],
@@ -229,15 +221,13 @@ class Backup:
             return await balite.HatchetBaliteModelConfig.load(config)
 
         @backup_workflow.task(
-            name="backup-{}-database".format(DatabaseType.SQLITE),
+            name=f"backup-{DatabaseType.SQLITE}-database",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[backup_load_config, backup_load_sqlite_config],
             skip_if=[
                 ParentCondition(
                     parent=backup_load_config,
-                    expression='!("{}" in output.databases)'.format(
-                        DatabaseType.SQLITE
-                    ),
+                    expression=f'!("{DatabaseType.SQLITE}" in output.databases)',
                 )
             ],
         )
@@ -253,7 +243,7 @@ class Backup:
             )
 
         @backup_workflow.task(
-            name="backup-{}-database-file".format(DatabaseType.SQLITE),
+            name=f"backup-{DatabaseType.SQLITE}-database-file",
             execution_timeout=Docker.DOCKER_TIMEOUT,
             parents=[
                 backup_load_config,
@@ -263,9 +253,7 @@ class Backup:
             skip_if=[
                 ParentCondition(
                     parent=backup_load_config,
-                    expression='!("{}" in output.databases)'.format(
-                        DatabaseType.SQLITE
-                    ),
+                    expression=f'!("{DatabaseType.SQLITE}" in output.databases)',
                 )
             ],
         )

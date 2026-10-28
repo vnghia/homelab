@@ -23,6 +23,6 @@ class GlobalPlainExtractS3Source(HomelabBaseModel):
                 bucket = plain_args.s3[self.s3].bucket
                 if not bucket:
                     raise ValueError(
-                        "Bucket is not configured for this s3 key {}".format(self.s3)
+                        f"Bucket is not configured for this s3 key {self.s3}"
                     )
                 return bucket

@@ -169,7 +169,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
             profile = ResticProfileDatabaseModel(
                 type_=DatabaseType.SQLITE,
-                name="{}-{}".format(name, DatabaseType.SQLITE),
+                name=f"{name}-{DatabaseType.SQLITE}",
                 service=service,
                 path=name,
                 volume=sqlite_backup_args.volume.name,
@@ -244,7 +244,7 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
         return self.configuration_dir_volume_path / "repositories.d" / name
 
     def get_repository_profile_name(self, name: str) -> str:
-        return "repository-{}".format(name)
+        return f"repository-{name}"
 
     def get_profile_volume_path(self, name: str) -> ContainerVolumePath:
         return self.configuration_dir_volume_path / "profiles.d" / name
@@ -255,8 +255,8 @@ class ResticService(ServiceWithConfigResourceBase[ResticConfig]):
 
     @classmethod
     def get_file_group(cls, service: str) -> str:
-        return "{}-file".format(service)
+        return f"{service}-file"
 
     @classmethod
     def get_database_group(cls, service: str) -> str:
-        return "{}-database".format(service)
+        return f"{service}-database"

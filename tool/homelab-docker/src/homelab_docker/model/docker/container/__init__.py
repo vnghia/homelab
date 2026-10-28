@@ -1,7 +1,8 @@
 import dataclasses
 import typing
 import uuid
-from typing import Any, Literal, Mapping, Sequence
+from collections.abc import Mapping, Sequence
+from typing import Any, Literal
 
 import pulumi
 import pulumi_docker as docker
@@ -63,9 +64,7 @@ class ContainerNetworkModelBuildArgs:
         default_factory=dict
     )
 
-    def __iadd__(
-        self, rhs: ContainerNetworkModelBuildArgs
-    ) -> ContainerNetworkModelBuildArgs:
+    def __iadd__(self, rhs: ContainerNetworkModelBuildArgs) -> typing.Self:
         self.add_hosts(rhs.hosts)
         self.add_ports(rhs.ports)
         self.add_bridges(rhs.bridges)
@@ -351,12 +350,10 @@ class ContainerModel(HomelabBaseModel):
         container = outputs["name"]
         if exit_code := int(outputs["exitCode"]):
             raise RuntimeError(
-                "Oneshot container {} exists with non-zero status {}. Please manually remove it after investigation".format(
-                    container, exit_code
-                )
+                f"Oneshot container {container} exists with non-zero status {exit_code}. Please manually remove it after investigation"
             )
 
-        pulumi.info("Removing oneshot container {}".format(container))
+        pulumi.info(f"Removing oneshot container {container}")
         host_resource.docker_client.containers.get(container).remove(v=True, force=True)
 
     def build_resource(

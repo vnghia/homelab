@@ -47,5 +47,5 @@ class ImageResource(ComponentResource):
             name: image.ref for name, image in self.builds.items()
         }
         for name, value in export.items():
-            pulumi.export("{}.{}.{}".format(host, self.RESOURCE_NAME, name), value)
+            pulumi.export(f"{host}.{self.RESOURCE_NAME}.{name}", value)
         self.register_outputs(export)

@@ -64,18 +64,18 @@ class TokenResource(ComponentResource):
         self.amce_resources: defaultdict[str, dict[str, str]] = defaultdict(dict)
         for record in config.records.values():
             self.amce_resources[record.host][
-                "com.cloudflare.api.account.zone.{}".format(record.zone_id)
+                f"com.cloudflare.api.account.zone.{record.zone_id}"
             ] = "*"
 
         self.acme_tokens: dict[str, cloudflare.ApiToken] = {}
 
         for host, resources in self.amce_resources.items():
             acme_token = cloudflare.ApiToken(
-                "{}-acme".format(host),
+                f"{host}-acme",
                 opts=ResourceOptions.merge(
                     self.child_opts, ResourceOptions(delete_before_replace=True)
                 ),
-                name="{}-{}-acme-token".format(project_args.prefix, host),
+                name=f"{project_args.prefix}-{host}-acme-token",
                 policies=[
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",
@@ -93,17 +93,17 @@ class TokenResource(ComponentResource):
         for record in config.records.values():
             if record.is_ddns:
                 self.ddns_resources[record.host][
-                    "com.cloudflare.api.account.zone.{}".format(record.zone_id)
+                    f"com.cloudflare.api.account.zone.{record.zone_id}"
                 ] = "*"
 
         self.ddns_tokens: dict[str, cloudflare.ApiToken] = {}
         for host, resources in self.ddns_resources.items():
             ddns_write = cloudflare.ApiToken(
-                "{}-ddns".format(host),
+                f"{host}-ddns",
                 opts=ResourceOptions.merge(
                     self.child_opts, ResourceOptions(delete_before_replace=True)
                 ),
-                name="{}-{}-ddns-write-token".format(project_args.prefix, host),
+                name=f"{project_args.prefix}-{host}-ddns-write-token",
                 policies=[
                     cloudflare.ApiTokenPolicyArgs(
                         effect="allow",

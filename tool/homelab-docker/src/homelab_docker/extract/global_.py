@@ -239,8 +239,6 @@ class GlobalExtractor(ExtractorBase[GlobalExtract]):
         )
         if volume_path.volume != current_volume:
             raise ValueError(
-                "Volume ({}) must be the same as current volume ({})".format(
-                    volume_path.volume, current_volume
-                )
+                f"Volume ({volume_path.volume}) must be the same as current volume ({current_volume})"
             )
         return volume_path.path

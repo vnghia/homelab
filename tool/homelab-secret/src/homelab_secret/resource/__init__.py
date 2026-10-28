@@ -48,9 +48,7 @@ class SecretResource(ComponentResource):
         secret = self.secrets[key]
         if isinstance(secret, (SecretOutput, random.RandomPassword)):
             return secret
-        raise TypeError(
-            "Secret {} is not a valid secret output or password".format(key)
-        )
+        raise TypeError(f"Secret {key} is not a valid secret output or password")
 
     def get_key(
         self, key: str | None, default: tls.PrivateKey | None = None
@@ -59,7 +57,7 @@ class SecretResource(ComponentResource):
             secret = self.secrets[key]
             if isinstance(secret, tls.PrivateKey):
                 return secret
-            raise TypeError("Secret {} is not a valid private key".format(key))
+            raise TypeError(f"Secret {key} is not a valid private key")
         if default:
             return default
         raise ValueError("Either key or default must be provided")
@@ -68,7 +66,7 @@ class SecretResource(ComponentResource):
         secret = self.secrets[key]
         if isinstance(secret, (tls.LocallySignedCert, tls.SelfSignedCert)):
             return secret
-        raise TypeError("Secret {} is not a valid certificate".format(key))
+        raise TypeError(f"Secret {key} is not a valid certificate")
 
     def get_self_signed_cert(
         self, key: str | None, default: tls.SelfSignedCert | None = None
@@ -77,9 +75,7 @@ class SecretResource(ComponentResource):
             secret = self.secrets[key]
             if isinstance(secret, tls.SelfSignedCert):
                 return secret
-            raise TypeError(
-                "Secret {} is not a valid self-signed certificate".format(key)
-            )
+            raise TypeError(f"Secret {key} is not a valid self-signed certificate")
         if default:
             return default
         raise ValueError("Either key or default must be provided")
@@ -88,4 +84,4 @@ class SecretResource(ComponentResource):
         secret = self.secrets[key]
         if isinstance(secret, SecretMTlsResource):
             return secret
-        raise TypeError("Secret {} is not a valid mTLS resource".format(key))
+        raise TypeError(f"Secret {key} is not a valid mTLS resource")

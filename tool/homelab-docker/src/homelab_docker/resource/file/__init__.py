@@ -62,9 +62,7 @@ class FileProviderProps(HomelabBaseModel):
         cls, data: Any, handler: ValidatorFunctionWrapHandler
     ) -> Any:
         if isinstance(data, pulumi.output.Unknown):
-            pulumi.log.warn(
-                "Pulumi unknown output encountered with {}.".format(cls.__name__)
-            )
+            pulumi.log.warn(f"Pulumi unknown output encountered with {cls.__name__}.")
             return ""
         return handler(data)
 
@@ -126,7 +124,7 @@ class FileVolumeProxy:
                     member = tar.getmember(name)
                     file = tar.extractfile(member)
                     if not file:
-                        raise KeyError("tar member {} not found".format(name))
+                        raise KeyError(f"tar member {name} not found")
                     return props.model_copy(
                         update={
                             "data": file.read().decode(),

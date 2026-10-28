@@ -23,8 +23,8 @@ class ContainerTmpfsConfig(HomelabRootModel[AbsolutePath | ContainerTmpfsFullCon
         option = ",".join(
             [
                 ("exec" if root.exec else "noexec"),
-                ("uid={}".format(user.uid)),
-                ("gid={}".format(user.gid)),
+                (f"uid={user.uid}"),
+                (f"gid={user.gid}"),
             ]
         )
 

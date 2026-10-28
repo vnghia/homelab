@@ -60,9 +60,7 @@ class ContainerDatabaseSourceModel:
                 "dbname": self.database,
             }
         ).apply(
-            lambda x: " ".join(
-                "{}={}".format(k, v) for k, v in (orjson.loads(x) | query).items()
-            )
+            lambda x: " ".join(f"{k}={v}" for k, v in (orjson.loads(x) | query).items())
         )
 
 

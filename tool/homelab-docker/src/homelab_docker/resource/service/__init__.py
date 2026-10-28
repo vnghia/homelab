@@ -32,7 +32,7 @@ class ServiceResourceBase(ComponentResource):
         opts: ResourceOptions,
         extractor_args: ExtractorArgs,
     ) -> None:
-        self.service_resource_name = "{}-service".format(self.name())
+        self.service_resource_name = f"{self.name()}-service"
 
         self.aliases = []
         if model.old:
@@ -106,25 +106,19 @@ class ServiceResourceBase(ComponentResource):
     @property
     def database(self) -> ServiceDatabaseResource:
         if not self._database:
-            raise ValueError(
-                "{} service is not configured with database".format(self.name())
-            )
+            raise ValueError(f"{self.name()} service is not configured with database")
         return self._database
 
     @property
     def secret(self) -> SecretResource:
         if not self._secret:
-            raise ValueError(
-                "{} service is not configured with secret".format(self.name())
-            )
+            raise ValueError(f"{self.name()} service is not configured with secret")
         return self._secret
 
     @property
     def keepass(self) -> ServiceKeepassResource:
         if not self._keepass:
-            raise ValueError(
-                "{} service is not configured with keepass".format(self.name())
-            )
+            raise ValueError(f"{self.name()} service is not configured with keepass")
         return self._keepass
 
     def build_databases(self) -> None:
@@ -156,25 +150,16 @@ class ServiceResourceBase(ComponentResource):
             for name, secret in self._secret.secrets.items():
                 if isinstance(secret, tls.PrivateKey):
                     pulumi.export(
-                        "{}.secret.{}.private-key".format(
-                            self.extractor_args.host.name,
-                            self.add_service_name(name),
-                        ),
+                        f"{self.extractor_args.host.name}.secret.{self.add_service_name(name)}.private-key",
                         secret.private_key_openssh,
                     )
                     pulumi.export(
-                        "{}.secret.{}.public-key".format(
-                            self.extractor_args.host.name,
-                            self.add_service_name(name),
-                        ),
+                        f"{self.extractor_args.host.name}.secret.{self.add_service_name(name)}.public-key",
                         secret.public_key_openssh,
                     )
                 elif isinstance(secret, (tls.LocallySignedCert, tls.SelfSignedCert)):
                     pulumi.export(
-                        "{}.secret.{}.cert".format(
-                            self.extractor_args.host.name,
-                            self.add_service_name(name),
-                        ),
+                        f"{self.extractor_args.host.name}.secret.{self.add_service_name(name)}.cert",
                         secret.cert_pem,
                     )
                 elif isinstance(secret, SecretMTlsResource):
@@ -189,10 +174,7 @@ class ServiceResourceBase(ComponentResource):
                         )
                 else:
                     pulumi.export(
-                        "{}.secret.{}".format(
-                            self.extractor_args.host.name,
-                            self.add_service_name(name),
-                        ),
+                        f"{self.extractor_args.host.name}.secret.{self.add_service_name(name)}",
                         secret.result,
                     )
 
@@ -307,10 +289,7 @@ class ServiceResourceBase(ComponentResource):
 
         for name, container in self.containers.items():
             pulumi.export(
-                "{}.container.{}".format(
-                    self.extractor_args.host.name,
-                    self.add_service_name(name),
-                ),
+                f"{self.extractor_args.host.name}.container.{self.add_service_name(name)}",
                 container.name,
             )
 

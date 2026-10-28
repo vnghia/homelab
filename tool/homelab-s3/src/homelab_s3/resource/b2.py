@@ -56,7 +56,7 @@ class B2Resource(ComponentResource):
                 bucket=bucket.bucket_name,
             )
 
-            pulumi.export("b2.{}.key_id".format(name), key.application_key_id)
-            pulumi.export("b2.{}.access_key".format(name), key.application_key)
+            pulumi.export(f"b2.{name}.key_id", key.application_key_id)
+            pulumi.export(f"b2.{name}.access_key", key.application_key)
 
         self.register_outputs({})

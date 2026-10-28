@@ -72,7 +72,7 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         ).apply(lambda x: KanidmClient.model_validate_json(x[0]).login(password=x[1]))
 
         self.emails = {
-            "email-{}".format(name): Output.from_input(person.mail_addresses[0])
+            f"email-{name}": Output.from_input(person.mail_addresses[0])
             for name, person in self.state.config.persons.root.items()
         }
         self.extractor_args.plain_args.contexts |= self.emails
@@ -90,6 +90,6 @@ class KanidmService(ServiceWithConfigResourceBase[KandimConfig]):
         }
         self.exports |= self.oauths | self.emails
         for system, secret in self.oauths.items():
-            pulumi.export("kanidm.{}.oauth".format(system), secret)
+            pulumi.export(f"kanidm.{system}.oauth", secret)
 
         self.register_outputs({})

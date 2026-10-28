@@ -50,7 +50,7 @@ class TailscaleClient:
         return TailscaleDevices.model_validate_json(
             httpx.get(
                 "https://api.tailscale.com/api/v2/tailnet/-/devices",
-                headers={"Authorization": "Bearer {}".format(api_key)},
+                headers={"Authorization": f"Bearer {api_key}"},
             )
             .raise_for_status()
             .read()
@@ -65,9 +65,7 @@ class TailscaleClient:
                     v4=IPv4Address(device.addresses[0]),
                     v6=IPv6Address(device.addresses[1]),
                 )
-        raise KeyError(
-            "Could not found tailscale device with hostname {}".format(hostname)
-        )
+        raise KeyError(f"Could not found tailscale device with hostname {hostname}")
 
 
 class TailscaleDeviceResourceProvider(ResourceProvider):

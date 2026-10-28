@@ -32,9 +32,7 @@ class TraefikDynamicServiceFullModelBuilder(
         ):
             return service.container_full_names[container_name]
         raise KeyError(
-            "Container {} is not configured in service {}".format(
-                container_name, service.name()
-            )
+            f"Container {container_name} is not configured in service {service.name()}"
         )
 
     def to_url(self, scheme: str, extractor_args: ExtractorArgs) -> Output[str]:

@@ -29,13 +29,13 @@ class OvhResource(ComponentResource):
             )
 
             user = ovh.cloudproject.User(
-                "s3-user-{}".format(name),
+                f"s3-user-{name}",
                 opts=self.child_opts,
-                description="s3-user-{}".format(name),
+                description=f"s3-user-{name}",
                 role_name="objectstore_operator",
             )
             _ = ovh.cloudproject.S3Policy(
-                "s3-policy-{}".format(name),
+                f"s3-policy-{name}",
                 self.child_opts,
                 user_id=user.id,
                 policy=Output.json_dumps(
@@ -55,21 +55,19 @@ class OvhResource(ComponentResource):
                 ),
             )
             credential = ovh.cloudproject.S3Credential(
-                "s3-credential-{}".format(name), opts=self.child_opts, user_id=user.id
+                f"s3-credential-{name}", opts=self.child_opts, user_id=user.id
             )
 
             self.credentials[name] = S3CredentialArgs(
                 key_id=credential.access_key_id,
                 access_key=credential.secret_access_key,
                 endpoint=HttpUrl(
-                    "https://s3.{}.io.cloud.ovh.net/".format(model.region.lower())
+                    f"https://s3.{model.region.lower()}.io.cloud.ovh.net/"
                 ),
                 bucket=bucket.name,
             )
 
-            pulumi.export("ovh.s3.{}.key_id".format(name), credential.access_key_id)
-            pulumi.export(
-                "ovh.s3.{}.access_key".format(name), credential.secret_access_key
-            )
+            pulumi.export(f"ovh.s3.{name}.key_id", credential.access_key_id)
+            pulumi.export(f"ovh.s3.{name}.access_key", credential.secret_access_key)
 
         self.register_outputs({})

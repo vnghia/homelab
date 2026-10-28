@@ -34,7 +34,7 @@ class RemoteImageModel(HomelabBaseModel):
             tag = self.prefix.to_str(platform) + tag
         if self.suffix:
             tag = tag + self.suffix.to_str(platform)
-        return "{}:{}".format(self.repo.to_str(platform), tag)
+        return f"{self.repo.to_str(platform)}:{tag}"
 
     def build_resource(
         self, resource_name: str, *, opts: ResourceOptions, config: DockerConfig

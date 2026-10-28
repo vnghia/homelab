@@ -1,8 +1,9 @@
 import os
 import re
 import typing
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Any, ClassVar, Generator, Self
+from typing import Any, ClassVar, Self
 from uuid import UUID
 
 import pulumi
@@ -25,10 +26,10 @@ from .entry import KeepassEntryResource
 
 class KeepassEntryProps(HomelabBaseModel):
     URL_PREFIX: ClassVar[str] = "KP2A_URL_"
-    URL_PATTERN: ClassVar[re.Pattern[str]] = re.compile("{}(\\d+)".format(URL_PREFIX))
+    URL_PATTERN: ClassVar[re.Pattern[str]] = re.compile(f"{URL_PREFIX}(\\d+)")
 
     APP_PREFIX: ClassVar[str] = "AndroidApp"
-    APP_PATTERN: ClassVar[re.Pattern[str]] = re.compile("{}(\\d+)".format(APP_PREFIX))
+    APP_PATTERN: ClassVar[re.Pattern[str]] = re.compile(f"{APP_PREFIX}(\\d+)")
 
     username: str
     password: str
@@ -42,9 +43,7 @@ class KeepassEntryProps(HomelabBaseModel):
         cls, data: Any, handler: ValidatorFunctionWrapHandler
     ) -> Any:
         if isinstance(data, pulumi.output.Unknown):
-            pulumi.log.warn(
-                "Pulumi unknown output encountered with {}.".format(cls.__name__)
-            )
+            pulumi.log.warn(f"Pulumi unknown output encountered with {cls.__name__}.")
             return ""
         return handler(data)
 
@@ -82,9 +81,7 @@ class KeepassProviderProps(HomelabBaseModel):
         cls, data: Any, handler: ValidatorFunctionWrapHandler
     ) -> Any:
         if isinstance(data, pulumi.output.Unknown):
-            pulumi.log.warn(
-                "Pulumi unknown output encountered with {}.".format(cls.__name__)
-            )
+            pulumi.log.warn(f"Pulumi unknown output encountered with {cls.__name__}.")
             return {}  # pyrefly: ignore [implicit-any-empty-container]
         return handler(data)
 
@@ -101,7 +98,7 @@ class Keepass:
             uuid=UUID(hex=os.environ["KEEPASS_GROUP"]), first=True
         )
         if not isinstance(group, Group):
-            raise RuntimeError()
+            raise TypeError()
         self.group = group
 
         self.props = props
@@ -117,9 +114,7 @@ class Keepass:
                 if not isinstance(entry, Entry):
                     raise RuntimeError()
                 return entry
-            pulumi.warn(
-                "Could not find entry with title {} and id {}".format(title, entry_id)
-            )
+            pulumi.warn(f"Could not find entry with title {title} and id {entry_id}")
             self.props.entry_ids.pop(title)
 
         path = [*list(self.group.path), title]
