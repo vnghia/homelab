@@ -59,6 +59,7 @@ services:
             raw.githubusercontent.com: null
             davidmegginson.github.io: null
             aerodatabox.p.rapidapi.com: null
+            tiles.openfreemap.org: null
     container:
       image: airtrail
       databases:
