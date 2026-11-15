@@ -1,9 +1,9 @@
 [project]
 name = "homelab-hatchet-worker-docker"
 version = "0.1.0"
-requires-python = ">=3.14.4"
+requires-python = ">=3.15.2"
 dependencies = [
-    "hatchet-sdk[otel]>=1.42.1",
+    "hatchet-sdk[otel]>=1.46.0",
     "homelab-hatchet-tool",
     "watchfiles>=1.1.1",
     "pydantic>=2.10.6",

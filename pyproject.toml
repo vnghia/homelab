@@ -35,7 +35,7 @@ dependencies = [
     "homelab-hatchet-worker-docker",
 ]
 readme = "README.md"
-requires-python = ">=3.14.4"
+requires-python = ">=3.15.2"
 classifiers = ["Private :: Do Not Upload"]
 
 [build-system]
