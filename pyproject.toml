@@ -161,6 +161,9 @@ ignore = [
 "pydantic.BaseModel".msg = "Use homelab_pydantic.HomelabBaseModel instead"
 "pydantic.RootModel".msg = "Use homelab_pydantic.HomelabRootModel instead"
 
+[tool.ty.src]
+exclude = ["sdks"]
+
 [tool.pyrefly]
 min-severity = "warn"
 preset = "strict"
