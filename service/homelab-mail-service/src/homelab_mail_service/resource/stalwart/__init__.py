@@ -111,7 +111,7 @@ class MailStalwartResource(ComponentResource):
                     ],
                     "protocol": model.protocol,
                     "useTls": model.use_tls,
-                    "tlsImplicit": model.tls_implicit if model.use_tls else False,
+                    "implicitTls": model.implicit_tls if model.use_tls else False,
                 }
                 | (
                     {
@@ -134,7 +134,7 @@ class MailStalwartResource(ComponentResource):
                 {
                     "@type": "Relay",
                     "name": name,
-                    "address": credential.host,
+                    "host": credential.host,
                     "port": credential.port,
                     "protocol": "smtp",
                     "implicitTls": True,

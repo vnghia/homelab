@@ -6,4 +6,4 @@ class MailStalwartListenerModel(HomelabBaseModel):
     port: GlobalExtract
     protocol: str
     use_tls: bool = False
-    tls_implicit: bool = False
+    implicit_tls: bool = False

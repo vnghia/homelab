@@ -49,6 +49,9 @@ class MailStalwartJmapProviderProps(HomelabBaseModel):
 
     @classmethod
     def compare_data(cls, olds: dict[str, Any], news: dict[str, Any]) -> dict[str, Any]:
+        if olds == news:
+            return {}
+
         diff: dict[str, Any] = {}
 
         for new_key, new_value in news.items():
